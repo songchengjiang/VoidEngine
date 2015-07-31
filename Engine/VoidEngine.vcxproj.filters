@@ -7,6 +7,9 @@
     <Filter Include="KernelCore">
       <UniqueIdentifier>{fea00ee6-eb55-4eb8-b27f-b7e7693ded55}</UniqueIdentifier>
     </Filter>
+    <Filter Include="FileCore">
+      <UniqueIdentifier>{31889e32-d27b-41a4-a5e7-7a803d2f6d51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseCore\Math.cpp">
@@ -23,6 +26,15 @@
     </ClCompile>
     <ClCompile Include="BaseCore\Vector4.cpp">
       <Filter>BaseCore</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseCore\Matrix4.cpp">
+      <Filter>BaseCore</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseCore\Matrix3.cpp">
+      <Filter>BaseCore</Filter>
+    </ClCompile>
+    <ClCompile Include="FileCore\Printer.cpp">
+      <Filter>FileCore</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -43,5 +55,15 @@
     </ClInclude>
     <ClInclude Include="Export.h" />
     <ClInclude Include="Prerequisites.h" />
+    <ClInclude Include="BaseCore\Matrix4.h">
+      <Filter>BaseCore</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseCore\Matrix3.h">
+      <Filter>BaseCore</Filter>
+    </ClInclude>
+    <ClInclude Include="VoidEngine.h" />
+    <ClInclude Include="FileCore\Printer.h">
+      <Filter>FileCore</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

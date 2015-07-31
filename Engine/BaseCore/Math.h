@@ -6,6 +6,11 @@
 class VE_EXPORT veMath
 {
 public:
+	static const veReal PI;
+	static const veReal TWO_PI;
+	static const veReal HALF_PI;
+	static const veReal QUARTER_PI;
+
 	veMath();
 	~veMath();
 

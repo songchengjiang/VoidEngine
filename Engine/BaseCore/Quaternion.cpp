@@ -27,6 +27,15 @@ veQuat::veQuat(const veReal angle, const veVec3 &axes)
 	this->fromAngleAxis(angle, axes);
 }
 
+veQuat::veQuat(const veQuat &copy)
+	: _w(copy._w)
+	, _x(copy._x)
+	, _y(copy._y)
+	, _z(copy._z)
+{
+
+}
+
 veQuat::~veQuat()
 {
 

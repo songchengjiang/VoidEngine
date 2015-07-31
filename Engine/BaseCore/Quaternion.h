@@ -13,6 +13,7 @@ public:
 	static const veQuat IDENTITY;
 
 	veQuat();
+	veQuat(const veQuat &copy);
 	veQuat(const veReal w, const veReal x, const veReal y, const veReal z);
 	veQuat(const veReal angle, const veVec3 &axes);
 	~veQuat();

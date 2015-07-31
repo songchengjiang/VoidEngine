@@ -27,4 +27,7 @@ typedef float veReal;
 
 #define veAssert(_Expression)     ((void)0)
 
+
+#include <memory.h>
+
 #endif

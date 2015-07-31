@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VoidEngine", "Engine\VoidEngine.vcxproj", "{FC047BD9-CA1D-469C-9A04-454A1B313B60}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tests", "Tests\Tests.vcxproj", "{016FC031-698D-428C-BE09-F9F252C56B0B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,6 +17,10 @@ Global
 		{FC047BD9-CA1D-469C-9A04-454A1B313B60}.Debug|Win32.Build.0 = Debug|Win32
 		{FC047BD9-CA1D-469C-9A04-454A1B313B60}.Release|Win32.ActiveCfg = Release|Win32
 		{FC047BD9-CA1D-469C-9A04-454A1B313B60}.Release|Win32.Build.0 = Release|Win32
+		{016FC031-698D-428C-BE09-F9F252C56B0B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{016FC031-698D-428C-BE09-F9F252C56B0B}.Debug|Win32.Build.0 = Debug|Win32
+		{016FC031-698D-428C-BE09-F9F252C56B0B}.Release|Win32.ActiveCfg = Release|Win32
+		{016FC031-698D-428C-BE09-F9F252C56B0B}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
