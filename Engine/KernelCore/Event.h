@@ -11,7 +11,9 @@ public:
 	, _keySymbol(VE_KEY_UNKNOWN)
 	, _mouseSymbol(VE_MOUSE_UNKNOWN)
 	, _mouseX(0.0f)
-	, _mouseY(0.0f){
+	, _mouseY(0.0f)
+	, _wndWidth(0)
+	, _wndHeight(0){
 	}
 
 	~veEvent(){
@@ -19,14 +21,17 @@ public:
 	}
 
 	enum EventType{
-		VE_UNKNOWN    = -1,
-		VE_RELEASE    = GLFW_RELEASE,
-		VE_PRESS      = GLFW_PRESS,
-		VE_REPEAT     = GLFW_REPEAT,
-		VE_SCROLL     = VE_REPEAT << 1,
-		VE_MOVE       = VE_REPEAT << 2,
-		VE_WIN_RESIZE = VE_REPEAT << 3,
-		VE_WIN_FOCUS  = VE_REPEAT << 4,
+		VE_UNKNOWN     = -1,
+		VE_RELEASE     = 0,
+		VE_PRESS       = 1 << 1,
+		VE_DOWN    = 1 << 2,
+		VE_UP      = 1 << 3,
+		VE_REPEAT      = 1 << 4,
+		VE_SCROLL_DOWN = 1 << 5,
+		VE_SCROLL_UP   = 1 << 6,
+		VE_MOVE        = 1 << 7,
+		VE_WIN_RESIZE  = 1 << 8,
+		VE_WIN_FOCUS   = 1 << 9,
 	};
 
 	enum KeySymbol{
@@ -183,8 +188,8 @@ public:
 
 	void setEventType(const EventType et) { _eventType = et; }
 	EventType getEventType() const { return _eventType; }
-	void setKeySymbol(const unsigned int ks) { _keySymbol = ks; }
-	unsigned int getKeySymbol() const { return _keySymbol; }
+	void setKeySymbol(const int ks) { _keySymbol = ks; }
+	int getKeySymbol() const { return _keySymbol; }
 	void setModKeySymbol(const ModKeySymbol mks) { _modKeySymbol = mks; }
 	ModKeySymbol getModKeySymbol() const { return _modKeySymbol; }
 	void setMouseSymbol(const MouseSymbol ms) { _mouseSymbol = ms; }
@@ -195,15 +200,22 @@ public:
 	void setMouseY(veReal y) { _mouseY = y; }
 	veReal getMouseY() const { return _mouseY; }
 
+	void setWindowWidth(int width) { _wndWidth = width; }
+	int getWindowWidth() const { return _wndWidth; }
+	void setWindowHeight(int height) { _wndHeight = height; }
+	int getWindowHeight() const { return _wndHeight; }
+
 private:
 
 	EventType _eventType;
-	unsigned int _keySymbol;
+	int _keySymbol;
 	ModKeySymbol _modKeySymbol;
 	MouseSymbol _mouseSymbol;
 
 	veReal _mouseX;
 	veReal _mouseY;
+	int _wndWidth;
+	int _wndHeight;
 };
 
 #endif

@@ -10,11 +10,12 @@ class veVisualiser;
 class VE_EXPORT veEventDispatcher
 {
 public:
-	typedef std::unordered_map< veVisualiser*, std::vector<veEvent> > Events;
 
 	~veEventDispatcher();
 
 	static veEventDispatcher* instance();
+
+	void dispatch();
 
 
 protected:
@@ -24,10 +25,10 @@ protected:
 
 private:
 
-	void caculateMouseUnitCoords(veVisualiser *vs, double x, double y);
+	static void caculateMouseUnitCoords(veVisualiser *vs, double x, double y);
 
 	static void collectKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
-	static void collectCharEvent(GLFWwindow* window, unsigned int codepoint);
+	//static void collectCharEvent(GLFWwindow* window, unsigned int codepoint, int mods);
 	static void collectMouseEvent(GLFWwindow* window, int button, int action, int mods);
 	static void collectMouseMoveEvent(GLFWwindow* window, double x, double y);
 	static void collectScrollEvent(GLFWwindow* window, double x, double y);
@@ -36,8 +37,9 @@ private:
 
 private:
 
+	typedef std::unordered_map< GLFWwindow*, std::vector<veEvent> > Events;
 	Events _events;
-	veVec2 _mouseUnitCoords;
+	veEvent _currentEvent;
 };
 
 #endif
