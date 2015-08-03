@@ -36,6 +36,21 @@
     <ClCompile Include="FileCore\Printer.cpp">
       <Filter>FileCore</Filter>
     </ClCompile>
+    <ClCompile Include="KernelCore\Renderer.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="KernelCore\Component.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="KernelCore\Inputer.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="KernelCore\EventDispatcher.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="KernelCore\Visualiser.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseCore\Math.h">
@@ -64,6 +79,31 @@
     <ClInclude Include="VoidEngine.h" />
     <ClInclude Include="FileCore\Printer.h">
       <Filter>FileCore</Filter>
+    </ClInclude>
+    <ClInclude Include="ReadMe" />
+    <ClInclude Include="KernelCore\Renderer.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\VE_Ptr.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\Component.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\Inputer.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\Event.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\EventDispatcher.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\Visualiser.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\Registrar.h">
+      <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -5,4 +5,8 @@
 #include "BaseCore/Matrix3.h"
 #include "BaseCore/Matrix4.h"
 
+#include "KernelCore/VE_Ptr.h"
+#include "KernelCore/Renderer.h"
+
+
 #include "FileCore/Printer.h"

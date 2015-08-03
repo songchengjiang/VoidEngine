@@ -37,7 +37,7 @@ public:
 	veReal squaredDistance(const veVec3& rhs) const{ return (*this - rhs).squaredLength(); }
 	veReal dotProduct(const veVec3 &vec) const { return _x * vec._x + _y * vec._y + _z * vec._z; }
 	veVec3 crossProduct(const veVec3 &vec) const {
-		return _y * vec._z - _z * vec._y, _z * vec._x - _x * vec._z, _x * vec._y - _y * vec._x;
+		return veVec3(_y * vec._z - _z * vec._y, _z * vec._x - _x * vec._z, _x * vec._y - _y * vec._x);
 	}
 
 	veReal normalize(){

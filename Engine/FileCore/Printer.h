@@ -8,12 +8,14 @@
 #include "BaseCore/Vector3.h"
 #include "BaseCore/Vector4.h"
 
-class VE_EXPORT Printer
+class VE_EXPORT vePrinter
 {
 public:
-	Printer();
-	~Printer();
+	vePrinter();
+	~vePrinter();
 
+	static void print(const bool val);
+	static void print(const veReal val);
 	static void print(const veVec2 &v);
 	static void print(const veVec3 &v);
 	static void print(const veVec4 &v);

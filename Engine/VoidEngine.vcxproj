@@ -19,6 +19,11 @@
     <ClCompile Include="BaseCore\Vector3.cpp" />
     <ClCompile Include="BaseCore\Vector4.cpp" />
     <ClCompile Include="FileCore\Printer.cpp" />
+    <ClCompile Include="KernelCore\Component.cpp" />
+    <ClCompile Include="KernelCore\EventDispatcher.cpp" />
+    <ClCompile Include="KernelCore\Inputer.cpp" />
+    <ClCompile Include="KernelCore\Renderer.cpp" />
+    <ClCompile Include="KernelCore\Visualiser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseCore\Math.h" />
@@ -30,7 +35,16 @@
     <ClInclude Include="BaseCore\Vector4.h" />
     <ClInclude Include="Export.h" />
     <ClInclude Include="FileCore\Printer.h" />
+    <ClInclude Include="KernelCore\Component.h" />
+    <ClInclude Include="KernelCore\Event.h" />
+    <ClInclude Include="KernelCore\EventDispatcher.h" />
+    <ClInclude Include="KernelCore\Inputer.h" />
+    <ClInclude Include="KernelCore\Registrar.h" />
+    <ClInclude Include="KernelCore\Renderer.h" />
+    <ClInclude Include="KernelCore\VE_Ptr.h" />
+    <ClInclude Include="KernelCore\Visualiser.h" />
     <ClInclude Include="Prerequisites.h" />
+    <ClInclude Include="ReadMe" />
     <ClInclude Include="VoidEngine.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -74,12 +88,14 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;VOIDENGINE_EXPORTS;VE_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;VOIDENGINE_EXPORTS;VE_LIBRARY;VE_DISABLE_MSVC_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Engine;$(SolutionDir)\Dependents;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Dependents;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew\lib\glew32s.lib;glfw\lib\glfw3.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -90,14 +106,16 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;VOIDENGINE_EXPORTS;VE_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;VOIDENGINE_EXPORTS;VE_LIBRARY;VE_DISABLE_MSVC_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Engine;$(SolutionDir)\Dependents;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>glew\lib\glew32s.lib;glfw\lib\glfw3.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Dependents;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

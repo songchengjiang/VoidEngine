@@ -1,0 +1,7 @@
+THREAD:
+
+
+COMPONENT:
+Inputer;
+Updater;
+Renderer;

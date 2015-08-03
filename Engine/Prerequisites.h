@@ -7,7 +7,6 @@
 #define VE_VERSION_PATCH 0
 #define VE_VERSION_SUFFIX ""
 #define VE_VERSION_NAME "Born"
-
 #define VE_VERSION    ((VE_VERSION_MAJOR << 16) | (VE_VERSION_MINOR << 8) | VE_VERSION_PATCH)
 
 // define the real number values to be used
@@ -24,10 +23,15 @@ typedef double veReal;
 typedef float veReal;
 #endif
 
+#define  VE_SAFE_DELETE(_PTR) do { if (_PTR){ delete _PTR; _PTR = nullptr; } } while (false);
 
 #define veAssert(_Expression)     ((void)0)
 
 
 #include <memory.h>
+#include <vector>
+
+#include "glew/include/GL/glew.h"
+#include "glfw/include/GLFW/glfw3.h"
 
 #endif
