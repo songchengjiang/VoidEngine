@@ -1,6 +1,6 @@
 #include "EventDispatcher.h"
 #include "Visualiser.h"
-#include "Registrar.h"
+#include "Inputer.h"
 
 veEventDispatcher::~veEventDispatcher()
 {
@@ -20,12 +20,22 @@ veEventDispatcher* veEventDispatcher::instance()
 
 void veEventDispatcher::dispatch()
 {
-
+	for (auto &event : _events) {
+		auto vs = veVisualiserRegistrar::instance()->getRegContent(event.first);
+		const auto &events = event.second;
+		for (auto e : events) {
+			for (auto &inputer : veInputerRegistrar::instance()->getRegistry()) {
+				if (e.getEventType() & inputer.second->getFilter()) {
+					inputer.second->input(e, vs);
+				}
+			}
+		}
+	}
 }
 
 void veEventDispatcher::initEventCallbacks()
 {
-	veRegistrar<GLFWwindow*, veVisualiser>::instance()->addRegisterCallback([](GLFWwindow *wnd, veVisualiser *vs){
+	veVisualiserRegistrar::instance()->addRegisterCallback([](GLFWwindow *wnd, veVisualiser *vs){
 		glfwSetKeyCallback(wnd, collectKeyEvent);
 		//glfwSetCharModsCallback(wnd, collectCharEvent);
 		glfwSetMouseButtonCallback(wnd, collectMouseEvent);
@@ -35,7 +45,7 @@ void veEventDispatcher::initEventCallbacks()
 		glfwSetWindowFocusCallback(wnd, collectWindowFocusEvent);
 	});
 
-	veRegistrar<GLFWwindow*, veVisualiser>::instance()->addUnRegisterCallback([](GLFWwindow *wnd, veVisualiser *vs){
+	veVisualiserRegistrar::instance()->addUnRegisterCallback([](GLFWwindow *wnd, veVisualiser *vs){
 		glfwSetKeyCallback(wnd, nullptr);
 		//glfwSetCharModsCallback(wnd, nullptr);
 		glfwSetMouseButtonCallback(wnd, nullptr);
@@ -84,7 +94,7 @@ void veEventDispatcher::collectMouseEvent(GLFWwindow* window, int button, int ac
 
 void veEventDispatcher::collectMouseMoveEvent(GLFWwindow* window, double x, double y)
 {
-	caculateMouseUnitCoords(veRegistrar<GLFWwindow*, veVisualiser>::instance()->getRegContent(window), x, y);
+	caculateMouseUnitCoords(veVisualiserRegistrar::instance()->getRegContent(window), x, y);
 	veEvent &event = veEventDispatcher::instance()->_currentEvent;
 	event.setEventType(veEvent::VE_MOVE);
 	veEventDispatcher::instance()->_events[window].push_back(event);

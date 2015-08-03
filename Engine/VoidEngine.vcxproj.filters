@@ -105,5 +105,8 @@
     <ClInclude Include="KernelCore\Registrar.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
+    <ClInclude Include="KernelCore\IDGenerator.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

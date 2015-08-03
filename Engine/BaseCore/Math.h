@@ -23,7 +23,7 @@ public:
 	static veReal acos(veReal val) { return ::acos(val); }
 	static veReal atan(veReal val) { return ::atan(val); }
 	static veReal atan2(veReal y, veReal x) { return ::atan2(y, x); }
-	static veReal abs(veReal val) { return ::abs(val); }
+	static veReal abs(veReal val) { return ::fabs(val); }
 	static bool isNaN(veReal val) { return val != val; }
 };
 

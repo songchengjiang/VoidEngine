@@ -15,23 +15,24 @@ public:
 		return &registrar;
 	}
 
-	bool reg(const ID id, const T *t){
+	bool reg(const ID id, T *t){
 		auto iter = _registry.find(id);
 		if (iter != _registry.end()) return false;
 		_registry[id] = t;
 		if (!_registerCallbacks.empty()){
-			for (auto &iter : _registerCallbacks){
-				iter(id, t);
+			for (auto &cb : _registerCallbacks){
+				cb(id, t);
 			}
 		}
+		return true;
 	}
 
 	bool unReg(const ID id){
 		auto iter = _registry.find(id);
 		if (iter != _registry.end()){
 			if (!_unRegisterCallbacks.empty()){
-				for (auto &iter : _unRegisterCallbacks){
-					iter(id, t);
+				for (auto &cb : _unRegisterCallbacks){
+					cb(iter->first, iter->second);
 				}
 			}
 			_registry.erase(iter);

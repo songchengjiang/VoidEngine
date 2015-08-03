@@ -2,6 +2,7 @@
 #define _VE_VISUALISER_
 #include <string>
 #include "Prerequisites.h"
+#include "Registrar.h"
 
 class VE_EXPORT veVisualiser
 {
@@ -19,5 +20,7 @@ private:
 	std::string _title;
 	GLFWwindow *_hwnd;
 };
+
+typedef veRegistrar<GLFWwindow*, veVisualiser> veVisualiserRegistrar;
 
 #endif

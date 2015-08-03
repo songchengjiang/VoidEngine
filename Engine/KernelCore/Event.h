@@ -24,14 +24,18 @@ public:
 		VE_UNKNOWN     = -1,
 		VE_RELEASE     = 0,
 		VE_PRESS       = 1 << 1,
-		VE_DOWN    = 1 << 2,
-		VE_UP      = 1 << 3,
+		VE_DOWN        = 1 << 2,
+		VE_UP          = 1 << 3,
 		VE_REPEAT      = 1 << 4,
 		VE_SCROLL_DOWN = 1 << 5,
 		VE_SCROLL_UP   = 1 << 6,
 		VE_MOVE        = 1 << 7,
 		VE_WIN_RESIZE  = 1 << 8,
 		VE_WIN_FOCUS   = 1 << 9,
+		VE_KEYBOARD_EVENT = VE_DOWN | VE_UP | VE_REPEAT,
+		VE_MOUSE_EVENT = VE_RELEASE | VE_PRESS | VE_SCROLL_DOWN | VE_SCROLL_UP | VE_MOVE,
+		VE_WIN_EVENT   = VE_WIN_RESIZE | VE_WIN_FOCUS,
+		VE_ALL_EVENT   = VE_WIN_FOCUS | ~VE_WIN_FOCUS,
 	};
 
 	enum KeySymbol{

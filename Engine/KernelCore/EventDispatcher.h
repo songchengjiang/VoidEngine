@@ -1,10 +1,8 @@
 #ifndef _VE_EVENT_DISPATCHER_
 #define _VE_EVENT_DISPATCHER_
 #include <unordered_map>
-#include "BaseCore/Vector2.h"
 #include "Prerequisites.h"
 #include "Event.h"
-#include "Registrar.h"
 
 class veVisualiser;
 class VE_EXPORT veEventDispatcher

@@ -2,28 +2,26 @@
 #define _VE_INPUTER_
 #include "Component.h"
 #include "Event.h"
+#include "Registrar.h"
 
+class veVisualiser;
 class VE_EXPORT veInputer : public veComponent
 {
 public:
-
-	enum InputerType
-	{
-		Keyboard,
-		Mouse,
-		Touch,
-	};
-
-	virtual bool handle(const veEvent &event) = 0;
-
-protected:
-
-	veInputer(InputerType type);
+	veInputer();
 	~veInputer();
 
+	virtual bool input(const veEvent &event, const veVisualiser *vs) = 0;
+
+	void setFilter(const veEvent::EventType filter) { _filter = filter; };
+	veEvent::EventType getFilter() const { return _filter; };
+
 protected:
 
-	InputerType _inputerType;
+	veEvent::EventType _filter;
+	unsigned int _id;
 };
+
+typedef veRegistrar<unsigned int, veInputer> veInputerRegistrar;
 
 #endif
