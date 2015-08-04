@@ -30,6 +30,7 @@ typedef float veReal;
 
 #include <memory.h>
 #include <vector>
+#include <string>
 
 #include "glew/include/GL/glew.h"
 #include "glfw/include/GLFW/glfw3.h"

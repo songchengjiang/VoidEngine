@@ -7,6 +7,9 @@
 
 #include "KernelCore/VE_Ptr.h"
 #include "KernelCore/Renderer.h"
+#include "KernelCore/Node.h"
+#include "KernelCore/Director.h"
+#include "KernelCore/Visualiser.h"
 
 
 #include "FileCore/Printer.h"

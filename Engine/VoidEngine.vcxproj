@@ -20,8 +20,10 @@
     <ClCompile Include="BaseCore\Vector4.cpp" />
     <ClCompile Include="FileCore\Printer.cpp" />
     <ClCompile Include="KernelCore\Component.cpp" />
+    <ClCompile Include="KernelCore\Director.cpp" />
     <ClCompile Include="KernelCore\EventDispatcher.cpp" />
     <ClCompile Include="KernelCore\Inputer.cpp" />
+    <ClCompile Include="KernelCore\Node.cpp" />
     <ClCompile Include="KernelCore\Renderer.cpp" />
     <ClCompile Include="KernelCore\Visualiser.cpp" />
   </ItemGroup>
@@ -36,10 +38,12 @@
     <ClInclude Include="Export.h" />
     <ClInclude Include="FileCore\Printer.h" />
     <ClInclude Include="KernelCore\Component.h" />
+    <ClInclude Include="KernelCore\Director.h" />
     <ClInclude Include="KernelCore\Event.h" />
     <ClInclude Include="KernelCore\EventDispatcher.h" />
     <ClInclude Include="KernelCore\IDGenerator.h" />
     <ClInclude Include="KernelCore\Inputer.h" />
+    <ClInclude Include="KernelCore\Node.h" />
     <ClInclude Include="KernelCore\Registrar.h" />
     <ClInclude Include="KernelCore\Renderer.h" />
     <ClInclude Include="KernelCore\VE_Ptr.h" />
@@ -57,13 +61,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>

@@ -14,6 +14,7 @@ public:
 	vePrinter();
 	~vePrinter();
 
+	static void print(const char* str);
 	static void print(const bool val);
 	static void print(const veReal val);
 	static void print(const veVec2 &v);

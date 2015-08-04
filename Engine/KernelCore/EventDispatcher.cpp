@@ -1,6 +1,7 @@
 #include "EventDispatcher.h"
 #include "Visualiser.h"
 #include "Inputer.h"
+#include "Node.h"
 
 veEventDispatcher::~veEventDispatcher()
 {
@@ -9,7 +10,6 @@ veEventDispatcher::~veEventDispatcher()
 
 veEventDispatcher::veEventDispatcher()
 {
-	initEventCallbacks();
 }
 
 veEventDispatcher* veEventDispatcher::instance()
@@ -18,22 +18,7 @@ veEventDispatcher* veEventDispatcher::instance()
 	return &dispatcher;
 }
 
-void veEventDispatcher::dispatch()
-{
-	for (auto &event : _events) {
-		auto vs = veVisualiserRegistrar::instance()->getRegContent(event.first);
-		const auto &events = event.second;
-		for (auto e : events) {
-			for (auto &inputer : veInputerRegistrar::instance()->getRegistry()) {
-				if (e.getEventType() & inputer.second->getFilter()) {
-					inputer.second->input(e, vs);
-				}
-			}
-		}
-	}
-}
-
-void veEventDispatcher::initEventCallbacks()
+void veEventDispatcher::registerCallback()
 {
 	veVisualiserRegistrar::instance()->addRegisterCallback([](GLFWwindow *wnd, veVisualiser *vs){
 		glfwSetKeyCallback(wnd, collectKeyEvent);
@@ -56,12 +41,29 @@ void veEventDispatcher::initEventCallbacks()
 	});
 }
 
-void veEventDispatcher::caculateMouseUnitCoords(veVisualiser *vs, double x, double y)
+bool veEventDispatcher::dispatch()
 {
-	double coordX = x / (double)vs->width();
-	double coordY = 1.0 - y / (double)vs->height();
+	glfwPollEvents();
+	for (auto &event : _events) {
+		auto vs = veVisualiserRegistrar::instance()->getRegContent(event.first);
+		const auto &events = event.second;
+		for (auto e : events) {
+			vs->dispatchEvent(e);
+		}
+	}
+
+	_events.clear();
+	return false;
+}
+
+void veEventDispatcher::caculateMouseUnitCoords(GLFWwindow* window, double x, double y)
+{
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
+	double coordX = x / (double)width;
+	double coordY = 1.0 - y / (double)height;
 	veEventDispatcher::instance()->_currentEvent.setMouseX(coordX - 0.5);
-	veEventDispatcher::instance()->_currentEvent.setMouseX(coordY - 0.5);
+	veEventDispatcher::instance()->_currentEvent.setMouseY(coordY - 0.5);
 }
 
 void veEventDispatcher::collectKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -94,7 +96,7 @@ void veEventDispatcher::collectMouseEvent(GLFWwindow* window, int button, int ac
 
 void veEventDispatcher::collectMouseMoveEvent(GLFWwindow* window, double x, double y)
 {
-	caculateMouseUnitCoords(veVisualiserRegistrar::instance()->getRegContent(window), x, y);
+	caculateMouseUnitCoords(window, x, y);
 	veEvent &event = veEventDispatcher::instance()->_currentEvent;
 	event.setEventType(veEvent::VE_MOVE);
 	veEventDispatcher::instance()->_events[window].push_back(event);

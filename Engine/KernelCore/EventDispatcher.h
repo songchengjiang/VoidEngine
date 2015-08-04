@@ -5,7 +5,8 @@
 #include "Event.h"
 
 class veVisualiser;
-class VE_EXPORT veEventDispatcher
+class veNode;
+class veEventDispatcher
 {
 public:
 
@@ -13,17 +14,18 @@ public:
 
 	static veEventDispatcher* instance();
 
-	void dispatch();
+	void registerCallback();
+
+	bool dispatch();
 
 
 protected:
 
 	veEventDispatcher();
-	void initEventCallbacks();
 
 private:
 
-	static void caculateMouseUnitCoords(veVisualiser *vs, double x, double y);
+	static void caculateMouseUnitCoords(GLFWwindow* window, double x, double y);
 
 	static void collectKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
 	//static void collectCharEvent(GLFWwindow* window, unsigned int codepoint, int mods);

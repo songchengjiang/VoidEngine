@@ -51,6 +51,12 @@
     <ClCompile Include="KernelCore\Visualiser.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
+    <ClCompile Include="KernelCore\Director.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="KernelCore\Node.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseCore\Math.h">
@@ -106,6 +112,12 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="KernelCore\IDGenerator.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\Director.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\Node.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>

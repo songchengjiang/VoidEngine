@@ -1,18 +1,33 @@
 #include "VoidEngine.h"
+#include "BaseTest/BaseTest.h"
+
+class KeyboardInputer : public veInputer
+{
+public:
+
+	KeyboardInputer(){
+		setFilter(veEvent::VE_WIN_EVENT);
+	}
+	~KeyboardInputer(){}
+
+	virtual bool input(veNode *node, const veEvent &event, const veVisualiser *vs) override{
+		static char outputString[512];
+		sprintf(outputString, "Keyboard: (%c) \n", event.getKeySymbol());
+		vePrinter::print(outputString);
+		sprintf(outputString, "Mouse: (%f, %f) \n", event.getMouseX(), event.getMouseY());
+		vePrinter::print(outputString);
+		return true;
+	}
+
+private:
+
+};
 
 int main(int argc, char **argv)
 {
-	veMat4 m;
-	m.makeTransform(veVec3(10.0f, 0.0f, 0.0f), veVec3(0.5f), veQuat(veMath::QUARTER_PI, veVec3::UNIT_Y));
-	vePrinter::print(m);
-
-	VE_Ptr<veRenderer> renderer = new veRenderer;
-	VE_Ptr<veRenderer> renderer2 = renderer;
-
-	if (renderer == renderer2){
-		vePrinter::print(true);
-	}
-
-	while (true);
-	return 0;
+	auto visualiser = veDirector::instance()->createVisualiser(800, 600, "Game");
+	auto node = new veNode;
+	node->addInputer(new KeyboardInputer);
+	visualiser->setSceneNode(node);
+	return veDirector::instance()->run();
 }

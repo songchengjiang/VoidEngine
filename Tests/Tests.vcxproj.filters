@@ -8,4 +8,9 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BaseTest\BaseTest.h">
+      <Filter>BaseTest</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

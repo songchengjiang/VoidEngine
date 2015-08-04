@@ -3,6 +3,11 @@
 
 static char outputString[512];
 
+void vePrinter::print(const char* str)
+{
+	std::cout << str << std::endl;
+}
+
 void vePrinter::print(const bool val)
 {
 	sprintf(outputString, "bool: %s", val == true ? "True" : "False");

@@ -7,7 +7,7 @@ class VE_Ptr
 {
 public:
 
-	VE_Ptr(T *ptr)
+	VE_Ptr(T *ptr = nullptr)
 		: _ptr(ptr)
 		, _inUse(new size_t(1)){
 	}
@@ -22,6 +22,10 @@ public:
 
 	bool valid(){
 		return _ptr != nullptr;
+	}
+
+	T* get() const{
+		return _ptr;
 	}
 
 	VE_Ptr& operator=(const VE_Ptr &rhs){

@@ -27,6 +27,15 @@ public:
 	veReal& w() { return _w; };
 	const veReal& w() const { return _w; };
 
+	veReal& r() { return _x; };
+	const veReal& r() const { return _x; };
+	veReal& g() { return _y; };
+	const veReal& g() const { return _y; };
+	veReal& b() { return _z; };
+	const veReal& b() const { return _z; };
+	veReal& a() { return _w; };
+	const veReal& a() const { return _w; };
+
 	bool isNaN() const{
 		return veMath::isNaN(_x) || veMath::isNaN(_y) || veMath::isNaN(_z);
 	}
