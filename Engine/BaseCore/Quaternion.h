@@ -90,6 +90,18 @@ public:
 			);
 	}
 
+	veQuat& operator*= (const veQuat& rkQ){
+		// NOTE:  Multiplication is not generally commutative, so in most
+		// cases p*q != q*p.
+		veReal w = _w * rkQ._w - _x * rkQ._x - _y * rkQ._y - _z * rkQ._z;
+		veReal x = _w * rkQ._x + _x * rkQ._w + _y * rkQ._z - _z * rkQ._y;
+		veReal y = _w * rkQ._y + _y * rkQ._w + _z * rkQ._x - _x * rkQ._z;
+		veReal z = _w * rkQ._z + _z * rkQ._w + _x * rkQ._y - _y * rkQ._x;
+		_w = w; _x = x; _y = y; _z = z;
+
+		return *this;
+	}
+
 	veQuat operator* (veReal fScalar) const{
 		return veQuat(fScalar * _w, fScalar * _x, fScalar * _y, fScalar * _z);
 	}

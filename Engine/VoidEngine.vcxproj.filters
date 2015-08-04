@@ -10,6 +10,9 @@
     <Filter Include="FileCore">
       <UniqueIdentifier>{31889e32-d27b-41a4-a5e7-7a803d2f6d51}</UniqueIdentifier>
     </Filter>
+    <Filter Include="KernelCore\Renderer">
+      <UniqueIdentifier>{1d75ce36-dea7-47d5-bf1a-ef654985fc4e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseCore\Math.cpp">
@@ -36,9 +39,6 @@
     <ClCompile Include="FileCore\Printer.cpp">
       <Filter>FileCore</Filter>
     </ClCompile>
-    <ClCompile Include="KernelCore\Renderer.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
     <ClCompile Include="KernelCore\Component.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
@@ -55,6 +55,15 @@
       <Filter>KernelCore</Filter>
     </ClCompile>
     <ClCompile Include="KernelCore\Node.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="KernelCore\Renderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="KernelCore\MeshRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="KernelCore\Transformer.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
   </ItemGroup>
@@ -87,9 +96,6 @@
       <Filter>FileCore</Filter>
     </ClInclude>
     <ClInclude Include="ReadMe" />
-    <ClInclude Include="KernelCore\Renderer.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
     <ClInclude Include="KernelCore\VE_Ptr.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
@@ -118,6 +124,18 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="KernelCore\Node.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\Renderer.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\MeshRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\Transformer.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\RenderCommand.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>

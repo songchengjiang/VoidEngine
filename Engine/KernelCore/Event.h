@@ -166,8 +166,7 @@ public:
 		VE_KEY_MENU          = GLFW_KEY_MENU         ,
 	};
 
-	enum ModKeySymbol
-	{
+	enum ModKeySymbol{
 		VE_MOD_SHIFT   = GLFW_MOD_SHIFT,
 		VE_MOD_CONTROL = GLFW_MOD_CONTROL,
 		VE_MOD_ALT     = GLFW_MOD_ALT,

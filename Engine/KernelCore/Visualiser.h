@@ -31,6 +31,7 @@ private:
 
 	veVisualiser(int w, int h, const std::string &title);
 
+	void update(double deltaTime);
 	void render(double deltaTime);
 
 private:

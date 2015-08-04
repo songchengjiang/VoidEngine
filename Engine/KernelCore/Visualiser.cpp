@@ -25,9 +25,8 @@ bool veVisualiser::simulate(double deltaTime)
 {
 	if (glfwWindowShouldClose(_hwnd)) return false;
 
-	glfwMakeContextCurrent(_hwnd);
+	update(deltaTime);
 	render(deltaTime);
-	glfwSwapBuffers(_hwnd);
 
 	return true;
 }
@@ -40,8 +39,17 @@ bool veVisualiser::dispatchEvent(const veEvent &event)
 	return false;
 }
 
+void veVisualiser::update(double deltaTime)
+{
+	if (_root.valid()){
+		_root->update(deltaTime, this);
+	}
+}
+
 void veVisualiser::render(double deltaTime)
 {
+	glfwMakeContextCurrent(_hwnd);
 	glClear(_clearMask);
 	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
+	glfwSwapBuffers(_hwnd);
 }
