@@ -66,6 +66,9 @@
     <ClCompile Include="KernelCore\Transformer.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
+    <ClCompile Include="KernelCore\RenderQueue.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseCore\Math.h">
@@ -136,6 +139,12 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="KernelCore\RenderCommand.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\RenderQueue.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\LoopQueue.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>

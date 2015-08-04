@@ -4,12 +4,13 @@
 #include <functional>
 
 class veRenderer;
-struct RenderCommand
+struct veRenderCommand
 {
-	RenderCommand()
+	veRenderCommand()
 		: priority(NORMAL_PRIORITY)
-		, updateFrequency(0)
-		, keepFrame(0){
+		, delayFrame(0)
+		, keepFrame(0)
+		, isKeeping(false){
 	}
 
 	enum Priority
@@ -20,9 +21,10 @@ struct RenderCommand
 	};
 
 	Priority priority;
-	unsigned int updateFrequency;
+	unsigned int delayFrame;
 	unsigned int keepFrame;
-	std::function<void(veRenderer *renderer)> renderFunc;
+	bool isKeeping;
+	std::function<void(double)> renderFunc;
 };
 
 #endif

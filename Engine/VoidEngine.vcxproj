@@ -26,6 +26,7 @@
     <ClCompile Include="KernelCore\MeshRenderer.cpp" />
     <ClCompile Include="KernelCore\Node.cpp" />
     <ClCompile Include="KernelCore\Renderer.cpp" />
+    <ClCompile Include="KernelCore\RenderQueue.cpp" />
     <ClCompile Include="KernelCore\Transformer.cpp" />
     <ClCompile Include="KernelCore\Visualiser.cpp" />
   </ItemGroup>
@@ -45,11 +46,13 @@
     <ClInclude Include="KernelCore\EventDispatcher.h" />
     <ClInclude Include="KernelCore\IDGenerator.h" />
     <ClInclude Include="KernelCore\Inputer.h" />
+    <ClInclude Include="KernelCore\LoopQueue.h" />
     <ClInclude Include="KernelCore\MeshRenderer.h" />
     <ClInclude Include="KernelCore\Node.h" />
     <ClInclude Include="KernelCore\Registrar.h" />
     <ClInclude Include="KernelCore\RenderCommand.h" />
     <ClInclude Include="KernelCore\Renderer.h" />
+    <ClInclude Include="KernelCore\RenderQueue.h" />
     <ClInclude Include="KernelCore\Transformer.h" />
     <ClInclude Include="KernelCore\VE_Ptr.h" />
     <ClInclude Include="KernelCore\Visualiser.h" />
@@ -66,13 +69,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>

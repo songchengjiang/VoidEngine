@@ -25,8 +25,12 @@ typedef float veReal;
 
 #define  VE_SAFE_DELETE(_PTR) do { if (_PTR){ delete _PTR; _PTR = nullptr; } } while (false);
 
+#if defined(_MSC_VER)
+#include <assert.h>
+#define veAssert(_Expression)     assert(_Expression)
+#else
 #define veAssert(_Expression)     ((void)0)
-
+#endif
 
 #include <memory.h>
 #include <vector>
