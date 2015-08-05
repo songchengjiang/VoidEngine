@@ -10,6 +10,11 @@
 #include "KernelCore/Node.h"
 #include "KernelCore/Director.h"
 #include "KernelCore/Visualiser.h"
+#include "KernelCore/Component.h"
+#include "KernelCore/Transformer.h"
+#include "KernelCore/MeshRenderer.h"
+#include "KernelCore/Inputer.h"
+
 
 
 #include "FileCore/Printer.h"

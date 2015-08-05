@@ -16,6 +16,18 @@ veVisualiser::~veVisualiser()
 	glfwDestroyWindow(_hwnd);
 }
 
+int veVisualiser::width()
+{
+	glfwGetWindowSize(_hwnd, &_width, &_height);
+	return _width;
+}
+
+int veVisualiser::height()
+{
+	glfwGetWindowSize(_hwnd, &_width, &_height);
+	return _height;
+}
+
 void veVisualiser::setSceneNode(veNode *node)
 {
 	_root = node;
@@ -27,14 +39,13 @@ bool veVisualiser::simulate(double deltaTime)
 
 	update(deltaTime);
 	render(deltaTime);
-
 	return true;
 }
 
-bool veVisualiser::dispatchEvent(const veEvent &event)
+bool veVisualiser::dispatchEvent(double deltaTime, const veEvent &event)
 {
 	if (_root.valid()){
-		return _root->routeEvent(event, this);
+		return _root->routeEvent(deltaTime, event, this);
 	}
 	return false;
 }
@@ -51,5 +62,6 @@ void veVisualiser::render(double deltaTime)
 	glfwMakeContextCurrent(_hwnd);
 	glClear(_clearMask);
 	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
+	_renderQueue.execute(deltaTime, this);
 	glfwSwapBuffers(_hwnd);
 }

@@ -41,14 +41,14 @@ void veEventDispatcher::registerCallback()
 	});
 }
 
-bool veEventDispatcher::dispatch()
+bool veEventDispatcher::dispatch(double deltaTime)
 {
 	glfwPollEvents();
 	for (auto &event : _events) {
 		auto vs = veVisualiserRegistrar::instance()->getRegContent(event.first);
 		const auto &events = event.second;
 		for (auto e : events) {
-			vs->dispatchEvent(e);
+			vs->dispatchEvent(deltaTime, e);
 		}
 	}
 

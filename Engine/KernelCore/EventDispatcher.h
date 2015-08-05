@@ -16,7 +16,7 @@ public:
 
 	void registerCallback();
 
-	bool dispatch();
+	bool dispatch(double deltaTime);
 
 
 protected:

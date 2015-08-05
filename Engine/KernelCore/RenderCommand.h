@@ -4,13 +4,14 @@
 #include <functional>
 
 class veRenderer;
+class veVisualiser;
 struct veRenderCommand
 {
 	veRenderCommand()
 		: priority(NORMAL_PRIORITY)
 		, delayFrame(0)
-		, keepFrame(0)
-		, isKeeping(false){
+		, keepFrame(1)
+		, iskeeping(false){
 	}
 
 	enum Priority
@@ -23,8 +24,8 @@ struct veRenderCommand
 	Priority priority;
 	unsigned int delayFrame;
 	unsigned int keepFrame;
-	bool isKeeping;
-	std::function<void(double)> renderFunc;
+	bool iskeeping;
+	std::function<void(double /*deltaTime*/, veVisualiser*)> renderFunc;
 };
 
 #endif

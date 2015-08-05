@@ -13,7 +13,6 @@ class VE_EXPORT veNode
 public:
 
 	typedef std::vector< VE_Ptr<veComponent> > Components;
-	typedef std::vector< VE_Ptr<veInputer> >   InputerList;
 	typedef std::vector< VE_Ptr<veNode> >      Children;
 
 	veNode();
@@ -25,12 +24,6 @@ public:
 	veNode* getChild(unsigned int cIndex);
 	unsigned int getChildCount() const { return _children.size(); }
 
-	int addInputer(veInputer *inputer);
-	bool removeInputer(veInputer *inputer);
-	veInputer* removeInputer(unsigned int inpIndex);
-	veInputer* getInputer(unsigned int inpIndex);
-	unsigned int getInputerCount() const { return _inputerList.size(); }
-
 	int addComponent(veComponent *com);
 	bool removeComponent(veComponent *com);
 	veComponent* removeComponent(unsigned int comIndex);
@@ -40,13 +33,12 @@ public:
 	void setMatrix(const veMat4 &mat) { _matrix = mat; }
 	const veMat4& getMatrix() const { return _matrix; }
 
-	bool routeEvent(const veEvent &event, const veVisualiser *vs);
-	void update(double deltaTime, const veVisualiser *vs);
+	bool routeEvent(double deltaTime, const veEvent &event, veVisualiser *vs);
+	void update(double deltaTime, veVisualiser *vs);
 
 protected:
 
 	Components     _components;
-	InputerList    _inputerList;
 	Children       _children;
 
 	veMat4         _matrix;

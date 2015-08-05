@@ -7,6 +7,7 @@
 #include "Registrar.h"
 #include "Event.h"
 #include "Node.h"
+#include "RenderQueue.h"
 
 class VE_EXPORT veVisualiser
 {
@@ -14,8 +15,8 @@ class VE_EXPORT veVisualiser
 public:
 	~veVisualiser();
 
-	int width() const { return _width; }
-	int height() const { return _height; }
+	int width();
+	int height();
 	void setClearColor(const veVec4 &color) { _clearColor = color; }
 	const veVec4& getClearColor() const { return _clearColor; }
 	void setClearMask(unsigned int mask) { _clearMask = mask; }
@@ -24,8 +25,10 @@ public:
 	void setSceneNode(veNode *node);
 	veNode* getSceneNode() const { return _root.get(); }
 
+	veRenderQueue& getRenderQueue() { return _renderQueue; }
+
 	bool simulate(double deltaTime);
-	bool dispatchEvent(const veEvent &event);
+	bool dispatchEvent(double deltaTime, const veEvent &event);
 
 private:
 
@@ -43,6 +46,8 @@ private:
 	unsigned int _clearMask;
 	GLFWwindow *_hwnd;
 	VE_Ptr<veNode> _root;
+
+	veRenderQueue _renderQueue;
 };
 
 typedef veRegistrar<GLFWwindow*, veVisualiser> veVisualiserRegistrar;

@@ -41,36 +41,6 @@ veNode* veNode::getChild(unsigned int cIndex)
 	return _children[cIndex].get();
 }
 
-int veNode::addInputer(veInputer *inputer)
-{
-	auto iter = std::find(_inputerList.begin(), _inputerList.end(), inputer);
-	if (iter != _inputerList.end()) return -1;
-	_inputerList.push_back(inputer);
-	return _inputerList.size() - 1;
-}
-
-bool veNode::removeInputer(veInputer *inputer)
-{
-	auto iter = std::find(_inputerList.begin(), _inputerList.end(), inputer);
-	if (iter == _inputerList.end()) return false;
-	_inputerList.erase(iter);
-	return true;
-}
-
-veInputer* veNode::removeInputer(unsigned int inpIndex)
-{
-	veAssert(inpIndex < _inputerList.size());
-	veInputer* inputer = _inputerList[inpIndex].get();
-	_inputerList.erase(_inputerList.begin() + inpIndex);
-	return inputer;
-}
-
-veInputer* veNode::getInputer(unsigned int inpIndex)
-{
-	veAssert(inpIndex < _inputerList.size());
-	return _inputerList[inpIndex].get();
-}
-
 int veNode::addComponent(veComponent *com)
 {
 	auto iter = std::find(_components.begin(), _components.end(), com);
@@ -101,24 +71,26 @@ veComponent* veNode::getComponent(unsigned int comIndex)
 	return _components[comIndex].get();
 }
 
-bool veNode::routeEvent(const veEvent &event, const veVisualiser *vs)
+bool veNode::routeEvent(double deltaTime, const veEvent &event, veVisualiser *vs)
 {
-	for (auto &inputer : _inputerList) {
-		if (event.getEventType() & inputer->getFilter()) {
-			if (inputer->input(this, event, vs)) return true;
+	if (!_components.empty()){
+		for (auto &com : _components){
+			if (event.getEventType() & com->getEventFilter()){
+				if (com->handle(deltaTime, this, vs, event)) return true;
+			}
 		}
 	}
 
 	if (!_children.empty()){
 		for (auto &child : _children){
-			if (child->routeEvent(event, vs)) return true;
+			if (child->routeEvent(deltaTime, event, vs)) return true;
 		}
 	}
 
 	return false;
 }
 
-void veNode::update(double deltaTime, const veVisualiser *vs)
+void veNode::update(double deltaTime, veVisualiser *vs)
 {
 	if (!_components.empty()){
 		for (auto &iter : _components){
