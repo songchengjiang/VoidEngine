@@ -4,6 +4,7 @@
 #include "BaseCore/Quaternion.h"
 #include "BaseCore/Matrix3.h"
 #include "BaseCore/Matrix4.h"
+#include "BaseCore/Math.h"
 
 #include "KernelCore/VE_Ptr.h"
 #include "KernelCore/Renderer.h"
@@ -14,6 +15,7 @@
 #include "KernelCore/Transformer.h"
 #include "KernelCore/MeshRenderer.h"
 #include "KernelCore/Inputer.h"
+#include "KernelCore/LoopQueue.h"
 
 
 

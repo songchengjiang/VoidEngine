@@ -89,9 +89,6 @@
       <Project>{fc047bd9-ca1d-469c-9a04-454a1b313b60}</Project>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="BaseTest\BaseTest.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

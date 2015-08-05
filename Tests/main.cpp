@@ -39,5 +39,6 @@ int main(int argc, char **argv)
 	node->addComponent(meshRenderer);
 
 	visualiser->setSceneNode(node);
+
 	return veDirector::instance()->run();
 }

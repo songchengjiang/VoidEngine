@@ -16,9 +16,10 @@ veMeshRenderer::~veMeshRenderer()
 void veMeshRenderer::update(double deltaTime, veNode *node, veVisualiser *vs)
 {
 	_node = node;
-	vs->getRenderQueue().pushCommand(_renderCommand.get());
+	vs->getRenderQueue().pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, _renderCommand.get());
 }
 
 void veMeshRenderer::render(double deltaTime, veVisualiser *vs)
 {
+
 }
