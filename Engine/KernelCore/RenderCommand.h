@@ -4,27 +4,22 @@
 #include <functional>
 
 class veRenderer;
+class veVisualiser;
 struct veRenderCommand
 {
 	veRenderCommand()
-		: priority(NORMAL_PRIORITY)
-		, delayFrame(0)
-		, keepFrame(0)
-		, isKeeping(false){
+		: priority(NORMAL_PRIORITY){
 	}
 
 	enum Priority
 	{
-		LOW_PRIORITY,
-		NORMAL_PRIORITY,
-		HIGH_PRIORITY,
+		LOW_PRIORITY    = -1,
+		NORMAL_PRIORITY = 0,
+		HIGH_PRIORITY   = 1,
 	};
 
-	Priority priority;
-	unsigned int delayFrame;
-	unsigned int keepFrame;
-	bool isKeeping;
-	std::function<void(double)> renderFunc;
+	int priority;
+	std::function<void(double /*deltaTime*/, veVisualiser*)> renderFunc;
 };
 
 #endif

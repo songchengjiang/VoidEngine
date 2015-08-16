@@ -33,10 +33,11 @@ bool veDirector::run()
 	double preFrameTime = glfwGetTime();
 	while (_isRunning)
 	{
-		veEventDispatcher::instance()->dispatch();
 		double currentFrameTime = glfwGetTime();
+		double deltaTime = currentFrameTime - preFrameTime;
+		veEventDispatcher::instance()->dispatch(deltaTime);
 		for (auto &iter : _visualiserList){
-			iter->simulate(currentFrameTime - preFrameTime);
+			iter->simulate(deltaTime);
 		}
 		preFrameTime = currentFrameTime;
 	}

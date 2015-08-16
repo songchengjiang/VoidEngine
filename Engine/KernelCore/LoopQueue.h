@@ -1,17 +1,18 @@
 #ifndef _VE_LOOP_QUEUE_
 #define _VE_LOOP_QUEUE_
 #include "Prerequisites.h"
+#include <functional>
 
 #define CAPACITY 512
 template<class T>
-class VE_EXPORT LoopQueue
+class veLoopQueue
 {
 public:
 
-	LoopQueue()
+	veLoopQueue()
 		: _front(0)
 		, _end(0){}
-	~LoopQueue() {}
+	~veLoopQueue(){}
 
 	bool empty() const {
 		return _front == _end;
@@ -28,7 +29,7 @@ public:
 	}
 
 	unsigned int size() const {
-		return _end - _front;
+		return (_end - _front + CAPACITY) % CAPACITY;
 	}
 
 	bool pop_front() {
@@ -42,6 +43,20 @@ public:
 		_queue[_end] = val;
 		inc(_end);
 		return true;
+	}
+
+	void sort(const std::function<bool(const T &, const T &)> &cmpFunc){
+		for (size_t f = _front; f != _end;){
+			for (size_t p = f + 1; p != _end;){
+				if (!cmpFunc(_queue[f], _queue[p])){
+					T temp = _queue[f];
+					_queue[f] = _queue[p];
+					_queue[p] = temp;
+				}
+				inc(p);
+			}
+			inc(f);
+		}
 	}
 
 private:

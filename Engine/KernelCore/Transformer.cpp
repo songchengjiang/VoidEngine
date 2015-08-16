@@ -4,6 +4,7 @@
 
 veTransformer::veTransformer()
 	: _neeUpdate(true)
+	, _scale(veVec3::UNIT_SCALE)
 {
 
 }
@@ -13,7 +14,7 @@ veTransformer::~veTransformer()
 
 }
 
-void veTransformer::update(double deltaTime, veNode *node, const veVisualiser *vs)
+void veTransformer::update(double deltaTime, veNode *node, veVisualiser *vs)
 {
 	if (_neeUpdate){
 		veMat4 m;
