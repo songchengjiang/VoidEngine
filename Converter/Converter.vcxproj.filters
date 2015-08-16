@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Converter.cpp" />
+    <ClCompile Include="ConverterFactory.cpp" />
+    <ClCompile Include="ModelConverter.cpp" />
+    <ClCompile Include="Argument.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Converter.h" />
+    <ClInclude Include="ConverterFactory.h" />
+    <ClInclude Include="ModelConverter.h" />
+    <ClInclude Include="Argument.h" />
+  </ItemGroup>
+</Project>
