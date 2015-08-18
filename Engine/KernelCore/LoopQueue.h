@@ -47,7 +47,7 @@ public:
 
 	void sort(const std::function<bool(const T &, const T &)> &cmpFunc){
 		for (size_t f = _front; f != _end;){
-			for (size_t p = f + 1; p != _end;){
+			for (size_t p = (f + 1) % CAPACITY; p != _end;){
 				if (!cmpFunc(_queue[f], _queue[p])){
 					T temp = _queue[f];
 					_queue[f] = _queue[p];

@@ -12,5 +12,7 @@
     <ClInclude Include="ConverterFactory.h" />
     <ClInclude Include="ModelConverter.h" />
     <ClInclude Include="Argument.h" />
+    <ClInclude Include="PrettyWriterExt.h" />
+    <ClInclude Include="Prerequisites.h" />
   </ItemGroup>
 </Project>

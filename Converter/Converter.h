@@ -1,6 +1,7 @@
 #ifndef _CONVERTER_
 #define _CONVERTER_
 #include <string>
+#include "Prerequisites.h"
 
 class Converter
 {
