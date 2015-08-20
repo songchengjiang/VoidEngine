@@ -7,6 +7,7 @@ class veNode;
 class veVisualiser;
 class VE_EXPORT veComponent
 {
+	USE_VE_PTR
 public:
 	veComponent();
 	virtual ~veComponent();

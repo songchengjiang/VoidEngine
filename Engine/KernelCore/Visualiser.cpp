@@ -8,6 +8,7 @@ veVisualiser::veVisualiser(int w, int h, const std::string &title)
 	, _clearColor(veVec4::WHITE)
 	, _clearMask(GL_COLOR_BUFFER_BIT)
 {
+	USE_VE_PTR_INIT
 	_hwnd = glfwCreateWindow(_width, _height, title.c_str(), nullptr, nullptr);
 }
 

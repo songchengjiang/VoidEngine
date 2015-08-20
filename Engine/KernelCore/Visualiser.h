@@ -11,6 +11,8 @@
 
 class VE_EXPORT veVisualiser
 {
+	USE_VE_PTR
+
 	friend class veDirector;
 public:
 	~veVisualiser();

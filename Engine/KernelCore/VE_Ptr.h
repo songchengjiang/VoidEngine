@@ -8,11 +8,11 @@ class VE_Ptr
 public:
 
 	VE_Ptr(T *ptr = nullptr)
-		: _ptr(ptr)
-		, _inUse(new size_t(1)){
+		: _ptr(ptr){
+		ref();
 	}
 
-	VE_Ptr(const VE_Ptr &copy): _ptr(copy._ptr), _inUse(copy._inUse){
+	VE_Ptr(const VE_Ptr &copy): _ptr(copy._ptr){
 		ref();
 	}
 
@@ -31,7 +31,6 @@ public:
 	VE_Ptr& operator=(const VE_Ptr &rhs){
 		unRef();
 		_ptr = rhs._ptr;
-		_inUse = rhs._inUse;
 		ref();
 		return *this;
 	}
@@ -71,20 +70,19 @@ public:
 private:
 
 	void ref(){
-		++*_inUse;
+		if (_ptr)
+			_ptr->ref();
 	}
 
 	void unRef(){
-		if (--*_inUse == 0){
+		if (_ptr && _ptr->unRef() == 0){
 			VE_SAFE_DELETE(_ptr);
-			VE_SAFE_DELETE(_inUse);
 		}
 	}
 
 private:
 
 	T *_ptr;
-	size_t *_inUse;
 };
 
 #endif

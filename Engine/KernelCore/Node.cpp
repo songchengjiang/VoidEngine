@@ -4,7 +4,7 @@
 veNode::veNode()
 	: _parent(nullptr)
 {
-
+	USE_VE_PTR_INIT
 }
 
 veNode::~veNode()

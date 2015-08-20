@@ -5,6 +5,7 @@
 template<typename TYPE>
 class veArray
 {
+	USE_VE_PTR
 public:
 	veArray()
 	: _size(0)

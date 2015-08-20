@@ -11,6 +11,7 @@
 class veVisualiser;
 class VE_EXPORT veNode
 {
+	USE_VE_PTR
 public:
 
 	typedef std::vector< VE_Ptr<veComponent> >        Components;

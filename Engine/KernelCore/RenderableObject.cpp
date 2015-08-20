@@ -4,7 +4,7 @@
 veRenderableObject::veRenderableObject()
 	: _renderer(nullptr)
 {
-
+	USE_VE_PTR_INIT
 }
 
 veRenderableObject::~veRenderableObject()

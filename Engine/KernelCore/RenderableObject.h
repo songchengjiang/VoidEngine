@@ -7,6 +7,7 @@ class veNode;
 class veVisualiser;
 class VE_EXPORT veRenderableObject
 {
+	USE_VE_PTR
 public:
 
 	veRenderableObject();
