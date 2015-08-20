@@ -247,4 +247,6 @@ static veVec4 operator - (const veReal lhs, const veVec4& rhs){
 	return veVec4(lhs - rhs._x, lhs - rhs._y, lhs - rhs._z, lhs - rhs._w);
 }
 
+typedef std::vector<veVec4> veVec4Array;
+
 #endif

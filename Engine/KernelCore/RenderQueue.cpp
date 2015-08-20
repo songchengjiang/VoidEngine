@@ -1,5 +1,6 @@
 #include "RenderQueue.h"
 #include "RenderCommand.h"
+#include "Renderer.h"
 
 veRenderQueue::veRenderQueue()
 {
@@ -16,7 +17,7 @@ void veRenderQueue::pushCommand(unsigned int renderQueueType, veRenderCommand *c
 	_renderQueues[renderQueueType].push_back(cmd);
 }
 
-void veRenderQueue::execute(double deltaTime, veVisualiser *visualiser)
+void veRenderQueue::execute(veVisualiser *visualiser)
 {
 	for (auto &iter : _renderQueues){
 		auto &q = iter.second;
@@ -25,7 +26,7 @@ void veRenderQueue::execute(double deltaTime, veVisualiser *visualiser)
 		});
 		while (!q.empty()){
 			const auto &cmd = q.front();
-			cmd->renderFunc(deltaTime, visualiser);
+			cmd->renderer->render(cmd->renderableObj, visualiser);
 			q.pop_front();
 		}
 	}

@@ -10,7 +10,7 @@ public:
 	veTransformer();
 	~veTransformer();
 
-	virtual void update(double deltaTime, veNode *node, veVisualiser *vs) override;
+	virtual void update(veNode *node, veVisualiser *vs) override;
 
 	void setPosition(const veVec3 &pos);
 	const veVec3& getPosition() const;

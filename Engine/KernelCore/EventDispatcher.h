@@ -34,6 +34,7 @@ private:
 	static void collectScrollEvent(GLFWwindow* window, double x, double y);
 	static void collectWindowSizeEvent(GLFWwindow* window, int width, int height);
 	static void collectWindowFocusEvent(GLFWwindow* window, int focused);
+	static void collectWindowClose(GLFWwindow* window);
 
 private:
 

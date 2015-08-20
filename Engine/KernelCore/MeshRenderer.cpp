@@ -1,11 +1,11 @@
 #include "MeshRenderer.h"
 #include "RenderCommand.h"
 #include "Visualiser.h"
+#include "RenderableObject.h"
+#include "Mesh.h"
 
 veMeshRenderer::veMeshRenderer()
-	: _renderCommand(new veRenderCommand)
 {
-	_renderCommand->renderFunc = VE_CALLBACK_2(veMeshRenderer::render, this);
 }
 
 veMeshRenderer::~veMeshRenderer()
@@ -13,13 +13,10 @@ veMeshRenderer::~veMeshRenderer()
 
 }
 
-void veMeshRenderer::update(double deltaTime, veNode *node, veVisualiser *vs)
+void veMeshRenderer::render(veRenderableObject *renderableObj, veVisualiser *vs)
 {
-	_node = node;
-	vs->getRenderQueue().pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, _renderCommand.get());
-}
+	if (renderableObj){
+		veMesh *mesh = static_cast<veMesh *>(renderableObj);
 
-void veMeshRenderer::render(double deltaTime, veVisualiser *vs)
-{
-
+	}
 }

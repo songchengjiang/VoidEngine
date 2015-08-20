@@ -17,7 +17,7 @@ public:
 	}
 
 	~VE_Ptr(){
-
+		unRef();
 	}
 
 	bool valid(){
@@ -56,8 +56,16 @@ public:
 		return _ptr == rhs._ptr;
 	}
 
+	bool operator==(const T *rhs) const{
+		return _ptr == rhs;
+	}
+
 	bool operator!=(const VE_Ptr &rhs) const{
 		return _ptr != rhs._ptr;
+	}
+
+	bool operator!=(const T *rhs) const{
+		return _ptr != rhs;
 	}
 
 private:

@@ -18,19 +18,25 @@
     <ClCompile Include="BaseCore\Vector2.cpp" />
     <ClCompile Include="BaseCore\Vector3.cpp" />
     <ClCompile Include="BaseCore\Vector4.cpp" />
+    <ClCompile Include="FileCore\File.cpp" />
+    <ClCompile Include="FileCore\FileReaderWriter.cpp" />
     <ClCompile Include="FileCore\Printer.cpp" />
+    <ClCompile Include="FileCore\veFileReaderWriterVEM.cpp" />
     <ClCompile Include="KernelCore\Component.cpp" />
     <ClCompile Include="KernelCore\Director.cpp" />
     <ClCompile Include="KernelCore\EventDispatcher.cpp" />
     <ClCompile Include="KernelCore\Inputer.cpp" />
+    <ClCompile Include="KernelCore\Mesh.cpp" />
     <ClCompile Include="KernelCore\MeshRenderer.cpp" />
     <ClCompile Include="KernelCore\Node.cpp" />
+    <ClCompile Include="KernelCore\RenderableObject.cpp" />
     <ClCompile Include="KernelCore\Renderer.cpp" />
     <ClCompile Include="KernelCore\RenderQueue.cpp" />
     <ClCompile Include="KernelCore\Transformer.cpp" />
     <ClCompile Include="KernelCore\Visualiser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseCore\Array.h" />
     <ClInclude Include="BaseCore\Math.h" />
     <ClInclude Include="BaseCore\Matrix3.h" />
     <ClInclude Include="BaseCore\Matrix4.h" />
@@ -38,7 +44,10 @@
     <ClInclude Include="BaseCore\Vector2.h" />
     <ClInclude Include="BaseCore\Vector3.h" />
     <ClInclude Include="BaseCore\Vector4.h" />
+    <ClInclude Include="Constants.h" />
     <ClInclude Include="Export.h" />
+    <ClInclude Include="FileCore\File.h" />
+    <ClInclude Include="FileCore\FileReaderWriter.h" />
     <ClInclude Include="FileCore\Printer.h" />
     <ClInclude Include="KernelCore\Component.h" />
     <ClInclude Include="KernelCore\Director.h" />
@@ -47,9 +56,11 @@
     <ClInclude Include="KernelCore\IDGenerator.h" />
     <ClInclude Include="KernelCore\Inputer.h" />
     <ClInclude Include="KernelCore\LoopQueue.h" />
+    <ClInclude Include="KernelCore\Mesh.h" />
     <ClInclude Include="KernelCore\MeshRenderer.h" />
     <ClInclude Include="KernelCore\Node.h" />
     <ClInclude Include="KernelCore\Registrar.h" />
+    <ClInclude Include="KernelCore\RenderableObject.h" />
     <ClInclude Include="KernelCore\RenderCommand.h" />
     <ClInclude Include="KernelCore\Renderer.h" />
     <ClInclude Include="KernelCore\RenderQueue.h" />

@@ -65,4 +65,24 @@ private:
 	std::vector< std::function<void(ID, T*)> > _unRegisterCallbacks;
 };
 
+template<typename ID, typename T, class C>
+class veRegistrarAgent
+{
+public:
+	veRegistrarAgent(const ID &id)
+		: _id(id)
+	{
+		_c = new C();
+		veRegistrar<ID, T>::instance()->reg(id, _c);
+	}
+	~veRegistrarAgent(){
+		veRegistrar<ID, T>::instance()->unReg(_id);
+		delete _c;
+	}
+
+private:
+	ID _id;
+	C *_c;
+};
+
 #endif

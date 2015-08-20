@@ -29,13 +29,14 @@ public:
 
 	bool simulate(double deltaTime);
 	bool dispatchEvent(double deltaTime, const veEvent &event);
+	double getDeltaTime() const { return _deltaTime; }
 
 private:
 
 	veVisualiser(int w, int h, const std::string &title);
 
-	void update(double deltaTime);
-	void render(double deltaTime);
+	void update();
+	void render();
 
 private:
 
@@ -46,6 +47,7 @@ private:
 	unsigned int _clearMask;
 	GLFWwindow *_hwnd;
 	VE_Ptr<veNode> _root;
+	double _deltaTime;
 
 	veRenderQueue _renderQueue;
 };

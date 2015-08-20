@@ -5,6 +5,7 @@
 
 class veRenderer;
 class veVisualiser;
+class veRenderableObject;
 struct veRenderCommand
 {
 	veRenderCommand()
@@ -19,7 +20,9 @@ struct veRenderCommand
 	};
 
 	int priority;
-	std::function<void(double /*deltaTime*/, veVisualiser*)> renderFunc;
+
+	veRenderableObject *renderableObj;
+	veRenderer *renderer;
 };
 
 #endif

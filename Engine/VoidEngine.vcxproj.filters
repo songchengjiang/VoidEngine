@@ -13,6 +13,9 @@
     <Filter Include="KernelCore\Renderer">
       <UniqueIdentifier>{1d75ce36-dea7-47d5-bf1a-ef654985fc4e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="FileCore\ReaderWriter">
+      <UniqueIdentifier>{5e444bc8-0636-4c75-ada0-4e56b5c27cb3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseCore\Math.cpp">
@@ -68,6 +71,21 @@
     </ClCompile>
     <ClCompile Include="KernelCore\RenderQueue.cpp">
       <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="FileCore\File.cpp">
+      <Filter>FileCore</Filter>
+    </ClCompile>
+    <ClCompile Include="FileCore\FileReaderWriter.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClCompile>
+    <ClCompile Include="FileCore\veFileReaderWriterVEM.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClCompile>
+    <ClCompile Include="KernelCore\RenderableObject.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="KernelCore\Mesh.cpp">
+      <Filter>KernelCore</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -147,5 +165,21 @@
     <ClInclude Include="KernelCore\LoopQueue.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
+    <ClInclude Include="FileCore\File.h">
+      <Filter>FileCore</Filter>
+    </ClInclude>
+    <ClInclude Include="FileCore\FileReaderWriter.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\RenderableObject.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\Mesh.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseCore\Array.h">
+      <Filter>BaseCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Constants.h" />
   </ItemGroup>
 </Project>

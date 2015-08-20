@@ -14,7 +14,7 @@ veTransformer::~veTransformer()
 
 }
 
-void veTransformer::update(double deltaTime, veNode *node, veVisualiser *vs)
+void veTransformer::update(veNode *node, veVisualiser *vs)
 {
 	if (_neeUpdate){
 		veMat4 m;

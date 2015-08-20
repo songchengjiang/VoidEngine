@@ -5,55 +5,7 @@
 #include <vector>
 #include <unordered_map>
 #include <sstream>
-
-static const std::string VERSION_KEY = "version";
-static const std::string NAME_KEY = "name";
-static const std::string MATERIALS_KEY = "materials";
-static const std::string MATERIAL_KEY = "material";
-static const std::string MESHES_KEY = "meshes";
-static const std::string ATTRIBUTES_KEY = "attributes";
-static const std::string ATTRIBUTE_KEY = "attribute";
-static const std::string SIZE_KEY = "size";
-static const std::string VERTICES_KEY = "vertices";
-static const std::string PARTS_KEY = "parts";
-static const std::string NODES_KEY = "nodes";
-static const std::string TYPE_KEY = "type";
-static const std::string INDICES_KEY = "indices";
-static const std::string SKELETON_KEY = "skeleton";
-static const std::string TRANSFORM_KEY = "transform";
-
-static const std::string TECHNIQUES_KEY = "techniques";
-static const std::string PASSES_KEY = "passes";
-static const std::string DEPTHTEST_KEY = "depthTest";
-static const std::string DEPTHWRITE_KEY = "depthWrite";
-static const std::string CULLFACE_KEY = "cullFace";
-static const std::string VERTEXSHADER_KEY = "vertexShader";
-static const std::string FRAGMENTSHADER_KEY = "fragmentShader";
-static const std::string SOURCE_KEY = "source";
-static const std::string AMBIENT_KEY = "ambient";
-static const std::string DIFFUSE_KEY = "diffuse";
-static const std::string EMISSIVE_KEY = "emissive";
-static const std::string SPECULAR_KEY = "specular";
-static const std::string TRANSPARENT_KEY = "transparent";
-static const std::string REFLECTIVE_KEY = "reflective";
-static const std::string SHININESS_KEY = "shininess";
-static const std::string OPACITY_KEY = "opacity";
-static const std::string REFLECTIVITY_KEY = "reflectivity";
-static const std::string AMBIENTTEX_KEY = "ambientTex";
-static const std::string DIFFUSETEX_KEY = "diffuseTex";
-static const std::string SPECULARTEX_KEY = "specularTex";
-static const std::string EMISSIVETEX_KEY = "emissiveTex";
-static const std::string HEIGHTTEX_KEY = "heightTex";
-static const std::string NORMALSTEX_KEY = "normalsTex";
-static const std::string SHININESSTEX_KEY = "shininessTex";
-static const std::string OPACITYTEX_KEY = "opacityTex";
-static const std::string DISPLACEMENTTEX_KEY = "displacementTex";
-static const std::string LIGHTMAPTEX_KEY = "lightmapTex";
-static const std::string REFLECTIONTEX_KEY = "reflectionTex";
-static const std::string TEXTUREUNITS_KEY = "textureUnits";
-static const std::string WRAP_KEY = "wrap";
-static const std::string FILTER_KEY = "filter";
-
+#include "Constants.h"
 
 std::vector<std::string> MESH_NAME_LIST;
 std::vector<std::string> MATERIAL_NAME_LIST;
@@ -166,7 +118,7 @@ void ModelConverter::writeMeshAttributes(const aiMesh *mesh)
 		_modelWriter.StartObject();
 		_modelWriter.String(SIZE_KEY.c_str(), SIZE_KEY.size()); _modelWriter.Int(3);
 		_modelWriter.String(TYPE_KEY.c_str(), TYPE_KEY.size()); _modelWriter.String("FLOAT", 5);
-		_modelWriter.String(ATTRIBUTE_KEY.c_str(), ATTRIBUTE_KEY.size()); _modelWriter.String("VERTEX_ATTRIB_POSITION", 22);
+		_modelWriter.String(ATTRIBUTE_KEY.c_str(), ATTRIBUTE_KEY.size()); _modelWriter.String(VERTEX_ATTRIB_POSITION.c_str(), VERTEX_ATTRIB_POSITION.size());
 		_modelWriter.EndObject();
 	}
 
@@ -174,7 +126,7 @@ void ModelConverter::writeMeshAttributes(const aiMesh *mesh)
 		_modelWriter.StartObject();
 		_modelWriter.String(SIZE_KEY.c_str(), SIZE_KEY.size()); _modelWriter.Int(3);
 		_modelWriter.String(TYPE_KEY.c_str(), TYPE_KEY.size()); _modelWriter.String("FLOAT", 5);
-		_modelWriter.String(ATTRIBUTE_KEY.c_str(), ATTRIBUTE_KEY.size()); _modelWriter.String("VERTEX_ATTRIB_NORMAL", 20);
+		_modelWriter.String(ATTRIBUTE_KEY.c_str(), ATTRIBUTE_KEY.size()); _modelWriter.String(VERTEX_ATTRIB_NORMAL.c_str(), VERTEX_ATTRIB_NORMAL.size());
 		_modelWriter.EndObject();
 	}
 
@@ -182,13 +134,13 @@ void ModelConverter::writeMeshAttributes(const aiMesh *mesh)
 		_modelWriter.StartObject();
 		_modelWriter.String(SIZE_KEY.c_str(), SIZE_KEY.size()); _modelWriter.Int(3);
 		_modelWriter.String(TYPE_KEY.c_str(), TYPE_KEY.size()); _modelWriter.String("FLOAT", 5);
-		_modelWriter.String(ATTRIBUTE_KEY.c_str(), ATTRIBUTE_KEY.size()); _modelWriter.String("VERTEX_ATTRIB_TANGENT", 21);
+		_modelWriter.String(ATTRIBUTE_KEY.c_str(), ATTRIBUTE_KEY.size()); _modelWriter.String(VERTEX_ATTRIB_TANGENT.c_str(), VERTEX_ATTRIB_TANGENT.size());
 		_modelWriter.EndObject();
 
 		_modelWriter.StartObject();
 		_modelWriter.String(SIZE_KEY.c_str(), SIZE_KEY.size()); _modelWriter.Int(3);
 		_modelWriter.String(TYPE_KEY.c_str(), TYPE_KEY.size()); _modelWriter.String("FLOAT", 5);
-		_modelWriter.String(ATTRIBUTE_KEY.c_str(), ATTRIBUTE_KEY.size()); _modelWriter.String("VERTEX_ATTRIB_BITANGENT", 23);
+		_modelWriter.String(ATTRIBUTE_KEY.c_str(), ATTRIBUTE_KEY.size()); _modelWriter.String(VERTEX_ATTRIB_BITANGENT.c_str(), VERTEX_ATTRIB_BITANGENT.size());
 		_modelWriter.EndObject();
 	}
 
@@ -198,7 +150,7 @@ void ModelConverter::writeMeshAttributes(const aiMesh *mesh)
 		_modelWriter.StartObject();
 		_modelWriter.String(SIZE_KEY.c_str(), SIZE_KEY.size()); _modelWriter.Int(2);
 		_modelWriter.String(TYPE_KEY.c_str(), TYPE_KEY.size()); _modelWriter.String("FLOAT", 5);
-		sprintf(str, "VERTEX_ATTRIB_TEX_COORD%d", i);
+		sprintf(str, "%s%d", VERTEX_ATTRIB_TEX_COORD.c_str(), i);
 		_modelWriter.String(ATTRIBUTE_KEY.c_str(), ATTRIBUTE_KEY.size()); _modelWriter.String(str);
 		_modelWriter.EndObject();
 	}
@@ -208,7 +160,7 @@ void ModelConverter::writeMeshAttributes(const aiMesh *mesh)
 		_modelWriter.StartObject();
 		_modelWriter.String(SIZE_KEY.c_str(), SIZE_KEY.size()); _modelWriter.Int(4);
 		_modelWriter.String(TYPE_KEY.c_str(), TYPE_KEY.size()); _modelWriter.String("FLOAT", 5);
-		sprintf(str, "VERTEX_ATTRIB_COLOR%d", i);
+		sprintf(str, "%s%d", VERTEX_ATTRIB_COLOR.c_str(), i);
 		_modelWriter.String(ATTRIBUTE_KEY.c_str(), ATTRIBUTE_KEY.size()); _modelWriter.String(str);
 		_modelWriter.EndObject();
 	}
@@ -276,9 +228,9 @@ void ModelConverter::writeMeshPairs(const aiMesh *mesh)
 			}
 			_modelWriter.StartObject();
 			_modelWriter.String(TYPE_KEY.c_str(), SIZE_KEY.size()); 
-			if (face.mNumIndices == 1) _modelWriter.String("POINTS");
-			else if (face.mNumIndices == 2) _modelWriter.String("LINES");
-			else if (face.mNumIndices == 3) _modelWriter.String("TRIANGLES");
+			if (face.mNumIndices == 1) _modelWriter.String(POINTS_KEY.c_str(), POINTS_KEY.size());
+			else if (face.mNumIndices == 2) _modelWriter.String(LINES_KEY.c_str(), LINES_KEY.size());
+			else if (face.mNumIndices == 3) _modelWriter.String(TRIANGLES_KEY.c_str(), TRIANGLES_KEY.size());
 			_modelWriter.String(INDICES_KEY.c_str(), INDICES_KEY.size());
 			_modelWriter.StartArray();
 			currentNumIndices = face.mNumIndices;
@@ -409,28 +361,41 @@ void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shade
 
 	aiColor4D col;
 	aiGetMaterialColor(mat, AI_MATKEY_COLOR_AMBIENT, &col);
-	_matWriter.String(AMBIENT_KEY.c_str(), AMBIENT_KEY.size());
-	writeVec4(_matWriter, &col);
+	if (!col.IsBlack()){
+		_matWriter.String(AMBIENT_KEY.c_str(), AMBIENT_KEY.size());
+		writeVec4(_matWriter, &col);
+	}
 
 	aiGetMaterialColor(mat, AI_MATKEY_COLOR_DIFFUSE, &col);
-	_matWriter.String(DIFFUSE_KEY.c_str(), DIFFUSE_KEY.size());
-	writeVec4(_matWriter, &col);
+	if (!col.IsBlack()){
+		_matWriter.String(DIFFUSE_KEY.c_str(), DIFFUSE_KEY.size());
+		writeVec4(_matWriter, &col);
+	}
 
 	aiGetMaterialColor(mat, AI_MATKEY_COLOR_SPECULAR, &col);
-	_matWriter.String(SPECULAR_KEY.c_str(), SPECULAR_KEY.size());
-	writeVec4(_matWriter, &col);
+	if (!col.IsBlack()){
+		_matWriter.String(SPECULAR_KEY.c_str(), SPECULAR_KEY.size());
+		writeVec4(_matWriter, &col);
+	}
 
 	aiGetMaterialColor(mat, AI_MATKEY_COLOR_EMISSIVE, &col);
-	_matWriter.String(EMISSIVE_KEY.c_str(), EMISSIVE_KEY.size());
-	writeVec4(_matWriter, &col);
+	if (!col.IsBlack()){
+		_matWriter.String(EMISSIVE_KEY.c_str(), EMISSIVE_KEY.size());
+		writeVec4(_matWriter, &col);
+	}
 
 	aiGetMaterialColor(mat, AI_MATKEY_COLOR_TRANSPARENT, &col);
-	_matWriter.String(TRANSPARENT_KEY.c_str(), TRANSPARENT_KEY.size());
-	writeVec4(_matWriter, &col);
+	if (!col.IsBlack()){
+		_matWriter.String(TRANSPARENT_KEY.c_str(), TRANSPARENT_KEY.size());
+		writeVec4(_matWriter, &col);
+	}
 
 	aiGetMaterialColor(mat, AI_MATKEY_COLOR_REFLECTIVE, &col);
-	_matWriter.String(REFLECTIVE_KEY.c_str(), REFLECTIVE_KEY.size());
-	writeVec4(_matWriter, &col);
+	if (!col.IsBlack()){
+		_matWriter.String(REFLECTIVE_KEY.c_str(), REFLECTIVE_KEY.size());
+		writeVec4(_matWriter, &col);
+	}
+
 
 	aiGetMaterialFloat(mat, AI_MATKEY_SHININESS, &valFloat);
 	_matWriter.String(SHININESS_KEY.c_str(), SHININESS_KEY.size());
@@ -597,8 +562,8 @@ void ModelConverter::setOutputFileInfo(const std::string &filePath, const std::s
 	std::string::size_type s = outFilePath.find_last_of("/\\") + 1;
 	std::string::size_type e = outFilePath.find_last_of(".");
 	_outputFileFolder = outFilePath.substr(0, s);
-	_outputModelName = outFilePath.substr(s, e - s) + std::string(".vem");
-	_outputMaterialName = outFilePath.substr(s, e - s) + std::string(".vemat");
+	_outputModelName = outFilePath.substr(s, e - s) + MODEL_EXT;
+	_outputMaterialName = outFilePath.substr(s, e - s) + MATERIAL_EXT;
 }
 
 void ModelConverter::generateMaterialNames(const aiScene *scene)

@@ -37,7 +37,7 @@ bool veDirector::run()
 		double deltaTime = currentFrameTime - preFrameTime;
 		veEventDispatcher::instance()->dispatch(deltaTime);
 		for (auto &iter : _visualiserList){
-			iter->simulate(deltaTime);
+			if (!iter->simulate(deltaTime)) stop();
 		}
 		preFrameTime = currentFrameTime;
 	}

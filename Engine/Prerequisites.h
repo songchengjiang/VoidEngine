@@ -24,6 +24,7 @@ typedef float veReal;
 #endif
 
 #define  VE_SAFE_DELETE(_PTR) do { if (_PTR){ delete _PTR; _PTR = nullptr; } } while (false);
+#define  VE_SAFE_DELETE_ARRAY(_PTR) do { if (_PTR){ delete[] _PTR; _PTR = nullptr; } } while (false);
 
 #define VE_CALLBACK_0(__selector__,__target__, ...) std::bind(&__selector__,__target__, ##__VA_ARGS__)
 #define VE_CALLBACK_1(__selector__,__target__, ...) std::bind(&__selector__,__target__, std::placeholders::_1, ##__VA_ARGS__)

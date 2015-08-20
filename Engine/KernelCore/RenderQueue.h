@@ -1,7 +1,6 @@
 #ifndef _VE_RENDER_QUEUE_
 #define _VE_RENDER_QUEUE_
 #include "Prerequisites.h"
-#include "VE_Ptr.h"
 #include "RenderCommand.h"
 #include "LoopQueue.h"
 #include <map>
@@ -23,11 +22,11 @@ public:
 	~veRenderQueue();
 
 	void pushCommand(unsigned int renderQueueType, veRenderCommand *cmd);
-	void execute(double deltaTime, veVisualiser *visualiser);
+	void execute(veVisualiser *visualiser);
 
 private:
 
-	std::map<unsigned int, veLoopQueue< VE_Ptr<veRenderCommand> > > _renderQueues;
+	std::map<unsigned int, veLoopQueue< veRenderCommand* > >_renderQueues;
 };
 
 #endif

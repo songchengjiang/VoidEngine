@@ -28,6 +28,7 @@ void veEventDispatcher::registerCallback()
 		glfwSetScrollCallback(wnd, collectScrollEvent);
 		glfwSetWindowSizeCallback(wnd, collectWindowSizeEvent);
 		glfwSetWindowFocusCallback(wnd, collectWindowFocusEvent);
+		glfwSetWindowCloseCallback(wnd, collectWindowClose);
 	});
 
 	veVisualiserRegistrar::instance()->addUnRegisterCallback([](GLFWwindow *wnd, veVisualiser *vs){
@@ -38,6 +39,7 @@ void veEventDispatcher::registerCallback()
 		glfwSetScrollCallback(wnd, nullptr);
 		glfwSetWindowSizeCallback(wnd, nullptr);
 		glfwSetWindowFocusCallback(wnd, nullptr);
+		glfwSetWindowCloseCallback(wnd, nullptr);
 	});
 }
 
@@ -127,3 +129,9 @@ void veEventDispatcher::collectWindowFocusEvent(GLFWwindow* window, int focused)
 	}
 }
 
+void veEventDispatcher::collectWindowClose(GLFWwindow* window)
+{
+	veEvent &event = veEventDispatcher::instance()->_currentEvent;
+	event.setEventType(veEvent::VE_WIN_CLOSE);
+	veEventDispatcher::instance()->_events[window].push_back(event);
+}

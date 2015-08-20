@@ -35,33 +35,36 @@ void veVisualiser::setSceneNode(veNode *node)
 
 bool veVisualiser::simulate(double deltaTime)
 {
-	if (glfwWindowShouldClose(_hwnd)) return false;
-
-	update(deltaTime);
-	render(deltaTime);
+	if (glfwWindowShouldClose(_hwnd)) 
+		return false;
+	_deltaTime = deltaTime;
+	update();
+	render();
 	return true;
 }
 
 bool veVisualiser::dispatchEvent(double deltaTime, const veEvent &event)
 {
+	if (event.getEventType() == veEvent::VE_WIN_CLOSE) return true;
+	_deltaTime = deltaTime;
 	if (_root.valid()){
-		return _root->routeEvent(deltaTime, event, this);
+		return _root->routeEvent(event, this);
 	}
 	return false;
 }
 
-void veVisualiser::update(double deltaTime)
+void veVisualiser::update()
 {
 	if (_root.valid()){
-		_root->update(deltaTime, this);
+		_root->update(this);
 	}
 }
 
-void veVisualiser::render(double deltaTime)
+void veVisualiser::render()
 {
 	glfwMakeContextCurrent(_hwnd);
 	glClear(_clearMask);
 	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
-	_renderQueue.execute(deltaTime, this);
+	_renderQueue.execute(this);
 	glfwSwapBuffers(_hwnd);
 }
