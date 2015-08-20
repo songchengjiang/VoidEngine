@@ -78,14 +78,14 @@
     <ClCompile Include="FileCore\FileReaderWriter.cpp">
       <Filter>FileCore\ReaderWriter</Filter>
     </ClCompile>
-    <ClCompile Include="FileCore\veFileReaderWriterVEM.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
     <ClCompile Include="KernelCore\RenderableObject.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
     <ClCompile Include="KernelCore\Mesh.cpp">
       <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="FileCore\FileReaderWriterVEM.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

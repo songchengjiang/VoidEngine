@@ -20,8 +20,8 @@
     <ClCompile Include="BaseCore\Vector4.cpp" />
     <ClCompile Include="FileCore\File.cpp" />
     <ClCompile Include="FileCore\FileReaderWriter.cpp" />
+    <ClCompile Include="FileCore\FileReaderWriterVEM.cpp" />
     <ClCompile Include="FileCore\Printer.cpp" />
-    <ClCompile Include="FileCore\veFileReaderWriterVEM.cpp" />
     <ClCompile Include="KernelCore\Component.cpp" />
     <ClCompile Include="KernelCore\Director.cpp" />
     <ClCompile Include="KernelCore\EventDispatcher.cpp" />
