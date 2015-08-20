@@ -37,7 +37,7 @@ protected: size_t _inUse;\
 public: void ref() { ++_inUse; }\
 public: size_t unRef() { --_inUse; return _inUse; }
 
-#define USE_VE_PTR_INIT _inUse = 0;
+#define USE_VE_PTR_INIT _inUse(0)
 
 #if defined(_MSC_VER)
 #include <assert.h>

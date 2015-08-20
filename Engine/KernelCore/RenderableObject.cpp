@@ -2,9 +2,9 @@
 #include "Visualiser.h"
 
 veRenderableObject::veRenderableObject()
-	: _renderer(nullptr)
+	: USE_VE_PTR_INIT
+	, _renderer(nullptr)
 {
-	USE_VE_PTR_INIT
 }
 
 veRenderableObject::~veRenderableObject()
