@@ -33,6 +33,7 @@ private:
 		loadMaterials();
 		readMeshs();
 		readNodes();
+		VE_SAFE_DELETE(_materials);
 	}
 
 	void loadMaterials(){

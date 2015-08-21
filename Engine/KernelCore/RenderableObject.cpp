@@ -17,6 +17,7 @@ void veRenderableObject::update(veNode *node, veVisualiser *vs)
 	updateImp(node, vs);
 	if (_renderer.valid()){
 		_renderer->getRenderCommand()->renderableObj = this;
+		_renderer->getRenderCommand()->attachedNode = node;
 		vs->getRenderQueue().pushCommand(veRenderCommand::NORMAL_PRIORITY, _renderer->getRenderCommand());
 	}
 }

@@ -15,6 +15,8 @@ public:
 
 	USE_VE_PTR;
 
+	void apply(const veMat4 &M, const veMat4 &V, const veMat4 &P);
+
 	const bool& depthTest() const { return _depthTest; };
 	bool& depthTest() { return _depthTest; }
 

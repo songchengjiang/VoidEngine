@@ -37,10 +37,10 @@ int main(int argc, char **argv)
 		visualiser->setSceneNode(node);
 	}
 
-	{
-		auto visualiser = veDirector::instance()->createVisualiser(400, 300, "Game");
-		visualiser->setSceneNode(node);
-	}
+	//{
+	//	auto visualiser = veDirector::instance()->createVisualiser(400, 300, "Game");
+	//	visualiser->setSceneNode(node);
+	//}
 
 	return veDirector::instance()->run();
 }

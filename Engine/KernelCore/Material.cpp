@@ -14,6 +14,11 @@ vePass::~vePass()
 
 }
 
+void vePass::apply(const veMat4 &M, const veMat4 &V, const veMat4 &P)
+{
+
+}
+
 void vePass::setShader(veShader *shader)
 {
 	_shaders[shader->getType()] = shader;
