@@ -87,6 +87,21 @@
     <ClCompile Include="FileCore\FileReaderWriterVEM.cpp">
       <Filter>FileCore\ReaderWriter</Filter>
     </ClCompile>
+    <ClCompile Include="KernelCore\Material.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="KernelCore\Texture.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="KernelCore\Image.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="KernelCore\Shader.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="FileCore\FileReaderWriterVEMTL.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseCore\Math.h">
@@ -181,5 +196,17 @@
       <Filter>BaseCore</Filter>
     </ClInclude>
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="KernelCore\Material.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\Texture.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\Image.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\Shader.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

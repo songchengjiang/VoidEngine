@@ -8,12 +8,14 @@ class veArray
 	USE_VE_PTR
 public:
 	veArray()
-	: _size(0)
+	: USE_VE_PTR_INIT
+	, _size(0)
 	, _end(0)
 	, _buffer(nullptr){
 	}
 	veArray(unsigned int arySize) 
-		: _size(arySize)
+		: USE_VE_PTR_INIT
+		, _size(arySize)
 		, _end(_size)
 		, _buffer(new TYPE[_size]){
 
@@ -53,8 +55,19 @@ public:
 		_end = 0;
 	}
 
-	const TYPE* buffer(){
+	const TYPE* buffer() const{
 		return _buffer;
+	}
+
+	size_t size() const{
+		return _end;
+	}
+
+	void resize(size_t sz){
+		if (_size < sz){
+			resizeImp(sz);
+			_end = _size;
+		}
 	}
 
 	inline TYPE operator [] (const size_t i) const{
@@ -77,13 +90,17 @@ private:
 			}
 			else{
 				size_t newSize = _size * _size;
-				TYPE* newBuf = new TYPE[newSize];
-				memcpy(newBuf, _buffer, _size);
-				VE_SAFE_DELETE_ARRAY(_buffer);
-				_buffer = newBuf;
-				_size = newSize;
+				resizeImp(newSize);
 			}
 		}
+	}
+
+	void resizeImp(size_t sz){
+		TYPE* newBuf = new TYPE[sz];
+		memcpy(newBuf, _buffer, _size);
+		VE_SAFE_DELETE_ARRAY(_buffer);
+		_buffer = newBuf;
+		_size = sz;
 	}
 
 private:

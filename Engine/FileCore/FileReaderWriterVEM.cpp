@@ -16,21 +16,10 @@ public:
 	virtual ~veFileReaderWriterVEM(){};
 
 	virtual void* readFile(const std::string &filePath){
-		FILE* file = fopen(filePath.c_str(), "r");
-		if (!file) return nullptr;
-		fseek(file, 0, SEEK_END);
-		size_t size = ftell(file);
-		rewind(file);
-		if (size == 0) return nullptr;
-
-		char *buffer = new char[size];
-		size_t result = fread(buffer, sizeof(char), size, file);
-		if (result != size) buffer[result] = '\0';
-		_doucument.Parse(buffer);
+		_fileFolder = filePath.substr(0, filePath.find_last_of("/\\") + 1);
+		std::string buffer = veFile::instance()->readFileToBuffer(filePath);
+		_doucument.Parse(buffer.c_str());
 		parseDoc();
-		fclose(file);
-		delete[] buffer;
-
 		return _root;
 	}
 
@@ -41,8 +30,14 @@ public:
 private:
 
 	void parseDoc(){
+		loadMaterials();
 		readMeshs();
 		readNodes();
+	}
+
+	void loadMaterials(){
+		std::string matFile = _doucument[MATERIALS_KEY.c_str()].GetString();
+		_materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_fileFolder + matFile));
 	}
 
 	void readMeshs(){
@@ -57,6 +52,8 @@ private:
 	void readMesh(const Value &meshVal){
 		auto mesh = new veMesh;
 		mesh->setName(meshVal[NAME_KEY.c_str()].GetString());
+		veMaterial *mat = _materials->getMaterial(meshVal[MATERIAL_KEY.c_str()].GetString());
+		mesh->setMaterial(mat);
 
 		if (meshVal.HasMember(ATTRIBUTES_KEY.c_str())){
 			const Value &attris = meshVal[ATTRIBUTES_KEY.c_str()];
@@ -177,6 +174,8 @@ private:
 	veNode *_root;
 	Document _doucument;
 	std::unordered_map<std::string, veMesh *> _meshList;
+	veMaterialArray *_materials;
+	std::string _fileFolder;
 };
 
 VE_READERWRITER_REG("vem", veFileReaderWriterVEM);

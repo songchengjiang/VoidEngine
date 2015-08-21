@@ -21,17 +21,22 @@
     <ClCompile Include="FileCore\File.cpp" />
     <ClCompile Include="FileCore\FileReaderWriter.cpp" />
     <ClCompile Include="FileCore\FileReaderWriterVEM.cpp" />
+    <ClCompile Include="FileCore\FileReaderWriterVEMTL.cpp" />
     <ClCompile Include="FileCore\Printer.cpp" />
     <ClCompile Include="KernelCore\Component.cpp" />
     <ClCompile Include="KernelCore\Director.cpp" />
     <ClCompile Include="KernelCore\EventDispatcher.cpp" />
+    <ClCompile Include="KernelCore\Image.cpp" />
     <ClCompile Include="KernelCore\Inputer.cpp" />
+    <ClCompile Include="KernelCore\Material.cpp" />
     <ClCompile Include="KernelCore\Mesh.cpp" />
     <ClCompile Include="KernelCore\MeshRenderer.cpp" />
     <ClCompile Include="KernelCore\Node.cpp" />
     <ClCompile Include="KernelCore\RenderableObject.cpp" />
     <ClCompile Include="KernelCore\Renderer.cpp" />
     <ClCompile Include="KernelCore\RenderQueue.cpp" />
+    <ClCompile Include="KernelCore\Shader.cpp" />
+    <ClCompile Include="KernelCore\Texture.cpp" />
     <ClCompile Include="KernelCore\Transformer.cpp" />
     <ClCompile Include="KernelCore\Visualiser.cpp" />
   </ItemGroup>
@@ -54,8 +59,10 @@
     <ClInclude Include="KernelCore\Event.h" />
     <ClInclude Include="KernelCore\EventDispatcher.h" />
     <ClInclude Include="KernelCore\IDGenerator.h" />
+    <ClInclude Include="KernelCore\Image.h" />
     <ClInclude Include="KernelCore\Inputer.h" />
     <ClInclude Include="KernelCore\LoopQueue.h" />
+    <ClInclude Include="KernelCore\Material.h" />
     <ClInclude Include="KernelCore\Mesh.h" />
     <ClInclude Include="KernelCore\MeshRenderer.h" />
     <ClInclude Include="KernelCore\Node.h" />
@@ -64,6 +71,8 @@
     <ClInclude Include="KernelCore\RenderCommand.h" />
     <ClInclude Include="KernelCore\Renderer.h" />
     <ClInclude Include="KernelCore\RenderQueue.h" />
+    <ClInclude Include="KernelCore\Shader.h" />
+    <ClInclude Include="KernelCore\Texture.h" />
     <ClInclude Include="KernelCore\Transformer.h" />
     <ClInclude Include="KernelCore\VE_Ptr.h" />
     <ClInclude Include="KernelCore\Visualiser.h" />
@@ -80,13 +89,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>

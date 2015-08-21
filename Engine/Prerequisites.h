@@ -39,6 +39,11 @@ public: size_t unRef() { --_inUse; return _inUse; }
 
 #define USE_VE_PTR_INIT _inUse(0)
 
+#define  USE_NAME_PROPERTY \
+protected: std::string _name;\
+public: void setName(const std::string &name) { _name = name; } \
+public: const std::string& getName() const { return _name; }
+
 #if defined(_MSC_VER)
 #include <assert.h>
 #define veAssert(_Expression)     assert(_Expression)

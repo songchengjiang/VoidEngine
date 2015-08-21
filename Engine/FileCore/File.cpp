@@ -31,6 +31,25 @@ bool veFile::writeFile(void *data, const std::string &filePath)
 	return fileReader->writeFile(data, filePath);
 }
 
+std::string veFile::readFileToBuffer(const std::string &filePath)
+{
+	FILE* file = fopen(filePath.c_str(), "r");
+	if (!file) return nullptr;
+	fseek(file, 0, SEEK_END);
+	size_t size = ftell(file);
+	rewind(file);
+	if (size == 0) return nullptr;
+
+	char *buffer = new char[size];
+	size_t result = fread(buffer, sizeof(char), size, file);
+	if (result != size) buffer[result] = '\0';
+	std::string buf(buffer);
+	fclose(file);
+	delete[] buffer;
+
+	return buf;
+}
+
 std::string veFile::getFileExt(const std::string &filePath)
 {
 	return filePath.substr(filePath.find_last_of(".") + 1);

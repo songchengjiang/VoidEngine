@@ -2,23 +2,26 @@
 #define _VE_RENDERABLE_OBJECT_
 #include "Prerequisites.h"
 #include "Renderer.h"
+#include "Material.h"
 
 class veNode;
 class veVisualiser;
 class VE_EXPORT veRenderableObject
 {
-	USE_VE_PTR
 public:
 
 	veRenderableObject();
 	virtual ~veRenderableObject();
 
+	USE_VE_PTR;
+	USE_NAME_PROPERTY;
+
 	void update(veNode *node, veVisualiser *vs);
 
-	void setName(const std::string &name) { _name = name; }
-	const std::string& getName() const { return _name; }
 	inline void setRenderer(veRenderer *renderer);
 	veRenderer* getRenderer() const { return _renderer.get(); }
+	void setMaterial(veMaterial *material) { _material = material; }
+	veMaterial* getMaterial() { return _material.get(); }
 
 protected:
 
@@ -27,7 +30,7 @@ protected:
 protected:
 
 	VE_Ptr<veRenderer> _renderer;
-	std::string _name;
+	VE_Ptr<veMaterial> _material;
 };
 
 #endif

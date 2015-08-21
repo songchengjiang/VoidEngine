@@ -11,18 +11,17 @@
 class veVisualiser;
 class VE_EXPORT veNode
 {
-	USE_VE_PTR
 public:
 
 	typedef std::vector< VE_Ptr<veComponent> >        Components;
 	typedef std::vector< VE_Ptr<veNode> >             Children;
 	typedef std::vector< VE_Ptr<veRenderableObject> > RenderableObjects;
 
+	USE_VE_PTR;
+	USE_NAME_PROPERTY;
+
 	veNode();
 	virtual ~veNode();
-
-	void setName(const std::string &name) { _name = name; }
-	const std::string& getName() const { return _name; }
 
 	int addChild(veNode *child);
 	bool removeChild(veNode *child);
@@ -59,7 +58,6 @@ protected:
 	veNode           *_parent;
 
 	veMat4            _matrix;
-	std::string       _name;
 };
 
 #endif

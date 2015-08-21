@@ -7,10 +7,11 @@ class veNode;
 class veVisualiser;
 class VE_EXPORT veComponent
 {
-	USE_VE_PTR
 public:
 	veComponent();
 	virtual ~veComponent();
+
+	USE_VE_PTR;
 
 	virtual bool handle(veNode *node, veVisualiser *vs, const veEvent &event) { return false; }
 	virtual void update(veNode *node, veVisualiser *vs) {};

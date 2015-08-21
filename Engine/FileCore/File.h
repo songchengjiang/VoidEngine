@@ -12,6 +12,8 @@ public:
 	void* readFile(const std::string &filePath);
 	bool writeFile(void *data, const std::string &filePath);
 
+	std::string readFileToBuffer(const std::string &filePath);
+
 private:
 
 	std::string getFileExt(const std::string &filePath);

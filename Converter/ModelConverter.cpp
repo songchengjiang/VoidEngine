@@ -339,23 +339,28 @@ void ModelConverter::writeShaders(const aiMaterial *mat)
 	int valInt = 0;
 	aiGetMaterialInteger(mat, AI_MATKEY_SHADING_MODEL, &valInt);
 	writeShader(mat, getShaderName(valInt));
-	_matWriter.EndObject();
 }
 
 void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shaderName)
 {
 	int valInt = 0;
 	float valFloat = 0.0f;
+
+	_matWriter.String(SHADERS_KEY.c_str(), SHADERS_KEY.size());
+	_matWriter.StartArray();
+
 	//vertex shader
-	_matWriter.String(VERTEXSHADER_KEY.c_str(), VERTEXSHADER_KEY.size());
 	_matWriter.StartObject();
+	_matWriter.String(TYPE_KEY.c_str(), TYPE_KEY.size());
+	_matWriter.String(VERTEXSHADER_KEY.c_str(), VERTEXSHADER_KEY.size());
 	_matWriter.String(SOURCE_KEY.c_str(), SOURCE_KEY.size());
 	_matWriter.String((shaderName + std::string(".vert")).c_str());
 	_matWriter.EndObject();
 
 	//fragment shader
-	_matWriter.String(FRAGMENTSHADER_KEY.c_str(), FRAGMENTSHADER_KEY.size());
 	_matWriter.StartObject();
+	_matWriter.String(TYPE_KEY.c_str(), TYPE_KEY.size());
+	_matWriter.String(FRAGMENTSHADER_KEY.c_str(), FRAGMENTSHADER_KEY.size());
 	_matWriter.String(SOURCE_KEY.c_str(), SOURCE_KEY.size());
 	_matWriter.String((shaderName + std::string(".frag")).c_str());
 
@@ -464,6 +469,10 @@ void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shade
 		_matWriter.String(REFLECTIONTEX_KEY.c_str(), REFLECTIONTEX_KEY.size());
 		_matWriter.Uint(texUnit++);
 	}
+
+	_matWriter.EndObject();
+
+	_matWriter.EndArray();
 }
 
 void ModelConverter::writeTextures(const aiMaterial *mat)
@@ -497,14 +506,14 @@ void ModelConverter::writeTexture(const aiMaterial *mat, aiTextureType texType)
 		_matWriter.String(texturePath.C_Str(), texturePath.length);
 
 		_matWriter.String(WRAP_KEY.c_str(), WRAP_KEY.size());
-		if (mapMode == aiTextureMapMode_Wrap) _matWriter.String("REPEAT");
-		else if (mapMode == aiTextureMapMode_Clamp) _matWriter.String("CLAMP");
-		else if (mapMode == aiTextureMapMode_Mirror) _matWriter.String("MIRROR");
-		else if (mapMode == aiTextureMapMode_Decal) _matWriter.String("DECAL");
-		else _matWriter.String("CLAMP");
+		if (mapMode == aiTextureMapMode_Wrap) _matWriter.String(REPEAT_KEY.c_str(), REPEAT_KEY.size());
+		else if (mapMode == aiTextureMapMode_Clamp) _matWriter.String(CLAMP_KEY.c_str(), CLAMP_KEY.size());
+		else if (mapMode == aiTextureMapMode_Mirror) _matWriter.String(MIRROR_KEY.c_str(), MIRROR_KEY.size());
+		else if (mapMode == aiTextureMapMode_Decal) _matWriter.String(DECAL_KEY.c_str(), DECAL_KEY.size());
+		else _matWriter.String(CLAMP_KEY.c_str(), CLAMP_KEY.size());
 
 		_matWriter.String(FILTER_KEY.c_str(), FILTER_KEY.size());
-		_matWriter.String("NERAEST");
+		_matWriter.String(NEREAST_KEY.c_str(), NEREAST_KEY.size());
 		_matWriter.EndObject();
 	}
 }

@@ -11,11 +11,11 @@
 
 class VE_EXPORT veVisualiser
 {
-	USE_VE_PTR
-
 	friend class veDirector;
 public:
 	~veVisualiser();
+
+	USE_VE_PTR;
 
 	int width();
 	int height();
