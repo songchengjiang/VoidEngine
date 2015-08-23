@@ -26,7 +26,7 @@ void veRenderQueue::execute(veVisualiser *visualiser)
 		});
 		while (!q.empty()){
 			const auto &cmd = q.front();
-			cmd->renderer->render(cmd->renderableObj, visualiser);
+			cmd->renderer->render();
 			q.pop_front();
 		}
 	}

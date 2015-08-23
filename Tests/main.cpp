@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 	transer->setRotation(veQuat(veMath::QUARTER_PI, veVec3::UNIT_X));
 
 	{
-		auto visualiser = veDirector::instance()->createVisualiser(800, 600, "Game");
+		auto visualiser = veDirector::DIRECTOR.createVisualiser(800, 600, "Game");
 		visualiser->setSceneNode(node);
 	}
 
@@ -42,5 +42,5 @@ int main(int argc, char **argv)
 	//	visualiser->setSceneNode(node);
 	//}
 
-	return veDirector::instance()->run();
+	return veDirector::DIRECTOR.run();
 }

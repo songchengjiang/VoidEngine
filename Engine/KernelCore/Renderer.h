@@ -14,7 +14,7 @@ public:
 	veRenderer();
 	virtual ~veRenderer();
 
-	virtual void render(veRenderableObject *renderableObj, veVisualiser *vs) = 0;
+	virtual void render() = 0;
 	veRenderCommand* getRenderCommand() { return _renderCommand; }
 
 protected:

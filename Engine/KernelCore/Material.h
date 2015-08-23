@@ -15,7 +15,7 @@ public:
 
 	USE_VE_PTR;
 
-	void apply(const veMat4 &M, const veMat4 &V, const veMat4 &P);
+	void apply();
 
 	const bool& depthTest() const { return _depthTest; };
 	bool& depthTest() { return _depthTest; }
@@ -25,6 +25,10 @@ public:
 
 	const bool& cullFace() const{ return _cullFace; }
 	bool& cullFace(){ return _cullFace; }
+
+	const veMat4*& M() { return _M; }
+	const veMat4*& V() { return _V; }
+	const veMat4*& P() { return _P; }
 
 	void setShader(veShader *shader);
 	veShader* getShader(veShader::Type type);
@@ -40,8 +44,11 @@ private:
 	bool _depthTest;
 	bool _depthWirte;
 	bool _cullFace;
+	const veMat4 *_M;
+	const veMat4 *_V;
+	const veMat4 *_P;
 	std::unordered_map<veShader::Type, VE_Ptr<veShader> > _shaders;
-	std::vector< VE_Ptr<veTexture> > _textures;
+	std::vector< VE_Ptr<veTexture> >                      _textures;
 };
 
 class VE_EXPORT veTechnique

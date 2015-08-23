@@ -19,6 +19,9 @@
 class VE_EXPORT veMat4
 {
 public:
+
+	static const veMat4 IDENTITY;
+
 	veMat4();
 	veMat4(const veMat4 &copy);
 	veMat4(const veQuat &rot);

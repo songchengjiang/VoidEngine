@@ -1,5 +1,9 @@
 #include "Matrix3.h"
 
+const veMat3 veMat3::IDENTITY = veMat3(1.0f, 0.0f, 0.0f
+									 , 0.0f, 1.0f, 0.0f
+									 , 0.0f, 0.0f, 1.0f);
+
 veMat3::veMat3()
 {
 

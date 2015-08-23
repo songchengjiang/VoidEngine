@@ -4,6 +4,7 @@
 const unsigned int veMesh::MAX_ATTRIBUTE_NUM = 16;
 
 veMesh::veMesh()
+	: _needRefresh(true)
 {
 	_renderer = new veMeshRenderer;
 }
@@ -30,9 +31,9 @@ const veMesh::Primitive& veMesh::getPrimitive(unsigned int idx) const
 	return _primitives[idx];
 }
 
-unsigned int veMesh::getPrimitiveNum() const
+bool& veMesh::needRefresh()
 {
-	return _primitives.size();
+	return _needRefresh;
 }
 
 void veMesh::updateImp(veNode *node, veVisualiser *vs)

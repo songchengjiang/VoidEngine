@@ -63,7 +63,6 @@ void veVisualiser::update()
 
 void veVisualiser::render()
 {
-	glfwMakeContextCurrent(_hwnd);
 	glClear(_clearMask);
 	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
 	_renderQueue.execute(this);

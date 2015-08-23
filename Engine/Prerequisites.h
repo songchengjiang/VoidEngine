@@ -55,6 +55,7 @@ public: const std::string& getName() const { return _name; }
 #include <vector>
 #include <string>
 
+#define GLEW_STATIC
 #include "glew/include/GL/glew.h"
 #include "glfw/include/GLFW/glfw3.h"
 

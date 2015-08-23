@@ -8,6 +8,11 @@ static veReal MINOR(const veMat4& m, const size_t r0, const size_t r1, const siz
 		m[r0][c2] * (m[r1][c0] * m[r2][c1] - m[r2][c0] * m[r1][c1]);
 }
 
+const veMat4 veMat4::IDENTITY = veMat4(1.0f, 0.0f, 0.0f, 0.0f
+	                                 , 0.0f, 1.0f, 0.0f, 0.0f
+									 , 0.0f, 0.0f, 1.0f, 0.0f
+									 , 0.0f, 0.0f, 0.0f, 1.0f);
+
 veMat4::veMat4()
 {
 

@@ -14,10 +14,10 @@ veRenderer::~veRenderer()
 	VE_SAFE_DELETE(_renderCommand);
 }
 
-void veRenderer::render(veRenderableObject *renderableObj, veVisualiser *vs)
+void veRenderer::render()
 {
 	if (!_technique){
-		auto material = renderableObj->getMaterial();
+		auto material = _renderCommand->renderableObj->getMaterial();
 		_technique = findOptimalTechnique(material);
 	}
 }

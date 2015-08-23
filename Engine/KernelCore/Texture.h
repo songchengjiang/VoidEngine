@@ -27,6 +27,7 @@ public:
 	USE_VE_PTR;
 	USE_NAME_PROPERTY;
 
+	virtual void bind(unsigned int textureUnit);
 
 	void setWrapMode(WrapMode wrapMode) { _wrapMode = wrapMode; }
 	WrapMode getWrapMode() const { return _wrapMode; }
@@ -51,7 +52,7 @@ public:
 	veTexture2D(veImage *image = nullptr);
 	~veTexture2D();
 
-
+	virtual void bind(unsigned int textureUnit) override;
 
 protected:
 

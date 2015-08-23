@@ -9,6 +9,7 @@
 #include "BaseCore/Matrix4.h"
 #include "BaseCore/Array.h"
 
+class vePass;
 class VE_EXPORT veUniform
 {
 public:
@@ -78,6 +79,8 @@ public:
 	~veShader();
 
 	USE_VE_PTR;
+
+	void apply(vePass *pass);
 
 	void setType(Type type) { _type = type; }
 	Type getType() const { return _type; }

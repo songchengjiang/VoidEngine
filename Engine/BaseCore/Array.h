@@ -18,7 +18,6 @@ public:
 		, _size(arySize)
 		, _end(_size)
 		, _buffer(new TYPE[_size]){
-
 	}
 	~veArray(){
 		VE_SAFE_DELETE_ARRAY(_buffer);

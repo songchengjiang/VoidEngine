@@ -24,6 +24,7 @@ struct veRenderCommand
 	veNode             *attachedNode;
 	veRenderableObject *renderableObj;
 	veRenderer         *renderer;
+	veVisualiser       *visualizer;
 };
 
 #endif

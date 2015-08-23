@@ -32,9 +32,9 @@ public:
 
 		enum ValueType
 		{
-			USHORT,
-			UINT,
-			FLOAT,
+			USHORT = GL_UNSIGNED_SHORT,
+			UINT = GL_UNSIGNED_INT,
+			FLOAT = GL_FLOAT,
 		};
 
 		AtrributeType attributeType;
@@ -64,10 +64,13 @@ public:
 	void setVertexAtrribute(unsigned int attrIndex, const VertexAtrribute &attri) { veAssert(attrIndex < _attributes.size());  _attributes[attrIndex] = attri; }
 	void addVertexAtrribute(const VertexAtrribute &attri);
 	const VertexAtrribute& getVertexAtrribute(unsigned int attrIndex) const { return _attributes[attrIndex]; }
+	unsigned int getVertexAtrributeNum() const { return _attributes.size();  };
 
 	void addPrimitive(const Primitive &primitive);
 	const Primitive& getPrimitive(unsigned int idx) const;
-	unsigned int getPrimitiveNum() const;
+	unsigned int getPrimitiveNum() const { return _primitives.size(); };
+
+	bool& needRefresh();
 
 protected:
 
@@ -78,6 +81,7 @@ protected:
 	VE_Ptr<veRealArray>                _vertices;
 	std::vector<VertexAtrribute>       _attributes;
 	std::vector<Primitive>             _primitives;
+	bool                               _needRefresh;
 };
 
 #endif

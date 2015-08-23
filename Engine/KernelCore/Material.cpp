@@ -14,9 +14,15 @@ vePass::~vePass()
 
 }
 
-void vePass::apply(const veMat4 &M, const veMat4 &V, const veMat4 &P)
+void vePass::apply()
 {
+	for (unsigned int i = 0; i < _textures.size(); ++i) {
+		_textures[i]->bind(i);
+	}
 
+	for (auto &iter : _shaders) {
+		iter.second->apply(this);
+	}
 }
 
 void vePass::setShader(veShader *shader)

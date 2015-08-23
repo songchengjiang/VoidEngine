@@ -1,4 +1,5 @@
 #include "Shader.h"
+#include "Material.h"
 
 veUniform::veUniform(const std::string &name)
 	: USE_VE_PTR_INIT
@@ -217,6 +218,10 @@ veShader::veShader()
 veShader::~veShader()
 {
 
+}
+
+void veShader::apply(vePass * pass)
+{
 }
 
 void veShader::setSource(const std::string &filePath)

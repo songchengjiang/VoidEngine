@@ -17,6 +17,8 @@ entries is shown below:
 class VE_EXPORT veMat3
 {
 public:
+	static const veMat3 IDENTITY;
+
 	veMat3();
 	veMat3(const veMat3 &copy);
 	veMat3(const veQuat &rot);

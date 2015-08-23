@@ -1,5 +1,6 @@
 #include "RenderableObject.h"
 #include "Visualiser.h"
+#include "RenderQueue.h"
 
 veRenderableObject::veRenderableObject()
 	: USE_VE_PTR_INIT
@@ -18,7 +19,8 @@ void veRenderableObject::update(veNode *node, veVisualiser *vs)
 	if (_renderer.valid()){
 		_renderer->getRenderCommand()->renderableObj = this;
 		_renderer->getRenderCommand()->attachedNode = node;
-		vs->getRenderQueue().pushCommand(veRenderCommand::NORMAL_PRIORITY, _renderer->getRenderCommand());
+		_renderer->getRenderCommand()->visualizer = vs;
+		vs->getRenderQueue().pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, _renderer->getRenderCommand());
 	}
 }
 
