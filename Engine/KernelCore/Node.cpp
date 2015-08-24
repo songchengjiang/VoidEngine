@@ -4,6 +4,7 @@
 veNode::veNode()
 	: USE_VE_PTR_INIT
 	, _parent(nullptr)
+	, _matrix(veMat4::IDENTITY)
 {
 }
 

@@ -1,27 +1,36 @@
 #include "Material.h"
+#include "RenderCommand.h"
+
+vePass* vePass::CURRENT_PASS = nullptr;
 
 vePass::vePass()
 	: USE_VE_PTR_INIT
 	, _depthTest(true)
 	, _depthWirte(true)
 	, _cullFace(true)
+	, _program(0)
+	, _renderCommand(new veRenderCommand)
 {
-
+	_renderCommand->pass = this;
 }
 
 vePass::~vePass()
 {
-
+	VE_SAFE_DELETE(_renderCommand);
 }
 
 void vePass::apply()
 {
-	for (unsigned int i = 0; i < _textures.size(); ++i) {
-		_textures[i]->bind(i);
-	}
-
+	applyProgram();
 	for (auto &iter : _shaders) {
 		iter.second->apply(this);
+	}
+
+	if (CURRENT_PASS == this) return;
+	CURRENT_PASS = this;
+
+	for (unsigned int i = 0; i < _textures.size(); ++i) {
+		_textures[i]->bind(i);
 	}
 }
 
@@ -61,6 +70,24 @@ veTexture* vePass::removeTexture(unsigned int idx)
 	veTexture *tex = _textures[idx].get();
 	_textures.erase(_textures.begin() + idx);
 	return tex;
+}
+
+void vePass::applyProgram()
+{
+	if (!_program)
+		_program = glCreateProgram();
+
+	bool needLink = false;
+	for (auto &iter : _shaders){
+		GLuint id = iter.second->compile();
+		if (id){
+			glAttachShader(_program, id);
+			needLink = true;
+		}
+	}
+	if (needLink)
+		glLinkProgram(_program);
+	glUseProgram(_program);
 }
 
 veTechnique::veTechnique()

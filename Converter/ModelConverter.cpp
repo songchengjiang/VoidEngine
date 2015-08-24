@@ -355,6 +355,10 @@ void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shade
 	_matWriter.String(VERTEXSHADER_KEY.c_str(), VERTEXSHADER_KEY.size());
 	_matWriter.String(SOURCE_KEY.c_str(), SOURCE_KEY.size());
 	_matWriter.String((shaderName + std::string(".vert")).c_str());
+	_matWriter.String(MVP_MATRIX_KEY.c_str(), MVP_MATRIX_KEY.size());
+	_matWriter.String(MVP_MATRIX.c_str(), MVP_MATRIX.size());
+	_matWriter.String(NORMAL_MATRIX_KEY.c_str(), NORMAL_MATRIX_KEY.size());
+	_matWriter.String(NORMAL_MATRIX.c_str(), NORMAL_MATRIX.size());
 	_matWriter.EndObject();
 
 	//fragment shader

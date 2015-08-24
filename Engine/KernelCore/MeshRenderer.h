@@ -10,11 +10,8 @@ public:
 	veMeshRenderer();
 	~veMeshRenderer();
 
-	virtual void render() override;
-
-protected:
-
-	void renderMesh(veMesh *mesh);
+	virtual void visit(veNode *node, veRenderableObject *renderableObj, veVisualiser *vs);
+	virtual void render(vePass *pass) override;
 
 protected:
 

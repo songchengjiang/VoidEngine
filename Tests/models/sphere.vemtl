@@ -15,19 +15,21 @@
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "BlinnPhoneShader.vert"
+                                    "source": "BlinnPhoneShader.vert",
+                                    "u_ModelViewProjectMat": "MVP_MATRIX",
+                                    "u_NormalMat": "NORMAL_MATRIX"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "BlinnPhoneShader.frag",
-                                    "ambient": [0.500000,0.500000,0.500000,1.000000
+                                    "u_ambient": [0.500000,0.500000,0.500000,1.000000
                                     ],
-                                    "diffuse": [0.500000,0.500000,0.500000,1.000000
+                                    "u_diffuse": [0.500000,0.500000,0.500000,1.000000
                                     ],
-                                    "shininess":5.656854,
-                                    "opacity":1.000000,
-                                    "reflectivity":0.000000,
-                                    "diffuseTex":0
+                                    "u_shininess":5.656854,
+                                    "u_opacity":1.000000,
+                                    "u_reflectivity":0.000000,
+                                    "u_diffuseTex":0
                                 }
                             ],
                             "textureUnits": [

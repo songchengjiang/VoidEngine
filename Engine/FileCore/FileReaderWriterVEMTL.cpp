@@ -15,6 +15,7 @@ public:
 	~veFileReaderWriterVEMTL(){};
 
 	virtual void* readFile(const std::string &filePath){
+		_fileFolder = filePath.substr(0, filePath.find_last_of("/\\") + 1);
 		std::string buffer = veFile::instance()->readFileToBuffer(filePath);
 		_doucument.Parse(buffer.c_str());
 		parseDoc();
@@ -97,7 +98,7 @@ private:
 			}
 			else if (member->name.GetString() == SOURCE_KEY){
 				std::string source = member->value.GetString();
-				shader->setSource(source);
+				shader->setSource(_fileFolder + source);
 			}else{
 				veUniform *uniform = new veUniform(member->name.GetString());
 				const Value &values = member->value;
@@ -105,6 +106,8 @@ private:
 					uniform->setValue(values.GetInt());
 				}else if (values.IsDouble()){
 					uniform->setValue((veReal)values.GetDouble());
+				}else if (values.IsString()){
+					uniform->setValue(std::string(values.GetString()));
 				}else if (values.Size() == 2){
 					veVec2 vec2(values[0].GetDouble(), values[1].GetDouble());
 					uniform->setValue(vec2);
@@ -134,7 +137,7 @@ private:
 
 	void readTexture(const Value &texVal, vePass *pass){
 		std::string source = texVal[SOURCE_KEY.c_str()].GetString();
-		veImage *image = new veImage(source);
+		veImage *image = new veImage(_fileFolder + source);
 		veTexture2D *tex2D = new veTexture2D(image);
 		std::string wrap = texVal[WRAP_KEY.c_str()].GetString();
 		if (wrap == REPEAT_KEY) tex2D->setWrapMode(veTexture2D::REPEAT);
@@ -155,6 +158,7 @@ private:
 
 	Document _doucument;
 	veMaterialArray *_materials;
+	std::string _fileFolder;
 };
 
 VE_READERWRITER_REG("vemtl", veFileReaderWriterVEMTL);

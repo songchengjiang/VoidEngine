@@ -3,21 +3,18 @@
 
 veRenderer::veRenderer()
 	: USE_VE_PTR_INIT
-	, _renderCommand(new veRenderCommand)
 	, _technique(nullptr)
 {
-	_renderCommand->renderer = this;
 }
 
 veRenderer::~veRenderer()
 {
-	VE_SAFE_DELETE(_renderCommand);
 }
 
-void veRenderer::render()
+void veRenderer::visit(veNode *node, veRenderableObject *renderableObj, veVisualiser *vs)
 {
 	if (!_technique){
-		auto material = _renderCommand->renderableObj->getMaterial();
+		auto material = renderableObj->getMaterial();
 		_technique = findOptimalTechnique(material);
 	}
 }

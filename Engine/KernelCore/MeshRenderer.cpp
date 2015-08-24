@@ -15,26 +15,30 @@ veMeshRenderer::~veMeshRenderer()
 
 }
 
-void veMeshRenderer::render()
+void veMeshRenderer::visit(veNode *node, veRenderableObject *renderableObj, veVisualiser *vs)
 {
-	if (_renderCommand->renderableObj){
-		veRenderer::render();
-		if (_technique){
-			veMesh *mesh = static_cast<veMesh *>(_renderCommand->renderableObj);
-			for (unsigned int i = 0; i < _technique->getPassNum(); ++i){
-				auto pass = _technique->getPass(i);
-				pass->M() = &_renderCommand->attachedNode->getNodeToWorldMatrix();
-				pass->V() = &veMat4::IDENTITY;
-				pass->P() = &veMat4::IDENTITY;
-				pass->apply();
-				renderMesh(mesh);
-			}
+	veRenderer::visit(node, renderableObj, vs);
+	if (_technique){
+		veMesh *mesh = static_cast<veMesh *>(renderableObj);
+		for (unsigned int i = 0; i < _technique->getPassNum(); ++i){
+			auto pass = _technique->getPass(i);
+			pass->M() = node->getNodeToWorldMatrix();
+			pass->V() = veMat4::IDENTITY;
+			pass->P() = veMat4::IDENTITY;
+			pass->getRenderCommand()->attachedNode = node;
+			pass->getRenderCommand()->renderableObj = renderableObj;
+			pass->getRenderCommand()->visualizer = vs;
+			pass->getRenderCommand()->renderer = this;
+			vs->getRenderQueue().pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, pass->getRenderCommand());
 		}
 	}
 }
 
-void veMeshRenderer::renderMesh(veMesh *mesh)
+void veMeshRenderer::render(vePass *pass)
 {
+	pass->apply();
+	auto mesh = static_cast<veMesh *>(pass->getRenderCommand()->renderableObj);
+
 	if (!_vao) {
 		glGenVertexArrays(1, &_vao);
 		glGenBuffers(1, &_vbo);

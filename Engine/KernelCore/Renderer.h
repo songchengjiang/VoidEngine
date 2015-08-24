@@ -7,15 +7,15 @@
 class veRenderableObject;
 class veTechnique;
 class veMaterial;
+class vePass;
 class VE_EXPORT veRenderer
 {
 	USE_VE_PTR
 public:
 	veRenderer();
 	virtual ~veRenderer();
-
-	virtual void render() = 0;
-	veRenderCommand* getRenderCommand() { return _renderCommand; }
+	virtual void visit(veNode *node, veRenderableObject *renderableObj, veVisualiser *vs) = 0;
+	virtual void render(vePass *pass) = 0;
 
 protected:
 
@@ -23,7 +23,6 @@ protected:
 
 protected:
 
-	veRenderCommand *_renderCommand;
 	veTechnique     *_technique;
 };
 

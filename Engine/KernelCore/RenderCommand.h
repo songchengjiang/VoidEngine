@@ -7,6 +7,7 @@ class veRenderer;
 class veVisualiser;
 class veRenderableObject;
 class veNode;
+class vePass;
 struct veRenderCommand
 {
 	veRenderCommand()
@@ -21,10 +22,11 @@ struct veRenderCommand
 	};
 
 	int                 priority;
+	vePass             *pass;
 	veNode             *attachedNode;
 	veRenderableObject *renderableObj;
-	veRenderer         *renderer;
 	veVisualiser       *visualizer;
+	veRenderer         *renderer;
 };
 
 #endif

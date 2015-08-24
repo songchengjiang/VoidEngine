@@ -6,10 +6,13 @@
 #include "VE_Ptr.h"
 #include <unordered_map>
 
+struct veRenderCommand;
+class veRenderer;
 class VE_EXPORT vePass
 {
+	friend class veUniform;
 public:
-
+	static vePass* CURRENT_PASS;
 	vePass();
 	~vePass();
 
@@ -26,9 +29,9 @@ public:
 	const bool& cullFace() const{ return _cullFace; }
 	bool& cullFace(){ return _cullFace; }
 
-	const veMat4*& M() { return _M; }
-	const veMat4*& V() { return _V; }
-	const veMat4*& P() { return _P; }
+	veMat4& M() { return _M; }
+	veMat4& V() { return _V; }
+	veMat4& P() { return _P; }
 
 	void setShader(veShader *shader);
 	veShader* getShader(veShader::Type type);
@@ -39,16 +42,24 @@ public:
 	veTexture* removeTexture(unsigned int idx);
 	unsigned int getTextureNum() const { return _textures.size(); }
 
+	veRenderCommand* getRenderCommand() { return _renderCommand; };
+
+private:
+
+	void applyProgram();
+
 private:
 
 	bool _depthTest;
 	bool _depthWirte;
 	bool _cullFace;
-	const veMat4 *_M;
-	const veMat4 *_V;
-	const veMat4 *_P;
+	veMat4 _M;
+	veMat4 _V;
+	veMat4 _P;
+	GLuint _program;
 	std::unordered_map<veShader::Type, VE_Ptr<veShader> > _shaders;
 	std::vector< VE_Ptr<veTexture> >                      _textures;
+	veRenderCommand                                      *_renderCommand;
 };
 
 class VE_EXPORT veTechnique
