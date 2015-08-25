@@ -1,5 +1,4 @@
 #include "Material.h"
-#include "RenderCommand.h"
 
 vePass* vePass::CURRENT_PASS = nullptr;
 
@@ -9,25 +8,26 @@ vePass::vePass()
 	, _depthWirte(true)
 	, _cullFace(true)
 	, _program(0)
-	, _renderCommand(new veRenderCommand)
 {
-	_renderCommand->pass = this;
 }
 
 vePass::~vePass()
 {
-	VE_SAFE_DELETE(_renderCommand);
 }
 
-void vePass::apply()
+void vePass::apply(const veRenderCommand &command)
 {
 	applyProgram();
 	for (auto &iter : _shaders) {
-		iter.second->apply(this);
+		iter.second->apply(command);
 	}
 
 	if (CURRENT_PASS == this) return;
 	CURRENT_PASS = this;
+
+	_depthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
+	glDepthMask(_depthWirte? GL_TRUE: GL_FALSE);
+	_cullFace ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
 
 	for (unsigned int i = 0; i < _textures.size(); ++i) {
 		_textures[i]->bind(i);

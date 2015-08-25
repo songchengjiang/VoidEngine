@@ -1,6 +1,7 @@
 #ifndef _VE_RENDER_COMMAND_
 #define _VE_RENDER_COMMAND_
 #include "Prerequisites.h"
+#include "BaseCore/Matrix4.h"
 #include <functional>
 
 class veRenderer;
@@ -22,6 +23,9 @@ struct veRenderCommand
 	};
 
 	int                 priority;
+	veMat4              M;
+	veMat4              V;
+	veMat4              P;
 	vePass             *pass;
 	veNode             *attachedNode;
 	veRenderableObject *renderableObj;

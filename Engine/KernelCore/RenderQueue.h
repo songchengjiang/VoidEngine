@@ -21,12 +21,12 @@ public:
 	veRenderQueue();
 	~veRenderQueue();
 
-	void pushCommand(unsigned int renderQueueType, veRenderCommand *cmd);
+	void pushCommand(unsigned int renderQueueType, const veRenderCommand &cmd);
 	void execute(veVisualiser *visualiser);
 
 private:
 
-	std::map<unsigned int, veLoopQueue< veRenderCommand* > >_renderQueues;
+	std::map<unsigned int, veLoopQueue< veRenderCommand > >_renderQueues;
 };
 
 #endif

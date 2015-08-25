@@ -15,7 +15,7 @@ public:
 	veRenderer();
 	virtual ~veRenderer();
 	virtual void visit(veNode *node, veRenderableObject *renderableObj, veVisualiser *vs) = 0;
-	virtual void render(vePass *pass) = 0;
+	virtual void render(const veRenderCommand &command) = 0;
 
 protected:
 

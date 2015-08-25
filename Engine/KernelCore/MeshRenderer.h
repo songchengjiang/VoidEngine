@@ -11,7 +11,7 @@ public:
 	~veMeshRenderer();
 
 	virtual void visit(veNode *node, veRenderableObject *renderableObj, veVisualiser *vs);
-	virtual void render(vePass *pass) override;
+	virtual void render(const veRenderCommand &command) override;
 
 protected:
 

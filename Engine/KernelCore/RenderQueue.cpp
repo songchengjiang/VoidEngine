@@ -12,7 +12,7 @@ veRenderQueue::~veRenderQueue()
 
 }
 
-void veRenderQueue::pushCommand(unsigned int renderQueueType, veRenderCommand *cmd)
+void veRenderQueue::pushCommand(unsigned int renderQueueType, const veRenderCommand &cmd)
 {
 	_renderQueues[renderQueueType].push_back(cmd);
 }
@@ -21,12 +21,12 @@ void veRenderQueue::execute(veVisualiser *visualiser)
 {
 	for (auto &iter : _renderQueues){
 		auto &q = iter.second;
-		q.sort([](const veRenderCommand *left, const veRenderCommand *right)->bool{
-			return right->priority < left->priority;
+		q.sort([](const veRenderCommand &left, const veRenderCommand &right)->bool{
+			return right.priority < left.priority;
 		});
 		while (!q.empty()){
 			const auto &cmd = q.front();
-			cmd->renderer->render(cmd->pass);
+			cmd.renderer->render(cmd);
 			q.pop_front();
 		}
 	}

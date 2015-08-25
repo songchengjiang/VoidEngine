@@ -6,10 +6,12 @@ veVisualiser::veVisualiser(int w, int h, const std::string &title)
 	, _width(w)
 	, _height(h)
 	, _title(title)
-	, _clearColor(veVec4::BLACK)
-	, _clearMask(GL_COLOR_BUFFER_BIT)
+	, _clearColor(veVec4::WHITE)
+	, _clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 {
 	_hwnd = glfwCreateWindow(_width, _height, title.c_str(), nullptr, nullptr);
+	_camera = new veCamera;
+	_camera->setProjectionMatrixAsPerspective(30.0f, (float)_width / (float)_height, 1.0f, 1000.0f);
 }
 
 veVisualiser::~veVisualiser()

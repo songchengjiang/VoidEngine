@@ -70,9 +70,9 @@ veUniform::~veUniform()
 
 }
 
-void veUniform::apply(vePass *pass)
+void veUniform::apply(const veRenderCommand &command)
 {
-	if (_location < 0) _location = glGetUniformLocation(pass->_program, _name.c_str());
+	if (_location < 0) _location = glGetUniformLocation(command.pass->_program, _name.c_str());
 
 	switch (_type)
 	{
@@ -98,25 +98,25 @@ void veUniform::apply(vePass *pass)
 		break;
 
 	case MAT3:
-		glUniformMatrix3fv(_location, 1, false, _values.buffer());
+		glUniformMatrix3fv(_location, 1, GL_FALSE, _values.buffer());
 		break;
 
 	case MAT4:
-		glUniformMatrix4fv(_location, 1, false, _values.buffer());
+		glUniformMatrix4fv(_location, 1, GL_FALSE, _values.buffer());
 		break;
 
 	case AUTO:
 		{
-			veMat4 mv = pass->V() * pass->M();
+			veMat4 mv = command.V * command.M;
 			if (_autoBindingValue == MVP_MATRIX){
-				veMat4 mvp = pass->P() * mv;
-				glUniformMatrix4fv(_location, 1, true, mvp[0]);
+				veMat4 mvp = command.P * mv;
+				glUniformMatrix4fv(_location, 1, GL_TRUE, mvp[0]);
 			}
 			else if (_autoBindingValue == MV_MATRIX){
-				glUniformMatrix4fv(_location, 1, true, mv[0]);
+				glUniformMatrix4fv(_location, 1, GL_TRUE, mv[0]);
 			}
 			else if (_autoBindingValue == P_MATRIX){
-				glUniformMatrix4fv(_location, 1, true, pass->P()[0]);
+				glUniformMatrix4fv(_location, 1, GL_TRUE, command.P[0]);
 			}
 			else if (_autoBindingValue == NORMAL_MATRIX){
 				veMat3 normMat(mv[0][0], mv[0][1], mv[0][2]
@@ -124,7 +124,7 @@ void veUniform::apply(vePass *pass)
 					, mv[2][0], mv[2][1], mv[2][2]);
 				normMat.inverse();
 				normMat.transpose();
-				glUniformMatrix3fv(_location, 1, true, normMat[0]);
+				glUniformMatrix3fv(_location, 1, GL_TRUE, normMat[0]);
 			}
 		}
 		break;
@@ -319,10 +319,10 @@ veShader::~veShader()
 
 }
 
-void veShader::apply(vePass * pass)
+void veShader::apply(const veRenderCommand &command)
 {
 	for (auto &iter : _uniforms){
-		iter->apply(pass);
+		iter->apply(command);
 	}
 }
 

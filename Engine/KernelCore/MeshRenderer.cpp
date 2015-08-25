@@ -21,23 +21,24 @@ void veMeshRenderer::visit(veNode *node, veRenderableObject *renderableObj, veVi
 	if (_technique){
 		veMesh *mesh = static_cast<veMesh *>(renderableObj);
 		for (unsigned int i = 0; i < _technique->getPassNum(); ++i){
-			auto pass = _technique->getPass(i);
-			pass->M() = node->getNodeToWorldMatrix();
-			pass->V() = veMat4::IDENTITY;
-			pass->P() = veMat4::IDENTITY;
-			pass->getRenderCommand()->attachedNode = node;
-			pass->getRenderCommand()->renderableObj = renderableObj;
-			pass->getRenderCommand()->visualizer = vs;
-			pass->getRenderCommand()->renderer = this;
-			vs->getRenderQueue().pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, pass->getRenderCommand());
+			veRenderCommand rc;
+			rc.M = node->getNodeToWorldMatrix();
+			rc.V = vs->getCamera()->viewMatrix();
+			rc.P = vs->getCamera()->projectionMatrix();
+			rc.pass = _technique->getPass(i);
+			rc.attachedNode = node;
+			rc.renderableObj = renderableObj;
+			rc.visualizer = vs;
+			rc.renderer = this;
+			vs->getRenderQueue().pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
 		}
 	}
 }
 
-void veMeshRenderer::render(vePass *pass)
+void veMeshRenderer::render(const veRenderCommand &command)
 {
-	pass->apply();
-	auto mesh = static_cast<veMesh *>(pass->getRenderCommand()->renderableObj);
+	command.pass->apply(command);
+	auto mesh = static_cast<veMesh *>(command.renderableObj);
 
 	if (!_vao) {
 		glGenVertexArrays(1, &_vao);
@@ -47,17 +48,26 @@ void veMeshRenderer::render(vePass *pass)
 	glBindVertexArray(_vao);
 	if (mesh->needRefresh()) {
 		glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-		glBufferData(GL_ARRAY_BUFFER, mesh->getVertexArray()->size() * sizeof(veReal), mesh->getVertexArray()->buffer(), GL_STATIC_DRAW);
+		if (!mesh->getVertexArray()->empty())
+			glBufferData(GL_ARRAY_BUFFER, mesh->getVertexArray()->size() * sizeof((*mesh->getVertexArray())[0]), mesh->getVertexArray()->buffer(), GL_STATIC_DRAW);
 
 		GLsizei stride = 0;
-		for (unsigned int i = 0; i < mesh->getVertexAtrributeNum(); ++i) {
+		for (unsigned int i = 0; i < mesh->getVertexAtrributeNum(); ++i){
 			auto attri = mesh->getVertexAtrribute(i);
-			bool normalize = attri.valueType == veMesh::VertexAtrribute::FLOAT ? false : true;
-			glVertexAttribPointer(i, attri.valueNum, attri.valueType, normalize, stride, nullptr);
-			glEnableVertexAttribArray(i);
 			if (attri.valueType == veMesh::VertexAtrribute::FLOAT) stride += sizeof(GLfloat) * attri.valueNum;
 			else if (attri.valueType == veMesh::VertexAtrribute::UINT) stride += sizeof(GLuint) * attri.valueNum;
 			else if (attri.valueType == veMesh::VertexAtrribute::USHORT) stride += sizeof(GLushort) * attri.valueNum;
+		}
+
+		GLsizei offset = 0;
+		for (unsigned int i = 0; i < mesh->getVertexAtrributeNum(); ++i) {
+			auto attri = mesh->getVertexAtrribute(i);
+			GLboolean normalize = attri.valueType == veMesh::VertexAtrribute::FLOAT ? GL_FALSE : GL_TRUE;
+			glVertexAttribPointer(i, attri.valueNum, attri.valueType, normalize, stride, (GLvoid*)offset);
+			glEnableVertexAttribArray(i);
+			if (attri.valueType == veMesh::VertexAtrribute::FLOAT) offset += sizeof(GLfloat) * attri.valueNum;
+			else if (attri.valueType == veMesh::VertexAtrribute::UINT) offset += sizeof(GLuint) * attri.valueNum;
+			else if (attri.valueType == veMesh::VertexAtrribute::USHORT) offset += sizeof(GLushort) * attri.valueNum;
 		}
 
 		if (_ibos.size() < mesh->getPrimitiveNum()) {
@@ -70,12 +80,13 @@ void veMeshRenderer::render(vePass *pass)
 			}
 			auto primitive = mesh->getPrimitive(i);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibos[i]);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, primitive.indices->size(), primitive.indices->buffer(), GL_STATIC_DRAW);
+			if (!primitive.indices->empty())
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, primitive.indices->size() * sizeof((*primitive.indices)[0]), primitive.indices->buffer(), GL_STATIC_DRAW);
+
 		}
 
 		mesh->needRefresh() = false;
 	}
-
 
 	for (unsigned int i = 0; i < mesh->getPrimitiveNum(); ++i) {
 		auto primitive = mesh->getPrimitive(i);

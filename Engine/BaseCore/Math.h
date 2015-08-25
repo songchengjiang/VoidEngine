@@ -24,6 +24,8 @@ public:
 	static veReal atan(veReal val) { return ::atan(val); }
 	static veReal atan2(veReal y, veReal x) { return ::atan2(y, x); }
 	static veReal abs(veReal val) { return ::fabs(val); }
+	static veReal radian(veReal deg) { return deg * PI / 180.0f; };
+	static veReal degree(veReal rad) { return rad * 180.0f / PI; };
 	static bool isNaN(veReal val) { return val != val; }
 };
 

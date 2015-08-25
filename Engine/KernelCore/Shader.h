@@ -8,6 +8,7 @@
 #include "BaseCore/Matrix3.h"
 #include "BaseCore/Matrix4.h"
 #include "BaseCore/Array.h"
+#include "RenderCommand.h"
 
 class vePass;
 class VE_EXPORT veUniform
@@ -41,7 +42,7 @@ public:
 
 	USE_VE_PTR;
 
-	void apply(vePass *pass);
+	void apply(const veRenderCommand &command);
 
 	void setValue(int val);
 	void setValue(bool val);
@@ -89,7 +90,7 @@ public:
 
 	USE_VE_PTR;
 
-	void apply(vePass *pass);
+	void apply(const veRenderCommand &command);
 
 	void setType(Type type) { _type = type; }
 	Type getType() const { return _type; }

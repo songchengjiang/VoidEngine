@@ -7,6 +7,7 @@
 #include "Registrar.h"
 #include "Event.h"
 #include "Node.h"
+#include "Camera.h"
 #include "RenderQueue.h"
 
 class VE_EXPORT veVisualiser
@@ -26,6 +27,9 @@ public:
 
 	void setSceneNode(veNode *node);
 	veNode* getSceneNode() const { return _root.get(); }
+
+	void setCamera(veCamera *camera) { _camera = camera; };
+	veCamera* getCamera() { return _camera.get(); }
 
 	veRenderQueue& getRenderQueue() { return _renderQueue; }
 
@@ -49,6 +53,7 @@ private:
 	unsigned int _clearMask;
 	GLFWwindow *_hwnd;
 	VE_Ptr<veNode> _root;
+	VE_Ptr<veCamera> _camera;
 	double _deltaTime;
 
 	veRenderQueue _renderQueue;

@@ -102,6 +102,9 @@
     <ClCompile Include="FileCore\FileReaderWriterVEMTL.cpp">
       <Filter>FileCore\ReaderWriter</Filter>
     </ClCompile>
+    <ClCompile Include="KernelCore\Camera.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseCore\Math.h">
@@ -206,6 +209,9 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="KernelCore\Shader.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\Camera.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>
