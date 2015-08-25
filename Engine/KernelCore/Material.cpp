@@ -7,6 +7,7 @@ vePass::vePass()
 	, _depthTest(true)
 	, _depthWirte(true)
 	, _cullFace(true)
+	, _polygonMode(GL_FILL)
 	, _program(0)
 {
 }
@@ -28,6 +29,7 @@ void vePass::apply(const veRenderCommand &command)
 	_depthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 	glDepthMask(_depthWirte? GL_TRUE: GL_FALSE);
 	_cullFace ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
+	glPolygonMode(GL_FRONT_AND_BACK, _polygonMode);
 
 	for (unsigned int i = 0; i < _textures.size(); ++i) {
 		_textures[i]->bind(i);

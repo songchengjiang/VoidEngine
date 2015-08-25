@@ -49,6 +49,11 @@ bool veVisualiser::simulate(double deltaTime)
 bool veVisualiser::dispatchEvent(double deltaTime, const veEvent &event)
 {
 	if (event.getEventType() == veEvent::VE_WIN_CLOSE) return true;
+	else if (event.getEventType() == veEvent::VE_WIN_RESIZE) {
+		_width = event.getWindowWidth();
+		_height = event.getWindowHeight();
+		glViewport(0, 0, _width, _height);
+	}
 	_deltaTime = deltaTime;
 	if (_root.valid()){
 		return _root->routeEvent(event, this);

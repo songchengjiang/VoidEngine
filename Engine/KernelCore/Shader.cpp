@@ -2,6 +2,7 @@
 #include "Material.h"
 #include "Constants.h"
 #include "FileCore/File.h"
+#include "Visualiser.h"
 
 veUniform::veUniform(const std::string &name)
 	: USE_VE_PTR_INIT
@@ -107,16 +108,16 @@ void veUniform::apply(const veRenderCommand &command)
 
 	case AUTO:
 		{
-			veMat4 mv = command.V * command.M;
+			veMat4 mv = command.visualizer->getCamera()->viewMatrix() * command.attachedNode->getNodeToWorldMatrix();
 			if (_autoBindingValue == MVP_MATRIX){
-				veMat4 mvp = command.P * mv;
+				veMat4 mvp = command.visualizer->getCamera()->projectionMatrix() * mv;
 				glUniformMatrix4fv(_location, 1, GL_TRUE, mvp[0]);
 			}
 			else if (_autoBindingValue == MV_MATRIX){
 				glUniformMatrix4fv(_location, 1, GL_TRUE, mv[0]);
 			}
 			else if (_autoBindingValue == P_MATRIX){
-				glUniformMatrix4fv(_location, 1, GL_TRUE, command.P[0]);
+				glUniformMatrix4fv(_location, 1, GL_TRUE, command.visualizer->getCamera()->projectionMatrix()[0]);
 			}
 			else if (_autoBindingValue == NORMAL_MATRIX){
 				veMat3 normMat(mv[0][0], mv[0][1], mv[0][2]

@@ -27,7 +27,7 @@ int main(int argc, char **argv)
 	veNode *root = new veNode;
 	veRenderableObject *obj = nullptr;
 	{
-		veNode *node = static_cast<veNode *>(veFile::instance()->readFile("models/box.vem"));
+		veNode *node = static_cast<veNode *>(veFile::instance()->readFile("models/sphere.vem"));
 		//node->addComponent(new KeyboardInputer);
 		veTransformer *transer = new veTransformer;
 		node->addComponent(transer);

@@ -22,9 +22,6 @@ void veMeshRenderer::visit(veNode *node, veRenderableObject *renderableObj, veVi
 		veMesh *mesh = static_cast<veMesh *>(renderableObj);
 		for (unsigned int i = 0; i < _technique->getPassNum(); ++i){
 			veRenderCommand rc;
-			rc.M = node->getNodeToWorldMatrix();
-			rc.V = vs->getCamera()->viewMatrix();
-			rc.P = vs->getCamera()->projectionMatrix();
 			rc.pass = _technique->getPass(i);
 			rc.attachedNode = node;
 			rc.renderableObj = renderableObj;

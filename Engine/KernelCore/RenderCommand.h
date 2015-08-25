@@ -23,9 +23,6 @@ struct veRenderCommand
 	};
 
 	int                 priority;
-	veMat4              M;
-	veMat4              V;
-	veMat4              P;
 	vePass             *pass;
 	veNode             *attachedNode;
 	veRenderableObject *renderableObj;

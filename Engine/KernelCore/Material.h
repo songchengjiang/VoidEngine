@@ -14,6 +14,7 @@ class VE_EXPORT vePass
 	friend class veUniform;
 public:
 	static vePass* CURRENT_PASS;
+
 	vePass();
 	~vePass();
 
@@ -29,6 +30,9 @@ public:
 
 	const bool& cullFace() const{ return _cullFace; }
 	bool& cullFace(){ return _cullFace; }
+
+	const GLenum& polygonMode() const { return _polygonMode; }
+	GLenum& polygonMode() { return _polygonMode; }
 
 	void setShader(veShader *shader);
 	veShader* getShader(veShader::Type type);
@@ -48,6 +52,7 @@ private:
 	bool _depthTest;
 	bool _depthWirte;
 	bool _cullFace;
+	GLenum _polygonMode;
 	GLuint _program;
 	std::unordered_map<veShader::Type, VE_Ptr<veShader> > _shaders;
 	std::vector< VE_Ptr<veTexture> >                      _textures;

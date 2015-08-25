@@ -33,16 +33,22 @@ public:
 	WrapMode getWrapMode() const { return _wrapMode; }
 	void setFilterMode(FilterMode filterMode){ _filterMode = filterMode; }
 	FilterMode getFilterMode() const { return _filterMode; }
+	void setImage(veImage *image) { _image = image; _needRefreshTex = true; };
+	veImage *getImage() { return _image.get(); }
+
 
 protected:
 
-	veTexture(veImage *image);
+	veTexture(veImage *image, GLenum target);
 
 protected:
 
 	VE_Ptr<veImage> _image;
-	WrapMode _wrapMode;
-	FilterMode _filterMode;
+	WrapMode        _wrapMode;
+	FilterMode      _filterMode;
+	bool            _needRefreshTex;
+	GLuint          _texID;
+	GLenum          _target;
 };
 
 class VE_EXPORT veTexture2D : public veTexture
