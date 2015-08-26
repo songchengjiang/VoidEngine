@@ -71,4 +71,5 @@ unsigned int veImage::perPixelSize()
 	case GL_RGBA32F:
 		return 16;
 	}
+	return 0;
 }
