@@ -50,6 +50,11 @@ std::string veFile::readFileToBuffer(const std::string &filePath)
 	return buf;
 }
 
+std::string veFile::getFullFilePath(const std::string &filePath)
+{
+	return filePath;
+}
+
 std::string veFile::getFileExt(const std::string &filePath)
 {
 	return filePath.substr(filePath.find_last_of(".") + 1);

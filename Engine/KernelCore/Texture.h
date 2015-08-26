@@ -9,17 +9,17 @@ class VE_EXPORT veTexture
 public:
 
 	enum WrapMode{
-		REPEAT,
-		MIRROR,
-		CLAMP,
-		DECAL,
+		REPEAT = GL_REPEAT,
+		MIRROR = GL_MIRRORED_REPEAT,
+		CLAMP = GL_CLAMP_TO_EDGE,
+		DECAL = GL_CLAMP,
 	};
 
 	enum FilterMode{
-		NEAREST,
-		LINEAR,
-		NEAREST_MIP_MAP,
-		LINEAR_MIP_MAP,
+		NEAREST = GL_NEAREST,
+		LINEAR = GL_LINEAR,
+		NEAREST_MIP_MAP = GL_NEAREST_MIPMAP_NEAREST,
+		LINEAR_MIP_MAP = GL_LINEAR_MIPMAP_LINEAR,
 	};
 
 	virtual ~veTexture();
@@ -29,9 +29,9 @@ public:
 
 	virtual void bind(unsigned int textureUnit);
 
-	void setWrapMode(WrapMode wrapMode) { _wrapMode = wrapMode; }
+	void setWrapMode(WrapMode wrapMode) { _wrapMode = wrapMode; _needRefreshSampler = true; }
 	WrapMode getWrapMode() const { return _wrapMode; }
-	void setFilterMode(FilterMode filterMode){ _filterMode = filterMode; }
+	void setFilterMode(FilterMode filterMode){ _filterMode = filterMode; _needRefreshSampler = true; }
 	FilterMode getFilterMode() const { return _filterMode; }
 	void setImage(veImage *image) { _image = image; _needRefreshTex = true; };
 	veImage *getImage() { return _image.get(); }
@@ -47,7 +47,9 @@ protected:
 	WrapMode        _wrapMode;
 	FilterMode      _filterMode;
 	bool            _needRefreshTex;
+	bool            _needRefreshSampler;
 	GLuint          _texID;
+	GLuint          _samplerID;
 	GLenum          _target;
 };
 

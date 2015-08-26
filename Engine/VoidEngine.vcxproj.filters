@@ -105,6 +105,9 @@
     <ClCompile Include="KernelCore\Camera.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
+    <ClCompile Include="FileCore\FileReaderWriterPNG.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseCore\Math.h">

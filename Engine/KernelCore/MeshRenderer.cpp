@@ -34,6 +34,7 @@ void veMeshRenderer::visit(veNode *node, veRenderableObject *renderableObj, veVi
 
 void veMeshRenderer::render(const veRenderCommand &command)
 {
+	//glDrawPixels(command.pass->getTexture(0)->getImage()->width(), command.pass->getTexture(0)->getImage()->height(), command.pass->getTexture(0)->getImage()->pixelFormat(), command.pass->getTexture(0)->getImage()->dataType(), command.pass->getTexture(0)->getImage()->data());
 	command.pass->apply(command);
 	auto mesh = static_cast<veMesh *>(command.renderableObj);
 

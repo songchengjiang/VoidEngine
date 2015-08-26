@@ -137,7 +137,7 @@ private:
 
 	void readTexture(const Value &texVal, vePass *pass){
 		std::string source = texVal[SOURCE_KEY.c_str()].GetString();
-		veImage *image = new veImage(_fileFolder + source);
+		veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_fileFolder + source));
 		veTexture2D *tex2D = new veTexture2D(image);
 		std::string wrap = texVal[WRAP_KEY.c_str()].GetString();
 		if (wrap == REPEAT_KEY) tex2D->setWrapMode(veTexture2D::REPEAT);
