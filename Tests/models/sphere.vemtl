@@ -34,7 +34,7 @@
                             ],
                             "textureUnits": [
                                 {
-                                    "source": "Brick-Std-Orange.png",
+                                    "source": "sphere.png",
                                     "wrap": "CLAMP",
                                     "filter": "NERAEST"
                                 }
