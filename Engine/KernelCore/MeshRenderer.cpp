@@ -7,6 +7,7 @@
 
 veMeshRenderer::veMeshRenderer()
 	: _vao(0)
+	, _vbo(0)
 {
 }
 

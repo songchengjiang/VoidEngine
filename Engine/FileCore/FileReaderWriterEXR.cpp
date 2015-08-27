@@ -9,16 +9,12 @@
 #ifdef _DEBUG
 #pragma comment(lib, "openexr/lib/Half_d.lib")
 #pragma comment(lib, "openexr/lib/Iex-2_2_d.lib")
-#pragma comment(lib, "openexr/lib/IexMath-2_2_d.lib")
 #pragma comment(lib, "openexr/lib/IlmImf-2_2_d.lib")
-#pragma comment(lib, "openexr/lib/IlmImfUtil-2_2_d.lib")
 #pragma comment(lib, "openexr/lib/IlmThread-2_2_d.lib")
 #else
 #pragma comment(lib, "openexr/lib/Half.lib")
 #pragma comment(lib, "openexr/lib/Iex-2_2.lib")
-#pragma comment(lib, "openexr/lib/IexMath-2_2.lib")
 #pragma comment(lib, "openexr/lib/IlmImf-2_2.lib")
-#pragma comment(lib, "openexr/lib/IlmImfUtil-2_2.lib")
 #pragma comment(lib, "openexr/lib/IlmThread-2_2.lib")
 #endif
 class veFileReaderWriterEXR : public veFileReaderWriter
@@ -40,6 +36,7 @@ public:
 			pixels.resizeErase(height, width);
 			file.setFrameBuffer(&pixels[0][0] - dw.min.x - dw.min.y * width, 1, width);
 			file.readPixels(dw.min.y, dw.max.y);
+			readImage(pixels);
 		}
 		if (!_image) VE_PRINT(std::string("veFileReaderWriterEXR: read ") + filePath + std::string(" failed!"));
 		return _image;
@@ -65,7 +62,7 @@ private:
 				buffer[index++] = pixels[h][w].a;
 			}
 		}
-
+		_image = new veImage;
 		_image->set(pixels.width(), pixels.height(), 1, internalFormat, pixelFormat, dataType, (unsigned char *)buffer);
 	}
 

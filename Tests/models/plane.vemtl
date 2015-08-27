@@ -1,0 +1,48 @@
+{
+    "version": "1.0",
+    "name": "plane.vemtl",
+    "materials": [
+        {
+            "name": "mat-0",
+            "techniques": [
+                {
+                    "name": "tech-0",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": true,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "BlinnPhoneShader.vert",
+                                    "u_ModelViewProjectMat": "MVP_MATRIX",
+                                    "u_NormalMat": "NORMAL_MATRIX"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "BlinnPhoneShader.frag",
+                                    "u_diffuse": [0.800000,0.800000,0.800000,1.000000
+                                    ],
+                                    "u_specular": [0.800000,0.800000,0.800000,1.000000
+                                    ],
+                                    "u_shininess":0.000000,
+                                    "u_opacity":0.000000,
+                                    "u_reflectivity": 0.000000,
+                                    "u_diffuseTex":0
+                                }
+                            ],
+                            "textureUnits": [
+                                {
+                                    "source": "rgba1.exr",
+                                    "wrap": "CLAMP",
+                                    "filter": "NERAEST"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

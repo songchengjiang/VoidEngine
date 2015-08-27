@@ -34,7 +34,7 @@
                             ],
                             "textureUnits": [
                                 {
-                                    "source": "sphere.png",
+                                    "source": "rgba1.exr",
                                     "wrap": "CLAMP",
                                     "filter": "NERAEST"
                                 }
