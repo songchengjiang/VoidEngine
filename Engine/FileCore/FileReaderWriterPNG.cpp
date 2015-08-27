@@ -3,6 +3,7 @@
 #include "KernelCore/Image.h"
 #include "libpng/include/png.h"
 
+#pragma comment(lib, "libpng/lib/libpng.lib")
 class veFileReaderWriterPNG : public veFileReaderWriter
 {
 public:
@@ -33,6 +34,7 @@ public:
 			}
 		}
 		fclose(fp);
+		if (!_image) VE_PRINT(std::string("veFileReaderWriterPNG: read ") + filePath + std::string(" failed!"));
 		return _image;
 	}
 
@@ -77,21 +79,33 @@ private:
 				}
 			}
 		}
+		else if (color_type == PNG_COLOR_TYPE_GRAY){
+			buffer = new unsigned char[width * height];
+			for (int y = height - 1; 0 <= y; --y){
+				for (int x = 0; x < width;){
+					buffer[index++] = row_pointers[y][x++];//gray
+				}
+			}
+			internalFormat = GL_LUMINANCE8;
+			pixelFormat = GL_LUMINANCE;
+		}
+		else if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA){
+			buffer = new unsigned char[width * height * 2];
+			for (int y = height - 1; 0 <= y; --y){
+				for (int x = 0; x < width * 2;){
+					buffer[index++] = row_pointers[y][x++];//gray
+					buffer[index++] = row_pointers[y][x++];//alpha
+				}
+			}
+			internalFormat = GL_LUMINANCE8_ALPHA8;
+			pixelFormat = GL_LUMINANCE_ALPHA;
+		}
 
 		if (buffer){
 			_image = new veImage;
 			_image->setName(_name);
 			_image->set(width, height, 1, internalFormat, pixelFormat, dataType, buffer);
 			delete[] buffer;
-		}
-	}
-
-	static png_uint_32 getRowBytes(png_uint_32 width){
-		if ((width * 3) % 4 == 0){
-			return width * 3;
-		}
-		else{
-			return ((width * 3) / 4 + 1) * 4;
 		}
 	}
 

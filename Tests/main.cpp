@@ -25,15 +25,16 @@ private:
 int main(int argc, char **argv)
 {
 	veNode *root = new veNode;
+	veImage *node = static_cast<veImage *>(veFile::instance()->readFile("models/rgba1.exr"));
 	veRenderableObject *obj = nullptr;
 	{
-		veNode *node = static_cast<veNode *>(veFile::instance()->readFile("models/plane.vem"));
+		veNode *node = static_cast<veNode *>(veFile::instance()->readFile("models/sphere.vem"));
 		//node->addComponent(new KeyboardInputer);
 		veTransformer *transer = new veTransformer;
 		node->addComponent(transer);
 		transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
 		transer->setScale(veVec3(1.0f));
-		transer->setRotation(veQuat(-veMath::HALF_PI, veVec3::UNIT_X));
+		transer->setRotation(veQuat(veMath::PI, veVec3::UNIT_X));
 		root->addChild(node);
 		obj = node->getChild(0)->getChild(0)->getRenderableObject(0);
 	}
