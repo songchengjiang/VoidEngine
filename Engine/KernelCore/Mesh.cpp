@@ -35,8 +35,3 @@ bool& veMesh::needRefresh()
 {
 	return _needRefresh;
 }
-
-void veMesh::updateImp(veNode *node, veVisualiser *vs)
-{
-
-}

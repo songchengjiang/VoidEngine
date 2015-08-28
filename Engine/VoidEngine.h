@@ -16,6 +16,7 @@
 #include "KernelCore/MeshRenderer.h"
 #include "KernelCore/Inputer.h"
 #include "KernelCore/LoopQueue.h"
+#include "KernelCore/Overlay.h"
 
 #include "FileCore/Printer.h"
 #include "FileCore/File.h"

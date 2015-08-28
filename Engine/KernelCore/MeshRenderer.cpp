@@ -35,6 +35,7 @@ void veMeshRenderer::visit(veNode *node, veRenderableObject *renderableObj, veVi
 
 void veMeshRenderer::render(const veRenderCommand &command)
 {
+	if (!command.pass) return;
 	//glDrawPixels(command.pass->getTexture(0)->getImage()->width(), command.pass->getTexture(0)->getImage()->height(), command.pass->getTexture(0)->getImage()->pixelFormat(), command.pass->getTexture(0)->getImage()->dataType(), command.pass->getTexture(0)->getImage()->data());
 	command.pass->apply(command);
 	auto mesh = static_cast<veMesh *>(command.renderableObj);
@@ -51,7 +52,7 @@ void veMeshRenderer::render(const veRenderCommand &command)
 			glBufferData(GL_ARRAY_BUFFER, mesh->getVertexArray()->size() * sizeof((*mesh->getVertexArray())[0]), mesh->getVertexArray()->buffer(), GL_STATIC_DRAW);
 
 		GLsizei stride = 0;
-		for (unsigned int i = 0; i < mesh->getVertexAtrributeNum(); ++i){
+		for (unsigned int i = 0; i < mesh->getVertexAtrributeNum(); ++i) {
 			auto attri = mesh->getVertexAtrribute(i);
 			if (attri.valueType == veMesh::VertexAtrribute::FLOAT) stride += sizeof(GLfloat) * attri.valueNum;
 			else if (attri.valueType == veMesh::VertexAtrribute::UINT) stride += sizeof(GLuint) * attri.valueNum;

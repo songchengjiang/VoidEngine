@@ -74,10 +74,6 @@ public:
 
 protected:
 
-	virtual void updateImp(veNode *node, veVisualiser *vs) override;
-
-protected:
-
 	VE_Ptr<veRealArray>                _vertices;
 	std::vector<VertexAtrribute>       _attributes;
 	std::vector<Primitive>             _primitives;

@@ -36,6 +36,8 @@
     <ClCompile Include="KernelCore\Mesh.cpp" />
     <ClCompile Include="KernelCore\MeshRenderer.cpp" />
     <ClCompile Include="KernelCore\Node.cpp" />
+    <ClCompile Include="KernelCore\Overlay.cpp" />
+    <ClCompile Include="KernelCore\OverlayRenderer.cpp" />
     <ClCompile Include="KernelCore\RenderableObject.cpp" />
     <ClCompile Include="KernelCore\Renderer.cpp" />
     <ClCompile Include="KernelCore\RenderQueue.cpp" />
@@ -71,6 +73,8 @@
     <ClInclude Include="KernelCore\Mesh.h" />
     <ClInclude Include="KernelCore\MeshRenderer.h" />
     <ClInclude Include="KernelCore\Node.h" />
+    <ClInclude Include="KernelCore\Overlay.h" />
+    <ClInclude Include="KernelCore\OverlayRenderer.h" />
     <ClInclude Include="KernelCore\Registrar.h" />
     <ClInclude Include="KernelCore\RenderableObject.h" />
     <ClInclude Include="KernelCore\RenderCommand.h" />

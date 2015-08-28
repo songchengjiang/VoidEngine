@@ -22,7 +22,7 @@ void veRenderQueue::execute(veVisualiser *visualiser)
 	for (auto &iter : _renderQueues){
 		auto &q = iter.second;
 		q.sort([](const veRenderCommand &left, const veRenderCommand &right)->bool{
-			return right.priority < left.priority;
+			return right.priority <= left.priority;
 		});
 		while (!q.empty()){
 			const auto &cmd = q.front();

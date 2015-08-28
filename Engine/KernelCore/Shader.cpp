@@ -108,7 +108,8 @@ void veUniform::apply(const veRenderCommand &command)
 
 	case AUTO:
 		{
-			veMat4 mv = command.visualizer->getCamera()->viewMatrix() * command.attachedNode->getNodeToWorldMatrix();
+			veMat4 m = command.attachedNode->getNodeToWorldMatrix();
+			veMat4 mv = command.visualizer->getCamera()->viewMatrix() * m;
 			if (_autoBindingValue == MVP_MATRIX){
 				veMat4 mvp = command.visualizer->getCamera()->projectionMatrix() * mv;
 				glUniformMatrix4fv(_location, 1, GL_TRUE, mvp[0]);
@@ -126,6 +127,9 @@ void veUniform::apply(const veRenderCommand &command)
 				normMat.inverse();
 				normMat.transpose();
 				glUniformMatrix3fv(_location, 1, GL_TRUE, normMat[0]);
+			}
+			else if (_autoBindingValue == M_MATRIX) {
+				glUniformMatrix4fv(_location, 1, GL_TRUE, m[0]);
 			}
 		}
 		break;
@@ -295,6 +299,7 @@ veShader::veShader(Type type, const std::string &filePath)
 	: USE_VE_PTR_INIT
 	, _type(type)
 	, _shader(0)
+	, _isCompiled(false)
 {
 	_source = veFile::instance()->readFileToBuffer(filePath);
 }
@@ -304,6 +309,7 @@ veShader::veShader(Type type, const char *str)
 	, _type(type)
 	, _shader(0)
 	, _source(str)
+	, _isCompiled(false)
 {
 
 }
@@ -311,6 +317,7 @@ veShader::veShader(Type type, const char *str)
 veShader::veShader()
 	: USE_VE_PTR_INIT
 	, _shader(0)
+	, _isCompiled(false)
 {
 
 }

@@ -25,7 +25,7 @@ public:
 
 protected:
 
-	virtual void updateImp(veNode *node, veVisualiser *vs) = 0;
+	virtual void updateImp(veNode *node, veVisualiser *vs) {};
 
 protected:
 

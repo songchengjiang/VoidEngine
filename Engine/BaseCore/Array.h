@@ -85,7 +85,7 @@ private:
 		if (_size <= _end){
 			if (_size == 0){
 				_size = 1000;
-				_buffer = new Type[_size];
+				_buffer = new TYPE[_size];
 			}
 			else{
 				size_t newSize = _size * _size;

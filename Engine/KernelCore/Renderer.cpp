@@ -15,7 +15,8 @@ void veRenderer::visit(veNode *node, veRenderableObject *renderableObj, veVisual
 {
 	if (!_technique){
 		auto material = renderableObj->getMaterial();
-		_technique = findOptimalTechnique(material);
+		if (material)
+			_technique = findOptimalTechnique(material);
 	}
 }
 

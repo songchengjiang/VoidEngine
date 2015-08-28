@@ -54,7 +54,7 @@ private:
 		GLenum dataType = GL_FLOAT;
 		float *buffer = new float[pixels.width() * pixels.height() * 4];
 		unsigned int index = 0;
-		for (int h = 0; h < pixels.height(); ++h){
+		for (int h = pixels.height() - 1; 0 <= h; --h){
 			for (int w = 0; w < pixels.width(); ++w){
 				buffer[index++] = pixels[h][w].r;
 				buffer[index++] = pixels[h][w].g;

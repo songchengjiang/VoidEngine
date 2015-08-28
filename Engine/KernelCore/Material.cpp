@@ -23,15 +23,15 @@ void vePass::apply(const veRenderCommand &command)
 		iter.second->apply(command);
 	}
 
-	//if (CURRENT_PASS == this) return;
-	//CURRENT_PASS = this;
+	if (CURRENT_PASS == this) return;
+	CURRENT_PASS = this;
 
 	for (unsigned int i = 0; i < _textures.size(); ++i) {
 		_textures[i]->bind(i);
 	}
 
 	_depthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
-	glDepthMask(_depthWirte? GL_TRUE: GL_FALSE);
+	_depthWirte ? glDepthMask(GL_TRUE) : glDepthMask(GL_FALSE);
 	_cullFace ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
 	glPolygonMode(GL_FRONT_AND_BACK, _polygonMode);
 }
@@ -185,6 +185,7 @@ veTechnique* veMaterial::removeTechnique(unsigned int idx)
 }
 
 veMaterialArray::veMaterialArray()
+	: USE_VE_PTR_INIT
 {
 
 }

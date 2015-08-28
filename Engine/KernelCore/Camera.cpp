@@ -2,6 +2,8 @@
 
 veCamera::veCamera()
 	: USE_VE_PTR_INIT
+	, _viewMat(veMat4::IDENTITY)
+	, _projectionMat(veMat4::IDENTITY)
 {
 
 }
@@ -41,6 +43,7 @@ void veCamera::setViewMatrixAslookAt(const veVec3 &eye, const veVec3 &center, co
 	veVec3 s = up.crossProduct(f);
 	s.normalize();
 	veVec3 u = f.crossProduct(s);
+	if (f.isZeroLength() || s.isZeroLength() || u.isZeroLength()) return;
 	_viewMat.set(s.x(), s.y(), s.z(), -s.dotProduct(eye)
 		       , u.x(), u.y(), u.z(), -u.dotProduct(eye)
 		       , f.x(), f.y(), f.z(), -f.dotProduct(eye)
