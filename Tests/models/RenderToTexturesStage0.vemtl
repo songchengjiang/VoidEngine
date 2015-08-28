@@ -1,0 +1,73 @@
+{
+    "version": "1.0",
+    "name": "DeferredShading.vemtl",
+    "materials": [
+        {
+            "name": "deferredmat",
+            "techniques": [
+                {
+                    "name": "perfect",
+                    "passes": [
+                        {
+                            "depthTest": false,
+                            "depthWrite": true,
+                            "cullFace": true,
+                            "shaders": [
+                              {
+                                "type": "VERTEX_SHADER",
+                                "source": "DeferredShader.vert",
+                                "u_ModelMat": "M_MATRIX"
+                              },
+                              {
+                                "type": "FRAGMENT_SHADER",
+                                "source": "DeferredShader.frag",
+                                "u_diffuse": [
+                                  0.800000,
+                                  0.800000,
+                                  0.800000,
+                                  1.000000
+                                ],
+                                "u_specular": [
+                                  0.800000,
+                                  0.800000,
+                                  0.800000,
+                                  1.000000
+                                ],
+                                "u_shininess": 0.000000,
+                                "u_opacity": 0.000000,
+                                "u_reflectivity": 0.000000,
+                                "u_position": 0,
+                                "u_normal": 1,
+                                "u_color": 2
+                              }
+                            ],
+                          "textureUnits": [
+                              {
+                                "source": "MRT0",
+                                "wrap": "CLAMP",
+                                "filter": "LINEAR"
+                              },
+                              {
+                                "source": "MRT1",
+                                "wrap": "CLAMP",
+                                "filter": "LINEAR"
+                              },
+                              {
+                                "source": "MRT2",
+                                "wrap": "CLAMP",
+                                "filter": "LINEAR"
+                              }
+                            ],                           
+                            "MRT": [
+                                  "COLOR0",
+                                  "COLOR1",
+                                  "COLOR2",
+                                  "DEPTH"
+                            ]
+                        }  
+                    ]
+                }
+            ]
+        }
+    ]
+}
