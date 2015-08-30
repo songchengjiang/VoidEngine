@@ -36,6 +36,7 @@ public:
 	void setImage(veImage *image) { _image = image; _needRefreshTex = true; };
 	veImage *getImage() { return _image.get(); }
 
+	GLuint glTex();
 
 protected:
 

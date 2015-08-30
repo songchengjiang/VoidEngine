@@ -120,6 +120,9 @@
     <ClCompile Include="KernelCore\OverlayRenderer.cpp">
       <Filter>KernelCore\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="KernelCore\FrameBufferObject.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseCore\Math.h">
@@ -234,6 +237,9 @@
     </ClInclude>
     <ClInclude Include="KernelCore\OverlayRenderer.h">
       <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\FrameBufferObject.h">
+      <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

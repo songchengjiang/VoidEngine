@@ -40,6 +40,14 @@ void veTexture::bind(unsigned int textureUnit)
 	glBindSampler(textureUnit, _samplerID);
 }
 
+GLuint veTexture::glTex()
+{
+	if (!_texID) {
+		glCreateTextures(_target, 1, &_texID);
+	}
+	return _texID;
+}
+
 veTexture2D::veTexture2D(veImage *image)
 	: veTexture(image, GL_TEXTURE_2D)
 {
