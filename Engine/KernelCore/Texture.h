@@ -7,6 +7,10 @@
 class VE_EXPORT veTexture
 {
 public:
+	static const int DEFAULT_WIDTH;
+	static const int DEFAULT_HEIGHT;
+	static const int DEFAULT_DEPTH;
+	static const int DEFAULT_INTERNAL_FORMAT;
 
 	enum WrapMode{
 		REPEAT = GL_REPEAT,
@@ -33,8 +37,21 @@ public:
 	WrapMode getWrapMode() const { return _wrapMode; }
 	void setFilterMode(FilterMode filterMode){ _filterMode = filterMode; _needRefreshSampler = true; }
 	FilterMode getFilterMode() const { return _filterMode; }
-	void setImage(veImage *image) { _image = image; _needRefreshTex = true; };
+	void setImage(veImage *image);
 	veImage *getImage() { return _image.get(); }
+
+	void storage(GLint internalFormat, int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT, int depth = DEFAULT_DEPTH);
+	void setWidth(int width) { if (width == _width) return;  _width = width; _needRefreshTex = true; }
+	int getWidth() const { return _width; }
+	void setHeight(int height) { if (_height == height) return; _height = height; _needRefreshTex = true; }
+	int getHeight() const { return _height; }
+	void setDepth(int depth) { if (_depth == depth) return; _depth = depth; _needRefreshTex = true; }
+	int getDepth() const { return _depth; }
+	void setInternalFormat(GLint interFormat) { if (_internalFormat == interFormat) return; _internalFormat = interFormat; _needRefreshTex = true; }
+	GLint getInternalFormat() const { return _internalFormat; }
+
+	bool& autoWidth() { return _autoWidth; }
+	bool& autoHeight() { return _autoHeight; }
 
 	GLuint glTex();
 
@@ -52,6 +69,13 @@ protected:
 	GLuint          _texID;
 	GLuint          _samplerID;
 	GLenum          _target;
+
+	int            _width;
+	int            _height;
+	int            _depth;
+	bool           _autoWidth;
+	bool           _autoHeight;
+	GLint          _internalFormat;
 };
 
 class VE_EXPORT veTexture2D : public veTexture

@@ -5,6 +5,16 @@ veFrameBufferObjectManager::veFrameBufferObjectManager()
 
 }
 
+veFrameBufferObject* veFrameBufferObjectManager::findfbo(const std::string &name)
+{
+	for (auto &iter : _fbos) {
+		if (iter->getName() == name)
+			return iter;
+	}
+
+	return nullptr;
+}
+
 veFrameBufferObjectManager::~veFrameBufferObjectManager()
 {
 	for (auto &iter : _fbos) {
@@ -18,16 +28,21 @@ veFrameBufferObjectManager* veFrameBufferObjectManager::instance()
 	return &fboManager;
 }
 
-veFrameBufferObject* veFrameBufferObjectManager::getOrCreateFrameBufferObject(unsigned int id)
+veFrameBufferObject* veFrameBufferObjectManager::getOrCreateFrameBufferObject(const std::string &name)
 {
-	if (id < _fbos.size()) {
-		return _fbos[id];
-	}
-	else {
-		auto fbo = new veFrameBufferObject;
+	auto fbo = findfbo(name);
+	if (!fbo) {
+		fbo = new veFrameBufferObject;
+		fbo->setName(name);
 		_fbos.push_back(fbo);
-		return fbo;
 	}
+	return fbo;
+}
+
+veFrameBufferObject* veFrameBufferObjectManager::getFrameBufferObject(unsigned int idx)
+{
+	veAssert(idx < _fbos.size());
+	return _fbos[idx];
 }
 
 veFrameBufferObject* veFrameBufferObject::CURRENT_FBO = nullptr;
@@ -55,10 +70,11 @@ void veFrameBufferObject::setSize(const veVec2 &size)
 	_needRefresh = true;
 }
 
-void veFrameBufferObject::attach(GLenum attchment)
+veTexture* veFrameBufferObject::attach(GLenum attchment)
 {
 	auto iter = _attachments.find(attchment);
-	if (iter != _attachments.end() && iter->second.valid()) return;
+	if (iter != _attachments.end() && iter->second.valid()) 
+		return iter->second.get();
 
 	veTexture *texture = nullptr;
 	if (!_texturePool.empty()) {
@@ -70,6 +86,7 @@ void veFrameBufferObject::attach(GLenum attchment)
 	}
 	_attachments[attchment] = texture;
 	_needRefresh = true;
+	return texture;
 }
 
 void veFrameBufferObject::detach(GLenum attchment)
@@ -81,15 +98,9 @@ void veFrameBufferObject::detach(GLenum attchment)
 	_needRefresh = true;
 }
 
-veTexture* veFrameBufferObject::attachTexture(GLenum attchment)
-{
-	auto iter = _attachments.find(attchment);
-	if (iter == _attachments.end()) return nullptr;
-	return iter->second.get();
-}
-
 void veFrameBufferObject::bind()
 {
+	if (CURRENT_FBO == this) return;
 	if (!_fbo) {
 		glGenFramebuffers(1, &_fbo);
 	}
@@ -99,7 +110,9 @@ void veFrameBufferObject::bind()
 
 void veFrameBufferObject::unBind()
 {
+	if (CURRENT_FBO == nullptr) return;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	CURRENT_FBO = nullptr;
 }
 
 void veFrameBufferObject::attachToFBO()

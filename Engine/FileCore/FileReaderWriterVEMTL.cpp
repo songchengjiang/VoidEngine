@@ -3,6 +3,7 @@
 #include "Constants.h"
 #include "KernelCore/Material.h"
 #include "KernelCore/Texture.h"
+#include "KernelCore/FrameBufferObject.h"
 #include <unordered_map>
 
 using namespace rapidjson;
@@ -81,6 +82,7 @@ private:
 				readTexture(texs[i], pass);
 			}
 		}
+
 		tecnique->addPass(pass);
 	}
 
@@ -136,24 +138,89 @@ private:
 	}
 
 	void readTexture(const Value &texVal, vePass *pass){
-		std::string source = texVal[SOURCE_KEY.c_str()].GetString();
-		veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_fileFolder + source));
-		veTexture2D *tex2D = new veTexture2D(image);
-		std::string wrap = texVal[WRAP_KEY.c_str()].GetString();
-		if (wrap == REPEAT_KEY) tex2D->setWrapMode(veTexture2D::REPEAT);
-		else if (wrap == MIRROR_KEY) tex2D->setWrapMode(veTexture2D::MIRROR);
-		else if (wrap == CLAMP_KEY) tex2D->setWrapMode(veTexture2D::CLAMP);
-		else if (wrap == DECAL_KEY) tex2D->setWrapMode(veTexture2D::DECAL);
-		else tex2D->setWrapMode(veTexture2D::REPEAT);
+		if (texVal.HasMember(SOURCE_KEY.c_str())) {
+			std::string source = texVal[SOURCE_KEY.c_str()].GetString();
+			veTexture *texture = nullptr;
+			if (source.find_last_of(".") != std::string::npos) {
+				veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_fileFolder + source));
+				texture = new veTexture2D(image);
+			}
+			else if (source.find_last_of(":") != std::string::npos) {
+				std::string fboName = source.substr(0, source.find_last_of(":"));
+				std::string attachName = source.substr(source.find_last_of(":") + 1);
+				veFrameBufferObject *fbo = veFrameBufferObjectManager::instance()->getOrCreateFrameBufferObject(fboName);
+				texture = fbo->attach(getFrameBufferObjectAttach(attachName.c_str()));
+			}
 
-		std::string filter = texVal[FILTER_KEY.c_str()].GetString();
-		if (filter == NEREAST_KEY) tex2D->setFilterMode(veTexture2D::NEAREST);
-		else if (filter == LINEAR_KEY) tex2D->setFilterMode(veTexture2D::LINEAR);
-		else tex2D->setFilterMode(veTexture2D::NEAREST);
+			if (!texture) return;
+			std::string wrap = texVal[WRAP_KEY.c_str()].GetString();
+			if (wrap == REPEAT_KEY) texture->setWrapMode(veTexture2D::REPEAT);
+			else if (wrap == MIRROR_KEY) texture->setWrapMode(veTexture2D::MIRROR);
+			else if (wrap == CLAMP_KEY) texture->setWrapMode(veTexture2D::CLAMP);
+			else if (wrap == DECAL_KEY) texture->setWrapMode(veTexture2D::DECAL);
+			else texture->setWrapMode(veTexture2D::REPEAT);
 
-		pass->addTexture(tex2D);
+			std::string filter = texVal[FILTER_KEY.c_str()].GetString();
+			if (filter == NEREAST_KEY) texture->setFilterMode(veTexture2D::NEAREST);
+			else if (filter == LINEAR_KEY) texture->setFilterMode(veTexture2D::LINEAR);
+			else texture->setFilterMode(veTexture2D::NEAREST);
+
+			pass->addTexture(texture);
+		}
+		else if (texVal.HasMember(TARGET_KEY.c_str())) {
+			std::string target = texVal[SOURCE_KEY.c_str()].GetString();
+			if (target.find_last_of(":") != std::string::npos) {
+				std::string fboName = target.substr(0, target.find_last_of(":"));
+				std::string attachName = target.substr(target.find_last_of(":") + 1);
+				veFrameBufferObject *fbo = veFrameBufferObjectManager::instance()->getOrCreateFrameBufferObject(fboName);
+				veTexture *texture = fbo->attach(getFrameBufferObjectAttach(attachName.c_str()));
+				int width = veTexture::DEFAULT_WIDTH;
+				int height= veTexture::DEFAULT_HEIGHT;
+				texture->autoWidth() = true;
+				texture->autoHeight() = true;
+				GLint internalFormat = veTexture::DEFAULT_INTERNAL_FORMAT;
+				if (texVal.HasMember(WIDTH_KEY.c_str())) {
+					width = texVal[WIDTH_KEY.c_str()].GetInt();
+					texture->autoWidth() = false;
+				}
+
+				if (texVal.HasMember(HEIGHT_KEY.c_str())) {
+					height = texVal[HEIGHT_KEY.c_str()].GetInt();
+					texture->autoHeight() = false;
+				}
+
+				if (texVal.HasMember(FORMAT_KEY.c_str()) && texVal.HasMember(TYPE_KEY.c_str())) {
+					const char* format = texVal[FORMAT_KEY.c_str()].GetString();
+					const char* type = texVal[TYPE_KEY.c_str()].GetString();
+					if (strcmp(format, "RGB") == 0 && strcmp(type, FLOAT_KEY.c_str()) == 0) {
+						internalFormat = GL_RGB32F;
+					}
+					else if (strcmp(format, "RGBA") == 0 && strcmp(type, FLOAT_KEY.c_str()) == 0) {
+						internalFormat = GL_RGBA32F;
+					}
+					else if (strcmp(format, "RGB") == 0 && strcmp(type, BYTE_KEY.c_str()) == 0) {
+						internalFormat = GL_RGB8;
+					}
+					else if (strcmp(format, "RGBA") == 0 && strcmp(type, BYTE_KEY.c_str()) == 0) {
+						internalFormat = GL_RGBA8;
+					}
+				}
+				texture->storage(width, height, internalFormat);
+			}
+		}
 	}
 
+	GLenum getFrameBufferObjectAttach(const char* str) {
+		if (strncmp(COLOR_KEY.c_str(), str, COLOR_KEY.size()) == 0) {
+			return GL_COLOR_ATTACHMENT0 + atoi(&str[COLOR_KEY.size()]);
+		}
+		else if (strcmp(DEPTH_KEY.c_str(), str) == 0) {
+			return GL_DEPTH_ATTACHMENT;
+		}
+		else if (strcmp(STENCIAL_KEY.c_str(), str) == 0) {
+			return GL_STENCIL_ATTACHMENT;
+		}
+	}
 private:
 
 	Document _doucument;

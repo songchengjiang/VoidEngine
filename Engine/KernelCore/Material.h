@@ -9,6 +9,7 @@
 
 struct veRenderCommand;
 class veRenderer;
+class veFrameBufferObject;
 class VE_EXPORT vePass
 {
 	friend class veUniform;
@@ -43,9 +44,13 @@ public:
 	veTexture* removeTexture(unsigned int idx);
 	unsigned int getTextureNum() const { return _textures.size(); }
 
+	void setFrameBufferObject(veFrameBufferObject *fbo) { _fbo = fbo; }
+	veFrameBufferObject* getFrameBufferObject() { return _fbo; }
+
 private:
 
 	void applyProgram();
+	void applyfbo();
 
 private:
 
@@ -56,6 +61,7 @@ private:
 	GLuint _program;
 	std::unordered_map<veShader::Type, VE_Ptr<veShader> > _shaders;
 	std::vector< VE_Ptr<veTexture> >                      _textures;
+	veFrameBufferObject                                  *_fbo;
 };
 
 class VE_EXPORT veTechnique

@@ -1,12 +1,12 @@
 {
     "version": "1.0",
-    "name": "DeferredShading.vemtl",
+    "name": "teapot.vemtl",
     "materials": [
         {
-            "name": "deferredmat",
+            "name": "mat-0",
             "techniques": [
                 {
-                    "name": "perfect",
+                    "name": "tech-0",
                     "passes": [
                         {
                             "depthTest": true,
@@ -15,20 +15,14 @@
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "BlinnPhoneShader.vert",
+                                    "source": "DeferredBlinnPhoneShader.vert",
                                     "u_ModelViewProjectMat": "MVP_MATRIX",
+                                    "u_ModelViewMat": "MV_MATRIX",
                                     "u_NormalMat": "NORMAL_MATRIX"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "BlinnPhoneShader.frag",
-                                    "u_ambient": [0.500000,0.500000,0.500000,1.000000
-                                    ],
-                                    "u_diffuse": [0.500000,0.500000,0.500000,1.000000
-                                    ],
-                                    "u_shininess":5.656854,
-                                    "u_opacity":1.000000,
-                                    "u_reflectivity":0.000000,
+                                    "source": "DeferredBlinnPhoneShader.frag",
                                     "u_diffuseTex":0
                                 }
                             ],
@@ -40,27 +34,25 @@
                                 },
                                 {
                                     "target": "fbo0:COLOR0",
-                                    "wrap": "CLAMP",
-                                    "filter": "NERAEST",
-                                    "internalFormat": "RGBA",
-                                    "dataType": "FLOAT"
+                                    "width": 512,
+                                    "height": 512,
+                                    "format": "RGBA",
+                                    "type": "FLOAT"
                                 },
                                 {
                                     "target": "fbo0:COLOR1",
-                                    "wrap": "CLAMP",
-                                    "filter": "NERAEST",
-                                    "internalFormat": "RGBA",
-                                    "dataType": "FLOAT"
+                                    "width": 512,
+                                    "height": 512,
+                                    "format": "RGBA",
+                                    "type": "FLOAT"
                                 },
                                 {
                                     "target": "fbo0:COLOR2",
-                                    "wrap": "CLAMP",
-                                    "filter": "NERAEST",
-                                    "internalFormat": "RGBA",
-                                    "dataType": "FLOAT"
+                                    "format": "RGBA",
+                                    "type": "FLOAT"
                                 }
-                            ]                  
-                        }  
+                            ]  
+                        }
                     ]
                 }
             ]

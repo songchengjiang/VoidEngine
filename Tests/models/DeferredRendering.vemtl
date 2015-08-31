@@ -15,27 +15,12 @@
                             "shaders": [
                               {
                                 "type": "VERTEX_SHADER",
-                                "source": "DeferredShader.vert",
+                                "source": "DeferredRendering.vert",
                                 "u_ModelMat": "M_MATRIX"
                               },
                               {
                                 "type": "FRAGMENT_SHADER",
-                                "source": "DeferredShader.frag",
-                                "u_diffuse": [
-                                  0.800000,
-                                  0.800000,
-                                  0.800000,
-                                  1.000000
-                                ],
-                                "u_specular": [
-                                  0.800000,
-                                  0.800000,
-                                  0.800000,
-                                  1.000000
-                                ],
-                                "u_shininess": 0.000000,
-                                "u_opacity": 0.000000,
-                                "u_reflectivity": 0.000000,
+                                "source": "DeferredRendering.frag",
                                 "u_position": 0,
                                 "u_normalandepth": 1,
                                 "u_color": 2

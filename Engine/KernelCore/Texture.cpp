@@ -1,5 +1,11 @@
 #include "Texture.h"
 
+const int veTexture::DEFAULT_WIDTH = 512;
+const int veTexture::DEFAULT_HEIGHT = 512;
+
+const int veTexture::DEFAULT_DEPTH = 1;
+const int veTexture::DEFAULT_INTERNAL_FORMAT = GL_RGBA32F;
+
 veTexture::~veTexture()
 {
 
@@ -15,6 +21,8 @@ veTexture::veTexture(veImage *image, GLenum target)
 	, _texID(0)
 	, _samplerID(0)
 	, _target(target)
+	, _autoWidth(false)
+	, _autoHeight(false)
 {
 }
 
@@ -40,6 +48,25 @@ void veTexture::bind(unsigned int textureUnit)
 	glBindSampler(textureUnit, _samplerID);
 }
 
+void veTexture::setImage(veImage *image)
+{
+	_image = image; 
+	_width = _image->width();
+	_height = _image->height();
+	_depth = _image->depth();
+	_internalFormat = _image->internalFormat();
+	_needRefreshTex = true;
+}
+
+void veTexture::storage(int width, int height, int depth, GLint internalFormat)
+{
+	_width = width;
+	_height = _height;
+	_depth = depth;
+	_internalFormat = internalFormat;
+	_needRefreshTex = true;
+}
+
 GLuint veTexture::glTex()
 {
 	if (!_texID) {
@@ -61,9 +88,10 @@ veTexture2D::~veTexture2D()
 void veTexture2D::bind(unsigned int textureUnit)
 {
 	veTexture::bind(textureUnit);
-	if (_image.valid() && _needRefreshTex) {
-		glTexStorage2D(_target, 1, _image->internalFormat(), _image->width(), _image->height());
-		glTexSubImage2D(_target, 0, 0, 0, _image->width(), _image->height(), _image->pixelFormat(), _image->dataType(), _image->data());
+	if (_needRefreshTex) {
+		glTexStorage2D(_target, 1, _internalFormat, _width, _height);
+		if (_image.valid())
+			glTexSubImage2D(_target, 0, 0, 0, _image->width(), _image->height(), _image->pixelFormat(), _image->dataType(), _image->data());
 		_needRefreshTex = false;
 	}
 }

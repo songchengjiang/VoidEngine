@@ -10,6 +10,9 @@
     <Filter Include="ImageTest">
       <UniqueIdentifier>{36416ec2-1916-496f-abef-e9d62adfaaaa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RenToTexTest">
+      <UniqueIdentifier>{0355b76f-86c1-473a-a91f-66b7f0df2173}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeshTest.h">
@@ -18,6 +21,9 @@
     <ClInclude Include="BaseTest.h" />
     <ClInclude Include="ImageTest.h">
       <Filter>ImageTest</Filter>
+    </ClInclude>
+    <ClInclude Include="RenToTex.h">
+      <Filter>RenToTexTest</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

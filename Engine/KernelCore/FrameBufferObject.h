@@ -14,10 +14,11 @@ public:
 	veFrameBufferObject();
 	~veFrameBufferObject();
 
+	USE_NAME_PROPERTY;
+
 	void setSize(const veVec2 &size);
-	void attach(GLenum attchment);
+	veTexture* attach(GLenum attchment);
 	void detach(GLenum attchment);
-	veTexture* attachTexture(GLenum attchment);
 
 	void setClearColor(const veVec4 &color) { _clearColor = color; }
 	const veVec4& getClearColor() const { return _clearColor; }
@@ -25,7 +26,7 @@ public:
 	unsigned int getClearMask() const { return _clearMask; }
 
 	void bind();
-	void unBind();
+	static void unBind();
 
 private:
 
@@ -38,7 +39,7 @@ private:
 	veVec4 _clearColor;
 	veVec2 _size;
 	bool _needRefresh;
-	std::map<GLenum, VE_Ptr<veTexture> > _attachments;
+	std::map<GLenum, VE_Ptr<veTexture>> _attachments;
 	std::vector< VE_Ptr<veTexture> >     _texturePool;
 };
 
@@ -47,13 +48,17 @@ class VE_EXPORT veFrameBufferObjectManager
 public:
 
 	~veFrameBufferObjectManager();
-	veFrameBufferObjectManager* instance();
+	static veFrameBufferObjectManager* instance();
 
-	veFrameBufferObject* getOrCreateFrameBufferObject(unsigned int id);
+	veFrameBufferObject* getOrCreateFrameBufferObject(const std::string &name);
+	veFrameBufferObject* getFrameBufferObject(unsigned int idx);
+	unsigned int getFrameBufferObjectNum() const { return _fbos.size(); }
+
 
 private:
 
 	veFrameBufferObjectManager();
+	veFrameBufferObject* findfbo(const std::string &name);
 
 private:
 

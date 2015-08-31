@@ -27,6 +27,8 @@ static const std::string SHADERS_KEY = "shaders";
 static const std::string VERTEXSHADER_KEY = "VERTEX_SHADER";
 static const std::string FRAGMENTSHADER_KEY = "FRAGMENT_SHADER";
 static const std::string SOURCE_KEY = "source";
+static const std::string TARGET_KEY = "target";
+static const std::string FORMAT_KEY = "format";
 static const std::string AMBIENT_KEY = "u_ambient";
 static const std::string DIFFUSE_KEY = "u_diffuse";
 static const std::string EMISSIVE_KEY = "u_emissive";
@@ -59,9 +61,16 @@ static const std::string LINEAR_KEY = "LINEAR";
 static const std::string FLOAT_KEY = "FLOAT";
 static const std::string UINT_KEY = "UINT";
 static const std::string USHORT_KEY = "USHORT";
+static const std::string BYTE_KEY = "BYTE";
 static const std::string POINTS_KEY = "POINTS";
 static const std::string LINES_KEY = "LINES";
 static const std::string TRIANGLES_KEY = "TRIANGLES";
+static const std::string COLOR_KEY = "COLOR";
+static const std::string DEPTH_KEY = "DEPTH";
+static const std::string STENCIAL_KEY = "STENCIAL";
+static const std::string WIDTH_KEY = "width";
+static const std::string HEIGHT_KEY = "height";
+
 
 static const std::string VERTEX_ATTRIB_POSITION = "VERTEX_ATTRIB_POSITION";
 static const std::string VERTEX_ATTRIB_NORMAL = "VERTEX_ATTRIB_NORMAL";

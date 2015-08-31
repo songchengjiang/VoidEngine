@@ -1,4 +1,6 @@
 #include "Material.h"
+#include "FrameBufferObject.h"
+#include "Visualiser.h"
 
 vePass* vePass::CURRENT_PASS = nullptr;
 
@@ -9,6 +11,7 @@ vePass::vePass()
 	, _cullFace(true)
 	, _polygonMode(GL_FILL)
 	, _program(0)
+	, _fbo(nullptr)
 {
 }
 
@@ -18,6 +21,7 @@ vePass::~vePass()
 
 void vePass::apply(const veRenderCommand &command)
 {
+	applyfbo();
 	applyProgram();
 	for (auto &iter : _shaders) {
 		iter.second->apply(command);
@@ -27,7 +31,10 @@ void vePass::apply(const veRenderCommand &command)
 	CURRENT_PASS = this;
 
 	for (unsigned int i = 0; i < _textures.size(); ++i) {
-		_textures[i]->bind(i);
+		auto &tex = _textures[i];
+		//if (tex->autoWidth()) tex->setWidth(command.visualizer->width());
+		//if (tex->autoHeight()) tex->setHeight(command.visualizer->height());
+		tex->bind(i);
 	}
 
 	_depthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
@@ -90,6 +97,17 @@ void vePass::applyProgram()
 	if (needLink)
 		glLinkProgram(_program);
 	glUseProgram(_program);
+}
+
+void vePass::applyfbo()
+{
+	if (_fbo) {
+		_fbo->bind();
+	}
+	else{
+		veFrameBufferObject::unBind();
+	}
+
 }
 
 veTechnique::veTechnique()
