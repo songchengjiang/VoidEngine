@@ -1,9 +1,31 @@
 #include "Camera.h"
+#include "Visualiser.h"
+#include "Node.h"
 
 veCamera::veCamera()
 	: USE_VE_PTR_INIT
 	, _viewMat(veMat4::IDENTITY)
 	, _projectionMat(veMat4::IDENTITY)
+	, _type(RENDER_TO_FRAME)
+	, _clearColor(0.8f)
+	, _clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+	, _viewport({0, 0, 800, 600})
+	, _mask(0xffffffff)
+	, _fbo(nullptr)
+{
+
+}
+
+veCamera::veCamera(const veViewport &vp)
+	: USE_VE_PTR_INIT
+	, _viewMat(veMat4::IDENTITY)
+	, _projectionMat(veMat4::IDENTITY)
+	, _type(RENDER_TO_FRAME)
+	, _clearColor(0.8f)
+	, _clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+	, _viewport(vp)
+	, _mask(0xffffffff)
+	, _fbo(nullptr)
 {
 
 }
@@ -48,4 +70,48 @@ void veCamera::setViewMatrixAslookAt(const veVec3 &eye, const veVec3 &center, co
 		       , u.x(), u.y(), u.z(), -u.dotProduct(eye)
 		       , f.x(), f.y(), f.z(), -f.dotProduct(eye)
 		       , 0.0f , 0.0f , 0.0f , 1.0f);
+}
+
+void veCamera::setType(TargetType tarType)
+{
+	if (tarType == RENDER_TO_TEXTURE) {
+		if (!_fbo.valid())
+			_fbo = new veFrameBufferObject;
+	}
+	else {
+		_fbo = nullptr;
+	}
+}
+
+void veCamera::setViewport(const veViewport &vp)
+{
+	if (_viewport == vp) return;
+	_viewport = vp;
+}
+
+void veCamera::render(veRenderQueue::RenderCommandList &renderList)
+{
+	if (_fbo.valid()) {
+		_fbo->setSize(veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y));
+		_fbo->bind();
+	}
+	glViewport(_viewport.x, _viewport.y, _viewport.width, _viewport.height);
+	glClear(_clearMask);
+	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
+
+	for (auto &iter : renderList) {
+		auto &q = iter.second;
+		q.sort([](const veRenderCommand &left, const veRenderCommand &right)->bool {
+			return right.priority <= left.priority;
+		});
+		while (!q.empty()) {
+			const auto &cmd = q.front();
+			cmd.renderer->draw(cmd);
+			q.pop_front();
+		}
+	}
+
+	if (_fbo.valid()) {
+		_fbo->unBind();
+	}
 }

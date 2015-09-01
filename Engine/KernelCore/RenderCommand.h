@@ -5,8 +5,8 @@
 #include <functional>
 
 class veRenderer;
-class veVisualiser;
 class veRenderableObject;
+class veCamera;
 class veNode;
 class vePass;
 struct veRenderCommand
@@ -26,7 +26,7 @@ struct veRenderCommand
 	vePass             *pass;
 	veNode             *attachedNode;
 	veRenderableObject *renderableObj;
-	veVisualiser       *visualizer;
+	veCamera           *camera;
 	veRenderer         *renderer;
 };
 

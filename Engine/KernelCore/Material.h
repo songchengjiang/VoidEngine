@@ -50,7 +50,7 @@ public:
 private:
 
 	void applyProgram();
-	void applyfbo();
+	void applyfbo(const veVec2 &size);
 
 private:
 
@@ -93,6 +93,8 @@ public:
 	USE_VE_PTR;
 	USE_NAME_PROPERTY;
 
+	veTechnique* activeTechnique() { return _activeTechnique; }
+	void activateTechnique(veTechnique *tech) { _activeTechnique = tech; };
 	void addTechnique(veTechnique *tech);
 	const veTechnique* getTechnique(unsigned int idx) const;
 	veTechnique* getTechnique(unsigned int idx);
@@ -104,6 +106,7 @@ public:
 private:
 
 	std::vector< VE_Ptr<veTechnique> > _techniques;
+	veTechnique                       *_activeTechnique;
 };
 
 class VE_EXPORT veMaterialArray

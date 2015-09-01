@@ -15,8 +15,14 @@ veRenderableObject::~veRenderableObject()
 
 void veRenderableObject::update(veNode *node, veVisualiser *vs)
 {
-	updateImp(node, vs);
-	_renderer->visit(node, this, vs);
+	if (_renderer.valid())
+		_renderer->visit(node, this, vs);
+}
+
+void veRenderableObject::render(veNode *node, veCamera *camera)
+{
+	if (_renderer.valid())
+		_renderer->render(node, this, camera);
 }
 
 void veRenderableObject::setRenderer(veRenderer *renderer)

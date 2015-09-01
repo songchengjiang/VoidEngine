@@ -14,8 +14,9 @@ class VE_EXPORT veRenderer
 public:
 	veRenderer();
 	virtual ~veRenderer();
-	virtual void visit(veNode *node, veRenderableObject *renderableObj, veVisualiser *vs) = 0;
-	virtual void render(const veRenderCommand &command) = 0;
+	virtual void visit(veNode *node, veRenderableObject *renderableObj, veVisualiser *vs);
+	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) = 0;
+	virtual void draw(const veRenderCommand &command) = 0;
 
 protected:
 

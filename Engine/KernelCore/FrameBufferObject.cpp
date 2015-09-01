@@ -48,7 +48,8 @@ veFrameBufferObject* veFrameBufferObjectManager::getFrameBufferObject(unsigned i
 veFrameBufferObject* veFrameBufferObject::CURRENT_FBO = nullptr;
 
 veFrameBufferObject::veFrameBufferObject()
-	: _fbo(0)
+	: USE_VE_PTR_INIT
+	, _fbo(0)
 	, _dsbo(0)
 	, _size(512, 512)
 	, _clearColor(veVec4::WHITE)
@@ -101,21 +102,52 @@ void veFrameBufferObject::detach(GLenum attchment)
 void veFrameBufferObject::bind()
 {
 	if (CURRENT_FBO == this) return;
-	if (!_fbo) {
-		glGenFramebuffers(1, &_fbo);
-	}
-	glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
-	attachToFBO();
+	refreshBuffers();
+	refreshAttachments();
+	glClear(_clearMask);
+	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
+	CURRENT_FBO = this;
 }
 
 void veFrameBufferObject::unBind()
 {
 	if (CURRENT_FBO == nullptr) return;
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	CURRENT_FBO = nullptr;
 }
 
-void veFrameBufferObject::attachToFBO()
+void veFrameBufferObject::refreshBuffers()
+{
+	if (!_fbo) {
+		glGenFramebuffers(1, &_fbo);
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
+
+	if (!_dsbo) {
+		bool hasDepthBuffer = (_clearMask & GL_DEPTH_BUFFER_BIT) != 0;
+		bool hasStencilBuffer = (_clearMask & GL_STENCIL_BUFFER_BIT) != 0;
+		if (hasDepthBuffer || hasStencilBuffer) {
+			glGenRenderbuffers(1, &_dsbo);
+		}
+
+		if (_dsbo) {
+			glBindRenderbuffer(GL_RENDERBUFFER, _dsbo);
+			if (hasDepthBuffer && !hasStencilBuffer)
+				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, _size.x(), _size.y());
+			else
+				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _size.x(), _size.y());
+
+			if (hasDepthBuffer)
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _dsbo);
+			if (hasStencilBuffer)
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _dsbo);
+		}
+	}
+	glBindRenderbuffer(GL_RENDERBUFFER, _dsbo);
+}
+
+void veFrameBufferObject::refreshAttachments()
 {
 	if (_needRefresh) {
 
@@ -132,24 +164,6 @@ void veFrameBufferObject::attachToFBO()
 		}
 		if (!mrt.empty())
 			glDrawBuffers(mrt.size(), &mrt[0]);
-
-		bool hasDepthBuffer = (_clearMask & GL_DEPTH_BUFFER_BIT) != 0;
-		bool hasStencilBuffer = (_clearMask & GL_STENCIL_BUFFER_BIT) != 0;
-		if (!_dsbo && (hasDepthBuffer || hasStencilBuffer)) {
-			glGenRenderbuffers(1, &_dsbo);
-		}
-
-		if (_dsbo) {
-			if (hasDepthBuffer && !hasStencilBuffer)
-				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, _size.x(), _size.y());
-			else
-				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _size.x(), _size.y());
-
-			if (hasDepthBuffer)
-				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _dsbo);
-			if (hasStencilBuffer)
-				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _dsbo);
-		}
 
 		_needRefresh = false;
 	}

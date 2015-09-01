@@ -9,12 +9,14 @@ public:
 		veNode *root = new veNode;
 		{
 			veNode *node = static_cast<veNode *>(veFile::instance()->readFile("models/teapot.vem"));
+			auto mat = node->getChild(0)->getChild(0)->getRenderableObject(0)->getMaterial();
+			mat->activateTechnique(mat->getTechnique("deferredRender"));
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
 			//transer->setPosition(veVec3(1.0f, 0.0f, 0.0f));
 			//transer->setScale(veVec3(1.0f));
-			//transer->setRotation(veQuat(veMath::PI, veVec3::UNIT_X));
+			transer->setRotation(veQuat(veMath::PI, veVec3::UNIT_X));
 			root->addChild(node);
 		}
 
@@ -23,6 +25,7 @@ public:
 			veNode *node = new veNode;
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
+			//transer->setScale(veVec3(0.5f));
 
 			auto overlay = new veOverlay;
 			node->addRenderableObject(overlay);

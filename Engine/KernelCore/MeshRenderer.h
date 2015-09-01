@@ -10,8 +10,8 @@ public:
 	veMeshRenderer();
 	~veMeshRenderer();
 
-	virtual void visit(veNode *node, veRenderableObject *renderableObj, veVisualiser *vs);
-	virtual void render(const veRenderCommand &command) override;
+	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override;
+	virtual void draw(const veRenderCommand &command) override;
 
 protected:
 

@@ -35,9 +35,8 @@ veOverlayRenderer::~veOverlayRenderer()
 
 }
 
-void veOverlayRenderer::visit(veNode *node, veRenderableObject *renderableObj, veVisualiser *vs)
+void veOverlayRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
-	veRenderer::visit(node, renderableObj, vs);
 	if (_technique) {
 		veOverlay *overlay = static_cast<veOverlay *>(renderableObj);
 		for (unsigned int i = 0; i < _technique->getPassNum(); ++i) {
@@ -45,14 +44,14 @@ void veOverlayRenderer::visit(veNode *node, veRenderableObject *renderableObj, v
 			rc.pass = _technique->getPass(i);
 			rc.attachedNode = node;
 			rc.renderableObj = renderableObj;
-			rc.visualizer = vs;
+			rc.camera = camera;
 			rc.renderer = this;
-			vs->getRenderQueue().pushCommand(veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
+			veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
 		}
 	}
 }
 
-void veOverlayRenderer::render(const veRenderCommand &command)
+void veOverlayRenderer::draw(const veRenderCommand &command)
 {
 	if (!command.pass) return;
 

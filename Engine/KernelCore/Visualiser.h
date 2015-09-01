@@ -20,16 +20,14 @@ public:
 
 	int width();
 	int height();
-	void setClearColor(const veVec4 &color) { _clearColor = color; }
-	const veVec4& getClearColor() const { return _clearColor; }
-	void setClearMask(unsigned int mask) { _clearMask = mask; }
-	unsigned int getClearMask() const { return _clearMask; }
 
 	void setSceneNode(veNode *node);
 	veNode* getSceneNode() const { return _root.get(); }
 
-	void setCamera(veCamera *camera) { _camera = camera; };
-	veCamera* getCamera() { return _camera.get(); }
+	int addCamera(veCamera *camera);
+	veCamera* getCamera(unsigned int idx);
+	veCamera* removeCamera(unsigned int idx);
+	unsigned int getCameraNum() const { return _cameras.size(); }
 
 	veRenderQueue& getRenderQueue() { return _renderQueue; }
 
@@ -49,11 +47,9 @@ private:
 	int _width;
 	int _height;
 	std::string _title;
-	veVec4 _clearColor;
-	unsigned int _clearMask;
 	GLFWwindow *_hwnd;
 	VE_Ptr<veNode> _root;
-	VE_Ptr<veCamera> _camera;
+	std::vector< VE_Ptr<veCamera> > _cameras;
 	double _deltaTime;
 
 	veRenderQueue _renderQueue;

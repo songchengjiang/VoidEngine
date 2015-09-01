@@ -158,3 +158,18 @@ void veNode::update(veVisualiser *vs)
 		}
 	}
 }
+
+void veNode::render(veCamera *camera)
+{
+	if (!_children.empty()) {
+		for (auto &child : _children) {
+			child->render(camera);
+		}
+	}
+
+	if (!_renderableObjects.empty()) {
+		for (auto &iter : _renderableObjects) {
+			iter->render(this, camera);
+		}
+	}
+}

@@ -13,14 +13,12 @@ veRenderer::~veRenderer()
 
 void veRenderer::visit(veNode *node, veRenderableObject *renderableObj, veVisualiser *vs)
 {
-	if (!_technique){
-		auto material = renderableObj->getMaterial();
-		if (material)
-			_technique = findOptimalTechnique(material);
-	}
+	auto material = renderableObj->getMaterial();
+	if (material)
+		_technique = findOptimalTechnique(material);
 }
 
 veTechnique* veRenderer::findOptimalTechnique(veMaterial *material)
 {
-	return material->getTechnique(0);
+	return material->activeTechnique();
 }

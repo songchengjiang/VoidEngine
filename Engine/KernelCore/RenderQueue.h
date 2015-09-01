@@ -4,11 +4,14 @@
 #include "RenderCommand.h"
 #include "LoopQueue.h"
 #include <map>
+#include <unordered_map>
 
 class veVisualiser;
 class veRenderQueue
 {
 public:
+	static veRenderQueue *CURRENT_RENDER_QUEUE;
+	typedef std::map<unsigned int, veLoopQueue< veRenderCommand > > RenderCommandList;
 
 	enum RenderQueueType
 	{
@@ -22,11 +25,11 @@ public:
 	~veRenderQueue();
 
 	void pushCommand(unsigned int renderQueueType, const veRenderCommand &cmd);
-	void execute(veVisualiser *visualiser);
+	void execute();
 
 private:
 
-	std::map<unsigned int, veLoopQueue< veRenderCommand > >_renderQueues;
+	std::unordered_map<veCamera*, RenderCommandList> _renderQueues;
 };
 
 #endif

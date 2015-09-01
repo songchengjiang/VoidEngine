@@ -16,24 +16,23 @@ veMeshRenderer::~veMeshRenderer()
 
 }
 
-void veMeshRenderer::visit(veNode *node, veRenderableObject *renderableObj, veVisualiser *vs)
+void veMeshRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
-	veRenderer::visit(node, renderableObj, vs);
-	if (_technique){
+	if (_technique) {
 		veMesh *mesh = static_cast<veMesh *>(renderableObj);
-		for (unsigned int i = 0; i < _technique->getPassNum(); ++i){
+		for (unsigned int i = 0; i < _technique->getPassNum(); ++i) {
 			veRenderCommand rc;
 			rc.pass = _technique->getPass(i);
 			rc.attachedNode = node;
 			rc.renderableObj = renderableObj;
-			rc.visualizer = vs;
+			rc.camera = camera;
 			rc.renderer = this;
-			vs->getRenderQueue().pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
+			veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
 		}
 	}
 }
 
-void veMeshRenderer::render(const veRenderCommand &command)
+void veMeshRenderer::draw(const veRenderCommand &command)
 {
 	if (!command.pass) return;
 	//glDrawPixels(command.pass->getTexture(0)->getImage()->width(), command.pass->getTexture(0)->getImage()->height(), command.pass->getTexture(0)->getImage()->pixelFormat(), command.pass->getTexture(0)->getImage()->dataType(), command.pass->getTexture(0)->getImage()->data());

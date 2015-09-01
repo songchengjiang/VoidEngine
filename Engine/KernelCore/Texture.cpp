@@ -21,9 +21,19 @@ veTexture::veTexture(veImage *image, GLenum target)
 	, _texID(0)
 	, _samplerID(0)
 	, _target(target)
+	, _width(DEFAULT_WIDTH)
+	, _height(DEFAULT_HEIGHT)
+	, _depth(DEFAULT_DEPTH)
+	, _internalFormat(GL_RGBA8)
 	, _autoWidth(false)
 	, _autoHeight(false)
 {
+	if (_image.valid()) {
+		_width = _image->width();
+		_height = _image->height();
+		_depth = _image->depth();
+		_internalFormat = _image->internalFormat();
+	}
 }
 
 void veTexture::bind(unsigned int textureUnit)
@@ -58,7 +68,7 @@ void veTexture::setImage(veImage *image)
 	_needRefreshTex = true;
 }
 
-void veTexture::storage(int width, int height, int depth, GLint internalFormat)
+void veTexture::storage(GLint internalFormat, int width, int height, int depth)
 {
 	_width = width;
 	_height = _height;

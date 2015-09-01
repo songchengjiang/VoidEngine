@@ -21,7 +21,7 @@ vePass::~vePass()
 
 void vePass::apply(const veRenderCommand &command)
 {
-	applyfbo();
+	veVec2 size(command.camera->getViewport().width, command.camera->getViewport().height);
 	applyProgram();
 	for (auto &iter : _shaders) {
 		iter.second->apply(command);
@@ -30,10 +30,12 @@ void vePass::apply(const veRenderCommand &command)
 	if (CURRENT_PASS == this) return;
 	CURRENT_PASS = this;
 
+	applyfbo(size);
+
 	for (unsigned int i = 0; i < _textures.size(); ++i) {
 		auto &tex = _textures[i];
-		//if (tex->autoWidth()) tex->setWidth(command.visualizer->width());
-		//if (tex->autoHeight()) tex->setHeight(command.visualizer->height());
+		if (tex->autoWidth()) tex->setWidth(size.x());
+		if (tex->autoHeight()) tex->setHeight(size.y());
 		tex->bind(i);
 	}
 
@@ -99,9 +101,10 @@ void vePass::applyProgram()
 	glUseProgram(_program);
 }
 
-void vePass::applyfbo()
+void vePass::applyfbo(const veVec2 &size)
 {
 	if (_fbo) {
+		_fbo->setSize(size);
 		_fbo->bind();
 	}
 	else{
@@ -148,6 +151,7 @@ vePass* veTechnique::removePass(unsigned int idx)
 
 veMaterial::veMaterial()
 	: USE_VE_PTR_INIT
+	, _activeTechnique(nullptr)
 {
 
 }
@@ -160,6 +164,9 @@ veMaterial::~veMaterial()
 void veMaterial::addTechnique(veTechnique *tech)
 {
 	_techniques.push_back(tech);
+	if (!_activeTechnique) {
+		_activeTechnique = tech;
+	}
 }
 
 const veTechnique* veMaterial::getTechnique(unsigned int idx) const
@@ -199,6 +206,8 @@ veTechnique* veMaterial::removeTechnique(unsigned int idx)
 	veAssert(idx < _techniques.size());
 	veTechnique *tech = _techniques[idx].get();
 	_techniques.erase(_techniques.begin() + idx);
+	if (_techniques.empty())
+		_activeTechnique = nullptr;
 	return tech;
 }
 

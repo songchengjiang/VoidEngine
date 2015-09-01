@@ -14,6 +14,7 @@ public:
 	veFrameBufferObject();
 	~veFrameBufferObject();
 
+	USE_VE_PTR;
 	USE_NAME_PROPERTY;
 
 	void setSize(const veVec2 &size);
@@ -30,7 +31,8 @@ public:
 
 private:
 
-	void attachToFBO();
+	void refreshBuffers();
+	void refreshAttachments();
 
 private:
 	GLuint _fbo;

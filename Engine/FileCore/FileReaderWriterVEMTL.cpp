@@ -168,7 +168,7 @@ private:
 			pass->addTexture(texture);
 		}
 		else if (texVal.HasMember(TARGET_KEY.c_str())) {
-			std::string target = texVal[SOURCE_KEY.c_str()].GetString();
+			std::string target = texVal[TARGET_KEY.c_str()].GetString();
 			if (target.find_last_of(":") != std::string::npos) {
 				std::string fboName = target.substr(0, target.find_last_of(":"));
 				std::string attachName = target.substr(target.find_last_of(":") + 1);
@@ -205,7 +205,8 @@ private:
 						internalFormat = GL_RGBA8;
 					}
 				}
-				texture->storage(width, height, internalFormat);
+				texture->storage(internalFormat, width, height);
+				pass->setFrameBufferObject(fbo);
 			}
 		}
 	}
@@ -220,6 +221,7 @@ private:
 		else if (strcmp(STENCIAL_KEY.c_str(), str) == 0) {
 			return GL_STENCIL_ATTACHMENT;
 		}
+		return 0;
 	}
 private:
 

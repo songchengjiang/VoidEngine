@@ -16,16 +16,13 @@ public:
 	USE_VE_PTR;
 	USE_NAME_PROPERTY;
 
-	void update(veNode *node, veVisualiser *vs);
+	virtual void update(veNode *node, veVisualiser *vs);
+	virtual void render(veNode *node, veCamera *camera);
 
 	inline void setRenderer(veRenderer *renderer);
 	veRenderer* getRenderer() const { return _renderer.get(); }
 	void setMaterial(veMaterial *material) { _material = material; }
 	veMaterial* getMaterial() { return _material.get(); }
-
-protected:
-
-	virtual void updateImp(veNode *node, veVisualiser *vs) {};
 
 protected:
 

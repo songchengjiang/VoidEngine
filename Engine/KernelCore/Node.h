@@ -49,6 +49,7 @@ public:
 
 	bool routeEvent(const veEvent &event, veVisualiser *vs);
 	void update(veVisualiser *vs);
+	void render(veCamera *camera);
 
 protected:
 

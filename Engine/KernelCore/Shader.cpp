@@ -109,16 +109,16 @@ void veUniform::apply(const veRenderCommand &command)
 	case AUTO:
 		{
 			veMat4 m = command.attachedNode->getNodeToWorldMatrix();
-			veMat4 mv = command.visualizer->getCamera()->viewMatrix() * m;
+			veMat4 mv = command.camera->viewMatrix() * m;
 			if (_autoBindingValue == MVP_MATRIX){
-				veMat4 mvp = command.visualizer->getCamera()->projectionMatrix() * mv;
+				veMat4 mvp = command.camera->projectionMatrix() * mv;
 				glUniformMatrix4fv(_location, 1, GL_TRUE, mvp[0]);
 			}
 			else if (_autoBindingValue == MV_MATRIX){
 				glUniformMatrix4fv(_location, 1, GL_TRUE, mv[0]);
 			}
 			else if (_autoBindingValue == P_MATRIX){
-				glUniformMatrix4fv(_location, 1, GL_TRUE, command.visualizer->getCamera()->projectionMatrix()[0]);
+				glUniformMatrix4fv(_location, 1, GL_TRUE, command.camera->projectionMatrix()[0]);
 			}
 			else if (_autoBindingValue == NORMAL_MATRIX){
 				veMat3 normMat(mv[0][0], mv[0][1], mv[0][2]

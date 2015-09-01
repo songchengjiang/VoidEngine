@@ -21,6 +21,7 @@
                               {
                                 "type": "FRAGMENT_SHADER",
                                 "source": "DeferredRendering.frag",
+                                "u_lightPos": [0.0, 0.0, 10.0],
                                 "u_position": 0,
                                 "u_normalandepth": 1,
                                 "u_color": 2

@@ -6,12 +6,11 @@ veVisualiser::veVisualiser(int w, int h, const std::string &title)
 	, _width(w)
 	, _height(h)
 	, _title(title)
-	, _clearColor(0.8f)
-	, _clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 {
 	_hwnd = glfwCreateWindow(_width, _height, title.c_str(), nullptr, nullptr);
-	_camera = new veCamera;
-	_camera->setProjectionMatrixAsPerspective(30.0f, (float)_width / (float)_height, 1.0f, 1000.0f);
+	auto camera = new veCamera({ 0, 0, _width, _height });
+	camera->setProjectionMatrixAsPerspective(30.0f, (float)_width / (float)_height, 1.0f, 1000.0f);
+	addCamera(camera);
 }
 
 veVisualiser::~veVisualiser()
@@ -36,6 +35,28 @@ void veVisualiser::setSceneNode(veNode *node)
 	_root = node;
 }
 
+int veVisualiser::addCamera(veCamera *camera)
+{
+	auto iter = std::find(_cameras.begin(), _cameras.end(), camera);
+	if (iter != _cameras.end()) return -1;
+	_cameras.push_back(camera);
+	return _cameras.size() - 1;
+}
+
+veCamera* veVisualiser::getCamera(unsigned int idx)
+{
+	veAssert(idx < _cameras.size());
+	return _cameras[idx].get();
+}
+
+veCamera* veVisualiser::removeCamera(unsigned int idx)
+{
+	veAssert(idx < _cameras.size());
+	veCamera* cam = _cameras[idx].get();
+	_cameras.erase(_cameras.begin() + idx);
+	return cam;
+}
+
 bool veVisualiser::simulate(double deltaTime)
 {
 	if (glfwWindowShouldClose(_hwnd)) 
@@ -55,6 +76,7 @@ bool veVisualiser::dispatchEvent(double deltaTime, const veEvent &event)
 		glViewport(0, 0, _width, _height);
 	}
 	_deltaTime = deltaTime;
+
 	if (_root.valid()){
 		return _root->routeEvent(event, this);
 	}
@@ -63,15 +85,16 @@ bool veVisualiser::dispatchEvent(double deltaTime, const veEvent &event)
 
 void veVisualiser::update()
 {
-	if (_root.valid()){
+	if (_root.valid())
 		_root->update(this);
-	}
 }
 
 void veVisualiser::render()
 {
-	glClear(_clearMask);
-	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
-	_renderQueue.execute(this);
+	veRenderQueue::CURRENT_RENDER_QUEUE = &_renderQueue;
+	for (auto &iter : _cameras) {
+		_root->render(iter.get());
+	}
+	_renderQueue.execute();
 	glfwSwapBuffers(_hwnd);
 }
