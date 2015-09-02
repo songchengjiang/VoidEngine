@@ -13,7 +13,6 @@ veCamera::veCamera()
 	, _mask(0xffffffff)
 	, _fbo(nullptr)
 {
-
 }
 
 veCamera::veCamera(const veViewport &vp)
@@ -27,7 +26,6 @@ veCamera::veCamera(const veViewport &vp)
 	, _mask(0xffffffff)
 	, _fbo(nullptr)
 {
-
 }
 
 veCamera::~veCamera()
@@ -75,8 +73,10 @@ void veCamera::setViewMatrixAslookAt(const veVec3 &eye, const veVec3 &center, co
 void veCamera::setType(TargetType tarType)
 {
 	if (tarType == RENDER_TO_TEXTURE) {
-		if (!_fbo.valid())
+		if (!_fbo.valid()) {
 			_fbo = new veFrameBufferObject;
+			_fbo->setFrameBufferSize(veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y));
+		}
 	}
 	else {
 		_fbo = nullptr;
@@ -87,12 +87,13 @@ void veCamera::setViewport(const veViewport &vp)
 {
 	if (_viewport == vp) return;
 	_viewport = vp;
+	if (_fbo.valid())
+		_fbo->setFrameBufferSize(veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y));
 }
 
 void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 {
 	if (_fbo.valid()) {
-		_fbo->setSize(veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y));
 		_fbo->bind();
 	}
 	glViewport(_viewport.x, _viewport.y, _viewport.width, _viewport.height);

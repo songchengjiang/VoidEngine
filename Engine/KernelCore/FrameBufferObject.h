@@ -12,19 +12,15 @@ public:
 	static veFrameBufferObject* CURRENT_FBO;
 
 	veFrameBufferObject();
+	veFrameBufferObject(const veVec2 &size);
 	~veFrameBufferObject();
 
 	USE_VE_PTR;
 	USE_NAME_PROPERTY;
 
-	void setSize(const veVec2 &size);
+	void setFrameBufferSize(const veVec2 &size);
 	veTexture* attach(GLenum attchment);
 	void detach(GLenum attchment);
-
-	void setClearColor(const veVec4 &color) { _clearColor = color; }
-	const veVec4& getClearColor() const { return _clearColor; }
-	void setClearMask(unsigned int mask) { _clearMask = mask; }
-	unsigned int getClearMask() const { return _clearMask; }
 
 	void bind();
 	static void unBind();
@@ -37,8 +33,6 @@ private:
 private:
 	GLuint _fbo;
 	GLuint _dsbo;
-	unsigned int _clearMask;
-	veVec4 _clearColor;
 	veVec2 _size;
 	bool _needRefresh;
 	std::map<GLenum, VE_Ptr<veTexture>> _attachments;

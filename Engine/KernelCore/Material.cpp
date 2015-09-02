@@ -30,8 +30,6 @@ void vePass::apply(const veRenderCommand &command)
 	if (CURRENT_PASS == this) return;
 	CURRENT_PASS = this;
 
-	applyfbo(size);
-
 	for (unsigned int i = 0; i < _textures.size(); ++i) {
 		auto &tex = _textures[i];
 		if (tex->autoWidth()) tex->setWidth(size.x());
@@ -99,18 +97,6 @@ void vePass::applyProgram()
 	if (needLink)
 		glLinkProgram(_program);
 	glUseProgram(_program);
-}
-
-void vePass::applyfbo(const veVec2 &size)
-{
-	if (_fbo) {
-		_fbo->setSize(size);
-		_fbo->bind();
-	}
-	else{
-		veFrameBufferObject::unBind();
-	}
-
 }
 
 veTechnique::veTechnique()

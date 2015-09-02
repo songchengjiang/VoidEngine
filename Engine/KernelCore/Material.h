@@ -50,7 +50,6 @@ public:
 private:
 
 	void applyProgram();
-	void applyfbo(const veVec2 &size);
 
 private:
 

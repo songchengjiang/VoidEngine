@@ -52,8 +52,16 @@ veFrameBufferObject::veFrameBufferObject()
 	, _fbo(0)
 	, _dsbo(0)
 	, _size(512, 512)
-	, _clearColor(veVec4::WHITE)
-	, _clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+	, _needRefresh(true)
+{
+
+}
+
+veFrameBufferObject::veFrameBufferObject(const veVec2 &size)
+	: USE_VE_PTR_INIT
+	, _fbo(0)
+	, _dsbo(0)
+	, _size(size)
 	, _needRefresh(true)
 {
 
@@ -64,7 +72,7 @@ veFrameBufferObject::~veFrameBufferObject()
 
 }
 
-void veFrameBufferObject::setSize(const veVec2 &size)
+void veFrameBufferObject::setFrameBufferSize(const veVec2 &size)
 {
 	if (size == _size) return;
 	_size = size;
@@ -104,8 +112,6 @@ void veFrameBufferObject::bind()
 	if (CURRENT_FBO == this) return;
 	refreshBuffers();
 	refreshAttachments();
-	glClear(_clearMask);
-	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
 	CURRENT_FBO = this;
 }
 
