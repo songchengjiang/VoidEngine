@@ -21,20 +21,23 @@ void veMeshRenderer::render(veNode *node, veRenderableObject *renderableObj, veC
 	if (_technique) {
 		veMesh *mesh = static_cast<veMesh *>(renderableObj);
 		for (unsigned int i = 0; i < _technique->getPassNum(); ++i) {
-			veRenderCommand rc;
-			rc.pass = _technique->getPass(i);
-			rc.attachedNode = node;
-			rc.renderableObj = renderableObj;
-			rc.camera = camera;
-			rc.renderer = this;
-			veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
+			auto pass = _technique->getPass(i);
+			if (camera->getMask() & pass->drawMask()) {
+				veRenderCommand rc;
+				rc.pass = pass;
+				rc.attachedNode = node;
+				rc.renderableObj = renderableObj;
+				rc.camera = camera;
+				rc.renderer = this;
+				pass->visit(rc);
+				veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
+			}
 		}
 	}
 }
 
 void veMeshRenderer::draw(const veRenderCommand &command)
 {
-	if (!command.pass) return;
 	//glDrawPixels(command.pass->getTexture(0)->getImage()->width(), command.pass->getTexture(0)->getImage()->height(), command.pass->getTexture(0)->getImage()->pixelFormat(), command.pass->getTexture(0)->getImage()->dataType(), command.pass->getTexture(0)->getImage()->data());
 	command.pass->apply(command);
 	auto mesh = static_cast<veMesh *>(command.renderableObj);

@@ -79,38 +79,16 @@ void veFrameBufferObject::setFrameBufferSize(const veVec2 &size)
 	_needRefresh = true;
 }
 
-veTexture* veFrameBufferObject::attach(GLenum attchment)
+void veFrameBufferObject::attach(veTexture *attachTex)
 {
-	auto iter = _attachments.find(attchment);
-	if (iter != _attachments.end() && iter->second.valid()) 
-		return iter->second.get();
-
-	veTexture *texture = nullptr;
-	if (!_texturePool.empty()) {
-		texture = _texturePool.back().get();
-		_texturePool.pop_back();
-	}
-	else {
-		texture = new veTexture2D;
-	}
-	_attachments[attchment] = texture;
-	_needRefresh = true;
-	return texture;
-}
-
-void veFrameBufferObject::detach(GLenum attchment)
-{
-	auto iter = _attachments.find(attchment);
-	if (iter == _attachments.end()) return;
-	_texturePool.push_back(iter->second);
-	iter->second = nullptr;
+	_attachments[attachTex->getAttachment()] = attachTex;
 	_needRefresh = true;
 }
 
-void veFrameBufferObject::bind()
+void veFrameBufferObject::bind(unsigned int clearMask)
 {
 	if (CURRENT_FBO == this) return;
-	refreshBuffers();
+	refreshBuffers(clearMask);
 	refreshAttachments();
 	CURRENT_FBO = this;
 }
@@ -123,7 +101,7 @@ void veFrameBufferObject::unBind()
 	CURRENT_FBO = nullptr;
 }
 
-void veFrameBufferObject::refreshBuffers()
+void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
 {
 	if (!_fbo) {
 		glGenFramebuffers(1, &_fbo);
@@ -131,8 +109,8 @@ void veFrameBufferObject::refreshBuffers()
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
 
 	if (!_dsbo) {
-		bool hasDepthBuffer = (_clearMask & GL_DEPTH_BUFFER_BIT) != 0;
-		bool hasStencilBuffer = (_clearMask & GL_STENCIL_BUFFER_BIT) != 0;
+		bool hasDepthBuffer = (clearMask & GL_DEPTH_BUFFER_BIT) != 0;
+		bool hasStencilBuffer = (clearMask & GL_STENCIL_BUFFER_BIT) != 0;
 		if (hasDepthBuffer || hasStencilBuffer) {
 			glGenRenderbuffers(1, &_dsbo);
 		}

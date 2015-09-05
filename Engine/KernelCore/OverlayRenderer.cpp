@@ -40,21 +40,23 @@ void veOverlayRenderer::render(veNode *node, veRenderableObject *renderableObj, 
 	if (_technique) {
 		veOverlay *overlay = static_cast<veOverlay *>(renderableObj);
 		for (unsigned int i = 0; i < _technique->getPassNum(); ++i) {
-			veRenderCommand rc;
-			rc.pass = _technique->getPass(i);
-			rc.attachedNode = node;
-			rc.renderableObj = renderableObj;
-			rc.camera = camera;
-			rc.renderer = this;
-			veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
+			auto pass = _technique->getPass(i);
+			if (camera->getMask() & pass->drawMask()) {
+				veRenderCommand rc;
+				rc.pass = pass;
+				rc.attachedNode = node;
+				rc.renderableObj = renderableObj;
+				rc.camera = camera;
+				rc.renderer = this;
+				pass->visit(rc);
+				veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
+			}
 		}
 	}
 }
 
 void veOverlayRenderer::draw(const veRenderCommand &command)
 {
-	if (!command.pass) return;
-
 	command.pass->apply(command);
 	auto overlay = static_cast<veOverlay *>(command.renderableObj);
 

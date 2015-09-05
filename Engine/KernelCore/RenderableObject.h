@@ -19,6 +19,11 @@ public:
 	virtual void update(veNode *node, veVisualiser *vs);
 	virtual void render(veNode *node, veCamera *camera);
 
+
+	void setVisible(bool isVis) { _isVisible = isVis; }
+	bool isVisible() const { return _isVisible; };
+	void setMask(unsigned int mask) { _mask = mask; }
+	unsigned int getMask() const { return _mask; }
 	inline void setRenderer(veRenderer *renderer);
 	veRenderer* getRenderer() const { return _renderer.get(); }
 	void setMaterial(veMaterial *material) { _material = material; }
@@ -28,6 +33,8 @@ protected:
 
 	VE_Ptr<veRenderer> _renderer;
 	VE_Ptr<veMaterial> _material;
+	bool              _isVisible;
+	unsigned int      _mask;
 };
 
 #endif

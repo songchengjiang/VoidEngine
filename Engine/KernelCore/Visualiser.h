@@ -24,12 +24,12 @@ public:
 	void setSceneNode(veNode *node);
 	veNode* getSceneNode() const { return _root.get(); }
 
-	int addCamera(veCamera *camera);
-	veCamera* getCamera(unsigned int idx);
-	veCamera* removeCamera(unsigned int idx);
-	unsigned int getCameraNum() const { return _cameras.size(); }
-
-	veRenderQueue& getRenderQueue() { return _renderQueue; }
+	void setCamera(veCamera *camera) { _mainCamera = camera; }
+	veCamera* getCamera() { return _mainCamera.get(); }
+	//int addCamera(veCamera *camera);
+	//veCamera* getCamera(unsigned int idx);
+	//veCamera* removeCamera(unsigned int idx);
+	//unsigned int getCameraNum() const { return _cameras.size(); }
 
 	bool simulate(double deltaTime);
 	bool dispatchEvent(double deltaTime, const veEvent &event);
@@ -49,7 +49,8 @@ private:
 	std::string _title;
 	GLFWwindow *_hwnd;
 	VE_Ptr<veNode> _root;
-	std::vector< VE_Ptr<veCamera> > _cameras;
+	CameraList _cameras;
+	VE_Ptr<veCamera> _mainCamera;
 	double _deltaTime;
 
 	veRenderQueue _renderQueue;

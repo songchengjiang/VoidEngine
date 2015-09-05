@@ -506,6 +506,8 @@ void ModelConverter::writeTexture(const aiMaterial *mat, aiTextureType texType)
 	mat->GetTexture(texType, 0, &texturePath, 0, 0, 0, 0, &mapMode);
 	if (0 < texturePath.length){
 		_matWriter.StartObject();
+		_matWriter.String(NAME_KEY.c_str(), NAME_KEY.size());
+		_matWriter.String(texturePath.C_Str(), texturePath.length);
 		_matWriter.String(SOURCE_KEY.c_str(), SOURCE_KEY.size()); 
 		_matWriter.String(texturePath.C_Str(), texturePath.length);
 

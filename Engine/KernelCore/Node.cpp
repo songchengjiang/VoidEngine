@@ -5,6 +5,8 @@ veNode::veNode()
 	: USE_VE_PTR_INIT
 	, _parent(nullptr)
 	, _matrix(veMat4::IDENTITY)
+	, _isVisible(true)
+	, _mask(0xffffffff)
 {
 }
 
@@ -115,12 +117,14 @@ veMat4 veNode::getNodeToWorldMatrix()
 
 veMat4 veNode::getWorldToNodeMatrix()
 {
-	if (!_parent) return _matrix;
-	return _matrix * _parent->getWorldToNodeMatrix();
+	veMat4 mat = getNodeToWorldMatrix();
+	mat.inverse();
+	return mat;
 }
 
 bool veNode::routeEvent(const veEvent &event, veVisualiser *vs)
 {
+	if (!_isVisible) return false;
 	if (!_components.empty()){
 		for (auto &com : _components){
 			if (event.getEventType() & com->getEventFilter()){
@@ -140,6 +144,7 @@ bool veNode::routeEvent(const veEvent &event, veVisualiser *vs)
 
 void veNode::update(veVisualiser *vs)
 {
+	if (!_isVisible) return;
 	if (!_components.empty()){
 		for (auto &iter : _components){
 			iter->update(this, vs);
@@ -161,15 +166,18 @@ void veNode::update(veVisualiser *vs)
 
 void veNode::render(veCamera *camera)
 {
-	if (!_children.empty()) {
-		for (auto &child : _children) {
-			child->render(camera);
+	if (!_isVisible) return;
+	if (_mask & camera->getMask()) {
+		if (!_children.empty()) {
+			for (auto &child : _children) {
+				child->render(camera);
+			}
 		}
-	}
 
-	if (!_renderableObjects.empty()) {
-		for (auto &iter : _renderableObjects) {
-			iter->render(this, camera);
+		if (!_renderableObjects.empty()) {
+			for (auto &iter : _renderableObjects) {
+				iter->render(this, camera);
+			}
 		}
 	}
 }

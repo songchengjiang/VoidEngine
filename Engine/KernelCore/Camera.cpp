@@ -3,27 +3,21 @@
 #include "Node.h"
 
 veCamera::veCamera()
-	: USE_VE_PTR_INIT
-	, _viewMat(veMat4::IDENTITY)
+	:_viewMat(veMat4::IDENTITY)
 	, _projectionMat(veMat4::IDENTITY)
-	, _type(RENDER_TO_FRAME)
 	, _clearColor(0.8f)
 	, _clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 	, _viewport({0, 0, 800, 600})
-	, _mask(0xffffffff)
 	, _fbo(nullptr)
 {
 }
 
 veCamera::veCamera(const veViewport &vp)
-	: USE_VE_PTR_INIT
-	, _viewMat(veMat4::IDENTITY)
+	: _viewMat(veMat4::IDENTITY)
 	, _projectionMat(veMat4::IDENTITY)
-	, _type(RENDER_TO_FRAME)
 	, _clearColor(0.8f)
 	, _clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 	, _viewport(vp)
-	, _mask(0xffffffff)
 	, _fbo(nullptr)
 {
 }
@@ -64,23 +58,23 @@ void veCamera::setViewMatrixAslookAt(const veVec3 &eye, const veVec3 &center, co
 	s.normalize();
 	veVec3 u = f.crossProduct(s);
 	if (f.isZeroLength() || s.isZeroLength() || u.isZeroLength()) return;
-	_viewMat.set(s.x(), s.y(), s.z(), -s.dotProduct(eye)
-		       , u.x(), u.y(), u.z(), -u.dotProduct(eye)
-		       , f.x(), f.y(), f.z(), -f.dotProduct(eye)
-		       , 0.0f , 0.0f , 0.0f , 1.0f);
+
+	setMatrix(veMat4(s.x(), u.x(), f.x(), s.dotProduct(eye)
+				   , s.y(), u.y(), f.y(), u.dotProduct(eye)
+				   , s.z(), u.z(), f.z(), f.dotProduct(eye)
+				   , 0.0f, 0.0f, 0.0f, 1.0f));
+
+	//_viewMat.set(s.x(), s.y(), s.z(), -s.dotProduct(eye)
+	//	       , u.x(), u.y(), u.z(), -u.dotProduct(eye)
+	//	       , f.x(), f.y(), f.z(), -f.dotProduct(eye)
+	//	       , 0.0f , 0.0f , 0.0f , 1.0f);
 }
 
-void veCamera::setType(TargetType tarType)
+void veCamera::setFrameBufferObject(veFrameBufferObject *fbo)
 {
-	if (tarType == RENDER_TO_TEXTURE) {
-		if (!_fbo.valid()) {
-			_fbo = new veFrameBufferObject;
-			_fbo->setFrameBufferSize(veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y));
-		}
-	}
-	else {
-		_fbo = nullptr;
-	}
+	_fbo = fbo;
+	if (_fbo.valid())
+		_fbo->setFrameBufferSize(veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y));
 }
 
 void veCamera::setViewport(const veViewport &vp)
@@ -91,10 +85,16 @@ void veCamera::setViewport(const veViewport &vp)
 		_fbo->setFrameBufferSize(veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y));
 }
 
+void veCamera::setMatrix(const veMat4 &mat)
+{
+	_matrix = mat;
+	_viewMat = getWorldToNodeMatrix();
+}
+
 void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 {
 	if (_fbo.valid()) {
-		_fbo->bind();
+		_fbo->bind(_clearMask);
 	}
 	glViewport(_viewport.x, _viewport.y, _viewport.width, _viewport.height);
 	glClear(_clearMask);

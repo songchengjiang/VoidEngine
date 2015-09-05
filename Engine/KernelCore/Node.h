@@ -23,11 +23,16 @@ public:
 	veNode();
 	virtual ~veNode();
 
+	void setVisible(bool isVis) { _isVisible = isVis; }
+	bool isVisible() const { return _isVisible; };
+
 	int addChild(veNode *child);
 	bool removeChild(veNode *child);
 	veNode* removeChild(unsigned int cIndex);
 	veNode* getChild(unsigned int cIndex);
 	unsigned int getChildCount() const { return _children.size(); }
+
+	veNode* getParent() { return _parent; }
 
 	int addComponent(veComponent *com);
 	bool removeComponent(veComponent *com);
@@ -41,15 +46,18 @@ public:
 	veRenderableObject* getRenderableObject(unsigned int objIndex);
 	unsigned int getRenderableObjectCount() const { return _renderableObjects.size(); }
 
-	void setMatrix(const veMat4 &mat) { _matrix = mat; }
+	virtual void setMatrix(const veMat4 &mat) { _matrix = mat; }
 	const veMat4& getMatrix() const { return _matrix; }
 
 	veMat4 getNodeToWorldMatrix();
 	veMat4 getWorldToNodeMatrix();
 
-	bool routeEvent(const veEvent &event, veVisualiser *vs);
-	void update(veVisualiser *vs);
-	void render(veCamera *camera);
+	void setMask(unsigned int mask) { _mask = mask; }
+	unsigned int getMask() const { return _mask; }
+
+	virtual bool routeEvent(const veEvent &event, veVisualiser *vs);
+	virtual void update(veVisualiser *vs);
+	virtual void render(veCamera *camera);
 
 protected:
 
@@ -59,6 +67,8 @@ protected:
 	veNode           *_parent;
 
 	veMat4            _matrix;
+	bool              _isVisible;
+	unsigned int      _mask;
 };
 
 #endif

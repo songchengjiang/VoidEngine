@@ -65,11 +65,12 @@ static const std::string BYTE_KEY = "BYTE";
 static const std::string POINTS_KEY = "POINTS";
 static const std::string LINES_KEY = "LINES";
 static const std::string TRIANGLES_KEY = "TRIANGLES";
-static const std::string COLOR_KEY = "COLOR";
-static const std::string DEPTH_KEY = "DEPTH";
-static const std::string STENCIAL_KEY = "STENCIAL";
+static const std::string COLOR_KEY = "FBO_COLOR";
+static const std::string DEPTH_KEY = "FBO_DEPTH";
+static const std::string STENCIAL_KEY = "FBO_STENCIAL";
 static const std::string WIDTH_KEY = "width";
 static const std::string HEIGHT_KEY = "height";
+static const std::string DRAWMASK_KEY = "drawMask";
 
 
 static const std::string VERTEX_ATTRIB_POSITION = "VERTEX_ATTRIB_POSITION";

@@ -19,15 +19,14 @@ public:
 	USE_NAME_PROPERTY;
 
 	void setFrameBufferSize(const veVec2 &size);
-	veTexture* attach(GLenum attchment);
-	void detach(GLenum attchment);
+	void attach(veTexture *attachTex);
 
-	void bind();
+	void bind(unsigned int clearMask);
 	static void unBind();
 
 private:
 
-	void refreshBuffers();
+	void refreshBuffers(unsigned int clearMask);
 	void refreshAttachments();
 
 private:
@@ -36,7 +35,6 @@ private:
 	veVec2 _size;
 	bool _needRefresh;
 	std::map<GLenum, VE_Ptr<veTexture>> _attachments;
-	std::vector< VE_Ptr<veTexture> >     _texturePool;
 };
 
 class VE_EXPORT veFrameBufferObjectManager

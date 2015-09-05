@@ -1,5 +1,31 @@
 #include "Visualiser.h"
 #include "Node.h"
+#include "NodeVisitor.h"
+
+class CameraFinder : public veNodeVisitor
+{
+public:
+	CameraFinder(CameraList &cameraList, veCamera *discardCam) 
+		: _cameraList(cameraList)
+	    , _discardCam(discardCam){
+
+	}
+	~CameraFinder() {
+
+	}
+
+protected:
+
+	virtual void visit(veCamera &camera) {
+		if (&camera != _discardCam)
+			_cameraList.push_back(&camera);
+	}
+
+private:
+
+	CameraList &_cameraList;
+	veCamera   *_discardCam;
+};
 
 veVisualiser::veVisualiser(int w, int h, const std::string &title)
 	: USE_VE_PTR_INIT
@@ -8,9 +34,8 @@ veVisualiser::veVisualiser(int w, int h, const std::string &title)
 	, _title(title)
 {
 	_hwnd = glfwCreateWindow(_width, _height, title.c_str(), nullptr, nullptr);
-	auto camera = new veCamera({ 0, 0, _width, _height });
-	camera->setProjectionMatrixAsPerspective(30.0f, (float)_width / (float)_height, 1.0f, 1000.0f);
-	addCamera(camera);
+	_mainCamera = new veCamera({ 0, 0, _width, _height });
+	_mainCamera->setProjectionMatrixAsPerspective(30.0f, (float)_width / (float)_height, 1.0f, 1000.0f);
 }
 
 veVisualiser::~veVisualiser()
@@ -35,27 +60,27 @@ void veVisualiser::setSceneNode(veNode *node)
 	_root = node;
 }
 
-int veVisualiser::addCamera(veCamera *camera)
-{
-	auto iter = std::find(_cameras.begin(), _cameras.end(), camera);
-	if (iter != _cameras.end()) return -1;
-	_cameras.push_back(camera);
-	return _cameras.size() - 1;
-}
-
-veCamera* veVisualiser::getCamera(unsigned int idx)
-{
-	veAssert(idx < _cameras.size());
-	return _cameras[idx].get();
-}
-
-veCamera* veVisualiser::removeCamera(unsigned int idx)
-{
-	veAssert(idx < _cameras.size());
-	veCamera* cam = _cameras[idx].get();
-	_cameras.erase(_cameras.begin() + idx);
-	return cam;
-}
+//int veVisualiser::addCamera(veCamera *camera)
+//{
+//	auto iter = std::find(_cameras.begin(), _cameras.end(), camera);
+//	if (iter != _cameras.end()) return -1;
+//	_cameras.push_back(camera);
+//	return _cameras.size() - 1;
+//}
+//
+//veCamera* veVisualiser::getCamera(unsigned int idx)
+//{
+//	veAssert(idx < _cameras.size());
+//	return _cameras[idx].get();
+//}
+//
+//veCamera* veVisualiser::removeCamera(unsigned int idx)
+//{
+//	veAssert(idx < _cameras.size());
+//	veCamera* cam = _cameras[idx].get();
+//	_cameras.erase(_cameras.begin() + idx);
+//	return cam;
+//}
 
 bool veVisualiser::simulate(double deltaTime)
 {
@@ -85,8 +110,12 @@ bool veVisualiser::dispatchEvent(double deltaTime, const veEvent &event)
 
 void veVisualiser::update()
 {
-	if (_root.valid())
+	if (_root.valid()) {
 		_root->update(this);
+		_cameras.clear();
+		CameraFinder camFinder(_cameras, _mainCamera.get());
+		camFinder.accept(_root.get());
+	}
 }
 
 void veVisualiser::render()
@@ -95,6 +124,7 @@ void veVisualiser::render()
 	for (auto &iter : _cameras) {
 		_root->render(iter.get());
 	}
+	_root->render(_mainCamera.get());
 	_renderQueue.execute();
 	glfwSwapBuffers(_hwnd);
 }

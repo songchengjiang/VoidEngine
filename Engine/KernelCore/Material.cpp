@@ -11,7 +11,7 @@ vePass::vePass()
 	, _cullFace(true)
 	, _polygonMode(GL_FILL)
 	, _program(0)
-	, _fbo(nullptr)
+	, _mask(0xffffffff)
 {
 }
 
@@ -19,9 +19,23 @@ vePass::~vePass()
 {
 }
 
+void vePass::visit(const veRenderCommand &command)
+{
+	for (unsigned int i = 0; i < _textures.size(); ++i) {
+		auto &tex = _textures[i];
+		if (tex->getSourceType() == veTexture::FRAME_BUFFER_OBJECT) {
+			if (tex->autoWidth()) tex->setWidth(command.camera->getViewport().width);
+			if (tex->autoHeight()) tex->setHeight(command.camera->getViewport().height);
+			if (!command.camera->getFrameBufferObject()) {
+				auto fbo = veFrameBufferObjectManager::instance()->getOrCreateFrameBufferObject(0);
+
+			}
+		}
+	}
+}
+
 void vePass::apply(const veRenderCommand &command)
 {
-	veVec2 size(command.camera->getViewport().width, command.camera->getViewport().height);
 	applyProgram();
 	for (auto &iter : _shaders) {
 		iter.second->apply(command);
@@ -32,8 +46,6 @@ void vePass::apply(const veRenderCommand &command)
 
 	for (unsigned int i = 0; i < _textures.size(); ++i) {
 		auto &tex = _textures[i];
-		if (tex->autoWidth()) tex->setWidth(size.x());
-		if (tex->autoHeight()) tex->setHeight(size.y());
 		tex->bind(i);
 	}
 

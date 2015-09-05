@@ -3,6 +3,7 @@
 #include "Constants.h"
 #include "KernelCore/Material.h"
 #include "KernelCore/Texture.h"
+#include "KernelCore/TextureManager.h"
 #include "KernelCore/FrameBufferObject.h"
 #include <unordered_map>
 
@@ -65,9 +66,14 @@ private:
 
 	void readPass(const Value &passVal, veTechnique *tecnique){
 		vePass *pass = new vePass;
-		pass->depthTest() = passVal[DEPTHTEST_KEY.c_str()].GetBool();
-		pass->depthWrite() = passVal[DEPTHWRITE_KEY.c_str()].GetBool();
-		pass->cullFace() = passVal[CULLFACE_KEY.c_str()].GetBool();
+		if (passVal.HasMember(DEPTHTEST_KEY.c_str()))
+			pass->depthTest() = passVal[DEPTHTEST_KEY.c_str()].GetBool();
+		if (passVal.HasMember(DEPTHWRITE_KEY.c_str()))
+			pass->depthWrite() = passVal[DEPTHWRITE_KEY.c_str()].GetBool();
+		if (passVal.HasMember(CULLFACE_KEY.c_str()))
+			pass->cullFace() = passVal[CULLFACE_KEY.c_str()].GetBool();
+		if (passVal.HasMember(DRAWMASK_KEY.c_str()))
+			pass->drawMask() = passVal[DRAWMASK_KEY.c_str()].GetUint();
 
 		if (passVal.HasMember(SHADERS_KEY.c_str())){
 			const Value &shaders = passVal[SHADERS_KEY.c_str()];
@@ -140,19 +146,27 @@ private:
 	void readTexture(const Value &texVal, vePass *pass){
 		if (texVal.HasMember(SOURCE_KEY.c_str())) {
 			std::string source = texVal[SOURCE_KEY.c_str()].GetString();
+			std::string name = source;
+			if (texVal.HasMember(NAME_KEY.c_str())) {
+				name = texVal[NAME_KEY.c_str()].GetString();
+			}
 			veTexture *texture = nullptr;
 			if (source.find_last_of(".") != std::string::npos) {
-				veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_fileFolder + source));
-				texture = new veTexture2D(image);
+				texture = veTextureManager::instance()->getOrCreateTexture(source, [=](const std::string &sc) -> veTexture* {
+					veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_fileFolder + sc));
+					veTexture *tex = new veTexture2D(image);
+					return tex;
+				});
 			}
 			else if (source.find_last_of(":") != std::string::npos) {
-				std::string fboName = source.substr(0, source.find_last_of(":"));
-				std::string attachName = source.substr(source.find_last_of(":") + 1);
-				veFrameBufferObject *fbo = veFrameBufferObjectManager::instance()->getOrCreateFrameBufferObject(fboName);
-				texture = fbo->attach(getFrameBufferObjectAttach(attachName.c_str()));
+				texture = veTextureManager::instance()->getOrCreateTexture(source, [=](const std::string &sc) -> veTexture* {
+					veTexture *tex = new veTexture2D;
+					return tex;
+				});
 			}
 
 			if (!texture) return;
+			texture->setName(name);
 			std::string wrap = texVal[WRAP_KEY.c_str()].GetString();
 			if (wrap == REPEAT_KEY) texture->setWrapMode(veTexture2D::REPEAT);
 			else if (wrap == MIRROR_KEY) texture->setWrapMode(veTexture2D::MIRROR);
@@ -172,10 +186,15 @@ private:
 			if (target.find_last_of(":") != std::string::npos) {
 				std::string fboName = target.substr(0, target.find_last_of(":"));
 				std::string attachName = target.substr(target.find_last_of(":") + 1);
-				veFrameBufferObject *fbo = veFrameBufferObjectManager::instance()->getOrCreateFrameBufferObject(fboName);
-				veTexture *texture = fbo->attach(getFrameBufferObjectAttach(attachName.c_str()));
+				veTexture *texture = veTextureManager::instance()->getOrCreateTexture(target, [=](const std::string &sc) -> veTexture* {
+					veTexture *tex = new veTexture2D;
+					return tex;
+				});
+				texture->setAttachedName(fboName);
+				texture->setAttachment(getFrameBufferObjectAttach(attachName.c_str()));
+				texture->setSourceType(veTexture::FRAME_BUFFER_OBJECT);
 				int width = veTexture::DEFAULT_WIDTH;
-				int height= veTexture::DEFAULT_HEIGHT;
+				int height = veTexture::DEFAULT_HEIGHT;
 				texture->autoWidth() = true;
 				texture->autoHeight() = true;
 				GLint internalFormat = veTexture::DEFAULT_INTERNAL_FORMAT;
@@ -206,7 +225,6 @@ private:
 					}
 				}
 				texture->storage(internalFormat, width, height);
-				pass->setFrameBufferObject(fbo);
 			}
 		}
 	}

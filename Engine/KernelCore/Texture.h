@@ -26,6 +26,12 @@ public:
 		LINEAR_MIP_MAP = GL_LINEAR_MIPMAP_LINEAR,
 	};
 
+	enum SourceType
+	{
+		IMAGE,
+		FRAME_BUFFER_OBJECT,
+	};
+
 	virtual ~veTexture();
 
 	USE_VE_PTR;
@@ -37,10 +43,17 @@ public:
 	WrapMode getWrapMode() const { return _wrapMode; }
 	void setFilterMode(FilterMode filterMode){ _filterMode = filterMode; _needRefreshSampler = true; }
 	FilterMode getFilterMode() const { return _filterMode; }
+	void setSourceType(SourceType sourceType) { _sourceType = sourceType; }
+	SourceType getSourceType() const { return _sourceType; }
+	void setAttachedName(const std::string &name) { _attachedName = name; }
+	const std::string& getAttachedName() const { return _attachedName; }
+	void setAttachment(GLenum attachment) { _attachment = attachment; }
+	GLenum getAttachment() const { return _attachment; }
+
 	void setImage(veImage *image);
 	veImage *getImage() { return _image.get(); }
-
 	void storage(GLint internalFormat, int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT, int depth = DEFAULT_DEPTH);
+
 	void setWidth(int width) { if (width == _width) return;  _width = width; _needRefreshTex = true; }
 	int getWidth() const { return _width; }
 	void setHeight(int height) { if (_height == height) return; _height = height; _needRefreshTex = true; }
@@ -64,18 +77,21 @@ protected:
 	VE_Ptr<veImage> _image;
 	WrapMode        _wrapMode;
 	FilterMode      _filterMode;
+	SourceType      _sourceType;
 	bool            _needRefreshTex;
 	bool            _needRefreshSampler;
 	GLuint          _texID;
 	GLuint          _samplerID;
 	GLenum          _target;
+	GLenum          _attachment;
+	std::string     _attachedName;
 
-	int            _width;
-	int            _height;
-	int            _depth;
-	bool           _autoWidth;
-	bool           _autoHeight;
-	GLint          _internalFormat;
+	int             _width;
+	int             _height;
+	int             _depth;
+	bool            _autoWidth;
+	bool            _autoHeight;
+	GLint           _internalFormat;
 };
 
 class VE_EXPORT veTexture2D : public veTexture

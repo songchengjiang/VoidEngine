@@ -37,6 +37,7 @@
     <ClCompile Include="KernelCore\Mesh.cpp" />
     <ClCompile Include="KernelCore\MeshRenderer.cpp" />
     <ClCompile Include="KernelCore\Node.cpp" />
+    <ClCompile Include="KernelCore\NodeVisitor.cpp" />
     <ClCompile Include="KernelCore\Overlay.cpp" />
     <ClCompile Include="KernelCore\OverlayRenderer.cpp" />
     <ClCompile Include="KernelCore\RenderableObject.cpp" />
@@ -44,6 +45,7 @@
     <ClCompile Include="KernelCore\RenderQueue.cpp" />
     <ClCompile Include="KernelCore\Shader.cpp" />
     <ClCompile Include="KernelCore\Texture.cpp" />
+    <ClCompile Include="KernelCore\TextureManager.cpp" />
     <ClCompile Include="KernelCore\Transformer.cpp" />
     <ClCompile Include="KernelCore\Visualiser.cpp" />
   </ItemGroup>
@@ -75,6 +77,7 @@
     <ClInclude Include="KernelCore\Mesh.h" />
     <ClInclude Include="KernelCore\MeshRenderer.h" />
     <ClInclude Include="KernelCore\Node.h" />
+    <ClInclude Include="KernelCore\NodeVisitor.h" />
     <ClInclude Include="KernelCore\Overlay.h" />
     <ClInclude Include="KernelCore\OverlayRenderer.h" />
     <ClInclude Include="KernelCore\Registrar.h" />
@@ -84,6 +87,7 @@
     <ClInclude Include="KernelCore\RenderQueue.h" />
     <ClInclude Include="KernelCore\Shader.h" />
     <ClInclude Include="KernelCore\Texture.h" />
+    <ClInclude Include="KernelCore\TextureManager.h" />
     <ClInclude Include="KernelCore\Transformer.h" />
     <ClInclude Include="KernelCore\VE_Ptr.h" />
     <ClInclude Include="KernelCore\Visualiser.h" />

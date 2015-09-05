@@ -3,11 +3,11 @@
 #include "Prerequisites.h"
 #include "BaseCore/Matrix4.h"
 #include "BaseCore/Vector4.h"
+#include "Node.h"
 #include "RenderQueue.h"
 #include "FrameBufferObject.h"
 
 class veVisualiser;
-class veNode;
 struct VE_EXPORT veViewport
 {
 	int x;
@@ -20,21 +20,13 @@ struct VE_EXPORT veViewport
 	}
 };
 
-class VE_EXPORT veCamera
+class VE_EXPORT veCamera : public veNode
 {
 public:
 
-	enum TargetType
-	{
-		RENDER_TO_FRAME,
-		RENDER_TO_TEXTURE,
-	};
 	veCamera();
 	veCamera(const veViewport &vp);
 	~veCamera();
-
-	USE_VE_PTR;
-	USE_NAME_PROPERTY;
 
 	void setProjectionMatrixAsOrtho(float left, float right, float bottom, float top, float zNear, float zFar);
 	void setProjectionMatrixAsPerspective(float fovy, float aspectRatio, float zNear, float zFar);
@@ -43,8 +35,8 @@ public:
 	void setViewMatrixAslookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &up);
 	veMat4& viewMatrix() { return _viewMat; }
 
-	void setType(TargetType tarType);
-	TargetType getType() const { return _type; }
+	void setFrameBufferObject(veFrameBufferObject *fbo);
+	veFrameBufferObject* getFrameBufferObject() { return _fbo.get(); }
 
 	void setViewport(const veViewport &vp);
 	const veViewport& getViewport() const { return _viewport; }
@@ -54,8 +46,7 @@ public:
 	void setClearMask(unsigned int mask) { _clearMask = mask; }
 	unsigned int getClearMask() const { return _clearMask; }
 
-	void setMask(unsigned int mask) { _mask = mask; }
-	unsigned int getMask() const { return _mask; }
+	virtual void setMatrix(const veMat4 &mat) override;
 
 	void render(veRenderQueue::RenderCommandList &renderList);
 
@@ -63,12 +54,12 @@ private:
 
 	veMat4 _projectionMat;
 	veMat4 _viewMat;
-	TargetType   _type;
 	veViewport   _viewport;
 	veVec4       _clearColor;
 	unsigned int _clearMask;
-	unsigned int _mask;
 	VE_Ptr<veFrameBufferObject> _fbo;
 };
+
+typedef std::vector< VE_Ptr<veCamera> > CameraList;
 
 #endif

@@ -21,6 +21,7 @@ public:
 
 	USE_VE_PTR;
 
+	void visit(const veRenderCommand &command);
 	void apply(const veRenderCommand &command);
 
 	const bool& depthTest() const { return _depthTest; };
@@ -31,6 +32,9 @@ public:
 
 	const bool& cullFace() const{ return _cullFace; }
 	bool& cullFace(){ return _cullFace; }
+
+	const unsigned int& drawMask() const { return _mask; }
+	unsigned int& drawMask() { return _mask; }
 
 	const GLenum& polygonMode() const { return _polygonMode; }
 	GLenum& polygonMode() { return _polygonMode; }
@@ -44,9 +48,6 @@ public:
 	veTexture* removeTexture(unsigned int idx);
 	unsigned int getTextureNum() const { return _textures.size(); }
 
-	void setFrameBufferObject(veFrameBufferObject *fbo) { _fbo = fbo; }
-	veFrameBufferObject* getFrameBufferObject() { return _fbo; }
-
 private:
 
 	void applyProgram();
@@ -56,11 +57,11 @@ private:
 	bool _depthTest;
 	bool _depthWirte;
 	bool _cullFace;
+	unsigned int _mask;
 	GLenum _polygonMode;
 	GLuint _program;
 	std::unordered_map<veShader::Type, VE_Ptr<veShader> > _shaders;
 	std::vector< VE_Ptr<veTexture> >                      _textures;
-	veFrameBufferObject                                  *_fbo;
 };
 
 class VE_EXPORT veTechnique

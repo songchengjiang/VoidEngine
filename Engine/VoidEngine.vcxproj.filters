@@ -123,6 +123,12 @@
     <ClCompile Include="KernelCore\FrameBufferObject.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
+    <ClCompile Include="KernelCore\NodeVisitor.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="KernelCore\TextureManager.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseCore\Math.h">
@@ -239,6 +245,12 @@
       <Filter>KernelCore\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="KernelCore\FrameBufferObject.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\NodeVisitor.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\TextureManager.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>
