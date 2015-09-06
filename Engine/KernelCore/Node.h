@@ -9,6 +9,7 @@
 #include "RenderableObject.h"
 
 class veVisualiser;
+class veNodeVisitor;
 class VE_EXPORT veNode
 {
 public:
@@ -58,6 +59,9 @@ public:
 	virtual bool routeEvent(const veEvent &event, veVisualiser *vs);
 	virtual void update(veVisualiser *vs);
 	virtual void render(veCamera *camera);
+
+	virtual void accept(veNodeVisitor &visitor);
+	virtual void visit(veNodeVisitor &visitor);
 
 protected:
 

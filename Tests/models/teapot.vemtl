@@ -12,7 +12,6 @@
                             "depthTest": true,
                             "depthWrite": true,
                             "cullFace": true,
-                            "drawMask": 1,
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
@@ -50,7 +49,6 @@
                             "depthTest": true,
                             "depthWrite": true,
                             "cullFace": true,
-                            "drawMask": 2,
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
@@ -70,21 +68,6 @@
                                     "source": "sphere.png",
                                     "wrap": "REPEAT",
                                     "filter": "NERAEST"
-                                },
-                                {
-                                    "target": "FBO0:COLOR0",
-                                    "wrap": "CLAMP",
-                                    "filter": "LINEAR"
-                                },
-                                {
-                                    "target": "FBO0:COLOR1",
-                                    "wrap": "CLAMP",
-                                    "filter": "LINEAR"
-                                },
-                                {
-                                    "target": "FBO0:COLOR2",
-                                    "wrap": "CLAMP",
-                                    "filter": "LINEAR"
                                 }
                             ]  
                         }

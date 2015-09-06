@@ -21,6 +21,7 @@ void* veFile::readFile(const std::string &filePath)
 {
 	std::string ext = getFileExt(filePath);
 	auto fileReader = FileReaderWriterRegistrar::instance()->getRegContent(ext);
+	if (!fileReader) return nullptr;
 	return fileReader->readFile(filePath);
 }
 

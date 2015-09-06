@@ -31,9 +31,11 @@ public:
 	void setProjectionMatrixAsOrtho(float left, float right, float bottom, float top, float zNear, float zFar);
 	void setProjectionMatrixAsPerspective(float fovy, float aspectRatio, float zNear, float zFar);
 	veMat4& projectionMatrix() { return _projectionMat; }
+	const veMat4& projectionMatrix() const { return _projectionMat; }
 
 	void setViewMatrixAslookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &up);
 	veMat4& viewMatrix() { return _viewMat; }
+	const veMat4& viewMatrix() const { return _viewMat; }
 
 	void setFrameBufferObject(veFrameBufferObject *fbo);
 	veFrameBufferObject* getFrameBufferObject() { return _fbo.get(); }
@@ -49,6 +51,8 @@ public:
 	virtual void setMatrix(const veMat4 &mat) override;
 
 	void render(veRenderQueue::RenderCommandList &renderList);
+
+	virtual void visit(veNodeVisitor &visitor);
 
 private:
 

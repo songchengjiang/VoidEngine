@@ -19,7 +19,7 @@ public:
 	USE_NAME_PROPERTY;
 
 	void setFrameBufferSize(const veVec2 &size);
-	void attach(veTexture *attachTex);
+	void attach(GLenum attachment, veTexture *attachTex);
 
 	void bind(unsigned int clearMask);
 	static void unBind();

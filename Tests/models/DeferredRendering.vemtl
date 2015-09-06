@@ -29,17 +29,17 @@
                             ],
                             "textureUnits": [
                               {
-                                "source": "FBO0:COLOR0",
+                                "source": "rtt.camera.tex0",
                                 "wrap": "CLAMP",
                                 "filter": "LINEAR"
                               },
                               {
-                                "source": "FBO0:COLOR1",
+                                "source": "rtt.camera.tex1",
                                 "wrap": "CLAMP",
                                 "filter": "LINEAR"
                               },
                               {
-                                "source": "FBO0:COLOR2",
+                                "source": "rtt.camera.tex2",
                                 "wrap": "CLAMP",
                                 "filter": "LINEAR"
                               }

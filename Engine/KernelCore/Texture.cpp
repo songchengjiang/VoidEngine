@@ -16,13 +16,11 @@ veTexture::veTexture(veImage *image, GLenum target)
 	, _image(image)
 	, _wrapMode(REPEAT)
 	, _filterMode(NEAREST)
-	, _sourceType(IMAGE)
 	, _needRefreshTex(true)
 	, _needRefreshSampler(true)
 	, _texID(0)
 	, _samplerID(0)
 	, _target(target)
-	, _attachment(GL_COLOR_ATTACHMENT0)
 	, _width(DEFAULT_WIDTH)
 	, _height(DEFAULT_HEIGHT)
 	, _depth(DEFAULT_DEPTH)
@@ -73,7 +71,7 @@ void veTexture::setImage(veImage *image)
 void veTexture::storage(GLint internalFormat, int width, int height, int depth)
 {
 	_width = width;
-	_height = _height;
+	_height = height;
 	_depth = depth;
 	_internalFormat = internalFormat;
 	_needRefreshTex = true;
@@ -90,7 +88,7 @@ GLuint veTexture::glTex()
 veTexture2D::veTexture2D(veImage *image)
 	: veTexture(image, GL_TEXTURE_2D)
 {
-
+	_type = veTexture::TEXTURE_2D;
 }
 
 veTexture2D::~veTexture2D()

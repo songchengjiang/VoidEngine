@@ -168,7 +168,7 @@ void veMat4::makeTransform(const veVec3& position, const veVec3& scale, const ve
 
 void veMat4::decomposition(veVec3* position, veVec3* scale, veQuat* orientation) const
 {
-	veAssert(true);
+	veAssert(false);
 	if (position){
 		position->x() = m[0][3];
 		position->y() = m[1][3];

@@ -129,6 +129,9 @@
     <ClCompile Include="KernelCore\TextureManager.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
+    <ClCompile Include="FileCore\FileReaderWriterCAMERA.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseCore\Math.h">

@@ -2,6 +2,9 @@
 #define _REN_TO_TEX_TEST_
 #include "BaseTest.h"
 
+#define MAIN_CAMERA 0x01
+#define RTT_CAMERA  0x02
+
 class RenToTex : public BaseTest
 {
 public:
@@ -18,6 +21,7 @@ public:
 			//transer->setScale(veVec3(1.0f));
 			transer->setRotation(veQuat(veMath::PI, veVec3::UNIT_X));
 			root->addChild(node);
+			node->setMask(RTT_CAMERA);
 		}
 
 		{
@@ -31,9 +35,17 @@ public:
 			node->addRenderableObject(overlay);
 			overlay->setMaterial(mats->getMaterial(0));
 			root->addChild(node);
+			node->setMask(MAIN_CAMERA);
+		}
+
+		{
+			veCamera *camera = static_cast<veCamera *>(veFile::instance()->readFile("cameras/rtt.camera"));
+			camera->setMask(RTT_CAMERA);
+			root->addChild(camera);
 		}
 
 		_visualiser->setSceneNode(root);
+		_visualiser->getCamera()->setMask(MAIN_CAMERA);
 	}
 	~RenToTex() {};
 

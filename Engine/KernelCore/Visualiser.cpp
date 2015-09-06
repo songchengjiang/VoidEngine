@@ -14,9 +14,7 @@ public:
 
 	}
 
-protected:
-
-	virtual void visit(veCamera &camera) {
+	virtual void visit(veCamera &camera) override{
 		if (&camera != _discardCam)
 			_cameraList.push_back(&camera);
 	}
@@ -98,7 +96,6 @@ bool veVisualiser::dispatchEvent(double deltaTime, const veEvent &event)
 	else if (event.getEventType() == veEvent::VE_WIN_RESIZE) {
 		_width = event.getWindowWidth();
 		_height = event.getWindowHeight();
-		glViewport(0, 0, _width, _height);
 	}
 	_deltaTime = deltaTime;
 
@@ -114,7 +111,7 @@ void veVisualiser::update()
 		_root->update(this);
 		_cameras.clear();
 		CameraFinder camFinder(_cameras, _mainCamera.get());
-		camFinder.accept(_root.get());
+		_root->accept(camFinder);
 	}
 }
 

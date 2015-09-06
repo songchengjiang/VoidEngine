@@ -79,9 +79,9 @@ void veFrameBufferObject::setFrameBufferSize(const veVec2 &size)
 	_needRefresh = true;
 }
 
-void veFrameBufferObject::attach(veTexture *attachTex)
+void veFrameBufferObject::attach(GLenum attachment, veTexture *attachTex)
 {
-	_attachments[attachTex->getAttachment()] = attachTex;
+	_attachments[attachment] = attachTex;
 	_needRefresh = true;
 }
 

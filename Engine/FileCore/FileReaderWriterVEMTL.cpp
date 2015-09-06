@@ -150,22 +150,11 @@ private:
 			if (texVal.HasMember(NAME_KEY.c_str())) {
 				name = texVal[NAME_KEY.c_str()].GetString();
 			}
-			veTexture *texture = nullptr;
-			if (source.find_last_of(".") != std::string::npos) {
-				texture = veTextureManager::instance()->getOrCreateTexture(source, [=](const std::string &sc) -> veTexture* {
-					veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_fileFolder + sc));
-					veTexture *tex = new veTexture2D(image);
-					return tex;
-				});
-			}
-			else if (source.find_last_of(":") != std::string::npos) {
-				texture = veTextureManager::instance()->getOrCreateTexture(source, [=](const std::string &sc) -> veTexture* {
-					veTexture *tex = new veTexture2D;
-					return tex;
-				});
-			}
-
+			veTexture *texture = veTextureManager::instance()->getOrCreateTexture(source, veTexture::TEXTURE_2D);
+			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_fileFolder + source));
 			if (!texture) return;
+			if (image)
+				texture->setImage(image);
 			texture->setName(name);
 			std::string wrap = texVal[WRAP_KEY.c_str()].GetString();
 			if (wrap == REPEAT_KEY) texture->setWrapMode(veTexture2D::REPEAT);
@@ -181,52 +170,46 @@ private:
 
 			pass->addTexture(texture);
 		}
-		else if (texVal.HasMember(TARGET_KEY.c_str())) {
-			std::string target = texVal[TARGET_KEY.c_str()].GetString();
-			if (target.find_last_of(":") != std::string::npos) {
-				std::string fboName = target.substr(0, target.find_last_of(":"));
-				std::string attachName = target.substr(target.find_last_of(":") + 1);
-				veTexture *texture = veTextureManager::instance()->getOrCreateTexture(target, [=](const std::string &sc) -> veTexture* {
-					veTexture *tex = new veTexture2D;
-					return tex;
-				});
-				texture->setAttachedName(fboName);
-				texture->setAttachment(getFrameBufferObjectAttach(attachName.c_str()));
-				texture->setSourceType(veTexture::FRAME_BUFFER_OBJECT);
-				int width = veTexture::DEFAULT_WIDTH;
-				int height = veTexture::DEFAULT_HEIGHT;
-				texture->autoWidth() = true;
-				texture->autoHeight() = true;
-				GLint internalFormat = veTexture::DEFAULT_INTERNAL_FORMAT;
-				if (texVal.HasMember(WIDTH_KEY.c_str())) {
-					width = texVal[WIDTH_KEY.c_str()].GetInt();
-					texture->autoWidth() = false;
-				}
+		//else if (texVal.HasMember(TARGET_KEY.c_str())) {
+		//	std::string target = texVal[TARGET_KEY.c_str()].GetString();
+		//	if (target.find_last_of(":") != std::string::npos) {
+		//		std::string fboName = target.substr(0, target.find_last_of(":"));
+		//		std::string attachName = target.substr(target.find_last_of(":") + 1);
+		//		veTexture *texture = veTextureManager::instance()->getOrCreateTexture(target, veTexture::TEXTURE_2D);
+		//		int width = veTexture::DEFAULT_WIDTH;
+		//		int height = veTexture::DEFAULT_HEIGHT;
+		//		texture->autoWidth() = true;
+		//		texture->autoHeight() = true;
+		//		GLint internalFormat = veTexture::DEFAULT_INTERNAL_FORMAT;
+		//		if (texVal.HasMember(WIDTH_KEY.c_str())) {
+		//			width = texVal[WIDTH_KEY.c_str()].GetInt();
+		//			texture->autoWidth() = false;
+		//		}
 
-				if (texVal.HasMember(HEIGHT_KEY.c_str())) {
-					height = texVal[HEIGHT_KEY.c_str()].GetInt();
-					texture->autoHeight() = false;
-				}
+		//		if (texVal.HasMember(HEIGHT_KEY.c_str())) {
+		//			height = texVal[HEIGHT_KEY.c_str()].GetInt();
+		//			texture->autoHeight() = false;
+		//		}
 
-				if (texVal.HasMember(FORMAT_KEY.c_str()) && texVal.HasMember(TYPE_KEY.c_str())) {
-					const char* format = texVal[FORMAT_KEY.c_str()].GetString();
-					const char* type = texVal[TYPE_KEY.c_str()].GetString();
-					if (strcmp(format, "RGB") == 0 && strcmp(type, FLOAT_KEY.c_str()) == 0) {
-						internalFormat = GL_RGB32F;
-					}
-					else if (strcmp(format, "RGBA") == 0 && strcmp(type, FLOAT_KEY.c_str()) == 0) {
-						internalFormat = GL_RGBA32F;
-					}
-					else if (strcmp(format, "RGB") == 0 && strcmp(type, BYTE_KEY.c_str()) == 0) {
-						internalFormat = GL_RGB8;
-					}
-					else if (strcmp(format, "RGBA") == 0 && strcmp(type, BYTE_KEY.c_str()) == 0) {
-						internalFormat = GL_RGBA8;
-					}
-				}
-				texture->storage(internalFormat, width, height);
-			}
-		}
+		//		if (texVal.HasMember(FORMAT_KEY.c_str()) && texVal.HasMember(TYPE_KEY.c_str())) {
+		//			const char* format = texVal[FORMAT_KEY.c_str()].GetString();
+		//			const char* type = texVal[TYPE_KEY.c_str()].GetString();
+		//			if (strcmp(format, "RGB") == 0 && strcmp(type, FLOAT_KEY.c_str()) == 0) {
+		//				internalFormat = GL_RGB32F;
+		//			}
+		//			else if (strcmp(format, "RGBA") == 0 && strcmp(type, FLOAT_KEY.c_str()) == 0) {
+		//				internalFormat = GL_RGBA32F;
+		//			}
+		//			else if (strcmp(format, "RGB") == 0 && strcmp(type, BYTE_KEY.c_str()) == 0) {
+		//				internalFormat = GL_RGB8;
+		//			}
+		//			else if (strcmp(format, "RGBA") == 0 && strcmp(type, BYTE_KEY.c_str()) == 0) {
+		//				internalFormat = GL_RGBA8;
+		//			}
+		//		}
+		//		texture->storage(internalFormat, width, height);
+		//	}
+		//}
 	}
 
 	GLenum getFrameBufferObjectAttach(const char* str) {

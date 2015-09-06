@@ -1,5 +1,6 @@
 #include "Node.h"
 #include "Visualiser.h"
+#include "NodeVisitor.h"
 
 veNode::veNode()
 	: USE_VE_PTR_INIT
@@ -180,4 +181,24 @@ void veNode::render(veCamera *camera)
 			}
 		}
 	}
+}
+
+void veNode::accept(veNodeVisitor &visitor)
+{
+	visit(visitor);
+	if (visitor.traversalMode() == veNodeVisitor::TRAVERSE_CHILDREN) {
+		for (auto &iter : _children) {
+			iter->accept(visitor);
+		}
+	}
+	else if (visitor.traversalMode() == veNodeVisitor::TRAVERSE_PARENT) {
+		if (_parent) {
+			_parent->accept(visitor);
+		}
+	}
+}
+
+void veNode::visit(veNodeVisitor &visitor)
+{
+	visitor.visit(*this);
 }

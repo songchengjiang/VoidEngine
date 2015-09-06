@@ -20,6 +20,7 @@
     <ClCompile Include="BaseCore\Vector4.cpp" />
     <ClCompile Include="FileCore\File.cpp" />
     <ClCompile Include="FileCore\FileReaderWriter.cpp" />
+    <ClCompile Include="FileCore\FileReaderWriterCAMERA.cpp" />
     <ClCompile Include="FileCore\FileReaderWriterEXR.cpp" />
     <ClCompile Include="FileCore\FileReaderWriterJPEG.cpp" />
     <ClCompile Include="FileCore\FileReaderWriterPNG.cpp" />

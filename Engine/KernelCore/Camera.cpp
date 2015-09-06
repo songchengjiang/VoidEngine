@@ -1,6 +1,6 @@
 #include "Camera.h"
 #include "Visualiser.h"
-#include "Node.h"
+#include "NodeVisitor.h"
 
 veCamera::veCamera()
 	:_viewMat(veMat4::IDENTITY)
@@ -59,15 +59,18 @@ void veCamera::setViewMatrixAslookAt(const veVec3 &eye, const veVec3 &center, co
 	veVec3 u = f.crossProduct(s);
 	if (f.isZeroLength() || s.isZeroLength() || u.isZeroLength()) return;
 
-	setMatrix(veMat4(s.x(), u.x(), f.x(), s.dotProduct(eye)
-				   , s.y(), u.y(), f.y(), u.dotProduct(eye)
-				   , s.z(), u.z(), f.z(), f.dotProduct(eye)
-				   , 0.0f, 0.0f, 0.0f, 1.0f));
+	float sdote = s.dotProduct(eye);
+	float udote = u.dotProduct(eye);
+	float fdote = f.dotProduct(eye);
+	setMatrix(veMat4(s.x(), u.x(), f.x(), s.x() * sdote + u.x() * udote + f.x() * fdote
+		, s.y(), u.y(), f.y(), s.y() * sdote + u.y() * udote + f.y() * fdote
+		, s.z(), u.z(), f.z(), s.z() * sdote + u.z() * udote + f.z() * fdote
+		, 0.0f, 0.0f, 0.0f, 1.0f));
 
 	//_viewMat.set(s.x(), s.y(), s.z(), -s.dotProduct(eye)
-	//	       , u.x(), u.y(), u.z(), -u.dotProduct(eye)
-	//	       , f.x(), f.y(), f.z(), -f.dotProduct(eye)
-	//	       , 0.0f , 0.0f , 0.0f , 1.0f);
+	//	, u.x(), u.y(), u.z(), -u.dotProduct(eye)
+	//	, f.x(), f.y(), f.z(), -f.dotProduct(eye)
+	//	, 0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void veCamera::setFrameBufferObject(veFrameBufferObject *fbo)
@@ -93,6 +96,7 @@ void veCamera::setMatrix(const veMat4 &mat)
 
 void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 {
+	if (renderList.empty()) return;
 	if (_fbo.valid()) {
 		_fbo->bind(_clearMask);
 	}
@@ -115,4 +119,9 @@ void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 	if (_fbo.valid()) {
 		_fbo->unBind();
 	}
+}
+
+void veCamera::visit(veNodeVisitor &visitor)
+{
+	visitor.visit(*this);
 }
