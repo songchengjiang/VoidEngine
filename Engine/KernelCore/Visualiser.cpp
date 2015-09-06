@@ -117,9 +117,11 @@ void veVisualiser::update()
 
 void veVisualiser::render()
 {
+	//glClear(_clearMask);
 	veRenderQueue::CURRENT_RENDER_QUEUE = &_renderQueue;
 	for (auto &iter : _cameras) {
-		_root->render(iter.get());
+		if (iter->getFrameBufferObject())
+			_root->render(iter.get());
 	}
 	_root->render(_mainCamera.get());
 	_renderQueue.execute();

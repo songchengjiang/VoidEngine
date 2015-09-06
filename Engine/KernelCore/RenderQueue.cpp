@@ -27,4 +27,5 @@ void veRenderQueue::execute()
 	for (auto &iter : _renderQueues) {
 		iter.first->render(iter.second);
 	}
+	_renderQueues.clear();
 }

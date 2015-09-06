@@ -91,6 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseTest.h" />
+    <ClInclude Include="CameraTest.h" />
     <ClInclude Include="ImageTest.h" />
     <ClInclude Include="MeshTest.h" />
     <ClInclude Include="RenToTex.h" />

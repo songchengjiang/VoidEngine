@@ -13,6 +13,9 @@
     <Filter Include="RenToTexTest">
       <UniqueIdentifier>{0355b76f-86c1-473a-a91f-66b7f0df2173}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CameraTest">
+      <UniqueIdentifier>{023da00b-f9a4-4d83-a376-16f077c16959}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeshTest.h">
@@ -24,6 +27,9 @@
     </ClInclude>
     <ClInclude Include="RenToTex.h">
       <Filter>RenToTexTest</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraTest.h">
+      <Filter>CameraTest</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
