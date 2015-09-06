@@ -7,9 +7,9 @@
 class VE_EXPORT veDirector
 {
 public:
-	static veDirector DIRECTOR;
 	~veDirector();
 
+	static veDirector* instance();
 	veVisualiser* createVisualiser(int w, int h, const std::string &title);
 
 	bool run();

@@ -1,8 +1,6 @@
 #include "Director.h"
 #include "EventDispatcher.h"
 
-veDirector veDirector::DIRECTOR;
-
 veDirector::veDirector()
 	: _isRunning(false)
 {
@@ -13,6 +11,12 @@ veDirector::veDirector()
 veDirector::~veDirector()
 {
 	glfwTerminate();
+}
+
+veDirector* veDirector::instance()
+{
+	static veDirector director;
+	return &director;
 }
 
 veVisualiser* veDirector::createVisualiser(int w, int h, const std::string &title)

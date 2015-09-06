@@ -59,10 +59,6 @@ public:
 	};
 	~ImageTest() {};
 
-	int run() {
-		return veDirector::DIRECTOR.run();
-	}
-
 protected:
 
 
