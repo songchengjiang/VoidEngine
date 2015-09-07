@@ -10,6 +10,25 @@
 struct veRenderCommand;
 class veRenderer;
 class veFrameBufferObject;
+
+struct VE_EXPORT veBlendFunc
+{
+	static veBlendFunc DISABLE;
+	static veBlendFunc ADDITIVE;
+	static veBlendFunc ALPHA;
+
+	GLenum src;
+	GLenum dst;
+
+	inline bool operator == (const veBlendFunc& rkbf) const {
+		return (src == rkbf.src && dst == rkbf.dst);
+	}
+
+	inline bool operator != (const veBlendFunc& rkbf) const {
+		return (src != rkbf.src || dst != rkbf.dst);
+	}
+};
+
 class VE_EXPORT vePass
 {
 	friend class veUniform;
@@ -32,6 +51,9 @@ public:
 
 	const bool& cullFace() const{ return _cullFace; }
 	bool& cullFace(){ return _cullFace; }
+
+	const veBlendFunc& blendFunc() const { return _blendFunc; }
+	veBlendFunc& blendFunc() { return _blendFunc; }
 
 	const unsigned int& drawMask() const { return _mask; }
 	unsigned int& drawMask() { return _mask; }
@@ -57,6 +79,7 @@ private:
 	bool _depthTest;
 	bool _depthWirte;
 	bool _cullFace;
+	veBlendFunc _blendFunc;
 	unsigned int _mask;
 	GLenum _polygonMode;
 	GLuint _program;

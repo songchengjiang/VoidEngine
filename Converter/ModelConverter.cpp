@@ -326,12 +326,17 @@ void ModelConverter::writePass(const aiMaterial *mat)
 {
 	int val = 0;
 	_matWriter.StartObject();
-	_matWriter.String(DEPTHTEST_KEY.c_str(), DEPTHTEST_KEY.size()); _matWriter.Bool(true);
-	_matWriter.String(DEPTHWRITE_KEY.c_str(), DEPTHWRITE_KEY.size()); _matWriter.Bool(true);
-	_matWriter.String(CULLFACE_KEY.c_str(), CULLFACE_KEY.size()); _matWriter.Bool(true);
+	writeRenderState(mat);
 	writeShaders(mat);
 	writeTextures(mat);
 	_matWriter.EndObject();
+}
+
+void ModelConverter::writeRenderState(const aiMaterial *mat)
+{
+	_matWriter.String(DEPTHTEST_KEY.c_str(), DEPTHTEST_KEY.size()); _matWriter.Bool(true);
+	_matWriter.String(DEPTHWRITE_KEY.c_str(), DEPTHWRITE_KEY.size()); _matWriter.Bool(true);
+	_matWriter.String(CULLFACE_KEY.c_str(), CULLFACE_KEY.size()); _matWriter.Bool(true);
 }
 
 void ModelConverter::writeShaders(const aiMaterial *mat)

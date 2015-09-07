@@ -66,15 +66,7 @@ private:
 
 	void readPass(const Value &passVal, veTechnique *tecnique){
 		vePass *pass = new vePass;
-		if (passVal.HasMember(DEPTHTEST_KEY.c_str()))
-			pass->depthTest() = passVal[DEPTHTEST_KEY.c_str()].GetBool();
-		if (passVal.HasMember(DEPTHWRITE_KEY.c_str()))
-			pass->depthWrite() = passVal[DEPTHWRITE_KEY.c_str()].GetBool();
-		if (passVal.HasMember(CULLFACE_KEY.c_str()))
-			pass->cullFace() = passVal[CULLFACE_KEY.c_str()].GetBool();
-		if (passVal.HasMember(DRAWMASK_KEY.c_str()))
-			pass->drawMask() = passVal[DRAWMASK_KEY.c_str()].GetUint();
-
+		readRenderState(passVal, pass);
 		if (passVal.HasMember(SHADERS_KEY.c_str())){
 			const Value &shaders = passVal[SHADERS_KEY.c_str()];
 			for (unsigned int i = 0; i < shaders.Size(); ++i){
@@ -90,6 +82,24 @@ private:
 		}
 
 		tecnique->addPass(pass);
+	}
+
+	void readRenderState(const Value &passVal, vePass *pass) {
+		if (passVal.HasMember(DEPTHTEST_KEY.c_str()))
+			pass->depthTest() = passVal[DEPTHTEST_KEY.c_str()].GetBool();
+		if (passVal.HasMember(DEPTHWRITE_KEY.c_str()))
+			pass->depthWrite() = passVal[DEPTHWRITE_KEY.c_str()].GetBool();
+		if (passVal.HasMember(CULLFACE_KEY.c_str()))
+			pass->cullFace() = passVal[CULLFACE_KEY.c_str()].GetBool();
+		if (passVal.HasMember(DRAWMASK_KEY.c_str()))
+			pass->drawMask() = passVal[DRAWMASK_KEY.c_str()].GetUint();
+		if (passVal.HasMember(BLENDFUNC_KEY.c_str())) {
+			const Value &bfVal = passVal[BLENDFUNC_KEY.c_str()];
+			if (bfVal.Size() == 2) {
+				pass->blendFunc().src = getBlendFuncParam(bfVal[0].GetString());
+				pass->blendFunc().dst = getBlendFuncParam(bfVal[1].GetString());
+			}
+		}
 	}
 
 	void readShader(const Value &shaderVal, vePass *pass){
@@ -221,6 +231,40 @@ private:
 		}
 		else if (strcmp(STENCIAL_KEY.c_str(), str) == 0) {
 			return GL_STENCIL_ATTACHMENT;
+		}
+		return 0;
+	}
+
+	GLenum getBlendFuncParam(const char* str) {
+		if (strncmp(ONE_KEY.c_str(), str, ONE_KEY.size()) == 0) {
+			return GL_ONE;
+		}
+		else if (strncmp(ZERO_KEY.c_str(), str, ZERO_KEY.size()) == 0) {
+			return GL_ZERO;
+		}
+		else if (strncmp(SRC_COLOR_KEY.c_str(), str, SRC_COLOR_KEY.size()) == 0) {
+			return GL_SRC_COLOR;
+		}
+		else if (strncmp(ONE_MINUS_SRC_COLOR_KEY.c_str(), str, ONE_MINUS_SRC_COLOR_KEY.size()) == 0) {
+			return GL_ONE_MINUS_SRC_COLOR;
+		}
+		else if (strncmp(SRC_ALPHA_KEY.c_str(), str, SRC_ALPHA_KEY.size()) == 0) {
+			return GL_SRC_ALPHA;
+		}
+		else if (strncmp(ONE_MINUS_SRC_ALPHA_KEY.c_str(), str, ONE_MINUS_SRC_ALPHA_KEY.size()) == 0) {
+			return GL_ONE_MINUS_SRC_ALPHA;
+		}
+		else if (strncmp(DST_ALPHA_KEY.c_str(), str, DST_ALPHA_KEY.size()) == 0) {
+			return GL_DST_ALPHA;
+		}
+		else if (strncmp(ONE_MINUS_DST_ALPHA_KEY.c_str(), str, ONE_MINUS_DST_ALPHA_KEY.size()) == 0) {
+			return GL_ONE_MINUS_DST_ALPHA;
+		}
+		else if (strncmp(DST_COLOR_KEY.c_str(), str, DST_COLOR_KEY.size()) == 0) {
+			return GL_DST_COLOR;
+		}
+		else if (strncmp(ONE_MINUS_DST_COLOR_KEY.c_str(), str, ONE_MINUS_DST_COLOR_KEY.size()) == 0) {
+			return GL_ONE_MINUS_DST_COLOR;
 		}
 		return 0;
 	}

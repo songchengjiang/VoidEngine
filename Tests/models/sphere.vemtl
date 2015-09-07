@@ -12,6 +12,7 @@
                             "depthTest": true,
                             "depthWrite": true,
                             "cullFace": true,
+                            "blendFunc": ["ONE", "ONE_MINUS_SRC_ALPHA"],
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",

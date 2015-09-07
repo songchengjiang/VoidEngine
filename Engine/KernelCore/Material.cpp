@@ -2,6 +2,10 @@
 #include "FrameBufferObject.h"
 #include "Visualiser.h"
 
+veBlendFunc veBlendFunc::DISABLE = { GL_ONE, GL_ZERO };
+veBlendFunc veBlendFunc::ADDITIVE = { GL_SRC_ALPHA, GL_ONE };
+veBlendFunc veBlendFunc::ALPHA = { GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA };
+
 vePass* vePass::CURRENT_PASS = nullptr;
 
 vePass::vePass()
@@ -9,6 +13,7 @@ vePass::vePass()
 	, _depthTest(true)
 	, _depthWirte(true)
 	, _cullFace(true)
+	, _blendFunc(veBlendFunc::DISABLE)
 	, _polygonMode(GL_FILL)
 	, _program(0)
 	, _mask(0xffffffff)
@@ -42,6 +47,13 @@ void vePass::apply(const veRenderCommand &command)
 	_depthWirte ? glDepthMask(GL_TRUE) : glDepthMask(GL_FALSE);
 	_cullFace ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
 	glPolygonMode(GL_FRONT_AND_BACK, _polygonMode);
+	if (_blendFunc != veBlendFunc::DISABLE) {
+		glEnable(GL_BLEND);
+		glBlendFunc(_blendFunc.src, _blendFunc.dst);
+	}
+	else {
+		glDisable(GL_BLEND);
+	}
 }
 
 void vePass::setShader(veShader *shader)
