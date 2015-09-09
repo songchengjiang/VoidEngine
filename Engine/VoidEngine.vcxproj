@@ -27,6 +27,7 @@
     <ClCompile Include="FileCore\FileReaderWriterVEM.cpp" />
     <ClCompile Include="FileCore\FileReaderWriterVEMTL.cpp" />
     <ClCompile Include="FileCore\Printer.cpp" />
+    <ClCompile Include="KernelCore\Bone.cpp" />
     <ClCompile Include="KernelCore\Camera.cpp" />
     <ClCompile Include="KernelCore\Component.cpp" />
     <ClCompile Include="KernelCore\Director.cpp" />
@@ -34,6 +35,7 @@
     <ClCompile Include="KernelCore\FrameBufferObject.cpp" />
     <ClCompile Include="KernelCore\Image.cpp" />
     <ClCompile Include="KernelCore\Inputer.cpp" />
+    <ClCompile Include="KernelCore\Light.cpp" />
     <ClCompile Include="KernelCore\Material.cpp" />
     <ClCompile Include="KernelCore\Mesh.cpp" />
     <ClCompile Include="KernelCore\MeshRenderer.cpp" />
@@ -64,6 +66,7 @@
     <ClInclude Include="FileCore\File.h" />
     <ClInclude Include="FileCore\FileReaderWriter.h" />
     <ClInclude Include="FileCore\Printer.h" />
+    <ClInclude Include="KernelCore\Bone.h" />
     <ClInclude Include="KernelCore\Camera.h" />
     <ClInclude Include="KernelCore\Component.h" />
     <ClInclude Include="KernelCore\Director.h" />
@@ -73,6 +76,7 @@
     <ClInclude Include="KernelCore\IDGenerator.h" />
     <ClInclude Include="KernelCore\Image.h" />
     <ClInclude Include="KernelCore\Inputer.h" />
+    <ClInclude Include="KernelCore\Light.h" />
     <ClInclude Include="KernelCore\LoopQueue.h" />
     <ClInclude Include="KernelCore\Material.h" />
     <ClInclude Include="KernelCore\Mesh.h" />

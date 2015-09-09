@@ -63,12 +63,12 @@ private:
 	}
 
 	bool getFormat(jpeg_decompress_struct &cinfo, GLint &internalFormat, GLenum &pixelFormat){
-		if (cinfo.num_components == 1 && cinfo.jpeg_color_space == JCS_GRAYSCALE){
+		if (cinfo.num_components == 1){
 			internalFormat = GL_LUMINANCE8;
 			pixelFormat = GL_LUMINANCE;
 			return true;
 		}
-		else if (cinfo.num_components == 3 && cinfo.jpeg_color_space == JCS_RGB){
+		else if (cinfo.num_components == 3){
 			internalFormat = GL_RGB8;
 			pixelFormat = GL_RGB;
 			return true;

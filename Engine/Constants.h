@@ -17,6 +17,13 @@ static const std::string TYPE_KEY = "type";
 static const std::string INDICES_KEY = "indices";
 static const std::string SKELETON_KEY = "skeleton";
 static const std::string TRANSFORM_KEY = "transform";
+static const std::string ANIMATIONS_KEY = "animations";
+static const std::string DURATION_KEY = "duration";
+static const std::string POSITIONS_KEY = "positions";
+static const std::string ROTATIONS_KEY = "rotations";
+static const std::string SCALES_KEY = "scales";
+static const std::string BONES_KEY = "bones";
+static const std::string WEIGHTS_KEY = "weights";
 
 static const std::string TECHNIQUES_KEY = "techniques";
 static const std::string PASSES_KEY = "passes";

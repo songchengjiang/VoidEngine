@@ -58,6 +58,10 @@ public:
 		return _buffer;
 	}
 
+	TYPE* buffer() {
+		return _buffer;
+	}
+
 	size_t size() const{
 		return _end;
 	}

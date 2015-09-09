@@ -26,6 +26,7 @@ private:
 	void writeMeshAttributes(const aiMesh *mesh);
 	void writeMeshVertices(const aiMesh *mesh);
 	void writeMeshPairs(const aiMesh *mesh);
+	void writeMeshBones(const aiMesh *mesh);
 	void writeNode(const aiNode *node);
 
 	void writeMaterials(const aiScene *scene);
@@ -39,6 +40,9 @@ private:
 	void writeTextures(const aiMaterial *mat);
 	void writeTexture(const aiMaterial *mat, aiTextureType texType);
 
+	void writeAnimation(const aiAnimation *animation);
+	void writeNodeAnim(const aiNodeAnim *nodeAnim);
+
 	void generateMeshNames(const aiScene *scene);
 	void generateMaterialNames(const aiScene *scene);
 	std::string getShaderName(int shaderMode);
@@ -50,6 +54,7 @@ private:
 	static void writeVec4(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiColor4D *col);
 	static void wirteVec3(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiVector3D *vec3);
 	static void wirteVec2(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiVector2D *vec2);
+	static void writeMat4(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiMatrix4x4 *mat4);
 	static bool hasTexture(const aiMaterial *mat, aiTextureType texType);
 
 private:

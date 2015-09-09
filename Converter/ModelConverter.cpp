@@ -85,6 +85,15 @@ void ModelConverter::writeModel(const aiScene *scene)
 	writeNode(scene->mRootNode);
 	_modelWriter.EndArray();
 
+	if (scene->HasAnimations()) {
+		_modelWriter.String(ANIMATIONS_KEY.c_str(), ANIMATIONS_KEY.size());
+		_modelWriter.StartArray();
+		for (unsigned int i = 0; i < scene->mNumAnimations; ++i) {
+			writeAnimation(scene->mAnimations[i]);
+		}
+		_modelWriter.EndArray();
+	}
+
 	_modelWriter.EndObject();
 }
 
@@ -108,6 +117,13 @@ void ModelConverter::writeMesh(const aiMesh *mesh, const std::string &name)
 	_modelWriter.StartArray();
 	writeMeshPairs(mesh);
 	_modelWriter.EndArray();
+
+	if (mesh->HasBones()) {
+		_modelWriter.String(BONES_KEY.c_str(), BONES_KEY.size());
+		_modelWriter.StartArray();
+		writeMeshBones(mesh);
+		_modelWriter.EndArray();
+	}
 
 	_modelWriter.EndObject();
 }
@@ -251,6 +267,28 @@ void ModelConverter::writeMeshPairs(const aiMesh *mesh)
 	_modelWriter.EndObject();
 }
 
+void ModelConverter::writeMeshBones(const aiMesh *mesh)
+{
+	for (unsigned int i = 0; i < mesh->mNumBones; ++i) {
+		_modelWriter.StartObject();
+		auto &bone = mesh->mBones[i];
+		_modelWriter.String(NAME_KEY.c_str(), NAME_KEY.size()); _modelWriter.String(bone->mName.C_Str(), bone->mName.length);
+		_modelWriter.String(TRANSFORM_KEY.c_str(), TRANSFORM_KEY.size());
+		writeMat4(_modelWriter, &bone->mOffsetMatrix);
+		_modelWriter.String(WEIGHTS_KEY.c_str(), WEIGHTS_KEY.size());
+		_modelWriter.StartArray();
+		for (unsigned int w = 0; w < bone->mNumWeights; ++w) {
+			auto &wt = bone->mWeights[w];
+			_modelbuffer.Put('\n');
+			_modelWriter.WriteIndent();
+			_modelWriter.Uint(wt.mVertexId);
+			_modelWriter.Float(wt.mWeight);
+		}
+		_modelWriter.EndArray();
+		_modelWriter.EndObject();
+	}
+}
+
 void ModelConverter::writeNode(const aiNode *node)
 {
 	_modelWriter.StartObject();
@@ -258,12 +296,7 @@ void ModelConverter::writeNode(const aiNode *node)
 	_modelWriter.String(NAME_KEY.c_str(), NAME_KEY.size()); _modelWriter.String(node->mName.C_Str(), node->mName.length);
 
 	_modelWriter.String(TRANSFORM_KEY.c_str(), TRANSFORM_KEY.size());
-	_modelWriter.StartArray();
-	_modelWriter.Float(node->mTransformation.a1); _modelWriter.Float(node->mTransformation.b1); _modelWriter.Float(node->mTransformation.c1); _modelWriter.Float(node->mTransformation.d1);
-	_modelWriter.Float(node->mTransformation.a2); _modelWriter.Float(node->mTransformation.b2); _modelWriter.Float(node->mTransformation.c2); _modelWriter.Float(node->mTransformation.d2);
-	_modelWriter.Float(node->mTransformation.a3); _modelWriter.Float(node->mTransformation.b3); _modelWriter.Float(node->mTransformation.c3); _modelWriter.Float(node->mTransformation.d3);
-	_modelWriter.Float(node->mTransformation.a4); _modelWriter.Float(node->mTransformation.b4); _modelWriter.Float(node->mTransformation.c4); _modelWriter.Float(node->mTransformation.d4);
-	_modelWriter.EndArray();
+	writeMat4(_modelWriter, &node->mTransformation);
 
 	if (node->mNumMeshes){
 		_modelWriter.String(MESHES_KEY.c_str(), MESHES_KEY.size());
@@ -529,6 +562,57 @@ void ModelConverter::writeTexture(const aiMaterial *mat, aiTextureType texType)
 	}
 }
 
+void ModelConverter::writeAnimation(const aiAnimation *animation)
+{
+	_modelWriter.StartObject();
+	_modelWriter.String(DURATION_KEY.c_str(), DURATION_KEY.size()); _modelWriter.Double(animation->mDuration);
+	_modelWriter.String(NODES_KEY.c_str(), NODES_KEY.size());
+	_modelWriter.StartArray();
+	for (unsigned int i = 0; i < animation->mNumChannels; ++i) {
+		writeNodeAnim(animation->mChannels[i]);
+	}
+	_modelWriter.EndArray();
+	_modelWriter.EndObject();
+}
+
+void ModelConverter::writeNodeAnim(const aiNodeAnim *nodeAnim)
+{
+	_modelWriter.StartObject();
+	_modelWriter.String(NAME_KEY.c_str(), NAME_KEY.size()); _modelWriter.String(nodeAnim->mNodeName.C_Str(), nodeAnim->mNodeName.length);
+
+	_modelWriter.String(POSITIONS_KEY.c_str(), POSITIONS_KEY.size());
+	_modelWriter.StartArray();
+	for (unsigned int i = 0; i < nodeAnim->mNumPositionKeys; ++i) {
+		auto positions = nodeAnim->mPositionKeys[i];
+		_modelbuffer.Put('\n');
+		_modelWriter.WriteIndent();
+		_modelWriter.Float(positions.mTime); _modelWriter.Float(positions.mValue.x); _modelWriter.Float(positions.mValue.y); _modelWriter.Float(positions.mValue.z);
+	}
+	_modelWriter.EndArray();
+
+	_modelWriter.String(ROTATIONS_KEY.c_str(), ROTATIONS_KEY.size());
+	_modelWriter.StartArray();
+	for (unsigned int i = 0; i < nodeAnim->mNumRotationKeys; ++i) {
+		auto rotations = nodeAnim->mRotationKeys[i];
+		_modelbuffer.Put('\n');
+		_modelWriter.WriteIndent();
+		_modelWriter.Float(rotations.mTime); _modelWriter.Float(rotations.mValue.w); _modelWriter.Float(rotations.mValue.x); _modelWriter.Float(rotations.mValue.y); _modelWriter.Float(rotations.mValue.z);
+	}
+	_modelWriter.EndArray();
+
+	_modelWriter.String(SCALES_KEY.c_str(), SCALES_KEY.size());
+	_modelWriter.StartArray();
+	for (unsigned int i = 0; i < nodeAnim->mNumScalingKeys; ++i) {
+		auto scales = nodeAnim->mScalingKeys[i];
+		_modelbuffer.Put('\n');
+		_modelWriter.WriteIndent();
+		_modelWriter.Float(scales.mTime);  _modelWriter.Float(scales.mValue.x); _modelWriter.Float(scales.mValue.y); _modelWriter.Float(scales.mValue.z);
+	}
+	_modelWriter.EndArray();
+
+	_modelWriter.EndObject();
+}
+
 void ModelConverter::writeVec4(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiColor4D *col)
 {
 	writer.StartArray();
@@ -547,6 +631,16 @@ void ModelConverter::wirteVec2(PrettyWriterExt<rapidjson::StringBuffer> &writer,
 {
 	writer.StartArray();
 	writer.Float(vec2->x); writer.Float(vec2->y);
+	writer.EndArray();
+}
+
+void ModelConverter::writeMat4(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiMatrix4x4 *mat4)
+{
+	writer.StartArray();
+	writer.Float(mat4->a1); writer.Float(mat4->b1); writer.Float(mat4->c1); writer.Float(mat4->d1);
+	writer.Float(mat4->a2); writer.Float(mat4->b2); writer.Float(mat4->c2); writer.Float(mat4->d2);
+	writer.Float(mat4->a3); writer.Float(mat4->b3); writer.Float(mat4->c3); writer.Float(mat4->d3);
+	writer.Float(mat4->a4); writer.Float(mat4->b4); writer.Float(mat4->c4); writer.Float(mat4->d4);
 	writer.EndArray();
 }
 

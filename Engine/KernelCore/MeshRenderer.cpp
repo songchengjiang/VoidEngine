@@ -8,6 +8,7 @@
 veMeshRenderer::veMeshRenderer()
 	: _vao(0)
 	, _vbo(0)
+	, _drawUsage(GL_STATIC_DRAW)
 {
 }
 
@@ -20,6 +21,7 @@ void veMeshRenderer::render(veNode *node, veRenderableObject *renderableObj, veC
 {
 	if (_technique) {
 		veMesh *mesh = static_cast<veMesh *>(renderableObj);
+		if (mesh->getBoneNum()) _drawUsage = GL_DYNAMIC_DRAW;
 		for (unsigned int i = 0; i < _technique->getPassNum(); ++i) {
 			auto pass = _technique->getPass(i);
 			if (camera->getMask() & pass->drawMask()) {
@@ -51,16 +53,9 @@ void veMeshRenderer::draw(const veRenderCommand &command)
 	if (mesh->needRefresh()) {
 		glBindBuffer(GL_ARRAY_BUFFER, _vbo);
 		if (!mesh->getVertexArray()->empty())
-			glBufferData(GL_ARRAY_BUFFER, mesh->getVertexArray()->size() * sizeof((*mesh->getVertexArray())[0]), mesh->getVertexArray()->buffer(), GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, mesh->getVertexArray()->size() * sizeof((*mesh->getVertexArray())[0]), mesh->getVertexArray()->buffer(), _drawUsage);
 
-		GLsizei stride = 0;
-		for (unsigned int i = 0; i < mesh->getVertexAtrributeNum(); ++i) {
-			auto attri = mesh->getVertexAtrribute(i);
-			if (attri.valueType == veMesh::VertexAtrribute::FLOAT) stride += sizeof(GLfloat) * attri.valueNum;
-			else if (attri.valueType == veMesh::VertexAtrribute::UINT) stride += sizeof(GLuint) * attri.valueNum;
-			else if (attri.valueType == veMesh::VertexAtrribute::USHORT) stride += sizeof(GLushort) * attri.valueNum;
-		}
-
+		GLsizei stride = mesh->getVertexStride();
 		GLsizei offset = 0;
 		for (unsigned int i = 0; i < mesh->getVertexAtrributeNum(); ++i) {
 			auto attri = mesh->getVertexAtrribute(i);
@@ -90,8 +85,37 @@ void veMeshRenderer::draw(const veRenderCommand &command)
 		mesh->needRefresh() = false;
 	}
 
+	if (mesh->getBoneNum())
+		updateBones(mesh);
+
 	for (unsigned int i = 0; i < mesh->getPrimitiveNum(); ++i) {
 		auto primitive = mesh->getPrimitive(i);
 		glDrawElements(primitive.primitiveType, primitive.indices->size(), GL_UNSIGNED_INT, nullptr);
 	}
+}
+
+void veMeshRenderer::updateBones(veMesh *mesh)
+{
+	unsigned char *ary = (unsigned char *)mesh->getVertexArray()->buffer();
+	unsigned char *buf = (unsigned char *)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+
+	//for (unsigned int i = 0; i < mesh->getBoneNum(); ++i) {
+	//	const auto &bone = mesh->getBone(i);
+	//	for (auto &iter : bone->getWeights()) {
+	//		veReal *vertex = (veReal *)(buf + iter.first * mesh->getVertexStride());
+	//		memset(vertex, 0, 3 * sizeof(veReal));
+	//	}
+	//}
+
+	for (unsigned int i = 0; i < mesh->getBoneNum(); ++i) {
+		const auto &bone = mesh->getBone(i);
+		for (auto &iter : bone->getWeights()) {
+			veVec3 *vertex = (veVec3 *)(buf + iter.first * mesh->getVertexStride());
+			veVec3 *normal = (vertex + 1);
+			veVec3 *originV = (veVec3 *)(ary + iter.first * mesh->getVertexStride());
+			veVec3 *originN = (originV + 1);
+			*vertex += bone->getOffsetMat() * (*vertex) * iter.second;
+		}
+	}
+	glUnmapBuffer(GL_ARRAY_BUFFER);
 }

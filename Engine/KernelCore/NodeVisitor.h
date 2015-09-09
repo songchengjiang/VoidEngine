@@ -4,6 +4,7 @@
 
 class veNode;
 class veCamera;
+class veLight;
 class VE_EXPORT veNodeVisitor
 {
 public:
@@ -21,6 +22,7 @@ public:
 
 	virtual void visit(veNode &node);
 	virtual void visit(veCamera &camera);
+	virtual void visit(veLight &light);
 
 protected:
 

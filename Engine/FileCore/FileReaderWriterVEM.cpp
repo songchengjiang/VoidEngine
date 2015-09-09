@@ -79,6 +79,13 @@ private:
 			}
 		}
 
+		if (meshVal.HasMember(BONES_KEY.c_str())) {
+			const Value &bones = meshVal[BONES_KEY.c_str()];
+			for (unsigned int i = 0; i < bones.Size(); ++i) {
+				readMeshBone(bones[i], mesh);
+			}
+		}
+
 		_meshList[mesh->getName()] = mesh;
 	}
 
@@ -127,6 +134,24 @@ private:
 		}
 
 		mesh->addPrimitive(primitive);
+	}
+
+	void readMeshBone(const Value &boneVal, veMesh *mesh) {
+		veBone *bone = new veBone;
+		bone->setName(boneVal[NAME_KEY.c_str()].GetString());
+		veMat4 offsetMatrix;
+		const Value &mat = boneVal[TRANSFORM_KEY.c_str()];
+		for (unsigned int i = 0; i < mat.Size(); ++i) {
+			offsetMatrix[i / 4][i % 4] = (veReal)mat[i].GetDouble();
+		}
+		bone->setOffsetMat(offsetMatrix);
+
+		const Value &weights = boneVal[WEIGHTS_KEY.c_str()];
+		for (unsigned int i = 0; i < weights.Size();) {
+			bone->setWeight((unsigned int)weights[i].GetDouble(), (float)weights[i + 1].GetDouble());
+			i += 2;
+		}
+		mesh->addBone(bone);
 	}
 
 	void readNodes(){

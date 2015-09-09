@@ -132,6 +132,12 @@
     <ClCompile Include="FileCore\FileReaderWriterCAMERA.cpp">
       <Filter>FileCore\ReaderWriter</Filter>
     </ClCompile>
+    <ClCompile Include="KernelCore\Light.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="KernelCore\Bone.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseCore\Math.h">
@@ -254,6 +260,12 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="KernelCore\TextureManager.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\Light.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\Bone.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>

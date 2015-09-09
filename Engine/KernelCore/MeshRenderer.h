@@ -15,8 +15,13 @@ public:
 
 protected:
 
+	void updateBones(veMesh *mesh);
+
+protected:
+
 	GLuint _vao;
 	GLuint _vbo;
+	GLenum _drawUsage;
 	std::vector<GLuint> _ibos;
 };
 

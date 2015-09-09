@@ -4,6 +4,7 @@
 #include "Prerequisites.h"
 #include "BaseCore/Array.h"
 #include "RenderableObject.h"
+#include "Bone.h"
 #include "VE_Ptr.h"
 
 class VE_EXPORT veMesh : public veRenderableObject
@@ -58,10 +59,11 @@ public:
 	veMesh();
 	virtual ~veMesh();
 
-	void setVertexArray(veRealArray *vAry) { _vertices = vAry; }
+	void setVertexArray(veRealArray *vAry) { _vertices = vAry; _needRefresh = true; }
 	veRealArray* getVertexArray() { return _vertices.get(); }
+	unsigned int getVertexStride();
 
-	void setVertexAtrribute(unsigned int attrIndex, const VertexAtrribute &attri) { veAssert(attrIndex < _attributes.size());  _attributes[attrIndex] = attri; }
+	void setVertexAtrribute(unsigned int attrIndex, const VertexAtrribute &attri) { veAssert(attrIndex < _attributes.size());  _attributes[attrIndex] = attri; _needRefresh = true; }
 	void addVertexAtrribute(const VertexAtrribute &attri);
 	const VertexAtrribute& getVertexAtrribute(unsigned int attrIndex) const { return _attributes[attrIndex]; }
 	unsigned int getVertexAtrributeNum() const { return _attributes.size();  };
@@ -70,6 +72,11 @@ public:
 	const Primitive& getPrimitive(unsigned int idx) const;
 	unsigned int getPrimitiveNum() const { return _primitives.size(); };
 
+	void addBone(veBone *bone);
+	veBone* getBone(unsigned int idx);
+	const veBone* getBone(unsigned int idx) const;
+	unsigned int getBoneNum() const { return _bones.size(); };
+
 	bool& needRefresh();
 
 protected:
@@ -77,6 +84,8 @@ protected:
 	VE_Ptr<veRealArray>                _vertices;
 	std::vector<VertexAtrribute>       _attributes;
 	std::vector<Primitive>             _primitives;
+	std::vector< VE_Ptr<veBone> >      _bones;
+	unsigned int                       _vertexStride;
 	bool                               _needRefresh;
 };
 
