@@ -152,6 +152,7 @@ private:
 			i += 2;
 		}
 		mesh->addBone(bone);
+		_boneList[bone->getName()] = bone;
 	}
 
 	void readNodes(){
@@ -187,6 +188,13 @@ private:
 			}
 		}
 
+		if (!_boneList.empty()) {
+			auto iter = _boneList.find(node->getName());
+			if (iter != _boneList.end()) {
+				iter->second->setBoneNode(node);
+			}
+		}
+
 		if (nodeVal.HasMember(NODES_KEY.c_str())){
 			const Value &children = nodeVal[NODES_KEY.c_str()];
 			for (unsigned int i = 0; i < children.Size(); ++i){
@@ -200,6 +208,7 @@ private:
 	veNode *_root;
 	Document _doucument;
 	std::unordered_map<std::string, veMesh *> _meshList;
+	std::unordered_map<std::string, veBone *> _boneList;
 	veMaterialArray *_materials;
 	std::string _fileFolder;
 };

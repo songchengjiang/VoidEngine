@@ -107,15 +107,15 @@ void veMeshRenderer::updateBones(veMesh *mesh)
 	//	}
 	//}
 
-	for (unsigned int i = 0; i < mesh->getBoneNum(); ++i) {
-		const auto &bone = mesh->getBone(i);
-		for (auto &iter : bone->getWeights()) {
-			veVec3 *vertex = (veVec3 *)(buf + iter.first * mesh->getVertexStride());
-			veVec3 *normal = (vertex + 1);
-			veVec3 *originV = (veVec3 *)(ary + iter.first * mesh->getVertexStride());
-			veVec3 *originN = (originV + 1);
-			*vertex += bone->getOffsetMat() * (*vertex) * iter.second;
-		}
-	}
+	//for (unsigned int i = 0; i < mesh->getBoneNum(); ++i) {
+	//	const auto &bone = mesh->getBone(i);
+	//	for (auto &iter : bone->getWeights()) {
+	//		veVec3 *vertex = (veVec3 *)(buf + iter.first * mesh->getVertexStride());
+	//		veVec3 *normal = (vertex + 1);
+	//		veVec3 *originV = (veVec3 *)(ary + iter.first * mesh->getVertexStride());
+	//		veVec3 *originN = (originV + 1);
+	//		*vertex += bone->getOffsetMat() * (*vertex) * iter.second;
+	//	}
+	//}
 	glUnmapBuffer(GL_ARRAY_BUFFER);
 }
