@@ -15,7 +15,7 @@ public:
 
 protected:
 
-	void updateBones(veMesh *mesh);
+	void updateBones(veNode *node, veMesh *mesh);
 
 protected:
 

@@ -21,6 +21,7 @@ class VE_EXPORT veMat4
 public:
 
 	static const veMat4 IDENTITY;
+	static const veMat4 ZERO;
 
 	veMat4();
 	veMat4(const veMat4 &copy);
@@ -107,6 +108,15 @@ public:
 			m[1][0] * v.x() + m[1][1] * v.y() + m[1][2] * v.z() + m[1][3] * v.w(),
 			m[2][0] * v.x() + m[2][1] * v.y() + m[2][2] * v.z() + m[2][3] * v.w(),
 			m[3][0] * v.x() + m[3][1] * v.y() + m[3][2] * v.z() + m[3][3] * v.w()
+			);
+	}
+
+	inline veMat4 operator * (const veReal& scaler) const {
+		return veMat4(
+			m[0][0] * scaler, m[0][1] * scaler, m[0][2] * scaler, m[0][3] * scaler,
+			m[1][0] * scaler, m[1][1] * scaler, m[1][2] * scaler, m[1][3] * scaler,
+			m[2][0] * scaler, m[2][1] * scaler, m[2][2] * scaler, m[2][3] * scaler,
+			m[3][0] * scaler, m[3][1] * scaler, m[3][2] * scaler, m[3][3] * scaler
 			);
 	}
 

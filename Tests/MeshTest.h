@@ -34,12 +34,13 @@ public:
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
-			transer->setPosition(veVec3(0.0f, 0.0f, -100.0f));
-			transer->setScale(veVec3(1.0f));
+			//transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
+			//transer->setScale(veVec3(1.0f));
 			//transer->setRotation(veQuat(veMath::HALF_PI, veVec3::UNIT_Y));
 			root->addChild(node);
 		}
 
+		_visualiser->getCamera()->setViewMatrixAslookAt(veVec3(0.0f, 0.0f, 50.0f), veVec3::ZERO, veVec3::UNIT_Y);
 		_visualiser->setSceneNode(root);
 	}
 	~MeshTest() {};

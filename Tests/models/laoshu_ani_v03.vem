@@ -7613,7 +7613,7 @@
     ],
     "animations": [
         {
-            "duration": 142.0,
+            "duration":142.0,
             "nodes": [
                 {
                     "name": "Bip001_$AssimpFbx$_Translation",

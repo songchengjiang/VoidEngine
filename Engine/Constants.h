@@ -114,6 +114,8 @@ static const std::string VERTEX_ATTRIB_NORMAL = "VERTEX_ATTRIB_NORMAL";
 static const std::string VERTEX_ATTRIB_TANGENT = "VERTEX_ATTRIB_TANGENT";
 static const std::string VERTEX_ATTRIB_BITANGENT = "VERTEX_ATTRIB_BITANGENT";
 static const std::string VERTEX_ATTRIB_TEX_COORD = "VERTEX_ATTRIB_TEX_COORD";
+static const std::string VERTEX_ATTRIB_BONE_INDICES = "VERTEX_ATTRIB_BONE_INDICES";
+static const std::string VERTEX_ATTRIB_BONE_WEIGHTS = "VERTEX_ATTRIB_BONE_WEIGHTS";
 static const std::string VERTEX_ATTRIB_COLOR = "VERTEX_ATTRIB_COLOR";
 
 //internal unifrom names

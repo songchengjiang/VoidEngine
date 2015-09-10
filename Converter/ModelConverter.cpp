@@ -181,12 +181,31 @@ void ModelConverter::writeMeshAttributes(const aiMesh *mesh)
 		_modelWriter.EndObject();
 	}
 
+	if (mesh->HasBones()) {
+		_modelWriter.StartObject();
+		_modelWriter.String(SIZE_KEY.c_str(), SIZE_KEY.size()); _modelWriter.Int(4);
+		_modelWriter.String(TYPE_KEY.c_str(), TYPE_KEY.size()); _modelWriter.String("FLOAT", 5);
+		_modelWriter.String(ATTRIBUTE_KEY.c_str(), ATTRIBUTE_KEY.size()); _modelWriter.String(VERTEX_ATTRIB_BONE_INDICES.c_str(), VERTEX_ATTRIB_BONE_INDICES.size());
+		_modelWriter.EndObject();
+
+		_modelWriter.StartObject();
+		_modelWriter.String(SIZE_KEY.c_str(), SIZE_KEY.size()); _modelWriter.Int(4);
+		_modelWriter.String(TYPE_KEY.c_str(), TYPE_KEY.size()); _modelWriter.String("FLOAT", 5);
+		_modelWriter.String(ATTRIBUTE_KEY.c_str(), ATTRIBUTE_KEY.size()); _modelWriter.String(VERTEX_ATTRIB_BONE_WEIGHTS.c_str(), VERTEX_ATTRIB_BONE_WEIGHTS.size());
+		_modelWriter.EndObject();
+	}
+
 }
 
 void ModelConverter::writeMeshVertices(const aiMesh *mesh)
 {
 	unsigned int uvNum = mesh->GetNumUVChannels();
 	unsigned int colNum = mesh->GetNumColorChannels();
+
+	std::vector< std::pair<aiVector4D, aiVector4D> > results;
+	if (mesh->HasBones()) {
+		collectBoneIndiecsAndBoneWeights(mesh, results);
+	}
 
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i){
 		//position
@@ -227,6 +246,20 @@ void ModelConverter::writeMeshVertices(const aiMesh *mesh)
 			_modelWriter.Float(mesh->mColors[col][i].g);
 			_modelWriter.Float(mesh->mColors[col][i].b);
 			_modelWriter.Float(mesh->mColors[col][i].a);
+		}
+
+		//boneindices and boneweights
+		if (mesh->HasBones()) {
+			auto indexAndweight = results[i];
+			_modelWriter.Float(indexAndweight.first[0]);
+			_modelWriter.Float(indexAndweight.first[1]);
+			_modelWriter.Float(indexAndweight.first[2]);
+			_modelWriter.Float(indexAndweight.first[3]);
+
+			_modelWriter.Float(indexAndweight.second[0]);
+			_modelWriter.Float(indexAndweight.second[1]);
+			_modelWriter.Float(indexAndweight.second[2]);
+			_modelWriter.Float(indexAndweight.second[3]);
 		}
 	}
 }
@@ -647,6 +680,24 @@ void ModelConverter::writeMat4(PrettyWriterExt<rapidjson::StringBuffer> &writer,
 bool ModelConverter::hasTexture(const aiMaterial *mat, aiTextureType texType)
 {
 	return 0 < mat->GetTextureCount(texType);
+}
+
+void ModelConverter::collectBoneIndiecsAndBoneWeights(const aiMesh *mesh, std::vector< std::pair<aiVector4D, aiVector4D> > &results)
+{
+	results.assign(mesh->mNumVertices, std::make_pair(aiVector4D(0.0f), aiVector4D(0.0f)));
+	unsigned int indices = 0;
+	unsigned int weights = 0;
+	for (unsigned int i = 0; i < mesh->mNumBones; ++i) {
+		const auto &bone = mesh->mBones[i];
+		for (unsigned int w = 0; w < bone->mNumWeights; ++w) {
+			const auto &weight = bone->mWeights[w];
+			auto &indicesAndweights = results[weight.mVertexId];
+			indicesAndweights.first[indices] = i;
+			indicesAndweights.second[weights] = weight.mWeight;
+		}
+		++indices;
+		++weights;
+	}
 }
 
 void ModelConverter::generateMeshNames(const aiScene *scene)

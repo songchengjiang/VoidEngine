@@ -1,6 +1,7 @@
 #ifndef _MODEL_CONVERTER_
 #define _MODEL_CONVERTER_
 #include <string>
+#include <vector>
 #include <rapidjson/include/writer.h>
 #include <rapidjson/include/stringbuffer.h>
 #include <assimp/include/scene.h>
@@ -11,6 +12,7 @@ struct aiNode;
 struct aiMesh;
 struct aiScene;
 struct aiMaterial;
+typedef aiColor4D aiVector4D;
 class ModelConverter : public Converter
 {
 public:
@@ -56,6 +58,8 @@ private:
 	static void wirteVec2(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiVector2D *vec2);
 	static void writeMat4(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiMatrix4x4 *mat4);
 	static bool hasTexture(const aiMaterial *mat, aiTextureType texType);
+
+	void collectBoneIndiecsAndBoneWeights(const aiMesh *mesh, std::vector< std::pair<aiVector4D, aiVector4D> > &results);
 
 private:
 

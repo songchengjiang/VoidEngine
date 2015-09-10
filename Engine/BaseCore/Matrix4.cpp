@@ -13,6 +13,11 @@ const veMat4 veMat4::IDENTITY = veMat4(1.0f, 0.0f, 0.0f, 0.0f
 									 , 0.0f, 0.0f, 1.0f, 0.0f
 									 , 0.0f, 0.0f, 0.0f, 1.0f);
 
+const veMat4 veMat4::ZERO = veMat4(0.0f, 0.0f, 0.0f, 0.0f
+								 , 0.0f, 0.0f, 0.0f, 0.0f
+								 , 0.0f, 0.0f, 0.0f, 0.0f
+								 , 0.0f, 0.0f, 0.0f, 0.0f);
+
 veMat4::veMat4()
 {
 

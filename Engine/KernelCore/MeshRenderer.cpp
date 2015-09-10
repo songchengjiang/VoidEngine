@@ -4,6 +4,7 @@
 #include "RenderableObject.h"
 #include "Mesh.h"
 #include "Material.h"
+#include <unordered_map>
 
 veMeshRenderer::veMeshRenderer()
 	: _vao(0)
@@ -86,7 +87,7 @@ void veMeshRenderer::draw(const veRenderCommand &command)
 	}
 
 	if (mesh->getBoneNum())
-		updateBones(mesh);
+		updateBones(command.attachedNode, mesh);
 
 	for (unsigned int i = 0; i < mesh->getPrimitiveNum(); ++i) {
 		auto primitive = mesh->getPrimitive(i);
@@ -94,28 +95,45 @@ void veMeshRenderer::draw(const veRenderCommand &command)
 	}
 }
 
-void veMeshRenderer::updateBones(veMesh *mesh)
+void veMeshRenderer::updateBones(veNode *node, veMesh *mesh)
 {
 	unsigned char *ary = (unsigned char *)mesh->getVertexArray()->buffer();
 	unsigned char *buf = (unsigned char *)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
 
+	//std::unordered_map<unsigned int, veMat4> vertexBoneMats;
+	//veMat4 worldToMesh = node->getWorldToNodeMatrix();
 	//for (unsigned int i = 0; i < mesh->getBoneNum(); ++i) {
 	//	const auto &bone = mesh->getBone(i);
+	//	veMat4 boneToWorld = bone->getBoneNode()->getNodeToWorldMatrix();
+	//	veMat4 worldmat = worldToMesh * boneToWorld * bone->getOffsetMat();
 	//	for (auto &iter : bone->getWeights()) {
-	//		veReal *vertex = (veReal *)(buf + iter.first * mesh->getVertexStride());
-	//		memset(vertex, 0, 3 * sizeof(veReal));
+	//		//veReal *vertex = (veReal *)(buf + iter.first * mesh->getVertexStride());
+	//		//memset(vertex, 0, 3 * sizeof(veReal));
+	//		auto m = vertexBoneMats.find(iter.first);
+	//		if (m == vertexBoneMats.end()) {
+	//			vertexBoneMats[iter.first] = worldmat * iter.second;
+	//		}
+	//		else {
+	//			m->second = m->second + worldmat * iter.second;
+	//		}
 	//	}
 	//}
 
-	//for (unsigned int i = 0; i < mesh->getBoneNum(); ++i) {
-	//	const auto &bone = mesh->getBone(i);
-	//	for (auto &iter : bone->getWeights()) {
-	//		veVec3 *vertex = (veVec3 *)(buf + iter.first * mesh->getVertexStride());
-	//		veVec3 *normal = (vertex + 1);
-	//		veVec3 *originV = (veVec3 *)(ary + iter.first * mesh->getVertexStride());
-	//		veVec3 *originN = (originV + 1);
-	//		*vertex += bone->getOffsetMat() * (*vertex) * iter.second;
-	//	}
+	////for (unsigned int i = 0; i < mesh->getBoneNum(); ++i) {
+	////	const auto &bone = mesh->getBone(i);
+	////	for (auto &iter : bone->getWeights()) {
+	////		veVec3 *vertex = (veVec3 *)(buf + iter.first * mesh->getVertexStride());
+	////		//veVec3 *normal = (vertex + 1);
+	////		//veVec3 *originV = (veVec3 *)(ary + iter.first * mesh->getVertexStride());
+	////		//veVec3 *originN = (originV + 1);
+	////		//*vertex = worldmat * (*originV) * iter.second;
+	////	}
+	////}
+
+	//for (auto &iter : vertexBoneMats) {
+	//	veVec3 *vertex = (veVec3 *)(buf + iter.first * mesh->getVertexStride());
+	//	veVec3 *originV = (veVec3 *)(ary + iter.first * mesh->getVertexStride());
+	//	*vertex = iter.second * (*originV);
 	//}
 	glUnmapBuffer(GL_ARRAY_BUFFER);
 }

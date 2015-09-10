@@ -18,6 +18,7 @@ public:
 		PrettyWriter(os, allocator,levelDepth){}
 
 	bool Float(float f)       { Prefix(rapidjson::kNumberType); return WriteFloat(f); }
+	bool Double(double f) { Prefix(rapidjson::kNumberType); return WriteDouble(f); }
 	bool Uint(unsigned ui)   { Prefix(rapidjson::kNumberType); return WriteUint(ui); }
 
 	void WriteIndent() { Base::WriteIndent(); };
