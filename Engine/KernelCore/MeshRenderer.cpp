@@ -4,6 +4,7 @@
 #include "RenderableObject.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "Constants.h"
 #include <unordered_map>
 
 veMeshRenderer::veMeshRenderer()
@@ -86,54 +87,28 @@ void veMeshRenderer::draw(const veRenderCommand &command)
 		mesh->needRefresh() = false;
 	}
 
-	if (mesh->getBoneNum())
-		updateBones(command.attachedNode, mesh);
-
 	for (unsigned int i = 0; i < mesh->getPrimitiveNum(); ++i) {
 		auto primitive = mesh->getPrimitive(i);
 		glDrawElements(primitive.primitiveType, primitive.indices->size(), GL_UNSIGNED_INT, nullptr);
 	}
 }
 
-void veMeshRenderer::updateBones(veNode *node, veMesh *mesh)
+void veMeshRenderer::uniformUpdate(veUniform *uniform, const veRenderCommand &command)
 {
-	unsigned char *ary = (unsigned char *)mesh->getVertexArray()->buffer();
-	unsigned char *buf = (unsigned char *)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
-
-	//std::unordered_map<unsigned int, veMat4> vertexBoneMats;
-	//veMat4 worldToMesh = node->getWorldToNodeMatrix();
-	//for (unsigned int i = 0; i < mesh->getBoneNum(); ++i) {
-	//	const auto &bone = mesh->getBone(i);
-	//	veMat4 boneToWorld = bone->getBoneNode()->getNodeToWorldMatrix();
-	//	veMat4 worldmat = worldToMesh * boneToWorld * bone->getOffsetMat();
-	//	for (auto &iter : bone->getWeights()) {
-	//		//veReal *vertex = (veReal *)(buf + iter.first * mesh->getVertexStride());
-	//		//memset(vertex, 0, 3 * sizeof(veReal));
-	//		auto m = vertexBoneMats.find(iter.first);
-	//		if (m == vertexBoneMats.end()) {
-	//			vertexBoneMats[iter.first] = worldmat * iter.second;
-	//		}
-	//		else {
-	//			m->second = m->second + worldmat * iter.second;
-	//		}
-	//	}
-	//}
-
-	////for (unsigned int i = 0; i < mesh->getBoneNum(); ++i) {
-	////	const auto &bone = mesh->getBone(i);
-	////	for (auto &iter : bone->getWeights()) {
-	////		veVec3 *vertex = (veVec3 *)(buf + iter.first * mesh->getVertexStride());
-	////		//veVec3 *normal = (vertex + 1);
-	////		//veVec3 *originV = (veVec3 *)(ary + iter.first * mesh->getVertexStride());
-	////		//veVec3 *originN = (originV + 1);
-	////		//*vertex = worldmat * (*originV) * iter.second;
-	////	}
-	////}
-
-	//for (auto &iter : vertexBoneMats) {
-	//	veVec3 *vertex = (veVec3 *)(buf + iter.first * mesh->getVertexStride());
-	//	veVec3 *originV = (veVec3 *)(ary + iter.first * mesh->getVertexStride());
-	//	*vertex = iter.second * (*originV);
-	//}
-	glUnmapBuffer(GL_ARRAY_BUFFER);
+	veRenderer::uniformUpdate(uniform, command);
+	std::string autoBinding;
+	uniform->getValue(autoBinding);
+	if (!autoBinding.empty()) {
+		if (autoBinding == BONE_MATRIXES) {
+			static veMat4 boneMates[60];
+			veMesh *mesh = static_cast<veMesh *>(command.renderableObj);
+			veMat4 worldToMesh = command.attachedNode->getWorldToNodeMatrix();
+			for (unsigned int i = 0; i < mesh->getBoneNum(); ++i) {
+				const auto &bone = mesh->getBone(i);
+				veMat4 boneToWorld = bone->getBoneNode()->getNodeToWorldMatrix();
+				boneMates[i] = worldToMesh * boneToWorld * bone->getOffsetMat();
+			}
+			uniform->setValue(boneMates, 60);
+		}
+	}
 }

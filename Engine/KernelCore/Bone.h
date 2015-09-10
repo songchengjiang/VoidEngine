@@ -17,9 +17,9 @@ public:
 	void setOffsetMat(const veMat4 &offsetMat) { _offsetMat = offsetMat; }
 	const veMat4& getOffsetMat() const { return _offsetMat; }
 
-	void setWeight(unsigned int vertexIndex, float weight);
-	float getWeight(unsigned int vertexIndex) { return _weights[vertexIndex]; };
-	const std::unordered_map<unsigned int, float>& getWeights() const { return _weights; }
+	//void setWeight(unsigned int vertexIndex, float weight);
+	//float getWeight(unsigned int vertexIndex) { return _weights[vertexIndex]; };
+	//const std::unordered_map<unsigned int, float>& getWeights() const { return _weights; }
 
 	void setBoneNode(veNode *node) { _boneNode = node; }
 	veNode* getBoneNode() { return _boneNode; }
@@ -28,7 +28,7 @@ public:
 private:
 
 	veMat4 _offsetMat;
-	std::unordered_map<unsigned int, float> _weights;
+	//std::unordered_map<unsigned int, float> _weights;
 	veNode *_boneNode;
 };
 

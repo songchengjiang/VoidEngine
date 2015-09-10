@@ -124,11 +124,13 @@ static const std::string MV_MATRIX_KEY = "u_ModelViewMat";
 static const std::string P_MATRIX_KEY = "u_ProjectMat";
 static const std::string MVP_MATRIX_KEY = "u_ModelViewProjectMat";
 static const std::string NORMAL_MATRIX_KEY = "u_NormalMat";
+static const std::string BONE_MATRIXES_KEY = "u_BoneMates";
 static const std::string M_MATRIX      = "M_MATRIX";
 static const std::string MV_MATRIX     = "MV_MATRIX";
 static const std::string P_MATRIX      = "P_MATRIX";
 static const std::string MVP_MATRIX    = "MVP_MATRIX";
 static const std::string NORMAL_MATRIX = "NORMAL_MATRIX";
+static const std::string BONE_MATRIXES = "BONE_MATRIXES";
 
 static const std::string MODEL_EXT = ".vem";
 static const std::string MATERIAL_EXT = ".vemtl";

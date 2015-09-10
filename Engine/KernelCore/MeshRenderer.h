@@ -12,10 +12,7 @@ public:
 
 	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override;
 	virtual void draw(const veRenderCommand &command) override;
-
-protected:
-
-	void updateBones(veNode *node, veMesh *mesh);
+	virtual void uniformUpdate(veUniform *uniform, const veRenderCommand &command);
 
 protected:
 

@@ -13,6 +13,7 @@ std::vector<std::string> MATERIAL_NAME_LIST;
 ModelConverter::ModelConverter()
 	: _modelWriter(_modelbuffer)
 	, _matWriter(_matBuffer)
+	, _hasBonesInfo(false)
 {
 	aiLogStream stream;
 	// get a handle to the predefined STDOUT log stream and attach
@@ -123,6 +124,7 @@ void ModelConverter::writeMesh(const aiMesh *mesh, const std::string &name)
 		_modelWriter.StartArray();
 		writeMeshBones(mesh);
 		_modelWriter.EndArray();
+		_hasBonesInfo = true;
 	}
 
 	_modelWriter.EndObject();
@@ -251,10 +253,10 @@ void ModelConverter::writeMeshVertices(const aiMesh *mesh)
 		//boneindices and boneweights
 		if (mesh->HasBones()) {
 			auto indexAndweight = results[i];
-			_modelWriter.Float(indexAndweight.first[0]);
-			_modelWriter.Float(indexAndweight.first[1]);
-			_modelWriter.Float(indexAndweight.first[2]);
-			_modelWriter.Float(indexAndweight.first[3]);
+			_modelWriter.Uint(indexAndweight.first[0]);
+			_modelWriter.Uint(indexAndweight.first[1]);
+			_modelWriter.Uint(indexAndweight.first[2]);
+			_modelWriter.Uint(indexAndweight.first[3]);
 
 			_modelWriter.Float(indexAndweight.second[0]);
 			_modelWriter.Float(indexAndweight.second[1]);
@@ -308,16 +310,16 @@ void ModelConverter::writeMeshBones(const aiMesh *mesh)
 		_modelWriter.String(NAME_KEY.c_str(), NAME_KEY.size()); _modelWriter.String(bone->mName.C_Str(), bone->mName.length);
 		_modelWriter.String(TRANSFORM_KEY.c_str(), TRANSFORM_KEY.size());
 		writeMat4(_modelWriter, &bone->mOffsetMatrix);
-		_modelWriter.String(WEIGHTS_KEY.c_str(), WEIGHTS_KEY.size());
-		_modelWriter.StartArray();
-		for (unsigned int w = 0; w < bone->mNumWeights; ++w) {
-			auto &wt = bone->mWeights[w];
-			_modelbuffer.Put('\n');
-			_modelWriter.WriteIndent();
-			_modelWriter.Uint(wt.mVertexId);
-			_modelWriter.Float(wt.mWeight);
-		}
-		_modelWriter.EndArray();
+		//_modelWriter.String(WEIGHTS_KEY.c_str(), WEIGHTS_KEY.size());
+		//_modelWriter.StartArray();
+		//for (unsigned int w = 0; w < bone->mNumWeights; ++w) {
+		//	auto &wt = bone->mWeights[w];
+		//	_modelbuffer.Put('\n');
+		//	_modelWriter.WriteIndent();
+		//	_modelWriter.Uint(wt.mVertexId);
+		//	_modelWriter.Float(wt.mWeight);
+		//}
+		//_modelWriter.EndArray();
 		_modelWriter.EndObject();
 	}
 }
@@ -430,6 +432,10 @@ void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shade
 	_matWriter.String(MVP_MATRIX.c_str(), MVP_MATRIX.size());
 	_matWriter.String(NORMAL_MATRIX_KEY.c_str(), NORMAL_MATRIX_KEY.size());
 	_matWriter.String(NORMAL_MATRIX.c_str(), NORMAL_MATRIX.size());
+	if (_hasBonesInfo) {
+		_matWriter.String(BONE_MATRIXES_KEY.c_str(), BONE_MATRIXES_KEY.size());
+		_matWriter.String(BONE_MATRIXES.c_str(), BONE_MATRIXES.size());
+	}
 	_matWriter.EndObject();
 
 	//fragment shader
@@ -685,18 +691,17 @@ bool ModelConverter::hasTexture(const aiMaterial *mat, aiTextureType texType)
 void ModelConverter::collectBoneIndiecsAndBoneWeights(const aiMesh *mesh, std::vector< std::pair<aiVector4D, aiVector4D> > &results)
 {
 	results.assign(mesh->mNumVertices, std::make_pair(aiVector4D(0.0f), aiVector4D(0.0f)));
-	unsigned int indices = 0;
-	unsigned int weights = 0;
+	std::vector<unsigned int> indices;
+	indices.assign(mesh->mNumVertices, 0);
 	for (unsigned int i = 0; i < mesh->mNumBones; ++i) {
 		const auto &bone = mesh->mBones[i];
 		for (unsigned int w = 0; w < bone->mNumWeights; ++w) {
 			const auto &weight = bone->mWeights[w];
 			auto &indicesAndweights = results[weight.mVertexId];
-			indicesAndweights.first[indices] = i;
-			indicesAndweights.second[weights] = weight.mWeight;
+			indicesAndweights.first[indices[weight.mVertexId]] = i;
+			indicesAndweights.second[indices[weight.mVertexId]] = weight.mWeight;
+			++indices[weight.mVertexId];
 		}
-		++indices;
-		++weights;
 	}
 }
 
@@ -773,8 +778,15 @@ std::string ModelConverter::getShaderName(int shaderMode)
 		return "FresnelShader";
 
 	case aiShadingMode_NoShading:
-	default:
-		return "BlinnPhoneShader";
+	default: 
+	{
+		if (_hasBonesInfo) {
+			return "BlinnPhoneBoneShader";
+		}
+		else {
+			return "BlinnPhoneShader";
+		}
+	}
 		break;
 	}
 }

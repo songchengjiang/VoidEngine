@@ -15,13 +15,14 @@
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "BlinnPhoneShader.vert",
+                                    "source": "BlinnPhoneBoneShader.vert",
                                     "u_ModelViewProjectMat": "MVP_MATRIX",
-                                    "u_NormalMat": "NORMAL_MATRIX"
+                                    "u_NormalMat": "NORMAL_MATRIX",
+                                    "u_BoneMates": "BONE_MATRIXES"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "BlinnPhoneShader.frag",
+                                    "source": "BlinnPhoneBoneShader.frag",
                                     "u_ambient": [0.588000,0.588000,0.588000,1.000000
                                     ],
                                     "u_diffuse": [0.588000,0.588000,0.588000,1.000000
@@ -58,13 +59,14 @@
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "BlinnPhoneShader.vert",
+                                    "source": "BlinnPhoneBoneShader.vert",
                                     "u_ModelViewProjectMat": "MVP_MATRIX",
-                                    "u_NormalMat": "NORMAL_MATRIX"
+                                    "u_NormalMat": "NORMAL_MATRIX",
+                                    "u_BoneMates": "BONE_MATRIXES"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "BlinnPhoneShader.frag",
+                                    "source": "BlinnPhoneBoneShader.frag",
                                     "u_ambient": [0.588000,0.588000,0.588000,1.000000
                                     ],
                                     "u_diffuse": [0.588000,0.588000,0.588000,1.000000

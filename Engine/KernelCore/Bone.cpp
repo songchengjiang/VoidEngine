@@ -12,8 +12,3 @@ veBone::~veBone()
 {
 
 }
-
-void veBone::setWeight(unsigned int vertexIndex, float weight)
-{
-	_weights[vertexIndex] = weight;
-}

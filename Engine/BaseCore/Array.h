@@ -19,6 +19,14 @@ public:
 		, _end(_size)
 		, _buffer(new TYPE[_size]){
 	}
+
+	veArray(const veArray<TYPE> &ary)
+		: USE_VE_PTR_INIT
+		, _size(ary._size)
+		, _end(ary._end)
+		, _buffer(new TYPE[_size]){
+		memcpy(_buffer, ary._buffer, _size * sizeof(TYPE));
+	}
 	~veArray(){
 		VE_SAFE_DELETE_ARRAY(_buffer);
 	}
@@ -83,6 +91,15 @@ public:
 		return _buffer[i];
 	}
 
+	inline veArray<TYPE>& operator = (const veArray<TYPE> & rkArray) {
+		_size = rkArray._size;
+		_end = rkArray._end;
+		VE_SAFE_DELETE_ARRAY(_buffer);
+		_buffer = new TYPE[_size];
+		memcpy(_buffer, rkArray._buffer, _size * sizeof(TYPE));
+		return *this;
+	}
+
 private:
 
 	void reallocSize(){
@@ -100,8 +117,10 @@ private:
 
 	void resizeImp(size_t sz){
 		TYPE* newBuf = new TYPE[sz];
-		memcpy(newBuf, _buffer, _size);
-		VE_SAFE_DELETE_ARRAY(_buffer);
+		if (_buffer) {
+			memcpy(newBuf, _buffer, _size * sizeof(TYPE));
+			VE_SAFE_DELETE_ARRAY(_buffer);
+		}
 		_buffer = newBuf;
 		_size = sz;
 	}

@@ -25,6 +25,12 @@ public:
 		VEC4,
 		MAT3,
 		MAT4,
+		REAL_ARRAY,
+		VEC2_ARRAY,
+		VEC3_ARRAY,
+		VEC4_ARRAY,
+		MAT3_ARRAY,
+		MAT4_ARRAY,
 		AUTO,
 	};
 
@@ -38,6 +44,13 @@ public:
 	veUniform(const std::string &name, const veVec4& val);
 	veUniform(const std::string &name, const veMat3& val);
 	veUniform(const std::string &name, const veMat4& val);
+	veUniform(const std::string &name, const veRealArray &val);
+	veUniform(const std::string &name, const veVec2 *val, unsigned int n);
+	veUniform(const std::string &name, const veVec3 *val, unsigned int n);
+	veUniform(const std::string &name, const veVec4 *val, unsigned int n);
+	veUniform(const std::string &name, const veMat3 *val, unsigned int n);
+	veUniform(const std::string &name, const veMat4 *val, unsigned int n);
+
 	~veUniform();
 
 	USE_VE_PTR;
@@ -53,6 +66,12 @@ public:
 	void setValue(const veVec4& val);
 	void setValue(const veMat3& val);
 	void setValue(const veMat4& val);
+	void setValue(const veRealArray &val);
+	void setValue(const veVec2 *val, unsigned int n);
+	void setValue(const veVec3 *val, unsigned int n);
+	void setValue(const veVec4 *val, unsigned int n);
+	void setValue(const veMat3 *val, unsigned int n);
+	void setValue(const veMat4 *val, unsigned int n);
 
 	bool getValue(int &val);
 	bool getValue(bool &val);
@@ -63,6 +82,7 @@ public:
 	bool getValue(veVec4 &val);
 	bool getValue(veMat3 &val);
 	bool getValue(veMat4 &val);
+	bool getValue(veRealArray &val);
 
 private:
 	
@@ -71,6 +91,8 @@ private:
 	Type        _type;
 	veRealArray _values;
 	GLint       _location;
+	GLint       _preLocation;
+	unsigned char _maxReLocation;
 };
 
 class VE_EXPORT veShader

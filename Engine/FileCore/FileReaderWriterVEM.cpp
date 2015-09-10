@@ -104,6 +104,8 @@ private:
 		else if (attri == (VERTEX_ATTRIB_COLOR + std::string("1"))) vertexAttri.attributeType = veMesh::VertexAtrribute::VERTEX_ATTRIB_COLOR1;
 		else if (attri == (VERTEX_ATTRIB_COLOR + std::string("2"))) vertexAttri.attributeType = veMesh::VertexAtrribute::VERTEX_ATTRIB_COLOR2;
 		else if (attri == (VERTEX_ATTRIB_COLOR + std::string("3"))) vertexAttri.attributeType = veMesh::VertexAtrribute::VERTEX_ATTRIB_COLOR3;
+		else if (attri == VERTEX_ATTRIB_BONE_INDICES) vertexAttri.attributeType = veMesh::VertexAtrribute::VERTEX_ATTRIB_BONE_INDICES;
+		else if (attri == VERTEX_ATTRIB_BONE_WEIGHTS) vertexAttri.attributeType = veMesh::VertexAtrribute::VERTEX_ATTRIB_BONE_WEIGHTS;
 		else vertexAttri.attributeType = veMesh::VertexAtrribute::VERTEX_ATTRIB_USER;
 
 		vertexAttri.valueNum = (unsigned short)attriVal[SIZE_KEY.c_str()].GetUint();
@@ -146,11 +148,11 @@ private:
 		}
 		bone->setOffsetMat(offsetMatrix);
 
-		const Value &weights = boneVal[WEIGHTS_KEY.c_str()];
-		for (unsigned int i = 0; i < weights.Size();) {
-			bone->setWeight((unsigned int)weights[i].GetDouble(), (float)weights[i + 1].GetDouble());
-			i += 2;
-		}
+		//const Value &weights = boneVal[WEIGHTS_KEY.c_str()];
+		//for (unsigned int i = 0; i < weights.Size();) {
+		//	bone->setWeight((unsigned int)weights[i].GetDouble(), (float)weights[i + 1].GetDouble());
+		//	i += 2;
+		//}
 		mesh->addBone(bone);
 		_boneList[bone->getName()].push_back(bone);
 	}

@@ -72,6 +72,7 @@ private:
 	std::string _outputFileFolder;
 	std::string _outputModelName;
 	std::string _outputMaterialName;
+	bool        _hasBonesInfo;
 };
 
 #endif
