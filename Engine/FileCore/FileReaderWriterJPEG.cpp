@@ -27,8 +27,8 @@ public:
 			jpeg_read_header(&cinfo, true);
 			readImage(cinfo);
 			jpeg_destroy_decompress(&cinfo);
+			fclose(fp);
 		}
-		fclose(fp);
 		if (!_image) VE_PRINT(std::string("veFileReaderWriterJPEG: read ") + filePath + std::string(" failed!"));
 		return _image;
 	}
