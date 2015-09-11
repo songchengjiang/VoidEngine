@@ -19,7 +19,6 @@ public:
 			node->addComponent(transer);
 			//transer->setPosition(veVec3(1.0f, 0.0f, 0.0f));
 			//transer->setScale(veVec3(1.0f));
-			transer->setRotation(veQuat(veMath::PI, veVec3::UNIT_X));
 			root->addChild(node);
 			node->setMask(RTT_CAMERA);
 		}
@@ -39,7 +38,7 @@ public:
 		}
 
 		{
-			veCamera *camera = static_cast<veCamera *>(veFile::instance()->readFile("cameras/rtt.camera"));
+			veCamera *camera = static_cast<veCamera *>(veFile::instance()->readFile("cameras/rtt.vecamera"));
 			camera->setMask(RTT_CAMERA);
 			root->addChild(camera);
 		}

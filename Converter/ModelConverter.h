@@ -42,6 +42,7 @@ private:
 	void writeTextures(const aiMaterial *mat);
 	void writeTexture(const aiMaterial *mat, aiTextureType texType);
 
+	void writeAnimations(const aiScene *scene);
 	void writeAnimation(const aiAnimation *animation);
 	void writeNodeAnim(const aiNodeAnim *nodeAnim);
 
@@ -69,9 +70,13 @@ private:
 	rapidjson::StringBuffer _matBuffer;
 	PrettyWriterExt<rapidjson::StringBuffer> _matWriter;
 
+	rapidjson::StringBuffer _animBuffer;
+	PrettyWriterExt<rapidjson::StringBuffer> _animWriter;
+
 	std::string _outputFileFolder;
 	std::string _outputModelName;
 	std::string _outputMaterialName;
+	std::string _outputAnimationName;
 	bool        _hasBonesInfo;
 };
 

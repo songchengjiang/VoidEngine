@@ -60,15 +60,15 @@ public:
 			node->addComponent(transer);
 			transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
 			transer->setScale(veVec3(1.0f));
-			transer->setRotation(veQuat(veMath::PI, veVec3::UNIT_X));
+			//transer->setRotation(veQuat(veMath::PI, veVec3::UNIT_X));
 			root->addChild(node);
 		}
 
 		{
-			veCamera *cam0 = static_cast<veCamera*>(veFile::instance()->readFile("cameras/cam0.camera"));
-			veCamera *cam1 = static_cast<veCamera*>(veFile::instance()->readFile("cameras/cam1.camera"));
-			veCamera *cam2 = static_cast<veCamera*>(veFile::instance()->readFile("cameras/cam2.camera"));
-			veCamera *cam3 = static_cast<veCamera*>(veFile::instance()->readFile("cameras/cam3.camera"));
+			veCamera *cam0 = static_cast<veCamera*>(veFile::instance()->readFile("cameras/cam0.vecamera"));
+			veCamera *cam1 = static_cast<veCamera*>(veFile::instance()->readFile("cameras/cam1.vecamera"));
+			veCamera *cam2 = static_cast<veCamera*>(veFile::instance()->readFile("cameras/cam2.vecamera"));
+			veCamera *cam3 = static_cast<veCamera*>(veFile::instance()->readFile("cameras/cam3.vecamera"));
 			//cam1->setClearColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
 			//cam2->setClearColor(veVec4(0.0f, 1.0f, 0.0f, 1.0f));
 			//cam3->setClearColor(veVec4(0.0f, 0.0f, 1.0f, 1.0f));

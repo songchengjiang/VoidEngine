@@ -19,6 +19,8 @@ static const std::string SKELETON_KEY = "skeleton";
 static const std::string TRANSFORM_KEY = "transform";
 static const std::string ANIMATIONS_KEY = "animations";
 static const std::string DURATION_KEY = "duration";
+static const std::string FRAMES_KEY = "frames";
+static const std::string FRAMERATE_KEY = "frameRate";
 static const std::string POSITIONS_KEY = "positions";
 static const std::string ROTATIONS_KEY = "rotations";
 static const std::string SCALES_KEY = "scales";
@@ -134,5 +136,6 @@ static const std::string BONE_MATRIXES = "BONE_MATRIXES";
 
 static const std::string MODEL_EXT = ".vem";
 static const std::string MATERIAL_EXT = ".vemtl";
+static const std::string ANIMATION_EXT = ".veanim";
 
 #endif

@@ -13,6 +13,7 @@ std::vector<std::string> MATERIAL_NAME_LIST;
 ModelConverter::ModelConverter()
 	: _modelWriter(_modelbuffer)
 	, _matWriter(_matBuffer)
+	, _animWriter(_animBuffer)
 	, _hasBonesInfo(false)
 {
 	aiLogStream stream;
@@ -37,6 +38,7 @@ void ModelConverter::convert(const std::string &filePath, const std::string &out
 
 	writeModel(scene);
 	writeMaterials(scene);
+	writeAnimations(scene);
 
 	outputFiles();
 	//rapidjson::StringBuffer s;
@@ -67,12 +69,18 @@ void ModelConverter::convert(const std::string &filePath, const std::string &out
 
 void ModelConverter::writeModel(const aiScene *scene)
 {
+	if (!scene->HasMeshes()) return;
 	generateMeshNames(scene);
 	generateMaterialNames(scene);
 	_modelWriter.StartObject();
 	_modelWriter.String(VERSION_KEY.c_str(), VERSION_KEY.size()); _modelWriter.String(CT_VERSION);
 	_modelWriter.String(NAME_KEY.c_str(), NAME_KEY.size()); _modelWriter.String(_outputModelName.c_str(), _outputModelName.size());
-	_modelWriter.String(MATERIALS_KEY.c_str(), MATERIALS_KEY.size()); _modelWriter.String(_outputMaterialName.c_str(), _outputMaterialName.size());
+	if (scene->HasMaterials()) {
+		_modelWriter.String(MATERIALS_KEY.c_str(), MATERIALS_KEY.size()); _modelWriter.String(_outputMaterialName.c_str(), _outputMaterialName.size());
+	}	
+	if (scene->HasAnimations()) {
+		_modelWriter.String(ANIMATIONS_KEY.c_str(), ANIMATIONS_KEY.size()); _modelWriter.String(_outputAnimationName.c_str(), _outputAnimationName.size());
+	}
 
 	_modelWriter.String(MESHES_KEY.c_str(), MESHES_KEY.size());
 	_modelWriter.StartArray();
@@ -85,15 +93,6 @@ void ModelConverter::writeModel(const aiScene *scene)
 	_modelWriter.StartArray();
 	writeNode(scene->mRootNode);
 	_modelWriter.EndArray();
-
-	if (scene->HasAnimations()) {
-		_modelWriter.String(ANIMATIONS_KEY.c_str(), ANIMATIONS_KEY.size());
-		_modelWriter.StartArray();
-		for (unsigned int i = 0; i < scene->mNumAnimations; ++i) {
-			writeAnimation(scene->mAnimations[i]);
-		}
-		_modelWriter.EndArray();
-	}
 
 	_modelWriter.EndObject();
 }
@@ -355,6 +354,7 @@ void ModelConverter::writeNode(const aiNode *node)
 
 void ModelConverter::writeMaterials(const aiScene *scene)
 {
+	if (!scene->HasMaterials()) return;
 	_matWriter.StartObject();
 	_matWriter.String(VERSION_KEY.c_str(), VERSION_KEY.size()); _matWriter.String(CT_VERSION);
 	_matWriter.String(NAME_KEY.c_str(), NAME_KEY.size()); _matWriter.String(_outputMaterialName.c_str(), _outputMaterialName.size());
@@ -601,55 +601,74 @@ void ModelConverter::writeTexture(const aiMaterial *mat, aiTextureType texType)
 	}
 }
 
+void ModelConverter::writeAnimations(const aiScene *scene)
+{
+	if (!scene->HasAnimations()) return;
+
+	_animWriter.StartObject();
+	_animWriter.String(VERSION_KEY.c_str(), VERSION_KEY.size()); _animWriter.String(CT_VERSION);
+	_animWriter.String(NAME_KEY.c_str(), NAME_KEY.size()); _animWriter.String(_outputAnimationName.c_str(), _outputAnimationName.size());
+	_animWriter.String(ANIMATIONS_KEY.c_str(), ANIMATIONS_KEY.size());
+	_animWriter.StartArray();
+	for (unsigned int i = 0; i < scene->mNumAnimations; ++i) {
+		writeAnimation(scene->mAnimations[i]);
+	}
+	_animWriter.EndArray();
+
+	_animWriter.EndObject();
+}
+
 void ModelConverter::writeAnimation(const aiAnimation *animation)
 {
-	_modelWriter.StartObject();
-	_modelWriter.String(DURATION_KEY.c_str(), DURATION_KEY.size()); _modelWriter.Double(animation->mDuration);
-	_modelWriter.String(NODES_KEY.c_str(), NODES_KEY.size());
-	_modelWriter.StartArray();
+	_animWriter.StartObject();
+	_animWriter.String(NAME_KEY.c_str(), NAME_KEY.size()); _animWriter.String(animation->mName.C_Str(), animation->mName.length);
+	_animWriter.String(FRAMES_KEY.c_str(), FRAMES_KEY.size()); _animWriter.Double(animation->mDuration);
+	_animWriter.String(FRAMERATE_KEY.c_str(), FRAMERATE_KEY.size()); _animWriter.Double(animation->mTicksPerSecond);
+	_animWriter.String(NODES_KEY.c_str(), NODES_KEY.size());
+	_animWriter.StartArray();
 	for (unsigned int i = 0; i < animation->mNumChannels; ++i) {
 		writeNodeAnim(animation->mChannels[i]);
 	}
-	_modelWriter.EndArray();
-	_modelWriter.EndObject();
+	_animWriter.EndArray();
+	_animWriter.EndObject();
 }
 
 void ModelConverter::writeNodeAnim(const aiNodeAnim *nodeAnim)
 {
-	_modelWriter.StartObject();
-	_modelWriter.String(NAME_KEY.c_str(), NAME_KEY.size()); _modelWriter.String(nodeAnim->mNodeName.C_Str(), nodeAnim->mNodeName.length);
+	_animWriter.StartObject();
+	_animWriter.String(NAME_KEY.c_str(), NAME_KEY.size()); _animWriter.String(nodeAnim->mNodeName.C_Str(), nodeAnim->mNodeName.length);
 
-	_modelWriter.String(POSITIONS_KEY.c_str(), POSITIONS_KEY.size());
-	_modelWriter.StartArray();
+	_animWriter.String(POSITIONS_KEY.c_str(), POSITIONS_KEY.size());
+	_animWriter.StartArray();
 	for (unsigned int i = 0; i < nodeAnim->mNumPositionKeys; ++i) {
 		auto positions = nodeAnim->mPositionKeys[i];
-		_modelbuffer.Put('\n');
-		_modelWriter.WriteIndent();
-		_modelWriter.Float(positions.mTime); _modelWriter.Float(positions.mValue.x); _modelWriter.Float(positions.mValue.y); _modelWriter.Float(positions.mValue.z);
+		_animBuffer.Put('\n');
+		_animWriter.WriteIndent();
+		_animWriter.Float(positions.mTime); _animWriter.Float(positions.mValue.x); _animWriter.Float(positions.mValue.y); _animWriter.Float(positions.mValue.z);
 	}
-	_modelWriter.EndArray();
+	_animWriter.EndArray();
 
-	_modelWriter.String(ROTATIONS_KEY.c_str(), ROTATIONS_KEY.size());
-	_modelWriter.StartArray();
+	_animWriter.String(ROTATIONS_KEY.c_str(), ROTATIONS_KEY.size());
+	_animWriter.StartArray();
 	for (unsigned int i = 0; i < nodeAnim->mNumRotationKeys; ++i) {
 		auto rotations = nodeAnim->mRotationKeys[i];
-		_modelbuffer.Put('\n');
-		_modelWriter.WriteIndent();
-		_modelWriter.Float(rotations.mTime); _modelWriter.Float(rotations.mValue.w); _modelWriter.Float(rotations.mValue.x); _modelWriter.Float(rotations.mValue.y); _modelWriter.Float(rotations.mValue.z);
+		_animBuffer.Put('\n');
+		_animWriter.WriteIndent();
+		_animWriter.Float(rotations.mTime); _animWriter.Float(rotations.mValue.w); _animWriter.Float(rotations.mValue.x); _animWriter.Float(rotations.mValue.y); _animWriter.Float(rotations.mValue.z);
 	}
-	_modelWriter.EndArray();
+	_animWriter.EndArray();
 
-	_modelWriter.String(SCALES_KEY.c_str(), SCALES_KEY.size());
-	_modelWriter.StartArray();
+	_animWriter.String(SCALES_KEY.c_str(), SCALES_KEY.size());
+	_animWriter.StartArray();
 	for (unsigned int i = 0; i < nodeAnim->mNumScalingKeys; ++i) {
 		auto scales = nodeAnim->mScalingKeys[i];
-		_modelbuffer.Put('\n');
-		_modelWriter.WriteIndent();
-		_modelWriter.Float(scales.mTime);  _modelWriter.Float(scales.mValue.x); _modelWriter.Float(scales.mValue.y); _modelWriter.Float(scales.mValue.z);
+		_animBuffer.Put('\n');
+		_animWriter.WriteIndent();
+		_animWriter.Float(scales.mTime);  _animWriter.Float(scales.mValue.x); _animWriter.Float(scales.mValue.y); _animWriter.Float(scales.mValue.z);
 	}
-	_modelWriter.EndArray();
+	_animWriter.EndArray();
 
-	_modelWriter.EndObject();
+	_animWriter.EndObject();
 }
 
 void ModelConverter::writeVec4(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiColor4D *col)
@@ -739,6 +758,7 @@ void ModelConverter::setOutputFileInfo(const std::string &filePath, const std::s
 	_outputFileFolder = outFilePath.substr(0, s);
 	_outputModelName = outFilePath.substr(s, e - s) + MODEL_EXT;
 	_outputMaterialName = outFilePath.substr(s, e - s) + MATERIAL_EXT;
+	_outputAnimationName = outFilePath.substr(s, e - s) + ANIMATION_EXT;
 }
 
 void ModelConverter::generateMaterialNames(const aiScene *scene)
@@ -798,15 +818,28 @@ std::string ModelConverter::getShaderName(int shaderMode)
 
 void ModelConverter::outputFiles()
 {
-	FILE *file = fopen((_outputFileFolder + _outputModelName).c_str(), "wt");
-	if (file){
-		fwrite(_modelbuffer.GetString(), _modelbuffer.GetSize(), 1, file);
+	FILE *file = nullptr;
+	if (_modelbuffer.GetSize() != 0) {
+		file = fopen((_outputFileFolder + _outputModelName).c_str(), "wt");
+		if (file) {
+			fwrite(_modelbuffer.GetString(), _modelbuffer.GetSize(), 1, file);
+		}
+		fclose(file);
 	}
-	fclose(file);
 
-	file = fopen((_outputFileFolder + _outputMaterialName).c_str(), "wt");
-	if (file){
-		fwrite(_matBuffer.GetString(), _matBuffer.GetSize(), 1, file);
+	if (_matBuffer.GetSize() != 0) {
+		file = fopen((_outputFileFolder + _outputMaterialName).c_str(), "wt");
+		if (file) {
+			fwrite(_matBuffer.GetString(), _matBuffer.GetSize(), 1, file);
+		}
+		fclose(file);
 	}
-	fclose(file);
+
+	if (_animBuffer.GetSize() != 0) {
+		file = fopen((_outputFileFolder + _outputAnimationName).c_str(), "wt");
+		if (file) {
+			fwrite(_animBuffer.GetString(), _animBuffer.GetSize(), 1, file);
+		}
+		fclose(file);
+	}
 }

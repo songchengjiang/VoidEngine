@@ -223,4 +223,4 @@ private:
 	veCamera *_camera;
 };
 
-VE_READERWRITER_REG("camera", veFileReaderWriterCAMERA);
+VE_READERWRITER_REG("vecamera", veFileReaderWriterCAMERA);

@@ -8,7 +8,7 @@ in vec2 v_texcoord;
 layout(location=0) out vec4 fragColor;
 out vec4 color;                     
 void main(){                        
-	vec3 lDir = normalize(vec3(1.0, 1.0, 0.0));          
+	vec3 lDir = normalize(vec3(0.0, 0.0, 1.0));          
 	vec3 normal = normalize(v_normal);                   
 	//vec3 eye = normalize(-v_position);                   
 	//vec3 H = normalize(eye + lDir);                      

@@ -20,6 +20,7 @@
     <ClCompile Include="BaseCore\Vector4.cpp" />
     <ClCompile Include="FileCore\File.cpp" />
     <ClCompile Include="FileCore\FileReaderWriter.cpp" />
+    <ClCompile Include="FileCore\FileReaderWriterANIMATION.cpp" />
     <ClCompile Include="FileCore\FileReaderWriterCAMERA.cpp" />
     <ClCompile Include="FileCore\FileReaderWriterEXR.cpp" />
     <ClCompile Include="FileCore\FileReaderWriterJPEG.cpp" />
@@ -27,6 +28,7 @@
     <ClCompile Include="FileCore\FileReaderWriterVEM.cpp" />
     <ClCompile Include="FileCore\FileReaderWriterVEMTL.cpp" />
     <ClCompile Include="FileCore\Printer.cpp" />
+    <ClCompile Include="KernelCore\Animation.cpp" />
     <ClCompile Include="KernelCore\Bone.cpp" />
     <ClCompile Include="KernelCore\Camera.cpp" />
     <ClCompile Include="KernelCore\Component.cpp" />
@@ -66,6 +68,7 @@
     <ClInclude Include="FileCore\File.h" />
     <ClInclude Include="FileCore\FileReaderWriter.h" />
     <ClInclude Include="FileCore\Printer.h" />
+    <ClInclude Include="KernelCore\Animation.h" />
     <ClInclude Include="KernelCore\Bone.h" />
     <ClInclude Include="KernelCore\Camera.h" />
     <ClInclude Include="KernelCore\Component.h" />

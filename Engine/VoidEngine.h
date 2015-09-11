@@ -17,6 +17,7 @@
 #include "KernelCore/Inputer.h"
 #include "KernelCore/LoopQueue.h"
 #include "KernelCore/Overlay.h"
+#include "KernelCore/Animation.h"
 
 #include "FileCore/Printer.h"
 #include "FileCore/File.h"

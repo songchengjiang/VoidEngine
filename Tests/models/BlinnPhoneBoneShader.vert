@@ -12,22 +12,24 @@ uniform mat4 u_BoneMates[60];
 out vec3 v_normal;                   
 out vec2 v_texcoord;
 
-vec4 updateBonePosition()
+void updateBonePositionAndNormal(out vec4 pos, out vec3 norm)
 {
 	vec4 weights = boneWeights;
 	weights.w = 1.0 - dot(weights.xyz, vec3(1.0));
-	vec4 localPos = vec4(position, 1.0);
-	vec4 bonePos = u_BoneMates[int(boneIndices.x)] * localPos * weights.x;
-	bonePos += u_BoneMates[int(boneIndices.y)] * localPos * weights.y;
-	bonePos += u_BoneMates[int(boneIndices.z)] * localPos * weights.z;
-	bonePos += u_BoneMates[int(boneIndices.w)] * localPos * weights.w;
-	return bonePos;
+	mat4 boneMat = u_BoneMates[int(boneIndices.x)] * weights.x;
+	boneMat += u_BoneMates[int(boneIndices.y)] * weights.y;
+	boneMat += u_BoneMates[int(boneIndices.z)] * weights.z;
+	boneMat += u_BoneMates[int(boneIndices.w)] * weights.w;
+	pos = boneMat * vec4(position, 1.0);
+	norm = (boneMat * vec4(normal, 0.0)).xyz;
 }
 
 void main()                                                 
 {   
-	vec4 finalPos = updateBonePosition();                     
-	v_normal = u_NormalMat * normal;                          
+	vec4 finalPos;
+	vec3 finalNorm;
+	updateBonePositionAndNormal(finalPos, finalNorm);                     
+	v_normal = u_NormalMat * finalNorm;                          
 	v_texcoord = texcoord; 
 	gl_Position = u_ModelViewProjectMat * finalPos; 
 }
