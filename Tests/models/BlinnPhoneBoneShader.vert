@@ -21,7 +21,6 @@ vec4 updateBonePosition()
 	bonePos += u_BoneMates[int(boneIndices.y)] * localPos * weights.y;
 	bonePos += u_BoneMates[int(boneIndices.z)] * localPos * weights.z;
 	bonePos += u_BoneMates[int(boneIndices.w)] * localPos * weights.w;
-
 	return bonePos;
 }
 

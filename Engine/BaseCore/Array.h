@@ -81,7 +81,7 @@ public:
 		}
 	}
 
-	inline TYPE operator [] (const size_t i) const{
+	inline const TYPE& operator [] (const size_t i) const{
 		veAssert(i < _end);
 		return _buffer[i];
 	}

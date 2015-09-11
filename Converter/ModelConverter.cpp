@@ -676,10 +676,15 @@ void ModelConverter::wirteVec2(PrettyWriterExt<rapidjson::StringBuffer> &writer,
 void ModelConverter::writeMat4(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiMatrix4x4 *mat4)
 {
 	writer.StartArray();
-	writer.Float(mat4->a1); writer.Float(mat4->b1); writer.Float(mat4->c1); writer.Float(mat4->d1);
-	writer.Float(mat4->a2); writer.Float(mat4->b2); writer.Float(mat4->c2); writer.Float(mat4->d2);
-	writer.Float(mat4->a3); writer.Float(mat4->b3); writer.Float(mat4->c3); writer.Float(mat4->d3);
-	writer.Float(mat4->a4); writer.Float(mat4->b4); writer.Float(mat4->c4); writer.Float(mat4->d4);
+	//writer.Float(mat4->a1); writer.Float(mat4->b1); writer.Float(mat4->c1); writer.Float(mat4->d1);
+	//writer.Float(mat4->a2); writer.Float(mat4->b2); writer.Float(mat4->c2); writer.Float(mat4->d2);
+	//writer.Float(mat4->a3); writer.Float(mat4->b3); writer.Float(mat4->c3); writer.Float(mat4->d3);
+	//writer.Float(mat4->a4); writer.Float(mat4->b4); writer.Float(mat4->c4); writer.Float(mat4->d4);
+
+	writer.Float(mat4->a1); writer.Float(mat4->a2); writer.Float(mat4->a3); writer.Float(mat4->a4);
+	writer.Float(mat4->b1); writer.Float(mat4->b2); writer.Float(mat4->b3); writer.Float(mat4->b4);
+	writer.Float(mat4->c1); writer.Float(mat4->c2); writer.Float(mat4->c3); writer.Float(mat4->c4);
+	writer.Float(mat4->d1); writer.Float(mat4->d2); writer.Float(mat4->d3); writer.Float(mat4->d4);
 	writer.EndArray();
 }
 

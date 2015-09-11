@@ -112,8 +112,13 @@ veRenderableObject* veNode::getRenderableObject(unsigned int objIndex)
 
 veMat4 veNode::getNodeToWorldMatrix()
 {
-	if (!_parent) return _matrix;
-	return _parent->getNodeToWorldMatrix() * _matrix;
+	veMat4 worldMat = _matrix;
+	veNode *parent = _parent;
+	while (parent){
+		worldMat = parent->getMatrix() * worldMat;
+		parent = parent->_parent;
+	}
+	return worldMat;
 }
 
 veMat4 veNode::getWorldToNodeMatrix()
