@@ -1,4 +1,4 @@
-#version 430                        
+                   
 uniform vec4 u_ambient;        
 uniform vec4 u_diffuse;       
 uniform float u_shininess;          

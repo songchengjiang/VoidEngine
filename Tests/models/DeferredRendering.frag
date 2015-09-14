@@ -1,4 +1,4 @@
-#version 430
+
 uniform sampler2D u_position;
 uniform sampler2D u_normalandepth;
 uniform sampler2D u_color;

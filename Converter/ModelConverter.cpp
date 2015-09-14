@@ -430,6 +430,8 @@ void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shade
 	_matWriter.String((shaderName + std::string(".vert")).c_str());
 	_matWriter.String(MVP_MATRIX_KEY.c_str(), MVP_MATRIX_KEY.size());
 	_matWriter.String(MVP_MATRIX.c_str(), MVP_MATRIX.size());
+	_matWriter.String(MV_MATRIX_KEY.c_str(), MV_MATRIX_KEY.size());
+	_matWriter.String(MV_MATRIX.c_str(), MV_MATRIX.size());
 	_matWriter.String(NORMAL_MATRIX_KEY.c_str(), NORMAL_MATRIX_KEY.size());
 	_matWriter.String(NORMAL_MATRIX.c_str(), NORMAL_MATRIX.size());
 	if (_hasBonesInfo) {
@@ -804,15 +806,7 @@ std::string ModelConverter::getShaderName(int shaderMode)
 
 	case aiShadingMode_NoShading:
 	default: 
-	{
-		if (_hasBonesInfo) {
-			return "BlinnPhoneBoneShader";
-		}
-		else {
-			return "BlinnPhoneShader";
-		}
-	}
-		break;
+		return "BlinnPhoneShader";
 	}
 }
 

@@ -1,12 +1,18 @@
 #include "Material.h"
 #include "FrameBufferObject.h"
 #include "Visualiser.h"
+#include "ShaderDefinationGenerator.h"
 
 veBlendFunc veBlendFunc::DISABLE = { GL_ONE, GL_ZERO };
 veBlendFunc veBlendFunc::ADDITIVE = { GL_SRC_ALPHA, GL_ONE };
 veBlendFunc veBlendFunc::ALPHA = { GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA };
 
 vePass* vePass::CURRENT_PASS = nullptr;
+bool vePass::CURRENT_DEPTH_TEST = false;
+bool vePass::CURRENT_DEPTH_WRITE = true;
+bool vePass::CURRENT_CULL_FACE = false;
+veBlendFunc vePass::CURRENT_BLEND_FUNC = veBlendFunc::DISABLE;
+GLenum vePass::CURRENT_POLYGON_MODE = GL_FILL;
 
 vePass::vePass()
 	: USE_VE_PTR_INIT
@@ -16,6 +22,7 @@ vePass::vePass()
 	, _blendFunc(veBlendFunc::DISABLE)
 	, _polygonMode(GL_FILL)
 	, _program(0)
+	, _needLinkProgram(true)
 	, _mask(0xffffffff)
 {
 }
@@ -30,10 +37,8 @@ void vePass::visit(const veRenderCommand &command)
 
 void vePass::apply(const veRenderCommand &command)
 {
-	applyProgram();
-	for (auto &iter : _shaders) {
-		iter.second->apply(command);
-	}
+	applyProgram(command);
+	applyUniforms(command);
 
 	if (CURRENT_PASS == this) return;
 	CURRENT_PASS = this;
@@ -43,22 +48,42 @@ void vePass::apply(const veRenderCommand &command)
 		tex->bind(i);
 	}
 
-	_depthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
-	_depthWirte ? glDepthMask(GL_TRUE) : glDepthMask(GL_FALSE);
-	_cullFace ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
-	glPolygonMode(GL_FRONT_AND_BACK, _polygonMode);
-	if (_blendFunc != veBlendFunc::DISABLE) {
-		glEnable(GL_BLEND);
-		glBlendFunc(_blendFunc.src, _blendFunc.dst);
+	if (_depthTest != CURRENT_DEPTH_TEST) {
+		_depthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
+		CURRENT_DEPTH_TEST = _depthTest;
 	}
-	else {
-		glDisable(GL_BLEND);
+
+	if (_depthWirte != CURRENT_DEPTH_WRITE) {
+		_depthWirte ? glDepthMask(GL_TRUE) : glDepthMask(GL_FALSE);
+		CURRENT_DEPTH_WRITE = _depthWirte;
+	}
+	
+	if (_cullFace != CURRENT_CULL_FACE) {
+		_cullFace ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
+		CURRENT_CULL_FACE = _cullFace;
+	}
+	
+	if (_polygonMode != CURRENT_POLYGON_MODE) {
+		glPolygonMode(GL_FRONT_AND_BACK, _polygonMode);
+		CURRENT_POLYGON_MODE = _polygonMode;
+	}
+
+	if (_blendFunc != CURRENT_BLEND_FUNC) {
+		if (_blendFunc != veBlendFunc::DISABLE) {
+			glEnable(GL_BLEND);
+			glBlendFunc(_blendFunc.src, _blendFunc.dst);
+		}
+		else {
+			glDisable(GL_BLEND);
+		}
+		_blendFunc = CURRENT_BLEND_FUNC;
 	}
 }
 
 void vePass::setShader(veShader *shader)
 {
 	_shaders[shader->getType()] = shader;
+	_needLinkProgram = true;
 }
 
 veShader* vePass::getShader(veShader::Type type)
@@ -71,6 +96,8 @@ veShader* vePass::getShader(veShader::Type type)
 
 void vePass::addTexture(veTexture *texture)
 {
+	if (_textures.empty())
+		_needLinkProgram = true;
 	_textures.push_back(texture);
 }
 
@@ -91,25 +118,56 @@ veTexture* vePass::removeTexture(unsigned int idx)
 	veAssert(idx < _textures.size());
 	veTexture *tex = _textures[idx].get();
 	_textures.erase(_textures.begin() + idx);
+	if (_textures.empty())
+		_needLinkProgram = true;
 	return tex;
 }
 
-void vePass::applyProgram()
+void vePass::addUniform(veUniform *uniform)
+{
+	_uniforms.push_back(uniform);
+}
+
+veUniform* vePass::getUniform(unsigned int idx)
+{
+	veAssert(idx < _uniforms.size());
+	return _uniforms[idx].get();
+}
+
+veUniform* vePass::removeUniform(unsigned int idx)
+{
+	veAssert(idx < _uniforms.size());
+	veUniform *uniform = _uniforms[idx].get();
+	_uniforms.erase(_uniforms.begin() + idx);
+	return uniform;
+}
+
+void vePass::applyProgram(const veRenderCommand &command)
 {
 	if (!_program)
 		_program = glCreateProgram();
 
-	bool needLink = false;
-	for (auto &iter : _shaders){
-		GLuint id = iter.second->compile();
-		if (id){
+	if (_needLinkProgram) {
+		ShaderDefinatiosGenerator sdg(command);
+		sdg.traversalMode() = ShaderDefinatiosGenerator::TRAVERSE_PARENT;
+		command.attachedNode->accept(sdg);
+		sdg.traversalMode() = ShaderDefinatiosGenerator::TRAVERSE_CHILDREN;
+		sdg.getRoot()->accept(sdg);
+		for (auto &iter : _shaders) {
+			GLuint id = iter.second->compile(sdg.getDefinations(this, iter.first));
 			glAttachShader(_program, id);
-			needLink = true;
 		}
-	}
-	if (needLink)
 		glLinkProgram(_program);
+		_needLinkProgram = false;
+	}
 	glUseProgram(_program);
+}
+
+void vePass::applyUniforms(const veRenderCommand &command)
+{
+	for (auto &iter : _uniforms) {
+		iter->apply(command);
+	}
 }
 
 veTechnique::veTechnique()

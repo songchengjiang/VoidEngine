@@ -148,6 +148,7 @@ veAnimationContainer::veAnimationContainer()
 	, _endFrame(-1)
 	, _frameRate(0.0)
 	, _needUpdate(false)
+	, _requestNoUpdate(false)
 	, _isLoop(false)
 {
 
@@ -162,6 +163,7 @@ void veAnimationContainer::update(veNode *node, veVisualiser *vs)
 {
 	if (_activeAnimationChannel && _needUpdate) {
 		_activeAnimationChannel->update(node, _smimulationFrame);
+		if (_requestNoUpdate) _needUpdate = false;
 		if (_smimulationFrame <= _endFrame)
 			_smimulationFrame += vs->getDeltaTime() * _frameRate;
 		else if (_isLoop){
@@ -199,15 +201,17 @@ void veAnimationContainer::start(double sFrame, double eFrame)
 	_endFrame = eFrame < 0.0 ? _activeAnimationChannel->getDuration() : eFrame;
 	_frameRate = _frameRate <= 0.0 ? _activeAnimationChannel->getFrameRate() : _frameRate;
 	_needUpdate = true;
+	_requestNoUpdate = false;
 }
 
 void veAnimationContainer::pause()
 {
 	_needUpdate = false;
+	_requestNoUpdate = true;
 }
 
 void veAnimationContainer::stop()
 {
-	_needUpdate = false;
+	_requestNoUpdate = true;
 	_smimulationFrame = 0.0;
 }

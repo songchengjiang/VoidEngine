@@ -106,7 +106,8 @@ private:
 		else if (attri == (VERTEX_ATTRIB_COLOR + std::string("3"))) vertexAttri.attributeType = veMesh::VertexAtrribute::VERTEX_ATTRIB_COLOR3;
 		else if (attri == VERTEX_ATTRIB_BONE_INDICES) vertexAttri.attributeType = veMesh::VertexAtrribute::VERTEX_ATTRIB_BONE_INDICES;
 		else if (attri == VERTEX_ATTRIB_BONE_WEIGHTS) vertexAttri.attributeType = veMesh::VertexAtrribute::VERTEX_ATTRIB_BONE_WEIGHTS;
-		else vertexAttri.attributeType = veMesh::VertexAtrribute::VERTEX_ATTRIB_USER;
+		else if (attri == VERTEX_ATTRIB_USER + std::string("0")) vertexAttri.attributeType = veMesh::VertexAtrribute::VERTEX_ATTRIB_USER0;
+		else vertexAttri.attributeType = veMesh::VertexAtrribute::VERTEX_ATTRIB_USER1;
 
 		vertexAttri.valueNum = (unsigned short)attriVal[SIZE_KEY.c_str()].GetUint();
 

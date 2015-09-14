@@ -17,6 +17,7 @@
                                     "type": "VERTEX_SHADER",
                                     "source": "BlinnPhoneShader.vert",
                                     "u_ModelViewProjectMat": "MVP_MATRIX",
+                                    "u_ModelViewMat": "MV_MATRIX",
                                     "u_NormalMat": "NORMAL_MATRIX"
                                 },
                                 {

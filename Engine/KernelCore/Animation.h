@@ -91,6 +91,7 @@ private:
 	double _endFrame;
 	double _frameRate;
 	bool   _needUpdate;
+	bool   _requestNoUpdate;
 	bool   _isLoop;
 };
 

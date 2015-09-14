@@ -450,13 +450,6 @@ veShader::~veShader()
 
 }
 
-void veShader::apply(const veRenderCommand &command)
-{
-	for (auto &iter : _uniforms){
-		iter->apply(command);
-	}
-}
-
 void veShader::setSource(const std::string &filePath)
 {
 	_source = veFile::instance()->readFileToBuffer(filePath);
@@ -469,54 +462,58 @@ void veShader::setSource(const char *str)
 	_isCompiled = false;
 }
 
-void veShader::addUniform(veUniform *uniform)
+GLuint veShader::compile(const std::string &definations)
 {
-	_uniforms.push_back(uniform);
-}
+	if (!_shader)
+		_shader = glCreateShader(_type);
 
-veUniform* veShader::getUniform(unsigned int idx)
-{
-	veAssert(idx < _uniforms.size());
-	return _uniforms[idx].get();
-}
+	std::string source = definations + _source;
+	char *buffer = new char[source.size() + 1];
+	strcpy(buffer, source.c_str());
+	glShaderSource(_shader, 1, &buffer, nullptr);
 
-veUniform* veShader::removeUniform(unsigned int idx)
-{
-	veAssert(idx < _uniforms.size());
-	veUniform *uniform = _uniforms[idx].get();
-	_uniforms.erase(_uniforms.begin() + idx);
-	return uniform;
-}
-
-GLuint veShader::compile()
-{
 	GLint state = GL_FALSE;
-
-	if (!_isCompiled){
-		if (!_shader)
-			_shader = glCreateShader(_type);
-
-		char *buffer = new char[_source.size() + 1];
-		strcpy(buffer, _source.c_str());
-		glShaderSource(_shader, 1, &buffer, nullptr);
-
-		glCompileShader(_shader);
-		glGetShaderiv(_shader, GL_COMPILE_STATUS, &state);
-		if (!state){
-			GLint maxLen;
-			glGetShaderiv(_shader, GL_INFO_LOG_LENGTH, &maxLen);
-			if (maxLen > 0){
-				GLchar *errors = new GLchar[maxLen];
-				glGetShaderInfoLog(_shader, maxLen, &maxLen, errors);
-				if (strcmp(errors, "") != 0){
-					VE_PRINT(errors);
-				}
-				delete[] errors;
+	glCompileShader(_shader);
+	glGetShaderiv(_shader, GL_COMPILE_STATUS, &state);
+	if (!state) {
+		GLint maxLen;
+		glGetShaderiv(_shader, GL_INFO_LOG_LENGTH, &maxLen);
+		if (maxLen > 0) {
+			GLchar *errors = new GLchar[maxLen];
+			glGetShaderInfoLog(_shader, maxLen, &maxLen, errors);
+			if (strcmp(errors, "") != 0) {
+				VE_PRINT(errors);
 			}
+			delete[] errors;
 		}
-		delete[] buffer;
-		_isCompiled = true;
+		glDeleteShader(_shader);
+		_shader = 0;
 	}
+	delete[] buffer;
+	return _shader;
+}
 
-	return state == GL_TRUE ? _shader : 0;
+veShaderManager::~veShaderManager()
+{
+
+}
+
+veShaderManager* veShaderManager::instance()
+{
+	static veShaderManager manager;
+	return &manager;
+}
+
+veShader* veShaderManager::getOrCreateShader(const std::string &name)
+{
+	auto iter = _shaders.find(name);
+	if (iter != _shaders.end()) return iter->second.get();
+	auto shader = new veShader();
+	_shaders[name] = shader;
+	return shader;
+}
+
+veShaderManager::veShaderManager()
+{
+
 }

@@ -9,6 +9,7 @@
 #include "BaseCore/Matrix4.h"
 #include "BaseCore/Array.h"
 #include "RenderCommand.h"
+#include <map>
 
 class vePass;
 class VE_EXPORT veUniform
@@ -99,6 +100,7 @@ class VE_EXPORT veShader
 {
 	friend class vePass;
 public:
+
 	enum Type
 	{
 		VERTEX_SHADER   = GL_VERTEX_SHADER,
@@ -112,22 +114,15 @@ public:
 
 	USE_VE_PTR;
 
-	void apply(const veRenderCommand &command);
-
 	void setType(Type type) { _type = type; }
 	Type getType() const { return _type; }
 
 	void setSource(const std::string &filePath);
 	void setSource(const char *str);
 
-	void addUniform(veUniform *uniform);
-	veUniform* getUniform(unsigned int idx);
-	veUniform* removeUniform(unsigned int idx);
-	unsigned int getUniformNum() const { return _uniforms.size(); }
-
 private:
 
-	GLuint compile();
+	GLuint compile(const std::string &definations);
 
 private:
 
@@ -135,7 +130,22 @@ private:
 	GLuint _shader;
 	std::string _source;
 	bool _isCompiled;
-	std::vector< VE_Ptr<veUniform> > _uniforms;
+};
+
+class VE_EXPORT veShaderManager
+{
+public:
+	~veShaderManager();
+
+	static veShaderManager* instance();
+	veShader* getOrCreateShader(const std::string &name);
+
+private:
+	veShaderManager();
+
+private:
+
+	std::map<std::string, VE_Ptr<veShader> > _shaders;
 };
 
 #endif

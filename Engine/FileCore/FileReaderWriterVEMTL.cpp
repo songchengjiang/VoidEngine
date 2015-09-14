@@ -103,7 +103,14 @@ private:
 	}
 
 	void readShader(const Value &shaderVal, vePass *pass){
-		veShader *shader = new veShader;
+		veShader *shader = nullptr;
+
+		if (shaderVal.HasMember(SOURCE_KEY.c_str())) {
+			std::string name = shaderVal[SOURCE_KEY.c_str()].GetString();
+			shader = new veShader;
+		}
+
+		if (!shader) return;
 		auto member = shaderVal.MemberBegin();
 		for (; member != shaderVal.MemberEnd(); ++member){
 			if (member->name.GetString() == TYPE_KEY){
@@ -147,7 +154,7 @@ private:
 						, values[12].GetDouble(), values[13].GetDouble(), values[14].GetDouble(), values[15].GetDouble());
 					uniform->setValue(mat);
 				}
-				shader->addUniform(uniform);
+				pass->addUniform(uniform);
 			}
 		}
 		pass->setShader(shader);

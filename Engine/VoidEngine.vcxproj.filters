@@ -277,5 +277,8 @@
     <ClInclude Include="KernelCore\Animation.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
+    <ClInclude Include="KernelCore\ShaderDefinationGenerator.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

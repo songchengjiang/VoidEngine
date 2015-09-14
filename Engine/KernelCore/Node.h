@@ -47,7 +47,7 @@ public:
 	veRenderableObject* getRenderableObject(unsigned int objIndex);
 	unsigned int getRenderableObjectCount() const { return _renderableObjects.size(); }
 
-	virtual void setMatrix(const veMat4 &mat) { _matrix = mat; }
+	virtual void setMatrix(const veMat4 &mat) { _matrix = mat; _refresh = true; }
 	const veMat4& getMatrix() const { return _matrix; }
 
 	veMat4 getNodeToWorldMatrix();
@@ -55,6 +55,8 @@ public:
 
 	void setMask(unsigned int mask) { _mask = mask; }
 	unsigned int getMask() const { return _mask; }
+
+	void refresh();
 
 	virtual bool routeEvent(const veEvent &event, veVisualiser *vs);
 	virtual void update(veVisualiser *vs);
@@ -72,6 +74,7 @@ protected:
 
 	veMat4            _matrix;
 	bool              _isVisible;
+	bool              _refresh;
 	unsigned int      _mask;
 };
 

@@ -94,6 +94,7 @@
     <ClInclude Include="KernelCore\Renderer.h" />
     <ClInclude Include="KernelCore\RenderQueue.h" />
     <ClInclude Include="KernelCore\Shader.h" />
+    <ClInclude Include="KernelCore\ShaderDefinationGenerator.h" />
     <ClInclude Include="KernelCore\Texture.h" />
     <ClInclude Include="KernelCore\TextureManager.h" />
     <ClInclude Include="KernelCore\Transformer.h" />

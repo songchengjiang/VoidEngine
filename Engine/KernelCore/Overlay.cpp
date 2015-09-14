@@ -68,6 +68,6 @@ void veOverlay::createMaterial()
 	pass->setShader(vShader);
 	pass->setShader(fShader);
 
-	vShader->addUniform(new veUniform("u_ModelMat", M_MATRIX));
-	fShader->addUniform(new veUniform("u_texture", 0));
+	pass->addUniform(new veUniform("u_ModelMat", M_MATRIX));
+	pass->addUniform(new veUniform("u_texture", 0));
 }

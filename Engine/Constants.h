@@ -119,6 +119,7 @@ static const std::string VERTEX_ATTRIB_TEX_COORD = "VERTEX_ATTRIB_TEX_COORD";
 static const std::string VERTEX_ATTRIB_BONE_INDICES = "VERTEX_ATTRIB_BONE_INDICES";
 static const std::string VERTEX_ATTRIB_BONE_WEIGHTS = "VERTEX_ATTRIB_BONE_WEIGHTS";
 static const std::string VERTEX_ATTRIB_COLOR = "VERTEX_ATTRIB_COLOR";
+static const std::string VERTEX_ATTRIB_USER = "VERTEX_ATTRIB_USER";
 
 //internal unifrom names
 static const std::string M_MATRIX_KEY = "u_ModelMat";

@@ -34,6 +34,11 @@ class VE_EXPORT vePass
 	friend class veUniform;
 public:
 	static vePass* CURRENT_PASS;
+	static bool CURRENT_DEPTH_TEST;
+	static bool CURRENT_DEPTH_WRITE;
+	static bool CURRENT_CULL_FACE;
+	static veBlendFunc CURRENT_BLEND_FUNC;
+	static GLenum CURRENT_POLYGON_MODE;
 
 	vePass();
 	~vePass();
@@ -70,9 +75,15 @@ public:
 	veTexture* removeTexture(unsigned int idx);
 	unsigned int getTextureNum() const { return _textures.size(); }
 
+	void addUniform(veUniform *uniform);
+	veUniform* getUniform(unsigned int idx);
+	veUniform* removeUniform(unsigned int idx);
+	unsigned int getUniformNum() const { return _uniforms.size(); }
+
 private:
 
-	void applyProgram();
+	void applyProgram(const veRenderCommand &command);
+	void applyUniforms(const veRenderCommand &command);
 
 private:
 
@@ -83,8 +94,10 @@ private:
 	unsigned int _mask;
 	GLenum _polygonMode;
 	GLuint _program;
+	bool    _needLinkProgram;
 	std::unordered_map<veShader::Type, VE_Ptr<veShader> > _shaders;
 	std::vector< VE_Ptr<veTexture> >                      _textures;
+	std::vector< VE_Ptr<veUniform> >                      _uniforms;
 };
 
 class VE_EXPORT veTechnique

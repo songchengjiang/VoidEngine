@@ -7,6 +7,7 @@ veNode::veNode()
 	, _parent(nullptr)
 	, _matrix(veMat4::IDENTITY)
 	, _isVisible(true)
+	, _refresh(true)
 	, _mask(0xffffffff)
 {
 }
@@ -114,7 +115,7 @@ veMat4 veNode::getNodeToWorldMatrix()
 {
 	veMat4 worldMat = _matrix;
 	veNode *parent = _parent;
-	while (parent){
+	while (parent) {
 		worldMat = parent->getMatrix() * worldMat;
 		parent = parent->_parent;
 	}
@@ -126,6 +127,11 @@ veMat4 veNode::getWorldToNodeMatrix()
 	veMat4 mat = getNodeToWorldMatrix();
 	mat.inverse();
 	return mat;
+}
+
+void veNode::refresh()
+{
+	_refresh = true;
 }
 
 bool veNode::routeEvent(const veEvent &event, veVisualiser *vs)

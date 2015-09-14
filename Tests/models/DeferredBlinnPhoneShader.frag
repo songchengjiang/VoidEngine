@@ -1,4 +1,4 @@
-#version 430        
+ 
 uniform sampler2D u_diffuseTex;
 in vec3 v_position;   
 in vec3 v_normal;                   
