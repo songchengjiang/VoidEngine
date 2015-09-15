@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "name": "point",
+  "parameters": [
+    {
+      "name": "color",
+      "type": "VEC3",
+      "value": [ 1.0, 1.0, 1.0 ]
+    }
+  ]
+}

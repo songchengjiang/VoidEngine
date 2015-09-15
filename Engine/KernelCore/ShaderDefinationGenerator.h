@@ -11,7 +11,6 @@ static const std::string SHADER_VERSION = "#version";
 static const std::string SHADER_DEFINE_BONES = "#define VE_USE_BONES";
 static const std::string SHADER_DEFINE_LIGHTS = "#define VE_USE_LIGHTS";
 static const std::string SHADER_DEFINE_TEXTURES = "#define VE_USE_TEXTURES";
-static const std::string SHADER_DEFINE_POINT_LIGHTS = "#define VE_USE_POINT_LIGHTS";
 static const std::string SHADER_DEFINE_ATTRIBUTE_ARRAY[] = {
 	"#define ATTR_POSITION",
 	"#define ATTR_NORMAL",
@@ -30,6 +29,10 @@ static const std::string SHADER_DEFINE_ATTRIBUTE_ARRAY[] = {
 	"#define ATTR_USER0",
 	"#define ATTR_USER1"
 };
+
+static const std::string SHADER_DEFINE_POINT_LIGHTS = "#define VE_USE_POINT_LIGHTS";
+static const std::string SHADER_DEFINE_DIRECTIONAL_LIGHTS = "#define VE_USE_DIRECTIONAL_LIGHTS";
+static const std::string SHADER_DEFINE_SPOT_LIGHTS = "#define VE_USE_SPOT_LIGHTS";
 //static const std::string SHADER_DEFINE_ATTRIBUTE_POSITION = "#define ATTR_POSITION";
 //static const std::string SHADER_DEFINE_ATTRIBUTE_NORMAL = "#define ATTR_NORMAL";
 //static const std::string SHADER_DEFINE_ATTRIBUTE_TANGENT = "#define ATTR_TANGENT";
