@@ -20,6 +20,8 @@ public:
 		std::string buffer = veFile::instance()->readFileToBuffer(filePath);
 		_doucument.Parse(buffer.c_str());
 		parseDoc();
+		_meshList.clear();
+		_boneList.clear();
 		return _root;
 	}
 

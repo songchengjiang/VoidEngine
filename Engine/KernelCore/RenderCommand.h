@@ -12,7 +12,8 @@ class vePass;
 struct veRenderCommand
 {
 	veRenderCommand()
-		: priority(NORMAL_PRIORITY){
+		: priority(NORMAL_PRIORITY)
+		, depthInCamera(0.0f){
 	}
 
 	enum Priority
@@ -23,6 +24,7 @@ struct veRenderCommand
 	};
 
 	int                 priority;
+	veReal              depthInCamera;
 	vePass             *pass;
 	veNode             *attachedNode;
 	veRenderableObject *renderableObj;

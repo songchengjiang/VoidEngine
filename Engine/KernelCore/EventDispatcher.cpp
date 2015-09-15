@@ -101,6 +101,8 @@ void veEventDispatcher::collectMouseMoveEvent(GLFWwindow* window, double x, doub
 	caculateMouseUnitCoords(window, x, y);
 	veEvent &event = veEventDispatcher::instance()->_currentEvent;
 	event.setEventType(veEvent::VE_MOVE);
+	auto action = glfwGetMouseButton(window, event.getMouseSymbol());
+	if (action != GLFW_PRESS) event.setMouseSymbol(veEvent::VE_MOUSE_UNKNOWN);
 	veEventDispatcher::instance()->_events[window].push_back(event);
 }
 

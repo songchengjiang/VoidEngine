@@ -24,8 +24,38 @@ void veRenderQueue::pushCommand(unsigned int renderQueueType, const veRenderComm
 
 void veRenderQueue::execute()
 {
+	sortQueues();
 	for (auto &iter : _renderQueues) {
 		iter.first->render(iter.second);
 	}
 	_renderQueues.clear();
+}
+
+void veRenderQueue::sortQueues()
+{
+	auto sortFunc = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
+		return right.priority <= left.priority;
+	};
+
+	auto transparentSortFunc = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
+		return /*right.priority <= left.priority && */left.depthInCamera <= right.depthInCamera;
+	};
+
+	for (auto &iter : _renderQueues) {
+		auto bgQueue = iter.second.find(veRenderQueue::RENDER_QUEUE_BACKGROUND);
+		if (bgQueue != iter.second.end() && !bgQueue->second.empty())
+			bgQueue->second.sort(sortFunc);
+
+		auto entityQueue = iter.second.find(veRenderQueue::RENDER_QUEUE_ENTITY);
+		if (entityQueue != iter.second.end() && !entityQueue->second.empty())
+			entityQueue->second.sort(sortFunc);
+
+		auto tpQueue = iter.second.find(veRenderQueue::RENDER_QUEUE_TRANSPARENT);
+		if (tpQueue != iter.second.end() && !tpQueue->second.empty())
+			tpQueue->second.sort(transparentSortFunc);
+
+		auto olQueue = iter.second.find(veRenderQueue::RENDER_QUEUE_OVERLAY);
+		if (olQueue != iter.second.end() && !olQueue->second.empty())
+			olQueue->second.sort(sortFunc);
+	}
 }

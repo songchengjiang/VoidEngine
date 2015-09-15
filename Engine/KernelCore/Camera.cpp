@@ -106,9 +106,6 @@ void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 
 	for (auto &iter : renderList) {
 		auto &q = iter.second;
-		q.sort([](const veRenderCommand &left, const veRenderCommand &right)->bool {
-			return right.priority <= left.priority;
-		});
 		while (!q.empty()) {
 			const auto &cmd = q.front();
 			cmd.renderer->draw(cmd);

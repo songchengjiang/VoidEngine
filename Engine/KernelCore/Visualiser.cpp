@@ -99,10 +99,13 @@ bool veVisualiser::dispatchEvent(double deltaTime, const veEvent &event)
 	}
 	_deltaTime = deltaTime;
 
+	bool state = false;
 	if (_root.valid()){
-		return _root->routeEvent(event, this);
+		state = _root->routeEvent(event, this);
 	}
-	return false;
+	if (!state && !_mainCamera->getParent() && _root.get() != _mainCamera.get())
+		_mainCamera->routeEvent(event, this);
+	return state;
 }
 
 void veVisualiser::update()
@@ -113,6 +116,9 @@ void veVisualiser::update()
 		CameraFinder camFinder(_cameras, _mainCamera.get());
 		_root->accept(camFinder);
 	}
+
+	if (!_mainCamera->getParent() && _root.get() != _mainCamera.get())
+		_mainCamera->update(this);
 }
 
 void veVisualiser::render()

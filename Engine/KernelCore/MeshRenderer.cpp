@@ -27,14 +27,20 @@ void veMeshRenderer::render(veNode *node, veRenderableObject *renderableObj, veC
 		for (unsigned int i = 0; i < _technique->getPassNum(); ++i) {
 			auto pass = _technique->getPass(i);
 			if (camera->getMask() & pass->drawMask()) {
+				bool isTransparent = pass->blendFunc() != veBlendFunc::DISABLE ? true : false;
 				veRenderCommand rc;
 				rc.pass = pass;
 				rc.attachedNode = node;
 				rc.renderableObj = renderableObj;
 				rc.camera = camera;
 				rc.renderer = this;
+				if (isTransparent)
+					rc.depthInCamera = (camera->viewMatrix() * node->getNodeToWorldMatrix())[2][3];
 				pass->visit(rc);
-				veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
+				if (isTransparent)
+					veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
+				else
+					veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
 			}
 		}
 	}

@@ -1,7 +1,8 @@
 uniform vec4 u_ambient;        
 uniform vec4 u_diffuse;
 uniform vec4 u_specular;
-uniform float u_shininess;          
+uniform float u_shininess; 
+uniform float u_opacity;         
 uniform sampler2D u_diffuseTex;
 in vec3 v_position;
 in vec3 v_normal;                   
@@ -16,8 +17,8 @@ void main(){
 	float specfactor = pow(max(0.0, dot(normal, H)), u_shininess);      
 	float diffactor = max(0.0, dot(normal, lDir));      
 #ifdef VE_USE_TEXTURES 
-	fragColor = diffactor * u_diffuse * texture(u_diffuseTex, v_texcoord) + specfactor * u_specular + u_ambient; 
+	fragColor = vec4((diffactor * u_diffuse * texture(u_diffuseTex, v_texcoord) + specfactor * u_specular + u_ambient).xyz, u_opacity); 
 #else
-	fragColor = diffactor * u_diffuse + specfactor * u_specular + u_ambient; 
+	fragColor = vec4((diffactor * u_diffuse + specfactor * u_specular + u_ambient).xyz, u_opacity); 
 #endif
 }

@@ -12,6 +12,7 @@
                             "depthTest": true,
                             "depthWrite": true,
                             "cullFace": true,
+                            "blendFunc": ["SRC_ALPHA", "ONE_MINUS_SRC_ALPHA"],
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
@@ -30,7 +31,7 @@
                                     "u_specular": [0.800000,0.800000,0.800000,1.000000
                                     ],
                                     "u_shininess":5.656854,
-                                    "u_opacity":1.000000,
+                                    "u_opacity":0.8,
                                     "u_reflectivity":0.000000
                                 }
                             ]

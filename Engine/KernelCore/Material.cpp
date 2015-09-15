@@ -76,7 +76,7 @@ void vePass::apply(const veRenderCommand &command)
 		else {
 			glDisable(GL_BLEND);
 		}
-		_blendFunc = CURRENT_BLEND_FUNC;
+		CURRENT_BLEND_FUNC = _blendFunc;
 	}
 }
 

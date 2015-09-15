@@ -29,6 +29,10 @@ public:
 
 private:
 
+	void sortQueues();
+
+private:
+
 	std::unordered_map<veCamera*, RenderCommandList> _renderQueues;
 };
 
