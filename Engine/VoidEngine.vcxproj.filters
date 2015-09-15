@@ -144,6 +144,9 @@
     <ClCompile Include="FileCore\FileReaderWriterANIMATION.cpp">
       <Filter>FileCore\ReaderWriter</Filter>
     </ClCompile>
+    <ClCompile Include="FileCore\FileReaderWriterLIGHT.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseCore\Math.h">

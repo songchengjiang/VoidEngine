@@ -24,6 +24,7 @@
     <ClCompile Include="FileCore\FileReaderWriterCAMERA.cpp" />
     <ClCompile Include="FileCore\FileReaderWriterEXR.cpp" />
     <ClCompile Include="FileCore\FileReaderWriterJPEG.cpp" />
+    <ClCompile Include="FileCore\FileReaderWriterLIGHT.cpp" />
     <ClCompile Include="FileCore\FileReaderWriterPNG.cpp" />
     <ClCompile Include="FileCore\FileReaderWriterVEM.cpp" />
     <ClCompile Include="FileCore\FileReaderWriterVEMTL.cpp" />
