@@ -83,6 +83,7 @@ public:
 private:
 
 	void applyProgram(const veRenderCommand &command);
+	void applyInnerUniforms(const veRenderCommand &command);
 	void applyUniforms(const veRenderCommand &command);
 
 private:
@@ -97,6 +98,7 @@ private:
 	bool    _needLinkProgram;
 	std::unordered_map<veShader::Type, VE_Ptr<veShader> > _shaders;
 	std::vector< VE_Ptr<veTexture> >                      _textures;
+	std::vector< VE_Ptr<veUniform> >                      _innerUniforms;
 	std::vector< VE_Ptr<veUniform> >                      _uniforms;
 };
 

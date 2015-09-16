@@ -6,6 +6,8 @@ class LightTest : public BaseTest
 {
 public:
 	LightTest() {
+		veLightManager::instance()->loadLightTemplates("lights/point.velightemplates");
+
 		veNode *root = new veNode;
 		{
 			veNode *node = static_cast<veNode *>(veFile::instance()->readFile("models/teapot.vem"));
@@ -17,6 +19,7 @@ public:
 
 			veLight *light = static_cast<veLight *>(veFile::instance()->readFile("lights/point0.velight"));
 			root->addChild(light);
+
 		}
 
 		_visualiser->setSceneNode(root);

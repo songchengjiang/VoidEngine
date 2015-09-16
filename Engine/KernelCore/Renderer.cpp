@@ -22,40 +22,6 @@ void veRenderer::visit(veNode *node, veRenderableObject *renderableObj, veVisual
 		_technique = findOptimalTechnique(material);
 }
 
-void veRenderer::uniformUpdate(veUniform *uniform, const veRenderCommand &command)
-{
-	std::string autoBinding;
-	uniform->getValue(autoBinding);
-	if (!autoBinding.empty()) {
-		veMat4 m = command.attachedNode->getNodeToWorldMatrix();
-		veMat4 mv = command.camera->viewMatrix() * m;
-		if (autoBinding == MVP_MATRIX) {
-			veMat4 mvp = command.camera->projectionMatrix() * mv;
-			uniform->setValue(mvp);
-		}
-		else if (autoBinding == MV_MATRIX) {
-			uniform->setValue(mv);
-		}
-		else if (autoBinding == P_MATRIX) {
-			const veMat4 &p = command.camera->projectionMatrix();
-			uniform->setValue(p);
-		}
-		else if (autoBinding == NORMAL_MATRIX) {
-			veMat3 normMat(mv[0][0], mv[0][1], mv[0][2]
-				, mv[1][0], mv[1][1], mv[1][2]
-				, mv[2][0], mv[2][1], mv[2][2]);
-			normMat.inverse();
-			normMat.transpose();
-			uniform->setValue(normMat);
-		}
-		else if (autoBinding == M_MATRIX) {
-			uniform->setValue(m);
-		}
-
-		//uniform->setValue(values);
-	}
-}
-
 veTechnique* veRenderer::findOptimalTechnique(veMaterial *material)
 {
 	return material->activeTechnique();

@@ -81,6 +81,7 @@ private:
 		center.makeTranslation(_center);
 		veMat4 trans;
 		trans.makeTranslation(_translate);
+
 		if (_camera)
 			_camera->setMatrix(center * veMat4::rotation(_rotation) * trans);
 	}

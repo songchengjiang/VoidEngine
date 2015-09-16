@@ -28,7 +28,7 @@ public:
 			case veEvent::VE_KEY_RIGHT:
 			{
 				++CURRENT_CAMERA;
-				if (node->getChildCount() <= CURRENT_CAMERA) CURRENT_CAMERA = 0;
+				if ((int)node->getChildCount() <= CURRENT_CAMERA) CURRENT_CAMERA = 0;
 				auto cam = static_cast<veCamera *>(node->getChild(CURRENT_CAMERA));
 				_visualiser->setCamera(cam);
 			}

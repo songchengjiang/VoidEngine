@@ -3,32 +3,30 @@
 #include "Prerequisites.h"
 #include "Node.h"
 #include "Shader.h"
+#include "Parameter.h"
 #include <unordered_map>
 
 class VE_EXPORT veLight : public veNode
 {
 	friend class veLightManager;
 public:
-	typedef std::vector< VE_Ptr<veUniform> > Parameters;
 
 	~veLight();
 
 	virtual void visit(veNodeVisitor &visitor) override;
 
 	const std::string& getType() const { return _type; }
-	const Parameters& getParameters() const { return _parameters; }
-	veUniform* getParameter(const std::string &name);
-
-	void apply(const veRenderCommand &command);
+	const veParameterList& getParameters() const { return _parameters; }
+	veParameter* getParameter(const std::string &name);
 
 protected:
 
-	veLight(const std::string &type, const Parameters &params);
+	veLight(const std::string &type, const veParameterList &params);
 
 protected:
 
 	std::string _type;
-	Parameters _parameters;
+	veParameterList _parameters;
 };
 
 typedef std::vector< VE_Ptr<veLight> > veLightList;
@@ -36,7 +34,7 @@ typedef std::vector< VE_Ptr<veLight> > veLightList;
 class VE_EXPORT veLightManager
 {
 public:
-	typedef std::vector< std::pair<std::string, veUniform::Type> > Parameters;
+	typedef std::vector< std::pair<std::string, std::string> > Parameters;
 	struct LightTemplate
 	{
 		unsigned int limit;
@@ -48,6 +46,7 @@ public:
 
 	static veLightManager* instance();
 
+	bool loadLightTemplates(const std::string &filePath);
 	void addLightTemplate(const std::string &className, const LightTemplate &lightTemp);
 	const LightTemplate& getLightTemplate(const std::string &className) const;
 	const LightTemplateList& getLightTemplateList() const { return _lightTemplate; }

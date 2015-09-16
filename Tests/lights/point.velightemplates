@@ -1,0 +1,55 @@
+{
+  "version": "1.0",
+  "lightTemplates": [
+    {
+      "name": "ve_PointLight",
+      "limit": 50,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "VEC3"
+        },
+        {
+          "name": "intensity",
+          "type": "FLOAT"
+        }
+      ]
+    },
+    {
+        "name": "ve_DirectionalLight",
+        "limit": 5,
+        "parameters": [
+          {
+            "name": "color",
+            "type": "VEC3"
+          },
+          {
+            "name": "intensity",
+            "type": "FLOAT"
+          }
+        ]
+    },
+    {
+        "name": "ve_SpotLight",
+        "limit": 5,
+        "parameters": [
+          {
+            "name": "innerAngle",
+            "type": "FLOAT"
+          },
+          {
+            "name": "outerAngle",
+            "type": "FLOAT"
+          },
+          {
+            "name": "color",
+            "type": "VEC3"
+          },
+          {
+            "name": "intensity",
+            "type": "FLOAT"
+          }
+        ]
+    }
+  ]
+}

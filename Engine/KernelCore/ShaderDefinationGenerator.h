@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "Shader.h"
+#include "Constants.h"
 #include <sstream>
 //shader definations
 static const std::string SHADER_VERSION = "#version";
@@ -102,42 +103,32 @@ public:
 		std::stringstream ss;
 		if (true) {
 			ss << "struct " << className << "{" << std::endl;
+			ss << "    vec3 position;" << std::endl;
+			ss << "    vec3 direction;" << std::endl;
 			for (auto &iter : lightTemplate.parameters) {
-				switch (iter.second)
-				{
-				case veUniform::INT:
+				if (INT_KEY == iter.second) {
 					ss << "    int " << iter.first << ";" << std::endl;
-					break;
-
-				case veUniform::BOOL:
+				}
+				else if (BOOL_KEY == iter.second) {
 					ss << "    bool " << iter.first << ";" << std::endl;
-					break;
-
-				case veUniform::REAL:
+				}
+				else if (FLOAT_KEY == iter.second) {
 					ss << "    float " << iter.first << ";" << std::endl;
-					break;
-
-				case veUniform::VEC2:
+				}
+				else if (VEC2_KEY == iter.second) {
 					ss << "    vec2 " << iter.first << ";" << std::endl;
-					break;
-
-				case veUniform::VEC3:
+				}
+				else if (VEC3_KEY == iter.second) {
 					ss << "    vec3 " << iter.first << ";" << std::endl;
-					break;
-
-				case veUniform::VEC4:
+				}
+				else if (VEC4_KEY == iter.second) {
 					ss << "    vec4 " << iter.first << ";" << std::endl;
-					break;
-
-				case veUniform::MAT3:
+				}
+				else if (MAT3_KEY == iter.second) {
 					ss << "    mat3 " << iter.first << ";" << std::endl;
-					break;
-
-				case veUniform::MAT4:
+				}
+				else if (MAT4_KEY == iter.second) {
 					ss << "    mat4 " << iter.first << ";" << std::endl;
-					break;
-				default:
-					break;
 				}
 			}
 			ss << "};" << std::endl;

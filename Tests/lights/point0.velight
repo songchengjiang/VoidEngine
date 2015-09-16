@@ -1,12 +1,8 @@
 {
   "version": "1.0",
-  "class": "point.velightdef",
+  "type": "ve_PointLight",
   "name": "point0",
   "parameters": [
-    {
-      "name": "position",
-      "values": [0.0, 0.0, 30.0]
-    },
     {
       "name": "color",
       "values": [ 1.0, 1.0, 1.0 ]

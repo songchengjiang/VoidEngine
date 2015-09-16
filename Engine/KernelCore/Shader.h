@@ -16,7 +16,7 @@ class VE_EXPORT veUniform
 {
 public:
 
-	enum Type
+	enum class Type
 	{
 		INT,
 		BOOL,

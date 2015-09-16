@@ -98,23 +98,3 @@ void veMeshRenderer::draw(const veRenderCommand &command)
 		glDrawElements(primitive.primitiveType, primitive.indices->size(), GL_UNSIGNED_INT, nullptr);
 	}
 }
-
-void veMeshRenderer::uniformUpdate(veUniform *uniform, const veRenderCommand &command)
-{
-	veRenderer::uniformUpdate(uniform, command);
-	std::string autoBinding;
-	uniform->getValue(autoBinding);
-	if (!autoBinding.empty()) {
-		if (autoBinding == BONE_MATRIXES) {
-			static veMat4 boneMates[60];
-			veMesh *mesh = static_cast<veMesh *>(command.renderableObj);
-			veMat4 worldToMesh = command.attachedNode->getWorldToNodeMatrix();
-			for (unsigned int i = 0; i < mesh->getBoneNum(); ++i) {
-				const auto &bone = mesh->getBone(i);
-				veMat4 boneToWorld = bone->getBoneNode()->getNodeToWorldMatrix();
-				boneMates[i] = worldToMesh * boneToWorld * bone->getOffsetMat();
-			}
-			uniform->setValue(boneMates, 60);
-		}
-	}
-}

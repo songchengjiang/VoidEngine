@@ -38,6 +38,7 @@ void vePass::visit(const veRenderCommand &command)
 void vePass::apply(const veRenderCommand &command)
 {
 	applyProgram(command);
+	applyInnerUniforms(command);
 	applyUniforms(command);
 
 	if (CURRENT_PASS == this) return;
@@ -161,6 +162,13 @@ void vePass::applyProgram(const veRenderCommand &command)
 		_needLinkProgram = false;
 	}
 	glUseProgram(_program);
+}
+
+void vePass::applyInnerUniforms(const veRenderCommand &command)
+{
+	for (auto &iter : _innerUniforms) {
+		iter->apply(command);
+	}
 }
 
 void vePass::applyUniforms(const veRenderCommand &command)

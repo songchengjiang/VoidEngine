@@ -147,6 +147,9 @@
     <ClCompile Include="FileCore\FileReaderWriterLIGHT.cpp">
       <Filter>FileCore\ReaderWriter</Filter>
     </ClCompile>
+    <ClCompile Include="KernelCore\Parameter.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseCore\Math.h">
@@ -281,6 +284,9 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="KernelCore\ShaderDefinationGenerator.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelCore\Parameter.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>

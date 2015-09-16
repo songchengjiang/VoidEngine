@@ -19,6 +19,7 @@ veNode::~veNode()
 
 int veNode::addChild(veNode *child)
 {
+	if (!child) return -1;
 	auto iter = std::find(_children.begin(), _children.end(), child);
 	if (iter != _children.end()) return -1;
 	veAssert(child->_parent == nullptr);

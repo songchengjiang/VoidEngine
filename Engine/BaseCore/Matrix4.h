@@ -47,10 +47,10 @@ public:
 	inline void inverse();
 	inline veReal determinant() const;
 
-	inline static veMat4 translation(const veVec3 &trans);
-	inline static veMat4 rotation(const veQuat &rot);
-	inline static veMat4 scale(const veVec3 &scl);
-	inline static veMat4 transform(const veVec3& position, const veVec3& scale, const veQuat& orientation);
+	static veMat4 translation(const veVec3 &trans);
+	static veMat4 rotation(const veQuat &rot);
+	static veMat4 scale(const veVec3 &scl);
+	static veMat4 transform(const veVec3& position, const veVec3& scale, const veQuat& orientation);
 
 	inline veMat4 operator * (const veMat4 &m2) const{
 		veMat4 r;

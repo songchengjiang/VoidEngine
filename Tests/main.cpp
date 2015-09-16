@@ -1,4 +1,5 @@
 #include "VoidEngine.h"
+#include "BaseTest.h"
 #include "MeshTest.h"
 #include "ImageTest.h"
 #include "RenToTex.h"
