@@ -18,6 +18,7 @@
 #include "KernelCore/LoopQueue.h"
 #include "KernelCore/Overlay.h"
 #include "KernelCore/Animation.h"
+#include "KernelCore/Light.h"
 
 #include "FileCore/Printer.h"
 #include "FileCore/File.h"

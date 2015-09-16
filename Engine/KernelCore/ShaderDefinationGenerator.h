@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "Shader.h"
+#include <sstream>
 //shader definations
 static const std::string SHADER_VERSION = "#version";
 static const std::string SHADER_DEFINE_BONES = "#define VE_USE_BONES";
@@ -30,9 +31,6 @@ static const std::string SHADER_DEFINE_ATTRIBUTE_ARRAY[] = {
 	"#define ATTR_USER1"
 };
 
-static const std::string SHADER_DEFINE_POINT_LIGHTS = "#define VE_USE_POINT_LIGHTS";
-static const std::string SHADER_DEFINE_DIRECTIONAL_LIGHTS = "#define VE_USE_DIRECTIONAL_LIGHTS";
-static const std::string SHADER_DEFINE_SPOT_LIGHTS = "#define VE_USE_SPOT_LIGHTS";
 //static const std::string SHADER_DEFINE_ATTRIBUTE_POSITION = "#define ATTR_POSITION";
 //static const std::string SHADER_DEFINE_ATTRIBUTE_NORMAL = "#define ATTR_NORMAL";
 //static const std::string SHADER_DEFINE_ATTRIBUTE_TANGENT = "#define ATTR_TANGENT";
@@ -65,9 +63,6 @@ public:
 		//_root->accept(*this);
 		std::string definations;
 		definations += SHADER_VERSION + std::string(" 430\n");
-		if (!_lightList.empty()) {
-			definations += SHADER_DEFINE_LIGHTS + std::string(" 1\n");
-		}
 
 		if (type == veShader::VERTEX_SHADER) {
 			auto mesh = dynamic_cast<veMesh *>(_command.renderableObj);
@@ -90,24 +85,82 @@ public:
 			}
 		}
 
+		auto lightTemplates = veLightManager::instance()->getLightTemplateList();
+		if (!lightTemplates.empty()) {
+			definations += SHADER_DEFINE_LIGHTS + std::string(" 1\n");
+			for (auto &temp : lightTemplates) {
+				definations += getLightDefination(temp.first, temp.second);
+			}
+		}
+
 		return definations;
 	}
 
-	virtual void visit(veNode &node) {
-		_root = &node;
+
+	std::string getLightDefination(const std::string &className, const veLightManager::LightTemplate &lightTemplate)
+	{
+		std::stringstream ss;
+		if (true) {
+			ss << "struct " << className << "{" << std::endl;
+			for (auto &iter : lightTemplate.parameters) {
+				switch (iter.second)
+				{
+				case veUniform::INT:
+					ss << "    int " << iter.first << ";" << std::endl;
+					break;
+
+				case veUniform::BOOL:
+					ss << "    bool " << iter.first << ";" << std::endl;
+					break;
+
+				case veUniform::REAL:
+					ss << "    float " << iter.first << ";" << std::endl;
+					break;
+
+				case veUniform::VEC2:
+					ss << "    vec2 " << iter.first << ";" << std::endl;
+					break;
+
+				case veUniform::VEC3:
+					ss << "    vec3 " << iter.first << ";" << std::endl;
+					break;
+
+				case veUniform::VEC4:
+					ss << "    vec4 " << iter.first << ";" << std::endl;
+					break;
+
+				case veUniform::MAT3:
+					ss << "    mat3 " << iter.first << ";" << std::endl;
+					break;
+
+				case veUniform::MAT4:
+					ss << "    mat4 " << iter.first << ";" << std::endl;
+					break;
+				default:
+					break;
+				}
+			}
+			ss << "};" << std::endl;
+			ss << "uniform " << className << "[" << lightTemplate.limit << "];" << std::endl;
+		}
+		return ss.str();
 	}
 
-	virtual void visit(veLight &light) {
-		if (_traversalMode == veNodeVisitor::TRAVERSE_CHILDREN)
-			_lightList.push_back(&light);
-	}
+	//virtual void visit(veNode &node) {
+	//	_root = &node;
+	//}
 
-	veNode *getRoot() { return _root; }
+	//virtual void visit(veLight &light) {
+	//	if (_traversalMode == veNodeVisitor::TRAVERSE_CHILDREN)
+	//		_lightList[light.getType()].push_back(&light);
+	//}
+
+	//veNode *getRoot() { return _root; }
 
 private:
 
 	const veRenderCommand &_command;
-	std::vector<veLight *> _lightList;
+	//std::map<std::string, std::vector<veLight *> > _lightList;
 	veNode                *_root;
 };
 

@@ -149,10 +149,10 @@ void vePass::applyProgram(const veRenderCommand &command)
 
 	if (_needLinkProgram) {
 		ShaderDefinatiosGenerator sdg(command);
-		sdg.traversalMode() = ShaderDefinatiosGenerator::TRAVERSE_PARENT;
-		command.attachedNode->accept(sdg);
-		sdg.traversalMode() = ShaderDefinatiosGenerator::TRAVERSE_CHILDREN;
-		sdg.getRoot()->accept(sdg);
+		//sdg.traversalMode() = ShaderDefinatiosGenerator::TRAVERSE_PARENT;
+		//command.attachedNode->accept(sdg);
+		//sdg.traversalMode() = ShaderDefinatiosGenerator::TRAVERSE_CHILDREN;
+		//sdg.getRoot()->accept(sdg);
 		for (auto &iter : _shaders) {
 			GLuint id = iter.second->compile(sdg.getDefinations(this, iter.first));
 			glAttachShader(_program, id);

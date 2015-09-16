@@ -85,6 +85,7 @@ public:
 	bool getValue(veMat4 &val);
 	bool getValue(veRealArray &val);
 
+	void setName(const std::string &name);
 	const std::string& getName() const { return _name; }
 	Type getType() const { return _type; }
 

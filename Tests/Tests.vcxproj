@@ -93,6 +93,7 @@
     <ClInclude Include="BaseTest.h" />
     <ClInclude Include="CameraTest.h" />
     <ClInclude Include="ImageTest.h" />
+    <ClInclude Include="LightTest.h" />
     <ClInclude Include="MeshTest.h" />
     <ClInclude Include="RenToTex.h" />
   </ItemGroup>

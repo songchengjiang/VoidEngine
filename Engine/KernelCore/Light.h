@@ -7,24 +7,59 @@
 
 class VE_EXPORT veLight : public veNode
 {
+	friend class veLightManager;
 public:
-	veLight();
+	typedef std::vector< VE_Ptr<veUniform> > Parameters;
+
 	~veLight();
 
 	virtual void visit(veNodeVisitor &visitor) override;
 
-	void addParameter(veUniform *parameter);
-	veUniform* getParameter(unsigned int idx);
-	veUniform* removeParameter(unsigned int idx);
-	unsigned int getParameterNum() const { return _parameters.size(); }
-
-	std::string getDefination();
+	const std::string& getType() const { return _type; }
+	const Parameters& getParameters() const { return _parameters; }
+	veUniform* getParameter(const std::string &name);
 
 	void apply(const veRenderCommand &command);
 
 protected:
 
-	std::vector< VE_Ptr<veUniform> > _parameters;
+	veLight(const std::string &type, const Parameters &params);
+
+protected:
+
+	std::string _type;
+	Parameters _parameters;
+};
+
+typedef std::vector< VE_Ptr<veLight> > veLightList;
+
+class VE_EXPORT veLightManager
+{
+public:
+	typedef std::vector< std::pair<std::string, veUniform::Type> > Parameters;
+	struct LightTemplate
+	{
+		unsigned int limit;
+		Parameters parameters;
+	};
+	typedef std::unordered_map<std::string, LightTemplate> LightTemplateList;
+
+	~veLightManager();
+
+	static veLightManager* instance();
+
+	void addLightTemplate(const std::string &className, const LightTemplate &lightTemp);
+	const LightTemplate& getLightTemplate(const std::string &className) const;
+	const LightTemplateList& getLightTemplateList() const { return _lightTemplate; }
+
+	veLight* instanceOneLight(const std::string &className);
+
+private:
+	veLightManager();
+
+private:
+
+	LightTemplateList _lightTemplate;
 };
 
 #endif

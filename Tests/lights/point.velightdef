@@ -1,0 +1,19 @@
+{
+  "version": "1.0",
+  "name": "ve_PointLight",
+  "limit": 10,
+  "parameters": [
+    {
+      "name": "position",
+      "type": "VEC3"
+    },
+    {
+      "name": "color",
+      "type": "VEC3"
+    },
+    {
+      "name": "intensity",
+      "type": "FLOAT"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "version": "1.0",
+  "class": "point.velightdef",
+  "name": "point0",
+  "parameters": [
+    {
+      "name": "position",
+      "values": [0.0, 0.0, 30.0]
+    },
+    {
+      "name": "color",
+      "values": [ 1.0, 1.0, 1.0 ]
+    },
+    {
+      "name": "intensity",
+      "values": 2.0
+    }
+  ]
+}

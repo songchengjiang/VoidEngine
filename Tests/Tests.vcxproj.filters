@@ -16,6 +16,9 @@
     <Filter Include="CameraTest">
       <UniqueIdentifier>{023da00b-f9a4-4d83-a376-16f077c16959}</UniqueIdentifier>
     </Filter>
+    <Filter Include="LightTest">
+      <UniqueIdentifier>{13d01622-693c-4534-abe0-18e3a8d575e8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeshTest.h">
@@ -30,6 +33,9 @@
     </ClInclude>
     <ClInclude Include="CameraTest.h">
       <Filter>CameraTest</Filter>
+    </ClInclude>
+    <ClInclude Include="LightTest.h">
+      <Filter>LightTest</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

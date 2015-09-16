@@ -82,6 +82,13 @@ static const std::string FLOAT_KEY = "FLOAT";
 static const std::string UINT_KEY = "UINT";
 static const std::string USHORT_KEY = "USHORT";
 static const std::string BYTE_KEY = "BYTE";
+static const std::string INT_KEY = "INT";
+static const std::string BOOL_KEY = "BOOL";
+static const std::string VEC2_KEY = "VEC2";
+static const std::string VEC3_KEY = "VEC3";
+static const std::string VEC4_KEY = "VEC4";
+static const std::string MAT3_KEY = "MAT3";
+static const std::string MAT4_KEY = "MAT4";
 static const std::string POINTS_KEY = "POINTS";
 static const std::string LINES_KEY = "LINES";
 static const std::string TRIANGLES_KEY = "TRIANGLES";
@@ -110,6 +117,11 @@ static const std::string CENTER_KEY = "center";
 static const std::string UP_KEY = "up";
 static const std::string FBO_KEY = "fbo";
 static const std::string ATTACHMENT_KEY = "attachment";
+
+static const std::string CLASS_KEY = "class";
+static const std::string PARAMETERS_KEY = "parameters";
+static const std::string VALUES_KEY = "values";
+static const std::string LIMIT_KEY = "limit";
 
 static const std::string VERTEX_ATTRIB_POSITION = "VERTEX_ATTRIB_POSITION";
 static const std::string VERTEX_ATTRIB_NORMAL = "VERTEX_ATTRIB_NORMAL";

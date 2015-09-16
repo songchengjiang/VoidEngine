@@ -80,8 +80,6 @@ public:
 	veUniform* removeUniform(unsigned int idx);
 	unsigned int getUniformNum() const { return _uniforms.size(); }
 
-
-
 private:
 
 	void applyProgram(const veRenderCommand &command);

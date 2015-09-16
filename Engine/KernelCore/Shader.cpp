@@ -418,6 +418,14 @@ bool veUniform::getValue(veRealArray &val)
 	return true;
 }
 
+void veUniform::setName(const std::string &name)
+{
+	_name = name;
+	_location = -1;
+	_preLocation = -1;
+	_maxReLocation = 0;
+}
+
 veShader::veShader(Type type, const std::string &filePath)
 	: USE_VE_PTR_INIT
 	, _type(type)
