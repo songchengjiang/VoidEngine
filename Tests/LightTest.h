@@ -61,9 +61,11 @@ public:
 	LightTest() {
 		veLightManager::instance()->loadLightTemplates("lights/point.velightemplates");
 
+		veRenderableObject *obj = nullptr;
 		veNode *root = new veNode;
 		{
 			veNode *node = static_cast<veNode *>(veFile::instance()->readFile("models/teapot.vem"));
+			obj = node->getChild(0)->getChild(0)->getRenderableObject(0);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
@@ -78,6 +80,17 @@ public:
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
 			transer->setScale(veVec3(20.0f));
+			root->addChild(node);
+		}
+
+		{
+			veNode *node = new veNode;
+			node->addRenderableObject(obj);
+			//node->addComponent(new KeyboardInputer);
+			veTransformer *transer = new veTransformer;
+			node->addComponent(transer);
+			transer->setScale(veVec3(2.0f));
+			transer->setRotation(veQuat(veMath::PI, veVec3::UNIT_X));
 			root->addChild(node);
 		}
 

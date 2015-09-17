@@ -84,6 +84,7 @@ veComponent* veNode::getComponent(unsigned int comIndex)
 
 int veNode::addRenderableObject(veRenderableObject *obj)
 {
+	if (!obj) return -1;
 	auto iter = std::find(_renderableObjects.begin(), _renderableObjects.end(), obj);
 	if (iter != _renderableObjects.end()) return -1;
 	_renderableObjects.push_back(obj);

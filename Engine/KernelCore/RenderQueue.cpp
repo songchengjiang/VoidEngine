@@ -34,11 +34,11 @@ void veRenderQueue::execute(veVisualiser *vs)
 void veRenderQueue::sortQueues()
 {
 	auto sortFunc = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
-		return right.priority <= left.priority;
+		return right.priority <= left.priority && left.pass <= right.pass;
 	};
 
 	auto transparentSortFunc = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
-		return /*right.priority <= left.priority && */left.depthInCamera <= right.depthInCamera;
+		return /*right.priority <= left.priority && */left.depthInCamera <= right.depthInCamera && left.pass <= right.pass;
 	};
 
 	for (auto &iter : _renderQueues) {
