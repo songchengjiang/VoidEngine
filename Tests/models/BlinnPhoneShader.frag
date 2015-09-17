@@ -20,7 +20,7 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 		for (int i = 0; i < ve_DirectionalLightNum; ++i){
 			vec3 lDir = -ve_DirectionalLight[i].direction;                          
 			vec3 H = normalize(eye + lDir);   
-			diffLightCol += max(0.0, dot(normal, lDir)) * ve_DirectionalLight[i].color; 
+			diffLightCol += max(0.0, dot(normal, lDir)) * ve_DirectionalLight[i].intensity * ve_DirectionalLight[i].color; 
 			if (0.0 < u_shininess)              
 				specLightColor += pow(max(0.0, dot(normal, H)), u_shininess) * ve_DirectionalLight[i].intensity * ve_DirectionalLight[i].color;      
 		}		
@@ -30,7 +30,7 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 		for (int i = 0; i < ve_PointLightNum; ++i){
 			vec3 lDir = normalize(ve_PointLight[i].position - v_position);                          
 			vec3 H = normalize(eye + lDir);   
-			diffLightCol += max(0.0, dot(normal, lDir)) * ve_PointLight[i].color; 
+			diffLightCol += max(0.0, dot(normal, lDir)) * ve_PointLight[i].intensity * ve_PointLight[i].color; 
 			if (0.0 < u_shininess)              
 				specLightColor += pow(max(0.0, dot(normal, H)), u_shininess) * ve_PointLight[i].intensity * ve_PointLight[i].color;      
 		}
@@ -42,7 +42,7 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 			float currentAngleCos = dot(lDir, -ve_SpotLight[i].direction);
 			float attenuation = smoothstep(ve_SpotLight[i].outerAngleCos, ve_SpotLight[i].innerAngleCos, currentAngleCos);                        
 			vec3 H = normalize(eye + lDir);   
-			diffLightCol += max(0.0, dot(normal, lDir)) * ve_SpotLight[i].color * attenuation; 
+			diffLightCol += max(0.0, dot(normal, lDir)) * ve_SpotLight[i].intensity * ve_SpotLight[i].color * attenuation; 
 			if (0.0 < u_shininess)              
 				specLightColor += pow(max(0.0, dot(normal, H)), u_shininess) * ve_SpotLight[i].intensity * ve_SpotLight[i].color * attenuation;      
 		}		

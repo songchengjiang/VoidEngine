@@ -9,6 +9,8 @@ public:
 	Updater() 
 		: _lastChangeColorTime(0.0){
 		_angle = veMath::randomUnitization() * veMath::TWO_PI;
+		_radius = 10.0f * veMath::randomUnitization() + 2.0f;
+		_height = 10.0f * (veMath::randomUnitization() * 2.0f - 1.0f);
 		_oriColor = _desColor = veVec3(veMath::randomUnitization(), veMath::randomUnitization(), veMath::randomUnitization());
 	}
 	virtual bool handle(veNode *node, veVisualiser *vs, const veEvent &event) {
@@ -39,11 +41,9 @@ private:
 	}
 
 	void updateMatrix(veLight *light, double deltaTime) {
-		veReal radius = 5.0;
-		veReal x = radius * veMath::cos(_angle);
-		veReal y = radius * veMath::sin(_angle);
-		veReal z = 5.0f;
-		light->setMatrix(veMat4::lookAt(veVec3(x, y, z), veVec3::ZERO, veVec3::UNIT_Y));
+		veReal x = _radius * veMath::cos(_angle);
+		veReal y = _radius * veMath::sin(_angle);
+		light->setMatrix(veMat4::lookAt(veVec3(x, y, _height), veVec3::ZERO, veVec3::UNIT_Y));
 		_angle += veMath::QUARTER_PI * deltaTime;
 	}
 
@@ -53,6 +53,8 @@ private:
 	veVec3 _oriColor;
 	veVec3 _desColor;
 	veReal _angle;
+	veReal _radius;
+	veReal _height;
 };
 
 class LightTest : public BaseTest
@@ -100,6 +102,12 @@ public:
 			directional0->addComponent(lightTranser);
 			directional0->addComponent(new Updater);
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
+			auto param = directional0->getParameter("intensity");
+			param->set(veMath::randomUnitization());
+
+			veNode *lightModel = static_cast<veNode *>(veFile::instance()->readFile("models/sphere.vem"));
+			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
+			directional0->addChild(lightModel);
 			root->addChild(directional0);
 		}
 
@@ -109,6 +117,12 @@ public:
 			point0->addComponent(lightTranser);
 			point0->addComponent(new Updater);
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
+			auto param = point0->getParameter("intensity");
+			param->set(veMath::randomUnitization());
+
+			veNode *lightModel = static_cast<veNode *>(veFile::instance()->readFile("models/sphere.vem"));
+			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
+			point0->addChild(lightModel);
 			root->addChild(point0);
 		}
 
@@ -118,6 +132,12 @@ public:
 			spot0->addComponent(lightTranser);
 			spot0->addComponent(new Updater);
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
+			auto param = spot0->getParameter("intensity");
+			param->set(veMath::randomUnitization());
+
+			veNode *lightModel = static_cast<veNode *>(veFile::instance()->readFile("models/sphere.vem"));
+			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
+			spot0->addChild(lightModel);
 			root->addChild(spot0);
 		}
 
