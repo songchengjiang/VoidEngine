@@ -102,9 +102,9 @@ public:
 	{
 		std::stringstream ss;
 		if (true) {
-			ss << "struct " << className << "{" << std::endl;
-			ss << "    vec3 position;" << std::endl;
-			ss << "    vec3 direction;" << std::endl;
+			ss << "uniform struct " << "{" << std::endl;
+			ss << "    vec3 " << POSITION_KEY << ";" << std::endl;
+			ss << "    vec3 " << DIRECTION_KEY << ";" << std::endl;
 			for (auto &iter : lightTemplate.parameters) {
 				if (INT_KEY == iter.second) {
 					ss << "    int " << iter.first << ";" << std::endl;
@@ -131,8 +131,9 @@ public:
 					ss << "    mat4 " << iter.first << ";" << std::endl;
 				}
 			}
-			ss << "};" << std::endl;
-			ss << "uniform " << className << "[" << lightTemplate.limit << "];" << std::endl;
+			ss << "}" << className << "[" << lightTemplate.limit << "];" << std::endl;
+			//ss << "uniform " << className << "[" << lightTemplate.limit << "];" << std::endl;
+			ss << "uniform int " << className << "Num;" << std::endl;
 		}
 		return ss.str();
 	}

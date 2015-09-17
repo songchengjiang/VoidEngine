@@ -8,11 +8,13 @@
 #include "Event.h"
 #include "Node.h"
 #include "Camera.h"
+#include "light.h"
 #include "RenderQueue.h"
 
 class VE_EXPORT veVisualiser
 {
 	friend class veDirector;
+	friend class veCamera;
 public:
 	~veVisualiser();
 
@@ -49,8 +51,10 @@ private:
 	std::string _title;
 	GLFWwindow *_hwnd;
 	VE_Ptr<veNode> _root;
-	CameraList _cameras;
+	veCameraList _cameras;
 	VE_Ptr<veCamera> _mainCamera;
+	veLightList  _lights;
+
 	double _deltaTime;
 
 	veRenderQueue _renderQueue;

@@ -123,6 +123,8 @@ static const std::string PARAMETERS_KEY = "parameters";
 static const std::string VALUES_KEY = "values";
 static const std::string LIMIT_KEY = "limit";
 static const std::string LIGHT_TEMPLATES_KEY = "lightTemplates";
+static const std::string POSITION_KEY = "position";
+static const std::string DIRECTION_KEY = "direction";
 
 static const std::string VERTEX_ATTRIB_POSITION = "VERTEX_ATTRIB_POSITION";
 static const std::string VERTEX_ATTRIB_NORMAL = "VERTEX_ATTRIB_NORMAL";

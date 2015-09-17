@@ -2,27 +2,34 @@
 #include "Node.h"
 #include "NodeVisitor.h"
 
-class CameraFinder : public veNodeVisitor
+class NodeFinder : public veNodeVisitor
 {
 public:
-	CameraFinder(CameraList &cameraList, veCamera *discardCam) 
+	NodeFinder(veCameraList &cameraList, veCamera *discardCam, veLightList &lightList)
 		: _cameraList(cameraList)
-	    , _discardCam(discardCam){
+	    , _discardCam(discardCam)
+		, _lightList(lightList){
 
 	}
-	~CameraFinder() {
+	~NodeFinder() {
 
 	}
 
 	virtual void visit(veCamera &camera) override{
-		if (&camera != _discardCam)
+		if (&camera != _discardCam && camera.isVisible())
 			_cameraList.push_back(&camera);
+	}
+
+	virtual void visit(veLight &light) override {
+		if (light.isVisible())
+			_lightList.push_back(&light);
 	}
 
 private:
 
-	CameraList &_cameraList;
+	veCameraList &_cameraList;
 	veCamera   *_discardCam;
+	veLightList &_lightList;
 };
 
 veVisualiser::veVisualiser(int w, int h, const std::string &title)
@@ -110,26 +117,26 @@ bool veVisualiser::dispatchEvent(double deltaTime, const veEvent &event)
 
 void veVisualiser::update()
 {
-	if (_root.valid()) {
-		_root->update(this);
-		_cameras.clear();
-		CameraFinder camFinder(_cameras, _mainCamera.get());
-		_root->accept(camFinder);
-	}
-
+	if (!_root.valid()) return;
+	_root->update(this);
+	_cameras.clear();
+	_lights.clear();
+	NodeFinder nodeFinder(_cameras, _mainCamera.get(), _lights);
+	_root->accept(nodeFinder);
 	if (!_mainCamera->getParent() && _root.get() != _mainCamera.get())
 		_mainCamera->update(this);
 }
 
 void veVisualiser::render()
 {
+	if (!_root.valid()) return;
 	//glClear(_clearMask);
 	veRenderQueue::CURRENT_RENDER_QUEUE = &_renderQueue;
 	for (auto &iter : _cameras) {
 		if (iter->getFrameBufferObject())
-			_root->render(iter.get());
+			_root->render(iter);
 	}
 	_root->render(_mainCamera.get());
-	_renderQueue.execute();
+	_renderQueue.execute(this);
 	glfwSwapBuffers(_hwnd);
 }

@@ -2,6 +2,7 @@
 #include "FrameBufferObject.h"
 #include "Visualiser.h"
 #include "ShaderDefinationGenerator.h"
+#include "Light.h"
 
 veBlendFunc veBlendFunc::DISABLE = { GL_ONE, GL_ZERO };
 veBlendFunc veBlendFunc::ADDITIVE = { GL_SRC_ALPHA, GL_ONE };
@@ -38,7 +39,7 @@ void vePass::visit(const veRenderCommand &command)
 void vePass::apply(const veRenderCommand &command)
 {
 	applyProgram(command);
-	applyInnerUniforms(command);
+	applyLightsUniforms(command);
 	applyUniforms(command);
 
 	if (CURRENT_PASS == this) return;
@@ -164,10 +165,20 @@ void vePass::applyProgram(const veRenderCommand &command)
 	glUseProgram(_program);
 }
 
-void vePass::applyInnerUniforms(const veRenderCommand &command)
+void vePass::applyLightsUniforms(const veRenderCommand &command)
 {
-	for (auto &iter : _innerUniforms) {
-		iter->apply(command);
+	std::unordered_map<std::string, int> currentyLights;
+	for (auto &iter : veLightManager::instance()->getLightTemplateList()) {
+		currentyLights[iter.first] = 0;
+	}
+	for (auto &iter : (*command.lightList)) {
+		int &count = currentyLights[iter->getType()];
+		applyLightUniforms(count, iter, command.camera);
+		++count;
+	}
+	for (auto &iter : currentyLights) {
+		GLint loc = glGetUniformLocation(_program, (iter.first + std::string("Num")).c_str());
+		glUniform1i(loc, iter.second);
 	}
 }
 
@@ -175,6 +186,85 @@ void vePass::applyUniforms(const veRenderCommand &command)
 {
 	for (auto &iter : _uniforms) {
 		iter->apply(command);
+	}
+}
+
+void vePass::applyLightUniforms(unsigned int idx, veLight *light, veCamera *camera)
+{
+	char str[32];
+	sprintf(str, "%s[%d].", light->getType().c_str(), idx);
+	std::string lightName = str;
+
+	GLint posLoc = glGetUniformLocation(_program, (lightName + POSITION_KEY).c_str());
+	GLint dirLoc = glGetUniformLocation(_program, (lightName + DIRECTION_KEY).c_str());
+	if (0 <= posLoc || 0 <= dirLoc) {
+		veMat4 lightInView = camera->viewMatrix() * light->getNodeToWorldMatrix();
+		if (0 <= posLoc) {
+			glUniform3f(posLoc, lightInView[0][3], lightInView[1][3], lightInView[2][3]);
+		}
+
+		if (0 <= dirLoc) {
+			lightInView[0][3] = lightInView[1][3] = lightInView[2][3] = 0.0f;
+			veVec3 dir = lightInView * -veVec3::UNIT_Z;
+			dir.normalize();
+			glUniform3f(dirLoc, dir.x(), dir.y(), dir.z());
+		}
+	}
+
+	for (auto &param : light->getParameters()) {
+		GLint loc = glGetUniformLocation(_program, (lightName + param->getName()).c_str());
+		switch (param->getType())
+		{
+		case veParameter::Type::INT:
+		{
+			int val;
+			param->get(val);
+			glUniform1i(loc, val);
+		}
+			break;
+
+		case veParameter::Type::BOOL:
+		{
+			bool val;
+			param->get(val);
+			glUniform1i(loc, val);
+		}
+			break;
+
+		case veParameter::Type::REAL:
+		{
+			veReal val;
+			param->get(val);
+			glUniform1f(loc, val);
+		}
+			break;
+
+		case veParameter::Type::VEC2:
+		{
+			veVec2 val;
+			param->get(val);
+			glUniform2f(loc, val.x(), val.y());
+		}
+			break;
+
+		case veParameter::Type::VEC3:
+		{
+			veVec3 val;
+			param->get(val);
+			glUniform3f(loc, val.x(), val.y(), val.z());
+		}
+			break;
+
+		case veParameter::Type::VEC4:
+		{
+			veVec4 val;
+			param->get(val);
+			glUniform4f(loc, val.x(), val.y(), val.z(), val.w());
+		}
+			break;
+		default:
+			break;
+		}
 	}
 }
 

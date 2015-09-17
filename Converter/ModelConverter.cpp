@@ -451,37 +451,43 @@ void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shade
 	aiGetMaterialColor(mat, AI_MATKEY_COLOR_AMBIENT, &col);
 	if (!col.IsBlack()){
 		_matWriter.String(AMBIENT_KEY.c_str(), AMBIENT_KEY.size());
-		writeVec4(_matWriter, &col);
+		aiVector3D vec3Col(col.r, col.g, col.b);
+		writeVec3(_matWriter, &vec3Col);
 	}
 
 	aiGetMaterialColor(mat, AI_MATKEY_COLOR_DIFFUSE, &col);
 	if (!col.IsBlack()){
 		_matWriter.String(DIFFUSE_KEY.c_str(), DIFFUSE_KEY.size());
-		writeVec4(_matWriter, &col);
+		aiVector3D vec3Col(col.r, col.g, col.b);
+		writeVec3(_matWriter, &vec3Col);
 	}
 
 	aiGetMaterialColor(mat, AI_MATKEY_COLOR_SPECULAR, &col);
 	if (!col.IsBlack()){
 		_matWriter.String(SPECULAR_KEY.c_str(), SPECULAR_KEY.size());
-		writeVec4(_matWriter, &col);
+		aiVector3D vec3Col(col.r, col.g, col.b);
+		writeVec3(_matWriter, &vec3Col);
 	}
 
 	aiGetMaterialColor(mat, AI_MATKEY_COLOR_EMISSIVE, &col);
 	if (!col.IsBlack()){
 		_matWriter.String(EMISSIVE_KEY.c_str(), EMISSIVE_KEY.size());
-		writeVec4(_matWriter, &col);
+		aiVector3D vec3Col(col.r, col.g, col.b);
+		writeVec3(_matWriter, &vec3Col);
 	}
 
 	aiGetMaterialColor(mat, AI_MATKEY_COLOR_TRANSPARENT, &col);
 	if (!col.IsBlack()){
 		_matWriter.String(TRANSPARENT_KEY.c_str(), TRANSPARENT_KEY.size());
-		writeVec4(_matWriter, &col);
+		aiVector3D vec3Col(col.r, col.g, col.b);
+		writeVec3(_matWriter, &vec3Col);
 	}
 
 	aiGetMaterialColor(mat, AI_MATKEY_COLOR_REFLECTIVE, &col);
 	if (!col.IsBlack()){
 		_matWriter.String(REFLECTIVE_KEY.c_str(), REFLECTIVE_KEY.size());
-		writeVec4(_matWriter, &col);
+		aiVector3D vec3Col(col.r, col.g, col.b);
+		writeVec3(_matWriter, &vec3Col);
 	}
 
 
@@ -680,14 +686,14 @@ void ModelConverter::writeVec4(PrettyWriterExt<rapidjson::StringBuffer> &writer,
 	writer.EndArray();
 }
 
-void ModelConverter::wirteVec3(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiVector3D *vec3)
+void ModelConverter::writeVec3(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiVector3D *vec3)
 {
 	writer.StartArray();
 	writer.Float(vec3->x); writer.Float(vec3->y); writer.Float(vec3->z);
 	writer.EndArray();
 }
 
-void ModelConverter::wirteVec2(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiVector2D *vec2)
+void ModelConverter::writeVec2(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiVector2D *vec2)
 {
 	writer.StartArray();
 	writer.Float(vec2->x); writer.Float(vec2->y);

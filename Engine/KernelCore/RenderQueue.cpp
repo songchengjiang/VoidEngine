@@ -22,11 +22,11 @@ void veRenderQueue::pushCommand(unsigned int renderQueueType, const veRenderComm
 	list[renderQueueType].push_back(cmd);
 }
 
-void veRenderQueue::execute()
+void veRenderQueue::execute(veVisualiser *vs)
 {
 	sortQueues();
 	for (auto &iter : _renderQueues) {
-		iter.first->render(iter.second);
+		iter.first->render(vs, iter.second);
 	}
 	_renderQueues.clear();
 }

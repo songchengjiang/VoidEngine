@@ -41,12 +41,14 @@ public:
 	void set(const veVec3 & val);
 	void set(const veVec4 & val);
 
-	bool get(int &val);
-	bool get(bool &val);
-	bool get(veReal &val);
-	bool get(veVec2 &val);
-	bool get(veVec3 & val);
-	bool get(veVec4 & val);
+	bool get(int &val) const;
+	bool get(bool &val) const;
+	bool get(veReal &val) const;
+	bool get(veVec2 &val) const;
+	bool get(veVec3 & val) const;
+	bool get(veVec4 & val) const;
+
+	Type getType() const { return _type; }
 
 private:
 

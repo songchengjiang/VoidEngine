@@ -55,8 +55,8 @@ private:
 	void setOutputFileInfo(const std::string &filePath, const std::string &outFile);
 
 	static void writeVec4(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiColor4D *col);
-	static void wirteVec3(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiVector3D *vec3);
-	static void wirteVec2(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiVector2D *vec2);
+	static void writeVec3(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiVector3D *vec3);
+	static void writeVec2(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiVector2D *vec2);
 	static void writeMat4(PrettyWriterExt<rapidjson::StringBuffer> &writer, const aiMatrix4x4 *mat4);
 	static bool hasTexture(const aiMaterial *mat, aiTextureType texType);
 

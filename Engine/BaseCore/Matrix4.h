@@ -42,6 +42,7 @@ public:
 	inline void makeRotation(const veQuat &rot);
 	inline void makeScale(const veVec3 &scl);
 	inline void makeTransform(const veVec3& position, const veVec3& scale, const veQuat& orientation);
+	inline void makeLookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &up);
 	inline void decomposition(veVec3* position, veVec3* scale, veQuat* orientation) const;
 	inline void transpose();
 	inline void inverse();
@@ -51,6 +52,7 @@ public:
 	static veMat4 rotation(const veQuat &rot);
 	static veMat4 scale(const veVec3 &scl);
 	static veMat4 transform(const veVec3& position, const veVec3& scale, const veQuat& orientation);
+	static veMat4 lookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &up);
 
 	inline veMat4 operator * (const veMat4 &m2) const{
 		veMat4 r;

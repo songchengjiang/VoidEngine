@@ -4,7 +4,7 @@
 #include "Shader.h"
 #include "Constants.h"
 
-const char *V_SHADER = " #version 430 \n \
+const char *V_SHADER = " \
 layout(location = 0) in vec3 position; \n \
 layout(location = 1) in vec3 normal; \n \
 layout(location = 2) in vec2 texcoord; \n \
@@ -18,7 +18,7 @@ void main() \n \
 	gl_Position = u_ModelMat * vec4(position, 1.0); \n \
 }";
 
-const char *F_SHADER = " #version 430 \n \
+const char *F_SHADER = " \
 uniform sampler2D u_texture; \n \
 in vec3 v_normal; \n \
 in vec2 v_texcoord; \n \

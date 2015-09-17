@@ -2,13 +2,13 @@
 #define _VE_LIGHT_
 #include "Prerequisites.h"
 #include "Node.h"
-#include "Shader.h"
 #include "Parameter.h"
 #include <unordered_map>
 
 class VE_EXPORT veLight : public veNode
 {
 	friend class veLightManager;
+	friend class vePass;
 public:
 
 	~veLight();
@@ -29,7 +29,8 @@ protected:
 	veParameterList _parameters;
 };
 
-typedef std::vector< VE_Ptr<veLight> > veLightList;
+typedef std::vector< veLight* > veLightList;
+typedef std::unordered_map< std::string, veLightList > veLightMap;
 
 class VE_EXPORT veLightManager
 {

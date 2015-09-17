@@ -54,7 +54,7 @@ public:
 
 	virtual void setMatrix(const veMat4 &mat) override;
 
-	void render(veRenderQueue::RenderCommandList &renderList);
+	void render(veVisualiser *vs, veRenderQueue::RenderCommandList &renderList);
 
 	virtual void visit(veNodeVisitor &visitor);
 
@@ -68,6 +68,6 @@ private:
 	VE_Ptr<veFrameBufferObject> _fbo;
 };
 
-typedef std::vector< VE_Ptr<veCamera> > CameraList;
+typedef std::vector< veCamera* > veCameraList;
 
 #endif

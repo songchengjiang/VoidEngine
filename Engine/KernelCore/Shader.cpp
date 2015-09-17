@@ -562,7 +562,7 @@ GLuint veShader::compile(const std::string &definations)
 			GLchar *errors = new GLchar[maxLen];
 			glGetShaderInfoLog(_shader, maxLen, &maxLen, errors);
 			if (strcmp(errors, "") != 0) {
-				VE_PRINT(errors);
+				veLog(errors);
 			}
 			delete[] errors;
 		}

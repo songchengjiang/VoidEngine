@@ -171,6 +171,24 @@ void veMat4::makeTransform(const veVec3& position, const veVec3& scale, const ve
 	m[3][0] = 0; m[3][1] = 0; m[3][2] = 0; m[3][3] = 1;
 }
 
+void veMat4::makeLookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &up)
+{
+	veVec3 f = eye - center;
+	f.normalize();
+	veVec3 s = up.crossProduct(f);
+	s.normalize();
+	veVec3 u = f.crossProduct(s);
+	if (f.isZeroLength() || s.isZeroLength() || u.isZeroLength()) return;
+
+	float sdote = s.dotProduct(eye);
+	float udote = u.dotProduct(eye);
+	float fdote = f.dotProduct(eye);
+	set(s.x(), u.x(), f.x(), s.x() * sdote + u.x() * udote + f.x() * fdote
+		, s.y(), u.y(), f.y(), s.y() * sdote + u.y() * udote + f.y() * fdote
+		, s.z(), u.z(), f.z(), s.z() * sdote + u.z() * udote + f.z() * fdote
+		, 0.0f, 0.0f, 0.0f, 1.0f);
+}
+
 void veMat4::decomposition(veVec3* position, veVec3* scale, veQuat* orientation) const
 {
 	veAssert(false);
@@ -291,5 +309,12 @@ veMat4 veMat4::transform(const veVec3& position, const veVec3& scale, const veQu
 {
 	veMat4 m;
 	m.makeTransform(position, scale, orientation);
+	return m;
+}
+
+veMat4 veMat4::lookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &up)
+{
+	veMat4 m;
+	m.makeLookAt(eye, center, up);
 	return m;
 }

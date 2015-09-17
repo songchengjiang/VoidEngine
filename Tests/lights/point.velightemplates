@@ -34,11 +34,11 @@
         "limit": 5,
         "parameters": [
           {
-            "name": "innerAngle",
+            "name": "innerAngleCos",
             "type": "FLOAT"
           },
           {
-            "name": "outerAngle",
+            "name": "outerAngleCos",
             "type": "FLOAT"
           },
           {

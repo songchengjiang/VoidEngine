@@ -25,7 +25,7 @@ public:
 	~veRenderQueue();
 
 	void pushCommand(unsigned int renderQueueType, const veRenderCommand &cmd);
-	void execute();
+	void execute(veVisualiser *vs);
 
 private:
 

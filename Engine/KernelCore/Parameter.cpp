@@ -89,28 +89,28 @@ void veParameter::set(const veVec4 & val)
 	_values[3] = val.w();
 }
 
-bool veParameter::get(int &val)
+bool veParameter::get(int &val) const
 {
 	if (_type != Type::INT) return false;
 	val = (int)_values[0];
 	return true;
 }
 
-bool veParameter::get(bool &val)
+bool veParameter::get(bool &val) const
 {
 	if (_type != Type::BOOL) return false;
 	val = _values[0] == 0? false: true;
 	return true;
 }
 
-bool veParameter::get(veReal &val)
+bool veParameter::get(veReal &val) const
 {
 	if (_type != Type::REAL) return false;
 	val = _values[0];
 	return true;
 }
 
-bool veParameter::get(veVec2 &val)
+bool veParameter::get(veVec2 &val) const
 {
 	if (_type != Type::VEC2) return false;
 	val.x() = _values[0];
@@ -118,7 +118,7 @@ bool veParameter::get(veVec2 &val)
 	return true;
 }
 
-bool veParameter::get(veVec3 & val)
+bool veParameter::get(veVec3 & val) const
 {
 	if (_type != Type::VEC3) return false;
 	val.x() = _values[0];
@@ -127,7 +127,7 @@ bool veParameter::get(veVec3 & val)
 	return true;
 }
 
-bool veParameter::get(veVec4 & val)
+bool veParameter::get(veVec4 & val) const
 {
 	if (_type != Type::VEC4) return false;
 	val.x() = _values[0];

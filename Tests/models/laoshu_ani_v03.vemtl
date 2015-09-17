@@ -24,9 +24,9 @@
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "BlinnPhoneShader.frag",
-                                    "u_ambient": [0.28000,0.28000,0.28000,1.000000
+                                    "u_ambient": [0.28000,0.28000,0.28000
                                     ],
-                                    "u_diffuse": [0.888000,0.888000,0.888000,1.000000
+                                    "u_diffuse": [0.888000,0.888000,0.888000
                                     ],
                                     "u_shininess":2.000000,
                                     "u_opacity":1.000000,
@@ -68,9 +68,9 @@
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "BlinnPhoneShader.frag",
-                                    "u_ambient": [0.28000,0.28000,0.28000,1.000000
+                                    "u_ambient": [0.28000,0.28000,0.28000
                                     ],
-                                    "u_diffuse": [0.888000,0.888000,0.888000,1.000000
+                                    "u_diffuse": [0.888000,0.888000,0.888000
                                     ],
                                     "u_shininess":2.000000,
                                     "u_opacity":1.000000,

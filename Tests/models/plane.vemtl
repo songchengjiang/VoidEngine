@@ -11,7 +11,7 @@
                         {
                             "depthTest": true,
                             "depthWrite": true,
-                            "cullFace": true,
+                            "cullFace": false,
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
@@ -23,12 +23,14 @@
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "BlinnPhoneShader.frag",
-                                    "u_diffuse": [0.800000,0.800000,0.800000,1.000000
+                                    "u_ambient": [0.000000,0.000000,0.000000
                                     ],
-                                    "u_specular": [0.800000,0.800000,0.800000,1.000000
+                                    "u_diffuse": [0.800000,0.800000,0.800000
                                     ],
-                                    "u_shininess":0.000000,
-                                    "u_opacity":0.000000,
+                                    "u_specular": [0.200000,0.200000,0.200000
+                                    ],
+                                    "u_shininess":1.000000,
+                                    "u_opacity":1.000000,
                                     "u_reflectivity": 0.000000,
                                     "u_diffuseTex":0
                                 }

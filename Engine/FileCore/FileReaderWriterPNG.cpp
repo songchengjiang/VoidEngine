@@ -34,7 +34,7 @@ public:
 			}
 			fclose(fp);
 		}
-		if (!_image) VE_PRINT(std::string("veFileReaderWriterPNG: read ") + filePath + std::string(" failed!"));
+		if (!_image) veLog(std::string("veFileReaderWriterPNG: read ") + filePath + std::string(" failed!"));
 		return _image;
 	}
 

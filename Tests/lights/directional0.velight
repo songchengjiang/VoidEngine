@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "type": "ve_PointLight",
-  "name": "point0",
+  "type": "ve_DirectionalLight",
+  "name": "directional0",
   "parameters": [
     {
       "name": "color",

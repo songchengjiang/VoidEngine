@@ -31,9 +31,6 @@ typedef float veReal;
 #define VE_CALLBACK_2(__selector__,__target__, ...) std::bind(&__selector__,__target__, std::placeholders::_1, std::placeholders::_2, ##__VA_ARGS__)
 #define VE_CALLBACK_3(__selector__,__target__, ...) std::bind(&__selector__,__target__, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, ##__VA_ARGS__)
 
-#include <iostream>
-#define VE_PRINT(STR) std::cout<<STR<<std::endl; 
-
 #define USE_VE_PTR \
 protected: size_t _inUse;\
 public: void ref() { ++_inUse; }\
@@ -51,6 +48,13 @@ public: const std::string& getName() const { return _name; }
 #define veAssert(_Expression)     assert(_Expression)
 #else
 #define veAssert(_Expression)     ((void)0)
+#endif
+
+#if defined(_DEBUG)
+#include <iostream>
+#define veLog(STR) std::cout<<STR<<std::endl; 
+#else
+#define veLog(STR) ((void)0); 
 #endif
 
 #include <memory.h>

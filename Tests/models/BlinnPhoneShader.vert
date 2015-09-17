@@ -39,6 +39,7 @@ void updateBonePositionAndNormal(out vec4 pos, out vec3 norm)
 	norm = (boneMat * vec4(normal, 0.0)).xyz;
 }
 #endif
+
 out vec3 v_position;          
 out vec3 v_normal;                   
 out vec2 v_texcoord;  

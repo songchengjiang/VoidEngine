@@ -38,6 +38,9 @@ bool veDirector::run()
 	{
 		double currentFrameTime = glfwGetTime();
 		double deltaTime = currentFrameTime - preFrameTime;
+		//char str[64];
+		//sprintf(str, "Frame: %.1f", 1.0 / deltaTime);
+		//veLog(str);
 		veEventDispatcher::instance()->dispatch(deltaTime);
 		for (auto &iter : _visualiserList){
 			glfwMakeContextCurrent(iter->_hwnd);

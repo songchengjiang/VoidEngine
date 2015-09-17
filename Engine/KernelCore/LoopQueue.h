@@ -23,7 +23,17 @@ public:
 		return _queue[_front];
 	}
 
+	T& front() {
+		veAssert(_front != _end);
+		return _queue[_front];
+	}
+
 	const T& back() const {
+		veAssert(_front != _end);
+		return _queue[_end - 1];
+	}
+
+	T& back() {
 		veAssert(_front != _end);
 		return _queue[_end - 1];
 	}

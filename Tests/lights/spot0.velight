@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "type": "ve_SpotLight",
+  "name": "spot0",
+  "parameters": [
+    {
+      "name": "innerAngleCos",
+      "values": 0.939
+    },
+    {
+      "name": "outerAngleCos",
+      "values": 0.707
+    },
+    {
+      "name": "color",
+      "values": [ 1.0, 1.0, 1.0 ]
+    },
+    {
+      "name": "intensity",
+      "values": 1.0
+    }
+  ]
+}

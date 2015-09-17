@@ -24,9 +24,9 @@
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "BlinnPhoneShader.frag",
-                                    "u_ambient": [0.500000,0.500000,0.500000,1.000000
+                                    "u_ambient": [0.500000,0.500000,0.500000
                                     ],
-                                    "u_diffuse": [0.500000,0.500000,0.500000,1.000000
+                                    "u_diffuse": [0.500000,0.500000,0.500000
                                     ],
                                     "u_shininess":5.656854,
                                     "u_opacity":0.5,

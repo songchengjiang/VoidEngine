@@ -3,12 +3,14 @@
 #include "Prerequisites.h"
 #include "BaseCore/Matrix4.h"
 #include <functional>
+#include <unordered_map>
 
 class veRenderer;
 class veRenderableObject;
 class veCamera;
 class veNode;
 class vePass;
+class veLight;
 struct veRenderCommand
 {
 	veRenderCommand()
@@ -30,6 +32,7 @@ struct veRenderCommand
 	veRenderableObject *renderableObj;
 	veCamera           *camera;
 	veRenderer         *renderer;
+	std::vector<veLight *> *lightList;
 };
 
 #endif
