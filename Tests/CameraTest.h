@@ -4,7 +4,7 @@
 
 int CURRENT_CAMERA = 0;
 
-class keyboardInput : public veInputer 
+class keyboardInput : public veComponent 
 {
 public:
 	keyboardInput(veVisualiser *vs)

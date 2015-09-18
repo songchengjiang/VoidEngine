@@ -37,7 +37,6 @@
     <ClCompile Include="KernelCore\EventDispatcher.cpp" />
     <ClCompile Include="KernelCore\FrameBufferObject.cpp" />
     <ClCompile Include="KernelCore\Image.cpp" />
-    <ClCompile Include="KernelCore\Inputer.cpp" />
     <ClCompile Include="KernelCore\Light.cpp" />
     <ClCompile Include="KernelCore\Material.cpp" />
     <ClCompile Include="KernelCore\Mesh.cpp" />
@@ -80,7 +79,6 @@
     <ClInclude Include="KernelCore\FrameBufferObject.h" />
     <ClInclude Include="KernelCore\IDGenerator.h" />
     <ClInclude Include="KernelCore\Image.h" />
-    <ClInclude Include="KernelCore\Inputer.h" />
     <ClInclude Include="KernelCore\Light.h" />
     <ClInclude Include="KernelCore\LoopQueue.h" />
     <ClInclude Include="KernelCore\Material.h" />

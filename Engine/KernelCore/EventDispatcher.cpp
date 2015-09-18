@@ -1,6 +1,5 @@
 #include "EventDispatcher.h"
 #include "Visualiser.h"
-#include "Inputer.h"
 #include "Node.h"
 
 veEventDispatcher::~veEventDispatcher()

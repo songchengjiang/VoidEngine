@@ -4,7 +4,6 @@
 #include "BaseCore/Matrix4.h"
 #include "VE_Ptr.h"
 #include "Event.h"
-#include "Inputer.h"
 #include "Component.h"
 #include "RenderableObject.h"
 

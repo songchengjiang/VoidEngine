@@ -45,9 +45,6 @@
     <ClCompile Include="KernelCore\Component.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
-    <ClCompile Include="KernelCore\Inputer.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
     <ClCompile Include="KernelCore\EventDispatcher.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
@@ -184,9 +181,6 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="KernelCore\Component.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="KernelCore\Inputer.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="KernelCore\Event.h">

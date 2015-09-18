@@ -2,7 +2,7 @@
 #define _BASE_TEST_
 #include "VoidEngine.h"
 
-class CameraManipulator : public veInputer
+class CameraManipulator : public veComponent
 {
 public:
 	CameraManipulator()
