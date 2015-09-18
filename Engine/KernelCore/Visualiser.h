@@ -43,6 +43,7 @@ private:
 
 	void update();
 	void render();
+	void resize(int width, int height);
 
 private:
 

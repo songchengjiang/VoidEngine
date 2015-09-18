@@ -410,28 +410,28 @@ void veUniform::setValue(const veMat4 *val, unsigned int n)
 		_location = -1;
 }
 
-bool veUniform::getValue(int &val)
+bool veUniform::getValue(int &val) const
 {
 	if (_type != Type::INT) return false;
 	val = _values[0];
 	return true;
 }
 
-bool veUniform::getValue(bool &val)
+bool veUniform::getValue(bool &val) const
 {
 	if (_type != Type::BOOL) return false;
 	val = _values[0] == 0? false : true; 
 	return true;
 }
 
-bool veUniform::getValue(veReal &val)
+bool veUniform::getValue(veReal &val) const
 {
 	if (_type != Type::REAL) return false;
 	val = _values[0];
 	return true;
 }
 
-bool veUniform::getValue(veVec2 &val)
+bool veUniform::getValue(veVec2 &val) const
 {
 	if (_type != Type::VEC2) return false;
 	val.x() = _values[0];
@@ -439,7 +439,7 @@ bool veUniform::getValue(veVec2 &val)
 	return true;
 }
 
-bool veUniform::getValue(veVec3 &val)
+bool veUniform::getValue(veVec3 &val) const
 {
 	if (_type != Type::VEC3) return false;
 	val.x() = _values[0];
@@ -448,7 +448,7 @@ bool veUniform::getValue(veVec3 &val)
 	return true;
 }
 
-bool veUniform::getValue(veVec4 &val)
+bool veUniform::getValue(veVec4 &val) const
 {
 	if (_type != Type::VEC4) return false;
 	val.x() = _values[0];
@@ -458,7 +458,7 @@ bool veUniform::getValue(veVec4 &val)
 	return true;
 }
 
-bool veUniform::getValue(veMat3 &val)
+bool veUniform::getValue(veMat3 &val) const
 {
 	if (_type != Type::MAT3) return false;
 	val[0][0] = _values[0]; val[0][1] = _values[3]; val[0][2] = _values[6];
@@ -467,7 +467,7 @@ bool veUniform::getValue(veMat3 &val)
 	return true;
 }
 
-bool veUniform::getValue(veMat4 &val)
+bool veUniform::getValue(veMat4 &val) const
 {
 	if (_type != Type::MAT4) return false;
 	val[0][0] = _values[0]; val[0][1] = _values[4]; val[0][2] = _values[8];  val[0][3] = _values[12];
@@ -477,13 +477,13 @@ bool veUniform::getValue(veMat4 &val)
 	return true;
 }
 
-bool veUniform::getValue(std::string &val)
+bool veUniform::getValue(std::string &val) const
 {
 	val = _autoBindingValue;
 	return true;
 }
 
-bool veUniform::getValue(veRealArray &val)
+bool veUniform::getValue(veRealArray &val) const
 {
 	if (_type != Type::REAL_ARRAY) return false;
 	val = _values;
@@ -542,12 +542,17 @@ void veShader::setSource(const char *str)
 	_isCompiled = false;
 }
 
-GLuint veShader::compile(const std::string &definations)
+void veShader::setShaderHeader(Type type, const std::string &sHeader)
+{
+	_shaderHeaders[type] = sHeader;
+}
+
+GLuint veShader::compile()
 {
 	if (!_shader)
 		_shader = glCreateShader(_type);
 
-	std::string source = definations + _source;
+	std::string source = _shaderHeaders[_type] + _source;
 	char *buffer = new char[source.size() + 1];
 	strcpy(buffer, source.c_str());
 	glShaderSource(_shader, 1, &buffer, nullptr);

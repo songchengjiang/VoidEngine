@@ -101,8 +101,7 @@ bool veVisualiser::dispatchEvent(double deltaTime, const veEvent &event)
 {
 	if (event.getEventType() == veEvent::VE_WIN_CLOSE) return true;
 	else if (event.getEventType() == veEvent::VE_WIN_RESIZE) {
-		_width = event.getWindowWidth();
-		_height = event.getWindowHeight();
+		resize(event.getWindowWidth(), event.getWindowHeight());
 	}
 	_deltaTime = deltaTime;
 
@@ -139,4 +138,16 @@ void veVisualiser::render()
 	_root->render(_mainCamera.get());
 	_renderQueue.execute(this);
 	glfwSwapBuffers(_hwnd);
+}
+
+void veVisualiser::resize(int width, int height)
+{
+	double widthChangeRatio = double(width) / double(_width);
+	double heigtChangeRatio = double(height) / double(_height);
+	double aspectInverseRatioChange = heigtChangeRatio / widthChangeRatio;
+	_width = width;
+	_height = height;
+
+	_mainCamera->projectionMatrix() = veMat4::scale(veVec3(aspectInverseRatioChange, 1.0f, 1.0f)) * _mainCamera->projectionMatrix();
+	_mainCamera->setViewport({ 0, 0, _width, _height });
 }

@@ -74,16 +74,16 @@ public:
 	void setValue(const veMat3 *val, unsigned int n);
 	void setValue(const veMat4 *val, unsigned int n);
 
-	bool getValue(int &val);
-	bool getValue(bool &val);
-	bool getValue(veReal &val);
-	bool getValue(std::string &val);
-	bool getValue(veVec2 &val);
-	bool getValue(veVec3 &val);
-	bool getValue(veVec4 &val);
-	bool getValue(veMat3 &val);
-	bool getValue(veMat4 &val);
-	bool getValue(veRealArray &val);
+	bool getValue(int &val) const;
+	bool getValue(bool &val) const;
+	bool getValue(veReal &val) const;
+	bool getValue(std::string &val) const;
+	bool getValue(veVec2 &val) const;
+	bool getValue(veVec3 &val) const;
+	bool getValue(veVec4 &val) const;
+	bool getValue(veMat3 &val) const;
+	bool getValue(veMat4 &val) const;
+	bool getValue(veRealArray &val) const;
 
 	void setName(const std::string &name);
 	const std::string& getName() const { return _name; }
@@ -124,15 +124,18 @@ public:
 	void setSource(const std::string &filePath);
 	void setSource(const char *str);
 
+	void setShaderHeader(Type type, const std::string &sHeader);
+
 private:
 
-	GLuint compile(const std::string &definations);
+	GLuint compile();
 
 private:
 
 	Type _type;
 	GLuint _shader;
 	std::string _source;
+	std::unordered_map<Type, std::string> _shaderHeaders;
 	bool _isCompiled;
 };
 

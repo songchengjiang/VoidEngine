@@ -28,13 +28,13 @@ public:
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
 			transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
-			transer->setScale(veVec3(0.5f));
 
 			auto overlay = new veOverlay;
 			node->addRenderableObject(overlay);
 
-			veImage *image = static_cast<veImage *>(veFile::instance()->readFile("textures/cocos.png"));
+			veImage *image = static_cast<veImage *>(veFile::instance()->readFile("textures/kill.png"));
 			overlay->setImage(image);
+			//overlay->setAlphaThreshold(1.0f);
 
 			root->addChild(node);
 		}

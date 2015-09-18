@@ -1,8 +1,8 @@
 #include "Overlay.h"
 #include "OverlayRenderer.h"
 #include "Material.h"
-#include "Shader.h"
 #include "Constants.h"
+#include "TextureManager.h"
 
 const char *V_SHADER = " \
 layout(location = 0) in vec3 position; \n \
@@ -19,13 +19,17 @@ void main() \n \
 }";
 
 const char *F_SHADER = " \
+uniform float u_alphaThreshold; \n \
 uniform sampler2D u_texture; \n \
 in vec3 v_normal; \n \
 in vec2 v_texcoord; \n \
 layout(location = 0) out vec4 fragColor; \n \
 out vec4 color; \n \
 void main() {  \n \
-	fragColor = texture(u_texture, v_texcoord);  \n \
+	vec4 color = texture(u_texture, v_texcoord); \n \
+	if (color.a < u_alphaThreshold)  \n \
+		discard;  \n \
+	fragColor = color; \n \
 }";
 
 veOverlay::veOverlay()
@@ -41,12 +45,24 @@ veOverlay::~veOverlay()
 
 void veOverlay::setImage(veImage *image)
 {
-	_material->getTechnique(0)->getPass(0)->getTexture(0)->setImage(image);
+	_texture->setImage(image);
 }
 
 veImage* veOverlay::getImage()
 {
-	return _material->getTechnique(0)->getPass(0)->getTexture(0)->getImage();
+	return _texture->getImage();
+}
+
+void veOverlay::setAlphaThreshold(veReal threshold)
+{
+	_alphaThreshold->setValue(threshold);
+}
+
+veReal veOverlay::getAlphaThreshold() const
+{
+	veReal val;
+	_alphaThreshold->getValue(val);
+	return val;
 }
 
 void veOverlay::createMaterial()
@@ -54,10 +70,10 @@ void veOverlay::createMaterial()
 	_material = new veMaterial;
 	auto tech = new veTechnique;
 	auto pass = new vePass;
-	auto texture = new veTexture2D;
+	_texture = new veTexture2D;
 	_material->addTechnique(tech);
 	tech->addPass(pass);
-	pass->addTexture(texture);
+	pass->addTexture(_texture.get());
 
 	pass->depthTest() = false;
 	pass->depthWrite() = true;
@@ -70,4 +86,6 @@ void veOverlay::createMaterial()
 
 	pass->addUniform(new veUniform("u_ModelMat", M_MATRIX));
 	pass->addUniform(new veUniform("u_texture", 0));
+	_alphaThreshold = new veUniform("u_alphaThreshold", 1.0f);
+	pass->addUniform(_alphaThreshold.get());
 }

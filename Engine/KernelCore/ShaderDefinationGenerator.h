@@ -133,7 +133,7 @@ public:
 			}
 			ss << "}" << className << "[" << lightTemplate.limit << "];" << std::endl;
 			//ss << "uniform " << className << "[" << lightTemplate.limit << "];" << std::endl;
-			ss << "uniform int " << className << "Num;" << std::endl;
+			ss << "uniform int " << className << "Number;" << std::endl;
 		}
 		return ss.str();
 	}

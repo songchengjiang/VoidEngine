@@ -16,8 +16,8 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 	diffLightCol = specLightColor = vec3(0.0);
 	vec3 normal = normalize(v_normal);                   
 	vec3 eye = normalize(-v_position);   
-	if (0 < ve_DirectionalLightNum){
-		for (int i = 0; i < ve_DirectionalLightNum; ++i){
+	if (0 < ve_DirectionalLightNumber){
+		for (int i = 0; i < ve_DirectionalLightNumber; ++i){
 			vec3 lDir = -ve_DirectionalLight[i].direction;                          
 			vec3 H = normalize(eye + lDir);   
 			diffLightCol += max(0.0, dot(normal, lDir)) * ve_DirectionalLight[i].intensity * ve_DirectionalLight[i].color; 
@@ -26,8 +26,8 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 		}		
 	}
 
-	if (0 < ve_PointLightNum){
-		for (int i = 0; i < ve_PointLightNum; ++i){
+	if (0 < ve_PointLightNumber){
+		for (int i = 0; i < ve_PointLightNumber; ++i){
 			vec3 lDir = normalize(ve_PointLight[i].position - v_position);                          
 			vec3 H = normalize(eye + lDir);   
 			diffLightCol += max(0.0, dot(normal, lDir)) * ve_PointLight[i].intensity * ve_PointLight[i].color; 
@@ -36,8 +36,8 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 		}
 	}
 
-	if (0 < ve_SpotLightNum){
-		for (int i = 0; i < ve_SpotLightNum; ++i){
+	if (0 < ve_SpotLightNumber){
+		for (int i = 0; i < ve_SpotLightNumber; ++i){
 			vec3 lDir = normalize(ve_SpotLight[i].position - v_position);
 			float currentAngleCos = dot(lDir, -ve_SpotLight[i].direction);
 			float attenuation = smoothstep(ve_SpotLight[i].outerAngleCos, ve_SpotLight[i].innerAngleCos, currentAngleCos);                        

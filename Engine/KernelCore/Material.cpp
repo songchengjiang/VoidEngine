@@ -156,7 +156,8 @@ void vePass::applyProgram(const veRenderCommand &command)
 		//sdg.traversalMode() = ShaderDefinatiosGenerator::TRAVERSE_CHILDREN;
 		//sdg.getRoot()->accept(sdg);
 		for (auto &iter : _shaders) {
-			GLuint id = iter.second->compile(sdg.getDefinations(this, iter.first));
+			iter.second->setShaderHeader(iter.first, sdg.getDefinations(this, iter.first));
+			GLuint id = iter.second->compile();
 			glAttachShader(_program, id);
 		}
 		glLinkProgram(_program);
@@ -167,17 +168,17 @@ void vePass::applyProgram(const veRenderCommand &command)
 
 void vePass::applyLightsUniforms(const veRenderCommand &command)
 {
-	std::unordered_map<std::string, int> currentyLights;
+	std::unordered_map<std::string, int> currentLights;
 	for (auto &iter : veLightManager::instance()->getLightTemplateList()) {
-		currentyLights[iter.first] = 0;
+		currentLights[iter.first] = 0;
 	}
 	for (auto &iter : (*command.lightList)) {
-		int &count = currentyLights[iter->getType()];
+		int &count = currentLights[iter->getType()];
 		applyLightUniforms(count, iter, command.camera);
 		++count;
 	}
-	for (auto &iter : currentyLights) {
-		GLint loc = glGetUniformLocation(_program, (iter.first + std::string("Num")).c_str());
+	for (auto &iter : currentLights) {
+		GLint loc = glGetUniformLocation(_program, (iter.first + std::string("Number")).c_str());
 		glUniform1i(loc, iter.second);
 	}
 }

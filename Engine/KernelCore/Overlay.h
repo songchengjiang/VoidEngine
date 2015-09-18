@@ -5,6 +5,7 @@
 #include "BaseCore/Array.h"
 #include "VE_Ptr.h"
 #include "Image.h"
+#include "Shader.h"
 
 class VE_EXPORT veOverlay : public veRenderableObject
 {
@@ -14,10 +15,17 @@ public:
 
 	void setImage(veImage *image);
 	veImage* getImage();
+	void setAlphaThreshold(veReal threshold);
+	veReal getAlphaThreshold() const;
 
-private:
+protected:
 
 	void createMaterial();
+
+protected:
+
+	VE_Ptr<veUniform> _alphaThreshold;
+	VE_Ptr<veTexture> _texture;
 };
 
 #endif

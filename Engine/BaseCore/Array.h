@@ -7,20 +7,20 @@ class veArray
 {
 	USE_VE_PTR
 public:
-	veArray()
+	explicit veArray()
 	: USE_VE_PTR_INIT
 	, _size(0)
 	, _end(0)
 	, _buffer(nullptr){
 	}
-	veArray(unsigned int arySize) 
+	explicit veArray(unsigned int arySize)
 		: USE_VE_PTR_INIT
 		, _size(arySize)
 		, _end(_size)
 		, _buffer(new TYPE[_size]){
 	}
 
-	veArray(const veArray<TYPE> &ary)
+	explicit veArray(const veArray<TYPE> &ary)
 		: USE_VE_PTR_INIT
 		, _size(ary._size)
 		, _end(ary._end)
