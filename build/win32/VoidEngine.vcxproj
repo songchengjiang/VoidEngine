@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Engine\BaseCore\Math.cpp" />
+    <ClCompile Include="..\..\Engine\BaseCore\Matrix3.cpp" />
+    <ClCompile Include="..\..\Engine\BaseCore\Matrix4.cpp" />
+    <ClCompile Include="..\..\Engine\BaseCore\Quaternion.cpp" />
+    <ClCompile Include="..\..\Engine\BaseCore\Vector2.cpp" />
+    <ClCompile Include="..\..\Engine\BaseCore\Vector3.cpp" />
+    <ClCompile Include="..\..\Engine\BaseCore\Vector4.cpp" />
+    <ClCompile Include="..\..\Engine\FileCore\File.cpp" />
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriter.cpp" />
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterANIMATION.cpp" />
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterCAMERA.cpp" />
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterEXR.cpp" />
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterJPEG.cpp" />
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterLIGHT.cpp" />
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterPNG.cpp" />
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterVEM.cpp" />
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterVEMTL.cpp" />
+    <ClCompile Include="..\..\Engine\FileCore\Printer.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Animation.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Bone.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Camera.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Component.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Director.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\EventDispatcher.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\FrameBufferObject.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Image.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Light.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Material.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Mesh.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\MeshRenderer.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Node.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\NodeVisitor.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Overlay.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\OverlayRenderer.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Parameter.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\RenderableObject.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Renderer.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\RenderQueue.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Shader.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Texture.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\TextureManager.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Transformer.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Visualiser.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Engine\BaseCore\Array.h" />
+    <ClInclude Include="..\..\Engine\BaseCore\Math.h" />
+    <ClInclude Include="..\..\Engine\BaseCore\Matrix3.h" />
+    <ClInclude Include="..\..\Engine\BaseCore\Matrix4.h" />
+    <ClInclude Include="..\..\Engine\BaseCore\Quaternion.h" />
+    <ClInclude Include="..\..\Engine\BaseCore\Vector2.h" />
+    <ClInclude Include="..\..\Engine\BaseCore\Vector3.h" />
+    <ClInclude Include="..\..\Engine\BaseCore\Vector4.h" />
+    <ClInclude Include="..\..\Engine\Constants.h" />
+    <ClInclude Include="..\..\Engine\Export.h" />
+    <ClInclude Include="..\..\Engine\FileCore\File.h" />
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriter.h" />
+    <ClInclude Include="..\..\Engine\FileCore\Printer.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Animation.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Bone.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Camera.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Component.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Director.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Event.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\EventDispatcher.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\FrameBufferObject.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\IDGenerator.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Image.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Light.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\LoopQueue.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Material.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Mesh.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\MeshRenderer.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Node.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\NodeVisitor.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Overlay.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\OverlayRenderer.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Parameter.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Registrar.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\RenderableObject.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\RenderCommand.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Renderer.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\RenderQueue.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Shader.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\ShaderDefinationGenerator.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Texture.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\TextureManager.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Transformer.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\VE_Ptr.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Visualiser.h" />
+    <ClInclude Include="..\..\Engine\Prerequisites.h" />
+    <ClInclude Include="..\..\Engine\VoidEngine.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FC047BD9-CA1D-469C-9A04-454A1B313B60}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>VoidEngine</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)..\..\$(Configuration)\</OutDir>
+    <IntDir>$(Configuration).$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)..\..\$(Configuration)\</OutDir>
+    <IntDir>$(Configuration).$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_USRDLL;_CRT_SECURE_NO_WARNINGS;VOIDENGINE_EXPORTS;VE_LIBRARY;VE_DISABLE_MSVC_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\Dependents;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glu32.lib;opengl32.lib;glfw\lib\glfw3.lib;glew\lib\glew32s.lib;zlib\lib\zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/NODEFAULTLIB:LIBCMT.lib %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;VOIDENGINE_EXPORTS;VE_LIBRARY;VE_DISABLE_MSVC_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>glu32.lib;opengl32.lib;glew\lib\glew32s.lib;glfw\lib\glfw3.lib;zlib\lib\zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\Dependents;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/NODEFAULTLIB:LIBCMT.lib %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

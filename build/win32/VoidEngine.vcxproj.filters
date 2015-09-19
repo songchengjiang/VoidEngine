@@ -1,0 +1,286 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="BaseCore">
+      <UniqueIdentifier>{b79f291e-e215-458a-ac33-ff5add8ae96e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KernelCore">
+      <UniqueIdentifier>{fea00ee6-eb55-4eb8-b27f-b7e7693ded55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FileCore">
+      <UniqueIdentifier>{31889e32-d27b-41a4-a5e7-7a803d2f6d51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KernelCore\Renderer">
+      <UniqueIdentifier>{1d75ce36-dea7-47d5-bf1a-ef654985fc4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FileCore\ReaderWriter">
+      <UniqueIdentifier>{5e444bc8-0636-4c75-ada0-4e56b5c27cb3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Engine\BaseCore\Math.cpp">
+      <Filter>BaseCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\BaseCore\Matrix3.cpp">
+      <Filter>BaseCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\BaseCore\Matrix4.cpp">
+      <Filter>BaseCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\BaseCore\Quaternion.cpp">
+      <Filter>BaseCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\BaseCore\Vector2.cpp">
+      <Filter>BaseCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\BaseCore\Vector3.cpp">
+      <Filter>BaseCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\BaseCore\Vector4.cpp">
+      <Filter>BaseCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriter.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterANIMATION.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterCAMERA.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterEXR.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterJPEG.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterLIGHT.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterPNG.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterVEM.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterVEMTL.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\FileCore\File.cpp">
+      <Filter>FileCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\FileCore\Printer.cpp">
+      <Filter>FileCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\MeshRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\OverlayRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Renderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\RenderQueue.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Animation.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Bone.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Camera.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Component.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Director.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\EventDispatcher.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\FrameBufferObject.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Image.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Light.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Material.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Mesh.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Node.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\NodeVisitor.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Overlay.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Parameter.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\RenderableObject.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Shader.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Texture.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\TextureManager.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Transformer.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Visualiser.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Engine\BaseCore\Array.h">
+      <Filter>BaseCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\BaseCore\Math.h">
+      <Filter>BaseCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\BaseCore\Matrix3.h">
+      <Filter>BaseCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\BaseCore\Matrix4.h">
+      <Filter>BaseCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\BaseCore\Quaternion.h">
+      <Filter>BaseCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\BaseCore\Vector2.h">
+      <Filter>BaseCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\BaseCore\Vector3.h">
+      <Filter>BaseCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\BaseCore\Vector4.h">
+      <Filter>BaseCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriter.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\File.h">
+      <Filter>FileCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\Printer.h">
+      <Filter>FileCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\MeshRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\OverlayRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\RenderCommand.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Renderer.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\RenderQueue.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Animation.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Bone.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Camera.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Component.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Director.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Event.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\EventDispatcher.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\FrameBufferObject.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\IDGenerator.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Image.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Light.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\LoopQueue.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Material.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Mesh.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Node.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\NodeVisitor.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Overlay.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Parameter.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Registrar.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\RenderableObject.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Shader.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\ShaderDefinationGenerator.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Texture.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\TextureManager.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Transformer.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\VE_Ptr.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Visualiser.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\Constants.h" />
+    <ClInclude Include="..\..\Engine\Export.h" />
+    <ClInclude Include="..\..\Engine\Prerequisites.h" />
+    <ClInclude Include="..\..\Engine\VoidEngine.h" />
+  </ItemGroup>
+</Project>

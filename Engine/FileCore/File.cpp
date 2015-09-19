@@ -35,7 +35,7 @@ bool veFile::writeFile(void *data, const std::string &filePath)
 std::string veFile::readFileToBuffer(const std::string &filePath)
 {
 	FILE* file = fopen(filePath.c_str(), "r");
-	if (!file) return nullptr;
+	if (!file) return std::string("null");
 	fseek(file, 0, SEEK_END);
 	size_t size = ftell(file);
 	rewind(file);

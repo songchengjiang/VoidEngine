@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\Converter\Argument.cpp" />
+    <ClCompile Include="..\..\Converter\Converter.cpp" />
+    <ClCompile Include="..\..\Converter\ConverterFactory.cpp" />
+    <ClCompile Include="..\..\Converter\main.cpp" />
+    <ClCompile Include="..\..\Converter\ModelConverter.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Converter\Argument.h" />
+    <ClInclude Include="..\..\Converter\Converter.h" />
+    <ClInclude Include="..\..\Converter\ConverterFactory.h" />
+    <ClInclude Include="..\..\Converter\ModelConverter.h" />
+    <ClInclude Include="..\..\Converter\Prerequisites.h" />
+    <ClInclude Include="..\..\Converter\PrettyWriterExt.h" />
+  </ItemGroup>
+</Project>
