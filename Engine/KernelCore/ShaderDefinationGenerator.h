@@ -64,7 +64,7 @@ public:
 		//_traversalMode = veNodeVisitor::TRAVERSE_CHILDREN;
 		//_root->accept(*this);
 		std::string definations;
-		definations += SHADER_VERSION + std::string(" 430\n");
+		definations += SHADER_VERSION + std::string(" 410\n");
 
 		if (_command.camera->getRenderPath() == veCamera::RenderPath::DEFERRED_PATH) {
 			definations += SHADER_DEFINE_DEFERRED_PATH + std::string(" 1\n");
