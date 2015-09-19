@@ -21,25 +21,24 @@
                               {
                                 "type": "FRAGMENT_SHADER",
                                 "source": "DeferredRendering.frag",
-                                "u_lightPos": [0.0, 0.0, 10.0],
-                                "u_position": 0,
-                                "u_normalandepth": 1,
-                                "u_color": 2
+                                "u_color": 0,
+                                "u_position": 1,
+                                "u_normAndepth": 2
                               }
                             ],
                             "textureUnits": [
                               {
-                                "source": "rtt.camera.tex0",
+                                "source": "deferred.camera.color",
                                 "wrap": "CLAMP",
                                 "filter": "LINEAR"
                               },
                               {
-                                "source": "rtt.camera.tex1",
+                                "source": "deferred.camera.position",
                                 "wrap": "CLAMP",
                                 "filter": "LINEAR"
                               },
                               {
-                                "source": "rtt.camera.tex2",
+                                "source": "deferred.camera.normAndepth",
                                 "wrap": "CLAMP",
                                 "filter": "LINEAR"
                               }

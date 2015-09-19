@@ -4,18 +4,22 @@ uniform vec3 u_specular;
 uniform float u_shininess; 
 uniform float u_opacity;         
 uniform sampler2D u_diffuseTex;
-in vec3 v_position;
-in vec3 v_normal;                   
+in vec4 v_position;
+in vec4 v_normalAndepth;                   
 in vec2 v_texcoord;  
+
 layout(location=0) out vec4 fragColor;
-out vec4 color;
+#ifdef VE_USE_DEFERRED_PATH
+layout(location=1) out vec4 position;
+layout(location=2) out vec4 normAndepth;
+#endif
 
 #ifdef VE_USE_LIGHTS
 void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 {
 	diffLightCol = specLightColor = vec3(0.0);
-	vec3 normal = normalize(v_normal);                   
-	vec3 eye = normalize(-v_position);   
+	vec3 normal = normalize(v_normalAndepth.xyz);                   
+	vec3 eye = normalize(-v_position.xyz);   
 	if (0 < ve_DirectionalLightNumber){
 		for (int i = 0; i < ve_DirectionalLightNumber; ++i){
 			vec3 lDir = -ve_DirectionalLight[i].direction;                          
@@ -28,7 +32,7 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 
 	if (0 < ve_PointLightNumber){
 		for (int i = 0; i < ve_PointLightNumber; ++i){
-			vec3 lDir = normalize(ve_PointLight[i].position - v_position);                          
+			vec3 lDir = normalize(ve_PointLight[i].position - v_position.xyz);                          
 			vec3 H = normalize(eye + lDir);   
 			diffLightCol += max(0.0, dot(normal, lDir)) * ve_PointLight[i].intensity * ve_PointLight[i].color; 
 			if (0.0 < u_shininess)              
@@ -38,7 +42,7 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 
 	if (0 < ve_SpotLightNumber){
 		for (int i = 0; i < ve_SpotLightNumber; ++i){
-			vec3 lDir = normalize(ve_SpotLight[i].position - v_position);
+			vec3 lDir = normalize(ve_SpotLight[i].position - v_position.xyz);
 			float currentAngleCos = dot(lDir, -ve_SpotLight[i].direction);
 			float attenuation = smoothstep(ve_SpotLight[i].outerAngleCos, ve_SpotLight[i].innerAngleCos, currentAngleCos);                        
 			vec3 H = normalize(eye + lDir);   
@@ -52,19 +56,24 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
              
 void main(){      
 
-#if VE_USE_LIGHTS 
+#if VE_USE_LIGHTS && !VE_USE_DEFERRED_PATH
   vec3 diffactor;
   vec3 specfactor;
   Lighting(diffactor, specfactor);
 #endif
 	            
-#if VE_USE_TEXTURES && VE_USE_LIGHTS 
+#if VE_USE_TEXTURES && VE_USE_LIGHTS && !VE_USE_DEFERRED_PATH
 	fragColor = clamp(vec4(diffactor * u_diffuse * texture(u_diffuseTex, v_texcoord).xyz + specfactor * u_specular + u_ambient, u_opacity), 0.0, 1.0); 
 #elif VE_USE_TEXTURES
 	fragColor = clamp(vec4(texture(u_diffuseTex, v_texcoord).xyz, u_opacity), 0.0, 1.0); 
-#elif VE_USE_LIGHTS
+#elif VE_USE_LIGHTS && !VE_USE_DEFERRED_PATH
 	fragColor = clamp(vec4(diffactor * u_diffuse + specfactor * u_specular + u_ambient, u_opacity), 0.0, 1.0); 
 #else
 	fragColor = clamp(vec4(u_diffuse + u_specular + u_ambient, u_opacity), 0.0, 1.0); 
 #endif
+
+#ifdef VE_USE_DEFERRED_PATH
+	position = vec4(v_position.xyz, u_shininess);
+	normAndepth = v_normalAndepth;
+#endif	
 }

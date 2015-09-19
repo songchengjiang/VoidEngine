@@ -52,7 +52,7 @@ public:
 	veMat4 getNodeToWorldMatrix();
 	veMat4 getWorldToNodeMatrix();
 
-	void setMask(unsigned int mask) { _mask = mask; }
+	void setMask(unsigned int mask, bool isOverride = false) { _mask = mask; _overrideMask = isOverride; }
 	unsigned int getMask() const { return _mask; }
 
 	void refresh();
@@ -75,6 +75,7 @@ protected:
 	bool              _isVisible;
 	bool              _refresh;
 	unsigned int      _mask;
+	bool              _overrideMask;
 };
 
 #endif

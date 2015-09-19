@@ -8,6 +8,7 @@
 #include "FrameBufferObject.h"
 
 class veVisualiser;
+class veLight;
 struct VE_EXPORT veViewport
 {
 	int x;
@@ -28,6 +29,11 @@ class VE_EXPORT veCamera : public veNode
 {
 public:
 
+	enum class RenderPath
+	{
+		FORWARD_PATH,
+		DEFERRED_PATH
+	};
 	veCamera();
 	veCamera(const veViewport &vp);
 	~veCamera();
@@ -52,11 +58,22 @@ public:
 	void setClearMask(unsigned int mask) { _clearMask = mask; }
 	unsigned int getClearMask() const { return _clearMask; }
 
+	void setRenderPath(RenderPath renderPath);
+	RenderPath getRenderPath() const { return _renderPath; }
+
+	bool isRenderStateChanged() { return _renderStateChanged; }
+
 	virtual void setMatrix(const veMat4 &mat) override;
 
 	void render(veVisualiser *vs, veRenderQueue::RenderCommandList &renderList);
 
-	virtual void visit(veNodeVisitor &visitor);
+	virtual bool routeEvent(const veEvent &event, veVisualiser *vs) override;
+	virtual void visit(veNodeVisitor &visitor) override;
+
+private:
+
+	void renderQueue(veLoopQueue< veRenderCommand > &queue, std::vector<veLight *> *lights);
+	void resize(int width, int height);
 
 private:
 
@@ -66,6 +83,9 @@ private:
 	veVec4       _clearColor;
 	unsigned int _clearMask;
 	VE_Ptr<veFrameBufferObject> _fbo;
+
+	RenderPath _renderPath;
+	bool _renderStateChanged;
 };
 
 typedef std::vector< veCamera* > veCameraList;

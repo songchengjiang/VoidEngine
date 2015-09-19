@@ -99,6 +99,9 @@ static const std::string WIDTH_KEY = "width";
 static const std::string HEIGHT_KEY = "height";
 static const std::string DRAWMASK_KEY = "drawMask";
 
+static const std::string RENDERPATH_KEY = "renderPath";
+static const std::string FORWARD_KEY = "FORWARD";
+static const std::string DEFERRED_KEY = "DEFERRED";
 static const std::string VIEWPORT_KEY = "viewport";
 static const std::string PROJECTION_KEY = "projection";
 static const std::string PERSPECTIVE_KEY = "PERSPECTIVE";
@@ -117,6 +120,9 @@ static const std::string CENTER_KEY = "center";
 static const std::string UP_KEY = "up";
 static const std::string FBO_KEY = "fbo";
 static const std::string ATTACHMENT_KEY = "attachment";
+static const std::string TEX_2D_KEY = "TEX_2D";
+static const std::string TEX_3D_KEY = "TEX_3D";
+static const std::string TEX_RECT_KEY = "TEX_RECT";
 
 static const std::string CLASS_KEY = "class";
 static const std::string PARAMETERS_KEY = "parameters";

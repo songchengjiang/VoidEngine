@@ -2,6 +2,14 @@
 #include "Visualiser.h"
 #include "NodeVisitor.h"
 
+veLoopQueue<veRenderCommand>::SortFunc PASS_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
+	return right.priority <= left.priority && left.pass <= right.pass;
+};
+
+veLoopQueue<veRenderCommand>::SortFunc TRANSPARENT_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
+	return left.depthInCamera <= right.depthInCamera && left.pass <= right.pass;
+};
+
 veCamera::veCamera()
 	:_viewMat(veMat4::IDENTITY)
 	, _projectionMat(veMat4::IDENTITY)
@@ -9,6 +17,8 @@ veCamera::veCamera()
 	, _clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 	, _viewport({0, 0, 800, 600})
 	, _fbo(nullptr)
+	, _renderPath(RenderPath::FORWARD_PATH)
+	, _renderStateChanged(true)
 {
 }
 
@@ -19,6 +29,8 @@ veCamera::veCamera(const veViewport &vp)
 	, _clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 	, _viewport(vp)
 	, _fbo(nullptr)
+	, _renderPath(RenderPath::FORWARD_PATH)
+	, _renderStateChanged(true)
 {
 }
 
@@ -89,6 +101,12 @@ void veCamera::setViewport(const veViewport &vp)
 		_fbo->setFrameBufferSize(veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y));
 }
 
+void veCamera::setRenderPath(RenderPath renderPath)
+{
+	_renderPath = renderPath;
+	_renderStateChanged = true;
+}
+
 void veCamera::setMatrix(const veMat4 &mat)
 {
 	_matrix = mat;
@@ -105,22 +123,66 @@ void veCamera::render(veVisualiser *vs, veRenderQueue::RenderCommandList &render
 	glClear(_clearMask);
 	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
 
-	for (auto &iter : renderList) {
-		auto &q = iter.second;
-		while (!q.empty()) {
-			auto &cmd = q.front();
-			cmd.lightList = &vs->_lights;
-			cmd.renderer->draw(cmd);
-			q.pop_front();
-		}
+	auto bgQueue = renderList.find(veRenderQueue::RENDER_QUEUE_BACKGROUND);
+	if (bgQueue != renderList.end()) {
+		bgQueue->second.sort(PASS_SORT);
+		renderQueue(bgQueue->second, nullptr);
+	}
+
+	auto entityQueue = renderList.find(veRenderQueue::RENDER_QUEUE_ENTITY);
+	if (entityQueue != renderList.end()) {
+		entityQueue->second.sort(PASS_SORT);
+		renderQueue(entityQueue->second, &vs->_lights);
+	}
+
+	auto tpQueue = renderList.find(veRenderQueue::RENDER_QUEUE_TRANSPARENT);
+	if (tpQueue != renderList.end()) {
+		tpQueue->second.sort(TRANSPARENT_SORT);
+		renderQueue(tpQueue->second, &vs->_lights);
+	}
+
+	auto olQueue = renderList.find(veRenderQueue::RENDER_QUEUE_OVERLAY);
+	if (olQueue != renderList.end()) {
+		olQueue->second.sort(PASS_SORT);
+		renderQueue(olQueue->second, &vs->_lights);
 	}
 
 	if (_fbo.valid()) {
 		_fbo->unBind();
 	}
+
+	_renderStateChanged = false;
+}
+
+bool veCamera::routeEvent(const veEvent &event, veVisualiser *vs)
+{
+	if (event.getEventType() == veEvent::VE_WIN_RESIZE) {
+		resize(event.getWindowWidth(), event.getWindowHeight());
+	}
+	return veNode::routeEvent(event, vs);
 }
 
 void veCamera::visit(veNodeVisitor &visitor)
 {
 	visitor.visit(*this);
+}
+
+void veCamera::renderQueue(veLoopQueue< veRenderCommand > &queue, std::vector<veLight *> *lights)
+{
+	while (!queue.empty()) {
+		auto &cmd = queue.front();
+		cmd.lightList = lights;
+		cmd.renderer->draw(cmd);
+		queue.pop_front();
+	}
+}
+
+void veCamera::resize(int width, int height)
+{
+	double widthChangeRatio = double(width) / double(_viewport.width - _viewport.x);
+	double heigtChangeRatio = double(height) / double(_viewport.height - _viewport.y);
+	double aspectInverseRatioChange = heigtChangeRatio / widthChangeRatio;
+
+	_projectionMat = veMat4::scale(veVec3(aspectInverseRatioChange, 1.0f, 1.0f)) * _projectionMat;
+	this->setViewport({ 0, 0, width, height });
 }

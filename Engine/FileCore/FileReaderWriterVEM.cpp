@@ -35,7 +35,6 @@ private:
 		loadMaterials();
 		readMeshs();
 		readNodes();
-		VE_SAFE_DELETE(_materials);
 	}
 
 	void loadMaterials(){
@@ -216,7 +215,7 @@ private:
 	Document _doucument;
 	std::unordered_map<std::string, veMesh *> _meshList;
 	std::unordered_map<std::string, std::vector<veBone *> > _boneList;
-	veMaterialArray *_materials;
+	VE_Ptr<veMaterialArray> _materials;
 	std::string _fileFolder;
 };
 

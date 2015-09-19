@@ -13,6 +13,7 @@ static const std::string SHADER_VERSION = "#version";
 static const std::string SHADER_DEFINE_BONES = "#define VE_USE_BONES";
 static const std::string SHADER_DEFINE_LIGHTS = "#define VE_USE_LIGHTS";
 static const std::string SHADER_DEFINE_TEXTURES = "#define VE_USE_TEXTURES";
+static const std::string SHADER_DEFINE_DEFERRED_PATH = "#define VE_USE_DEFERRED_PATH";
 static const std::string SHADER_DEFINE_ATTRIBUTE_ARRAY[] = {
 	"#define ATTR_POSITION",
 	"#define ATTR_NORMAL",
@@ -59,12 +60,15 @@ public:
 		//_traversalMode = veNodeVisitor::TRAVERSE_PARENT;
 	}
 
-	std::string getDefinations(vePass *pass, veShader::Type type) {
+	std::string getDefinations(veShader::Type type) {
 		//_traversalMode = veNodeVisitor::TRAVERSE_CHILDREN;
 		//_root->accept(*this);
 		std::string definations;
 		definations += SHADER_VERSION + std::string(" 430\n");
 
+		if (_command.camera->getRenderPath() == veCamera::RenderPath::DEFERRED_PATH) {
+			definations += SHADER_DEFINE_DEFERRED_PATH + std::string(" 1\n");
+		}
 		if (type == veShader::VERTEX_SHADER) {
 			auto mesh = dynamic_cast<veMesh *>(_command.renderableObj);
 			if (mesh) {
@@ -81,7 +85,7 @@ public:
 		}
 
 		if (type == veShader::FRAGMENT_SHADER) {
-			if (0 < pass->getTextureNum()) {
+			if (0 < _command.pass->getTextureNum()) {
 				definations += SHADER_DEFINE_TEXTURES + std::string(" 1\n");
 			}
 		}

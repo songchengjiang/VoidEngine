@@ -98,11 +98,18 @@ void veFrameBufferObject::unBind()
 	if (CURRENT_FBO == nullptr) return;
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDrawBuffer(GL_BACK);
 	CURRENT_FBO = nullptr;
 }
 
 void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
 {
+	if (_needRefresh) {
+		glDeleteRenderbuffers(1, &_dsbo);
+		glDeleteFramebuffers(1, &_fbo);
+		_dsbo = _fbo = 0;
+	}
+
 	if (!_fbo) {
 		glGenFramebuffers(1, &_fbo);
 	}
@@ -129,21 +136,28 @@ void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
 		}
 	}
 	glBindRenderbuffer(GL_RENDERBUFFER, _dsbo);
+
+	for (auto &iter : _attachments) {
+		float clearColorZero[4] = { 1.f, 0.f, 0.f, 0.f };
+		glClearBufferfv(GL_COLOR, iter.first - GL_COLOR_ATTACHMENT0, clearColorZero);
+	}
 }
 
 void veFrameBufferObject::refreshAttachments()
 {
 	if (_needRefresh) {
-
 		std::vector<GLenum> mrt;
 		for (auto &iter : _attachments) {
 			if (iter.second.valid()) {
 				if (iter.first >= GL_COLOR_ATTACHMENT0 && iter.first <= GL_COLOR_ATTACHMENT15)
 					mrt.push_back(iter.first);
-				glFramebufferTexture(GL_FRAMEBUFFER, iter.first, iter.second->glTex(), 0);
+				iter.second->setWidth(_size.x());
+				iter.second->setHeight(_size.y());
+				iter.second->bind(0);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, iter.first, iter.second->glTarget(), iter.second->glTex(), 0);
 			}
 			else {
-				glFramebufferTexture(GL_FRAMEBUFFER, iter.first, 0, 0);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, iter.first, 0, 0, 0);
 			}
 		}
 		if (!mrt.empty())

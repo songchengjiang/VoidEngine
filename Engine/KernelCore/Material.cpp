@@ -34,6 +34,8 @@ vePass::~vePass()
 
 void vePass::visit(const veRenderCommand &command)
 {
+	if (command.camera->isRenderStateChanged())
+		_needLinkProgram = true;
 }
 
 void vePass::apply(const veRenderCommand &command)
@@ -156,7 +158,7 @@ void vePass::applyProgram(const veRenderCommand &command)
 		//sdg.traversalMode() = ShaderDefinatiosGenerator::TRAVERSE_CHILDREN;
 		//sdg.getRoot()->accept(sdg);
 		for (auto &iter : _shaders) {
-			iter.second->setShaderHeader(iter.first, sdg.getDefinations(this, iter.first));
+			iter.second->setShaderHeader(iter.first, sdg.getDefinations(iter.first));
 			GLuint id = iter.second->compile();
 			glAttachShader(_program, id);
 		}
@@ -168,6 +170,7 @@ void vePass::applyProgram(const veRenderCommand &command)
 
 void vePass::applyLightsUniforms(const veRenderCommand &command)
 {
+	if (!command.lightList) return;
 	std::unordered_map<std::string, int> currentLights;
 	for (auto &iter : veLightManager::instance()->getLightTemplateList()) {
 		currentLights[iter.first] = 0;
@@ -199,7 +202,8 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, veCamera *came
 	GLint posLoc = glGetUniformLocation(_program, (lightName + POSITION_KEY).c_str());
 	GLint dirLoc = glGetUniformLocation(_program, (lightName + DIRECTION_KEY).c_str());
 	if (0 <= posLoc || 0 <= dirLoc) {
-		veMat4 lightInView = camera->viewMatrix() * light->getNodeToWorldMatrix();
+		//veMat4 lightInView = camera->viewMatrix() * light->getNodeToWorldMatrix();
+		veMat4 lightInView = light->getLightViewMatrix();
 		if (0 <= posLoc) {
 			glUniform3f(posLoc, lightInView[0][3], lightInView[1][3], lightInView[2][3]);
 		}

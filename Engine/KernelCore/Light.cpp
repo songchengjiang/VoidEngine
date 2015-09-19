@@ -3,6 +3,7 @@
 #include "FileCore/File.h"
 #include <rapidjson/include/document.h>
 #include "Constants.h"
+#include "Camera.h"
 
 using namespace rapidjson;
 veLightManager::~veLightManager()
@@ -82,6 +83,7 @@ veLightManager::veLightManager()
 veLight::veLight(const std::string &type, const veParameterList &params)
 	: _type(type)
 	, _parameters(params)
+	, _camera(nullptr)
 {
 }
 
@@ -95,6 +97,25 @@ void veLight::visit(veNodeVisitor &visitor)
 	visitor.visit(*this);
 }
 
+void veLight::render(veCamera *camera)
+{
+	if (!_isVisible) return;
+	if (_mask & camera->getMask()) {
+		_camera = camera;
+		if (!_children.empty()) {
+			for (auto &child : _children) {
+				child->render(camera);
+			}
+		}
+
+		if (!_renderableObjects.empty()) {
+			for (auto &iter : _renderableObjects) {
+				iter->render(this, camera);
+			}
+		}
+	}
+}
+
 veParameter* veLight::getParameter(const std::string &name)
 {
 	for (auto &iter : _parameters) {
@@ -103,4 +124,9 @@ veParameter* veLight::getParameter(const std::string &name)
 	}
 
 	return nullptr;
+}
+
+veMat4 veLight::getLightViewMatrix()
+{
+	return _camera == nullptr ? veMat4::IDENTITY : _camera->viewMatrix() * this->getNodeToWorldMatrix();
 }

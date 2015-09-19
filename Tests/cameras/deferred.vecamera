@@ -1,34 +1,31 @@
 {
   "version": "1.0",
-  "name": "rtt.camera",
-  "viewport": [0, 0, 800, 600],
+  "name": "deferred.camera",
+  "viewport": [ 0, 0, 800, 600 ],
+  "renderPath": "DEFERRED",
   "projection": {
     "type": "PERSPECTIVE",
-    "fov": 60.0,
-    "left": -2.66,
-    "right": 2.66,
-    "bottom": -2.0,
-    "top": 2.0
+    "fov": 60.0
   },
   "lookAt": {
-    "eye": [ 0.0, 0.0, 5.0 ],
+    "eye": [ 0.0, 0.0, 30.0 ],
     "center": [ 0.0, 0.0, 0.0 ],
     "up": [ 0.0, 1.0, 0.0 ]
   },
   "fbo": [
     {
       "attachment": "COLOR0",
-      "source": "rtt.camera.tex0",
-      "format": "RGBA32F"
+      "source": "deferred.camera.color",
+      "format": "RGBA8"
     },
     {
       "attachment": "COLOR1",
-      "source": "rtt.camera.tex1",
+      "source": "deferred.camera.position",
       "format": "RGBA32F"
     },
     {
       "attachment": "COLOR2",
-      "source": "rtt.camera.tex2",
+      "source": "deferred.camera.normAndepth",
       "format": "RGBA32F"
     }
   ]

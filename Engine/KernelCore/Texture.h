@@ -16,6 +16,7 @@ public:
 	{
 		TEXTURE_2D,
 		TEXTURE_3D,
+		TEXTURE_RECT,
 	};
 
 	enum WrapMode{
@@ -57,10 +58,8 @@ public:
 	void setInternalFormat(GLint interFormat) { if (_internalFormat == interFormat) return; _internalFormat = interFormat; _needRefreshTex = true; }
 	GLint getInternalFormat() const { return _internalFormat; }
 
-	bool& autoWidth() { return _autoWidth; }
-	bool& autoHeight() { return _autoHeight; }
-
 	GLuint glTex();
+	GLenum glTarget() { return _target; }
 
 protected:
 
@@ -92,6 +91,19 @@ public:
 
 	veTexture2D(veImage *image = nullptr);
 	~veTexture2D();
+
+	virtual void bind(unsigned int textureUnit) override;
+
+protected:
+
+};
+
+class VE_EXPORT veTextureRECT : public veTexture
+{
+public:
+
+	veTextureRECT(veImage *image = nullptr);
+	~veTextureRECT();
 
 	virtual void bind(unsigned int textureUnit) override;
 

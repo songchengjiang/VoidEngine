@@ -24,8 +24,11 @@ veTexture* veTextureManager::getOrCreateTexture(const std::string &name, veTextu
 	veTexture *texture = nullptr;
 	if (texType == veTexture::TEXTURE_2D) {
 		texture = new veTexture2D;
-		_texturePool[name] = texture;
+	}
+	else if (texType == veTexture::TEXTURE_RECT){
+		texture = new veTextureRECT;
 	}
 
+	_texturePool[name] = texture;
 	return texture;
 }

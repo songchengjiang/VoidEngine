@@ -118,8 +118,6 @@ void veVisualiser::update()
 {
 	if (!_root.valid()) return;
 	_root->update(this);
-	_cameras.clear();
-	_lights.clear();
 	NodeFinder nodeFinder(_cameras, _mainCamera.get(), _lights);
 	_root->accept(nodeFinder);
 	if (!_mainCamera->getParent() && _root.get() != _mainCamera.get())
@@ -138,16 +136,12 @@ void veVisualiser::render()
 	_root->render(_mainCamera.get());
 	_renderQueue.execute(this);
 	glfwSwapBuffers(_hwnd);
+	_cameras.clear();
+	_lights.clear();
 }
 
 void veVisualiser::resize(int width, int height)
 {
-	double widthChangeRatio = double(width) / double(_width);
-	double heigtChangeRatio = double(height) / double(_height);
-	double aspectInverseRatioChange = heigtChangeRatio / widthChangeRatio;
 	_width = width;
 	_height = height;
-
-	_mainCamera->projectionMatrix() = veMat4::scale(veVec3(aspectInverseRatioChange, 1.0f, 1.0f)) * _mainCamera->projectionMatrix();
-	_mainCamera->setViewport({ 0, 0, _width, _height });
 }

@@ -36,6 +36,16 @@ private:
 			_camera->setName(_doucument[NAME_KEY.c_str()].GetString());
 		}
 
+		if (_doucument.HasMember(RENDERPATH_KEY.c_str())) {
+			const char *str = _doucument[RENDERPATH_KEY.c_str()].GetString();
+			if (strcmp(FORWARD_KEY.c_str(), str) == 0) {
+				_camera->setRenderPath(veCamera::RenderPath::FORWARD_PATH);
+			}
+			else if (strcmp(DEFERRED_KEY.c_str(), str) == 0) {
+				_camera->setRenderPath(veCamera::RenderPath::DEFERRED_PATH);
+			}
+		}
+
 		if (_doucument.HasMember(VIEWPORT_KEY.c_str())) {
 			const Value &val = _doucument[VIEWPORT_KEY.c_str()];
 			readViewport(val);
@@ -157,20 +167,25 @@ private:
 			int width = _camera->getViewport().width;
 			int height = _camera->getViewport().height;
 			GLuint internalFormat = GL_RGBA32F;
+			veTexture::TextureType texType = veTexture::TEXTURE_2D;
 			if (attachmentVal.HasMember(ATTACHMENT_KEY.c_str())) {
 				attachment = getFrameBufferObjectAttach(attachmentVal[ATTACHMENT_KEY.c_str()].GetString());
 			}
 
+			if (attachmentVal.HasMember(TYPE_KEY.c_str())) {
+				texType = getTextureType(attachmentVal[TYPE_KEY.c_str()].GetString());
+			}
+
 			if (attachmentVal.HasMember(SOURCE_KEY.c_str())) {
 				std::string name = attachmentVal[SOURCE_KEY.c_str()].GetString();
-				texture = veTextureManager::instance()->getOrCreateTexture(name, veTexture::TEXTURE_2D);
+				texture = veTextureManager::instance()->getOrCreateTexture(name, texType);
 			}
 
 			if (!texture) continue;
 
 			if (attachmentVal.HasMember(SOURCE_KEY.c_str())) {
 				std::string name = attachmentVal[SOURCE_KEY.c_str()].GetString();
-				texture = veTextureManager::instance()->getOrCreateTexture(name, veTexture::TEXTURE_2D);
+				texture = veTextureManager::instance()->getOrCreateTexture(name, texType);
 			}
 
 			if (attachmentVal.HasMember(WIDTH_KEY.c_str())) {
@@ -201,6 +216,19 @@ private:
 			fbo->attach(attachment, texture);
 		}
 		_camera->setFrameBufferObject(fbo);
+	}
+
+	veTexture::TextureType getTextureType(const char *str) {
+		if (strcmp(TEX_2D_KEY.c_str(), str) == 0) {
+			return veTexture::TEXTURE_2D;
+		}
+		else if (strcmp(TEX_3D_KEY.c_str(), str) == 0) {
+			return veTexture::TEXTURE_3D;
+		}
+		else if (strcmp(TEX_RECT_KEY.c_str(), str) == 0) {
+			return veTexture::TEXTURE_RECT;
+		}
+		return veTexture::TEXTURE_2D;
 	}
 
 

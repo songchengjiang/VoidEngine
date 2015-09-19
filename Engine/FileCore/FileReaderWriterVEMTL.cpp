@@ -167,7 +167,12 @@ private:
 			if (texVal.HasMember(NAME_KEY.c_str())) {
 				name = texVal[NAME_KEY.c_str()].GetString();
 			}
-			veTexture *texture = veTextureManager::instance()->getOrCreateTexture(source, veTexture::TEXTURE_2D);
+
+			veTexture::TextureType texType = veTexture::TEXTURE_2D;
+			if (texVal.HasMember(TYPE_KEY.c_str())) {
+				texType = getTextureType(texVal[TYPE_KEY.c_str()].GetString());
+			}
+			veTexture *texture = veTextureManager::instance()->getOrCreateTexture(source, texType);
 			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_fileFolder + source));
 			if (!texture) return;
 			if (image)
@@ -275,6 +280,20 @@ private:
 		}
 		return 0;
 	}
+
+	veTexture::TextureType getTextureType(const char *str) {
+		if (strcmp(TEX_2D_KEY.c_str(), str) == 0) {
+			return veTexture::TEXTURE_2D;
+		}
+		else if (strcmp(TEX_3D_KEY.c_str(), str) == 0) {
+			return veTexture::TEXTURE_3D;
+		}
+		else if (strcmp(TEX_RECT_KEY.c_str(), str) == 0) {
+			return veTexture::TEXTURE_RECT;
+		}
+		return veTexture::TEXTURE_2D;
+	}
+
 private:
 
 	Document _doucument;

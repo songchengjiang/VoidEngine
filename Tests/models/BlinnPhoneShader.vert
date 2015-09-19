@@ -40,8 +40,8 @@ void updateBonePositionAndNormal(out vec4 pos, out vec3 norm)
 }
 #endif
 
-out vec3 v_position;          
-out vec3 v_normal;                   
+out vec4 v_position;          
+out vec4 v_normalAndepth;                   
 out vec2 v_texcoord;  
 void main()                                                 
 {   
@@ -54,8 +54,15 @@ void main()
 	finalNorm = normal;
 #endif
 	
-	v_position = (u_ModelViewMat * finalPos).xyz;
-	v_texcoord = texcoord0;                    
-	v_normal = u_NormalMat * finalNorm; 
-	gl_Position = u_ModelViewProjectMat * finalPos;  
+	v_texcoord = texcoord0;
+	v_position = u_ModelViewMat * finalPos; 
+	  
+#ifdef VE_USE_DEFERRED_PATH
+	gl_Position = u_ModelViewProjectMat * finalPos; 
+	v_normalAndepth = vec4(u_NormalMat * finalNorm, gl_Position.w);
+#else
+	gl_Position = u_ModelViewProjectMat * finalPos; 
+	v_normalAndepth = vec4(u_NormalMat * finalNorm, gl_Position.w);
+#endif	
+	  
 }

@@ -29,16 +29,8 @@
                                     "u_diffuse": [0.500000,0.500000,0.500000
                                     ],
                                     "u_shininess":5.656854,
-                                    "u_opacity":0.5,
-                                    "u_reflectivity":0.000000,
-                                    "u_diffuseTex":0
-                                }
-                            ],
-                            "textureUnits": [
-                                {
-                                    "source": "sphere.png",
-                                    "wrap": "CLAMP",
-                                    "filter": "NERAEST"
+                                    "u_opacity":0.05,
+                                    "u_reflectivity":0.000000
                                 }
                             ]
                         }

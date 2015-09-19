@@ -9,6 +9,8 @@ class veLoopQueue
 {
 public:
 
+	typedef std::function<bool(const T &, const T &)> SortFunc;
+
 	veLoopQueue()
 		: _front(0)
 		, _end(0){}
@@ -55,7 +57,7 @@ public:
 		return true;
 	}
 
-	void sort(const std::function<bool(const T &, const T &)> &cmpFunc){
+	void sort(const SortFunc &cmpFunc){
 		for (size_t f = _front; f != _end;){
 			for (size_t p = (f + 1) % CAPACITY; p != _end;){
 				if (!cmpFunc(_queue[f], _queue[p])){

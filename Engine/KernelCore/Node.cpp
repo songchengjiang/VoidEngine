@@ -9,6 +9,7 @@ veNode::veNode()
 	, _isVisible(true)
 	, _refresh(true)
 	, _mask(0xffffffff)
+	, _overrideMask(false)
 {
 }
 
@@ -167,6 +168,7 @@ void veNode::update(veVisualiser *vs)
 
 	if (!_children.empty()){
 		for (auto &child : _children){
+			if (_overrideMask) child->setMask(_mask);
 			child->update(vs);
 		}
 	}

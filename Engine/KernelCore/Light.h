@@ -14,10 +14,13 @@ public:
 	~veLight();
 
 	virtual void visit(veNodeVisitor &visitor) override;
+	virtual void render(veCamera *camera) override;
 
 	const std::string& getType() const { return _type; }
 	const veParameterList& getParameters() const { return _parameters; }
 	veParameter* getParameter(const std::string &name);
+
+	veMat4 getLightViewMatrix();
 
 protected:
 
@@ -27,6 +30,7 @@ protected:
 
 	std::string _type;
 	veParameterList _parameters;
+	veCamera *_camera;
 };
 
 typedef std::vector< veLight* > veLightList;
