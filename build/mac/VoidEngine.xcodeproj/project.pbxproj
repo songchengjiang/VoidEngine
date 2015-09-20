@@ -1,0 +1,359 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BECBC5421BAEDEBF0075A461 /* Argument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BECBC5371BAEDEBE0075A461 /* Argument.cpp */; settings = {ASSET_TAGS = (); }; };
+		BECBC5431BAEDEBF0075A461 /* Argument.h in Headers */ = {isa = PBXBuildFile; fileRef = BECBC5381BAEDEBE0075A461 /* Argument.h */; settings = {ASSET_TAGS = (); }; };
+		BECBC5441BAEDEBF0075A461 /* Converter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BECBC5391BAEDEBF0075A461 /* Converter.cpp */; settings = {ASSET_TAGS = (); }; };
+		BECBC5451BAEDEBF0075A461 /* Converter.h in Headers */ = {isa = PBXBuildFile; fileRef = BECBC53A1BAEDEBF0075A461 /* Converter.h */; settings = {ASSET_TAGS = (); }; };
+		BECBC5461BAEDEBF0075A461 /* ConverterFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BECBC53B1BAEDEBF0075A461 /* ConverterFactory.cpp */; settings = {ASSET_TAGS = (); }; };
+		BECBC5471BAEDEBF0075A461 /* ConverterFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BECBC53C1BAEDEBF0075A461 /* ConverterFactory.h */; settings = {ASSET_TAGS = (); }; };
+		BECBC5481BAEDEBF0075A461 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BECBC53D1BAEDEBF0075A461 /* main.cpp */; settings = {ASSET_TAGS = (); }; };
+		BECBC5491BAEDEBF0075A461 /* ModelConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BECBC53E1BAEDEBF0075A461 /* ModelConverter.cpp */; settings = {ASSET_TAGS = (); }; };
+		BECBC54A1BAEDEBF0075A461 /* ModelConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = BECBC53F1BAEDEBF0075A461 /* ModelConverter.h */; settings = {ASSET_TAGS = (); }; };
+		BECBC54B1BAEDEBF0075A461 /* Prerequisites.h in Headers */ = {isa = PBXBuildFile; fileRef = BECBC5401BAEDEBF0075A461 /* Prerequisites.h */; settings = {ASSET_TAGS = (); }; };
+		BECBC54C1BAEDEBF0075A461 /* PrettyWriterExt.h in Headers */ = {isa = PBXBuildFile; fileRef = BECBC5411BAEDEBF0075A461 /* PrettyWriterExt.h */; settings = {ASSET_TAGS = (); }; };
+		BECBC5541BAEDEDE0075A461 /* Constants.h in Headers */ = {isa = PBXBuildFile; fileRef = BECBC54E1BAEDEDE0075A461 /* Constants.h */; settings = {ASSET_TAGS = (); }; };
+		BECBC5551BAEDEDE0075A461 /* Export.h in Headers */ = {isa = PBXBuildFile; fileRef = BECBC54F1BAEDEDE0075A461 /* Export.h */; settings = {ASSET_TAGS = (); }; };
+		BECBC5561BAEDEDE0075A461 /* Prerequisites.h in Headers */ = {isa = PBXBuildFile; fileRef = BECBC5521BAEDEDE0075A461 /* Prerequisites.h */; settings = {ASSET_TAGS = (); }; };
+		BECBC5571BAEDEDE0075A461 /* VoidEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = BECBC5531BAEDEDE0075A461 /* VoidEngine.h */; settings = {ASSET_TAGS = (); }; };
+		BECBC5601BAEDFBA0075A461 /* BaseTest.h in Headers */ = {isa = PBXBuildFile; fileRef = BECBC5591BAEDFBA0075A461 /* BaseTest.h */; settings = {ASSET_TAGS = (); }; };
+		BECBC5611BAEDFBA0075A461 /* CameraTest.h in Headers */ = {isa = PBXBuildFile; fileRef = BECBC55A1BAEDFBA0075A461 /* CameraTest.h */; settings = {ASSET_TAGS = (); }; };
+		BECBC5621BAEDFBA0075A461 /* ImageTest.h in Headers */ = {isa = PBXBuildFile; fileRef = BECBC55B1BAEDFBA0075A461 /* ImageTest.h */; settings = {ASSET_TAGS = (); }; };
+		BECBC5631BAEDFBA0075A461 /* LightTest.h in Headers */ = {isa = PBXBuildFile; fileRef = BECBC55C1BAEDFBA0075A461 /* LightTest.h */; settings = {ASSET_TAGS = (); }; };
+		BECBC5641BAEDFBA0075A461 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BECBC55D1BAEDFBA0075A461 /* main.cpp */; settings = {ASSET_TAGS = (); }; };
+		BECBC5651BAEDFBA0075A461 /* MeshTest.h in Headers */ = {isa = PBXBuildFile; fileRef = BECBC55E1BAEDFBA0075A461 /* MeshTest.h */; settings = {ASSET_TAGS = (); }; };
+		BECBC5661BAEDFBA0075A461 /* RenToTex.h in Headers */ = {isa = PBXBuildFile; fileRef = BECBC55F1BAEDFBA0075A461 /* RenToTex.h */; settings = {ASSET_TAGS = (); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		BECBC5261BAEDD430075A461 /* libVoidEngine.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libVoidEngine.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		BECBC5371BAEDEBE0075A461 /* Argument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Argument.cpp; path = ../../Converter/Argument.cpp; sourceTree = "<group>"; };
+		BECBC5381BAEDEBE0075A461 /* Argument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Argument.h; path = ../../Converter/Argument.h; sourceTree = "<group>"; };
+		BECBC5391BAEDEBF0075A461 /* Converter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Converter.cpp; path = ../../Converter/Converter.cpp; sourceTree = "<group>"; };
+		BECBC53A1BAEDEBF0075A461 /* Converter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Converter.h; path = ../../Converter/Converter.h; sourceTree = "<group>"; };
+		BECBC53B1BAEDEBF0075A461 /* ConverterFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ConverterFactory.cpp; path = ../../Converter/ConverterFactory.cpp; sourceTree = "<group>"; };
+		BECBC53C1BAEDEBF0075A461 /* ConverterFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConverterFactory.h; path = ../../Converter/ConverterFactory.h; sourceTree = "<group>"; };
+		BECBC53D1BAEDEBF0075A461 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../Converter/main.cpp; sourceTree = "<group>"; };
+		BECBC53E1BAEDEBF0075A461 /* ModelConverter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelConverter.cpp; path = ../../Converter/ModelConverter.cpp; sourceTree = "<group>"; };
+		BECBC53F1BAEDEBF0075A461 /* ModelConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelConverter.h; path = ../../Converter/ModelConverter.h; sourceTree = "<group>"; };
+		BECBC5401BAEDEBF0075A461 /* Prerequisites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Prerequisites.h; path = ../../Converter/Prerequisites.h; sourceTree = "<group>"; };
+		BECBC5411BAEDEBF0075A461 /* PrettyWriterExt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrettyWriterExt.h; path = ../../Converter/PrettyWriterExt.h; sourceTree = "<group>"; };
+		BECBC54D1BAEDEDE0075A461 /* BaseCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BaseCore; path = ../../Engine/BaseCore; sourceTree = "<group>"; };
+		BECBC54E1BAEDEDE0075A461 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Constants.h; path = ../../Engine/Constants.h; sourceTree = "<group>"; };
+		BECBC54F1BAEDEDE0075A461 /* Export.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Export.h; path = ../../Engine/Export.h; sourceTree = "<group>"; };
+		BECBC5501BAEDEDE0075A461 /* FileCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FileCore; path = ../../Engine/FileCore; sourceTree = "<group>"; };
+		BECBC5521BAEDEDE0075A461 /* Prerequisites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Prerequisites.h; path = ../../Engine/Prerequisites.h; sourceTree = "<group>"; };
+		BECBC5531BAEDEDE0075A461 /* VoidEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VoidEngine.h; path = ../../Engine/VoidEngine.h; sourceTree = "<group>"; };
+		BECBC5591BAEDFBA0075A461 /* BaseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTest.h; path = ../../Tests/BaseTest.h; sourceTree = "<group>"; };
+		BECBC55A1BAEDFBA0075A461 /* CameraTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CameraTest.h; path = ../../Tests/CameraTest.h; sourceTree = "<group>"; };
+		BECBC55B1BAEDFBA0075A461 /* ImageTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageTest.h; path = ../../Tests/ImageTest.h; sourceTree = "<group>"; };
+		BECBC55C1BAEDFBA0075A461 /* LightTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightTest.h; path = ../../Tests/LightTest.h; sourceTree = "<group>"; };
+		BECBC55D1BAEDFBA0075A461 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../Tests/main.cpp; sourceTree = "<group>"; };
+		BECBC55E1BAEDFBA0075A461 /* MeshTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeshTest.h; path = ../../Tests/MeshTest.h; sourceTree = "<group>"; };
+		BECBC55F1BAEDFBA0075A461 /* RenToTex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenToTex.h; path = ../../Tests/RenToTex.h; sourceTree = "<group>"; };
+		BECBC56A1BAEF50C0075A461 /* KernelCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = KernelCore; path = ../../Engine/KernelCore; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BECBC5231BAEDD430075A461 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		BECBC51D1BAEDD430075A461 = {
+			isa = PBXGroup;
+			children = (
+				BECBC5361BAEDE820075A461 /* Tests */,
+				BECBC5351BAEDE790075A461 /* Engine */,
+				BECBC5341BAEDE640075A461 /* Converter */,
+				BECBC5271BAEDD430075A461 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		BECBC5271BAEDD430075A461 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BECBC5261BAEDD430075A461 /* libVoidEngine.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BECBC5341BAEDE640075A461 /* Converter */ = {
+			isa = PBXGroup;
+			children = (
+				BECBC5371BAEDEBE0075A461 /* Argument.cpp */,
+				BECBC5381BAEDEBE0075A461 /* Argument.h */,
+				BECBC5391BAEDEBF0075A461 /* Converter.cpp */,
+				BECBC53A1BAEDEBF0075A461 /* Converter.h */,
+				BECBC53B1BAEDEBF0075A461 /* ConverterFactory.cpp */,
+				BECBC53C1BAEDEBF0075A461 /* ConverterFactory.h */,
+				BECBC53D1BAEDEBF0075A461 /* main.cpp */,
+				BECBC53E1BAEDEBF0075A461 /* ModelConverter.cpp */,
+				BECBC53F1BAEDEBF0075A461 /* ModelConverter.h */,
+				BECBC5401BAEDEBF0075A461 /* Prerequisites.h */,
+				BECBC5411BAEDEBF0075A461 /* PrettyWriterExt.h */,
+			);
+			name = Converter;
+			sourceTree = "<group>";
+		};
+		BECBC5351BAEDE790075A461 /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				BECBC56A1BAEF50C0075A461 /* KernelCore */,
+				BECBC54D1BAEDEDE0075A461 /* BaseCore */,
+				BECBC5501BAEDEDE0075A461 /* FileCore */,
+				BECBC54E1BAEDEDE0075A461 /* Constants.h */,
+				BECBC54F1BAEDEDE0075A461 /* Export.h */,
+				BECBC5521BAEDEDE0075A461 /* Prerequisites.h */,
+				BECBC5531BAEDEDE0075A461 /* VoidEngine.h */,
+			);
+			name = Engine;
+			sourceTree = "<group>";
+		};
+		BECBC5361BAEDE820075A461 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				BECBC5591BAEDFBA0075A461 /* BaseTest.h */,
+				BECBC55A1BAEDFBA0075A461 /* CameraTest.h */,
+				BECBC55B1BAEDFBA0075A461 /* ImageTest.h */,
+				BECBC55C1BAEDFBA0075A461 /* LightTest.h */,
+				BECBC55D1BAEDFBA0075A461 /* main.cpp */,
+				BECBC55E1BAEDFBA0075A461 /* MeshTest.h */,
+				BECBC55F1BAEDFBA0075A461 /* RenToTex.h */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		BECBC5241BAEDD430075A461 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BECBC5551BAEDEDE0075A461 /* Export.h in Headers */,
+				BECBC5561BAEDEDE0075A461 /* Prerequisites.h in Headers */,
+				BECBC5431BAEDEBF0075A461 /* Argument.h in Headers */,
+				BECBC5611BAEDFBA0075A461 /* CameraTest.h in Headers */,
+				BECBC5541BAEDEDE0075A461 /* Constants.h in Headers */,
+				BECBC5471BAEDEBF0075A461 /* ConverterFactory.h in Headers */,
+				BECBC5451BAEDEBF0075A461 /* Converter.h in Headers */,
+				BECBC5621BAEDFBA0075A461 /* ImageTest.h in Headers */,
+				BECBC54C1BAEDEBF0075A461 /* PrettyWriterExt.h in Headers */,
+				BECBC5661BAEDFBA0075A461 /* RenToTex.h in Headers */,
+				BECBC54B1BAEDEBF0075A461 /* Prerequisites.h in Headers */,
+				BECBC5601BAEDFBA0075A461 /* BaseTest.h in Headers */,
+				BECBC5571BAEDEDE0075A461 /* VoidEngine.h in Headers */,
+				BECBC54A1BAEDEBF0075A461 /* ModelConverter.h in Headers */,
+				BECBC5631BAEDFBA0075A461 /* LightTest.h in Headers */,
+				BECBC5651BAEDFBA0075A461 /* MeshTest.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		BECBC5251BAEDD430075A461 /* VoidEngine */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BECBC5311BAEDD430075A461 /* Build configuration list for PBXNativeTarget "VoidEngine" */;
+			buildPhases = (
+				BECBC5221BAEDD430075A461 /* Sources */,
+				BECBC5231BAEDD430075A461 /* Frameworks */,
+				BECBC5241BAEDD430075A461 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VoidEngine;
+			productName = VoidEngine;
+			productReference = BECBC5261BAEDD430075A461 /* libVoidEngine.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BECBC51E1BAEDD430075A461 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0700;
+				ORGANIZATIONNAME = JasonCheng;
+				TargetAttributes = {
+					BECBC5251BAEDD430075A461 = {
+						CreatedOnToolsVersion = 7.0;
+					};
+				};
+			};
+			buildConfigurationList = BECBC5211BAEDD430075A461 /* Build configuration list for PBXProject "VoidEngine" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = BECBC51D1BAEDD430075A461;
+			productRefGroup = BECBC5271BAEDD430075A461 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				BECBC5251BAEDD430075A461 /* VoidEngine */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BECBC5221BAEDD430075A461 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BECBC5441BAEDEBF0075A461 /* Converter.cpp in Sources */,
+				BECBC5421BAEDEBF0075A461 /* Argument.cpp in Sources */,
+				BECBC5641BAEDFBA0075A461 /* main.cpp in Sources */,
+				BECBC5481BAEDEBF0075A461 /* main.cpp in Sources */,
+				BECBC5491BAEDEBF0075A461 /* ModelConverter.cpp in Sources */,
+				BECBC5461BAEDEBF0075A461 /* ConverterFactory.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		BECBC52F1BAEDD430075A461 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		BECBC5301BAEDD430075A461 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		BECBC5321BAEDD430075A461 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		BECBC5331BAEDD430075A461 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		BECBC5211BAEDD430075A461 /* Build configuration list for PBXProject "VoidEngine" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BECBC52F1BAEDD430075A461 /* Debug */,
+				BECBC5301BAEDD430075A461 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BECBC5311BAEDD430075A461 /* Build configuration list for PBXNativeTarget "VoidEngine" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BECBC5321BAEDD430075A461 /* Debug */,
+				BECBC5331BAEDD430075A461 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BECBC51E1BAEDD430075A461 /* Project object */;
+}
