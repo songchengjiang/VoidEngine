@@ -46,7 +46,7 @@ public:
 
 	veFrameBufferObject* getOrCreateFrameBufferObject(const std::string &name);
 	veFrameBufferObject* getFrameBufferObject(unsigned int idx);
-	unsigned int getFrameBufferObjectNum() const { return _fbos.size(); }
+	size_t getFrameBufferObjectNum() const { return _fbos.size(); }
 
 
 private:

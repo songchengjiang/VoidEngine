@@ -15,11 +15,11 @@ public:
 	\param levelDepth Initial capacity of stack.
 	*/
 	PrettyWriterExt(OutputStream& os, StackAllocator* allocator = 0, size_t levelDepth = Base::kDefaultLevelDepth) :
-		PrettyWriter(os, allocator,levelDepth){}
+		rapidjson::PrettyWriter<OutputStream, SourceEncoding, TargetEncoding, StackAllocator>(os, allocator,levelDepth){}
 
-	bool Float(float f)       { Prefix(rapidjson::kNumberType); return WriteFloat(f); }
-	bool Double(double f) { Prefix(rapidjson::kNumberType); return WriteDouble(f); }
-	bool Uint(unsigned ui)   { Prefix(rapidjson::kNumberType); return WriteUint(ui); }
+    bool Float(float f)       { rapidjson::PrettyWriter<OutputStream, SourceEncoding, TargetEncoding, StackAllocator>::Prefix(rapidjson::kNumberType); return WriteFloat(f); }
+	bool Double(double f) { rapidjson::PrettyWriter<OutputStream, SourceEncoding, TargetEncoding, StackAllocator>::Prefix(rapidjson::kNumberType); return rapidjson::PrettyWriter<OutputStream, SourceEncoding, TargetEncoding, StackAllocator>::WriteDouble(f); }
+	bool Uint(unsigned ui)   { rapidjson::PrettyWriter<OutputStream, SourceEncoding, TargetEncoding, StackAllocator>::Prefix(rapidjson::kNumberType); return rapidjson::PrettyWriter<OutputStream, SourceEncoding, TargetEncoding, StackAllocator>::WriteUint(ui); }
 
 	void WriteIndent() { Base::WriteIndent(); };
 
@@ -28,7 +28,7 @@ public:
 		sprintf(str, "%f", f);
 		unsigned int sz = strlen(str);
 		for (unsigned int i = 0; i < sz; ++i)
-			os_->Put(str[i]);
+			rapidjson::PrettyWriter<OutputStream, SourceEncoding, TargetEncoding, StackAllocator>::os_->Put(str[i]);
 		return true;
 	}
 };

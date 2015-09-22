@@ -70,7 +70,7 @@ public:
 
 	void addAnimationChannel(veAnimation *anim);
 	veAnimation* getAnimationChannel(unsigned int idx);
-	unsigned int getAnimationChannelNum() const { return _animations.size(); }
+	size_t getAnimationChannelNum() const { return _animations.size(); }
 
 	void setActiveAnimationChannel(unsigned int idx);
 

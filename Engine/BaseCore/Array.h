@@ -13,14 +13,14 @@ public:
 	, _end(0)
 	, _buffer(nullptr){
 	}
-	explicit veArray(unsigned int arySize)
+    veArray(unsigned int arySize)
 		: USE_VE_PTR_INIT
 		, _size(arySize)
 		, _end(_size)
 		, _buffer(new TYPE[_size]){
 	}
 
-	explicit veArray(const veArray<TYPE> &ary)
+    veArray(const veArray<TYPE> &ary)
 		: USE_VE_PTR_INIT
 		, _size(ary._size)
 		, _end(ary._end)

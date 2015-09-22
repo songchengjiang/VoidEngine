@@ -1,3 +1,4 @@
+#ifdef _WIN32
 #include "FileReaderWriter.h"
 #include <unordered_map>
 #include "KernelCore/Image.h"
@@ -83,3 +84,5 @@ private:
 };
 
 VE_READERWRITER_REG("jpg", veFileReaderWriterJPEG);
+
+#endif

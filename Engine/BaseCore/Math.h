@@ -2,6 +2,7 @@
 #define _VE_MATH_
 #include "Prerequisites.h"
 #include <math.h>
+#include <random>
 
 class VE_EXPORT veMath
 {

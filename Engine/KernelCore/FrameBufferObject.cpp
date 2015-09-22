@@ -161,7 +161,7 @@ void veFrameBufferObject::refreshAttachments()
 			}
 		}
 		if (!mrt.empty())
-			glDrawBuffers(mrt.size(), &mrt[0]);
+			glDrawBuffers(GLsizei(mrt.size()), &mrt[0]);
 
 		_needRefresh = false;
 	}

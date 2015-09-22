@@ -1,7 +1,8 @@
 #ifndef _CONVERTER_
 #define _CONVERTER_
 #include <string>
-#include "Prerequisites.h"
+
+#define CT_VERSION "1.0"
 
 class Converter
 {

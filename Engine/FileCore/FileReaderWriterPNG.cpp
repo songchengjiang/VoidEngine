@@ -86,8 +86,8 @@ private:
 					buffer[index++] = row_pointers[y][x++];//gray
 				}
 			}
-			internalFormat = GL_LUMINANCE8;
-			pixelFormat = GL_LUMINANCE;
+			internalFormat = GL_R8;
+			pixelFormat = GL_RED;
 		}
 		else if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA){
 			buffer = new unsigned char[width * height * 2];
@@ -97,8 +97,8 @@ private:
 					buffer[index++] = row_pointers[y][x++];//alpha
 				}
 			}
-			internalFormat = GL_LUMINANCE8_ALPHA8;
-			pixelFormat = GL_LUMINANCE_ALPHA;
+			internalFormat = GL_RG8;
+			pixelFormat = GL_RG;
 		}
 
 		if (buffer){

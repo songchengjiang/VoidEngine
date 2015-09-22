@@ -131,8 +131,20 @@ public:
 		return !operator==(rhs);
 	}
 
-	friend veQuat operator * (const veReal fScalar, const veQuat& rkQ);
-	friend veVec3 operator * (const veVec3& v, const veQuat& rkQ);
+    friend veQuat operator * (const veReal fScalar, const veQuat& rkQ){
+        return veQuat(fScalar * rkQ._w, fScalar * rkQ._y, fScalar * rkQ._z, fScalar * rkQ._z);
+    }
+    friend veVec3 operator * (const veVec3& v, const veQuat& rkQ){
+        // nVidia SDK implementation
+        veVec3 uv, uuv;
+        veVec3 qvec(rkQ._x, rkQ._y, rkQ._z);
+        uv = qvec.crossProduct(v);
+        uuv = qvec.crossProduct(uv);
+        uv *= (2.0f * rkQ._w);
+        uuv *= 2.0f;
+        
+        return v + uv + uuv;
+    }
 
 private:
 
@@ -146,11 +158,11 @@ private:
 	veReal _z;
 };
 
-static veQuat operator * (const veReal fScalar, const veQuat& rkQ){
+/*veQuat operator * (const veReal fScalar, const veQuat& rkQ){
 	return veQuat(fScalar * rkQ._w, fScalar * rkQ._y, fScalar * rkQ._z, fScalar * rkQ._z);
 }
 
-static veVec3 operator * (const veVec3& v, const veQuat& rkQ){
+veVec3 operator * (const veVec3& v, const veQuat& rkQ){
 	// nVidia SDK implementation
 	veVec3 uv, uuv;
 	veVec3 qvec(rkQ._x, rkQ._y, rkQ._z);
@@ -160,6 +172,6 @@ static veVec3 operator * (const veVec3& v, const veQuat& rkQ){
 	uuv *= 2.0f;
 
 	return v + uv + uuv;
-}
+}*/
 
 #endif

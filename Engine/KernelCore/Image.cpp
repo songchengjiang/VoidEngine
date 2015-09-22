@@ -36,14 +36,15 @@ unsigned int veImage::perPixelSize()
 {
 	switch (_internalFormat)
 	{
-	case GL_ALPHA8:
+	case GL_ALPHA:
 	case GL_DEPTH_COMPONENT:
-	case GL_LUMINANCE8:
+	case GL_R8:
 		return 1;
 
-	case GL_ALPHA16:
+	case GL_R16F:
 	case GL_DEPTH_COMPONENT16:
-	case GL_LUMINANCE16:
+    case GL_RG8:
+	//case GL_LUMINANCE16:
 		return 2;
 
 	case GL_DEPTH_COMPONENT32F:

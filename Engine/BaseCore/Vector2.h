@@ -202,12 +202,24 @@ public:
 		return false;
 	}
 
-	friend veVec2 operator * (const veReal fScalar, const veVec2& rkVector);
-	friend veVec2 operator / (const veReal fScalar, const veVec2& rkVector);
-	friend veVec2 operator + (const veVec2& lhs, const veReal rhs);
-	friend veVec2 operator + (const veReal lhs, const veVec2& rhs);
-	friend veVec2 operator - (const veVec2& lhs, const veReal rhs);
-	friend veVec2 operator - (const veReal lhs, const veVec2& rhs);
+    friend veVec2 operator * (const veReal fScalar, const veVec2& rkVector){
+        return veVec2(fScalar * rkVector._x, fScalar * rkVector._y);
+    }
+    friend veVec2 operator / (const veReal fScalar, const veVec2& rkVector){
+        return veVec2(fScalar / rkVector._x, fScalar / rkVector._y);
+    }
+    friend veVec2 operator + (const veVec2& lhs, const veReal rhs){
+        return veVec2(lhs._x + rhs, lhs._y + rhs);
+    }
+    friend veVec2 operator + (const veReal lhs, const veVec2& rhs){
+        return veVec2(lhs + rhs._x, lhs + rhs._y);
+    }
+    friend veVec2 operator - (const veVec2& lhs, const veReal rhs){
+        return veVec2(lhs._x - rhs, lhs._y - rhs);
+    }
+    friend veVec2 operator - (const veReal lhs, const veVec2& rhs){
+        return veVec2(lhs - rhs._x, lhs - rhs._y);
+    }
 
 private:
 
@@ -215,29 +227,29 @@ private:
 	veReal _y;
 };
 
-static veVec2 operator * (const veReal fScalar, const veVec2& rkVector){
+/*veVec2 operator * (const veReal fScalar, const veVec2& rkVector){
 	return veVec2(fScalar * rkVector._x, fScalar * rkVector._y);
 }
 
-static veVec2 operator / (const veReal fScalar, const veVec2& rkVector){
+veVec2 operator / (const veReal fScalar, const veVec2& rkVector){
 	return veVec2(fScalar / rkVector._x, fScalar / rkVector._y);
 }
 
-static veVec2 operator + (const veVec2& lhs, const veReal rhs){
+veVec2 operator + (const veVec2& lhs, const veReal rhs){
 	return veVec2(lhs._x + rhs, lhs._y + rhs);
 }
 
-static veVec2 operator + (const veReal lhs, const veVec2& rhs){
+veVec2 operator + (const veReal lhs, const veVec2& rhs){
 	return veVec2(lhs + rhs._x, lhs + rhs._y);
 }
 
-static veVec2 operator - (const veVec2& lhs, const veReal rhs){
+veVec2 operator - (const veVec2& lhs, const veReal rhs){
 	return veVec2(lhs._x - rhs, lhs._y - rhs);
 }
 
-static veVec2 operator - (const veReal lhs, const veVec2& rhs){
+veVec2 operator - (const veReal lhs, const veVec2& rhs){
 	return veVec2(lhs - rhs._x, lhs - rhs._y);
-}
+}*/
 
 typedef std::vector<veVec2> veVec2Array;
 

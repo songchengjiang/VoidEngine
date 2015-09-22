@@ -30,7 +30,7 @@ public:
 	bool removeChild(veNode *child);
 	veNode* removeChild(unsigned int cIndex);
 	veNode* getChild(unsigned int cIndex);
-	unsigned int getChildCount() const { return _children.size(); }
+	size_t getChildCount() const { return _children.size(); }
 
 	veNode* getParent() { return _parent; }
 
@@ -38,13 +38,13 @@ public:
 	bool removeComponent(veComponent *com);
 	veComponent* removeComponent(unsigned int comIndex);
 	veComponent* getComponent(unsigned int comIndex);
-	unsigned int getComponentCount() const { return _components.size(); }
+	size_t getComponentCount() const { return _components.size(); }
 
 	int addRenderableObject(veRenderableObject *obj);
 	bool removeRenderableObject(veRenderableObject *obj);
 	veRenderableObject* removeRenderableObject(unsigned int objIndex);
 	veRenderableObject* getRenderableObject(unsigned int objIndex);
-	unsigned int getRenderableObjectCount() const { return _renderableObjects.size(); }
+	size_t getRenderableObjectCount() const { return _renderableObjects.size(); }
 
 	virtual void setMatrix(const veMat4 &mat) { _matrix = mat; _refresh = true; }
 	const veMat4& getMatrix() const { return _matrix; }

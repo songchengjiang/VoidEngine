@@ -26,7 +26,7 @@ int veNode::addChild(veNode *child)
 	veAssert(child->_parent == nullptr);
 	child->_parent = this;
 	_children.push_back(child);
-	return _children.size() - 1;
+	return int(_children.size() - 1);
 }
 
 bool veNode::removeChild(veNode *child)
@@ -58,7 +58,7 @@ int veNode::addComponent(veComponent *com)
 	auto iter = std::find(_components.begin(), _components.end(), com);
 	if (iter != _components.end()) return -1;
 	_components.push_back(com);
-	return _components.size() - 1;
+	return int(_components.size() - 1);
 }
 
 bool veNode::removeComponent(veComponent *com)
@@ -89,7 +89,7 @@ int veNode::addRenderableObject(veRenderableObject *obj)
 	auto iter = std::find(_renderableObjects.begin(), _renderableObjects.end(), obj);
 	if (iter != _renderableObjects.end()) return -1;
 	_renderableObjects.push_back(obj);
-	return _renderableObjects.size() - 1;
+	return int(_renderableObjects.size() - 1);
 }
 
 bool veNode::removeRenderableObject(veRenderableObject *obj)

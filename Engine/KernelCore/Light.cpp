@@ -19,7 +19,7 @@ veLightManager* veLightManager::instance()
 
 bool veLightManager::loadLightTemplates(const std::string &filePath)
 {
-	std::string buffer = veFile::instance()->readFileToBuffer(filePath);
+	std::string buffer = veFile::readFileToBuffer(filePath);
 	Document document;
 	document.Parse(buffer.c_str());
 

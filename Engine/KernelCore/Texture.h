@@ -23,7 +23,7 @@ public:
 		REPEAT = GL_REPEAT,
 		MIRROR = GL_MIRRORED_REPEAT,
 		CLAMP = GL_CLAMP_TO_EDGE,
-		DECAL = GL_CLAMP,
+		DECAL = GL_CLAMP_TO_BORDER,
 	};
 
 	enum FilterMode{

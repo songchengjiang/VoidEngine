@@ -95,6 +95,6 @@ void veMeshRenderer::draw(const veRenderCommand &command)
 
 	for (unsigned int i = 0; i < mesh->getPrimitiveNum(); ++i) {
 		auto primitive = mesh->getPrimitive(i);
-		glDrawElements(primitive.primitiveType, primitive.indices->size(), GL_UNSIGNED_INT, nullptr);
+		glDrawElements(primitive.primitiveType, GLsizei(primitive.indices->size()), GL_UNSIGNED_INT, nullptr);
 	}
 }

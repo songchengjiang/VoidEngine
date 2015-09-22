@@ -17,8 +17,9 @@ public:
 
 	virtual void* readFile(const std::string &filePath){
 		_fileFolder = filePath.substr(0, filePath.find_last_of("/\\") + 1);
-		std::string buffer = veFile::instance()->readFileToBuffer(filePath);
+		std::string buffer = veFile::readFileToBuffer(filePath);
 		_doucument.Parse(buffer.c_str());
+        if (_doucument.HasParseError()) return  nullptr;
 		parseDoc();
 		_meshList.clear();
 		_boneList.clear();

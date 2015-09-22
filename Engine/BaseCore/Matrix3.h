@@ -22,7 +22,7 @@ public:
 	veMat3();
 	veMat3(const veMat3 &copy);
 	veMat3(const veQuat &rot);
-	inline veMat3(veReal m00, veReal m01, veReal m02,
+    veMat3(veReal m00, veReal m01, veReal m02,
 		veReal m10, veReal m11, veReal m12,
 		veReal m20, veReal m21, veReal m22);
 	~veMat3();
@@ -31,8 +31,8 @@ public:
 	inline void set(veReal m00, veReal m01, veReal m02,
 		veReal m10, veReal m11, veReal m12,
 		veReal m20, veReal m21, veReal m22);
-	inline void transpose();
-	inline void inverse();
+    void transpose();
+    void inverse();
 
 	inline veReal* operator [] (size_t iRow){
 		veAssert(iRow < 3);
@@ -139,7 +139,21 @@ public:
 		return r;
 	}
 
-	friend veMat3 operator* (const veReal scalar, const veMat3& m);
+    friend veMat3 operator* (const veReal scalar, const veMat3& m){
+        veMat3 r;
+        r.m[0][0] = m[0][0] * scalar;
+        r.m[0][1] = m[0][1] * scalar;
+        r.m[0][2] = m[0][2] * scalar;
+        
+        r.m[1][0] = m[1][0] * scalar;
+        r.m[1][1] = m[1][1] * scalar;
+        r.m[1][2] = m[1][2] * scalar;
+        
+        r.m[2][0] = m[2][0] * scalar;
+        r.m[2][1] = m[2][1] * scalar;
+        r.m[2][2] = m[2][2] * scalar;
+        return r;
+    }
 
 private:
 
@@ -149,7 +163,7 @@ private:
 	};
 };
 
-static veMat3 operator* (const veReal scalar, const veMat3& m){
+/*veMat3 operator* (const veReal scalar, const veMat3& m){
 	veMat3 r;
 	r.m[0][0] = m[0][0] * scalar;
 	r.m[0][1] = m[0][1] * scalar;
@@ -163,6 +177,6 @@ static veMat3 operator* (const veReal scalar, const veMat3& m){
 	r.m[2][1] = m[2][1] * scalar;
 	r.m[2][2] = m[2][2] * scalar;
 	return r;
-}
+}*/
 
 #endif

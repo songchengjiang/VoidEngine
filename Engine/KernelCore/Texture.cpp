@@ -39,7 +39,8 @@ veTexture::veTexture(veImage *image, GLenum target)
 void veTexture::bind(unsigned int textureUnit)
 {
 	if (!_texID) {
-		glCreateTextures(_target, 1, &_texID);
+        glGenTextures(1, &_texID);
+		//glCreateTextures(_target, 1, &_texID);
 	}
 	if (!_samplerID) {
 		glGenSamplers(1, &_samplerID);
@@ -55,7 +56,7 @@ void veTexture::bind(unsigned int textureUnit)
 
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
 	glBindTexture(_target, _texID);
-	glBindSampler(textureUnit, _samplerID);
+	//glBindSampler(textureUnit, _samplerID);
 }
 
 void veTexture::setImage(veImage *image)
@@ -80,7 +81,8 @@ void veTexture::storage(GLint internalFormat, int width, int height, int depth)
 GLuint veTexture::glTex()
 {
 	if (!_texID) {
-		glCreateTextures(_target, 1, &_texID);
+        glGenTextures(1, &_texID);
+		//glCreateTextures(_target, 1, &_texID);
 	}
 	return _texID;
 }

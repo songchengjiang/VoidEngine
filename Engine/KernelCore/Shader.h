@@ -129,13 +129,14 @@ public:
 private:
 
 	GLuint compile();
+    std::string typeToString();
 
 private:
 
 	Type _type;
 	GLuint _shader;
 	std::string _source;
-	std::unordered_map<Type, std::string> _shaderHeaders;
+	std::map<Type, std::string> _shaderHeaders;
 	bool _isCompiled;
 };
 

@@ -24,9 +24,9 @@
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "BlinnPhoneShader.frag",
-                                    "u_ambient": [0.28000,0.28000,0.28000
+                                    "u_ambient": [0.588000,0.588000,0.588000
                                     ],
-                                    "u_diffuse": [0.888000,0.888000,0.888000
+                                    "u_diffuse": [0.588000,0.588000,0.588000
                                     ],
                                     "u_shininess":2.000000,
                                     "u_opacity":1.000000,
@@ -36,8 +36,8 @@
                             ],
                             "textureUnits": [
                                 {
-                                    "name": "laoshu_tex_tou.jpg",
-                                    "source": "laoshu_tex_tou.jpg",
+                                    "name": "laoshu_tex_tou.png”,
+                                    "source": "laoshu_tex_tou.png”,
                                     "wrap": "CLAMP",
                                     "filter": "NERAEST"
                                 }
@@ -62,15 +62,16 @@
                                     "type": "VERTEX_SHADER",
                                     "source": "BlinnPhoneShader.vert",
                                     "u_ModelViewProjectMat": "MVP_MATRIX",
+                                    "u_ModelViewMat": "MV_MATRIX",
                                     "u_NormalMat": "NORMAL_MATRIX",
                                     "u_BoneMates": "BONE_MATRIXES"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "BlinnPhoneShader.frag",
-                                    "u_ambient": [0.28000,0.28000,0.28000
+                                    "u_ambient": [0.588000,0.588000,0.588000
                                     ],
-                                    "u_diffuse": [0.888000,0.888000,0.888000
+                                    "u_diffuse": [0.588000,0.588000,0.588000
                                     ],
                                     "u_shininess":2.000000,
                                     "u_opacity":1.000000,
@@ -80,8 +81,8 @@
                             ],
                             "textureUnits": [
                                 {
-                                    "name": "laoshu_tex_shenti.jpg",
-                                    "source": "laoshu_tex_shenti.jpg",
+                                    "name": "laoshu_tex_shenti.png”,
+                                    "source": "laoshu_tex_shenti.png”,
                                     "wrap": "CLAMP",
                                     "filter": "NERAEST"
                                 }

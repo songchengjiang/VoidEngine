@@ -220,12 +220,24 @@ public:
 		return false;
 	}
 
-	friend veVec3 operator * (const veReal fScalar, const veVec3& rkVector);
-	friend veVec3 operator / (const veReal fScalar, const veVec3& rkVector);
-	friend veVec3 operator + (const veVec3& lhs, const veReal rhs);
-	friend veVec3 operator + (const veReal lhs, const veVec3& rhs);
-	friend veVec3 operator - (const veVec3& lhs, const veReal rhs);
-	friend veVec3 operator - (const veReal lhs, const veVec3& rhs);
+    friend veVec3 operator * (const veReal fScalar, const veVec3& rkVector){
+        return veVec3(fScalar * rkVector._x, fScalar * rkVector._y, fScalar * rkVector._z);
+    }
+    friend veVec3 operator / (const veReal fScalar, const veVec3& rkVector){
+        return veVec3(fScalar / rkVector._x, fScalar / rkVector._y, fScalar / rkVector._z);
+    }
+    friend veVec3 operator + (const veVec3& lhs, const veReal rhs){
+        return veVec3(lhs._x + rhs, lhs._y + rhs, lhs._z + rhs);
+    }
+    friend veVec3 operator + (const veReal lhs, const veVec3& rhs){
+        return veVec3(lhs + rhs._x, lhs + rhs._y, lhs + rhs._z);
+    }
+    friend veVec3 operator - (const veVec3& lhs, const veReal rhs){
+        return veVec3(lhs._x - rhs, lhs._y - rhs, lhs._z - rhs);
+    }
+    friend veVec3 operator - (const veReal lhs, const veVec3& rhs){
+        return veVec3(lhs - rhs._x, lhs - rhs._y, lhs - rhs._z);
+    }
 
 private:
 
@@ -234,29 +246,29 @@ private:
 	veReal _z;
 };
 
-static veVec3 operator * (const veReal fScalar, const veVec3& rkVector){
+/*veVec3 operator * (const veReal fScalar, const veVec3& rkVector){
 	return veVec3(fScalar * rkVector._x, fScalar * rkVector._y, fScalar * rkVector._z);
 }
 
-static veVec3 operator / (const veReal fScalar, const veVec3& rkVector){
+veVec3 operator / (const veReal fScalar, const veVec3& rkVector){
 	return veVec3(fScalar / rkVector._x, fScalar / rkVector._y, fScalar / rkVector._z);
 }
 
-static veVec3 operator + (const veVec3& lhs, const veReal rhs){
+veVec3 operator + (const veVec3& lhs, const veReal rhs){
 	return veVec3(lhs._x + rhs, lhs._y + rhs, lhs._z + rhs);
 }
 
-static veVec3 operator + (const veReal lhs, const veVec3& rhs){
+veVec3 operator + (const veReal lhs, const veVec3& rhs){
 	return veVec3(lhs + rhs._x, lhs + rhs._y, lhs + rhs._z);
 }
 
-static veVec3 operator - (const veVec3& lhs, const veReal rhs){
+veVec3 operator - (const veVec3& lhs, const veReal rhs){
 	return veVec3(lhs._x - rhs, lhs._y - rhs, lhs._z - rhs);
 }
 
-static veVec3 operator - (const veReal lhs, const veVec3& rhs){
+veVec3 operator - (const veReal lhs, const veVec3& rhs){
 	return veVec3(lhs - rhs._x, lhs - rhs._y, lhs - rhs._z);
-}
+}*/
 
 typedef std::vector<veVec3> veVec3Array;
 

@@ -73,12 +73,12 @@ public:
 	void setTexture(unsigned int idx, veTexture *texture);
 	veTexture* getTexture(unsigned int idx);
 	veTexture* removeTexture(unsigned int idx);
-	unsigned int getTextureNum() const { return _textures.size(); }
+	size_t getTextureNum() const { return _textures.size(); }
 
 	void addUniform(veUniform *uniform);
 	veUniform* getUniform(unsigned int idx);
 	veUniform* removeUniform(unsigned int idx);
-	unsigned int getUniformNum() const { return _uniforms.size(); }
+	size_t getUniformNum() const { return _uniforms.size(); }
 
 private:
 
@@ -97,7 +97,7 @@ private:
 	GLenum _polygonMode;
 	GLuint _program;
 	bool    _needLinkProgram;
-	std::unordered_map<veShader::Type, VE_Ptr<veShader> > _shaders;
+	std::map<veShader::Type, VE_Ptr<veShader> > _shaders;
 	std::vector< VE_Ptr<veTexture> >                      _textures;
 	std::vector< VE_Ptr<veUniform> >                      _uniforms;
 };
@@ -115,7 +115,7 @@ public:
 	const vePass* getPass(unsigned int idx) const;
 	vePass* getPass(unsigned int idx);
 	vePass* removePass(unsigned int idx);
-	unsigned int getPassNum() const { return _passes.size(); }
+	size_t getPassNum() const { return _passes.size(); }
 
 private:
 
@@ -139,7 +139,7 @@ public:
 	const veTechnique* getTechnique(const std::string &name) const;
 	veTechnique* getTechnique(const std::string &name);
 	veTechnique* removeTechnique(unsigned int idx);
-	unsigned int getTechniqueNum() const { return _techniques.size(); }
+	size_t getTechniqueNum() const { return _techniques.size(); }
 
 private:
 
@@ -161,7 +161,7 @@ public:
 	veMaterial* getMaterial(unsigned int idx);
 	const veMaterial* getMaterial(const std::string &name) const;
 	veMaterial* getMaterial(const std::string &name);
-	unsigned int getMaterialNum() const { return _materials.size(); }
+	size_t getMaterialNum() const { return _materials.size(); }
 
 private:
 

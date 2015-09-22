@@ -125,32 +125,32 @@ void veUniform::apply(const veRenderCommand &command)
 
 	case Type::REAL:
 	case Type::REAL_ARRAY:
-		glUniform1fv(_location, _values.size(), _values.buffer());
+		glUniform1fv(_location, GLsizei(_values.size()), _values.buffer());
 		break;
 
 	case Type::VEC2:
 	case Type::VEC2_ARRAY:
-		glUniform2fv(_location, _values.size() / 2, _values.buffer());
+		glUniform2fv(_location, GLsizei(_values.size() / 2), _values.buffer());
 		break;
 
 	case Type::VEC3:
 	case Type::VEC3_ARRAY:
-		glUniform3fv(_location, _values.size() / 3, _values.buffer());
+		glUniform3fv(_location, GLsizei(_values.size() / 3), _values.buffer());
 		break;
 
 	case Type::VEC4:
 	case Type::VEC4_ARRAY:
-		glUniform4fv(_location, _values.size() / 4, _values.buffer());
+		glUniform4fv(_location, GLsizei(_values.size() / 4), _values.buffer());
 		break;
 
 	case Type::MAT3:
 	case Type::MAT3_ARRAY:
-		glUniformMatrix3fv(_location, _values.size() / 9, GL_FALSE, _values.buffer());
+		glUniformMatrix3fv(_location, GLsizei(_values.size() / 9), GL_FALSE, _values.buffer());
 		break;
 
 	case Type::MAT4:
 	case Type::MAT4_ARRAY:
-		glUniformMatrix4fv(_location, _values.size() / 16, GL_FALSE, _values.buffer());
+		glUniformMatrix4fv(_location, GLsizei(_values.size() / 16), GL_FALSE, _values.buffer());
 		break;
 
 	case Type::AUTO:
@@ -504,7 +504,7 @@ veShader::veShader(Type type, const std::string &filePath)
 	, _shader(0)
 	, _isCompiled(false)
 {
-	_source = veFile::instance()->readFileToBuffer(filePath);
+	_source = veFile::readFileToBuffer(filePath);
 }
 
 veShader::veShader(Type type, const char *str)
@@ -532,7 +532,7 @@ veShader::~veShader()
 
 void veShader::setSource(const std::string &filePath)
 {
-	_source = veFile::instance()->readFileToBuffer(filePath);
+	_source = veFile::readFileToBuffer(filePath);
 	_isCompiled = false;
 }
 
@@ -567,7 +567,11 @@ GLuint veShader::compile()
 			GLchar *errors = new GLchar[maxLen];
 			glGetShaderInfoLog(_shader, maxLen, &maxLen, errors);
 			if (strcmp(errors, "") != 0) {
+                std::string shaderType = typeToString();
+                veLog(shaderType + std::string(" Shader Errors"));
 				veLog(errors);
+                veLog(shaderType + std::string(" Shader Source"));
+                veLog(source);
 			}
 			delete[] errors;
 		}
@@ -576,6 +580,20 @@ GLuint veShader::compile()
 	}
 	delete[] buffer;
 	return _shader;
+}
+
+std::string veShader::typeToString()
+{
+    switch (_type) {
+        case VERTEX_SHADER:
+            return "VERTEX_SHADER";
+            
+        case FRAGMENT_SHADER:
+            return "FRAGMENT_SHADER";
+            
+        default:
+            return "undefine";
+    }
 }
 
 veShaderManager::~veShaderManager()

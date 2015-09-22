@@ -41,9 +41,10 @@ std::string veFile::readFileToBuffer(const std::string &filePath)
 	rewind(file);
 	if (size == 0) return nullptr;
 
-	char *buffer = new char[size];
+	char *buffer = new char[size + 1];
 	size_t result = fread(buffer, sizeof(char), size, file);
-	if (result != size) buffer[result] = '\0';
+	if (result != size + 1) buffer[result] = '\0';
+    veLog(buffer);
 	std::string buf(buffer);
 	fclose(file);
 	delete[] buffer;

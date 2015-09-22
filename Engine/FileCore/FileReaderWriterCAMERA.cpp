@@ -18,8 +18,9 @@ public:
 	~veFileReaderWriterCAMERA(){};
 
 	virtual void* readFile(const std::string &filePath){
-		std::string buffer = veFile::instance()->readFileToBuffer(filePath);
+		std::string buffer = veFile::readFileToBuffer(filePath);
 		_doucument.Parse(buffer.c_str());
+        if (_doucument.HasParseError()) return  nullptr;
 		readCamera();
 		return _camera;
 	}

@@ -38,7 +38,6 @@ veOverlayRenderer::~veOverlayRenderer()
 void veOverlayRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
 	if (_technique) {
-		veOverlay *overlay = static_cast<veOverlay *>(renderableObj);
 		for (unsigned int i = 0; i < _technique->getPassNum(); ++i) {
 			auto pass = _technique->getPass(i);
 			if (camera->getMask() & pass->drawMask()) {
@@ -58,7 +57,6 @@ void veOverlayRenderer::render(veNode *node, veRenderableObject *renderableObj, 
 void veOverlayRenderer::draw(const veRenderCommand &command)
 {
 	command.pass->apply(command);
-	auto overlay = static_cast<veOverlay *>(command.renderableObj);
 
 	if (!_vao) {
 		glGenVertexArrays(1, &_vao);

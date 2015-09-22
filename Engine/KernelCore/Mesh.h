@@ -69,16 +69,16 @@ public:
 	void setVertexAtrribute(unsigned int attrIndex, const VertexAtrribute &attri) { veAssert(attrIndex < _attributes.size());  _attributes[attrIndex] = attri; _needRefresh = true; }
 	void addVertexAtrribute(const VertexAtrribute &attri);
 	const VertexAtrribute& getVertexAtrribute(unsigned int attrIndex) const { return _attributes[attrIndex]; }
-	unsigned int getVertexAtrributeNum() const { return _attributes.size();  };
+	size_t getVertexAtrributeNum() const { return _attributes.size();  };
 
 	void addPrimitive(const Primitive &primitive);
 	const Primitive& getPrimitive(unsigned int idx) const;
-	unsigned int getPrimitiveNum() const { return _primitives.size(); };
+	size_t getPrimitiveNum() const { return _primitives.size(); };
 
 	void addBone(veBone *bone);
 	veBone* getBone(unsigned int idx);
 	const veBone* getBone(unsigned int idx) const;
-	unsigned int getBoneNum() const { return _bones.size(); };
+	size_t getBoneNum() const { return _bones.size(); };
 
 	bool& needRefresh();
 

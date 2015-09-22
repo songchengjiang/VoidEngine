@@ -12,8 +12,8 @@ public:
 	void* readFile(const std::string &filePath);
 	bool writeFile(void *data, const std::string &filePath);
 
-	std::string readFileToBuffer(const std::string &filePath);
-	std::string getFullFilePath(const std::string &filePath);
+	static std::string readFileToBuffer(const std::string &filePath);
+	static std::string getFullFilePath(const std::string &filePath);
 
 private:
 

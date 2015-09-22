@@ -5,6 +5,10 @@ veDirector::veDirector()
 	: _isRunning(false)
 {
 	glfwInit();
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 	veEventDispatcher::instance()->registerCallback();
 }
 
@@ -29,10 +33,11 @@ veVisualiser* veDirector::createVisualiser(int w, int h, const std::string &titl
 
 bool veDirector::run()
 {
+    _isRunning = true;
 	double preFrameTime = glfwGetTime();
 	if (!_visualiserList.empty()) {
 		glfwMakeContextCurrent(_visualiserList[0]->_hwnd);
-		_isRunning = glewInit() == GLEW_OK;
+        //_isRunning = glewInit() == GLEW_OK? true: false;
 	}
 	while (_isRunning)
 	{

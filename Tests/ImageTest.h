@@ -39,7 +39,7 @@ public:
 			root->addChild(node);
 		}
 
-		{
+		/*{
 			veNode *node = new veNode;
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
@@ -53,7 +53,7 @@ public:
 			overlay->setImage(image);
 
 			root->addChild(node);
-		}
+		}*/
 
 		_visualiser->setSceneNode(root);
 	};

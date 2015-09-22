@@ -27,25 +27,25 @@ public:
 	veMat4(const veMat4 &copy);
 	veMat4(const veQuat &rot);
 	veMat4(const veVec3 &trans);
-	inline veMat4(veReal m00, veReal m01, veReal m02, veReal m03,
+    veMat4(veReal m00, veReal m01, veReal m02, veReal m03,
 		veReal m10, veReal m11, veReal m12, veReal m13,
 		veReal m20, veReal m21, veReal m22, veReal m23,
 		veReal m30, veReal m31, veReal m32, veReal m33);
 	~veMat4();
 
 	inline void identity();
-	inline void set(veReal m00, veReal m01, veReal m02, veReal m03,
+    void set(veReal m00, veReal m01, veReal m02, veReal m03,
 		veReal m10, veReal m11, veReal m12, veReal m13,
 		veReal m20, veReal m21, veReal m22, veReal m23,
 		veReal m30, veReal m31, veReal m32, veReal m33);
-	inline void makeTranslation(const veVec3 &trans);
+    void makeTranslation(const veVec3 &trans);
 	inline void makeRotation(const veQuat &rot);
 	inline void makeScale(const veVec3 &scl);
-	inline void makeTransform(const veVec3& position, const veVec3& scale, const veQuat& orientation);
+    void makeTransform(const veVec3& position, const veVec3& scale, const veQuat& orientation);
 	inline void makeLookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &up);
 	inline void decomposition(veVec3* position, veVec3* scale, veQuat* orientation) const;
 	inline void transpose();
-	inline void inverse();
+    void inverse();
 	inline veReal determinant() const;
 
 	static veMat4 translation(const veVec3 &trans);

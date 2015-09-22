@@ -54,8 +54,8 @@ private:
 		GLenum dataType = GL_FLOAT;
 		float *buffer = new float[pixels.width() * pixels.height() * 4];
 		unsigned int index = 0;
-		for (int h = pixels.height() - 1; 0 <= h; --h){
-			for (int w = 0; w < pixels.width(); ++w){
+		for (int h = int(pixels.height() - 1); 0 <= h; --h){
+			for (int w = 0; w < int(pixels.width()); ++w){
 				buffer[index++] = pixels[h][w].r;
 				buffer[index++] = pixels[h][w].g;
 				buffer[index++] = pixels[h][w].b;
@@ -63,7 +63,7 @@ private:
 			}
 		}
 		_image = new veImage;
-		_image->set(pixels.width(), pixels.height(), 1, internalFormat, pixelFormat, dataType, (unsigned char *)buffer);
+		_image->set(int(pixels.width()), int(pixels.height()), 1, internalFormat, pixelFormat, dataType, (unsigned char *)buffer);
 	}
 
 private:

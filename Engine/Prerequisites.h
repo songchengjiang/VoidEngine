@@ -53,16 +53,25 @@ public: const std::string& getName() const { return _name; }
 #if defined(_DEBUG)
 #include <iostream>
 #define veLog(STR) std::cout<<STR<<std::endl; 
-#else
-#define veLog(STR) ((void)0); 
+#elif defined(__APPLE_CC__)
+#include <iostream>
+#define veLog(STR) std::cout<<STR<<std::endl;
 #endif
 
 #include <memory.h>
 #include <vector>
 #include <string>
 
+
+#if defined(_MSC_VER)
 #define GLEW_STATIC
 #include "glew/include/GL/glew.h"
+#endif
+
+#if defined(__APPLE_CC__)
+#define GLFW_INCLUDE_GLCOREARB
+#define GLFW_INCLUDE_GLEXT
+#endif
 #include "glfw/include/GLFW/glfw3.h"
 
 #endif

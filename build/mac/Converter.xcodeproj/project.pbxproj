@@ -1,0 +1,298 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BE1B50211BB048A70039A346 /* Argument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE0E4E2C1BB03F010001AA36 /* Argument.cpp */; };
+		BE1B50221BB048A70039A346 /* Converter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE0E4E2E1BB03F010001AA36 /* Converter.cpp */; };
+		BE1B50231BB048A70039A346 /* ConverterFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE0E4E301BB03F010001AA36 /* ConverterFactory.cpp */; };
+		BE1B50241BB048A70039A346 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE0E4E321BB03F010001AA36 /* main.cpp */; };
+		BE1B50251BB048A70039A346 /* ModelConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE0E4E331BB03F010001AA36 /* ModelConverter.cpp */; };
+		BE1B50261BB048AC0039A346 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE1B50131BB047720039A346 /* libz.a */; };
+		BE1B50271BB048AE0039A346 /* libassimp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4E471BB0425F0001AA36 /* libassimp.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BE1B50181BB0487F0039A346 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		BE0E4E2C1BB03F010001AA36 /* Argument.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Argument.cpp; path = ../../Converter/Argument.cpp; sourceTree = "<group>"; };
+		BE0E4E2D1BB03F010001AA36 /* Argument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Argument.h; path = ../../Converter/Argument.h; sourceTree = "<group>"; };
+		BE0E4E2E1BB03F010001AA36 /* Converter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Converter.cpp; path = ../../Converter/Converter.cpp; sourceTree = "<group>"; };
+		BE0E4E2F1BB03F010001AA36 /* Converter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Converter.h; path = ../../Converter/Converter.h; sourceTree = "<group>"; };
+		BE0E4E301BB03F010001AA36 /* ConverterFactory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ConverterFactory.cpp; path = ../../Converter/ConverterFactory.cpp; sourceTree = "<group>"; };
+		BE0E4E311BB03F010001AA36 /* ConverterFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ConverterFactory.h; path = ../../Converter/ConverterFactory.h; sourceTree = "<group>"; };
+		BE0E4E321BB03F010001AA36 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../Converter/main.cpp; sourceTree = "<group>"; };
+		BE0E4E331BB03F010001AA36 /* ModelConverter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ModelConverter.cpp; path = ../../Converter/ModelConverter.cpp; sourceTree = "<group>"; };
+		BE0E4E341BB03F010001AA36 /* ModelConverter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ModelConverter.h; path = ../../Converter/ModelConverter.h; sourceTree = "<group>"; };
+		BE0E4E351BB03F010001AA36 /* PrettyWriterExt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PrettyWriterExt.h; path = ../../Converter/PrettyWriterExt.h; sourceTree = "<group>"; };
+		BE0E4E471BB0425F0001AA36 /* libassimp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libassimp.a; path = ../../Dependents/assimp/lib/libassimp.a; sourceTree = "<group>"; };
+		BE1B50131BB047720039A346 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../../Dependents/zlib/lib/libz.a; sourceTree = "<group>"; };
+		BE1B501A1BB0487F0039A346 /* Converter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Converter; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE1B502E1BB049690039A346 /* VoidEngine.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoidEngine.hpp; sourceTree = "<group>"; };
+		BE1B50301BB049690039A346 /* VoidEnginePriv.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoidEnginePriv.hpp; sourceTree = "<group>"; };
+		BE1B50321BB049690039A346 /* VoidEngine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VoidEngine.cpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BE1B50171BB0487F0039A346 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE1B50261BB048AC0039A346 /* libz.a in Frameworks */,
+				BE1B50271BB048AE0039A346 /* libassimp.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		BE0E4E241BB03ED50001AA36 = {
+			isa = PBXGroup;
+			children = (
+				BE1B501A1BB0487F0039A346 /* Converter */,
+				BE0E4E491BB0426B0001AA36 /* libs */,
+				BE0E4E2C1BB03F010001AA36 /* Argument.cpp */,
+				BE0E4E2D1BB03F010001AA36 /* Argument.h */,
+				BE0E4E2E1BB03F010001AA36 /* Converter.cpp */,
+				BE0E4E2F1BB03F010001AA36 /* Converter.h */,
+				BE0E4E301BB03F010001AA36 /* ConverterFactory.cpp */,
+				BE0E4E311BB03F010001AA36 /* ConverterFactory.h */,
+				BE0E4E321BB03F010001AA36 /* main.cpp */,
+				BE0E4E331BB03F010001AA36 /* ModelConverter.cpp */,
+				BE0E4E341BB03F010001AA36 /* ModelConverter.h */,
+				BE0E4E351BB03F010001AA36 /* PrettyWriterExt.h */,
+				BE1B502D1BB049690039A346 /* VoidEngine */,
+			);
+			sourceTree = "<group>";
+		};
+		BE0E4E491BB0426B0001AA36 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				BE1B50131BB047720039A346 /* libz.a */,
+				BE0E4E471BB0425F0001AA36 /* libassimp.a */,
+			);
+			name = libs;
+			sourceTree = "<group>";
+		};
+		BE1B502D1BB049690039A346 /* VoidEngine */ = {
+			isa = PBXGroup;
+			children = (
+				BE1B502E1BB049690039A346 /* VoidEngine.hpp */,
+				BE1B50301BB049690039A346 /* VoidEnginePriv.hpp */,
+				BE1B50321BB049690039A346 /* VoidEngine.cpp */,
+			);
+			path = VoidEngine;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		BE1B50191BB0487F0039A346 /* Converter */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BE1B501E1BB0487F0039A346 /* Build configuration list for PBXNativeTarget "Converter" */;
+			buildPhases = (
+				BE1B50161BB0487F0039A346 /* Sources */,
+				BE1B50171BB0487F0039A346 /* Frameworks */,
+				BE1B50181BB0487F0039A346 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Converter;
+			productName = Convert;
+			productReference = BE1B501A1BB0487F0039A346 /* Converter */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BE0E4E251BB03ED50001AA36 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0700;
+				TargetAttributes = {
+					BE1B50191BB0487F0039A346 = {
+						CreatedOnToolsVersion = 7.0;
+					};
+				};
+			};
+			buildConfigurationList = BE0E4E281BB03ED50001AA36 /* Build configuration list for PBXProject "Converter" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = BE0E4E241BB03ED50001AA36;
+			productRefGroup = BE0E4E241BB03ED50001AA36;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				BE1B50191BB0487F0039A346 /* Converter */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BE1B50161BB0487F0039A346 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE1B50211BB048A70039A346 /* Argument.cpp in Sources */,
+				BE1B50221BB048A70039A346 /* Converter.cpp in Sources */,
+				BE1B50231BB048A70039A346 /* ConverterFactory.cpp in Sources */,
+				BE1B50241BB048A70039A346 /* main.cpp in Sources */,
+				BE1B50251BB048A70039A346 /* ModelConverter.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		BE0E4E291BB03ED50001AA36 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				SDKROOT = macosx;
+				SYMROOT = "$(SRCROOT)/../../mac";
+			};
+			name = Debug;
+		};
+		BE0E4E2A1BB03ED50001AA36 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				SDKROOT = macosx;
+				SYMROOT = "$(SRCROOT)/../../mac";
+			};
+			name = Release;
+		};
+		BE1B501F1BB0487F0039A346 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../Converter\"",
+					"\"$(SRCROOT)/../../Dependents\"",
+					"\"$(SRCROOT)/../../Engine\"",
+				);
+				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../../Dependents/assimp/lib\"";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SYMROOT = "$(SRCROOT)/../../mac";
+			};
+			name = Debug;
+		};
+		BE1B50201BB0487F0039A346 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../Converter\"",
+					"\"$(SRCROOT)/../../Dependents\"",
+					"\"$(SRCROOT)/../../Engine\"",
+				);
+				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../../Dependents/assimp/lib\"";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SYMROOT = "$(SRCROOT)/../../mac";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		BE0E4E281BB03ED50001AA36 /* Build configuration list for PBXProject "Converter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BE0E4E291BB03ED50001AA36 /* Debug */,
+				BE0E4E2A1BB03ED50001AA36 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BE1B501E1BB0487F0039A346 /* Build configuration list for PBXNativeTarget "Converter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BE1B501F1BB0487F0039A346 /* Debug */,
+				BE1B50201BB0487F0039A346 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BE0E4E251BB03ED50001AA36 /* Project object */;
+}
