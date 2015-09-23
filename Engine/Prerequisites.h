@@ -62,6 +62,12 @@ public: const std::string& getName() const { return _name; }
 #include <vector>
 #include <string>
 
+#if defined(__APPLE_CC__)
+#define VE_DEVICE_PIXEL_RATIO 2
+#else
+#define VE_DEVICE_PIXEL_RATIO 1
+#endif
+
 
 #if defined(_MSC_VER)
 #define GLEW_STATIC

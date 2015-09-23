@@ -125,9 +125,9 @@ void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
 		if (_dsbo) {
 			glBindRenderbuffer(GL_RENDERBUFFER, _dsbo);
 			if (hasDepthBuffer && !hasStencilBuffer)
-				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, _size.x(), _size.y());
+				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, _size.x() * VE_DEVICE_PIXEL_RATIO, _size.y() * VE_DEVICE_PIXEL_RATIO);
 			else
-				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _size.x(), _size.y());
+				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _size.x() * VE_DEVICE_PIXEL_RATIO, _size.y() * VE_DEVICE_PIXEL_RATIO);
 
 			if (hasDepthBuffer)
 				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _dsbo);
@@ -151,8 +151,8 @@ void veFrameBufferObject::refreshAttachments()
 			if (iter.second.valid()) {
 				if (iter.first >= GL_COLOR_ATTACHMENT0 && iter.first <= GL_COLOR_ATTACHMENT15)
 					mrt.push_back(iter.first);
-				iter.second->setWidth(_size.x());
-				iter.second->setHeight(_size.y());
+				iter.second->setWidth(_size.x() * VE_DEVICE_PIXEL_RATIO);
+				iter.second->setHeight(_size.y() * VE_DEVICE_PIXEL_RATIO);
 				iter.second->bind(0);
 				glFramebufferTexture2D(GL_FRAMEBUFFER, iter.first, iter.second->glTarget(), iter.second->glTex(), 0);
 			}
