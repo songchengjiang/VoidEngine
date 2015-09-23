@@ -66,6 +66,7 @@
 		BE1B50801BB04A100039A346 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DC21BB02F530001AA36 /* CoreVideo.framework */; };
 		BE1B50811BB04A120039A346 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DC01BB003190001AA36 /* OpenGL.framework */; };
 		BE1B50821BB04A140039A346 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DBD1BB002CF0001AA36 /* Foundation.framework */; };
+		BE5BF1731BB28A1200FAE523 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE5BF1721BB28A1100FAE523 /* libjpeg.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -177,6 +178,7 @@
 		BE3D41CF1BAF0B8D0063041C /* Vector3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Vector3.h; path = ../../Engine/BaseCore/Vector3.h; sourceTree = "<group>"; };
 		BE3D41D01BAF0B8D0063041C /* Vector4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Vector4.cpp; path = ../../Engine/BaseCore/Vector4.cpp; sourceTree = "<group>"; };
 		BE3D41D11BAF0B8D0063041C /* Vector4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Vector4.h; path = ../../Engine/BaseCore/Vector4.h; sourceTree = "<group>"; };
+		BE5BF1721BB28A1100FAE523 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../../Dependents/libjpeg/lib/libjpeg.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,6 +194,7 @@
 				BE1B50731BB049F00039A346 /* libGLEW.a in Frameworks */,
 				BE1B50741BB049F30039A346 /* libglfw3.a in Frameworks */,
 				BE1B50751BB049F90039A346 /* libpng.a in Frameworks */,
+				BE5BF1731BB28A1200FAE523 /* libjpeg.a in Frameworks */,
 				BE1B50761BB049FF0039A346 /* libHalf.a in Frameworks */,
 				BE1B50771BB049FF0039A346 /* libIex-2_2.a in Frameworks */,
 				BE1B50781BB049FF0039A346 /* libIexMath-2_2.a in Frameworks */,
@@ -223,6 +226,7 @@
 				BE0E4DB21BB002A80001AA36 /* libIlmThread-2_2.a */,
 				BE0E4DB31BB002A80001AA36 /* libImath-2_2.a */,
 				BE0E4DAB1BB002A00001AA36 /* libpng.a */,
+				BE5BF1721BB28A1100FAE523 /* libjpeg.a */,
 				BE0E4DA91BB0029A0001AA36 /* libglfw3.a */,
 				BE0E4DA71BB002960001AA36 /* libGLEW.a */,
 				BE0E4DA51BB002900001AA36 /* libassimp.a */,
@@ -519,6 +523,15 @@
 					"\"$(SRCROOT)/../../Dependents\"",
 					"\"$(SRCROOT)/../../Engine\"",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../Dependents/freetype/lib\"",
+					"\"$(SRCROOT)/../../Dependents/glew/lib\"",
+					"\"$(SRCROOT)/../../Dependents/glfw/lib\"",
+					"\"$(SRCROOT)/../../Dependents/libpng/lib\"",
+					"\"$(SRCROOT)/../../Dependents/libjpeg/lib\"",
+					"\"$(SRCROOT)/../../Dependents/openexr/lib\"",
+					"\"$(SRCROOT)/../../Dependents/zlib/lib\"",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -564,6 +577,15 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../../Dependents\"",
 					"\"$(SRCROOT)/../../Engine\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../Dependents/freetype/lib\"",
+					"\"$(SRCROOT)/../../Dependents/glew/lib\"",
+					"\"$(SRCROOT)/../../Dependents/glfw/lib\"",
+					"\"$(SRCROOT)/../../Dependents/libpng/lib\"",
+					"\"$(SRCROOT)/../../Dependents/libjpeg/lib\"",
+					"\"$(SRCROOT)/../../Dependents/openexr/lib\"",
+					"\"$(SRCROOT)/../../Dependents/zlib/lib\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;

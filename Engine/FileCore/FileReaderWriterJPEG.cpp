@@ -1,12 +1,16 @@
-#ifdef _WIN32
 #include "FileReaderWriter.h"
 #include <unordered_map>
 #include "KernelCore/Image.h"
 extern "C" {
-#include "libjpeg/include/jpeglib.h"
+#if defined(_MSC_VER)
+#include "libjpeg/include/win/jpeglib.h"
+#elif defined(__APPLE_CC__)
+#include "libjpeg/include/mac/jpeglib.h"
+#endif
 }
-
+#if defined(_MSC_VER)
 #pragma comment(lib, "libjpeg/lib/libjpeg.lib")
+#endif
 class veFileReaderWriterJPEG : public veFileReaderWriter
 {
 public:
@@ -65,8 +69,8 @@ private:
 
 	bool getFormat(jpeg_decompress_struct &cinfo, GLint &internalFormat, GLenum &pixelFormat){
 		if (cinfo.num_components == 1){
-			internalFormat = GL_LUMINANCE8;
-			pixelFormat = GL_LUMINANCE;
+			internalFormat = GL_R8;
+			pixelFormat = GL_RED;
 			return true;
 		}
 		else if (cinfo.num_components == 3){
@@ -84,5 +88,3 @@ private:
 };
 
 VE_READERWRITER_REG("jpg", veFileReaderWriterJPEG);
-
-#endif
