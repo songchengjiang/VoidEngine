@@ -51,13 +51,15 @@ void main() {
 	vec3 norm = normalize(normAndepth.xyz);
 	float depth = normAndepth.w / (normAndepth.w + 1);
 
-#if VE_USE_LIGHTS && !VE_USE_DEFERRED_PATH
+#ifdef VE_USE_LIGHTS
+#ifndef VE_USE_DEFERRED_PATH
   vec3 diffactor = vec3(0.5);
   vec3 specfactor = vec3(0.5);
   Lighting(position, norm, diffactor, specfactor);
 #endif
+#endif
 
-#if VE_USE_LIGHTS
+#ifdef VE_USE_LIGHTS
 	//if (all(lessThanEqual(diffactor, vec3(0.0))))
 	//	fragColor = color;
 	//else
@@ -66,5 +68,5 @@ void main() {
 	fragColor = color;
 #endif
 
-	//fragColor = vec4(normAndepth);
+	//fragColor = vec4(color);
 }

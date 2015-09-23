@@ -18,7 +18,6 @@ public:
 
 	virtual void init() override {
         
-//        veMaterialArray *matAry = static_cast<veMaterialArray *>(veFile::instance()->readFile("models/laoshu_ani_v03.vemtl"));
         
 		veLightManager::instance()->loadLightTemplates("lights/point.velightemplates");
 
@@ -37,7 +36,7 @@ public:
 			transer->setScale(veVec3(0.3f));
 			transer->setPosition(veVec3(5.0f, 0.0f, 0.0f));
 			transer->setRotation(veQuat(veMath::HALF_PI, veVec3::UNIT_X));
-			root->addChild(node);
+			scene->addChild(node);
 
 			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile("models/laoshu_ani_v03.veanim"));
 			animationContainer->start();
