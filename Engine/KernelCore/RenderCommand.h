@@ -31,7 +31,8 @@ struct veRenderCommand
 	veNode             *attachedNode;
 	veRenderableObject *renderableObj;
 	veCamera           *camera;
-	veRenderer         *renderer;
+	//veRenderer         *renderer;
+    std::function<void(const veRenderCommand &)> drawFunc;
 	std::vector<veLight *> *lightList;
 };
 

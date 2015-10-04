@@ -68,5 +68,5 @@ void main() {
 	fragColor = color;
 #endif
 
-	//fragColor = vec4(color);
+	//fragColor = vec4(depth);
 }

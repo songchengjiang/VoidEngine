@@ -66,7 +66,11 @@
 		BE1B50801BB04A100039A346 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DC21BB02F530001AA36 /* CoreVideo.framework */; };
 		BE1B50811BB04A120039A346 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DC01BB003190001AA36 /* OpenGL.framework */; };
 		BE1B50821BB04A140039A346 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DBD1BB002CF0001AA36 /* Foundation.framework */; };
+		BE455BF91BBFE18C00DEC208 /* BoudingBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE455BF71BBFE18C00DEC208 /* BoudingBox.cpp */; settings = {ASSET_TAGS = (); }; };
+		BE455BFA1BBFE18C00DEC208 /* BoudingBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BE455BF81BBFE18C00DEC208 /* BoudingBox.h */; settings = {ASSET_TAGS = (); }; };
 		BE5BF1731BB28A1200FAE523 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE5BF1721BB28A1100FAE523 /* libjpeg.a */; };
+		BE5BF1761BB2A05B00FAE523 /* Debuger.h in Headers */ = {isa = PBXBuildFile; fileRef = BE5BF1751BB2A05B00FAE523 /* Debuger.h */; settings = {ASSET_TAGS = (); }; };
+		BE5BF1781BB2A09D00FAE523 /* Debuger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE5BF1771BB2A09D00FAE523 /* Debuger.cpp */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -178,7 +182,11 @@
 		BE3D41CF1BAF0B8D0063041C /* Vector3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Vector3.h; path = ../../Engine/BaseCore/Vector3.h; sourceTree = "<group>"; };
 		BE3D41D01BAF0B8D0063041C /* Vector4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Vector4.cpp; path = ../../Engine/BaseCore/Vector4.cpp; sourceTree = "<group>"; };
 		BE3D41D11BAF0B8D0063041C /* Vector4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Vector4.h; path = ../../Engine/BaseCore/Vector4.h; sourceTree = "<group>"; };
+		BE455BF71BBFE18C00DEC208 /* BoudingBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoudingBox.cpp; path = ../../Engine/KernelCore/BoudingBox.cpp; sourceTree = "<group>"; };
+		BE455BF81BBFE18C00DEC208 /* BoudingBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoudingBox.h; path = ../../Engine/KernelCore/BoudingBox.h; sourceTree = "<group>"; };
 		BE5BF1721BB28A1100FAE523 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../../Dependents/libjpeg/lib/libjpeg.a; sourceTree = "<group>"; };
+		BE5BF1751BB2A05B00FAE523 /* Debuger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Debuger.h; path = ../../Engine/Debuger/Debuger.h; sourceTree = "<group>"; };
+		BE5BF1771BB2A09D00FAE523 /* Debuger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Debuger.cpp; path = ../../Engine/Debuger/Debuger.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -246,6 +254,7 @@
 		BE3D41281BAF0AFC0063041C /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				BE5BF1741BB29FFC00FAE523 /* Debuger */,
 				BE3D412C1BAF0B380063041C /* Constants.h */,
 				BE3D412D1BAF0B380063041C /* Export.h */,
 				BE3D412E1BAF0B380063041C /* Prerequisites.h */,
@@ -360,8 +369,19 @@
 				BE3D416A1BAF0B520063041C /* VE_Ptr.h */,
 				BE3D416B1BAF0B520063041C /* Visualiser.cpp */,
 				BE3D416C1BAF0B520063041C /* Visualiser.h */,
+				BE455BF71BBFE18C00DEC208 /* BoudingBox.cpp */,
+				BE455BF81BBFE18C00DEC208 /* BoudingBox.h */,
 			);
 			name = KernelCore;
+			sourceTree = "<group>";
+		};
+		BE5BF1741BB29FFC00FAE523 /* Debuger */ = {
+			isa = PBXGroup;
+			children = (
+				BE5BF1751BB2A05B00FAE523 /* Debuger.h */,
+				BE5BF1771BB2A09D00FAE523 /* Debuger.cpp */,
+			);
+			name = Debuger;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -371,6 +391,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE5BF1761BB2A05B00FAE523 /* Debuger.h in Headers */,
+				BE455BFA1BBFE18C00DEC208 /* BoudingBox.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -466,11 +488,13 @@
 				BE1B506A1BB049E30039A346 /* FileReaderWriterVEMTL.cpp in Sources */,
 				BE1B506B1BB049E30039A346 /* Printer.cpp in Sources */,
 				BE1B506C1BB049E30039A346 /* Math.cpp in Sources */,
+				BE455BF91BBFE18C00DEC208 /* BoudingBox.cpp in Sources */,
 				BE1B506D1BB049E30039A346 /* Matrix3.cpp in Sources */,
 				BE1B506E1BB049E30039A346 /* Matrix4.cpp in Sources */,
 				BE1B506F1BB049E30039A346 /* Quaternion.cpp in Sources */,
 				BE1B50701BB049E30039A346 /* Vector2.cpp in Sources */,
 				BE1B50711BB049E30039A346 /* Vector3.cpp in Sources */,
+				BE5BF1781BB2A09D00FAE523 /* Debuger.cpp in Sources */,
 				BE1B50721BB049E30039A346 /* Vector4.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

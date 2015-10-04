@@ -46,7 +46,7 @@ void veOverlayRenderer::render(veNode *node, veRenderableObject *renderableObj, 
 				rc.attachedNode = node;
 				rc.renderableObj = renderableObj;
 				rc.camera = camera;
-				rc.renderer = this;
+                rc.drawFunc = VE_CALLBACK_1(veOverlayRenderer::draw, this);
 				pass->visit(rc);
 				veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
 			}

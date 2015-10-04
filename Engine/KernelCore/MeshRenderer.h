@@ -11,7 +11,7 @@ public:
 	~veMeshRenderer();
 
 	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override;
-	virtual void draw(const veRenderCommand &command) override;
+	void draw(const veRenderCommand &command);
 
 protected:
 

@@ -33,7 +33,7 @@ void veMeshRenderer::render(veNode *node, veRenderableObject *renderableObj, veC
 				rc.attachedNode = node;
 				rc.renderableObj = renderableObj;
 				rc.camera = camera;
-				rc.renderer = this;
+                rc.drawFunc = VE_CALLBACK_1(veMeshRenderer::draw, this);
 				if (isTransparent)
 					rc.depthInCamera = (camera->viewMatrix() * node->getNodeToWorldMatrix())[2][3];
 				pass->visit(rc);

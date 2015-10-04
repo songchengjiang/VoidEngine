@@ -172,7 +172,7 @@ void veCamera::renderQueue(veLoopQueue< veRenderCommand > &queue, std::vector<ve
 	while (!queue.empty()) {
 		auto &cmd = queue.front();
 		cmd.lightList = lights;
-		cmd.renderer->draw(cmd);
+        cmd.drawFunc(cmd);
 		queue.pop_front();
 	}
 }

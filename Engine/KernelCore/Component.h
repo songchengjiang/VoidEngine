@@ -5,6 +5,7 @@
 
 class veNode;
 class veVisualiser;
+class veCamera;
 class VE_EXPORT veComponent
 {
 public:
@@ -14,14 +15,19 @@ public:
 	USE_VE_PTR;
 
 	virtual bool handle(veNode *node, veVisualiser *vs, const veEvent &event) { return false; }
-	virtual void update(veNode *node, veVisualiser *vs) {};
+	virtual void update(veNode *node, veVisualiser *vs) {}
+    virtual void render(veCamera *camera){}
 
 	void setEventFilter(const veEvent::EventType filter) { _filter = filter; };
 	veEvent::EventType getEventFilter() const { return _filter; };
+    
+    void setEnable(bool isEnable) { _isEnabled = isEnable; }
+    bool getEnabled() { return _isEnabled; }
 
 protected:
 
 	veEvent::EventType _filter;
+    bool _isEnabled;
 };
 
 #endif
