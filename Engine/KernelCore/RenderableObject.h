@@ -3,6 +3,7 @@
 #include "Prerequisites.h"
 #include "Renderer.h"
 #include "Material.h"
+#include "BoudingBox.h"
 
 class veNode;
 class veVisualiser;
@@ -28,11 +29,14 @@ public:
 	veRenderer* getRenderer() const { return _renderer.get(); }
 	void setMaterial(veMaterial *material) { _material = material; }
 	veMaterial* getMaterial() { return _material.get(); }
+	void setBoundingBox(const veBoundingBox &bbox) { _boundingBox = bbox; }
+	const veBoundingBox& getBoundingBox() const { return _boundingBox; }
 
 protected:
 
 	VE_Ptr<veRenderer> _renderer;
 	VE_Ptr<veMaterial> _material;
+	veBoundingBox      _boundingBox;
 	bool              _isVisible;
 	unsigned int      _mask;
 };

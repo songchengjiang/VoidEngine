@@ -42,12 +42,16 @@ public:
 
 	int addRenderableObject(veRenderableObject *obj);
 	bool removeRenderableObject(veRenderableObject *obj);
-	veRenderableObject* removeRenderableObject(unsigned int objIndex);
-	veRenderableObject* getRenderableObject(unsigned int objIndex);
+	veRenderableObject* removeRenderableObject(size_t objIndex);
+	veRenderableObject* getRenderableObject(size_t objIndex);
 	size_t getRenderableObjectCount() const { return _renderableObjects.size(); }
 
 	virtual void setMatrix(const veMat4 &mat) { _matrix = mat; _refresh = true; }
 	const veMat4& getMatrix() const { return _matrix; }
+
+	void setBoundingBox(const veBoundingBox &bbox) { _boundingBox = bbox; }
+	const veBoundingBox& getBoundingBox() const { return _boundingBox; }
+	void setAutoUpdateBoundingBox(bool isAuto) { _autoUpdateBoundingBox = isAuto; }
 
 	veMat4 getNodeToWorldMatrix();
 	veMat4 getWorldToNodeMatrix();
@@ -66,16 +70,22 @@ public:
 
 protected:
 
+	void updateBoundingBox();
+
+protected:
+
 	Components        _components;
 	Children          _children;
 	RenderableObjects _renderableObjects;
 	veNode           *_parent;
 
+	veBoundingBox     _boundingBox;
 	veMat4            _matrix;
 	bool              _isVisible;
 	bool              _refresh;
 	unsigned int      _mask;
 	bool              _overrideMask;
+	bool              _autoUpdateBoundingBox;
 };
 
 #endif

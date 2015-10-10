@@ -23,7 +23,7 @@ void veMeshRenderer::render(veNode *node, veRenderableObject *renderableObj, veC
 {
 	if (_technique) {
 		veMesh *mesh = static_cast<veMesh *>(renderableObj);
-		if (mesh->getBoneNum()) _drawUsage = GL_DYNAMIC_DRAW;
+		//if (mesh->getBoneNum()) _drawUsage = GL_DYNAMIC_DRAW;
 		for (unsigned int i = 0; i < _technique->getPassNum(); ++i) {
 			auto pass = _technique->getPass(i);
 			if (camera->getMask() & pass->drawMask()) {

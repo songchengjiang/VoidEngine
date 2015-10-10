@@ -18,6 +18,7 @@
     <ClCompile Include="..\..\Engine\BaseCore\Vector2.cpp" />
     <ClCompile Include="..\..\Engine\BaseCore\Vector3.cpp" />
     <ClCompile Include="..\..\Engine\BaseCore\Vector4.cpp" />
+    <ClCompile Include="..\..\Engine\Debuger\Debuger.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\File.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriter.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterANIMATION.cpp" />
@@ -31,6 +32,7 @@
     <ClCompile Include="..\..\Engine\FileCore\Printer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Animation.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Bone.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\BoudingBox.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Camera.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Component.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Director.cpp" />
@@ -65,12 +67,14 @@
     <ClInclude Include="..\..\Engine\BaseCore\Vector3.h" />
     <ClInclude Include="..\..\Engine\BaseCore\Vector4.h" />
     <ClInclude Include="..\..\Engine\Constants.h" />
+    <ClInclude Include="..\..\Engine\Debuger\Debuger.h" />
     <ClInclude Include="..\..\Engine\Export.h" />
     <ClInclude Include="..\..\Engine\FileCore\File.h" />
     <ClInclude Include="..\..\Engine\FileCore\FileReaderWriter.h" />
     <ClInclude Include="..\..\Engine\FileCore\Printer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Animation.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Bone.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\BoudingBox.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Camera.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Component.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Director.h" />

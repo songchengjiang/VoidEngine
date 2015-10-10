@@ -80,6 +80,8 @@ public:
 	veUniform* removeUniform(unsigned int idx);
 	size_t getUniformNum() const { return _uniforms.size(); }
 
+	static void restoreGLState();
+
 private:
 
 	void applyProgram(const veRenderCommand &command);

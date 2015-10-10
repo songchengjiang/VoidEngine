@@ -21,3 +21,5 @@
 
 #include "FileCore/Printer.h"
 #include "FileCore/File.h"
+
+#include "Debuger/Debuger.h"

@@ -16,9 +16,6 @@
     <Filter Include="LightTest">
       <UniqueIdentifier>{13d01622-693c-4534-abe0-18e3a8d575e8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="lights">
-      <UniqueIdentifier>{97d050b0-380e-477f-8ea4-50ff224138c6}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Tests\CameraTest.h">
@@ -40,19 +37,5 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Tests\main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\Tests\lights\directional0.velight">
-      <Filter>lights</Filter>
-    </None>
-    <None Include="..\..\Tests\lights\point.velightemplates">
-      <Filter>lights</Filter>
-    </None>
-    <None Include="..\..\Tests\lights\point0.velight">
-      <Filter>lights</Filter>
-    </None>
-    <None Include="..\..\Tests\lights\spot0.velight">
-      <Filter>lights</Filter>
-    </None>
   </ItemGroup>
 </Project>

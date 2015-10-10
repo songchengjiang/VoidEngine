@@ -20,7 +20,7 @@ public:
 
 protected:
 
-	void createMaterial();
+	void initMaterial();
 
 protected:
 

@@ -16,6 +16,9 @@
     <Filter Include="FileCore\ReaderWriter">
       <UniqueIdentifier>{5e444bc8-0636-4c75-ada0-4e56b5c27cb3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Debuger">
+      <UniqueIdentifier>{1709491a-9175-456d-9378-f0bc8b1f74c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Engine\BaseCore\Math.cpp">
@@ -146,6 +149,12 @@
     </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\Visualiser.cpp">
       <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\BoudingBox.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\Debuger\Debuger.cpp">
+      <Filter>Debuger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -282,5 +291,11 @@
     <ClInclude Include="..\..\Engine\Export.h" />
     <ClInclude Include="..\..\Engine\Prerequisites.h" />
     <ClInclude Include="..\..\Engine\VoidEngine.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\BoudingBox.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\Debuger\Debuger.h">
+      <Filter>Debuger</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

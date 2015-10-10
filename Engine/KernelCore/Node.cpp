@@ -10,6 +10,7 @@ veNode::veNode()
 	, _refresh(true)
 	, _mask(0xffffffff)
 	, _overrideMask(false)
+	, _autoUpdateBoundingBox(true)
 {
 }
 
@@ -100,7 +101,7 @@ bool veNode::removeRenderableObject(veRenderableObject *obj)
 	return true;
 }
 
-veRenderableObject* veNode::removeRenderableObject(unsigned int objIndex)
+veRenderableObject* veNode::removeRenderableObject(size_t objIndex)
 {
 	veAssert(objIndex < _renderableObjects.size());
 	veRenderableObject* obj = _renderableObjects[objIndex].get();
@@ -108,7 +109,7 @@ veRenderableObject* veNode::removeRenderableObject(unsigned int objIndex)
 	return obj;
 }
 
-veRenderableObject* veNode::getRenderableObject(unsigned int objIndex)
+veRenderableObject* veNode::getRenderableObject(size_t objIndex)
 {
 	veAssert(objIndex < _renderableObjects.size());
 	return _renderableObjects[objIndex].get();
@@ -178,12 +179,20 @@ void veNode::update(veVisualiser *vs)
 			iter->update(this, vs);
 		}
 	}
+
+	updateBoundingBox();
 }
 
 void veNode::render(veCamera *camera)
 {
 	if (!_isVisible) return;
 	if (_mask & camera->getMask()) {
+		if (!_components.empty()) {
+			for (auto &iter : _components) {
+				iter->render(camera);
+			}
+		}
+
 		if (!_children.empty()) {
 			for (auto &child : _children) {
 				child->render(camera);
@@ -216,4 +225,24 @@ void veNode::accept(veNodeVisitor &visitor)
 void veNode::visit(veNodeVisitor &visitor)
 {
 	visitor.visit(*this);
+}
+
+void veNode::updateBoundingBox()
+{
+	if (_autoUpdateBoundingBox) {
+		_boundingBox.dirty();
+		if (!_children.empty()) {
+			for (auto &child : _children) {
+				if (!child->getBoundingBox().isNull())
+					_boundingBox.expandBy(child->getBoundingBox() * _matrix);
+			}
+		}
+
+		if (!_renderableObjects.empty()) {
+			for (auto &iter : _renderableObjects) {
+				if (!iter->getBoundingBox().isNull())
+					_boundingBox.expandBy(iter->getBoundingBox() * _matrix);
+			}
+		}
+	}
 }

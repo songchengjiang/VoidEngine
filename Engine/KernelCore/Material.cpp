@@ -146,6 +146,14 @@ veUniform* vePass::removeUniform(unsigned int idx)
 	return uniform;
 }
 
+void vePass::restoreGLState()
+{
+	if (!CURRENT_DEPTH_WRITE) {
+		glDepthMask(GL_TRUE);
+		CURRENT_DEPTH_WRITE = true;
+	}
+}
+
 void vePass::applyProgram(const veRenderCommand &command)
 {
 	if (!_program)

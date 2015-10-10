@@ -13,6 +13,7 @@ public:
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
 			transer->setPosition(veVec3(-5.0f, -5.0f, 0.0f));
+			transer->setRotation(veQuat(veMath::QUARTER_PI, veVec3::UNIT_Y));
 			transer->setScale(veVec3(2.0f));
 			root->addChild(node);
 		}
@@ -35,6 +36,7 @@ public:
 			transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
 			transer->setScale(veVec3(2.0f));
 			root->addChild(node);
+
 		}
 
 		{
@@ -67,11 +69,15 @@ public:
 
 			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile("models/laoshu_ani_v03.veanim"));
 			animationContainer->start();
-			animationContainer->setFrameRate(100.0f);
+			animationContainer->setFrameRate(10.0f);
 			animationContainer->setLoopAnimation(true);
 			node->addComponent(animationContainer);
 		}
 
+		auto debuger = new veDebuger;
+		debuger->debugDrawBoundingBoxWireframe(true);
+		debuger->setDebugDrawColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
+		root->addComponent(debuger);
 		_visualiser->setSceneNode(root);
 	}
 	~MeshTest() {};

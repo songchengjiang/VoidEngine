@@ -62,17 +62,19 @@ public:
 	veMesh();
 	virtual ~veMesh();
 
+	virtual void update(veNode *node, veVisualiser *vs) override;
+
 	void setVertexArray(veRealArray *vAry) { _vertices = vAry; _needRefresh = true; }
 	veRealArray* getVertexArray() { return _vertices.get(); }
 	unsigned int getVertexStride();
 
 	void setVertexAtrribute(unsigned int attrIndex, const VertexAtrribute &attri) { veAssert(attrIndex < _attributes.size());  _attributes[attrIndex] = attri; _needRefresh = true; }
 	void addVertexAtrribute(const VertexAtrribute &attri);
-	const VertexAtrribute& getVertexAtrribute(unsigned int attrIndex) const { return _attributes[attrIndex]; }
+	const VertexAtrribute& getVertexAtrribute(size_t attrIndex) const { return _attributes[attrIndex]; }
 	size_t getVertexAtrributeNum() const { return _attributes.size();  };
 
 	void addPrimitive(const Primitive &primitive);
-	const Primitive& getPrimitive(unsigned int idx) const;
+	const Primitive& getPrimitive(size_t idx) const;
 	size_t getPrimitiveNum() const { return _primitives.size(); };
 
 	void addBone(veBone *bone);
@@ -80,7 +82,13 @@ public:
 	const veBone* getBone(unsigned int idx) const;
 	size_t getBoneNum() const { return _bones.size(); };
 
+	void caculateBoundingBox();
+
 	bool& needRefresh();
+
+protected:
+
+	void updateBones(veNode *node);
 
 protected:
 

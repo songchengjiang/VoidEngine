@@ -3,7 +3,7 @@
 #include "NodeVisitor.h"
 
 veLoopQueue<veRenderCommand>::SortFunc PASS_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
-	return right.priority <= left.priority && left.pass <= right.pass;
+	return right.priority == left.priority? left.pass <= right.pass: right.priority < left.priority;
 };
 
 veLoopQueue<veRenderCommand>::SortFunc TRANSPARENT_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
@@ -151,6 +151,7 @@ void veCamera::render(veVisualiser *vs, veRenderQueue::RenderCommandList &render
 		_fbo->unBind();
 	}
 
+	vePass::restoreGLState();
 	_renderStateChanged = false;
 }
 

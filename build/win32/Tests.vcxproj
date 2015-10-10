@@ -103,12 +103,6 @@
       <Project>{fc047bd9-ca1d-469c-9a04-454a1b313b60}</Project>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\Tests\lights\directional0.velight" />
-    <None Include="..\..\Tests\lights\point.velightemplates" />
-    <None Include="..\..\Tests\lights\point0.velight" />
-    <None Include="..\..\Tests\lights\spot0.velight" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
