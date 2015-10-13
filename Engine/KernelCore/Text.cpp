@@ -115,6 +115,8 @@ void veText::initMaterial()
 	pass->depthTest() = false;
 	pass->depthWrite() = false;
 	pass->cullFace() = true;
+	pass->blendFunc().src = GL_ONE;
+	pass->blendFunc().dst = GL_ONE_MINUS_SRC_ALPHA;
 
 	veShader *vShader = nullptr;
 	if (_type == HUD) {
