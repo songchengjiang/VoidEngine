@@ -162,9 +162,6 @@
     <ClCompile Include="..\..\Engine\KernelCore\Text.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\TextRenderer.cpp">
-      <Filter>KernelCore\Renderer</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -311,9 +308,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\Text.h">
       <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\TextRenderer.h">
-      <Filter>KernelCore\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

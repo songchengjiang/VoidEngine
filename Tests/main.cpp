@@ -5,7 +5,7 @@
 #include "RenToTex.h"
 #include "CameraTest.h"
 #include "LightTest.h"
-#include "TextTex.h"
+#include "TextTest.h"
 
 int main(int argc, char **argv)
 {
@@ -14,6 +14,6 @@ int main(int argc, char **argv)
 	//auto test = new RenToTex;
 	//auto test = new MeshTest;
 	//auto test = new ImageTest;
-	auto test = new TextTex;
+	auto test = new TextTest;
 	return test->run();
 }

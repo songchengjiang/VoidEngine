@@ -115,8 +115,8 @@ void veText::initMaterial()
 	pass->depthTest() = false;
 	pass->depthWrite() = false;
 	pass->cullFace() = true;
-	pass->blendFunc().src = GL_ONE;
-	pass->blendFunc().dst = GL_ONE_MINUS_SRC_ALPHA;
+	//pass->blendFunc().src = GL_ONE;
+	//pass->blendFunc().dst = GL_ONE_MINUS_SRC_ALPHA;
 
 	veShader *vShader = nullptr;
 	if (_type == HUD) {
@@ -145,25 +145,25 @@ void veText::rebuildContentBitmap(int divWidth, int divHeight)
 {
 #define FOUR_BYTES_ALIGN(BYTES)  ((((BYTES + 4))>>2)<<2)  
 
-	int fontSize = _font->getFontSize();
-	int charSpace = _charSpace * fontSize;
-	int horiSpace = 0.125f * fontSize;
-	int width = (fontSize + charSpace) * _content.size();
+	int fontSpace = _font->getFontSize();
+	int charSpace = _charSpace * fontSpace;
+	int horiSpace = 0.25 * fontSpace;
+	int width = (fontSpace + charSpace) * _content.size();
 	int actualWidth = 0;
-	unsigned char *temp = new unsigned char[width * fontSize];
-	memset(temp, 0, width * fontSize * sizeof(unsigned char));
+	unsigned char *temp = new unsigned char[width * fontSpace];
+	memset(temp, 0, width * fontSpace * sizeof(unsigned char));
 	int charStartOffset = charSpace;
 	for (size_t i = 0; i < _content.size(); ++i) {
 		auto glyph = _font->getGlyphOfCharCode(_content[i]);
 		for (unsigned int h = 0; h < glyph->bitmap.rows; ++h) {
-			memcpy(&temp[(h + horiSpace) * width + charStartOffset], &glyph->bitmap.buffer[(glyph->bitmap.rows - h - 1) * glyph->bitmap.width], glyph->bitmap.width * sizeof(unsigned char));
+			memcpy(&temp[(h + horiSpace - (glyph->bitmap.rows - glyph->bitmap_top)) * width + charStartOffset], &glyph->bitmap.buffer[(glyph->bitmap.rows - h - 1) * glyph->bitmap.width], glyph->bitmap.width * sizeof(unsigned char));
 		}
 		charStartOffset += charSpace + (glyph->advance.x >> 6);
 	}
 	actualWidth = FOUR_BYTES_ALIGN(charStartOffset);
 
-	unsigned char *buf = new unsigned char[actualWidth * fontSize];
-	for (int h = 0; h < fontSize; ++h) {
+	unsigned char *buf = new unsigned char[actualWidth * fontSpace];
+	for (int h = 0; h < fontSpace; ++h) {
 		memcpy(&buf[h * actualWidth], &temp[h * width], actualWidth * sizeof(unsigned char));
 	}
 
@@ -175,12 +175,12 @@ void veText::rebuildContentBitmap(int divWidth, int divHeight)
 	//}
 
 	auto image = new veImage;
-	image->set(actualWidth, fontSize, 1, GL_R8, GL_RED, GL_UNSIGNED_BYTE, buf);
+	image->set(actualWidth, fontSpace, 1, GL_R8, GL_RED, GL_UNSIGNED_BYTE, buf);
 	_texture->setImage(image);
 	if (_type == HUD)
-		_scaleMatUniform->setValue(veMat4::scale(veVec3((float)actualWidth / (float)divWidth, (float)fontSize / (float)divHeight, 0.0f)));
+		_scaleMatUniform->setValue(veMat4::scale(veVec3((float)actualWidth / (float)divWidth, (float)fontSpace / (float)divHeight, 0.0f)));
 	else if (_type == PLANE)
-		_scaleMatUniform->setValue(veMat4::scale(veVec3(actualWidth / 2.0f, fontSize / 2.0f, 0.0f)));
+		_scaleMatUniform->setValue(veMat4::scale(veVec3(actualWidth / 2.0f, fontSpace / 2.0f, 0.0f)));
 
 	delete[] temp;
 	delete[] buf;

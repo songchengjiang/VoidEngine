@@ -37,7 +37,7 @@
       <Filter>RenToTexTest</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Tests\BaseTest.h" />
-    <ClInclude Include="..\..\Tests\TextTex.h">
+    <ClInclude Include="..\..\Tests\TextTest.h">
       <Filter>TextTest</Filter>
     </ClInclude>
   </ItemGroup>

@@ -21,13 +21,13 @@ private:
 	veText *_text;
 };
 
-class TextTex : public BaseTest
+class TextTest : public BaseTest
 {
 public:
-	TextTex() {
+	TextTest() {
 		veNode *root = new veNode;
 		{
-			auto text = new veText(new veFont("fonts/arial.ttf", 64), "Void Engine!");
+			auto text = new veText(new veFont("fonts/Vera.ttf", 64), "Void Engine!");
 			text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
 			auto node = new veNode;
 			node->addRenderableObject(text);
@@ -64,7 +64,7 @@ public:
 
 		_visualiser->setSceneNode(root);
 	}
-	~TextTex() {};
+	~TextTest() {};
 
 private:
 

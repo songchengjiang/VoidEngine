@@ -54,7 +54,6 @@
     <ClCompile Include="..\..\Engine\KernelCore\RenderQueue.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Shader.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Text.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\TextRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Texture.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\TextureManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Transformer.cpp" />
@@ -105,7 +104,6 @@
     <ClInclude Include="..\..\Engine\KernelCore\Shader.h" />
     <ClInclude Include="..\..\Engine\KernelCore\ShaderDefinationGenerator.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Text.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\TextRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Texture.h" />
     <ClInclude Include="..\..\Engine\KernelCore\TextureManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Transformer.h" />
