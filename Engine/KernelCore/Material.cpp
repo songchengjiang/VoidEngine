@@ -152,6 +152,7 @@ void vePass::restoreGLState()
 		glDepthMask(GL_TRUE);
 		CURRENT_DEPTH_WRITE = true;
 	}
+	CURRENT_PASS = nullptr;
 }
 
 void vePass::applyProgram(const veRenderCommand &command)

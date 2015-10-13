@@ -3,6 +3,7 @@
 veImage::veImage()
 	: USE_VE_PTR_INIT
 	, _data(nullptr)
+	, _needRefresh(true)
 {
 
 }
@@ -24,6 +25,7 @@ void veImage::set(int width, int height, int depth, GLint internalFormat, GLenum
 	unsigned int pixelSize = perPixelSize();
 	_data = new unsigned char[_width * _height * _depth * pixelSize];
 	memcpy(_data, data, _width * _height * _depth * pixelSize);
+	_needRefresh = true;
 }
 
 veVec4 veImage::getColor(int s, int t, int r) const

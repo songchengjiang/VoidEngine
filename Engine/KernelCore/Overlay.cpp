@@ -40,7 +40,7 @@ veReal veOverlay::getAlphaThreshold() const
 
 void veOverlay::initMaterial()
 {
-	const char *V_SHADER = " \
+	static const char *V_SHADER = " \
 	layout(location = 0) in vec3 position; \n \
 	layout(location = 1) in vec3 normal; \n \
 	layout(location = 2) in vec2 texcoord; \n \
@@ -54,7 +54,7 @@ void veOverlay::initMaterial()
 		gl_Position = u_ModelMat * vec4(position, 1.0); \n \
 	}";
 
-	const char *F_SHADER = " \
+	static const char *F_SHADER = " \
 	uniform float u_alphaThreshold; \n \
 	uniform sampler2D u_texture; \n \
 	in vec3 v_normal; \n \
@@ -76,7 +76,7 @@ void veOverlay::initMaterial()
 	pass->addTexture(_texture.get());
 
 	pass->depthTest() = false;
-	pass->depthWrite() = true;
+	pass->depthWrite() = false;
 	pass->cullFace() = true;
 
 	auto vShader = new veShader(veShader::VERTEX_SHADER, V_SHADER);

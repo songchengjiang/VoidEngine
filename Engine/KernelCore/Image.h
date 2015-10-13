@@ -22,6 +22,8 @@ public:
 	GLenum pixelFormat() const { return _pixelFormat; }
 	GLenum dataType() const { return _dataType; }
 
+	bool& needRefresh() { return _needRefresh; }
+
 private:
 
 	unsigned int perPixelSize();
@@ -35,6 +37,8 @@ private:
 	GLenum         _pixelFormat;
 	GLenum         _dataType;
 	unsigned char *_data;
+
+	bool           _needRefresh;
 };
 
 #endif

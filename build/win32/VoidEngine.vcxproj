@@ -37,6 +37,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\Component.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Director.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\EventDispatcher.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Font.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\FrameBufferObject.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Image.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Light.cpp" />
@@ -52,6 +53,8 @@
     <ClCompile Include="..\..\Engine\KernelCore\Renderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\RenderQueue.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Shader.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Text.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\TextRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Texture.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\TextureManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Transformer.cpp" />
@@ -80,6 +83,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\Director.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Event.h" />
     <ClInclude Include="..\..\Engine\KernelCore\EventDispatcher.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Font.h" />
     <ClInclude Include="..\..\Engine\KernelCore\FrameBufferObject.h" />
     <ClInclude Include="..\..\Engine\KernelCore\IDGenerator.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Image.h" />
@@ -100,6 +104,8 @@
     <ClInclude Include="..\..\Engine\KernelCore\RenderQueue.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Shader.h" />
     <ClInclude Include="..\..\Engine\KernelCore\ShaderDefinationGenerator.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Text.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\TextRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Texture.h" />
     <ClInclude Include="..\..\Engine\KernelCore\TextureManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Transformer.h" />
@@ -155,7 +161,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_USRDLL;_CRT_SECURE_NO_WARNINGS;VOIDENGINE_EXPORTS;VE_LIBRARY;VE_DISABLE_MSVC_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;$(SolutionDir)..\..\Dependents\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -164,7 +170,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)..\..\Dependents;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glu32.lib;opengl32.lib;glfw\lib\glfw3.lib;glew\lib\glew32s.lib;zlib\lib\zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glu32.lib;opengl32.lib;glfw\lib\glfw3.lib;glew\lib\glew32s.lib;zlib\lib\zlib.lib;freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
@@ -177,14 +183,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;VOIDENGINE_EXPORTS;VE_LIBRARY;VE_DISABLE_MSVC_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;$(SolutionDir)..\..\Dependents\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>glu32.lib;opengl32.lib;glew\lib\glew32s.lib;glfw\lib\glfw3.lib;zlib\lib\zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glu32.lib;opengl32.lib;glew\lib\glew32s.lib;glfw\lib\glfw3.lib;zlib\lib\zlib.lib;freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)..\..\Dependents;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>

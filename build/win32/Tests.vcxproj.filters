@@ -16,6 +16,9 @@
     <Filter Include="LightTest">
       <UniqueIdentifier>{13d01622-693c-4534-abe0-18e3a8d575e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TextTest">
+      <UniqueIdentifier>{070f2dd5-3cb1-44d6-99bc-0e97df92d9df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Tests\CameraTest.h">
@@ -34,6 +37,9 @@
       <Filter>RenToTexTest</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Tests\BaseTest.h" />
+    <ClInclude Include="..\..\Tests\TextTex.h">
+      <Filter>TextTest</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Tests\main.cpp" />

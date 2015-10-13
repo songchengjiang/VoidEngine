@@ -27,7 +27,7 @@ public:
 	unsigned int getMask() const { return _mask; }
 	inline void setRenderer(veRenderer *renderer);
 	veRenderer* getRenderer() const { return _renderer.get(); }
-	void setMaterial(veMaterial *material) { _material = material; }
+	virtual void setMaterial(veMaterial *material) { _material = material; }
 	veMaterial* getMaterial() { return _material.get(); }
 	void setBoundingBox(const veBoundingBox &bbox) { _boundingBox = bbox; }
 	const veBoundingBox& getBoundingBox() const { return _boundingBox; }

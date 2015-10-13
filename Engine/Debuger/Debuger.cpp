@@ -82,7 +82,7 @@ void veDebuger::render(veCamera *camera)
 	veRenderCommand rc;
 	rc.priority = veRenderCommand::LOW_PRIORITY;
 	rc.pass = _material->getTechnique(0)->getPass(0);
-	rc.attachedNode = _attachedNode;
+	rc.worldMatrix = _attachedNode->getNodeToWorldMatrix();
 	rc.renderableObj = nullptr;
 	rc.camera = camera;
 	rc.drawFunc = VE_CALLBACK_1(veDebuger::draw, this);

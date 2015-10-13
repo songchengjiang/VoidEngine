@@ -34,18 +34,20 @@ bool veFile::writeFile(void *data, const std::string &filePath)
 
 std::string veFile::readFileToBuffer(const std::string &filePath)
 {
-	FILE* file = fopen(filePath.c_str(), "r");
+	FILE* file = fopen(filePath.c_str(), "rb");
 	if (!file) return std::string("null");
 	fseek(file, 0, SEEK_END);
 	size_t size = ftell(file);
-	rewind(file);
+	//rewind(file);
+	fseek(file, 0, SEEK_SET);
 	if (size == 0) return nullptr;
 
 	char *buffer = new char[size + 1];
 	size_t result = fread(buffer, sizeof(char), size, file);
-	if (result != size + 1) buffer[result] = '\0';
+	buffer[result] = '\0';
     //veLog(buffer);
-	std::string buf(buffer);
+	std::string buf;
+	buf.assign(buffer, result);
 	fclose(file);
 	delete[] buffer;
 

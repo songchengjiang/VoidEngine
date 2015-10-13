@@ -29,6 +29,8 @@ public:
 	static veReal degree(veReal rad) { return rad * 180.0f / PI; }
 	static veReal randomUnitization() { return (veReal)rand() / RAND_MAX; }
 	static bool isNaN(veReal val) { return val != val; }
+	template<typename T> static T minimum(const T& lVal, const T& rVal) { return lVal < rVal ? lVal : rVal; }
+	template<typename T> static T maximum(const T& lVal, const T& rVal) { return lVal < rVal ? rVal : lVal; }
 };
 
 #endif

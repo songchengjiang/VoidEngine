@@ -156,7 +156,7 @@ void veUniform::apply(const veRenderCommand &command)
 	case Type::AUTO:
 	{
 		if (!_autoBindingValue.empty()) {
-			veMat4 w = command.attachedNode->getNodeToWorldMatrix();
+			const veMat4 &w = command.worldMatrix;
 			veMat4 mv = command.camera->viewMatrix() * w;
 			if (_autoBindingValue == MVP_MATRIX) {
 				veMat4 mvp = command.camera->projectionMatrix() * mv;
@@ -207,7 +207,8 @@ void veUniform::apply(const veRenderCommand &command)
 			else if (_autoBindingValue == BONE_MATRIXES) {
 				static float boneMates[60 * 16];
 				veMesh *mesh = static_cast<veMesh *>(command.renderableObj);
-				veMat4 worldToMesh = command.attachedNode->getWorldToNodeMatrix();
+				veMat4 worldToMesh = command.worldMatrix;
+				worldToMesh.inverse();
 				for (unsigned int i = 0; i < mesh->getBoneNum(); ++i) {
 					unsigned int idx = 16 * i;
 					const auto &bone = mesh->getBone(i);

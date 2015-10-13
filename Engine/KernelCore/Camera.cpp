@@ -6,8 +6,12 @@ veLoopQueue<veRenderCommand>::SortFunc PASS_SORT = [](const veRenderCommand &lef
 	return right.priority == left.priority? left.pass <= right.pass: right.priority < left.priority;
 };
 
+veLoopQueue<veRenderCommand>::SortFunc ENTITY_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
+	return right.priority == left.priority ? left.pass <= right.pass : right.priority < left.priority;
+};
+
 veLoopQueue<veRenderCommand>::SortFunc TRANSPARENT_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
-	return left.depthInCamera <= right.depthInCamera && left.pass <= right.pass;
+	return right.priority == left.priority ? left.depthInCamera <= right.depthInCamera : right.priority < left.priority;
 };
 
 veCamera::veCamera()
@@ -131,7 +135,7 @@ void veCamera::render(veVisualiser *vs, veRenderQueue::RenderCommandList &render
 
 	auto entityQueue = renderList.find(veRenderQueue::RENDER_QUEUE_ENTITY);
 	if (entityQueue != renderList.end()) {
-		entityQueue->second.sort(PASS_SORT);
+		entityQueue->second.sort(ENTITY_SORT);
 		renderQueue(entityQueue->second, &vs->_lights);
 	}
 

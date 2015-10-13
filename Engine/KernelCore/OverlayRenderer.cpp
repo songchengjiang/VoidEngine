@@ -38,15 +38,41 @@ veOverlayRenderer::~veOverlayRenderer()
 void veOverlayRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
 	if (_technique) {
+		if (_needRefresh) {
+			if (!_vao) {
+				glGenVertexArrays(1, &_vao);
+				glGenBuffers(1, &_vbo);
+			}
+			glBindVertexArray(_vao);
+			glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+			if (!_vertices.empty())
+				glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(_vertices[0]), _vertices.buffer(), GL_STATIC_DRAW);
+
+			unsigned int stride = sizeof(GLfloat) * 8;
+			//v
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, 0);
+			glEnableVertexAttribArray(0);
+
+			//n
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (GLvoid *)(sizeof(GLfloat) * 3));
+			glEnableVertexAttribArray(1);
+
+			//tc
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid *)(sizeof(GLfloat) * 6));
+			glEnableVertexAttribArray(2);
+
+			_needRefresh = false;
+		}
+
 		for (unsigned int i = 0; i < _technique->getPassNum(); ++i) {
 			auto pass = _technique->getPass(i);
 			if (camera->getMask() & pass->drawMask()) {
 				veRenderCommand rc;
 				rc.pass = pass;
-				rc.attachedNode = node;
+				rc.worldMatrix = node->getNodeToWorldMatrix();
 				rc.renderableObj = renderableObj;
 				rc.camera = camera;
-                rc.drawFunc = VE_CALLBACK_1(veOverlayRenderer::draw, this);
+				rc.drawFunc = VE_CALLBACK_1(veOverlayRenderer::draw, this);
 				pass->visit(rc);
 				veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
 			}
@@ -58,33 +84,6 @@ void veOverlayRenderer::draw(const veRenderCommand &command)
 {
 	command.pass->apply(command);
 
-	if (!_vao) {
-		glGenVertexArrays(1, &_vao);
-		glGenBuffers(1, &_vbo);
-	}
-
 	glBindVertexArray(_vao);
-
-	if (_needRefresh) {
-		glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-		if (!_vertices.empty())
-			glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(_vertices[0]), _vertices.buffer(), GL_STATIC_DRAW);
-
-		unsigned int stride = sizeof(GLfloat) * 8;
-		//v
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, 0);
-		glEnableVertexAttribArray(0);
-
-		//n
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (GLvoid *)(sizeof(GLfloat) * 3));
-		glEnableVertexAttribArray(1);
-
-		//tc
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid *)(sizeof(GLfloat) * 6));
-		glEnableVertexAttribArray(2);
-
-		_needRefresh = false;
-	}
-
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }

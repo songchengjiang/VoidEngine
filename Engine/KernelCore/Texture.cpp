@@ -106,8 +106,9 @@ void veTexture2D::bind(unsigned int textureUnit)
 	veTexture::bind(textureUnit);
 	if (_needRefreshTex) {
 		glTexStorage2D(_target, 1, _internalFormat, _width, _height);
-		if (_image.valid())
+		if (_image.valid()) {
 			glTexSubImage2D(_target, 0, 0, 0, _image->width(), _image->height(), _image->pixelFormat(), _image->dataType(), _image->data());
+		}
 		_needRefreshTex = false;
 	}
 }
