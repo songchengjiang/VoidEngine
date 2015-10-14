@@ -8,6 +8,7 @@
 #include "RenderableObject.h"
 
 class veVisualiser;
+class veSceneManager;
 class veNodeVisitor;
 class VE_EXPORT veNode
 {
@@ -20,13 +21,13 @@ public:
 	USE_VE_PTR;
 	USE_NAME_PROPERTY;
 
-	veNode();
 	virtual ~veNode();
 
 	void setVisible(bool isVis) { _isVisible = isVis; }
 	bool isVisible() const { return _isVisible; };
 
 	int addChild(veNode *child);
+	veNode* createChild();
 	bool removeChild(veNode *child);
 	veNode* removeChild(unsigned int cIndex);
 	veNode* getChild(unsigned int cIndex);
@@ -53,6 +54,9 @@ public:
 	const veBoundingBox& getBoundingBox() const { return _boundingBox; }
 	void setAutoUpdateBoundingBox(bool isAuto) { _autoUpdateBoundingBox = isAuto; }
 
+	void setSceneManager(veSceneManager *sm) { _sceneManager = sm; }
+	veSceneManager* getSceneManager() { return _sceneManager; }
+
 	veMat4 getNodeToWorldMatrix();
 	veMat4 getWorldToNodeMatrix();
 
@@ -62,7 +66,7 @@ public:
 	void refresh();
 
 	virtual bool routeEvent(const veEvent &event, veVisualiser *vs);
-	virtual void update(veVisualiser *vs);
+	virtual void update(veSceneManager *sm);
 	virtual void render(veCamera *camera);
 
 	virtual void accept(veNodeVisitor &visitor);
@@ -70,6 +74,7 @@ public:
 
 protected:
 
+	veNode();
 	void updateBoundingBox();
 
 protected:
@@ -86,6 +91,8 @@ protected:
 	unsigned int      _mask;
 	bool              _overrideMask;
 	bool              _autoUpdateBoundingBox;
+
+	veSceneManager   *_sceneManager;
 };
 
 #endif

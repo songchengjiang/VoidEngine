@@ -1,8 +1,11 @@
 #include "Director.h"
 #include "EventDispatcher.h"
+#include "SceneManager.h"
+#include "OctreeSceneManager.h"
 
 veDirector::veDirector()
-	: _isRunning(false)
+	: _sceneManager(nullptr)
+	, _isRunning(false)
 {
 	glfwInit();
 #if defined(__APPLE_CC__)
@@ -12,6 +15,11 @@ veDirector::veDirector()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, VE_GLSL_VERSION_MINOR);
 #endif
 	veEventDispatcher::instance()->registerCallback();
+}
+
+void veDirector::allocSceneManager()
+{
+	_sceneManager = new veOctreeSceneManager;
 }
 
 veDirector::~veDirector()
@@ -25,34 +33,24 @@ veDirector* veDirector::instance()
 	return &director;
 }
 
-veVisualiser* veDirector::createVisualiser(int w, int h, const std::string &title)
-{
-	auto visualiser = new veVisualiser(w, h, title);
-	veVisualiserRegistrar::instance()->reg(visualiser->_hwnd, visualiser);
-	_visualiserList.push_back(visualiser);
-	return visualiser;
-}
+//veVisualiser* veDirector::createVisualiser(int w, int h, const std::string &title)
+//{
+//	auto visualiser = new veVisualiser(w, h, title);
+//	veVisualiserRegistrar::instance()->reg(visualiser->_hwnd, visualiser);
+//	_visualiserList.push_back(visualiser);
+//	return visualiser;
+//}
 
 bool veDirector::run()
 {
     _isRunning = true;
 	double preFrameTime = glfwGetTime();
-	if (!_visualiserList.empty()) {
-		glfwMakeContextCurrent(_visualiserList[0]->_hwnd);
-        _isRunning = glewInit() == GLEW_OK? true: false;
-	}
 	while (_isRunning)
 	{
 		double currentFrameTime = glfwGetTime();
 		double deltaTime = currentFrameTime - preFrameTime;
-		//char str[64];
-		//sprintf(str, "Frame: %.1f", 1.0 / deltaTime);
-		//veLog(str);
-		veEventDispatcher::instance()->dispatch(deltaTime);
-		for (auto &iter : _visualiserList){
-			glfwMakeContextCurrent(iter->_hwnd);
-			if (!iter->simulate(deltaTime)) stop();
-		}
+		veEventDispatcher::instance()->dispatch(deltaTime, _sceneManager);
+		if (!_sceneManager->simulation(deltaTime)) _isRunning = false;
 		preFrameTime = currentFrameTime;
 	}
 	return true;

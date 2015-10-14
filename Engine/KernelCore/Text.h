@@ -21,7 +21,8 @@ public:
 
 	USE_VE_PTR;
 
-	virtual void update(veNode *node, veVisualiser *vs) override;
+	virtual bool handle(veNode *node, veVisualiser *vs, const veEvent &event) override;
+	virtual void update(veNode *node, veSceneManager *sm) override;
 
 	void setTextType(TextType type);
 	TextType getTextType() const { return _type; }
@@ -46,12 +47,15 @@ protected:
 
 	TextType          _type;
 	VE_Ptr<veTexture> _texture;
-	VE_Ptr<veFont>  _font;
-	std::string     _content;
-	veVec4          _color;
+	VE_Ptr<veFont>    _font;
+	std::string       _content;
+	veVec4            _color;
 	VE_Ptr<veUniform> _colorUniform;
 	VE_Ptr<veUniform> _scaleMatUniform;
 	float             _charSpace;
+
+	int               _width;
+	int               _height;
 
 	bool              _needRefresh;
 };

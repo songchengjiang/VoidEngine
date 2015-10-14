@@ -7,6 +7,7 @@
 
 class veNode;
 class veVisualiser;
+class veSceneManager;
 class VE_EXPORT veRenderableObject
 {
 public:
@@ -17,7 +18,8 @@ public:
 	USE_VE_PTR;
 	USE_NAME_PROPERTY;
 
-	virtual void update(veNode *node, veVisualiser *vs);
+	virtual bool handle(veNode *node, veVisualiser *vs, const veEvent &event) { return false; }
+	virtual void update(veNode *node, veSceneManager *sm);
 	virtual void render(veNode *node, veCamera *camera);
 
 

@@ -1,6 +1,7 @@
 #include "Text.h"
 #include "OverlayRenderer.h"
 #include "Constants.h"
+#include "SceneManager.h"
 #include "Visualiser.h"
 #include "FileCore/File.h"
 
@@ -10,7 +11,9 @@ veText::veText(veFont *font, const std::string &content)
 	, _font(font)
 	, _content(content)
 	, _color(veVec4::WHITE)
-	, _charSpace(0.125)
+	, _charSpace(0)
+	, _width(0)
+	, _height(0)
 	, _needRefresh(true)
 {
 	_renderer = new veOverlayRenderer;
@@ -23,15 +26,25 @@ veText::~veText()
 
 }
 
-void veText::update(veNode *node, veVisualiser *vs)
+bool veText::handle(veNode *node, veVisualiser *vs, const veEvent &event)
+{
+	if (event.getEventType() == veEvent::VE_WIN_RESIZE) {
+		if (_type == HUD)
+			_scaleMatUniform->setValue(veMat4::scale(veVec3((float)_width / (float)vs->width(), (float)_height / (float)vs->height(), 0.0f)));
+	}
+
+	return false;
+}
+
+void veText::update(veNode *node, veSceneManager *sm)
 {
 	if (!_isVisible) return;
 	if (_needRefresh) {
-		rebuildContentBitmap(vs->width(), vs->height());
+		rebuildContentBitmap(sm->getVisualiser()->width(), sm->getVisualiser()->height());
 		_needRefresh = false;
 	}
 	if (_renderer.valid())
-		_renderer->visit(node, this, vs);
+		_renderer->visit(node, this, sm);
 }
 
 void veText::setTextType(TextType type)
@@ -115,8 +128,8 @@ void veText::initMaterial()
 	pass->depthTest() = false;
 	pass->depthWrite() = false;
 	pass->cullFace() = true;
-	//pass->blendFunc().src = GL_ONE;
-	//pass->blendFunc().dst = GL_ONE_MINUS_SRC_ALPHA;
+	pass->blendFunc().src = GL_ONE;
+	pass->blendFunc().dst = GL_ONE_MINUS_SRC_ALPHA;
 
 	veShader *vShader = nullptr;
 	if (_type == HUD) {
@@ -145,9 +158,9 @@ void veText::rebuildContentBitmap(int divWidth, int divHeight)
 {
 #define FOUR_BYTES_ALIGN(BYTES)  ((((BYTES + 4))>>2)<<2)  
 
-	int fontSpace = _font->getFontSize();
-	int charSpace = _charSpace * fontSpace;
-	int horiSpace = 0.25 * fontSpace;
+	int fontSpace = _font->getFontSize() * 1.2;
+	int charSpace = _charSpace * _font->getFontSize();
+	int horiSpace = (fontSpace - _font->getFontSize()) * 2;
 	int width = (fontSpace + charSpace) * _content.size();
 	int actualWidth = 0;
 	unsigned char *temp = new unsigned char[width * fontSpace];
@@ -182,6 +195,8 @@ void veText::rebuildContentBitmap(int divWidth, int divHeight)
 	else if (_type == PLANE)
 		_scaleMatUniform->setValue(veMat4::scale(veVec3(actualWidth / 2.0f, fontSpace / 2.0f, 0.0f)));
 
+	_width = actualWidth;
+	_height = fontSpace;
 	delete[] temp;
 	delete[] buf;
 }

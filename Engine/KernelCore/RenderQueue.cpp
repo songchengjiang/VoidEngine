@@ -25,7 +25,7 @@ void veRenderQueue::pushCommand(unsigned int renderQueueType, const veRenderComm
 void veRenderQueue::execute(veVisualiser *vs)
 {
 	for (auto &iter : _renderQueues) {
-		iter.first->render(vs, iter.second);
+		iter.first->render(iter.second);
 	}
 	_renderQueues.clear();
 }

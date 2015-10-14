@@ -14,7 +14,7 @@ veTransformer::~veTransformer()
 
 }
 
-void veTransformer::update(veNode *node, veVisualiser *vs)
+void veTransformer::update(veNode *node, veSceneManager *sm)
 {
 	if (_neeUpdate){
 		veMat4 m;

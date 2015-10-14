@@ -34,8 +34,7 @@ public:
 		FORWARD_PATH,
 		DEFERRED_PATH
 	};
-	veCamera();
-	veCamera(const veViewport &vp);
+
 	~veCamera();
 
 	void setProjectionMatrixAsOrtho(float left, float right, float bottom, float top, float zNear, float zFar);
@@ -65,17 +64,19 @@ public:
 
 	virtual void setMatrix(const veMat4 &mat) override;
 
-	void render(veVisualiser *vs, veRenderQueue::RenderCommandList &renderList);
+	void render(veRenderQueue::RenderCommandList &renderList);
 
 	virtual bool routeEvent(const veEvent &event, veVisualiser *vs) override;
 	virtual void visit(veNodeVisitor &visitor) override;
 
-private:
+protected:
 
-	void renderQueue(veLoopQueue< veRenderCommand > &queue, std::vector<veLight *> *lights);
+	veCamera();
+	veCamera(const veViewport &vp);
+	void renderQueue(veLoopQueue< veRenderCommand > &queue);
 	void resize(int width, int height);
 
-private:
+protected:
 
 	veMat4 _projectionMat;
 	veMat4 _viewMat;

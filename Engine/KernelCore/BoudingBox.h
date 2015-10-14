@@ -20,6 +20,29 @@ public:
 	void dirty();
 	bool isNull() const;
 
+	inline bool intersects(const veBoundingBox& bbox) const
+	{
+		if (this->isNull() || bbox.isNull())
+			return false;
+
+		if (_max.x() < bbox._min.x())
+			return false;
+		if (_max.y() < bbox._min.y())
+			return false;
+		if (_max.z() < bbox._min.z())
+			return false;
+
+		if (_min.x() > bbox._max.x())
+			return false;
+		if (_min.y() > bbox._max.y())
+			return false;
+		if (_min.z() > bbox._max.z())
+			return false;
+
+		return true;
+
+	}
+
 	inline veBoundingBox operator * (const veMat4& m) const {
 		veBoundingBox bbox;
 		bbox.expandBy(m * _min);

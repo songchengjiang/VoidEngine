@@ -16,12 +16,12 @@ veMesh::~veMesh()
 
 }
 
-void veMesh::update(veNode *node, veVisualiser *vs)
+void veMesh::update(veNode *node, veSceneManager *sm)
 {
 	if (!_isVisible) return;
 	updateBones(node);
 	if (_renderer.valid())
-		_renderer->visit(node, this, vs);
+		_renderer->visit(node, this, sm);
 }
 
 unsigned int veMesh::getVertexStride()

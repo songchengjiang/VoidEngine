@@ -66,7 +66,7 @@ public:
 	veAnimationContainer();
 	~veAnimationContainer();
 
-	virtual void update(veNode *node, veVisualiser *vs) override;
+	virtual void update(veNode *node, veSceneManager *sm) override;
 
 	void addAnimationChannel(veAnimation *anim);
 	veAnimation* getAnimationChannel(unsigned int idx);

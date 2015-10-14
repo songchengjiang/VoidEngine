@@ -117,7 +117,7 @@ void veCamera::setMatrix(const veMat4 &mat)
 	_viewMat = getWorldToNodeMatrix();
 }
 
-void veCamera::render(veVisualiser *vs, veRenderQueue::RenderCommandList &renderList)
+void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 {
 	if (renderList.empty()) return;
 	if (_fbo.valid()) {
@@ -130,25 +130,25 @@ void veCamera::render(veVisualiser *vs, veRenderQueue::RenderCommandList &render
 	auto bgQueue = renderList.find(veRenderQueue::RENDER_QUEUE_BACKGROUND);
 	if (bgQueue != renderList.end()) {
 		bgQueue->second.sort(PASS_SORT);
-		renderQueue(bgQueue->second, nullptr);
+		renderQueue(bgQueue->second);
 	}
 
 	auto entityQueue = renderList.find(veRenderQueue::RENDER_QUEUE_ENTITY);
 	if (entityQueue != renderList.end()) {
 		entityQueue->second.sort(ENTITY_SORT);
-		renderQueue(entityQueue->second, &vs->_lights);
+		renderQueue(entityQueue->second);
 	}
 
 	auto tpQueue = renderList.find(veRenderQueue::RENDER_QUEUE_TRANSPARENT);
 	if (tpQueue != renderList.end()) {
 		tpQueue->second.sort(TRANSPARENT_SORT);
-		renderQueue(tpQueue->second, &vs->_lights);
+		renderQueue(tpQueue->second);
 	}
 
 	auto olQueue = renderList.find(veRenderQueue::RENDER_QUEUE_OVERLAY);
 	if (olQueue != renderList.end()) {
 		olQueue->second.sort(PASS_SORT);
-		renderQueue(olQueue->second, &vs->_lights);
+		renderQueue(olQueue->second);
 	}
 
 	if (_fbo.valid()) {
@@ -172,11 +172,10 @@ void veCamera::visit(veNodeVisitor &visitor)
 	visitor.visit(*this);
 }
 
-void veCamera::renderQueue(veLoopQueue< veRenderCommand > &queue, std::vector<veLight *> *lights)
+void veCamera::renderQueue(veLoopQueue< veRenderCommand > &queue)
 {
 	while (!queue.empty()) {
 		auto &cmd = queue.front();
-		cmd.lightList = lights;
         cmd.drawFunc(cmd);
 		queue.pop_front();
 	}

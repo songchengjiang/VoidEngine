@@ -3,6 +3,7 @@
 #include "Visualiser.h"
 #include "ShaderDefinationGenerator.h"
 #include "Light.h"
+#include "SceneManager.h"
 
 veBlendFunc veBlendFunc::DISABLE = { GL_ONE, GL_ZERO };
 veBlendFunc veBlendFunc::ADDITIVE = { GL_SRC_ALPHA, GL_ONE };
@@ -179,12 +180,13 @@ void vePass::applyProgram(const veRenderCommand &command)
 
 void vePass::applyLightsUniforms(const veRenderCommand &command)
 {
-	if (!command.lightList) return;
+	const LightList &lightList = command.camera->getSceneManager()->getLightList();
+	if (!lightList.empty()) return;
 	std::unordered_map<std::string, int> currentLights;
 	for (auto &iter : veLightManager::instance()->getLightTemplateList()) {
 		currentLights[iter.first] = 0;
 	}
-	for (auto &iter : (*command.lightList)) {
+	for (auto &iter : lightList) {
 		int &count = currentLights[iter->getType()];
 		applyLightUniforms(count, iter, command.camera);
 		++count;

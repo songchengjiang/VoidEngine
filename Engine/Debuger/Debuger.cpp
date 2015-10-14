@@ -43,7 +43,7 @@ veDebuger::~veDebuger()
 
 }
 
-void veDebuger::update(veNode *node, veVisualiser *vs)
+void veDebuger::update(veNode *node, veSceneManager *sm)
 {
 	_attachedNode = node;
 	_renderableNodes.clear();

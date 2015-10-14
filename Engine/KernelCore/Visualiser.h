@@ -11,9 +11,10 @@
 #include "light.h"
 #include "RenderQueue.h"
 
+class veSceneManager;
 class VE_EXPORT veVisualiser
 {
-	friend class veDirector;
+	friend class veSceneManager;
 	friend class veCamera;
 public:
 	~veVisualiser();
@@ -23,9 +24,6 @@ public:
 	int width();
 	int height();
 
-	void setSceneNode(veNode *node);
-	veNode* getSceneNode() const { return _root.get(); }
-
 	void setCamera(veCamera *camera) { _mainCamera = camera; }
 	veCamera* getCamera() { return _mainCamera.get(); }
 	//int addCamera(veCamera *camera);
@@ -33,17 +31,9 @@ public:
 	//veCamera* removeCamera(unsigned int idx);
 	//unsigned int getCameraNum() const { return _cameras.size(); }
 
-	bool simulate(double deltaTime);
-	bool dispatchEvent(double deltaTime, const veEvent &event);
-	double getDeltaTime() const { return _deltaTime; }
-
 private:
 
 	veVisualiser(int w, int h, const std::string &title);
-
-	void update();
-	void render();
-	void resize(int width, int height);
 
 private:
 
@@ -51,14 +41,9 @@ private:
 	int _height;
 	std::string _title;
 	GLFWwindow *_hwnd;
-	VE_Ptr<veNode> _root;
-	veCameraList _cameras;
 	VE_Ptr<veCamera> _mainCamera;
-	veLightList  _lights;
 
-	double _deltaTime;
-
-	veRenderQueue _renderQueue;
+	veSceneManager *_sceneManager;
 };
 
 typedef veRegistrar<GLFWwindow*, veVisualiser> veVisualiserRegistrar;

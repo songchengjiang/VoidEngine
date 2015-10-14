@@ -19,6 +19,12 @@
     <Filter Include="Debuger">
       <UniqueIdentifier>{1709491a-9175-456d-9378-f0bc8b1f74c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="KernelCore\SceneManagement">
+      <UniqueIdentifier>{6bfb4abf-9b5c-4fca-9f46-48d5c887f39e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KernelCore\SceneManagement\Octree">
+      <UniqueIdentifier>{c95ce5b0-245f-4cb3-85bb-4d6cc70373b8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Engine\BaseCore\Math.cpp">
@@ -161,6 +167,18 @@
     </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\Text.cpp">
       <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\SceneManager.cpp">
+      <Filter>KernelCore\SceneManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\OctreeSceneManager.cpp">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\OctreeNode.cpp">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\OctreeCamera.cpp">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -308,6 +326,18 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\Text.h">
       <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\SceneManager.h">
+      <Filter>KernelCore\SceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\OctreeSceneManager.h">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\OctreeNode.h">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\OctreeCamera.h">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

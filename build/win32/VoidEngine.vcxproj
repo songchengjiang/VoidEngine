@@ -46,12 +46,16 @@
     <ClCompile Include="..\..\Engine\KernelCore\MeshRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Node.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\NodeVisitor.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\OctreeCamera.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\OctreeNode.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\OctreeSceneManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Overlay.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\OverlayRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Parameter.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\RenderableObject.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Renderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\RenderQueue.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\SceneManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Shader.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Text.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Texture.cpp" />
@@ -93,6 +97,9 @@
     <ClInclude Include="..\..\Engine\KernelCore\MeshRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Node.h" />
     <ClInclude Include="..\..\Engine\KernelCore\NodeVisitor.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\OctreeCamera.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\OctreeNode.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\OctreeSceneManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Overlay.h" />
     <ClInclude Include="..\..\Engine\KernelCore\OverlayRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Parameter.h" />
@@ -101,6 +108,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\RenderCommand.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Renderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\RenderQueue.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\SceneManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Shader.h" />
     <ClInclude Include="..\..\Engine\KernelCore\ShaderDefinationGenerator.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Text.h" />

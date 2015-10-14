@@ -1,6 +1,7 @@
 #include "EventDispatcher.h"
 #include "Visualiser.h"
 #include "Node.h"
+#include "SceneManager.h"
 
 veEventDispatcher::~veEventDispatcher()
 {
@@ -42,17 +43,16 @@ void veEventDispatcher::registerCallback()
 	});
 }
 
-bool veEventDispatcher::dispatch(double deltaTime)
+bool veEventDispatcher::dispatch(double deltaTime, veSceneManager *sceneManager)
 {
 	glfwPollEvents();
 	for (auto &event : _events) {
-		auto vs = veVisualiserRegistrar::instance()->getRegContent(event.first);
+		//auto vs = veVisualiserRegistrar::instance()->getRegContent(event.first);
 		const auto &events = event.second;
 		for (auto e : events) {
-			vs->dispatchEvent(deltaTime, e);
+			sceneManager->dispatchEvents(deltaTime, e);
 		}
 	}
-
 	_events.clear();
 	return false;
 }

@@ -26,8 +26,10 @@ class TextTest : public BaseTest
 public:
 	TextTest() {
 		veNode *root = new veNode;
+
+		std::string fontFile = "fonts/arial.ttf";
 		{
-			auto text = new veText(new veFont("fonts/Vera.ttf", 64), "Void Engine!");
+			auto text = new veText(new veFont(fontFile, 64), "Hello Void Engine");
 			text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
 			auto node = new veNode;
 			node->addRenderableObject(text);
@@ -38,7 +40,7 @@ public:
 		}
 
 		{
-			auto text = new veText(new veFont("fonts/arial.ttf"));
+			auto text = new veText(new veFont(fontFile));
 			//text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
 			auto node = new veNode;
 			node->addRenderableObject(text);

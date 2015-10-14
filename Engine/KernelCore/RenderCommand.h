@@ -7,6 +7,7 @@
 
 class veRenderer;
 class veRenderableObject;
+class veSceneManager;
 class veCamera;
 class veNode;
 class vePass;
@@ -34,7 +35,6 @@ struct veRenderCommand
 	veCamera           *camera;
 	//veRenderer         *renderer;
     std::function<void(const veRenderCommand &)> drawFunc;
-	std::vector<veLight *> *lightList;
 };
 
 #endif

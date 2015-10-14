@@ -15,7 +15,7 @@ veRenderer::~veRenderer()
 {
 }
 
-void veRenderer::visit(veNode *node, veRenderableObject *renderableObj, veVisualiser *vs)
+void veRenderer::visit(veNode *node, veRenderableObject *renderableObj, veSceneManager *sm)
 {
 	auto material = renderableObj->getMaterial();
 	if (material)

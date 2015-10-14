@@ -4,8 +4,7 @@
 #include "Prerequisites.h"
 #include "Event.h"
 
-class veVisualiser;
-class veNode;
+class veSceneManager;
 class veEventDispatcher
 {
 public:
@@ -16,7 +15,7 @@ public:
 
 	void registerCallback();
 
-	bool dispatch(double deltaTime);
+	bool dispatch(double deltaTime, veSceneManager *sceneManager);
 
 
 protected:

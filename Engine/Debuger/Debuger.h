@@ -14,7 +14,7 @@ public:
     veDebuger();
     ~veDebuger();
     
-    virtual void update(veNode *node, veVisualiser *vs) override;
+    virtual void update(veNode *node, veSceneManager *sm) override;
     virtual void render(veCamera *camera) override;
 
 	void debugDrawMeshWireframe(bool isDraw) { _isDrawMeshWireframe = isDraw; }

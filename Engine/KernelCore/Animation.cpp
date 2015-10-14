@@ -2,6 +2,7 @@
 #include "Node.h"
 #include "Visualiser.h"
 #include "NodeVisitor.h"
+#include "SceneManager.h"
 
 class FindNode : public veNodeVisitor 
 {
@@ -159,13 +160,13 @@ veAnimationContainer::~veAnimationContainer()
 
 }
 
-void veAnimationContainer::update(veNode *node, veVisualiser *vs)
+void veAnimationContainer::update(veNode *node, veSceneManager *sm)
 {
 	if (_activeAnimationChannel && _needUpdate) {
 		_activeAnimationChannel->update(node, _smimulationFrame);
 		if (_requestNoUpdate) _needUpdate = false;
 		if (_smimulationFrame <= _endFrame)
-			_smimulationFrame += vs->getDeltaTime() * _frameRate;
+			_smimulationFrame += sm->getDeltaTime() * _frameRate;
 		else if (_isLoop){
 			_smimulationFrame = _startFrame;
 		}

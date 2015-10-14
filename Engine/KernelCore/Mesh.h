@@ -62,7 +62,7 @@ public:
 	veMesh();
 	virtual ~veMesh();
 
-	virtual void update(veNode *node, veVisualiser *vs) override;
+	virtual void update(veNode *node, veSceneManager *sm) override;
 
 	void setVertexArray(veRealArray *vAry) { _vertices = vAry; _needRefresh = true; }
 	veRealArray* getVertexArray() { return _vertices.get(); }

@@ -11,6 +11,7 @@ veNode::veNode()
 	, _mask(0xffffffff)
 	, _overrideMask(false)
 	, _autoUpdateBoundingBox(true)
+	, _sceneManager(nullptr)
 {
 }
 
@@ -28,6 +29,14 @@ int veNode::addChild(veNode *child)
 	child->_parent = this;
 	_children.push_back(child);
 	return int(_children.size() - 1);
+}
+
+veNode* veNode::createChild()
+{
+	auto child = new veNode;
+	child->_parent = this;
+	_children.push_back(child);
+	return child;
 }
 
 bool veNode::removeChild(veNode *child)
@@ -155,28 +164,34 @@ bool veNode::routeEvent(const veEvent &event, veVisualiser *vs)
 		}
 	}
 
+	if (!_renderableObjects.empty()) {
+		for (auto &iter : _renderableObjects) {
+			if (iter->handle(this, vs, event)) return true;
+		}
+	}
+
 	return false;
 }
 
-void veNode::update(veVisualiser *vs)
+void veNode::update(veSceneManager *sm)
 {
 	if (!_isVisible) return;
 	if (!_components.empty()){
 		for (auto &iter : _components){
-			iter->update(this, vs);
+			iter->update(this, sm);
 		}
 	}
 
 	if (!_children.empty()){
 		for (auto &child : _children){
 			if (_overrideMask) child->setMask(_mask);
-			child->update(vs);
+			child->update(sm);
 		}
 	}
 
 	if (!_renderableObjects.empty()){
 		for (auto &iter : _renderableObjects){
-			iter->update(this, vs);
+			iter->update(this, sm);
 		}
 	}
 
