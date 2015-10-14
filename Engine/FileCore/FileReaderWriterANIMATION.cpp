@@ -12,7 +12,7 @@ public:
 	{};
 	~veFileReaderWriterANIMATION(){};
 
-	virtual void* readFile(const std::string &filePath){
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
 		std::string buffer = veFile::readFileToBuffer(filePath);
 		_doucument.Parse(buffer.c_str());
         if (_doucument.HasParseError()) return  nullptr;
@@ -20,7 +20,7 @@ public:
 		return _animationContainer;
 	}
 
-	virtual bool writeFile(void *data, const std::string &filePath){
+	virtual bool writeFile(veSceneManager *sm, void *data, const std::string &filePath) override{
 		return true;
 	}
 

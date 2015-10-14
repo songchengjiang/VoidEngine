@@ -1,7 +1,6 @@
 #include "OctreeSceneManager.h"
 #include "OctreeNode.h"
 #include "OctreeCamera.h"
-#include "OctreeLight.h"
 
 veOctreeSceneManager::veOctreeSceneManager()
 {

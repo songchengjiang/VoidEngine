@@ -5,6 +5,7 @@
 #include "KernelCore/Texture.h"
 #include "KernelCore/TextureManager.h"
 #include "KernelCore/FrameBufferObject.h"
+#include "KernelCore/SceneManager.h"
 #include <unordered_map>
 
 using namespace rapidjson;
@@ -16,7 +17,8 @@ public:
 	{};
 	~veFileReaderWriterVEMTL(){};
 
-	virtual void* readFile(const std::string &filePath){
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
+		_sceneManager = sm;
 		_fileFolder = filePath.substr(0, filePath.find_last_of("/\\") + 1);
 		std::string buffer = veFile::readFileToBuffer(filePath);
 		_doucument.Parse(buffer.c_str());
@@ -25,7 +27,7 @@ public:
 		return _materials;
 	}
 
-	virtual bool writeFile(void *data, const std::string &filePath){
+	virtual bool writeFile(veSceneManager *sm, void *data, const std::string &filePath) override{
 		return true;
 	}
 
@@ -174,7 +176,7 @@ private:
 				texType = getTextureType(texVal[TYPE_KEY.c_str()].GetString());
 			}
 			veTexture *texture = veTextureManager::instance()->getOrCreateTexture(source, texType);
-			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_fileFolder + source));
+			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source));
 			if (!texture) return;
 			if (image)
 				texture->setImage(image);
@@ -300,6 +302,7 @@ private:
 	Document _doucument;
 	veMaterialArray *_materials;
 	std::string _fileFolder;
+	veSceneManager *_sceneManager;
 };
 
 VE_READERWRITER_REG("vemtl", veFileReaderWriterVEMTL);

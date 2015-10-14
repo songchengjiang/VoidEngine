@@ -3,6 +3,7 @@
 #include "Constants.h"
 #include "KernelCore/Mesh.h"
 #include "KernelCore/Node.h"
+#include "KernelCore/SceneManager.h"
 #include "BaseCore/Array.h"
 #include <unordered_map>
 
@@ -15,7 +16,8 @@ public:
 	{};
 	virtual ~veFileReaderWriterVEM(){};
 
-	virtual void* readFile(const std::string &filePath){
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
+		_sceneManager = sm;
 		_fileFolder = filePath.substr(0, filePath.find_last_of("/\\") + 1);
 		std::string buffer = veFile::readFileToBuffer(filePath);
 		_doucument.Parse(buffer.c_str());
@@ -26,7 +28,7 @@ public:
 		return _root;
 	}
 
-	virtual bool writeFile(void *data, const std::string &filePath){
+	virtual bool writeFile(veSceneManager *sm, void *data, const std::string &filePath) override{
 		return true;
 	}
 
@@ -40,7 +42,7 @@ private:
 
 	void loadMaterials(){
 		std::string matFile = _doucument[MATERIALS_KEY.c_str()].GetString();
-		_materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_fileFolder + matFile));
+		_materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, _fileFolder + matFile));
 	}
 
 	void readMeshs(){
@@ -171,7 +173,7 @@ private:
 	}
 
 	void readNode(const Value &nodeVal, veNode *parent){
-		veNode *node = new veNode;
+		veNode *node = _sceneManager->createNode();
 		if (parent != nullptr){
 			parent->addChild(node);
 		}
@@ -219,6 +221,7 @@ private:
 	std::unordered_map<std::string, std::vector<veBone *> > _boneList;
 	VE_Ptr<veMaterialArray> _materials;
 	std::string _fileFolder;
+	veSceneManager *_sceneManager;
 };
 
 VE_READERWRITER_REG("vem", veFileReaderWriterVEM);

@@ -10,8 +10,8 @@ public:
 	veFileReaderWriter();
 	virtual ~veFileReaderWriter();
 
-	virtual void* readFile(const std::string &filePath) = 0;
-	virtual bool writeFile(void *data, const std::string &filePath) = 0;
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath) = 0;
+	virtual bool writeFile(veSceneManager *sm, void *data, const std::string &filePath) = 0;
 };
 
 typedef veRegistrar<std::string, veFileReaderWriter> FileReaderWriterRegistrar;

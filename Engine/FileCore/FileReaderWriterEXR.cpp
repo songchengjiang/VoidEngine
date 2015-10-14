@@ -25,7 +25,7 @@ public:
 	{};
 	virtual ~veFileReaderWriterEXR(){};
 
-	virtual void* readFile(const std::string &filePath){
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
 		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
 		Imf::Array2D<Imf::Rgba> pixels;
 		Imf::RgbaInputFile file(fullPath.c_str());
@@ -42,7 +42,7 @@ public:
 		return _image;
 	}
 
-	virtual bool writeFile(void *data, const std::string &filePath){
+	virtual bool writeFile(veSceneManager *sm, void *data, const std::string &filePath) override{
 		return true;
 	}
 

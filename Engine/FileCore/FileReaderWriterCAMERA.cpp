@@ -6,6 +6,7 @@
 #include "KernelCore/TextureManager.h"
 #include "KernelCore/FrameBufferObject.h"
 #include "KernelCore/Camera.h"
+#include "KernelCore/SceneManager.h"
 #include <unordered_map>
 
 using namespace rapidjson;
@@ -17,7 +18,8 @@ public:
 	{};
 	~veFileReaderWriterCAMERA(){};
 
-	virtual void* readFile(const std::string &filePath){
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
+		_sceneManager = sm;
 		std::string buffer = veFile::readFileToBuffer(filePath);
 		_doucument.Parse(buffer.c_str());
         if (_doucument.HasParseError()) return  nullptr;
@@ -25,14 +27,14 @@ public:
 		return _camera;
 	}
 
-	virtual bool writeFile(void *data, const std::string &filePath){
+	virtual bool writeFile(veSceneManager *sm, void *data, const std::string &filePath) override{
 		return true;
 	}
 
 private:
 
 	void readCamera() {
-		_camera = new veCamera;
+		_camera = _sceneManager->createCamera();
 		if (_doucument.HasMember(NAME_KEY.c_str())) {
 			_camera->setName(_doucument[NAME_KEY.c_str()].GetString());
 		}
@@ -250,6 +252,7 @@ private:
 
 	Document _doucument;
 	veCamera *_camera;
+	veSceneManager *_sceneManager;
 };
 
 VE_READERWRITER_REG("vecamera", veFileReaderWriterCAMERA);

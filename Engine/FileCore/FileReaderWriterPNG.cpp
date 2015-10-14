@@ -12,7 +12,7 @@ public:
 	{};
 	virtual ~veFileReaderWriterPNG(){};
 
-	virtual void* readFile(const std::string &filePath){
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
 		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
 		_name = fullPath.substr(fullPath.find_last_of("/\\") + 1);
 		FILE *fp = fopen(fullPath.c_str(), "rb");
@@ -38,7 +38,7 @@ public:
 		return _image;
 	}
 
-	virtual bool writeFile(void *data, const std::string &filePath){
+	virtual bool writeFile(veSceneManager *sm, void *data, const std::string &filePath) override{
 		return true;
 	}
 

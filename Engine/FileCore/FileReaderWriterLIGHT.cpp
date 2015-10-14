@@ -2,6 +2,7 @@
 #include <rapidjson/include/document.h>
 #include "Constants.h"
 #include "KernelCore/Light.h"
+#include "KernelCore/SceneManager.h"
 #include <unordered_map>
 
 using namespace rapidjson;
@@ -13,7 +14,8 @@ public:
 	{};
 	~veFileReaderWriterLIGHT(){};
 
-	virtual void* readFile(const std::string &filePath){
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
+		_sceneManager = sm;
 		_fileFolder = filePath.substr(0, filePath.find_last_of("/\\") + 1);
 		std::string buffer = veFile::readFileToBuffer(filePath);
 		_doucument.Parse(buffer.c_str());
@@ -22,7 +24,7 @@ public:
 		return _light;
 	}
 
-	virtual bool writeFile(void *data, const std::string &filePath){
+	virtual bool writeFile(veSceneManager *sm, void *data, const std::string &filePath) override{
 		return true;
 	}
 
@@ -31,7 +33,7 @@ private:
 	void readLight() {
 		std::string name = _doucument[NAME_KEY.c_str()].GetString();
 		std::string type = _doucument[TYPE_KEY.c_str()].GetString();
-		_light = veLightManager::instance()->instanceOneLight(type);
+		_light = _sceneManager->createLight(type);
 		if (!_light) return;
 		_light->setName(name);
 		const Value &paramsVals = _doucument[PARAMETERS_KEY.c_str()];
@@ -75,6 +77,7 @@ private:
 	std::string _fileFolder;
 	std::string _className;
 	veLight *_light;
+	veSceneManager *_sceneManager;
 };
 
 VE_READERWRITER_REG("velight", veFileReaderWriterLIGHT);

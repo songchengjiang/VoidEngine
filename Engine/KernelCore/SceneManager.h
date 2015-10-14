@@ -21,11 +21,8 @@ public:
 	veVisualiser* createVisualiser(int w, int h, const std::string &title);
 	veVisualiser* getVisualiser() { return _visualiser.get(); }
 	virtual veNode* createNode() = 0;
-	virtual veNode* createNode(const std::string &filePath) = 0;
 	virtual veCamera* createCamera(const veViewport &vp = {0, 0, 0, 0}) = 0;
-	virtual veCamera* createCamera(const std::string &filePath) = 0;
 	virtual veLight* createLight(const std::string &className) = 0;
-	//virtual veLight* createLight(const std::string &filePath) = 0;
 
 	const NodeList& getNodeList() const { return _nodeList; }
 	const CameraList& getCameraList() const { return _cameraList; }

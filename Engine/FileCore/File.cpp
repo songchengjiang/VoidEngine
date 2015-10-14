@@ -17,19 +17,19 @@ veFile* veFile::instance()
 	return &fileReader;
 }
 
-void* veFile::readFile(const std::string &filePath)
+void* veFile::readFile(veSceneManager *sm, const std::string &filePath)
 {
 	std::string ext = getFileExt(filePath);
 	auto fileReader = FileReaderWriterRegistrar::instance()->getRegContent(ext);
 	if (!fileReader) return nullptr;
-	return fileReader->readFile(filePath);
+	return fileReader->readFile(sm, filePath);
 }
 
-bool veFile::writeFile(void *data, const std::string &filePath)
+bool veFile::writeFile(veSceneManager *sm, void *data, const std::string &filePath)
 {
 	std::string ext = getFileExt(filePath);
 	auto fileReader = FileReaderWriterRegistrar::instance()->getRegContent(ext);
-	return fileReader->writeFile(data, filePath);
+	return fileReader->writeFile(sm, data, filePath);
 }
 
 std::string veFile::readFileToBuffer(const std::string &filePath)
