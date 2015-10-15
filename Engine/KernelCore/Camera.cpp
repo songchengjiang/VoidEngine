@@ -142,7 +142,8 @@ const vePlane& veCamera::getFrustumPlane(FrustumPlane fp)
 void veCamera::setMatrix(const veMat4 &mat)
 {
 	_matrix = mat;
-	_viewMat = getWorldToNodeMatrix();
+	_viewMat = _isInScene == true? getNodeToWorldMatrix(): _matrix;
+	_viewMat.inverse();
 	_needRefreshFrustumPlane = true;
 }
 
@@ -199,6 +200,11 @@ bool veCamera::routeEvent(const veEvent &event, veSceneManager *sm)
 void veCamera::visit(veNodeVisitor &visitor)
 {
 	visitor.visit(*this);
+}
+
+bool veCamera::isOutOfFrustum(veNode *node)
+{
+	return false;
 }
 
 void veCamera::renderQueue(veLoopQueue< veRenderCommand > &queue)

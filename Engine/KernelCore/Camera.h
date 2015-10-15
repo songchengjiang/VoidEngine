@@ -76,12 +76,13 @@ public:
 
 	bool isRenderStateChanged() { return _renderStateChanged; }
 
-	virtual void setMatrix(const veMat4 &mat) override;
-
 	void render(veRenderQueue::RenderCommandList &renderList);
 
+	virtual void setMatrix(const veMat4 &mat) override;
 	virtual bool routeEvent(const veEvent &event, veSceneManager *sm) override;
 	virtual void visit(veNodeVisitor &visitor) override;
+	virtual bool isOutOfFrustum(veNode *node);
+
 
 protected:
 

@@ -8,6 +8,7 @@
 
 veSceneManager::veSceneManager()
 	: _deltaTime(0.0)
+	, _renderQueue(nullptr)
 {
 	_managerList[veLightManager::TYPE()] = new veLightManager;
 }
@@ -17,6 +18,7 @@ veSceneManager::~veSceneManager()
 	for (auto &iter : _managerList) {
 		VE_SAFE_DELETE(iter.second);
 	}
+	VE_SAFE_DELETE(_renderQueue);
 }
 
 veVisualiser* veSceneManager::createVisualiser(int w, int h, const std::string &title)
@@ -93,7 +95,6 @@ bool veSceneManager::simulation()
 	glfwMakeContextCurrent(_visualiser->_hwnd);
 
 	update();
-	cull();
 	render();
 
 	return true;

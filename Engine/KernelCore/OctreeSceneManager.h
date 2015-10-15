@@ -5,6 +5,7 @@
 #include "BoudingBox.h"
 
 class veOctree;
+class veOctreeNode;
 class VE_EXPORT veOctreeSceneManager : public veSceneManager
 {
 public:
@@ -17,19 +18,24 @@ public:
 	virtual veNode* createNode() override;
 	virtual veCamera* createCamera(const veViewport &vp = { 0, 0, 0, 0 }) override;
 
+	virtual void updateRenderableNode(veNode *node);
+
 protected:
 
+	typedef std::vector<veOctreeNode *> OctreeNodeList;
+
 	virtual void update() override;
-	virtual void cull() override;
 	virtual void render() override;
 
-	void initOctrees();
+	void init();
+	void updateOctree();
 
 protected:
 
 	veBoundingBox _boundingBox;
 	unsigned int _octreeMaxDeep;
 	veOctree *_octree;
+	OctreeNodeList _octreeNodeList;
 };
 
 #endif

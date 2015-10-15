@@ -1,17 +1,20 @@
 #include "Node.h"
 #include "Visualiser.h"
 #include "NodeVisitor.h"
+#include "SceneManager.h"
 
 veNode::veNode()
 	: USE_VE_PTR_INIT
 	, _parent(nullptr)
 	, _matrix(veMat4::IDENTITY)
+	, _worldMatrix(veMat4::IDENTITY)
 	, _isVisible(true)
 	, _refresh(true)
 	, _mask(0xffffffff)
 	, _overrideMask(false)
 	, _autoUpdateBoundingBox(true)
 	, _sceneManager(nullptr)
+	, _isInScene(false)
 {
 }
 
@@ -36,6 +39,7 @@ bool veNode::removeChild(veNode *child)
 	auto iter = std::find(_children.begin(), _children.end(), child);
 	if (iter == _children.end()) return false;
 	(*iter)->_parent = nullptr;
+	(*iter)->_isInScene = false;
 	_children.erase(iter);
 	return true;
 }
@@ -45,6 +49,7 @@ veNode* veNode::removeChild(unsigned int cIndex)
 	veAssert(cIndex < _children.size());
 	veNode* child = _children[cIndex].get();
 	child->_parent = nullptr;
+	child->_isInScene = false;
 	_children.erase(_children.begin() + cIndex);
 	return child;
 }
@@ -116,15 +121,14 @@ veRenderableObject* veNode::getRenderableObject(size_t objIndex)
 	return _renderableObjects[objIndex].get();
 }
 
+bool veNode::isInScene()
+{
+	return _isInScene;
+}
+
 veMat4 veNode::getNodeToWorldMatrix()
 {
-	veMat4 worldMat = _matrix;
-	veNode *parent = _parent;
-	while (parent) {
-		worldMat = parent->getMatrix() * worldMat;
-		parent = parent->_parent;
-	}
-	return worldMat;
+	return _worldMatrix;
 }
 
 veMat4 veNode::getWorldToNodeMatrix()
@@ -141,6 +145,7 @@ void veNode::refresh()
 
 bool veNode::routeEvent(const veEvent &event, veSceneManager *sm)
 {
+	_isInScene = true;
 	if (!_isVisible) return false;
 	if (!_components.empty()){
 		for (auto &com : _components){
@@ -165,9 +170,10 @@ bool veNode::routeEvent(const veEvent &event, veSceneManager *sm)
 	return false;
 }
 
-void veNode::update(veSceneManager *sm)
+void veNode::update(veSceneManager *sm, const veMat4 &transform)
 {
 	if (!_isVisible) return;
+	_worldMatrix = transform * _matrix;
 	if (!_components.empty()){
 		for (auto &iter : _components){
 			iter->update(this, sm);
@@ -177,11 +183,12 @@ void veNode::update(veSceneManager *sm)
 	if (!_children.empty()){
 		for (auto &child : _children){
 			if (_overrideMask) child->setMask(_mask);
-			child->update(sm);
+			child->update(sm, _worldMatrix);
 		}
 	}
 
 	if (!_renderableObjects.empty()){
+		_sceneManager->updateRenderableNode(this);
 		for (auto &iter : _renderableObjects){
 			iter->update(this, sm);
 		}
@@ -192,9 +199,8 @@ void veNode::update(veSceneManager *sm)
 
 void veNode::render(veCamera *camera)
 {
-	if (!_isVisible) return;
+	if (!_isVisible || camera->isOutOfFrustum(this)) return;
 	if (_mask & camera->getMask()) {
-
 		if (!_children.empty()) {
 			for (auto &child : _children) {
 				child->render(camera);
@@ -236,14 +242,14 @@ void veNode::updateBoundingBox()
 		if (!_children.empty()) {
 			for (auto &child : _children) {
 				if (!child->getBoundingBox().isNull())
-					_boundingBox.expandBy(child->getBoundingBox() * _matrix);
+					_boundingBox.expandBy(child->getBoundingBox() * _worldMatrix);
 			}
 		}
 
 		if (!_renderableObjects.empty()) {
 			for (auto &iter : _renderableObjects) {
 				if (!iter->getBoundingBox().isNull())
-					_boundingBox.expandBy(iter->getBoundingBox() * _matrix);
+					_boundingBox.expandBy(iter->getBoundingBox() * _worldMatrix);
 			}
 		}
 	}

@@ -35,6 +35,8 @@ public:
 	virtual veText* createText(veFont *font, const std::string &content = "");
 	virtual veAnimation* createAnimation();
 
+	virtual void updateRenderableNode(veNode *node) = 0;
+
 	const NodeList& getNodeList() const { return _nodeList; }
 	const CameraList& getCameraList() const { return _cameraList; }
 	const LightList& getLightList() const { return _lightList; }
@@ -53,12 +55,11 @@ public:
 protected:
 
 	virtual void update() = 0;
-	virtual void cull() = 0;
 	virtual void render() = 0;
 
 protected:
 
-	veRenderQueue _renderQueue;
+	veRenderQueue *_renderQueue;
 	VE_Ptr<veVisualiser> _visualiser;
 	VE_Ptr<veNode> _root;
 	NodeList _nodeList;

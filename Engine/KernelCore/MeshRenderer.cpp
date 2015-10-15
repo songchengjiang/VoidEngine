@@ -72,6 +72,7 @@ void veMeshRenderer::render(veNode *node, veRenderableObject *renderableObj, veC
 				veRenderCommand rc;
 				rc.pass = pass;
 				rc.worldMatrix = node->getNodeToWorldMatrix();
+				rc.attachedNode = node;
 				rc.renderableObj = renderableObj;
 				rc.camera = camera;
 				rc.drawFunc = VE_CALLBACK_1(veMeshRenderer::draw, this);

@@ -21,7 +21,7 @@ void veLight::visit(veNodeVisitor &visitor)
 
 void veLight::render(veCamera *camera)
 {
-	if (!_isVisible) return;
+	if (!_isVisible || camera->isOutOfFrustum(this)) return;
 	if (_mask & camera->getMask()) {
 		_camera = camera;
 		if (!_children.empty()) {

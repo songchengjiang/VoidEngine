@@ -55,6 +55,8 @@ public:
 	void setSceneManager(veSceneManager *sm) { _sceneManager = sm; }
 	veSceneManager* getSceneManager() { return _sceneManager; }
 
+	bool isInScene();
+
 	veMat4 getNodeToWorldMatrix();
 	veMat4 getWorldToNodeMatrix();
 
@@ -64,7 +66,7 @@ public:
 	void refresh();
 
 	virtual bool routeEvent(const veEvent &event, veSceneManager *sm);
-	virtual void update(veSceneManager *sm);
+	virtual void update(veSceneManager *sm, const veMat4 &transform);
 	virtual void render(veCamera *camera);
 
 	virtual void accept(veNodeVisitor &visitor);
@@ -84,11 +86,13 @@ protected:
 
 	veBoundingBox     _boundingBox;
 	veMat4            _matrix;
+	veMat4            _worldMatrix;
 	bool              _isVisible;
 	bool              _refresh;
 	unsigned int      _mask;
 	bool              _overrideMask;
 	bool              _autoUpdateBoundingBox;
+	bool              _isInScene;
 
 	veSceneManager   *_sceneManager;
 };

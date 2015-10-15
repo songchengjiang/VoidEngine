@@ -22,12 +22,12 @@ public:
 	};
 
 	veRenderQueue();
-	~veRenderQueue();
+	virtual ~veRenderQueue();
 
-	void pushCommand(unsigned int renderQueueType, const veRenderCommand &cmd);
-	void execute(veVisualiser *vs);
+	virtual void pushCommand(unsigned int renderQueueType, const veRenderCommand &cmd);
+	virtual void execute(veVisualiser *vs);
 
-private:
+protected:
 
 	std::unordered_map<veCamera*, RenderCommandList> _renderQueues;
 };

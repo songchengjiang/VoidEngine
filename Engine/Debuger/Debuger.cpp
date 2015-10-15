@@ -49,7 +49,7 @@ void veDebuger::setDebugNode(veNode *node)
 	_attachedNode = node;
 }
 
-void veDebuger::update(veSceneManager *sm)
+void veDebuger::update(veSceneManager *sm, const veMat4 &transform)
 {
 	_renderableNodes.clear();
 	_vertices.clear();
@@ -75,6 +75,8 @@ void veDebuger::update(veSceneManager *sm)
 			}
 		}
 	}
+
+	veNode::update(sm, transform);
 }
 
 void veDebuger::render(veCamera *camera)

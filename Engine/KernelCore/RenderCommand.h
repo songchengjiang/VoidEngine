@@ -27,10 +27,10 @@ struct veRenderCommand
 	};
 
 	int                 priority;
+	veMat4              worldMatrix;
 	veReal              depthInCamera;
 	vePass             *pass;
-	//veNode             *attachedNode;
-	veMat4              worldMatrix;
+	veNode             *attachedNode;
 	veRenderableObject *renderableObj;
 	veCamera           *camera;
 	veSceneManager     *sceneManager;

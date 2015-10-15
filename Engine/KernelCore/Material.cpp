@@ -187,7 +187,7 @@ void vePass::applyLightsUniforms(const veRenderCommand &command)
 		currentLights[iter.first] = 0;
 	}
 	for (auto &iter : lightList) {
-		if (iter->getParent()) {
+		if (iter->isInScene()) {
 			int &count = currentLights[iter->getType()];
 			applyLightUniforms(count, iter, command.camera);
 			++count;

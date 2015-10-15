@@ -51,6 +51,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\Octree.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\OctreeCamera.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\OctreeNode.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\OctreeRenderQueue.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\OctreeSceneManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Overlay.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\OverlayRenderer.cpp" />
@@ -106,6 +107,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\Octree.h" />
     <ClInclude Include="..\..\Engine\KernelCore\OctreeCamera.h" />
     <ClInclude Include="..\..\Engine\KernelCore\OctreeNode.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\OctreeRenderQueue.h" />
     <ClInclude Include="..\..\Engine\KernelCore\OctreeSceneManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Overlay.h" />
     <ClInclude Include="..\..\Engine\KernelCore\OverlayRenderer.h" />
