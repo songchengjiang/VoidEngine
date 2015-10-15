@@ -7,7 +7,6 @@
 #include "Component.h"
 #include "RenderableObject.h"
 
-class veVisualiser;
 class veSceneManager;
 class veNodeVisitor;
 class VE_EXPORT veNode
@@ -27,7 +26,6 @@ public:
 	bool isVisible() const { return _isVisible; };
 
 	int addChild(veNode *child);
-	veNode* createChild();
 	bool removeChild(veNode *child);
 	veNode* removeChild(unsigned int cIndex);
 	veNode* getChild(unsigned int cIndex);
@@ -65,7 +63,7 @@ public:
 
 	void refresh();
 
-	virtual bool routeEvent(const veEvent &event, veVisualiser *vs);
+	virtual bool routeEvent(const veEvent &event, veSceneManager *sm);
 	virtual void update(veSceneManager *sm);
 	virtual void render(veCamera *camera);
 

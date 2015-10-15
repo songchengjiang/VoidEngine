@@ -4,7 +4,7 @@
 
 veOctreeSceneManager::veOctreeSceneManager()
 {
-
+	_root = new veOctreeNode;
 }
 
 veOctreeSceneManager::~veOctreeSceneManager()
@@ -16,6 +16,7 @@ veNode* veOctreeSceneManager::createNode()
 {
 	auto node = new veOctreeNode;
 	node->setSceneManager(this);
+	_nodeList.push_back(node);
 	return node;
 }
 
@@ -23,14 +24,8 @@ veCamera* veOctreeSceneManager::createCamera(const veViewport &vp)
 {
 	auto camera = new veOctreeCamera(vp);
 	camera->setSceneManager(this);
+	_cameraList.push_back(camera);
 	return camera;
-}
-
-veLight* veOctreeSceneManager::createLight(const std::string &className)
-{
-	auto light = veLightManager::instance()->instanceOneLight(className);
-	light->setSceneManager(this);
-	return light;
 }
 
 void veOctreeSceneManager::update()
@@ -53,10 +48,12 @@ void veOctreeSceneManager::render()
 	veRenderQueue::CURRENT_RENDER_QUEUE = &_renderQueue;
 	veCamera *mainCamera = nullptr;
 	for (auto &iter : _cameraList) {
-		if (iter == _visualiser->getCamera()) 
-			mainCamera = iter;
-		if (iter->getFrameBufferObject())
-			_root->render(iter);
+		if (iter->getParent()) {
+			if (iter == _visualiser->getCamera())
+				mainCamera = iter;
+			if (iter->getFrameBufferObject())
+				_root->render(iter);
+		}
 	}
 	if (mainCamera)
 		_root->render(mainCamera);

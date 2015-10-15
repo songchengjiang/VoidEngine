@@ -26,11 +26,11 @@ veText::~veText()
 
 }
 
-bool veText::handle(veNode *node, veVisualiser *vs, const veEvent &event)
+bool veText::handle(veNode *node, veSceneManager *sm, const veEvent &event)
 {
 	if (event.getEventType() == veEvent::VE_WIN_RESIZE) {
 		if (_type == HUD)
-			_scaleMatUniform->setValue(veMat4::scale(veVec3((float)_width / (float)vs->width(), (float)_height / (float)vs->height(), 0.0f)));
+			_scaleMatUniform->setValue(veMat4::scale(veVec3((float)_width / (float)sm->getVisualiser()->width(), (float)_height / (float)sm->getVisualiser()->height(), 0.0f)));
 	}
 
 	return false;

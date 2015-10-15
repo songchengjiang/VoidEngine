@@ -180,6 +180,12 @@
     <ClCompile Include="..\..\Engine\KernelCore\OctreeCamera.cpp">
       <Filter>KernelCore\SceneManagement\Octree</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\LightManager.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\BaseManager.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -338,6 +344,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\OctreeCamera.h">
       <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\LightManager.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\BaseManager.h">
+      <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

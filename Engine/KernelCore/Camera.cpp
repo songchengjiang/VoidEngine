@@ -159,12 +159,12 @@ void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 	_renderStateChanged = false;
 }
 
-bool veCamera::routeEvent(const veEvent &event, veVisualiser *vs)
+bool veCamera::routeEvent(const veEvent &event, veSceneManager *sm)
 {
 	if (event.getEventType() == veEvent::VE_WIN_RESIZE) {
 		resize(event.getWindowWidth(), event.getWindowHeight());
 	}
-	return veNode::routeEvent(event, vs);
+	return veNode::routeEvent(event, sm);
 }
 
 void veCamera::visit(veNodeVisitor &visitor)
@@ -176,6 +176,7 @@ void veCamera::renderQueue(veLoopQueue< veRenderCommand > &queue)
 {
 	while (!queue.empty()) {
 		auto &cmd = queue.front();
+		cmd.sceneManager = _sceneManager;
         cmd.drawFunc(cmd);
 		queue.pop_front();
 	}

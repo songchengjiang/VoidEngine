@@ -6,12 +6,12 @@ class LightTest : public BaseTest
 {
 public:
 	LightTest() {
-		veLightManager::instance()->loadLightTemplates("lights/point.velightemplates");
+		_sceneManager->loadLightConfiguration("lights/point.velightemplates");
 
 		veRenderableObject *obj = nullptr;
-		veNode *root = new veNode;
+		veNode *root = _sceneManager->createNode();
 		{
-			veNode *node = static_cast<veNode *>(veFile::instance()->readFile("models/teapot.vem"));
+			veNode *node = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem"));
 			obj = node->getChild(0)->getChild(0)->getRenderableObject(0);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
@@ -22,7 +22,7 @@ public:
 		}
 
 		{
-			veNode *node = static_cast<veNode *>(veFile::instance()->readFile("models/plane.vem"));
+			veNode *node = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/plane.vem"));
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
@@ -31,7 +31,7 @@ public:
 		}
 
 		{
-			veNode *node = new veNode;
+			veNode *node = _sceneManager->createNode();
 			node->addRenderableObject(obj);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
@@ -42,7 +42,7 @@ public:
 		}
 
 		{
-			veLight *directional0 = static_cast<veLight *>(veFile::instance()->readFile("lights/directional0.velight"));
+			veLight *directional0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight"));
 			veTransformer *lightTranser = new veTransformer;
 			directional0->addComponent(lightTranser);
 			directional0->addComponent(new LightUpdater);
@@ -50,14 +50,14 @@ public:
 			auto param = directional0->getParameter("intensity");
 			param->set(veMath::randomUnitization());
 
-			veNode *lightModel = static_cast<veNode *>(veFile::instance()->readFile("models/sphere.vem"));
+			veNode *lightModel = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem"));
 			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
 			directional0->addChild(lightModel);
 			root->addChild(directional0);
 		}
 
 		{
-			veLight *point0 = static_cast<veLight *>(veFile::instance()->readFile("lights/point0.velight"));
+			veLight *point0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight"));
 			veTransformer *lightTranser = new veTransformer;
 			point0->addComponent(lightTranser);
 			point0->addComponent(new LightUpdater);
@@ -65,14 +65,14 @@ public:
 			auto param = point0->getParameter("intensity");
 			param->set(veMath::randomUnitization());
 
-			veNode *lightModel = static_cast<veNode *>(veFile::instance()->readFile("models/sphere.vem"));
+			veNode *lightModel = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem"));
 			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
 			point0->addChild(lightModel);
 			root->addChild(point0);
 		}
 
 		{
-			veLight *spot0 = static_cast<veLight *>(veFile::instance()->readFile("lights/spot0.velight"));
+			veLight *spot0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/spot0.velight"));
 			veTransformer *lightTranser = new veTransformer;
 			spot0->addComponent(lightTranser);
 			spot0->addComponent(new LightUpdater);
@@ -80,13 +80,13 @@ public:
 			auto param = spot0->getParameter("intensity");
 			param->set(veMath::randomUnitization());
 
-			veNode *lightModel = static_cast<veNode *>(veFile::instance()->readFile("models/sphere.vem"));
+			veNode *lightModel = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem"));
 			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
 			spot0->addChild(lightModel);
 			root->addChild(spot0);
 		}
 
-		_visualiser->setSceneNode(root);
+		_sceneManager->getRootNode()->addChild(root);
 	};
 	~LightTest() {};
 

@@ -31,14 +31,6 @@ int veNode::addChild(veNode *child)
 	return int(_children.size() - 1);
 }
 
-veNode* veNode::createChild()
-{
-	auto child = new veNode;
-	child->_parent = this;
-	_children.push_back(child);
-	return child;
-}
-
 bool veNode::removeChild(veNode *child)
 {
 	auto iter = std::find(_children.begin(), _children.end(), child);
@@ -147,26 +139,26 @@ void veNode::refresh()
 	_refresh = true;
 }
 
-bool veNode::routeEvent(const veEvent &event, veVisualiser *vs)
+bool veNode::routeEvent(const veEvent &event, veSceneManager *sm)
 {
 	if (!_isVisible) return false;
 	if (!_components.empty()){
 		for (auto &com : _components){
 			if (event.getEventType() & com->getEventFilter()){
-				if (com->handle(this, vs, event)) return true;
+				if (com->handle(this, sm, event)) return true;
 			}
 		}
 	}
 
 	if (!_children.empty()){
 		for (auto &child : _children){
-			if (child->routeEvent(event, vs)) return true;
+			if (child->routeEvent(event, sm)) return true;
 		}
 	}
 
 	if (!_renderableObjects.empty()) {
 		for (auto &iter : _renderableObjects) {
-			if (iter->handle(this, vs, event)) return true;
+			if (iter->handle(this, sm, event)) return true;
 		}
 	}
 

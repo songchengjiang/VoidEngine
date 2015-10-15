@@ -2,6 +2,7 @@
 #include <rapidjson/include/document.h>
 #include "Constants.h"
 #include "KernelCore/Light.h"
+#include "KernelCore/LightManager.h"
 #include "KernelCore/SceneManager.h"
 #include <unordered_map>
 
@@ -38,7 +39,6 @@ private:
 		_light->setName(name);
 		const Value &paramsVals = _doucument[PARAMETERS_KEY.c_str()];
 		if (!paramsVals.Empty()) {
-			veLightManager::Parameters params;
 			for (unsigned int i = 0; i < paramsVals.Size(); ++i) {
 				const Value & pm = paramsVals[i];
 				const Value & values = pm[VALUES_KEY.c_str()];

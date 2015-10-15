@@ -11,7 +11,6 @@ public:
 
 	virtual veNode* createNode() override;
 	virtual veCamera* createCamera(const veViewport &vp = { 0, 0, 0, 0 }) override;
-	virtual veLight* createLight(const std::string &className) override;
 
 protected:
 

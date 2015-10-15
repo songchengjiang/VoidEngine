@@ -2,6 +2,7 @@
 #include <rapidjson/include/document.h>
 #include "Constants.h"
 #include "KernelCore/Animation.h"
+#include "KernelCore/SceneManager.h"
 #include <unordered_map>
 
 using namespace rapidjson;
@@ -13,6 +14,7 @@ public:
 	~veFileReaderWriterANIMATION(){};
 
 	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
+		_sceneManager = sm;
 		std::string buffer = veFile::readFileToBuffer(filePath);
 		_doucument.Parse(buffer.c_str());
         if (_doucument.HasParseError()) return  nullptr;
@@ -37,7 +39,7 @@ private:
 	}
 
 	void readAnimation(const Value &animVal) {
-		veAnimation *animation = new veAnimation;
+		veAnimation *animation = _sceneManager->createAnimation();
 
 		if (animVal.HasMember(NAME_KEY.c_str())) {
 			animation->setName(animVal[NAME_KEY.c_str()].GetString());
@@ -96,6 +98,7 @@ private:
 
 	Document _doucument;
 	veAnimationContainer *_animationContainer;
+	veSceneManager *_sceneManager;
 };
 
 VE_READERWRITER_REG("veanim", veFileReaderWriterANIMATION);

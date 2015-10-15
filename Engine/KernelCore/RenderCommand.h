@@ -33,6 +33,7 @@ struct veRenderCommand
 	veMat4              worldMatrix;
 	veRenderableObject *renderableObj;
 	veCamera           *camera;
+	veSceneManager     *sceneManager;
 	//veRenderer         *renderer;
     std::function<void(const veRenderCommand &)> drawFunc;
 };

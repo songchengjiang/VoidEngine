@@ -17,11 +17,6 @@ veDirector::veDirector()
 	veEventDispatcher::instance()->registerCallback();
 }
 
-void veDirector::allocSceneManager()
-{
-	_sceneManager = new veOctreeSceneManager;
-}
-
 veDirector::~veDirector()
 {
 	glfwTerminate();
@@ -48,9 +43,9 @@ bool veDirector::run()
 	while (_isRunning)
 	{
 		double currentFrameTime = glfwGetTime();
-		double deltaTime = currentFrameTime - preFrameTime;
-		veEventDispatcher::instance()->dispatch(deltaTime, _sceneManager);
-		if (!_sceneManager->simulation(deltaTime)) _isRunning = false;
+		_sceneManager->setDeltaTime(currentFrameTime - preFrameTime);
+		veEventDispatcher::instance()->dispatch(_sceneManager);
+		if (!_sceneManager->simulation()) _isRunning = false;
 		preFrameTime = currentFrameTime;
 	}
 	return true;

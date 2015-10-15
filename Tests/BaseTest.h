@@ -13,16 +13,16 @@ public:
 		_height = 10.0f * (veMath::randomUnitization());
 		_oriColor = _desColor = veVec3(veMath::randomUnitization(), veMath::randomUnitization(), veMath::randomUnitization());
 	}
-	virtual bool handle(veNode *node, veVisualiser *vs, const veEvent &event) {
+	virtual bool handle(veNode *node, veSceneManager *sm, const veEvent &event) override{
 		return false;
 	}
 
-	virtual void update(veNode *node, veVisualiser *vs) {
+	virtual void update(veNode *node, veSceneManager *sm) override{
 		auto light = static_cast<veLight *>(node);
 		if (light) {
 			auto param = light->getParameter("color");
-			updateColor(param, vs->getDeltaTime());
-			updateMatrix(light, vs->getDeltaTime());
+			updateColor(param, sm->getDeltaTime());
+			updateMatrix(light, sm->getDeltaTime());
 		}
 	}
 
@@ -67,7 +67,7 @@ public:
 	}
 	~CameraManipulator(){}
 
-	virtual bool handle(veNode *node, veVisualiser *vs, const veEvent &event) {
+	virtual bool handle(veNode *node, veSceneManager *sm, const veEvent &event) override{
 		_camera = static_cast<veCamera *>(node);
 		if (event.getEventType() & veEvent::VE_MOUSE_EVENT) {
 			if (event.getEventType() == veEvent::VE_PRESS) {
@@ -191,14 +191,22 @@ class BaseTest
 {
 public:
 	BaseTest() {
-		_visualiser = veDirector::instance()->createVisualiser(800, 600, "Game");
-		_visualiser->getCamera()->setViewMatrixAslookAt(veVec3(0.0f, 0.0f, 30.0f), veVec3::ZERO, veVec3::UNIT_Y);
+		_sceneManager = new veOctreeSceneManager;
+		veDirector::instance()->setSceneManager(_sceneManager);
+		int width = 800;
+		int height = 600;
+		_sceneManager->createVisualiser(width, height, "Game");
+		_camera = _sceneManager->createCamera({0, 0, width, height });
+		_camera->setProjectionMatrixAsPerspective(30.0f, (float)width / (float)height, 1.0f, 1000.0f);
+		_camera->setViewMatrixAslookAt(veVec3(0.0f, 0.0f, 30.0f), veVec3::ZERO, veVec3::UNIT_Y);
+		_sceneManager->getRootNode()->addChild(_camera);
+		_sceneManager->getVisualiser()->setCamera(_camera);
 	};
-	~BaseTest() {};
+	~BaseTest() {
+		VE_SAFE_DELETE(_sceneManager);
+	};
 
 	virtual void init() {
-		_visualiser->getCamera()->setViewMatrixAslookAt(veVec3(0.0f, 0.0f, 30.0f), veVec3::ZERO, veVec3::UNIT_Y);
-		_camera = _visualiser->getCamera();
 	}
 
 	int run() {
@@ -209,7 +217,7 @@ public:
 
 protected:
 
-	veVisualiser *_visualiser;
+	veSceneManager *_sceneManager;
 	veCamera  *_camera;
 };
 

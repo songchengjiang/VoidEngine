@@ -19,6 +19,8 @@
 #include "KernelCore/Animation.h"
 #include "KernelCore/Light.h"
 #include "KernelCore/Text.h"
+#include "KernelCore/SceneManager.h"
+#include "KernelCore/OctreeSceneManager.h"
 
 #include "FileCore/Printer.h"
 #include "FileCore/File.h"

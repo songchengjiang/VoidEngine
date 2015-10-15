@@ -66,7 +66,7 @@ public:
 
 	void render(veRenderQueue::RenderCommandList &renderList);
 
-	virtual bool routeEvent(const veEvent &event, veVisualiser *vs) override;
+	virtual bool routeEvent(const veEvent &event, veSceneManager *sm) override;
 	virtual void visit(veNodeVisitor &visitor) override;
 
 protected:

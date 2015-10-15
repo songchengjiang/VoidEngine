@@ -15,7 +15,7 @@ public:
 
 	void registerCallback();
 
-	bool dispatch(double deltaTime, veSceneManager *sceneManager);
+	bool dispatch(veSceneManager *sceneManager);
 
 
 protected:

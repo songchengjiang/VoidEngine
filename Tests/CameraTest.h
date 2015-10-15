@@ -7,8 +7,7 @@ int CURRENT_CAMERA = 0;
 class keyboardInput : public veComponent 
 {
 public:
-	keyboardInput(veVisualiser *vs)
-		: _visualiser(vs)
+	keyboardInput()
 	{}
 	~keyboardInput(){}
 
@@ -21,7 +20,7 @@ public:
 				--CURRENT_CAMERA;
 				if (CURRENT_CAMERA < 0) CURRENT_CAMERA = node->getChildCount() - 1;
 				auto cam = static_cast<veCamera *>(node->getChild(CURRENT_CAMERA));
-				_visualiser->setCamera(cam);
+				vs->setCamera(cam);
 			}
 				break;
 
@@ -30,7 +29,7 @@ public:
 				++CURRENT_CAMERA;
 				if ((int)node->getChildCount() <= CURRENT_CAMERA) CURRENT_CAMERA = 0;
 				auto cam = static_cast<veCamera *>(node->getChild(CURRENT_CAMERA));
-				_visualiser->setCamera(cam);
+				vs->setCamera(cam);
 			}
 				break;
 
@@ -40,19 +39,15 @@ public:
 		}
 		return false;
 	}
-
-private:
-
-	veVisualiser *_visualiser;
 };
 
 class CameraTest : public BaseTest
 {
 public:
 	CameraTest() {
-		veNode *root = new veNode;
+		veNode *root = _sceneManager->createNode();
 		{
-			veNode *node = static_cast<veNode *>(veFile::instance()->readFile("models/teapot.vem"));
+			veNode *node = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem"));
 			auto mat = node->getChild(0)->getChild(0)->getRenderableObject(0)->getMaterial();
 			mat->activateTechnique(mat->getTechnique("forwardRender"));
 			//node->addComponent(new KeyboardInputer);
@@ -65,23 +60,23 @@ public:
 		}
 
 		{
-			veCamera *cam0 = static_cast<veCamera*>(veFile::instance()->readFile("cameras/cam0.vecamera"));
-			veCamera *cam1 = static_cast<veCamera*>(veFile::instance()->readFile("cameras/cam1.vecamera"));
-			veCamera *cam2 = static_cast<veCamera*>(veFile::instance()->readFile("cameras/cam2.vecamera"));
-			veCamera *cam3 = static_cast<veCamera*>(veFile::instance()->readFile("cameras/cam3.vecamera"));
+			veCamera *cam0 = static_cast<veCamera*>(veFile::instance()->readFile(_sceneManager, "cameras/cam0.vecamera"));
+			veCamera *cam1 = static_cast<veCamera*>(veFile::instance()->readFile(_sceneManager, "cameras/cam1.vecamera"));
+			veCamera *cam2 = static_cast<veCamera*>(veFile::instance()->readFile(_sceneManager, "cameras/cam2.vecamera"));
+			veCamera *cam3 = static_cast<veCamera*>(veFile::instance()->readFile(_sceneManager, "cameras/cam3.vecamera"));
 			//cam1->setClearColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
 			//cam2->setClearColor(veVec4(0.0f, 1.0f, 0.0f, 1.0f));
 			//cam3->setClearColor(veVec4(0.0f, 0.0f, 1.0f, 1.0f));
-			veNode *cameras = new veNode;
+			veNode *cameras = _sceneManager->createNode();
 			cameras->addChild(cam0);
 			cameras->addChild(cam1);
 			cameras->addChild(cam2);
 			cameras->addChild(cam3);
-			cameras->addComponent(new keyboardInput(_visualiser));
+			cameras->addComponent(new keyboardInput());
 			root->addChild(cameras);
 		}
 
-		_visualiser->setSceneNode(root);
+		_sceneManager->getRootNode()->addChild(root);
 	}
 	~CameraTest() {};
 

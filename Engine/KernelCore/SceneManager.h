@@ -4,11 +4,18 @@
 #include "VE_Ptr.h"
 #include "Visualiser.h"
 #include "RenderQueue.h"
+#include <unordered_map>
 
 class veEvent;
 class veNode;
 class veCamera;
 class veLight;
+class veOverlay;
+class veMesh;
+class veFont;
+class veText;
+class veAnimation;
+class veBaseManager;
 typedef std::vector< veNode* > NodeList;
 typedef std::vector< veCamera* > CameraList;
 typedef std::vector< veLight* > LightList;
@@ -21,19 +28,27 @@ public:
 	veVisualiser* createVisualiser(int w, int h, const std::string &title);
 	veVisualiser* getVisualiser() { return _visualiser.get(); }
 	virtual veNode* createNode() = 0;
-	virtual veCamera* createCamera(const veViewport &vp = {0, 0, 0, 0}) = 0;
-	virtual veLight* createLight(const std::string &className) = 0;
+	virtual veCamera* createCamera(const veViewport &vp = { 0, 0, 0, 0 }) = 0;
+	virtual veLight* createLight(const std::string &type);
+	virtual veOverlay* createOverlay();
+	virtual veMesh* createMesh();
+	virtual veText* createText(veFont *font, const std::string &content = "");
+	virtual veAnimation* createAnimation();
 
 	const NodeList& getNodeList() const { return _nodeList; }
 	const CameraList& getCameraList() const { return _cameraList; }
 	const LightList& getLightList() const { return _lightList; }
 
-	void dispatchEvents(double deltaTime, veEvent &event);
-	bool simulation(double deltaTime);
+	void loadLightConfiguration(const std::string &filePath);
+
+	veBaseManager* getManager(const std::string &mgType);
 
 	veNode* getRootNode() { return _root.get(); }
-
+	void setDeltaTime(double deltaTime) { _deltaTime = deltaTime; }
 	double getDeltaTime() { return _deltaTime; }
+
+	void dispatchEvents(veEvent &event);
+	bool simulation();
 
 protected:
 
@@ -49,6 +64,8 @@ protected:
 	NodeList _nodeList;
 	CameraList _cameraList;
 	LightList _lightList;
+
+	std::unordered_map<std::string, veBaseManager *> _managerList;
 
 	double _deltaTime;
 };

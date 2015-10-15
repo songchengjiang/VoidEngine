@@ -1,7 +1,9 @@
 #ifndef _VE_SHADER_DEFINATION_GENERATOR_
 #define _VE_SHADER_DEFINATION_GENERATOR_
 #include "NodeVisitor.h"
+#include "SceneManager.h"
 #include "Light.h"
+#include "LightManager.h"
 #include "RenderCommand.h"
 #include "Mesh.h"
 #include "Material.h"
@@ -92,7 +94,7 @@ public:
 			}
 		}
 
-		auto lightTemplates = veLightManager::instance()->getLightTemplateList();
+		auto lightTemplates = static_cast<veLightManager *>(_command.sceneManager->getManager(veLightManager::TYPE()))->getLightTemplateList();
 		if (!lightTemplates.empty()) {
 			definations += SHADER_DEFINE_LIGHTS + std::string(" 1\n");
 			for (auto &temp : lightTemplates) {

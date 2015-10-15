@@ -13,6 +13,7 @@ public:
 	static veDirector* instance();
 
 	//veVisualiser* createVisualiser(int w, int h, const std::string &title);
+	void setSceneManager(veSceneManager *sm) { _sceneManager = sm; }
 	veSceneManager* getSceneManager() { return _sceneManager; }
 
 	bool run();
@@ -21,7 +22,6 @@ public:
 private:
 
 	veDirector();
-	void allocSceneManager();
 
 private:
 	

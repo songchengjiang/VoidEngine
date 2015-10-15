@@ -10,9 +10,9 @@ public:
 
 	}
 
-	virtual void update(veNode *node, veVisualiser *vs) override {
+	virtual void update(veNode *node, veSceneManager *sm) override {
 		char buf[256];
-		sprintf(buf, "Frame Rate: %f", 1.0f / vs->getDeltaTime());
+		sprintf(buf, "Frame Rate: %f", 1.0f / sm->getDeltaTime());
 		_text->setContent(buf);
 	}
 
@@ -25,13 +25,13 @@ class TextTest : public BaseTest
 {
 public:
 	TextTest() {
-		veNode *root = new veNode;
+		veNode *root = _sceneManager->createNode();
 
 		std::string fontFile = "fonts/arial.ttf";
 		{
-			auto text = new veText(new veFont(fontFile, 64), "Hello Void Engine");
+			auto text = _sceneManager->createText(new veFont(fontFile, 64), "Hello Void Engine");
 			text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
-			auto node = new veNode;
+			auto node = _sceneManager->createNode();
 			node->addRenderableObject(text);
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
@@ -40,16 +40,16 @@ public:
 		}
 
 		{
-			auto text = new veText(new veFont(fontFile));
+			auto text = _sceneManager->createText(new veFont(fontFile));
 			//text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
-			auto node = new veNode;
+			auto node = _sceneManager->createNode();
 			node->addRenderableObject(text);
 			node->addComponent(new TextUpdater(text));
 			root->addChild(node);
 		}
 
 		{
-			veNode *node = static_cast<veNode *>(veFile::instance()->readFile("models/laoshu_ani_v03.vem"));
+			veNode *node = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem"));
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
@@ -58,13 +58,13 @@ public:
 			//transer->setRotation(veQuat(veMath::HALF_PI, veVec3::UNIT_Y));
 			root->addChild(node);
 
-			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile("models/laoshu_ani_v03.veanim"));
+			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim"));
 			animationContainer->start();
 			animationContainer->setLoopAnimation(true);
 			node->addComponent(animationContainer);
 		}
 
-		_visualiser->setSceneNode(root);
+		_sceneManager->getRootNode()->addChild(root);
 	}
 	~TextTest() {};
 

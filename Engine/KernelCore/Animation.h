@@ -32,8 +32,8 @@ private:
 
 class VE_EXPORT veAnimation
 {
+	friend class veSceneManager;
 public:
-	veAnimation();
 	~veAnimation();
 
 	USE_VE_PTR;
@@ -49,6 +49,7 @@ public:
 
 private:
 
+	veAnimation();
 	veAnimKeyValues* getAnimKeyValuesByName(const std::string &name);
 
 private:

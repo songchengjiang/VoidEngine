@@ -6,33 +6,33 @@ class ImageTest : public BaseTest
 {
 public:
 	ImageTest() {
-		veNode *root = new veNode;
+		veNode *root = _sceneManager->createNode();
 		{
-			veNode *node = new veNode;
+			veNode *node = _sceneManager->createNode();
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
 			transer->setPosition(veVec3(-0.5f, -0.5f, 0.0f));
 			transer->setScale(veVec3(0.5f));
 
-			auto overlay = new veOverlay;
+			auto overlay = _sceneManager->createOverlay();
 			node->addRenderableObject(overlay);
 
-			veImage *image = static_cast<veImage *>(veFile::instance()->readFile("textures/Desk.exr"));
+			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_sceneManager, "textures/Desk.exr"));
 			overlay->setImage(image);
 
 			root->addChild(node);
 		}
 
 		{
-			veNode *node = new veNode;
+			veNode *node = _sceneManager->createNode();
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
 			transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
 
-			auto overlay = new veOverlay;
+			auto overlay = _sceneManager->createOverlay();
 			node->addRenderableObject(overlay);
 
-			veImage *image = static_cast<veImage *>(veFile::instance()->readFile("textures/kill.png"));
+			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_sceneManager, "textures/kill.png"));
 			overlay->setImage(image);
 			//overlay->setAlphaThreshold(1.0f);
 
@@ -40,22 +40,22 @@ public:
 		}
 
 		{
-			veNode *node = new veNode;
+			veNode *node = _sceneManager->createNode();
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
 			transer->setPosition(veVec3(0.5f, 0.5f, 0.0f));
 			transer->setScale(veVec3(0.5f));
 
-			auto overlay = new veOverlay;
+			auto overlay = _sceneManager->createOverlay();
 			node->addRenderableObject(overlay);
 
-			veImage *image = static_cast<veImage *>(veFile::instance()->readFile("textures/sphere.jpg"));
+			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_sceneManager, "textures/sphere.jpg"));
 			overlay->setImage(image);
 
 			root->addChild(node);
 		}
 
-		_visualiser->setSceneNode(root);
+		_sceneManager->getRootNode()->addChild(root);
 	};
 	~ImageTest() {};
 

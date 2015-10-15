@@ -21,7 +21,7 @@ public:
 
 	USE_VE_PTR;
 
-	virtual bool handle(veNode *node, veVisualiser *vs, const veEvent &event) override;
+	virtual bool handle(veNode *node, veSceneManager *sm, const veEvent &event) override;
 	virtual void update(veNode *node, veSceneManager *sm) override;
 
 	void setTextType(TextType type);

@@ -43,14 +43,14 @@ void veEventDispatcher::registerCallback()
 	});
 }
 
-bool veEventDispatcher::dispatch(double deltaTime, veSceneManager *sceneManager)
+bool veEventDispatcher::dispatch(veSceneManager *sceneManager)
 {
 	glfwPollEvents();
 	for (auto &event : _events) {
 		//auto vs = veVisualiserRegistrar::instance()->getRegContent(event.first);
 		const auto &events = event.second;
 		for (auto e : events) {
-			sceneManager->dispatchEvents(deltaTime, e);
+			sceneManager->dispatchEvents(e);
 		}
 	}
 	_events.clear();

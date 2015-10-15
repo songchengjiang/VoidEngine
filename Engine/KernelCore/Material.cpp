@@ -180,16 +180,18 @@ void vePass::applyProgram(const veRenderCommand &command)
 
 void vePass::applyLightsUniforms(const veRenderCommand &command)
 {
-	const LightList &lightList = command.camera->getSceneManager()->getLightList();
-	if (!lightList.empty()) return;
+	const LightList &lightList = command.sceneManager->getLightList();
+	if (lightList.empty()) return;
 	std::unordered_map<std::string, int> currentLights;
-	for (auto &iter : veLightManager::instance()->getLightTemplateList()) {
+	for (auto &iter : static_cast<veLightManager *>(command.sceneManager->getManager(veLightManager::TYPE()))->getLightTemplateList()) {
 		currentLights[iter.first] = 0;
 	}
 	for (auto &iter : lightList) {
-		int &count = currentLights[iter->getType()];
-		applyLightUniforms(count, iter, command.camera);
-		++count;
+		if (iter->getParent()) {
+			int &count = currentLights[iter->getType()];
+			applyLightUniforms(count, iter, command.camera);
+			++count;
+		}
 	}
 	for (auto &iter : currentLights) {
 		GLint loc = glGetUniformLocation(_program, (iter.first + std::string("Number")).c_str());
