@@ -115,24 +115,6 @@ void veCamera::setRenderPath(RenderPath renderPath)
 	_renderStateChanged = true;
 }
 
-bool veCamera::isVisible(const veBoundingBox &bbox)
-{
-	updateFrustumPlane();
-	veVec3 center = bbox.center();
-	veVec3 halfSize = (bbox.max() - bbox.min()) * 0.5f;
-
-	for (int plane = 0; plane < 6; ++plane)
-	{
-		vePlane::Side side = _frustumPlane[plane].getSide(center, halfSize);
-		if (side == vePlane::NEGATIVE_SIDE)
-		{
-			return false;
-		}
-	}
-
-	return true;
-}
-
 const vePlane& veCamera::getFrustumPlane(FrustumPlane fp)
 {
 	updateFrustumPlane();

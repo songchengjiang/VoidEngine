@@ -71,7 +71,6 @@ public:
 	void setRenderPath(RenderPath renderPath);
 	RenderPath getRenderPath() const { return _renderPath; }
 
-	bool isVisible(const veBoundingBox &bbox);
 	const vePlane& getFrustumPlane(FrustumPlane fp);
 
 	bool isRenderStateChanged() { return _renderStateChanged; }

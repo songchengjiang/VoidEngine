@@ -63,13 +63,13 @@ void veOctreeSceneManager::render()
 	veRenderQueue::CURRENT_RENDER_QUEUE = _renderQueue;
 	auto mainCamera = _visualiser->getCamera();
 	for (auto &iter : _cameraList) {
-		if (iter->getParent() && iter != mainCamera) {
+		if (iter->isVisible() && iter->isInScene() && iter != mainCamera) {
 			if (iter->getFrameBufferObject()) {
 				_root->render(iter);
 			}
 		}
 	}
-	if (mainCamera)
+	if (mainCamera && mainCamera->isVisible())
 		_root->render(mainCamera);
 	_renderQueue->execute(_visualiser.get());
 	veSceneManager::render();
