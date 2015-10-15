@@ -11,7 +11,7 @@ public:
 	{}
 	~keyboardInput(){}
 
-	virtual bool handle(veNode *node, veVisualiser *vs, const veEvent &event) {
+	virtual bool handle(veNode *node, veSceneManager *sm, const veEvent &event) override{
 		if (event.getEventType() == veEvent::VE_DOWN) {
 			switch (event.getKeySymbol())
 			{
@@ -20,7 +20,7 @@ public:
 				--CURRENT_CAMERA;
 				if (CURRENT_CAMERA < 0) CURRENT_CAMERA = node->getChildCount() - 1;
 				auto cam = static_cast<veCamera *>(node->getChild(CURRENT_CAMERA));
-				vs->setCamera(cam);
+				sm->getVisualiser()->setCamera(cam);
 			}
 				break;
 
@@ -29,7 +29,7 @@ public:
 				++CURRENT_CAMERA;
 				if ((int)node->getChildCount() <= CURRENT_CAMERA) CURRENT_CAMERA = 0;
 				auto cam = static_cast<veCamera *>(node->getChild(CURRENT_CAMERA));
-				vs->setCamera(cam);
+				sm->getVisualiser()->setCamera(cam);
 			}
 				break;
 
@@ -38,6 +38,10 @@ public:
 			}
 		}
 		return false;
+	}
+
+	virtual void update(veNode *node, veSceneManager *sm) override {
+
 	}
 };
 
@@ -76,6 +80,11 @@ public:
 			root->addChild(cameras);
 		}
 
+		auto debuger = new veDebuger;
+		debuger->debugDrawFrustumPlane(true);
+		debuger->setDebugDrawColor(veVec4(1.0f, 1.0f, 1.0f, 1.0f));
+		debuger->setDebugNode(root);
+		_sceneManager->getRootNode()->addChild(debuger);
 		_sceneManager->getRootNode()->addChild(root);
 	}
 	~CameraTest() {};

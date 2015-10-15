@@ -24,9 +24,9 @@ veVisualiser* veSceneManager::createVisualiser(int w, int h, const std::string &
 	auto visualiser = new veVisualiser(w, h, title);
 	veVisualiserRegistrar::instance()->reg(visualiser->_hwnd, visualiser);
 	glfwMakeContextCurrent(visualiser->_hwnd);
-	if (glewInit() != GLEW_OK) {
-		veLog("glewInit error!")
-	}
+#if defined(_MSC_VER)
+	if (glewInit() != GLEW_OK) veLog("glewInit error!");
+#endif
 	visualiser->_sceneManager = this;
 	if (_visualiser.valid()) veVisualiserRegistrar::instance()->unReg(_visualiser->_hwnd);
 	_visualiser = visualiser;

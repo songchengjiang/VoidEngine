@@ -186,6 +186,12 @@
     <ClCompile Include="..\..\Engine\KernelCore\BaseManager.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Octree.cpp">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Plane.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -349,6 +355,12 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\BaseManager.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Octree.h">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Plane.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>

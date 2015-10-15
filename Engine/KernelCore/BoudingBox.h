@@ -17,6 +17,7 @@ public:
 	veVec3& min() { return _min; }
 	const veVec3& max() const { return _max; }
 	veVec3& max() { return _max; }
+	inline veVec3 center() const;
 	void dirty();
 	bool isNull() const;
 

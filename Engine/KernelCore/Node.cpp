@@ -194,11 +194,6 @@ void veNode::render(veCamera *camera)
 {
 	if (!_isVisible) return;
 	if (_mask & camera->getMask()) {
-		if (!_components.empty()) {
-			for (auto &iter : _components) {
-				iter->render(camera);
-			}
-		}
 
 		if (!_children.empty()) {
 			for (auto &child : _children) {

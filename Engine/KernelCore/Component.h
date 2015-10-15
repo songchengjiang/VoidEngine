@@ -5,7 +5,6 @@
 
 class veNode;
 class veSceneManager;
-class veCamera;
 class VE_EXPORT veComponent
 {
 public:
@@ -16,7 +15,6 @@ public:
 
 	virtual bool handle(veNode *node, veSceneManager *sm, const veEvent &event) { return false; }
 	virtual void update(veNode *node, veSceneManager *sm) {}
-    virtual void render(veCamera *camera){}
 
 	void setEventFilter(const veEvent::EventType filter) { _filter = filter; };
 	veEvent::EventType getEventFilter() const { return _filter; };

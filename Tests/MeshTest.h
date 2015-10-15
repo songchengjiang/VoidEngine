@@ -77,8 +77,8 @@ public:
 		auto debuger = new veDebuger;
 		debuger->debugDrawBoundingBoxWireframe(true);
 		debuger->setDebugDrawColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
-		root->addComponent(debuger);
-
+		debuger->setDebugNode(_sceneManager->getRootNode());
+		_sceneManager->getRootNode()->addChild(debuger);
 		_sceneManager->getRootNode()->addChild(root);
 	}
 	~MeshTest() {};

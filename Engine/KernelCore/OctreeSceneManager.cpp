@@ -3,8 +3,18 @@
 #include "OctreeCamera.h"
 
 veOctreeSceneManager::veOctreeSceneManager()
+	: _boundingBox(veVec3(-10000.0f), veVec3(10000.0f))
+	, _octreeMaxDeep(8)
+	, _octree(nullptr)
 {
 	_root = new veOctreeNode;
+}
+
+veOctreeSceneManager::veOctreeSceneManager(const veBoundingBox &bbox, unsigned int octreeDeep)
+	: _boundingBox(bbox)
+	, _octreeMaxDeep(octreeDeep)
+{
+
 }
 
 veOctreeSceneManager::~veOctreeSceneManager()
@@ -28,12 +38,14 @@ veCamera* veOctreeSceneManager::createCamera(const veViewport &vp)
 	return camera;
 }
 
+void veOctreeSceneManager::initOctrees()
+{
+
+}
+
 void veOctreeSceneManager::update()
 {
-	if (!_root.get()) return;
 	_root->update(this);
-	//if (!_visualiser->getCamera()->getParent() && _root.get() != _visualiser->getCamera())
-	//	_visualiser->getCamera()->update(_visualiser.get());
 }
 
 void veOctreeSceneManager::cull()
@@ -43,14 +55,11 @@ void veOctreeSceneManager::cull()
 
 void veOctreeSceneManager::render()
 {
-	if (!_root.get()) return;
 	//glClear(_clearMask);
 	veRenderQueue::CURRENT_RENDER_QUEUE = &_renderQueue;
-	veCamera *mainCamera = nullptr;
+	auto mainCamera = _visualiser->getCamera();
 	for (auto &iter : _cameraList) {
-		if (iter->getParent()) {
-			if (iter == _visualiser->getCamera())
-				mainCamera = iter;
+		if (iter->getParent() && iter != mainCamera) {
 			if (iter->getFrameBufferObject())
 				_root->render(iter);
 		}

@@ -6,6 +6,7 @@
 #include "Node.h"
 #include "RenderQueue.h"
 #include "FrameBufferObject.h"
+#include "Plane.h"
 
 class veVisualiser;
 class veLight;
@@ -35,6 +36,16 @@ public:
 		DEFERRED_PATH
 	};
 
+	enum FrustumPlane
+	{
+		FRUSTUM_PLANE_NEAR   = 0,
+		FRUSTUM_PLANE_FAR    = 1,
+		FRUSTUM_PLANE_LEFT   = 2,
+		FRUSTUM_PLANE_RIGHT  = 3,
+		FRUSTUM_PLANE_TOP    = 4,
+		FRUSTUM_PLANE_BOTTOM = 5
+	};
+
 	~veCamera();
 
 	void setProjectionMatrixAsOrtho(float left, float right, float bottom, float top, float zNear, float zFar);
@@ -60,6 +71,9 @@ public:
 	void setRenderPath(RenderPath renderPath);
 	RenderPath getRenderPath() const { return _renderPath; }
 
+	bool isVisible(const veBoundingBox &bbox);
+	const vePlane& getFrustumPlane(FrustumPlane fp);
+
 	bool isRenderStateChanged() { return _renderStateChanged; }
 
 	virtual void setMatrix(const veMat4 &mat) override;
@@ -75,6 +89,7 @@ protected:
 	veCamera(const veViewport &vp);
 	void renderQueue(veLoopQueue< veRenderCommand > &queue);
 	void resize(int width, int height);
+	void updateFrustumPlane();
 
 protected:
 
@@ -84,6 +99,9 @@ protected:
 	veVec4       _clearColor;
 	unsigned int _clearMask;
 	VE_Ptr<veFrameBufferObject> _fbo;
+
+	vePlane _frustumPlane[6];
+	bool    _needRefreshFrustumPlane;
 
 	RenderPath _renderPath;
 	bool _renderStateChanged;

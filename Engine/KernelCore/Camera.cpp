@@ -23,6 +23,7 @@ veCamera::veCamera()
 	, _fbo(nullptr)
 	, _renderPath(RenderPath::FORWARD_PATH)
 	, _renderStateChanged(true)
+	, _needRefreshFrustumPlane(true)
 {
 }
 
@@ -35,6 +36,7 @@ veCamera::veCamera(const veViewport &vp)
 	, _fbo(nullptr)
 	, _renderPath(RenderPath::FORWARD_PATH)
 	, _renderStateChanged(true)
+	, _needRefreshFrustumPlane(true)
 {
 }
 
@@ -49,6 +51,7 @@ void veCamera::setProjectionMatrixAsOrtho(float left, float right, float bottom,
 		             , 0.0f                 , 2.0f / (top - bottom), 0.0f                 , -(top + bottom) / (top - bottom)
 		             , 0.0f                 , 0.0f                 , 2.0f / (zNear - zFar), (zNear + zFar) / (zNear - zFar)
 		             , 0.0f                 , 0.0f                 , 0.0f                 , 1.0f);
+	_needRefreshFrustumPlane = true;
 }
 
 void veCamera::setProjectionMatrixAsPerspective(float fovy, float aspectRatio, float zNear, float zFar)
@@ -64,6 +67,7 @@ void veCamera::setProjectionMatrixAsPerspective(float fovy, float aspectRatio, f
 		              , 0.0f                          , (2.0f * zNear) / (top - bottom), (top + bottom) / (top - bottom), 0.0f
 		              , 0.0f                          , 0.0f                           , a                              , b
 		              , 0.0f                          , 0.0f                           , -1.0f                          , 0.0f);
+	_needRefreshFrustumPlane = true;
 }
 
 void veCamera::setViewMatrixAslookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &up)
@@ -111,10 +115,35 @@ void veCamera::setRenderPath(RenderPath renderPath)
 	_renderStateChanged = true;
 }
 
+bool veCamera::isVisible(const veBoundingBox &bbox)
+{
+	updateFrustumPlane();
+	veVec3 center = bbox.center();
+	veVec3 halfSize = (bbox.max() - bbox.min()) * 0.5f;
+
+	for (int plane = 0; plane < 6; ++plane)
+	{
+		vePlane::Side side = _frustumPlane[plane].getSide(center, halfSize);
+		if (side == vePlane::NEGATIVE_SIDE)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+const vePlane& veCamera::getFrustumPlane(FrustumPlane fp)
+{
+	updateFrustumPlane();
+	return _frustumPlane[fp];
+}
+
 void veCamera::setMatrix(const veMat4 &mat)
 {
 	_matrix = mat;
 	_viewMat = getWorldToNodeMatrix();
+	_needRefreshFrustumPlane = true;
 }
 
 void veCamera::render(veRenderQueue::RenderCommandList &renderList)
@@ -190,4 +219,49 @@ void veCamera::resize(int width, int height)
 
 	_projectionMat = veMat4::scale(veVec3(aspectInverseRatioChange, 1.0f, 1.0f)) * _projectionMat;
 	this->setViewport({ 0, 0, width, height });
+}
+
+void veCamera::updateFrustumPlane()
+{
+	if (_needRefreshFrustumPlane) {
+		veMat4 vpMat = _projectionMat * _viewMat;
+		_frustumPlane[FRUSTUM_PLANE_LEFT].normal().x() = vpMat[3][0] + vpMat[0][0];
+		_frustumPlane[FRUSTUM_PLANE_LEFT].normal().y() = vpMat[3][1] + vpMat[0][1];
+		_frustumPlane[FRUSTUM_PLANE_LEFT].normal().z() = vpMat[3][2] + vpMat[0][2];
+		_frustumPlane[FRUSTUM_PLANE_LEFT].constantD() = vpMat[3][3] + vpMat[0][3];
+
+		_frustumPlane[FRUSTUM_PLANE_RIGHT].normal().x() = vpMat[3][0] - vpMat[0][0];
+		_frustumPlane[FRUSTUM_PLANE_RIGHT].normal().y() = vpMat[3][1] - vpMat[0][1];
+		_frustumPlane[FRUSTUM_PLANE_RIGHT].normal().z() = vpMat[3][2] - vpMat[0][2];
+		_frustumPlane[FRUSTUM_PLANE_RIGHT].constantD() = vpMat[3][3] - vpMat[0][3];
+
+		_frustumPlane[FRUSTUM_PLANE_TOP].normal().x() = vpMat[3][0] - vpMat[1][0];
+		_frustumPlane[FRUSTUM_PLANE_TOP].normal().y() = vpMat[3][1] - vpMat[1][1];
+		_frustumPlane[FRUSTUM_PLANE_TOP].normal().z() = vpMat[3][2] - vpMat[1][2];
+		_frustumPlane[FRUSTUM_PLANE_TOP].constantD() = vpMat[3][3] - vpMat[1][3];
+
+		_frustumPlane[FRUSTUM_PLANE_BOTTOM].normal().x() = vpMat[3][0] + vpMat[1][0];
+		_frustumPlane[FRUSTUM_PLANE_BOTTOM].normal().y() = vpMat[3][1] + vpMat[1][1];
+		_frustumPlane[FRUSTUM_PLANE_BOTTOM].normal().z() = vpMat[3][2] + vpMat[1][2];
+		_frustumPlane[FRUSTUM_PLANE_BOTTOM].constantD() = vpMat[3][3] + vpMat[1][3];
+
+		_frustumPlane[FRUSTUM_PLANE_NEAR].normal().x() = vpMat[3][0] + vpMat[2][0];
+		_frustumPlane[FRUSTUM_PLANE_NEAR].normal().y() = vpMat[3][1] + vpMat[2][1];
+		_frustumPlane[FRUSTUM_PLANE_NEAR].normal().z() = vpMat[3][2] + vpMat[2][2];
+		_frustumPlane[FRUSTUM_PLANE_NEAR].constantD() = vpMat[3][3] + vpMat[2][3];
+
+		_frustumPlane[FRUSTUM_PLANE_FAR].normal().x() = vpMat[3][0] - vpMat[2][0];
+		_frustumPlane[FRUSTUM_PLANE_FAR].normal().y() = vpMat[3][1] - vpMat[2][1];
+		_frustumPlane[FRUSTUM_PLANE_FAR].normal().z() = vpMat[3][2] - vpMat[2][2];
+		_frustumPlane[FRUSTUM_PLANE_FAR].constantD() = vpMat[3][3] - vpMat[2][3];
+
+		// Renormalise any normals which were not unit length
+		for (int i = 0; i < 6; i++)
+		{
+			veReal length = _frustumPlane[i].normal().normalize();
+			_frustumPlane[i].constantD() /= length;
+		}
+
+		_needRefreshFrustumPlane = false;
+	}
 }

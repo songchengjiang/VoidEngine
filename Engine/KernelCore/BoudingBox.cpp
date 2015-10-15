@@ -41,6 +41,11 @@ void veBoundingBox::expandBy(const veBoundingBox &bbox)
 	if (_max.z() < bbox.max().z()) _max.z() = bbox.max().z();
 }
 
+veVec3 veBoundingBox::center() const
+{
+	return (_min + _max) * 0.5f;
+}
+
 void veBoundingBox::dirty()
 {
 	_min = VEC3_MAX;
