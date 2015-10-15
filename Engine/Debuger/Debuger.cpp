@@ -56,10 +56,13 @@ void veDebuger::update(veSceneManager *sm, const veMat4 &transform)
 	RenderableObjectFinder finder(_renderableNodes);
 	_attachedNode->accept(finder);
 
+	veMat4 nTow = _attachedNode->getWorldToNodeMatrix();
+	if (_isDrawBoundingBoxWireframe) {
+		renderBoundingBoxWireframe(_attachedNode->getBoundingBox(), nTow);
+	}
+
 	for (auto &iter : _renderableNodes) {
-		veMat4 nTow = _attachedNode->getWorldToNodeMatrix();
 		veMat4 rnToNode = nTow * iter->getNodeToWorldMatrix();
-		//renderBoundingBoxWireframe(iter->getBoundingBox(), rnToNode);
 		if (_isDrawFrustumPlane) {
 			auto camera = dynamic_cast<veCamera *>(iter);
 			if (camera)

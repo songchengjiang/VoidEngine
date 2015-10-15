@@ -139,14 +139,6 @@ const vePlane& veCamera::getFrustumPlane(FrustumPlane fp)
 	return _frustumPlane[fp];
 }
 
-void veCamera::setMatrix(const veMat4 &mat)
-{
-	_matrix = mat;
-	_viewMat = _isInScene == true? getNodeToWorldMatrix(): _matrix;
-	_viewMat.inverse();
-	_needRefreshFrustumPlane = true;
-}
-
 void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 {
 	if (renderList.empty()) return;
@@ -159,26 +151,34 @@ void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 
 	auto bgQueue = renderList.find(veRenderQueue::RENDER_QUEUE_BACKGROUND);
 	if (bgQueue != renderList.end()) {
-		bgQueue->second.sort(PASS_SORT);
-		renderQueue(bgQueue->second);
+		if (!bgQueue->second.empty()) {
+			bgQueue->second.sort(PASS_SORT);
+			renderQueue(bgQueue->second);
+		}
 	}
 
 	auto entityQueue = renderList.find(veRenderQueue::RENDER_QUEUE_ENTITY);
 	if (entityQueue != renderList.end()) {
-		entityQueue->second.sort(ENTITY_SORT);
-		renderQueue(entityQueue->second);
+		if (!entityQueue->second.empty()) {
+			entityQueue->second.sort(ENTITY_SORT);
+			renderQueue(entityQueue->second);	
+		}
 	}
 
 	auto tpQueue = renderList.find(veRenderQueue::RENDER_QUEUE_TRANSPARENT);
 	if (tpQueue != renderList.end()) {
-		tpQueue->second.sort(TRANSPARENT_SORT);
-		renderQueue(tpQueue->second);
+		if (!tpQueue->second.empty()) {
+			tpQueue->second.sort(TRANSPARENT_SORT);
+			renderQueue(tpQueue->second);
+		}
 	}
 
 	auto olQueue = renderList.find(veRenderQueue::RENDER_QUEUE_OVERLAY);
 	if (olQueue != renderList.end()) {
-		olQueue->second.sort(PASS_SORT);
-		renderQueue(olQueue->second);
+		if (!olQueue->second.empty()) {
+			olQueue->second.sort(PASS_SORT);
+			renderQueue(olQueue->second);
+		}
 	}
 
 	if (_fbo.valid()) {
@@ -187,6 +187,19 @@ void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 
 	vePass::restoreGLState();
 	_renderStateChanged = false;
+}
+
+void veCamera::setMatrix(const veMat4 &mat)
+{
+	_matrix = mat;
+	_viewMat = computeWorldToNodeMatrix();
+	refresh();
+}
+
+void veCamera::refresh()
+{
+	veNode::refresh();
+	_needRefreshFrustumPlane = true;
 }
 
 bool veCamera::routeEvent(const veEvent &event, veSceneManager *sm)
@@ -204,6 +217,16 @@ void veCamera::visit(veNodeVisitor &visitor)
 
 bool veCamera::isOutOfFrustum(veNode *node)
 {
+	if (node->getBoundingBox().isNull()) return true;
+	updateFrustumPlane();
+	veVec3 center = node->getBoundingBox().center();
+	veVec3 halfSize = (node->getBoundingBox().max() - node->getBoundingBox().min()) * 0.5f;
+	for (unsigned int i = 0; i < 6; ++i) {
+		auto side = _frustumPlane[i].getSide(center, halfSize);
+		if (side == vePlane::NEGATIVE_SIDE)
+			return true;
+	}
+
 	return false;
 }
 

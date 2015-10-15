@@ -45,7 +45,7 @@ public:
 	veRenderableObject* getRenderableObject(size_t objIndex);
 	size_t getRenderableObjectCount() const { return _renderableObjects.size(); }
 
-	virtual void setMatrix(const veMat4 &mat) { _matrix = mat; _refresh = true; }
+	virtual void setMatrix(const veMat4 &mat) { _matrix = mat; refresh(); }
 	const veMat4& getMatrix() const { return _matrix; }
 
 	void setBoundingBox(const veBoundingBox &bbox) { _boundingBox = bbox; }
@@ -57,13 +57,16 @@ public:
 
 	bool isInScene();
 
-	veMat4 getNodeToWorldMatrix();
-	veMat4 getWorldToNodeMatrix();
+	veMat4 getNodeToWorldMatrix() const;
+	veMat4 getWorldToNodeMatrix() const;
+
+	veMat4 computeNodeToWorldMatrix() const;
+	veMat4 computeWorldToNodeMatrix() const;
 
 	void setMask(unsigned int mask, bool isOverride = false) { _mask = mask; _overrideMask = isOverride; }
 	unsigned int getMask() const { return _mask; }
 
-	void refresh();
+	virtual void refresh();
 
 	virtual bool routeEvent(const veEvent &event, veSceneManager *sm);
 	virtual void update(veSceneManager *sm, const veMat4 &transform);

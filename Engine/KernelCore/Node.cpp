@@ -126,16 +126,37 @@ bool veNode::isInScene()
 	return _isInScene;
 }
 
-veMat4 veNode::getNodeToWorldMatrix()
+veMat4 veNode::getNodeToWorldMatrix() const
 {
-	return _worldMatrix;
+	if (_refresh)
+		return computeNodeToWorldMatrix();
+	else
+		return _worldMatrix;
 }
 
-veMat4 veNode::getWorldToNodeMatrix()
+veMat4 veNode::getWorldToNodeMatrix() const
 {
 	veMat4 mat = getNodeToWorldMatrix();
 	mat.inverse();
 	return mat;
+}
+
+veMat4 veNode::computeNodeToWorldMatrix() const
+{
+	veMat4 worldMat = _matrix;
+	veNode *parent = _parent;
+	while (parent) {
+		worldMat = parent->getMatrix() * worldMat;
+		parent = parent->_parent;
+	}
+	return worldMat;
+}
+
+veMat4 veNode::computeWorldToNodeMatrix() const
+{
+	veMat4 worldMat = computeNodeToWorldMatrix();
+	worldMat.inverse();
+	return worldMat;
 }
 
 void veNode::refresh()
@@ -173,16 +194,18 @@ bool veNode::routeEvent(const veEvent &event, veSceneManager *sm)
 void veNode::update(veSceneManager *sm, const veMat4 &transform)
 {
 	if (!_isVisible) return;
-	_worldMatrix = transform * _matrix;
 	if (!_components.empty()){
 		for (auto &iter : _components){
 			iter->update(this, sm);
 		}
 	}
 
+	if (_refresh)
+		_worldMatrix = transform * _matrix;
 	if (!_children.empty()){
 		for (auto &child : _children){
 			if (_overrideMask) child->setMask(_mask);
+			if (_refresh) child->refresh();
 			child->update(sm, _worldMatrix);
 		}
 	}
@@ -195,6 +218,7 @@ void veNode::update(veSceneManager *sm, const veMat4 &transform)
 	}
 
 	updateBoundingBox();
+	_refresh = false;
 }
 
 void veNode::render(veCamera *camera)
@@ -242,7 +266,7 @@ void veNode::updateBoundingBox()
 		if (!_children.empty()) {
 			for (auto &child : _children) {
 				if (!child->getBoundingBox().isNull())
-					_boundingBox.expandBy(child->getBoundingBox() * _worldMatrix);
+					_boundingBox.expandBy(child->getBoundingBox());
 			}
 		}
 
