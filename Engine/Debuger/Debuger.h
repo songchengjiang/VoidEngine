@@ -10,15 +10,14 @@ class veNode;
 class veMesh;
 class vePlane;
 class veBoundingBox;
-class VE_EXPORT veDebuger : public veNode
+class VE_EXPORT veDebuger : public veRenderableObject
 {
 public:
     veDebuger();
-    ~veDebuger();
+    virtual ~veDebuger();
     
-	void setDebugNode(veNode *node);
-	virtual void update(veSceneManager *sm, const veMat4 &transform) override;
-	virtual void render(veCamera *camera) override;
+	virtual void update(veNode *node, veSceneManager *sm) override;
+	virtual void render(veNode *node, veCamera *camera) override;
 
 	void debugDrawMeshWireframe(bool isDraw) { _isDrawMeshWireframe = isDraw; }
 	void debugDrawBoundingBoxWireframe(bool isDraw) { _isDrawBoundingBoxWireframe = isDraw; }
@@ -29,8 +28,8 @@ protected:
 
 	void initMaterial();
 	void renderMeshWireframe(veMesh *mesh, const veMat4 &trans);
-	void renderBoundingBoxWireframe(const veBoundingBox &bbox, const veMat4 &trans);
-	void renderFrustumPlanes(veCamera *camera, const veMat4 &trans);
+	void renderBoundingBoxWireframe(const veBoundingBox &bbox);
+	void renderFrustumPlanes(veCamera *camera);
 	void draw(const veRenderCommand &command);
 	void drawLine(const veVec3 &start, const veVec3 &end);
 
@@ -43,7 +42,6 @@ protected:
 	VE_Ptr<veMaterial>                _material;
 	GLuint          _vao;
 	GLuint          _vbo;
-	veNode         *_attachedNode;
 
 	veVec4          _color;
 	VE_Ptr<veUniform> _colorUniform;

@@ -39,7 +39,7 @@ public:
 	veComponent* getComponent(unsigned int comIndex);
 	size_t getComponentCount() const { return _components.size(); }
 
-	int addRenderableObject(veRenderableObject *obj);
+	virtual int addRenderableObject(veRenderableObject *obj);
 	bool removeRenderableObject(veRenderableObject *obj);
 	veRenderableObject* removeRenderableObject(size_t objIndex);
 	veRenderableObject* getRenderableObject(size_t objIndex);
@@ -70,7 +70,6 @@ public:
 
 	virtual bool routeEvent(const veEvent &event, veSceneManager *sm);
 	virtual void update(veSceneManager *sm, const veMat4 &transform);
-	virtual void render(veCamera *camera);
 
 	virtual void accept(veNodeVisitor &visitor);
 	virtual void visit(veNodeVisitor &visitor);
@@ -79,6 +78,7 @@ protected:
 
 	veNode();
 	void updateBoundingBox();
+	virtual void updateSceneManager();
 
 protected:
 

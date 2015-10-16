@@ -211,32 +211,15 @@ void veNode::update(veSceneManager *sm, const veMat4 &transform)
 	}
 
 	if (!_renderableObjects.empty()){
-		_sceneManager->updateRenderableNode(this);
 		for (auto &iter : _renderableObjects){
 			iter->update(this, sm);
 		}
 	}
 
 	updateBoundingBox();
+	if (_refresh)
+		updateSceneManager();
 	_refresh = false;
-}
-
-void veNode::render(veCamera *camera)
-{
-	if (!_isVisible || camera->isOutOfFrustum(this)) return;
-	if (_mask & camera->getMask()) {
-		if (!_children.empty()) {
-			for (auto &child : _children) {
-				child->render(camera);
-			}
-		}
-
-		if (!_renderableObjects.empty()) {
-			for (auto &iter : _renderableObjects) {
-				iter->render(this, camera);
-			}
-		}
-	}
 }
 
 void veNode::accept(veNodeVisitor &visitor)
@@ -277,4 +260,10 @@ void veNode::updateBoundingBox()
 			}
 		}
 	}
+}
+
+void veNode::updateSceneManager()
+{
+	if (!_renderableObjects.empty())
+		_sceneManager->requestRender(this);
 }

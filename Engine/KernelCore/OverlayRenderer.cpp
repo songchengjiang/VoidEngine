@@ -70,7 +70,7 @@ void veOverlayRenderer::render(veNode *node, veRenderableObject *renderableObj, 
 				veRenderCommand rc;
 				rc.pass = pass;
 				rc.worldMatrix = node->getNodeToWorldMatrix();
-				rc.attachedNode = node;
+				//rc.attachedNode = node;
 				rc.renderableObj = renderableObj;
 				rc.camera = camera;
 				rc.drawFunc = VE_CALLBACK_1(veOverlayRenderer::draw, this);

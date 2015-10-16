@@ -18,7 +18,9 @@ public:
 	virtual veNode* createNode() override;
 	virtual veCamera* createCamera(const veViewport &vp = { 0, 0, 0, 0 }) override;
 
-	virtual void updateRenderableNode(veNode *node);
+	virtual void requestRender(veNode *node) override;
+
+	veOctree* getRootOctree() { return _octree; }
 
 protected:
 
@@ -27,8 +29,9 @@ protected:
 	virtual void update() override;
 	virtual void render() override;
 
+	void traverseOctree(veOctree *octant, veCamera *camera);
+	void addOctreeNode(veOctreeNode *node, veOctree *octant, unsigned int depth = 0);
 	void init();
-	void updateOctree();
 
 protected:
 

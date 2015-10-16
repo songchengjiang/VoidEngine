@@ -82,7 +82,7 @@ public:
 
 	virtual bool routeEvent(const veEvent &event, veSceneManager *sm) override;
 	virtual void visit(veNodeVisitor &visitor) override;
-	virtual bool isOutOfFrustum(veNode *node);
+	virtual bool isOutOfFrustum(const veBoundingBox &bbox);
 
 
 protected:
@@ -92,6 +92,7 @@ protected:
 	void renderQueue(veLoopQueue< veRenderCommand > &queue);
 	void resize(int width, int height);
 	void updateFrustumPlane();
+	virtual void updateSceneManager() override;
 
 protected:
 

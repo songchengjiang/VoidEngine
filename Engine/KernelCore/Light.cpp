@@ -19,24 +19,13 @@ void veLight::visit(veNodeVisitor &visitor)
 	visitor.visit(*this);
 }
 
-void veLight::render(veCamera *camera)
-{
-	if (!_isVisible || camera->isOutOfFrustum(this)) return;
-	if (_mask & camera->getMask()) {
-		_camera = camera;
-		if (!_children.empty()) {
-			for (auto &child : _children) {
-				child->render(camera);
-			}
-		}
-
-		if (!_renderableObjects.empty()) {
-			for (auto &iter : _renderableObjects) {
-				iter->render(this, camera);
-			}
-		}
-	}
-}
+//void veLight::render(veCamera *camera)
+//{
+//	veNode::render(camera);
+//	_camera = nullptr;
+//	if (_mask & camera->getMask())
+//		_camera = camera;
+//}
 
 veParameter* veLight::getParameter(const std::string &name)
 {
@@ -51,4 +40,9 @@ veParameter* veLight::getParameter(const std::string &name)
 veMat4 veLight::getLightViewMatrix()
 {
 	return _camera == nullptr ? veMat4::IDENTITY : _camera->viewMatrix() * this->getNodeToWorldMatrix();
+}
+
+void veLight::updateSceneManager()
+{
+
 }

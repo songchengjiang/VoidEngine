@@ -195,6 +195,9 @@
     <ClCompile Include="..\..\Engine\KernelCore\OctreeRenderQueue.cpp">
       <Filter>KernelCore\SceneManagement\Octree</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\Debuger\OctreeDebuger.cpp">
+      <Filter>Debuger</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -368,6 +371,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\OctreeRenderQueue.h">
       <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\Debuger\OctreeDebuger.h">
+      <Filter>Debuger</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

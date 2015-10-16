@@ -220,6 +220,18 @@ public:
 		return false;
 	}
 
+	inline bool operator <= (const veVec3& rhs) const {
+		if (_x <= rhs._x && _y <= rhs._y  && _z <= rhs._z)
+			return true;
+		return false;
+	}
+
+	inline bool operator >=(const veVec3& rhs) const {
+		if (rhs._x <= _x && rhs._y <= _y && rhs._z <= _z)
+			return true;
+		return false;
+	}
+
     friend veVec3 operator * (const veReal fScalar, const veVec3& rkVector){
         return veVec3(fScalar * rkVector._x, fScalar * rkVector._y, fScalar * rkVector._z);
     }

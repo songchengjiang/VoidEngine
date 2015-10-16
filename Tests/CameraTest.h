@@ -80,11 +80,6 @@ public:
 			root->addChild(cameras);
 		}
 
-		auto debuger = new veDebuger;
-		debuger->debugDrawFrustumPlane(true);
-		debuger->setDebugDrawColor(veVec4(1.0f, 1.0f, 1.0f, 1.0f));
-		debuger->setDebugNode(root);
-		_sceneManager->getRootNode()->addChild(debuger);
 		_sceneManager->getRootNode()->addChild(root);
 	}
 	~CameraTest() {};

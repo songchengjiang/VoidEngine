@@ -35,7 +35,7 @@ public:
 	virtual veText* createText(veFont *font, const std::string &content = "");
 	virtual veAnimation* createAnimation();
 
-	virtual void updateRenderableNode(veNode *node) = 0;
+	virtual void requestRender(veNode *node) = 0;
 
 	const NodeList& getNodeList() const { return _nodeList; }
 	const CameraList& getCameraList() const { return _cameraList; }

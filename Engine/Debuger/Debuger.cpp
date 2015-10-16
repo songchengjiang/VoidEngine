@@ -7,6 +7,7 @@
 #include "KernelCore/RenderCommand.h"
 #include "KernelCore/RenderQueue.h"
 #include "KernelCore/Camera.h"
+#include "KernelCore/SceneManager.h"
 #include "Constants.h"
 
 class RenderableObjectFinder : public veNodeVisitor
@@ -30,7 +31,6 @@ veDebuger::veDebuger()
 	: _material(new veMaterial)
 	, _vao(0)
 	, _vbo(0)
-	, _attachedNode(nullptr)
 	, _color(veVec4::WHITE)
 	, _isDrawMeshWireframe(false)
 	, _isDrawBoundingBoxWireframe(false)
@@ -44,50 +44,48 @@ veDebuger::~veDebuger()
 
 }
 
-void veDebuger::setDebugNode(veNode *node)
+void veDebuger::update(veNode *node, veSceneManager *sm)
 {
-	_attachedNode = node;
-}
-
-void veDebuger::update(veSceneManager *sm, const veMat4 &transform)
-{
+	veRenderableObject::update(node, sm);
 	_renderableNodes.clear();
 	_vertices.clear();
 	RenderableObjectFinder finder(_renderableNodes);
-	_attachedNode->accept(finder);
+	node->accept(finder);
 
-	veMat4 nTow = _attachedNode->getWorldToNodeMatrix();
-	if (_isDrawBoundingBoxWireframe) {
-		renderBoundingBoxWireframe(_attachedNode->getBoundingBox(), nTow);
-	}
+	//if (_isDrawBoundingBoxWireframe) {
+	//	renderBoundingBoxWireframe(_attachedNode->getBoundingBox(), nTow);
+	//}
 
 	for (auto &iter : _renderableNodes) {
-		veMat4 rnToNode = nTow * iter->getNodeToWorldMatrix();
 		if (_isDrawFrustumPlane) {
 			auto camera = dynamic_cast<veCamera *>(iter);
 			if (camera)
-				renderFrustumPlanes(camera, nTow);
+				renderFrustumPlanes(camera);
 		}
-		for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
-			auto mesh = dynamic_cast<veMesh *>(iter->getRenderableObject(i));
-			if (mesh) {
-				if (_isDrawMeshWireframe)
-					renderMeshWireframe(mesh, rnToNode);
-				if (_isDrawBoundingBoxWireframe)
-					renderBoundingBoxWireframe(mesh->getBoundingBox(), rnToNode);
+		if (0 < iter->getRenderableObjectCount()) {
+			if (_isDrawBoundingBoxWireframe)
+				renderBoundingBoxWireframe(iter->getBoundingBox());
+
+			veMat4 rnToNode = iter->getNodeToWorldMatrix();
+			for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
+				auto mesh = dynamic_cast<veMesh *>(iter->getRenderableObject(i));
+				if (mesh) {
+					if (_isDrawMeshWireframe)
+						renderMeshWireframe(mesh, rnToNode);
+					//if (_isDrawBoundingBoxWireframe)
+					//	renderBoundingBoxWireframe(mesh->getBoundingBox(), rnToNode);
+				}
 			}
 		}
 	}
-
-	veNode::update(sm, transform);
 }
 
-void veDebuger::render(veCamera *camera)
+void veDebuger::render(veNode *node, veCamera *camera)
 {
 	veRenderCommand rc;
 	rc.priority = veRenderCommand::LOW_PRIORITY;
 	rc.pass = _material->getTechnique(0)->getPass(0);
-	rc.worldMatrix = _attachedNode->getNodeToWorldMatrix();
+	rc.worldMatrix = veMat4::IDENTITY;
 	rc.renderableObj = nullptr;
 	rc.camera = camera;
 	rc.drawFunc = VE_CALLBACK_1(veDebuger::draw, this);
@@ -116,7 +114,7 @@ void veDebuger::initMaterial()
 	_material->addTechnique(tech);
 	tech->addPass(pass);
 
-	pass->depthTest() = false;
+	pass->depthTest() = true;
 	pass->depthWrite() = false;
 	pass->cullFace() = true;
 
@@ -179,12 +177,11 @@ void veDebuger::renderMeshWireframe(veMesh *mesh, const veMat4 &trans)
 	}
 }
 
-void veDebuger::renderBoundingBoxWireframe(const veBoundingBox &bbox, const veMat4 &trans)
+void veDebuger::renderBoundingBoxWireframe(const veBoundingBox &bbox)
 {
 	if (bbox.isNull()) return;
-	veBoundingBox transbbox = bbox * trans;
-	veVec3 bbmin = transbbox.min();
-	veVec3 bbmax = transbbox.max();
+	const veVec3 &bbmin = bbox.min();
+	const veVec3 &bbmax = bbox.max();
 	veVec3 v0 = bbmin;
 	veVec3 v1 = veVec3(bbmax.x(), bbmin.y(), bbmin.z());
 	veVec3 v2 = veVec3(bbmax.x(), bbmax.y(), bbmin.z());
@@ -210,7 +207,7 @@ void veDebuger::renderBoundingBoxWireframe(const veBoundingBox &bbox, const veMa
 	drawLine(v3, v7);
 }
 
-void veDebuger::renderFrustumPlanes(veCamera *camera, const veMat4 &trans)
+void veDebuger::renderFrustumPlanes(veCamera *camera)
 {
 	auto leftPlane = camera->getFrustumPlane(veCamera::FRUSTUM_PLANE_LEFT);
 	auto rightPlane = camera->getFrustumPlane(veCamera::FRUSTUM_PLANE_RIGHT);

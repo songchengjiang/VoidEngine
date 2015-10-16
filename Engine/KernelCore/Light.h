@@ -13,7 +13,7 @@ public:
 	~veLight();
 
 	virtual void visit(veNodeVisitor &visitor) override;
-	virtual void render(veCamera *camera) override;
+	//virtual void render(veCamera *camera) override;
 
 	const std::string& getType() const { return _type; }
 	const veParameterList& getParameters() const { return _parameters; }
@@ -21,9 +21,10 @@ public:
 
 	veMat4 getLightViewMatrix();
 
-
 protected:
 	veLight(const std::string &type, const veParameterList &params);
+
+	virtual void updateSceneManager() override;
 
 protected:
 

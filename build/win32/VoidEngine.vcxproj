@@ -19,6 +19,7 @@
     <ClCompile Include="..\..\Engine\BaseCore\Vector3.cpp" />
     <ClCompile Include="..\..\Engine\BaseCore\Vector4.cpp" />
     <ClCompile Include="..\..\Engine\Debuger\Debuger.cpp" />
+    <ClCompile Include="..\..\Engine\Debuger\OctreeDebuger.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\File.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriter.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterANIMATION.cpp" />
@@ -79,6 +80,7 @@
     <ClInclude Include="..\..\Engine\BaseCore\Vector4.h" />
     <ClInclude Include="..\..\Engine\Constants.h" />
     <ClInclude Include="..\..\Engine\Debuger\Debuger.h" />
+    <ClInclude Include="..\..\Engine\Debuger\OctreeDebuger.h" />
     <ClInclude Include="..\..\Engine\Export.h" />
     <ClInclude Include="..\..\Engine\FileCore\File.h" />
     <ClInclude Include="..\..\Engine\FileCore\FileReaderWriter.h" />

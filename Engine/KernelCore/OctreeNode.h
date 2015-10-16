@@ -3,19 +3,15 @@
 #include "Node.h"
 #include "Octree.h"
 
-class veOctreeNode : public veNode
+class VE_EXPORT veOctreeNode : public veNode
 {
 public:
 	veOctreeNode();
 	~veOctreeNode();
 
-	void setOctant(veOctree *octant) { _octant = octant; }
-	veOctree* getOctant() { return _octant; }
 	bool isIn(const veBoundingBox & bbox);
 
-private:
-
-	veOctree *_octant;
+	veOctree *octant;
 };
 
 #endif

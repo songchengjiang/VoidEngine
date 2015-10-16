@@ -26,3 +26,4 @@
 #include "FileCore/File.h"
 
 #include "Debuger/Debuger.h"
+#include "Debuger/OctreeDebuger.h"

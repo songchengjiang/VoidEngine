@@ -197,12 +197,12 @@ void veCamera::visit(veNodeVisitor &visitor)
 	visitor.visit(*this);
 }
 
-bool veCamera::isOutOfFrustum(veNode *node)
+bool veCamera::isOutOfFrustum(const veBoundingBox &bbox)
 {
-	if (node->getBoundingBox().isNull()) return true;
+	if (bbox.isNull()) return true;
 	updateFrustumPlane();
-	veVec3 center = node->getBoundingBox().center();
-	veVec3 halfSize = (node->getBoundingBox().max() - node->getBoundingBox().min()) * 0.5f;
+	veVec3 center = bbox.center();
+	veVec3 halfSize = (bbox.max() - bbox.min()) * 0.5f;
 	for (unsigned int i = 0; i < 6; ++i) {
 		auto side = _frustumPlane[i].getSide(center, halfSize);
 		if (side == vePlane::NEGATIVE_SIDE)
@@ -275,4 +275,9 @@ void veCamera::updateFrustumPlane()
 
 		_needRefreshFrustumPlane = false;
 	}
+}
+
+void veCamera::updateSceneManager()
+{
+
 }

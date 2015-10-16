@@ -74,11 +74,11 @@ public:
 			node->addComponent(animationContainer);
 		}
 
-		auto debuger = new veDebuger;
-		debuger->debugDrawBoundingBoxWireframe(true);
+		auto debuger = new veOctreeDebuger;
+		debuger->debugDrawBoundingBoxWireframe(false);
+		debuger->debugDrawOctree(true);
 		debuger->setDebugDrawColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
-		debuger->setDebugNode(_sceneManager->getRootNode());
-		_sceneManager->getRootNode()->addChild(debuger);
+		_sceneManager->getRootNode()->addRenderableObject(debuger);
 		_sceneManager->getRootNode()->addChild(root);
 	}
 	~MeshTest() {};

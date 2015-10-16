@@ -1,29 +1,37 @@
 #ifndef _VE_OCTREE_
 #define _VE_OCTREE_
-#include <vector>
+#include "Prerequisites.h"
 #include "BoudingBox.h"
 
-class veNode;
-class veOctree
+class veOctreeNode;
+/*
+veOctree:
+ / 4 - 5 /
+/ 6 - 7 /
+./ 0 - 1 /
+/ 2 - 3 /
+*/
+class VE_EXPORT veOctree
 {
 public:
 	veOctree();
 	~veOctree();
 
-	inline void addNode(veNode *node);
-	inline void removeNode(veNode *node);
+	inline void addNode(veOctreeNode *node);
+	inline void removeNode(veOctreeNode *node);
 
-	inline void setChild(unsigned int idx, veOctree *child);
-	veOctree* getParent() { return _parent; }
+	inline void setChild(unsigned int x, unsigned int y, unsigned int z, veOctree *child);
+	veOctree* getChild(unsigned int x, unsigned int y, unsigned int z);
+	void getChildIndex(const veBoundingBox &bbox, unsigned int &x, unsigned int &y, unsigned int &z);
+
+	bool isTwiceSize(const veBoundingBox &bbox);
 
 	veBoundingBox boundingBox;
+	veOctree* children[8];
 
-private:
-
-	typedef std::vector<veNode *> NodeList;
-	NodeList  _nodeList;
-	veOctree* _children[8];
-	veOctree* _parent;
+	typedef std::vector<veOctreeNode *> OctreeNodeList;
+	OctreeNodeList  nodeList;
+	veOctree* parent;
 };
 
 #endif
