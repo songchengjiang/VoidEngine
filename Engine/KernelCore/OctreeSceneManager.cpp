@@ -125,7 +125,17 @@ void veOctreeSceneManager::addOctreeNode(veOctreeNode *node, veOctree *octant, u
 		addOctreeNode(node, octant->getChild(x, y, z), ++depth);
 	}
 	else {
+		octant->boundingBox.expandBy(node->getBoundingBox());
+		updateParentsBoundingBox(octant);
 		octant->addNode(node);
+	}
+}
+
+void veOctreeSceneManager::updateParentsBoundingBox(veOctree *octant)
+{
+	if (octant->parent) {
+		octant->parent->boundingBox.expandBy(octant->boundingBox);
+		updateParentsBoundingBox(octant->parent);
 	}
 }
 
@@ -164,8 +174,10 @@ void veOctreeSceneManager::traverseOctree(veOctree *octant, veCamera *camera)
 	if (!octant->nodeList.empty()) {
 		for (auto &iter : octant->nodeList) {
 			if (iter->isVisible() && (iter->getMask() & camera->getMask())) {
-				for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
-					iter->getRenderableObject(i)->render(iter, camera);
+				if (!camera->isOutOfFrustum(iter->getBoundingBox())) {
+					for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
+						iter->getRenderableObject(i)->render(iter, camera);
+					}
 				}
 			}
 		}

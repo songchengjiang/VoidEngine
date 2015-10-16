@@ -31,6 +31,7 @@ protected:
 
 	void traverseOctree(veOctree *octant, veCamera *camera);
 	void addOctreeNode(veOctreeNode *node, veOctree *octant, unsigned int depth = 0);
+	void updateParentsBoundingBox(veOctree *octant);
 	void init();
 
 protected:
