@@ -6,7 +6,7 @@
 #include <map>
 #include <unordered_map>
 
-class veVisualiser;
+class veCamera;
 class veRenderQueue
 {
 public:
@@ -25,11 +25,11 @@ public:
 	virtual ~veRenderQueue();
 
 	virtual void pushCommand(unsigned int renderQueueType, const veRenderCommand &cmd);
-	virtual void execute(veVisualiser *vs);
+	virtual void execute(veCamera *camera);
 
 protected:
 
-	std::unordered_map<veCamera*, RenderCommandList> _renderQueues;
+	RenderCommandList _renderQueue;
 };
 
 #endif

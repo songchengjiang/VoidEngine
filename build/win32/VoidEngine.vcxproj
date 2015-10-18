@@ -38,6 +38,8 @@
     <ClCompile Include="..\..\Engine\KernelCore\Camera.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Component.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Director.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Entity.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\EntityRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\EventDispatcher.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Font.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\FrameBufferObject.cpp" />
@@ -46,7 +48,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\LightManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Material.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Mesh.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\MeshRenderer.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\MeshNode.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Node.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\NodeVisitor.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Octree.cpp" />
@@ -92,6 +94,8 @@
     <ClInclude Include="..\..\Engine\KernelCore\Camera.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Component.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Director.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Entity.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\EntityRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Event.h" />
     <ClInclude Include="..\..\Engine\KernelCore\EventDispatcher.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Font.h" />
@@ -103,7 +107,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\LoopQueue.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Material.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Mesh.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\MeshRenderer.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\MeshNode.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Node.h" />
     <ClInclude Include="..\..\Engine\KernelCore\NodeVisitor.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Octree.h" />

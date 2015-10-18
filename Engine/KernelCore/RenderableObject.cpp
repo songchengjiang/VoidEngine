@@ -6,6 +6,7 @@ veRenderableObject::veRenderableObject()
 	: USE_VE_PTR_INIT
 	, _renderer(nullptr)
 	, _isVisible(true)
+	, _isDirtyBoundingBox(true)
 	, _mask(0xffffffff)
 {
 }

@@ -51,9 +51,11 @@ public:
 	CameraTest() {
 		veNode *root = _sceneManager->createNode();
 		{
-			veNode *node = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem"));
-			auto mat = node->getChild(0)->getChild(0)->getRenderableObject(0)->getMaterial();
+			veNode *node = _sceneManager->createNode();
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem"));
+			auto mat = entity->getMaterialArray()->getMaterial(0);
 			mat->activateTechnique(mat->getTechnique("forwardRender"));
+			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);

@@ -38,8 +38,7 @@ protected:
 protected:
     
     std::vector<veNode *> _renderableNodes;
-	veRealArray                       _vertices;
-	VE_Ptr<veMaterial>                _material;
+	veRealArray     _vertices;
 	GLuint          _vao;
 	GLuint          _vbo;
 

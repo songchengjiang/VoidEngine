@@ -2,7 +2,7 @@
 #include "Event.h"
 #include "LightManager.h"
 #include "Overlay.h"
-#include "Mesh.h"
+#include "Entity.h"
 #include "Text.h"
 #include "Animation.h"
 
@@ -48,10 +48,10 @@ veOverlay* veSceneManager::createOverlay()
 	return overlay;
 }
 
-veMesh* veSceneManager::createMesh()
+veEntity* veSceneManager::createEntity()
 {
-	auto mesh = new veMesh;
-	return mesh;
+	auto entity = new veEntity;
+	return entity;
 }
 
 veText* veSceneManager::createText(veFont *font, const std::string &content)

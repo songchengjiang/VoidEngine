@@ -49,7 +49,9 @@ public:
 		}
 
 		{
-			veNode *node = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem"));
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem"));
+			veNode *node = _sceneManager->createNode();
+			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
@@ -61,7 +63,7 @@ public:
 			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim"));
 			animationContainer->start();
 			animationContainer->setLoopAnimation(true);
-			node->addComponent(animationContainer);
+			entity->setAnimationContainer(animationContainer);
 		}
 
 		_sceneManager->getRootNode()->addChild(root);

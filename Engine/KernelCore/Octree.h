@@ -26,12 +26,20 @@ public:
 
 	bool isTwiceSize(const veBoundingBox &bbox);
 
+	bool updateBoundingBox();
+
 	veBoundingBox boundingBox;
+	veBoundingBox originBoundingBox;
 	veOctree* children[8];
 
 	typedef std::vector<veOctreeNode *> OctreeNodeList;
 	OctreeNodeList  nodeList;
 	veOctree* parent;
+	bool isVisible;
+
+private:
+
+	bool _needUpdateBoundingBox;
 };
 
 #endif

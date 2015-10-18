@@ -208,6 +208,10 @@ void vePass::applyUniforms(const veRenderCommand &command)
 
 void vePass::applyLightUniforms(unsigned int idx, veLight *light, veCamera *camera)
 {
+	if (light->getMask() & camera->getMask()) {
+		light->setLightViewMatrix(camera->viewMatrix() * light->getNodeToWorldMatrix());
+	}
+
 	char str[32];
 	sprintf(str, "%s[%d].", light->getType().c_str(), idx);
 	std::string lightName = str;
@@ -215,7 +219,6 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, veCamera *came
 	GLint posLoc = glGetUniformLocation(_program, (lightName + POSITION_KEY).c_str());
 	GLint dirLoc = glGetUniformLocation(_program, (lightName + DIRECTION_KEY).c_str());
 	if (0 <= posLoc || 0 <= dirLoc) {
-		//veMat4 lightInView = camera->viewMatrix() * light->getNodeToWorldMatrix();
 		veMat4 lightInView = light->getLightViewMatrix();
 		if (0 <= posLoc) {
 			glUniform3f(posLoc, lightInView[0][3], lightInView[1][3], lightInView[2][3]);
@@ -231,6 +234,7 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, veCamera *came
 
 	for (auto &param : light->getParameters()) {
 		GLint loc = glGetUniformLocation(_program, (lightName + param->getName()).c_str());
+		if (loc < 0) continue;
 		switch (param->getType())
 		{
 		case veParameter::Type::INT:

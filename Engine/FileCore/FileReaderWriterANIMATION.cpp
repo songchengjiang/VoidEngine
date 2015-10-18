@@ -10,15 +10,18 @@ class veFileReaderWriterANIMATION : public veFileReaderWriter
 {
 public:
 	veFileReaderWriterANIMATION()
+		: _doucument(nullptr)
 	{};
 	~veFileReaderWriterANIMATION(){};
 
 	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
+		if (!_doucument) _doucument = new Document;
 		_sceneManager = sm;
 		std::string buffer = veFile::readFileToBuffer(filePath);
-		_doucument.Parse(buffer.c_str());
-        if (_doucument.HasParseError()) return  nullptr;
+		_doucument->Parse(buffer.c_str());
+        if (_doucument->HasParseError()) return  nullptr;
 		readAnimations();
+		VE_SAFE_DELETE(_doucument);
 		return _animationContainer;
 	}
 
@@ -30,8 +33,8 @@ private:
 
 	void readAnimations() {
 		_animationContainer = new veAnimationContainer;
-		if (_doucument.HasMember(ANIMATIONS_KEY.c_str())) {
-			const Value &anims = _doucument[ANIMATIONS_KEY.c_str()];
+		if ((*_doucument).HasMember(ANIMATIONS_KEY.c_str())) {
+			const Value &anims = (*_doucument)[ANIMATIONS_KEY.c_str()];
 			for (unsigned int i = 0; i < anims.Size(); ++i) {
 				readAnimation(anims[i]);
 			}
@@ -96,7 +99,7 @@ private:
 
 private:
 
-	Document _doucument;
+	Document *_doucument;
 	veAnimationContainer *_animationContainer;
 	veSceneManager *_sceneManager;
 };

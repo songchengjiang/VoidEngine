@@ -1,8 +1,9 @@
 #include "FileReaderWriter.h"
 #include <rapidjson/include/document.h>
 #include "Constants.h"
+#include "KernelCore/Entity.h"
 #include "KernelCore/Mesh.h"
-#include "KernelCore/Node.h"
+#include "KernelCore/MeshNode.h"
 #include "KernelCore/SceneManager.h"
 #include "BaseCore/Array.h"
 #include <unordered_map>
@@ -12,20 +13,23 @@ class veFileReaderWriterVEM : public veFileReaderWriter
 {
 public:
 	veFileReaderWriterVEM()
-		: _root(nullptr)
+		: _entity(nullptr)
+		, _doucument(nullptr)
 	{};
 	virtual ~veFileReaderWriterVEM(){};
 
 	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
+		if (!_doucument) _doucument = new Document;
 		_sceneManager = sm;
 		_fileFolder = filePath.substr(0, filePath.find_last_of("/\\") + 1);
 		std::string buffer = veFile::readFileToBuffer(filePath);
-		_doucument.Parse(buffer.c_str());
-        if (_doucument.HasParseError()) return  nullptr;
+		_doucument->Parse(buffer.c_str());
+        if (_doucument->HasParseError()) return  nullptr;
 		parseDoc();
 		_meshList.clear();
 		_boneList.clear();
-		return _root;
+		VE_SAFE_DELETE(_doucument);
+		return _entity;
 	}
 
 	virtual bool writeFile(veSceneManager *sm, void *data, const std::string &filePath) override{
@@ -35,23 +39,29 @@ public:
 private:
 
 	void parseDoc(){
+		_entity = _sceneManager->createEntity();
 		loadMaterials();
 		readMeshs();
 		readNodes();
 	}
 
 	void loadMaterials(){
-		std::string matFile = _doucument[MATERIALS_KEY.c_str()].GetString();
+		std::string matFile = (*_doucument)[MATERIALS_KEY.c_str()].GetString();
 		_materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, _fileFolder + matFile));
+		_entity->setMaterialArray(_materials);
 	}
 
 	void readMeshs(){
-		if (_doucument.HasMember(MESHES_KEY.c_str())){
-			const Value &meshs = _doucument[MESHES_KEY.c_str()];
+		if ((*_doucument).HasMember(MESHES_KEY.c_str())){
+			const Value &meshs = (*_doucument)[MESHES_KEY.c_str()];
 			for (unsigned int i = 0; i < meshs.Size(); ++i){
 				readMesh(meshs[i]);
 			}
-		}	
+
+			for (auto &iter : _meshList) {
+				_entity->addMesh(iter.second);
+			}
+		}
 	}
 
 	void readMesh(const Value &meshVal){
@@ -164,21 +174,21 @@ private:
 	}
 
 	void readNodes(){
-		if (_doucument.HasMember(NODES_KEY.c_str())){
-			const Value &nodes = _doucument[NODES_KEY.c_str()];
+		if ((*_doucument).HasMember(NODES_KEY.c_str())){
+			const Value &nodes = (*_doucument)[NODES_KEY.c_str()];
 			for (unsigned int i = 0; i < nodes.Size(); ++i){
 				readNode(nodes[i], nullptr);
 			}
 		}
 	}
 
-	void readNode(const Value &nodeVal, veNode *parent){
-		veNode *node = _sceneManager->createNode();
+	void readNode(const Value &nodeVal, veMeshNode *parent){
+		veMeshNode *node = new veMeshNode;
 		if (parent != nullptr){
 			parent->addChild(node);
 		}
 		else{
-			_root = node;
+			_entity->setRootMeshNode(node);
 		}
 		node->setName(nodeVal[NAME_KEY.c_str()].GetString());
 		veMat4 matrix;
@@ -192,7 +202,7 @@ private:
 			const Value &meshs = nodeVal[MESHES_KEY.c_str()];
 			for (unsigned int i = 0; i < meshs.Size(); ++i){
 				std::string meshName = meshs[i].GetString();
-				node->addRenderableObject(_meshList[meshName]);
+				node->addMeshRef(_meshList[meshName]);
 			}
 		}
 
@@ -215,11 +225,11 @@ private:
 
 private:
 
-	veNode *_root;
-	Document _doucument;
+	veEntity *_entity;
+	Document *_doucument;
 	std::unordered_map<std::string, veMesh *> _meshList;
 	std::unordered_map<std::string, std::vector<veBone *> > _boneList;
-	VE_Ptr<veMaterialArray> _materials;
+	veMaterialArray *_materials;
 	std::string _fileFolder;
 	veSceneManager *_sceneManager;
 };

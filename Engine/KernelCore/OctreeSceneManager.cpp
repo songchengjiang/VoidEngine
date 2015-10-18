@@ -30,7 +30,7 @@ void veOctreeSceneManager::init()
 	_root = new veOctreeNode;
 	_root->setSceneManager(this);
 	_renderQueue = new veOctreeRenderQueue;
-	_octree->boundingBox = _boundingBox;
+	_octree->originBoundingBox = _octree->boundingBox = _boundingBox;
 }
 
 veNode* veOctreeSceneManager::createNode()
@@ -75,6 +75,12 @@ void veOctreeSceneManager::requestRender(veNode *node)
 	}
 }
 
+bool veOctreeSceneManager::isNodeVisibleInScene(veNode *node)
+{
+	veOctreeNode *ocNode = static_cast<veOctreeNode *>(node);
+	return ocNode->octant == nullptr ? false : ocNode->octant->isVisible;
+}
+
 void veOctreeSceneManager::addOctreeNode(veOctreeNode *node, veOctree *octant, unsigned int depth)
 {
 	if (!octant) return;
@@ -87,8 +93,8 @@ void veOctreeSceneManager::addOctreeNode(veOctreeNode *node, veOctree *octant, u
 			auto octree = new veOctree;
 			const veVec3& octantMin = octant->boundingBox.min();
 			const veVec3& octantMax = octant->boundingBox.max();
-			veVec3 &min = octree->boundingBox.min();
-			veVec3 &max = octree->boundingBox.max();
+			veVec3 &min = octree->originBoundingBox.min();
+			veVec3 &max = octree->originBoundingBox.max();
 			if (x == 0)
 			{
 				min.x() = octantMin.x();
@@ -119,29 +125,21 @@ void veOctreeSceneManager::addOctreeNode(veOctreeNode *node, veOctree *octant, u
 				min.z() = (octantMin.z() + octantMax.z()) * 0.5f;
 				max.z() = octantMax.z();
 			}
+			octree->boundingBox = octree->originBoundingBox;
 			octant->setChild(x, y, z, octree);	
 		}
 
 		addOctreeNode(node, octant->getChild(x, y, z), ++depth);
 	}
 	else {
-		octant->boundingBox.expandBy(node->getBoundingBox());
-		updateParentsBoundingBox(octant);
 		octant->addNode(node);
-	}
-}
-
-void veOctreeSceneManager::updateParentsBoundingBox(veOctree *octant)
-{
-	if (octant->parent) {
-		octant->parent->boundingBox.expandBy(octant->boundingBox);
-		updateParentsBoundingBox(octant->parent);
 	}
 }
 
 void veOctreeSceneManager::update()
 {
 	_root->update(this, veMat4::IDENTITY);
+	_octree->updateBoundingBox();
 }
 
 void veOctreeSceneManager::render()
@@ -154,6 +152,7 @@ void veOctreeSceneManager::render()
 			if (iter->getFrameBufferObject()) {
 				//_root->render(iter);
 				traverseOctree(_octree, iter);
+				_renderQueue->execute(iter);
 			}
 		}
 	}
@@ -161,16 +160,19 @@ void veOctreeSceneManager::render()
 	if (mainCamera && mainCamera->isInScene() && mainCamera->isVisible()) {
 		//_root->render(mainCamera);
 		traverseOctree(_octree, mainCamera);
+		_renderQueue->execute(mainCamera);
 	}
-	_renderQueue->execute(_visualiser.get());
 	veSceneManager::render();
 }
 
 void veOctreeSceneManager::traverseOctree(veOctree *octant, veCamera *camera)
 {
-	if (camera->isOutOfFrustum(octant->boundingBox))
+	if (camera->isOutOfFrustum(octant->boundingBox)) {
+		octant->isVisible = false;
 		return;
+	}
 
+	octant->isVisible = true;
 	if (!octant->nodeList.empty()) {
 		for (auto &iter : octant->nodeList) {
 			if (iter->isVisible() && (iter->getMask() & camera->getMask())) {

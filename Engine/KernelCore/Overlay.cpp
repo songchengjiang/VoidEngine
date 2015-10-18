@@ -7,7 +7,7 @@
 veOverlay::veOverlay()
 {
 	_renderer = new veOverlayRenderer;
-	_material = new veMaterial;
+	_materials = new veMaterialArray;
 	initMaterial();
 }
 
@@ -68,10 +68,12 @@ void veOverlay::initMaterial()
 		fragColor = color; \n \
 	}";
 
+	_materials = new veMaterialArray;
+	auto material = new veMaterial;
 	auto tech = new veTechnique;
 	auto pass = new vePass;
 	_texture = new veTexture2D;
-	_material->addTechnique(tech);
+	material->addTechnique(tech);
 	tech->addPass(pass);
 	pass->addTexture(_texture.get());
 
@@ -88,4 +90,6 @@ void veOverlay::initMaterial()
 	pass->addUniform(new veUniform("u_texture", 0));
 	_alphaThreshold = new veUniform("u_alphaThreshold", 1.0f);
 	pass->addUniform(_alphaThreshold.get());
+
+	_materials->addMaterial(material);
 }

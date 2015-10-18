@@ -1,11 +1,10 @@
 #include "Light.h"
 #include "NodeVisitor.h"
-#include "Camera.h"
 
 veLight::veLight(const std::string &type, const veParameterList &params)
 	: _type(type)
 	, _parameters(params)
-	, _camera(nullptr)
+	, _lightMatrix(veMat4::IDENTITY)
 {
 }
 
@@ -35,11 +34,6 @@ veParameter* veLight::getParameter(const std::string &name)
 	}
 
 	return nullptr;
-}
-
-veMat4 veLight::getLightViewMatrix()
-{
-	return _camera == nullptr ? veMat4::IDENTITY : _camera->viewMatrix() * this->getNodeToWorldMatrix();
 }
 
 void veLight::updateSceneManager()

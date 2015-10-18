@@ -2,7 +2,7 @@
 #include "KernelCore/RenderableObject.h"
 #include "KernelCore/NodeVisitor.h"
 #include "KernelCore/Node.h"
-#include "KernelCore/Mesh.h"
+#include "KernelCore/Entity.h"
 #include "KernelCore/BoudingBox.h"
 #include "KernelCore/RenderCommand.h"
 #include "KernelCore/RenderQueue.h"
@@ -28,8 +28,7 @@ private:
 };
 
 veDebuger::veDebuger()
-	: _material(new veMaterial)
-	, _vao(0)
+	: _vao(0)
 	, _vbo(0)
 	, _color(veVec4::WHITE)
 	, _isDrawMeshWireframe(false)
@@ -68,12 +67,15 @@ void veDebuger::update(veNode *node, veSceneManager *sm)
 
 			veMat4 rnToNode = iter->getNodeToWorldMatrix();
 			for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
-				auto mesh = dynamic_cast<veMesh *>(iter->getRenderableObject(i));
-				if (mesh) {
+				auto entity = dynamic_cast<veEntity *>(iter->getRenderableObject(i));
+				if (entity) {
 					if (_isDrawMeshWireframe)
-						renderMeshWireframe(mesh, rnToNode);
+						for (size_t i = 0; i < entity->getMeshCount(); ++i) {
+							auto mesh = entity->getMesh(i);
+							renderMeshWireframe(mesh, rnToNode * mesh->getAttachedNode()->toMeshNodeRootMatrix());
+						}
 					//if (_isDrawBoundingBoxWireframe)
-					//	renderBoundingBoxWireframe(mesh->getBoundingBox(), rnToNode);
+					//	renderBoundingBoxWireframe(entity->getBoundingBox() * rnToNode);
 				}
 			}
 		}
@@ -84,7 +86,7 @@ void veDebuger::render(veNode *node, veCamera *camera)
 {
 	veRenderCommand rc;
 	rc.priority = veRenderCommand::LOW_PRIORITY;
-	rc.pass = _material->getTechnique(0)->getPass(0);
+	rc.pass = _materials->getMaterial(0)->getTechnique(0)->getPass(0);
 	rc.worldMatrix = veMat4::IDENTITY;
 	rc.renderableObj = nullptr;
 	rc.camera = camera;
@@ -109,9 +111,11 @@ void veDebuger::initMaterial()
 		fragColor = u_Color; \n \
 	}";
 
+	_materials = new veMaterialArray;
+	auto material = new veMaterial;
 	auto tech = new veTechnique;
 	auto pass = new vePass;
-	_material->addTechnique(tech);
+	material->addTechnique(tech);
 	tech->addPass(pass);
 
 	pass->depthTest() = true;
@@ -126,6 +130,8 @@ void veDebuger::initMaterial()
 	pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
 	_colorUniform = new veUniform("u_Color", _color);
 	pass->addUniform(_colorUniform.get());
+
+	_materials->addMaterial(material);
 }
 
 void veDebuger::renderMeshWireframe(veMesh *mesh, const veMat4 &trans)
@@ -261,8 +267,8 @@ void veDebuger::drawLine(const veVec3 &start, const veVec3 &end)
 
 void veDebuger::draw(const veRenderCommand &command)
 {
-	_colorUniform->setValue(_color);
 	command.pass->apply(command);
+	_colorUniform->setValue(_color);
 
 	if (!_vao) {
 		glGenVertexArrays(1, &_vao);

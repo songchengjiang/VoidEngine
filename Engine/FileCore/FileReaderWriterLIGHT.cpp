@@ -12,16 +12,19 @@ class veFileReaderWriterLIGHT : public veFileReaderWriter
 public:
 	veFileReaderWriterLIGHT()
 		: _light(nullptr)
+		, _doucument(nullptr)
 	{};
 	~veFileReaderWriterLIGHT(){};
 
 	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
+		if (!_doucument) _doucument = new Document;
 		_sceneManager = sm;
 		_fileFolder = filePath.substr(0, filePath.find_last_of("/\\") + 1);
 		std::string buffer = veFile::readFileToBuffer(filePath);
-		_doucument.Parse(buffer.c_str());
-        if (_doucument.HasParseError()) return  nullptr;
+		_doucument->Parse(buffer.c_str());
+        if (_doucument->HasParseError()) return  nullptr;
 		readLight();
+		VE_SAFE_DELETE(_doucument);
 		return _light;
 	}
 
@@ -32,12 +35,12 @@ public:
 private:
 
 	void readLight() {
-		std::string name = _doucument[NAME_KEY.c_str()].GetString();
-		std::string type = _doucument[TYPE_KEY.c_str()].GetString();
+		std::string name = (*_doucument)[NAME_KEY.c_str()].GetString();
+		std::string type = (*_doucument)[TYPE_KEY.c_str()].GetString();
 		_light = _sceneManager->createLight(type);
 		if (!_light) return;
 		_light->setName(name);
-		const Value &paramsVals = _doucument[PARAMETERS_KEY.c_str()];
+		const Value &paramsVals = (*_doucument)[PARAMETERS_KEY.c_str()];
 		if (!paramsVals.Empty()) {
 			for (unsigned int i = 0; i < paramsVals.Size(); ++i) {
 				const Value & pm = paramsVals[i];
@@ -73,7 +76,7 @@ private:
 
 private:
 
-	Document _doucument;
+	Document *_doucument;
 	std::string _fileFolder;
 	std::string _className;
 	veLight *_light;

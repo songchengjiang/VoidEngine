@@ -81,9 +81,6 @@
     <ClCompile Include="..\..\Engine\FileCore\Printer.cpp">
       <Filter>FileCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\MeshRenderer.cpp">
-      <Filter>KernelCore\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\OverlayRenderer.cpp">
       <Filter>KernelCore\Renderer</Filter>
     </ClCompile>
@@ -198,6 +195,15 @@
     <ClCompile Include="..\..\Engine\Debuger\OctreeDebuger.cpp">
       <Filter>Debuger</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Entity.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\MeshNode.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\EntityRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -232,9 +238,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\FileCore\Printer.h">
       <Filter>FileCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\MeshRenderer.h">
-      <Filter>KernelCore\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\OverlayRenderer.h">
       <Filter>KernelCore\Renderer</Filter>
@@ -374,6 +377,15 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\Debuger\OctreeDebuger.h">
       <Filter>Debuger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Entity.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\MeshNode.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\EntityRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

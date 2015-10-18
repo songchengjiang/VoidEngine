@@ -8,6 +8,8 @@
 #include "BaseCore/Quaternion.h"
 #include <map>
 
+class veEntity;
+class veBone;
 class VE_EXPORT veAnimKeyValues
 {
 public:
@@ -45,7 +47,7 @@ public:
 	void setFrameRate(double fRate) { _frameRate = fRate; }
 	double getFrameRate() const { return _frameRate; }
 
-	void update(veNode *node, double frame);
+	void update(veEntity *entity, double frame);
 
 private:
 
@@ -55,19 +57,22 @@ private:
 private:
 
 	std::vector< VE_Ptr<veAnimKeyValues> > _animsKeyValuse;
-	std::map< veNode*, veAnimKeyValues* > _nodeAnims;
+	std::map< veBone*, veAnimKeyValues* > _boneAnims;
 	double _duration;
 	double _frameRate;
 	bool _needRefresh;
 };
 
-class VE_EXPORT veAnimationContainer : public veComponent
+class VE_EXPORT veAnimationContainer
 {
 public:
 	veAnimationContainer();
 	~veAnimationContainer();
 
-	virtual void update(veNode *node, veSceneManager *sm) override;
+	USE_VE_PTR;
+	USE_NAME_PROPERTY;
+
+	void update(veNode *node, veEntity *entity, veSceneManager *sm);
 
 	void addAnimationChannel(veAnimation *anim);
 	veAnimation* getAnimationChannel(unsigned int idx);

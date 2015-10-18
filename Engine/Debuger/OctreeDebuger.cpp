@@ -18,6 +18,7 @@ void veOctreeDebuger::update(veNode *node, veSceneManager *sm)
 	veDebuger::update(node, sm);
 	if (_isDrawOctree) {
 		auto octreesm = static_cast<veOctreeSceneManager *>(sm);
+		//_boundingBox = octreesm->getRootOctree()->boundingBox;
 		renderOctree(octreesm->getRootOctree());
 	}
 }

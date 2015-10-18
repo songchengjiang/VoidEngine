@@ -3,11 +3,12 @@
 #include <unordered_map>
 #include "Prerequisites.h"
 #include "BaseCore/Array.h"
-#include "RenderableObject.h"
+#include "Material.h"
 #include "Bone.h"
 #include "VE_Ptr.h"
 
-class VE_EXPORT veMesh : public veRenderableObject
+class veMeshNode;
+class VE_EXPORT veMesh
 {
 public:
 	static const unsigned int MAX_ATTRIBUTE_NUM;
@@ -62,7 +63,10 @@ public:
 	veMesh();
 	virtual ~veMesh();
 
-	virtual void update(veNode *node, veSceneManager *sm) override;
+	USE_VE_PTR;
+	USE_NAME_PROPERTY;
+
+	//virtual void update(veNode *node, veSceneManager *sm) override;
 
 	void setVertexArray(veRealArray *vAry) { _vertices = vAry; _needRefresh = true; }
 	veRealArray* getVertexArray() { return _vertices.get(); }
@@ -82,20 +86,29 @@ public:
 	const veBone* getBone(unsigned int idx) const;
 	size_t getBoneNum() const { return _bones.size(); };
 
+	void setBoundingBox(const veBoundingBox &bbox) { _boundingBox = bbox; }
+	const veBoundingBox& getBoundingBox() const { return _boundingBox; }
+
+	void setAttachedNode(veMeshNode *meshNode) { _meshNode = meshNode; }
+	veMeshNode* getAttachedNode() { return _meshNode; }
+
+	virtual void setMaterial(veMaterial *material) { _material = material; }
+	veMaterial* getMaterial() { return _material.get(); }
+
 	void caculateBoundingBox();
+	void updateBoundingBox();
 
 	bool& needRefresh();
 
 protected:
 
-	void updateBones(veNode *node);
-
-protected:
-
+	veMeshNode                        *_meshNode;
+	VE_Ptr<veMaterial>                 _material;
 	VE_Ptr<veRealArray>                _vertices;
 	std::vector<VertexAtrribute>       _attributes;
 	std::vector<Primitive>             _primitives;
 	std::vector< VE_Ptr<veBone> >      _bones;
+	veBoundingBox                      _boundingBox;
 	unsigned int                       _vertexStride;
 	bool                               _needRefresh;
 };

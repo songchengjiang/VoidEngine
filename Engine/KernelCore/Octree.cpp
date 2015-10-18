@@ -3,6 +3,8 @@
 
 veOctree::veOctree()
 	: parent(nullptr)
+	, _needUpdateBoundingBox(true)
+	, isVisible(true)
 {
 	memset(children, 0, sizeof(veOctree*) * 8);
 }
@@ -18,6 +20,7 @@ void veOctree::addNode(veOctreeNode *node)
 {
 	node->octant = this;
 	nodeList.push_back(node);
+	_needUpdateBoundingBox = true;
 }
 
 void veOctree::removeNode(veOctreeNode *node)
@@ -26,6 +29,7 @@ void veOctree::removeNode(veOctreeNode *node)
 	if (iter == nodeList.end()) return;
 	(*iter)->octant = nullptr;
 	nodeList.erase(iter);
+	_needUpdateBoundingBox = true;
 }
 
 void veOctree::setChild(unsigned int x, unsigned int y, unsigned int z, veOctree *child)
@@ -68,4 +72,28 @@ bool veOctree::isTwiceSize(const veBoundingBox &bbox)
 	veVec3 halfBoxSize = (boundingBox.max() - boundingBox.min()) * 0.5f;
 	veVec3 boxSize = bbox.max() - bbox.min();
 	return boxSize <= halfBoxSize;
+}
+
+bool veOctree::updateBoundingBox()
+{
+	bool state = false;
+	if (_needUpdateBoundingBox) {
+		boundingBox = originBoundingBox;
+		for (auto &iter : nodeList) {
+			boundingBox.expandBy(iter->getBoundingBox());
+		}
+		state = true;
+		_needUpdateBoundingBox = false;
+	}
+
+	for (unsigned int i = 0; i < 8; ++i) {
+		if (children[i]) {
+			if (children[i]->updateBoundingBox()) {
+				boundingBox.expandBy(children[i]->boundingBox);
+				state = true;
+			}
+		}
+	}
+
+	return state;
 }

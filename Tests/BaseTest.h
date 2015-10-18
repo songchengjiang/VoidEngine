@@ -60,8 +60,10 @@ private:
 class CameraManipulator : public veComponent
 {
 public:
-	CameraManipulator()
+	CameraManipulator(veReal defaultCameraDistance, veReal defaultCameraZoomScale)
 		: _camera(nullptr)
+		, _defaultCameraDistance(defaultCameraDistance)
+		, _defaultCameraZoomScale(defaultCameraZoomScale)
 	{
 		resetCamera();
 	}
@@ -113,18 +115,18 @@ private:
 	void moveCamera(const veVec2 &g0, const veVec2 &g1) {
 		if (g0 == g1) return;
 		veVec2 delta = g0 - g1;
-		delta *= 20.0f;
+		delta *= 20;
 		_center += _rotation * veVec3(delta.x(), delta.y(), .0f);
 		updateViewMatrix();
 	}
 
 	void zoomCamera(float zoomDelta) {
-		_translate.z() += zoomDelta;
+		_translate.z() += zoomDelta * _defaultCameraZoomScale;
 		updateViewMatrix();
 	}
 
 	void resetCamera() {
-		_translate = veVec3(0.0f, 0.0f, 30.0f);
+		_translate = veVec3(0.0f, 0.0f, _defaultCameraDistance);
 		_center = veVec3::ZERO;
 		_rotation = veQuat::IDENTITY;
 		updateViewMatrix();
@@ -185,6 +187,8 @@ private:
 	veCamera *_camera;
 	veVec2 _g0;
 	veVec2 _g1;
+	veReal _defaultCameraDistance;
+	veReal _defaultCameraZoomScale;
 };
 
 class BaseTest
@@ -201,6 +205,8 @@ public:
 		_camera->setViewMatrixAslookAt(veVec3(0.0f, 0.0f, 30.0f), veVec3::ZERO, veVec3::UNIT_Y);
 		_sceneManager->getRootNode()->addChild(_camera);
 		_sceneManager->getVisualiser()->setCamera(_camera);
+		_defaultCameraDistance = 30.0f;
+		_defaultCameraZoomScale = 1.0f;
 	};
 	~BaseTest() {
 		VE_SAFE_DELETE(_sceneManager);
@@ -211,7 +217,7 @@ public:
 
 	int run() {
 		init();
-		_camera->addComponent(new CameraManipulator);
+		_camera->addComponent(new CameraManipulator(_defaultCameraDistance, _defaultCameraZoomScale));
 		return veDirector::instance()->run();
 	}
 
@@ -219,6 +225,8 @@ protected:
 
 	veSceneManager *_sceneManager;
 	veCamera  *_camera;
+	veReal _defaultCameraDistance;
+	veReal _defaultCameraZoomScale;
 };
 
 #endif

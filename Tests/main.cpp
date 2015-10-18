@@ -6,6 +6,7 @@
 #include "CameraTest.h"
 #include "LightTest.h"
 #include "TextTest.h"
+#include "PerformanceTest.h"
 
 int main(int argc, char **argv)
 {
@@ -15,5 +16,6 @@ int main(int argc, char **argv)
 	auto test = new MeshTest;
 	//auto test = new ImageTest;
 	//auto test = new TextTest;
+	//auto test = new PerformanceTest;
 	return test->run();
 }

@@ -29,17 +29,20 @@ public:
 	unsigned int getMask() const { return _mask; }
 	inline void setRenderer(veRenderer *renderer);
 	veRenderer* getRenderer() const { return _renderer.get(); }
-	virtual void setMaterial(veMaterial *material) { _material = material; }
-	veMaterial* getMaterial() { return _material.get(); }
+	virtual void setMaterialArray(veMaterialArray *material) { _materials = material; }
+	veMaterialArray* getMaterialArray() { return _materials.get(); }
 	void setBoundingBox(const veBoundingBox &bbox) { _boundingBox = bbox; }
 	const veBoundingBox& getBoundingBox() const { return _boundingBox; }
+
+	void dirtyBoundingBox() { _isDirtyBoundingBox = true; }
 
 protected:
 
 	VE_Ptr<veRenderer> _renderer;
-	VE_Ptr<veMaterial> _material;
+	VE_Ptr<veMaterialArray> _materials;
 	veBoundingBox      _boundingBox;
 	bool              _isVisible;
+	bool              _isDirtyBoundingBox;
 	unsigned int      _mask;
 };
 

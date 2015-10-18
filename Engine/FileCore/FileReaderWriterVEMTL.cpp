@@ -14,16 +14,19 @@ class veFileReaderWriterVEMTL : public veFileReaderWriter
 public:
 	veFileReaderWriterVEMTL()
 		: _materials(nullptr)
+		, _doucument(nullptr)
 	{};
 	~veFileReaderWriterVEMTL(){};
 
 	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
+		if (!_doucument) _doucument = new Document;
 		_sceneManager = sm;
 		_fileFolder = filePath.substr(0, filePath.find_last_of("/\\") + 1);
 		std::string buffer = veFile::readFileToBuffer(filePath);
-		_doucument.Parse(buffer.c_str());
-        if (_doucument.HasParseError()) return  nullptr;
+		_doucument->Parse(buffer.c_str());
+        if (_doucument->HasParseError()) return  nullptr;
 		parseDoc();
+		VE_SAFE_DELETE(_doucument);
 		return _materials;
 	}
 
@@ -34,9 +37,9 @@ public:
 private:
 
 	void parseDoc(){
-		if (_doucument.HasMember(MATERIALS_KEY.c_str())){
+		if (_doucument->HasMember(MATERIALS_KEY.c_str())){
 			_materials = new veMaterialArray;
-			const Value &mats = _doucument[MATERIALS_KEY.c_str()];
+			const Value &mats = (*_doucument)[MATERIALS_KEY.c_str()];
 			for (unsigned int i = 0; i < mats.Size(); ++i){
 				readMaterial(mats[i]);
 			}
@@ -299,7 +302,7 @@ private:
 
 private:
 
-	Document _doucument;
+	Document *_doucument;
 	veMaterialArray *_materials;
 	std::string _fileFolder;
 	veSceneManager *_sceneManager;

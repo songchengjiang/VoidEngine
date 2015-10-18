@@ -17,7 +17,7 @@ veText::veText(veFont *font, const std::string &content)
 	, _needRefresh(true)
 {
 	_renderer = new veOverlayRenderer;
-	_material = new veMaterial;
+	_materials = new veMaterialArray;
 	initMaterial();
 }
 
@@ -116,12 +116,13 @@ void veText::initMaterial()
 		fragColor = u_Color * glyph; \n \
 	}";
 
+	auto material = new veMaterial;
 	auto tech = new veTechnique;
 	auto pass = new vePass;
 	_texture = new veTexture2D;
 	//_texture->setFilterMode(veTexture::LINEAR);
 	_texture->setWrapMode(veTexture::CLAMP);
-	_material->addTechnique(tech);
+	material->addTechnique(tech);
 	tech->addPass(pass);
 	pass->addTexture(_texture.get());
 
@@ -151,6 +152,8 @@ void veText::initMaterial()
 	pass->addUniform(_colorUniform.get());
 	_scaleMatUniform = new veUniform("u_ScaleMat", veMat4::IDENTITY);
 	pass->addUniform(_scaleMatUniform.get());
+
+	_materials->addMaterial(material);
 }
 
 

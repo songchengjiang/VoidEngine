@@ -11,7 +11,7 @@ class veNode;
 class veCamera;
 class veLight;
 class veOverlay;
-class veMesh;
+class veEntity;
 class veFont;
 class veText;
 class veAnimation;
@@ -31,11 +31,12 @@ public:
 	virtual veCamera* createCamera(const veViewport &vp = { 0, 0, 0, 0 }) = 0;
 	virtual veLight* createLight(const std::string &type);
 	virtual veOverlay* createOverlay();
-	virtual veMesh* createMesh();
+	virtual veEntity* createEntity();
 	virtual veText* createText(veFont *font, const std::string &content = "");
 	virtual veAnimation* createAnimation();
 
 	virtual void requestRender(veNode *node) = 0;
+	virtual bool isNodeVisibleInScene(veNode *node) { return true; }
 
 	const NodeList& getNodeList() const { return _nodeList; }
 	const CameraList& getCameraList() const { return _cameraList; }

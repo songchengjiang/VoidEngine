@@ -34,6 +34,7 @@ struct veRenderCommand
 	veRenderableObject *renderableObj;
 	veCamera           *camera;
 	veSceneManager     *sceneManager;
+	void               *userData;
 	//veRenderer         *renderer;
     std::function<void(const veRenderCommand &)> drawFunc;
 };

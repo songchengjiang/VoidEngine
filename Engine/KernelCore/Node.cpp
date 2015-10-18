@@ -166,7 +166,6 @@ void veNode::refresh()
 
 bool veNode::routeEvent(const veEvent &event, veSceneManager *sm)
 {
-	_isInScene = true;
 	if (!_isVisible) return false;
 	if (!_components.empty()){
 		for (auto &com : _components){
@@ -193,33 +192,36 @@ bool veNode::routeEvent(const veEvent &event, veSceneManager *sm)
 
 void veNode::update(veSceneManager *sm, const veMat4 &transform)
 {
-	if (!_isVisible) return;
-	if (!_components.empty()){
-		for (auto &iter : _components){
+	_isInScene = true;
+	if (_parent && _parent->_overrideMask) {
+		_mask = _parent->getMask();
+		_overrideMask = true;
+	}
+	if (!_components.empty()) {
+		for (auto &iter : _components) {
 			iter->update(this, sm);
 		}
 	}
 
 	if (_refresh)
 		_worldMatrix = transform * _matrix;
-	if (!_children.empty()){
-		for (auto &child : _children){
-			if (_overrideMask) child->setMask(_mask);
+	if (!_children.empty()) {
+		for (auto &child : _children) {
 			if (_refresh) child->refresh();
 			child->update(sm, _worldMatrix);
 		}
 	}
 
-	if (!_renderableObjects.empty()){
-		for (auto &iter : _renderableObjects){
+	if (!_renderableObjects.empty()) {
+		for (auto &iter : _renderableObjects) {
 			iter->update(this, sm);
 		}
 	}
 
 	updateBoundingBox();
-	if (_refresh)
-		updateSceneManager();
+	updateSceneManager();
 	_refresh = false;
+	_overrideMask = false;
 }
 
 void veNode::accept(veNodeVisitor &visitor)

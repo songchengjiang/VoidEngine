@@ -1,14 +1,15 @@
 #include "Mesh.h"
-#include "MeshRenderer.h"
-#include "Node.h"
+#include "EntityRenderer.h"
+#include "MeshNode.h"
 
 const unsigned int veMesh::MAX_ATTRIBUTE_NUM = 16;
 
 veMesh::veMesh()
-	: _needRefresh(true)
+	: USE_VE_PTR_INIT
+	, _needRefresh(true)
+	, _meshNode(nullptr)
 	, _vertexStride(0)
 {
-	_renderer = new veMeshRenderer;
 }
 
 veMesh::~veMesh()
@@ -16,13 +17,13 @@ veMesh::~veMesh()
 
 }
 
-void veMesh::update(veNode *node, veSceneManager *sm)
-{
-	if (!_isVisible) return;
-	updateBones(node);
-	if (_renderer.valid())
-		_renderer->visit(node, this, sm);
-}
+//void veMesh::update(veNode *node, veSceneManager *sm)
+//{
+//	if (!_isVisible) return;
+//	updateBones(node);
+//	if (_renderer.valid())
+//		_renderer->visit(node, this, sm);
+//}
 
 unsigned int veMesh::getVertexStride()
 {
@@ -129,12 +130,14 @@ bool& veMesh::needRefresh()
 	return _needRefresh;
 }
 
-void veMesh::updateBones(veNode *node)
+void veMesh::updateBoundingBox()
 {
 	if (!_bones.empty()) {
 		_boundingBox.dirty();
 		for (auto &iter : _bones) {
-			veMat4 boneMat = node->getWorldToNodeMatrix() * iter->getBoneNode()->getNodeToWorldMatrix() * iter->getOffsetMat();
+			veMat4 thisToNodeMatrix = _meshNode->toMeshNodeRootMatrix();
+			thisToNodeMatrix.inverse();
+			veMat4 boneMat = thisToNodeMatrix * iter->getBoneNode()->toMeshNodeRootMatrix() * iter->getOffsetMat();
 			iter->setBoundingBox(iter->getBindPosBoundingBox() * boneMat);
 			_boundingBox.expandBy(iter->getBoundingBox());
 		}

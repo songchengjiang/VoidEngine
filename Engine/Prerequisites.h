@@ -44,10 +44,12 @@ public: void setName(const std::string &name) { _name = name; } \
 public: const std::string& getName() const { return _name; }
 
 #if defined(_MSC_VER)
+#if defined(_DEBUG)
 #include <assert.h>
 #define veAssert(_Expression)     assert(_Expression)
 #else
 #define veAssert(_Expression)     ((void)0)
+#endif
 #endif
 
 #if defined(_DEBUG)
@@ -56,6 +58,8 @@ public: const std::string& getName() const { return _name; }
 #elif defined(__APPLE_CC__)
 #include <iostream>
 #define veLog(STR) std::cout<<STR<<std::endl;
+#else
+#define veLog(STR) ((void)0);
 #endif
 
 #include <memory.h>

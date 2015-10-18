@@ -19,7 +19,8 @@ public:
 	const veParameterList& getParameters() const { return _parameters; }
 	veParameter* getParameter(const std::string &name);
 
-	veMat4 getLightViewMatrix();
+	void setLightViewMatrix(const veMat4 &mat) { _lightMatrix = mat; }
+	const veMat4& getLightViewMatrix() { return _lightMatrix; }
 
 protected:
 	veLight(const std::string &type, const veParameterList &params);
@@ -30,7 +31,7 @@ protected:
 
 	std::string _type;
 	veParameterList _parameters;
-	veCamera *_camera;
+	veMat4 _lightMatrix;
 };
 
 #endif

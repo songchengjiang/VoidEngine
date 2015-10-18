@@ -15,15 +15,18 @@ class veFileReaderWriterCAMERA : public veFileReaderWriter
 public:
 	veFileReaderWriterCAMERA()
 		: _camera(nullptr)
+		, _doucument(nullptr)
 	{};
 	~veFileReaderWriterCAMERA(){};
 
 	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
+		if (!_doucument) _doucument = new Document;
 		_sceneManager = sm;
 		std::string buffer = veFile::readFileToBuffer(filePath);
-		_doucument.Parse(buffer.c_str());
-        if (_doucument.HasParseError()) return  nullptr;
+		_doucument->Parse(buffer.c_str());
+        if (_doucument->HasParseError()) return  nullptr;
 		readCamera();
+		VE_SAFE_DELETE(_doucument);
 		return _camera;
 	}
 
@@ -35,12 +38,12 @@ private:
 
 	void readCamera() {
 		_camera = _sceneManager->createCamera();
-		if (_doucument.HasMember(NAME_KEY.c_str())) {
-			_camera->setName(_doucument[NAME_KEY.c_str()].GetString());
+		if ((*_doucument).HasMember(NAME_KEY.c_str())) {
+			_camera->setName((*_doucument)[NAME_KEY.c_str()].GetString());
 		}
 
-		if (_doucument.HasMember(RENDERPATH_KEY.c_str())) {
-			const char *str = _doucument[RENDERPATH_KEY.c_str()].GetString();
+		if ((*_doucument).HasMember(RENDERPATH_KEY.c_str())) {
+			const char *str = (*_doucument)[RENDERPATH_KEY.c_str()].GetString();
 			if (strcmp(FORWARD_KEY.c_str(), str) == 0) {
 				_camera->setRenderPath(veCamera::RenderPath::FORWARD_PATH);
 			}
@@ -49,23 +52,23 @@ private:
 			}
 		}
 
-		if (_doucument.HasMember(VIEWPORT_KEY.c_str())) {
-			const Value &val = _doucument[VIEWPORT_KEY.c_str()];
+		if ((*_doucument).HasMember(VIEWPORT_KEY.c_str())) {
+			const Value &val = (*_doucument)[VIEWPORT_KEY.c_str()];
 			readViewport(val);
 		}
 
-		if (_doucument.HasMember(PROJECTION_KEY.c_str())) {
-			const Value &val = _doucument[PROJECTION_KEY.c_str()];
+		if ((*_doucument).HasMember(PROJECTION_KEY.c_str())) {
+			const Value &val = (*_doucument)[PROJECTION_KEY.c_str()];
 			readProjection(val);
 		}
 
-		if (_doucument.HasMember(LOOKAT_KEY.c_str())) {
-			const Value &val = _doucument[LOOKAT_KEY.c_str()];
+		if ((*_doucument).HasMember(LOOKAT_KEY.c_str())) {
+			const Value &val = (*_doucument)[LOOKAT_KEY.c_str()];
 			readLookat(val);
 		}
 
-		if (_doucument.HasMember(FBO_KEY.c_str())) {
-			const Value &val = _doucument[FBO_KEY.c_str()];
+		if ((*_doucument).HasMember(FBO_KEY.c_str())) {
+			const Value &val = (*_doucument)[FBO_KEY.c_str()];
 			readfbo(val);
 		}
 	}
@@ -250,7 +253,7 @@ private:
 
 private:
 
-	Document _doucument;
+	Document *_doucument;
 	veCamera *_camera;
 	veSceneManager *_sceneManager;
 };

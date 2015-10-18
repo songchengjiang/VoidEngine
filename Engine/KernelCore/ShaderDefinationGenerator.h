@@ -5,6 +5,7 @@
 #include "Light.h"
 #include "LightManager.h"
 #include "RenderCommand.h"
+#include "EntityRenderer.h"
 #include "Mesh.h"
 #include "Material.h"
 #include "Shader.h"
@@ -73,17 +74,31 @@ public:
 		if (_command.camera->getRenderPath() == veCamera::RenderPath::DEFERRED_PATH) {
 			definations += SHADER_DEFINE_DEFERRED_PATH + std::string(" 1\n");
 		}
+		else {
+			auto lightTemplates = static_cast<veLightManager *>(_command.sceneManager->getManager(veLightManager::TYPE()))->getLightTemplateList();
+			if (!lightTemplates.empty()) {
+				definations += SHADER_DEFINE_LIGHTS + std::string(" 1\n");
+				for (auto &temp : lightTemplates) {
+					definations += getLightDefination(temp.first, temp.second);
+				}
+			}
+		}
 		if (type == veShader::VERTEX_SHADER) {
-			auto mesh = dynamic_cast<veMesh *>(_command.renderableObj);
-			if (mesh) {
-				if (mesh->getBoneNum())
-					definations += SHADER_DEFINE_BONES + std::string(" 1\n");
+			if (_command.renderableObj) {
+				auto entityRender = dynamic_cast<veEntityRenderer *>(_command.renderableObj->getRenderer());
+				if (entityRender) {
+					auto meshBuffers = static_cast<veEntityRenderer::MeshBuffers *>(_command.userData);
+					if (meshBuffers->mesh) {
+						if (meshBuffers->mesh->getBoneNum())
+							definations += SHADER_DEFINE_BONES + std::string(" 1\n");
 
-				char str[8];
-				for (unsigned int i = 0; i < mesh->getVertexAtrributeNum(); ++i) {
-					sprintf(str, " %d\n", i);
-					auto attr = mesh->getVertexAtrribute(i);
-					definations += SHADER_DEFINE_ATTRIBUTE_ARRAY[attr.attributeType] + std::string(str);
+						char str[8];
+						for (unsigned int i = 0; i < meshBuffers->mesh->getVertexAtrributeNum(); ++i) {
+							sprintf(str, " %d\n", i);
+							auto attr = meshBuffers->mesh->getVertexAtrribute(i);
+							definations += SHADER_DEFINE_ATTRIBUTE_ARRAY[attr.attributeType] + std::string(str);
+						}
+					}
 				}
 			}
 		}
@@ -91,14 +106,6 @@ public:
 		if (type == veShader::FRAGMENT_SHADER) {
 			if (0 < _command.pass->getTextureNum()) {
 				definations += SHADER_DEFINE_TEXTURES + std::string(" 1\n");
-			}
-		}
-
-		auto lightTemplates = static_cast<veLightManager *>(_command.sceneManager->getManager(veLightManager::TYPE()))->getLightTemplateList();
-		if (!lightTemplates.empty()) {
-			definations += SHADER_DEFINE_LIGHTS + std::string(" 1\n");
-			for (auto &temp : lightTemplates) {
-				definations += getLightDefination(temp.first, temp.second);
 			}
 		}
 

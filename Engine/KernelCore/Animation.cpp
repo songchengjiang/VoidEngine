@@ -3,17 +3,7 @@
 #include "Visualiser.h"
 #include "NodeVisitor.h"
 #include "SceneManager.h"
-
-class FindNode : public veNodeVisitor 
-{
-public:
-
-	virtual void visit(veNode &node) {
-		nodeList.push_back(&node);
-	}
-
-	std::vector<veNode *> nodeList;
-};
+#include "Entity.h"
 
 veAnimKeyValues::veAnimKeyValues()
 	: USE_VE_PTR_INIT
@@ -99,31 +89,37 @@ veAnimation::~veAnimation()
 
 }
 
-void veAnimation::update(veNode *node, double frame)
+void veAnimation::update(veEntity *entity, double frame)
 {
 	if (_needRefresh) {
-		FindNode fn;
-		node->accept(fn);
-		for (auto &iter : fn.nodeList) {
+		std::vector<veBone *> boneList;
+		for (size_t i = 0; i < entity->getMeshCount(); ++i) {
+			auto mesh = entity->getMesh(i);
+			for (size_t bn = 0; bn < mesh->getBoneNum(); ++bn) {
+				boneList.push_back(mesh->getBone(bn));
+			}
+		}
+		for (auto &iter : boneList) {
 			auto valuse = getAnimKeyValuesByName(iter->getName());
 			if (valuse) {
-				_nodeAnims[iter] = valuse;
+				_boneAnims[iter] = valuse;
 			}
 		}
 		_needRefresh = false;
 	}
 
-	if (!_nodeAnims.empty()) {
-		for (auto &iter : _nodeAnims) {
+	if (!_boneAnims.empty()) {
+		for (auto &iter : _boneAnims) {
 			veVec3 pos;
 			veVec3 scl(1.0f);
 			veQuat rot;
 			if (iter.second->evaluate(frame, pos, scl, rot)) {
 				veMat4 nodeMat;
 				nodeMat.makeTransform(pos, scl, rot);
-				iter.first->setMatrix(nodeMat);
+				iter.first->getBoneNode()->setMatrix(nodeMat);
 			}
 		}
+		entity->dirtyBoundingBox();
 	}
 }
 
@@ -143,7 +139,8 @@ veAnimKeyValues* veAnimation::getAnimKeyValuesByName(const std::string &name)
 }
 
 veAnimationContainer::veAnimationContainer()
-	: _activeAnimationChannel(nullptr)
+	: USE_VE_PTR_INIT
+	, _activeAnimationChannel(nullptr)
 	, _smimulationFrame(0.0)
 	, _startFrame(0)
 	, _endFrame(-1)
@@ -160,14 +157,16 @@ veAnimationContainer::~veAnimationContainer()
 
 }
 
-void veAnimationContainer::update(veNode *node, veSceneManager *sm)
+void veAnimationContainer::update(veNode *node, veEntity *entity, veSceneManager *sm)
 {
+	if (!sm->isNodeVisibleInScene(node))
+		return;
 	if (_activeAnimationChannel && _needUpdate) {
-		_activeAnimationChannel->update(node, _smimulationFrame);
+		_activeAnimationChannel->update(entity, _smimulationFrame);
 		if (_requestNoUpdate) _needUpdate = false;
 		if (_smimulationFrame <= _endFrame)
 			_smimulationFrame += sm->getDeltaTime() * _frameRate;
-		else if (_isLoop){
+		else if (_isLoop) {
 			_smimulationFrame = _startFrame;
 		}
 	}

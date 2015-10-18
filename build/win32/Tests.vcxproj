@@ -93,6 +93,7 @@
     <ClInclude Include="..\..\Tests\ImageTest.h" />
     <ClInclude Include="..\..\Tests\LightTest.h" />
     <ClInclude Include="..\..\Tests\MeshTest.h" />
+    <ClInclude Include="..\..\Tests\PerformanceTest.h" />
     <ClInclude Include="..\..\Tests\RenToTex.h" />
     <ClInclude Include="..\..\Tests\TextTest.h" />
   </ItemGroup>
