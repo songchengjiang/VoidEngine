@@ -155,22 +155,30 @@ private:
 	}
 
 	void readMeshBone(const Value &boneVal, veMesh *mesh) {
-		veBone *bone = new veBone;
-		bone->setName(boneVal[NAME_KEY.c_str()].GetString());
-		veMat4 offsetMatrix;
-		const Value &mat = boneVal[TRANSFORM_KEY.c_str()];
-		for (unsigned int i = 0; i < mat.Size(); ++i) {
-			offsetMatrix[i / 4][i % 4] = (veReal)mat[i].GetDouble();
-		}
-		bone->setOffsetMat(offsetMatrix);
+		std::string name = boneVal[NAME_KEY.c_str()].GetString();
+		veBone *bone = nullptr;
+		auto iter = _boneList.find(name);
+		if (iter == _boneList.end())
+		{
+			bone = new veBone;
+			bone->setName(name);
+			veMat4 offsetMatrix;
+			const Value &mat = boneVal[TRANSFORM_KEY.c_str()];
+			for (unsigned int i = 0; i < mat.Size(); ++i) {
+				offsetMatrix[i / 4][i % 4] = (veReal)mat[i].GetDouble();
+			}
+			bone->setOffsetMat(offsetMatrix);
 
-		//const Value &weights = boneVal[WEIGHTS_KEY.c_str()];
-		//for (unsigned int i = 0; i < weights.Size();) {
-		//	bone->setWeight((unsigned int)weights[i].GetDouble(), (float)weights[i + 1].GetDouble());
-		//	i += 2;
-		//}
+			//const Value &weights = boneVal[WEIGHTS_KEY.c_str()];
+			//for (unsigned int i = 0; i < weights.Size();) {
+			//	bone->setWeight((unsigned int)weights[i].GetDouble(), (float)weights[i + 1].GetDouble());
+			//	i += 2;
+			//}
+			_boneList[bone->getName()].push_back(bone);
+		}
+		else
+			bone = iter->second.front();
 		mesh->addBone(bone);
-		_boneList[bone->getName()].push_back(bone);
 	}
 
 	void readNodes(){

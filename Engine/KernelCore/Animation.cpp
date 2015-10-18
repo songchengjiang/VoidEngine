@@ -4,6 +4,7 @@
 #include "NodeVisitor.h"
 #include "SceneManager.h"
 #include "Entity.h"
+#include <set>
 
 veAnimKeyValues::veAnimKeyValues()
 	: USE_VE_PTR_INIT
@@ -92,11 +93,11 @@ veAnimation::~veAnimation()
 void veAnimation::update(veEntity *entity, double frame)
 {
 	if (_needRefresh) {
-		std::vector<veBone *> boneList;
+		std::set<veBone *> boneList;
 		for (size_t i = 0; i < entity->getMeshCount(); ++i) {
 			auto mesh = entity->getMesh(i);
 			for (size_t bn = 0; bn < mesh->getBoneNum(); ++bn) {
-				boneList.push_back(mesh->getBone(bn));
+				boneList.insert(mesh->getBone(bn));
 			}
 		}
 		for (auto &iter : boneList) {
