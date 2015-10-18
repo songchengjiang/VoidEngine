@@ -174,10 +174,10 @@ private:
 			//	bone->setWeight((unsigned int)weights[i].GetDouble(), (float)weights[i + 1].GetDouble());
 			//	i += 2;
 			//}
-			_boneList[bone->getName()].push_back(bone);
+			_boneList[bone->getName()] = bone;
 		}
 		else
-			bone = iter->second.front();
+			bone = iter->second;
 		mesh->addBone(bone);
 	}
 
@@ -217,9 +217,7 @@ private:
 		if (!_boneList.empty()) {
 			auto iter = _boneList.find(node->getName());
 			if (iter != _boneList.end()) {
-				for (auto &bone : iter->second) {
-					bone->setBoneNode(node);
-				}
+				iter->second->setBoneNode(node);
 			}
 		}
 
@@ -236,7 +234,7 @@ private:
 	veEntity *_entity;
 	Document *_doucument;
 	std::unordered_map<std::string, veMesh *> _meshList;
-	std::unordered_map<std::string, std::vector<veBone *> > _boneList;
+	std::unordered_map<std::string, veBone * > _boneList;
 	veMaterialArray *_materials;
 	std::string _fileFolder;
 	veSceneManager *_sceneManager;

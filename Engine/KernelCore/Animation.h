@@ -9,7 +9,7 @@
 #include <map>
 
 class veEntity;
-class veBone;
+class veMeshNode;
 class VE_EXPORT veAnimKeyValues
 {
 public:
@@ -57,7 +57,7 @@ private:
 private:
 
 	std::vector< VE_Ptr<veAnimKeyValues> > _animsKeyValuse;
-	std::map< veBone*, veAnimKeyValues* > _boneAnims;
+	std::map< veMeshNode*, veAnimKeyValues* > _boneAnims;
 	double _duration;
 	double _frameRate;
 	bool _needRefresh;

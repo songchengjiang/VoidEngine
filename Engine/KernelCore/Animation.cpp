@@ -6,6 +6,20 @@
 #include "Entity.h"
 #include <set>
 
+class FindMeshNodes 
+{
+public:
+
+	void find(veMeshNode *node) {
+		nodeList.push_back(node);
+		for (size_t i = 0; i < node->getChildCount(); ++i) {
+			find(node->getChild(i));
+		}
+	}
+
+	std::vector<veMeshNode *> nodeList;
+};
+
 veAnimKeyValues::veAnimKeyValues()
 	: USE_VE_PTR_INIT
 {
@@ -50,6 +64,12 @@ bool veAnimKeyValues::evaluate(double keyTime, veVec3 &pos, veVec3 &scl, veQuat 
 		pos = posIter->second;
 		state = true;
 	}
+	else {
+		if (!_positions.empty()) {
+			pos = _positions.begin()->second;
+			state = true;
+		}
+	}
 
 	if (rotIter != _rotations.end()) {
 		//auto preRotIter = rotIter;
@@ -61,6 +81,12 @@ bool veAnimKeyValues::evaluate(double keyTime, veVec3 &pos, veVec3 &scl, veQuat 
 		rot = rotIter->second;
 		state = true;
 	}
+	else {
+		if (!_rotations.empty()) {
+			rot = _rotations.begin()->second;
+			state = true;
+		}
+	}
 
 	if (sclIter != _scales.end()) {
 		//auto preSclIter = sclIter;
@@ -71,6 +97,12 @@ bool veAnimKeyValues::evaluate(double keyTime, veVec3 &pos, veVec3 &scl, veQuat 
 		//}
 		scl = sclIter->second;
 		state = true;
+	}
+	else {
+		if (!_scales.empty()) {
+			scl = _scales.begin()->second;
+			state = true;
+		}
 	}
 
 	return state;
@@ -93,14 +125,9 @@ veAnimation::~veAnimation()
 void veAnimation::update(veEntity *entity, double frame)
 {
 	if (_needRefresh) {
-		std::set<veBone *> boneList;
-		for (size_t i = 0; i < entity->getMeshCount(); ++i) {
-			auto mesh = entity->getMesh(i);
-			for (size_t bn = 0; bn < mesh->getBoneNum(); ++bn) {
-				boneList.insert(mesh->getBone(bn));
-			}
-		}
-		for (auto &iter : boneList) {
+		FindMeshNodes finder;
+		finder.find(entity->getRootMeshNode());
+		for (auto &iter : finder.nodeList) {
 			auto valuse = getAnimKeyValuesByName(iter->getName());
 			if (valuse) {
 				_boneAnims[iter] = valuse;
@@ -112,12 +139,12 @@ void veAnimation::update(veEntity *entity, double frame)
 	if (!_boneAnims.empty()) {
 		for (auto &iter : _boneAnims) {
 			veVec3 pos;
-			veVec3 scl(1.0f);
+			veVec3 scl(1.0);
 			veQuat rot;
 			if (iter.second->evaluate(frame, pos, scl, rot)) {
 				veMat4 nodeMat;
 				nodeMat.makeTransform(pos, scl, rot);
-				iter.first->getBoneNode()->setMatrix(nodeMat);
+				iter.first->setMatrix(nodeMat);
 			}
 		}
 		entity->dirtyBoundingBox();
@@ -160,16 +187,17 @@ veAnimationContainer::~veAnimationContainer()
 
 void veAnimationContainer::update(veNode *node, veEntity *entity, veSceneManager *sm)
 {
-	if (!sm->isNodeVisibleInScene(node))
-		return;
-	if (_activeAnimationChannel && _needUpdate) {
-		_activeAnimationChannel->update(entity, _smimulationFrame);
-		if (_requestNoUpdate) _needUpdate = false;
-		if (_smimulationFrame <= _endFrame)
-			_smimulationFrame += sm->getDeltaTime() * _frameRate;
-		else if (_isLoop) {
-			_smimulationFrame = _startFrame;
+	if (sm->isNodeVisibleInScene(node)) {
+		if (_activeAnimationChannel && _needUpdate) {
+			_activeAnimationChannel->update(entity, _smimulationFrame);
+			if (_requestNoUpdate) _needUpdate = false;
 		}
+	}
+
+	if (_smimulationFrame <= _endFrame)
+		_smimulationFrame += sm->getDeltaTime() * _frameRate;
+	else if (_isLoop) {
+		_smimulationFrame = _startFrame;
 	}
 }
 
@@ -207,8 +235,15 @@ void veAnimationContainer::start(double sFrame, double eFrame)
 
 void veAnimationContainer::pause()
 {
-	_needUpdate = false;
-	_requestNoUpdate = true;
+	if (_needUpdate) {
+		_startFrame = _smimulationFrame;
+		_needUpdate = false;
+		_requestNoUpdate = true;
+	}
+	else {
+		_smimulationFrame = _startFrame;
+		_needUpdate = true;
+	}
 }
 
 void veAnimationContainer::stop()
