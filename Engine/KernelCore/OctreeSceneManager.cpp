@@ -79,10 +79,7 @@ bool veOctreeSceneManager::isNodeVisibleInScene(veNode *node)
 {
 	veOctreeNode *ocNode = static_cast<veOctreeNode *>(node);
 	bool isVisible = ocNode->octant == nullptr ? false : ocNode->octant->isVisible;
-	if (isVisible) {
-		isVisible = ocNode->isVisibleInOctree;
-	}
-	return isVisible;
+	return isVisible? ocNode->isVisibleInOctree: false;
 }
 
 void veOctreeSceneManager::addOctreeNode(veOctreeNode *node, veOctree *octant, unsigned int depth)

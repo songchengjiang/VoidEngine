@@ -76,7 +76,8 @@ public:
 		_sceneManager->getRootNode()->addComponent(pu);
 
 		auto debuger = new veOctreeDebuger;
-		debuger->debugDrawOctree(true);
+		debuger->debugDrawBoundingBoxWireframe(true);
+		debuger->debugDrawOctree(false);
 		debuger->setDebugDrawColor(veVec4(0.0f, 1.0f, 0.0f, 1.0f));
 		_sceneManager->getRootNode()->addRenderableObject(debuger);
 

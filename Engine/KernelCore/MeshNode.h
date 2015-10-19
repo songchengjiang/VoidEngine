@@ -35,6 +35,8 @@ public:
 	veMesh* getMeshRef(size_t idx) { return _meshList[idx]; }
 	size_t getMeshRefCount() { return _meshList.size(); }
 
+	void needRefresh();
+
 protected:
 
 	veMat4 _matrix;

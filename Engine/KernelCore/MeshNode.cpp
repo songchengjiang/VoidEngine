@@ -51,6 +51,7 @@ veMeshNode* veMeshNode::getChild(unsigned int cIndex)
 void veMeshNode::setMatrix(const veMat4 &mat)
 {
 	_matrix = mat;
+	needRefresh();
 }
 
 veMat4 veMeshNode::toMeshNodeRootMatrix()
@@ -92,4 +93,14 @@ veMesh* veMeshNode::removeMeshRef(unsigned int mIndex)
 	mesh->setAttachedNode(nullptr);
 	_meshList.erase(_meshList.begin() + mIndex);
 	return mesh;
+}
+
+void veMeshNode::needRefresh()
+{
+	if (_needRefresh) 
+		return;
+	_needRefresh = true;
+	for (auto &iter : _children) {
+		iter->needRefresh();
+	}
 }
