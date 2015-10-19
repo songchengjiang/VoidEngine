@@ -138,14 +138,14 @@ void veAnimation::update(veEntity *entity, double frame)
 
 	if (!_boneAnims.empty()) {
 		for (auto &iter : _boneAnims) {
-			veVec3 pos;
-			veVec3 scl(1.0);
-			veQuat rot;
-			if (iter.second->evaluate(frame, pos, scl, rot)) {
-				veMat4 nodeMat;
-				nodeMat.makeTransform(pos, scl, rot);
-				iter.first->setMatrix(nodeMat);
-			}
+			//veVec3 pos;
+			//veVec3 scl(1.0);
+			//veQuat rot;
+			//if (iter.second->evaluate(frame, pos, scl, rot)) {
+			//	veMat4 nodeMat;
+			//	nodeMat.makeTransform(pos, scl, rot);
+			//	iter.first->setMatrix(nodeMat);
+			//}
 		}
 		entity->dirtyBoundingBox();
 	}

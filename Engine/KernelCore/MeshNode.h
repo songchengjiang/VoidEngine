@@ -38,6 +38,8 @@ public:
 protected:
 
 	veMat4 _matrix;
+	veMat4 _worldMatrix;
+	bool _needRefresh;
 	std::vector<veMesh*> _meshList;
 
 	Children _children;

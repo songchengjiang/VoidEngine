@@ -67,7 +67,8 @@ void veEntity::dirtyBoundingBox()
 {
 	_boundingBox.dirty();
 	for (auto &iter : _meshList) {
-		iter->updateBoundingBox();
-		_boundingBox.expandBy(iter->getBoundingBox() * iter->getAttachedNode()->toMeshNodeRootMatrix());
+		veMat4 meshToRoot = iter->getAttachedNode()->toMeshNodeRootMatrix();
+		iter->updateBoundingBox(meshToRoot);
+		_boundingBox.expandBy(iter->getBoundingBox() * meshToRoot);
 	}
 }

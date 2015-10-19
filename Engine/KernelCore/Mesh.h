@@ -96,7 +96,7 @@ public:
 	veMaterial* getMaterial() { return _material.get(); }
 
 	void caculateBoundingBox();
-	void updateBoundingBox();
+	void updateBoundingBox(const veMat4 &meshToRoot);
 
 	bool& needRefresh();
 

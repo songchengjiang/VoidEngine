@@ -130,13 +130,13 @@ bool& veMesh::needRefresh()
 	return _needRefresh;
 }
 
-void veMesh::updateBoundingBox()
+void veMesh::updateBoundingBox(const veMat4 &meshToRoot)
 {
 	if (!_bones.empty()) {
 		_boundingBox.dirty();
+		veMat4 thisToNodeMatrix = meshToRoot;
+		thisToNodeMatrix.inverse();
 		for (auto &iter : _bones) {
-			veMat4 thisToNodeMatrix = _meshNode->toMeshNodeRootMatrix();
-			thisToNodeMatrix.inverse();
 			veMat4 boneMat = thisToNodeMatrix * iter->getBoneNode()->toMeshNodeRootMatrix() * iter->getOffsetMat();
 			iter->setBoundingBox(iter->getBindPosBoundingBox() * boneMat);
 			_boundingBox.expandBy(iter->getBoundingBox());

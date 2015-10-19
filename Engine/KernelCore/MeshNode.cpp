@@ -4,6 +4,7 @@
 veMeshNode::veMeshNode()
 	: USE_VE_PTR_INIT
 	, _parent(nullptr)
+	, _needRefresh(true)
 {
 }
 
@@ -54,13 +55,19 @@ void veMeshNode::setMatrix(const veMat4 &mat)
 
 veMat4 veMeshNode::toMeshNodeRootMatrix()
 {
-	veMat4 rootMat = _matrix;
-	veMeshNode *parent = _parent;
-	while (parent) {
-		rootMat = parent->getMatrix() * rootMat;
-		parent = parent->_parent;
+	if (_needRefresh) {
+		//veMat4 rootMat = _matrix;
+		//veMeshNode *parent = _parent;
+		//while (parent) {
+		//	rootMat = parent->getMatrix() * rootMat;
+		//	parent = parent->_parent;
+		//}
+		//_worldMatrix = rootMat;
+
+		_worldMatrix = _parent == nullptr? _matrix: _parent->toMeshNodeRootMatrix() * _matrix;
+		_needRefresh = false;
 	}
-	return rootMat;
+	return _worldMatrix;
 }
 
 void veMeshNode::addMeshRef(veMesh *mesh)

@@ -78,7 +78,11 @@ void veOctreeSceneManager::requestRender(veNode *node)
 bool veOctreeSceneManager::isNodeVisibleInScene(veNode *node)
 {
 	veOctreeNode *ocNode = static_cast<veOctreeNode *>(node);
-	return ocNode->octant == nullptr ? false : ocNode->octant->isVisible;
+	bool isVisible = ocNode->octant == nullptr ? false : ocNode->octant->isVisible;
+	if (isVisible) {
+		isVisible = ocNode->isVisibleInOctree;
+	}
+	return isVisible;
 }
 
 void veOctreeSceneManager::addOctreeNode(veOctreeNode *node, veOctree *octant, unsigned int depth)
@@ -180,6 +184,10 @@ void veOctreeSceneManager::traverseOctree(veOctree *octant, veCamera *camera)
 					for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
 						iter->getRenderableObject(i)->render(iter, camera);
 					}
+					iter->isVisibleInOctree = true;
+				}
+				else {
+					iter->isVisibleInOctree = false;
 				}
 			}
 		}
