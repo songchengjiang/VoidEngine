@@ -27,24 +27,24 @@ void veRay::addIntersection(const Intersection &inters)
 
 bool veRay::isIntersectWith(const veBoundingBox &bbox)
 {
-	veVec3 rayCenter = (_start + _end) * 0.5f;
-	veVec3 rayHalfSize = (_end - _start) * 0.5f;
-	veVec3 bboxHalfSize = (bbox.max() - bbox.min()) * 0.5f;
-	rayCenter = rayCenter - bbox.center();
-	veReal vx = veMath::abs(rayHalfSize.x());
-	veReal vy = veMath::abs(rayHalfSize.y());
-	veReal vz = veMath::abs(rayHalfSize.z());
-	if (vx + bboxHalfSize.x() < veMath::abs(rayCenter.x())) 
+	veVec3 c = (_start + _end) * 0.5f;
+	veVec3 w = (_end - _start) * 0.5f;
+	veVec3 h = (bbox.max() - bbox.min()) * 0.5f;
+	c = c - bbox.center();
+	veReal vx = veMath::abs(w.x());
+	veReal vy = veMath::abs(w.y());
+	veReal vz = veMath::abs(w.z());
+	if ((vx + h.x()) < veMath::abs(c.x())) 
 		return false;
-	if (vx + bboxHalfSize.y() < veMath::abs(rayCenter.y())) 
+	if ((vy + h.y()) < veMath::abs(c.y())) 
 		return false;
-	if (vx + bboxHalfSize.z() < veMath::abs(rayCenter.z()))
+	if ((vz + h.z()) < veMath::abs(c.z()))
 		return false;
-	if (bboxHalfSize.y() * vz + bboxHalfSize.z() * vy < veMath::abs(rayCenter.y() * rayHalfSize.z() - rayCenter.z() * rayHalfSize.y())) 
+	if ((h.y() * vz + h.z() * vy) < veMath::abs(c.y() * w.z() - c.z() * w.y())) 
 		return false;
-	if (bboxHalfSize.x() * vz + bboxHalfSize.z() * vx < veMath::abs(rayCenter.x() * rayHalfSize.z() - rayCenter.z() * rayHalfSize.x())) 
+	if ((h.x() * vz + h.z() * vx) < veMath::abs(c.x() * w.z() - c.z() * w.x())) 
 		return false;
-	if (bboxHalfSize.x() * vy + bboxHalfSize.y() * vx < veMath::abs(rayCenter.x() * rayHalfSize.y() - rayCenter.y() * rayHalfSize.x())) 
+	if ((h.x() * vy + h.y() * vx) < veMath::abs(c.x() * w.y() - c.y() * w.x())) 
 		return false;
 	return true;
 }
