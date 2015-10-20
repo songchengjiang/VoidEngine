@@ -46,6 +46,7 @@ public:
 		veNode *root = _sceneManager->createNode();
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem"));
+			entity->setName("teapot");
 			veNode *node = _sceneManager->createNode();
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
@@ -59,6 +60,7 @@ public:
 
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/plane.vem"));
+			entity->setName("plane");
 			veNode *node = _sceneManager->createNode();
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
@@ -71,6 +73,7 @@ public:
 
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem"));
+			entity->setName("sphere");
 			veNode *node = _sceneManager->createNode();
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
@@ -84,6 +87,7 @@ public:
 
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem"));
+			entity->setName("laoshu-1");
 			veNode *node = _sceneManager->createNode();
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
@@ -103,6 +107,7 @@ public:
 
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem"));
+			entity->setName("laoshu-2");
 			veNode *node = _sceneManager->createNode();
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);

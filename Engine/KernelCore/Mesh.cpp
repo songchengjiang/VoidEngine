@@ -158,12 +158,15 @@ void veMesh::traversePrimitive(const Primitive &primitive, const PrimitiveCallba
 			return;
 		}
 		for (size_t idx = 0; idx < primitive.indices->size(); idx += 3) {
-			veReal *p1 = &(*_vertices)[ idx      * stride + vOffset];
-			veReal *p2 = &(*_vertices)[(idx + 1) * stride + vOffset];
-			veReal *p3 = &(*_vertices)[(idx + 2) * stride + vOffset];
-			veReal *n1 = &(*_vertices)[ idx      * stride + nOffset];
-			veReal *n2 = &(*_vertices)[(idx + 1) * stride + nOffset];
-			veReal *n3 = &(*_vertices)[(idx + 2) * stride + nOffset];
+			unsigned int id0 = (*primitive.indices)[idx];
+			unsigned int id1 = (*primitive.indices)[idx + 1];
+			unsigned int id2 = (*primitive.indices)[idx + 2];
+			veReal *p1 = &(*_vertices)[id0 * stride + vOffset];
+			veReal *p2 = &(*_vertices)[id1 * stride + vOffset];
+			veReal *p3 = &(*_vertices)[id2 * stride + vOffset];
+			veReal *n1 = &(*_vertices)[id0 * stride + nOffset];
+			veReal *n2 = &(*_vertices)[id1 * stride + nOffset];
+			veReal *n3 = &(*_vertices)[id2 * stride + nOffset];
 			if (callback != nullptr) {
 				callback(p1, p2, p3, n1, n2, n3);
 			}
