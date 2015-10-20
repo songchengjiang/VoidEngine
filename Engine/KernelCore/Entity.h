@@ -17,6 +17,7 @@ public:
 	virtual ~veEntity();
 
 	virtual void update(veNode *node, veSceneManager *sm) override;
+	virtual bool intersectWith(veRay *ray, veNode *node) override;
 
 	bool& needRefresh();
 

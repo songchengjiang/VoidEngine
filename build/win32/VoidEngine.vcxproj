@@ -60,6 +60,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\OverlayRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Parameter.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Plane.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Ray.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\RenderableObject.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Renderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\RenderQueue.cpp" />
@@ -119,6 +120,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\OverlayRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Parameter.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Plane.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Ray.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Registrar.h" />
     <ClInclude Include="..\..\Engine\KernelCore\RenderableObject.h" />
     <ClInclude Include="..\..\Engine\KernelCore\RenderCommand.h" />

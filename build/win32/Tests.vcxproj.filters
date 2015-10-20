@@ -22,6 +22,9 @@
     <Filter Include="PerfomanceTest">
       <UniqueIdentifier>{d243922c-95e0-4587-b540-d93c97f65533}</UniqueIdentifier>
     </Filter>
+    <Filter Include="IntersectionTest">
+      <UniqueIdentifier>{f635f1f8-a5cd-43b8-aade-a4ac4505cd46}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Tests\CameraTest.h">
@@ -45,6 +48,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Tests\PerformanceTest.h">
       <Filter>PerfomanceTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tests\IntersectionTest.h">
+      <Filter>IntersectionTest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

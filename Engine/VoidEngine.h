@@ -22,6 +22,7 @@
 #include "KernelCore/Text.h"
 #include "KernelCore/SceneManager.h"
 #include "KernelCore/OctreeSceneManager.h"
+#include "KernelCore/Ray.h"
 
 #include "FileCore/Printer.h"
 #include "FileCore/File.h"

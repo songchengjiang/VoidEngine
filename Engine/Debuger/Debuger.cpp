@@ -47,7 +47,6 @@ void veDebuger::update(veNode *node, veSceneManager *sm)
 {
 	veRenderableObject::update(node, sm);
 	_renderableNodes.clear();
-	_vertices.clear();
 	RenderableObjectFinder finder(_renderableNodes);
 	node->accept(finder);
 
@@ -80,6 +79,7 @@ void veDebuger::update(veNode *node, veSceneManager *sm)
 			}
 		}
 	}
+
 }
 
 void veDebuger::render(veNode *node, veCamera *camera)
@@ -92,6 +92,11 @@ void veDebuger::render(veNode *node, veCamera *camera)
 	rc.camera = camera;
 	rc.drawFunc = VE_CALLBACK_1(veDebuger::draw, this);
 	veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
+}
+
+void veDebuger::debugDrawLine(const veVec3 &start, const veVec3 &end)
+{
+	drawLine(start, end);
 }
 
 void veDebuger::initMaterial()
@@ -286,4 +291,6 @@ void veDebuger::draw(const veRenderCommand &command)
 	glEnableVertexAttribArray(0);
 
 	glDrawArrays(GL_LINES, 0, _vertices.size());
+
+	_vertices.clear();
 }

@@ -4,6 +4,7 @@
 #include "OctreeCamera.h"
 #include "OctreeRenderQueue.h"
 #include "RenderableObject.h"
+#include "Ray.h"
 
 veOctreeSceneManager::veOctreeSceneManager()
 	: _boundingBox(veVec3(-10000.0f), veVec3(10000.0f))
@@ -75,11 +76,28 @@ void veOctreeSceneManager::requestRender(veNode *node)
 	}
 }
 
+void veOctreeSceneManager::requestRayCast(veRay *ray)
+{
+	intersectByRay(_octree, ray);
+}
+
 bool veOctreeSceneManager::isNodeVisibleInScene(veNode *node)
 {
 	veOctreeNode *ocNode = static_cast<veOctreeNode *>(node);
 	bool isVisible = ocNode->octant == nullptr ? false : ocNode->octant->isVisible;
-	return isVisible? ocNode->isVisibleInOctree: false;
+	if (isVisible) {
+		isVisible = isVisible ? ocNode->isVisibleInOctant : false;
+		if (isVisible) {
+			veOctree *parent = ocNode->octant->parent;
+			while (parent)
+			{
+				isVisible = parent->isVisible;
+				if (!isVisible) break;
+				parent = parent->parent;
+			}
+		}
+	}
+	return isVisible;
 }
 
 void veOctreeSceneManager::addOctreeNode(veOctreeNode *node, veOctree *octant, unsigned int depth)
@@ -137,6 +155,31 @@ void veOctreeSceneManager::addOctreeNode(veOctreeNode *node, veOctree *octant, u
 	}
 }
 
+void veOctreeSceneManager::intersectByRay(veOctree *octant, veRay *ray)
+{
+	if (!octant) return;
+	if (ray->isIntersectWith(octant->boundingBox)) {
+		if (!octant->nodeList.empty()) {
+			for (auto &iter : octant->nodeList) {
+				if (iter->isVisible()) {
+					if (ray->isIntersectWith(iter->getBoundingBox())) {
+						for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
+							if (iter->getRenderableObject(i)->isVisible())
+								iter->getRenderableObject(i)->intersectWith(ray, iter);
+						}
+					}
+				}
+			}
+		}
+
+		for (unsigned int i = 0; i < 8; ++i) {
+			if (octant->children[i]) {
+				intersectByRay(octant->children[i], ray);
+			}
+		}
+	}
+}
+
 void veOctreeSceneManager::update()
 {
 	_root->update(this, veMat4::IDENTITY);
@@ -179,12 +222,13 @@ void veOctreeSceneManager::traverseOctree(veOctree *octant, veCamera *camera)
 			if (iter->isVisible() && (iter->getMask() & camera->getMask())) {
 				if (!camera->isOutOfFrustum(iter->getBoundingBox())) {
 					for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
-						iter->getRenderableObject(i)->render(iter, camera);
+						if (iter->getRenderableObject(i)->isVisible())
+							iter->getRenderableObject(i)->render(iter, camera);
 					}
-					iter->isVisibleInOctree = true;
+					iter->isVisibleInOctant = true;
 				}
 				else {
-					iter->isVisibleInOctree = false;
+					iter->isVisibleInOctant = false;
 				}
 			}
 		}

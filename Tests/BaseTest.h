@@ -108,14 +108,14 @@ private:
 		float angle;
 		veVec3 axes;
 		trackball(axes, angle, g0.x(), g0.y(), g1.x(), g1.y());
-		_rotation = veQuat(angle * 3.0f, axes) * _rotation;
+		_rotation = veQuat(angle, axes) * _rotation;
 		updateViewMatrix();
 	}
 
 	void moveCamera(const veVec2 &g0, const veVec2 &g1) {
 		if (g0 == g1) return;
 		veVec2 delta = g0 - g1;
-		delta *= 20;
+		delta *= 10;
 		_center += _rotation * veVec3(delta.x(), delta.y(), .0f);
 		updateViewMatrix();
 	}

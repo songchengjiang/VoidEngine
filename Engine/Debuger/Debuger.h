@@ -23,6 +23,7 @@ public:
 	void debugDrawBoundingBoxWireframe(bool isDraw) { _isDrawBoundingBoxWireframe = isDraw; }
 	void debugDrawFrustumPlane(bool isDraw) { _isDrawFrustumPlane = isDraw; }
 	void setDebugDrawColor(const veVec4 &color) { _color = color; }
+	void debugDrawLine(const veVec3 &start, const veVec3 &end);
 
 protected:
 

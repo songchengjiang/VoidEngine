@@ -19,6 +19,7 @@ public:
 	virtual veCamera* createCamera(const veViewport &vp = { 0, 0, 0, 0 }) override;
 
 	virtual void requestRender(veNode *node) override;
+	virtual void requestRayCast(veRay *ray) override;
 	virtual bool isNodeVisibleInScene(veNode *node) override;
 
 	veOctree* getRootOctree() { return _octree; }
@@ -32,6 +33,7 @@ protected:
 
 	void traverseOctree(veOctree *octant, veCamera *camera);
 	void addOctreeNode(veOctreeNode *node, veOctree *octant, unsigned int depth = 0);
+	void intersectByRay(veOctree *octant, veRay *ray);
 	void init();
 
 protected:

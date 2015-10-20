@@ -16,6 +16,7 @@ class veFont;
 class veText;
 class veAnimation;
 class veBaseManager;
+class veRay;
 typedef std::vector< veNode* > NodeList;
 typedef std::vector< veCamera* > CameraList;
 typedef std::vector< veLight* > LightList;
@@ -36,6 +37,7 @@ public:
 	virtual veAnimation* createAnimation();
 
 	virtual void requestRender(veNode *node) = 0;
+	virtual void requestRayCast(veRay *ray) = 0;
 	virtual bool isNodeVisibleInScene(veNode *node) { return true; }
 
 	const NodeList& getNodeList() const { return _nodeList; }

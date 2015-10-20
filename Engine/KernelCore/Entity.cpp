@@ -1,6 +1,7 @@
 #include "Entity.h"
 #include "EntityRenderer.h"
 #include "Node.h"
+#include "Ray.h"
 
 veEntity::veEntity()
 	: _needRefresh(true)
@@ -25,6 +26,38 @@ void veEntity::update(veNode *node, veSceneManager *sm)
 	}
 	if (_renderer.valid())
 		_renderer->visit(node, this, sm);
+}
+
+bool veEntity::intersectWith(veRay *ray, veNode *node)
+{
+	bool state = false;
+	if (!_meshList.empty()) {
+		veMat4 wton = node->getWorldToNodeMatrix();
+		veVec3 start = ray->getStart();
+		veVec3 end = ray->getEnd();
+		veVec3 localStart = wton * start;
+		veVec3 localEnd = wton * end;
+		for (auto &iter : _meshList) {
+			veMat4 meshToRoot = iter->getAttachedNode()->toMeshNodeRootMatrix();
+			meshToRoot.inverse();
+			ray->setStart(meshToRoot * localStart);
+			ray->setEnd(meshToRoot * localEnd);
+			if (ray->isIntersectWith(iter->getBoundingBox())) {
+				veRay::Intersection inters;
+				if (iter->intersectWith(ray, inters.position, inters.normal)) {
+					inters.node = node;
+					inters.renderable = this;
+					ray->addIntersection(inters);
+					state = true;
+				}
+			}
+		}
+
+		ray->setStart(start);
+		ray->setEnd(end);
+	}
+
+	return state;
 }
 
 bool& veEntity::needRefresh()

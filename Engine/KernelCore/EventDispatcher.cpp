@@ -63,8 +63,8 @@ void veEventDispatcher::caculateMouseUnitCoords(GLFWwindow* window, double x, do
 	glfwGetWindowSize(window, &width, &height);
 	double coordX = x / (double)width;
 	double coordY = 1.0 - y / (double)height;
-	veEventDispatcher::instance()->_currentEvent.setMouseX(coordX - 0.5);
-	veEventDispatcher::instance()->_currentEvent.setMouseY(coordY - 0.5);
+	veEventDispatcher::instance()->_currentEvent.setMouseX((coordX - 0.5) * 2.0);
+	veEventDispatcher::instance()->_currentEvent.setMouseY((coordY - 0.5) * 2.0);
 }
 
 void veEventDispatcher::collectKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods)

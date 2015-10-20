@@ -56,3 +56,8 @@ bool veBoundingBox::isNull() const
 {
 	return _min == VEC3_MAX && _max == VEC3_MIN;
 }
+
+bool veBoundingBox::intersectWith(const veVec3 &start, const veVec3 &end) const
+{
+	return false;
+}

@@ -2,7 +2,7 @@
 
 veOctreeNode::veOctreeNode()
 	: octant(nullptr)
-	, isVisibleInOctree(false)
+	, isVisibleInOctant(false)
 {
 
 }

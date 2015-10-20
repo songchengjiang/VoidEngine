@@ -94,6 +94,13 @@ void veCamera::setViewMatrixAslookAt(const veVec3 &eye, const veVec3 &center, co
 	//	, 0.0f, 0.0f, 0.0f, 1.0f);
 }
 
+veVec3 veCamera::convertScreenCoordsToWorldCoords(const veVec2 &sCoords, veReal zDepth)
+{
+	veMat4 projMatInverse = _projectionMat;
+	projMatInverse.inverse();
+	return _matrix * projMatInverse * veVec3(sCoords.x(), sCoords.y(), zDepth);
+}
+
 void veCamera::setFrameBufferObject(veFrameBufferObject *fbo)
 {
 	_fbo = fbo;

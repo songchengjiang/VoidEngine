@@ -57,6 +57,8 @@ public:
 	veMat4& viewMatrix() { return _viewMat; }
 	const veMat4& viewMatrix() const { return _viewMat; }
 
+	veVec3 convertScreenCoordsToWorldCoords(const veVec2 &sCoords, veReal zDepth = -1.0f);
+
 	void setFrameBufferObject(veFrameBufferObject *fbo);
 	veFrameBufferObject* getFrameBufferObject() { return _fbo.get(); }
 

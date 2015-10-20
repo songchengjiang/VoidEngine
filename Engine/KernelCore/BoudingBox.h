@@ -21,6 +21,8 @@ public:
 	void dirty();
 	bool isNull() const;
 
+	bool intersectWith(const veVec3 &start, const veVec3 &end) const;
+
 	inline bool intersects(const veBoundingBox& bbox) const
 	{
 		if (this->isNull() || bbox.isNull())

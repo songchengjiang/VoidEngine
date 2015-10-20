@@ -5,6 +5,7 @@
 #include "Material.h"
 #include "BoudingBox.h"
 
+class veRay;
 class veNode;
 class veVisualiser;
 class veSceneManager;
@@ -21,7 +22,7 @@ public:
 	virtual bool handle(veNode *node, veSceneManager *sm, const veEvent &event) { return false; }
 	virtual void update(veNode *node, veSceneManager *sm);
 	virtual void render(veNode *node, veCamera *camera);
-
+	virtual bool intersectWith(veRay *ray, veNode *node) { return false; };
 
 	void setVisible(bool isVis) { _isVisible = isVis; }
 	bool isVisible() const { return _isVisible; };

@@ -1,6 +1,7 @@
 #include "Mesh.h"
 #include "EntityRenderer.h"
 #include "MeshNode.h"
+#include "Ray.h"
 
 const unsigned int veMesh::MAX_ATTRIBUTE_NUM = 16;
 
@@ -130,6 +131,46 @@ bool& veMesh::needRefresh()
 	return _needRefresh;
 }
 
+void veMesh::traversePrimitive(const Primitive &primitive, const PrimitiveCallback &callback)
+{
+	if (primitive.primitiveType == Primitive::TRIANGLES) {
+		unsigned int stride = 0;
+		unsigned int vOffset = 0;
+		unsigned int vCount = 0;
+		unsigned int nOffset = 0;
+		unsigned int nCount = 0;
+		for (auto iter : _attributes) {
+			if (iter.attributeType == VertexAtrribute::VERTEX_ATTRIB_POSITION) {
+				vOffset = stride;
+				vCount = iter.valueNum;
+			}
+			else if (iter.attributeType == VertexAtrribute::VERTEX_ATTRIB_NORMAL) {
+				nOffset = stride;
+				nCount = iter.valueNum;
+			}
+			if (iter.valueType == veMesh::VertexAtrribute::FLOAT) stride += sizeof(GLfloat) * iter.valueNum / sizeof(GLfloat);
+			else if (iter.valueType == veMesh::VertexAtrribute::UINT) stride += sizeof(GLuint) * iter.valueNum / sizeof(GLfloat);
+			else if (iter.valueType == veMesh::VertexAtrribute::USHORT) stride += sizeof(GLushort) * iter.valueNum / sizeof(GLfloat);
+		}
+
+		if (vCount < 3 || nCount < 3) {
+			veLog("Vertex or Normal Size < 3, not support in traversePrimitive function.");
+			return;
+		}
+		for (size_t idx = 0; idx < primitive.indices->size(); idx += 3) {
+			veReal *p1 = &(*_vertices)[ idx      * stride + vOffset];
+			veReal *p2 = &(*_vertices)[(idx + 1) * stride + vOffset];
+			veReal *p3 = &(*_vertices)[(idx + 2) * stride + vOffset];
+			veReal *n1 = &(*_vertices)[ idx      * stride + nOffset];
+			veReal *n2 = &(*_vertices)[(idx + 1) * stride + nOffset];
+			veReal *n3 = &(*_vertices)[(idx + 2) * stride + nOffset];
+			if (callback != nullptr) {
+				callback(p1, p2, p3, n1, n2, n3);
+			}
+		}
+	}
+}
+
 void veMesh::updateBoundingBox(const veMat4 &meshToRoot)
 {
 	if (!_bones.empty()) {
@@ -142,4 +183,24 @@ void veMesh::updateBoundingBox(const veMat4 &meshToRoot)
 			_boundingBox.expandBy(iter->getBoundingBox());
 		}
 	}
+}
+
+bool veMesh::intersectWith(veRay *ray, veVec3 &position, veVec3 &normal)
+{
+	bool state = false;
+	veVec3 intersectPoint;
+	veVec3 intersectNormal;
+	for (auto &prim : _primitives) {
+		traversePrimitive(prim, [&](const veReal *p1, const veReal *p2, const veReal *p3
+			                      , const veReal *n1, const veReal *n2, const veReal *n3) -> bool {
+			if (ray->isIntersectWith(veVec3(p1[0], p1[1], p1[2]), veVec3(p2[0], p2[1], p2[2]), veVec3(p3[0], p3[1], p3[2]), &intersectPoint, &intersectNormal)) {
+				position = intersectPoint;
+				normal = intersectNormal;
+				state = true;
+				return true;
+			}
+			return false;
+		});
+	}
+	return state;
 }

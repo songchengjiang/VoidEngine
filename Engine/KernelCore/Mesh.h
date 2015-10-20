@@ -7,6 +7,7 @@
 #include "Bone.h"
 #include "VE_Ptr.h"
 
+class veRay;
 class veMeshNode;
 class VE_EXPORT veMesh
 {
@@ -98,7 +99,14 @@ public:
 	void caculateBoundingBox();
 	void updateBoundingBox(const veMat4 &meshToRoot);
 
+	bool intersectWith(veRay *ray, veVec3 &position, veVec3 &normal);
+
+	typedef std::function<bool(const veReal* /*p1*/, const veReal* /*p2*/, const veReal* /*p3*/
+		                     , const veReal* /*n1*/, const veReal* /*n2*/, const veReal* /*n3*/)> PrimitiveCallback;
+	void traversePrimitive(const Primitive &primitive, const PrimitiveCallback &callback);
+
 	bool& needRefresh();
+
 
 protected:
 
