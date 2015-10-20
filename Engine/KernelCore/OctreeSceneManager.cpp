@@ -171,11 +171,11 @@ void veOctreeSceneManager::intersectByRay(veOctree *octant, veRay *ray)
 				}
 			}
 		}
-	}
 
-	for (unsigned int i = 0; i < 8; ++i) {
-		if (octant->children[i]) {
-			intersectByRay(octant->children[i], ray);
+		for (unsigned int i = 0; i < 8; ++i) {
+			if (octant->children[i]) {
+				intersectByRay(octant->children[i], ray);
+			}
 		}
 	}
 }
