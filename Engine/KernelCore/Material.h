@@ -5,6 +5,7 @@
 #include "Texture.h"
 #include "VE_Ptr.h"
 #include "RenderCommand.h"
+#include "TransformFeedback.h"
 #include <unordered_map>
 
 struct veRenderCommand;
@@ -80,6 +81,9 @@ public:
 	veUniform* removeUniform(unsigned int idx);
 	size_t getUniformNum() const { return _uniforms.size(); }
 
+	void setTransformFeedback(veTransformFeedback *transFeedback) { _transformFeedback = transFeedback; _needLinkProgram = true; }
+	veTransformFeedback* getTransformFeedback() { return _transformFeedback.get(); }
+
 	static void restoreGLState();
 
 private:
@@ -99,9 +103,10 @@ private:
 	GLenum _polygonMode;
 	GLuint _program;
 	bool    _needLinkProgram;
-	std::map<veShader::Type, VE_Ptr<veShader> > _shaders;
+	std::map<veShader::Type, VE_Ptr<veShader> >           _shaders;
 	std::vector< VE_Ptr<veTexture> >                      _textures;
 	std::vector< VE_Ptr<veUniform> >                      _uniforms;
+	VE_Ptr<veTransformFeedback>                           _transformFeedback;
 };
 
 class VE_EXPORT veTechnique

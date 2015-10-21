@@ -14,14 +14,19 @@ public:
 		if (event.getEventType() & veEvent::VE_MOUSE_EVENT) {
 			if (event.getEventType() == veEvent::VE_PRESS) {
 				veVec2 screenCoords = veVec2(event.getMouseX(), event.getMouseY());
-				start = sm->getVisualiser()->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
-				end = sm->getVisualiser()->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
+				veVec3 start = sm->getVisualiser()->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
+				veVec3 end = sm->getVisualiser()->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
 				veRay ray(start, end);
 				ray.apply(sm);
 				if (!ray.getIntersections().empty()) {
+					char str[256];
 					for (auto &inters : ray.getIntersections()) {
+						_lines.push_back(std::make_pair(inters.worldPosition, inters.worldPosition + inters.worldNormal * 2.0f));
+						sprintf(str, "Intersection info: position(%f, %f, %f) \n \t \t normal(%f, %f, %f)"
+							, inters.worldPosition.x(), inters.worldPosition.y(), inters.worldPosition.z()
+							, inters.worldNormal.x(), inters.worldNormal.y(), inters.worldNormal.z());
+						veLog(str);
 					}
-					veLog("Intersection!");
 					return true;
 				}
 			}
@@ -30,12 +35,13 @@ public:
 	}
 
 	virtual void update(veNode *node, veSceneManager *sm) override{
-		debuger->debugDrawLine(start, end);
+		for (auto &line : _lines) {
+			debuger->debugDrawLine(line.first, line.second, veVec4(0.0f, 1.0f, 0.0f, 1.0f));
+		}
 	}
 
 	veDebuger *debuger;
-	veVec3 start;
-	veVec3 end;
+	std::vector<std::pair<veVec3, veVec3> > _lines;
 };
 
 
@@ -127,9 +133,9 @@ public:
 		}
 
 		auto debuger = new veOctreeDebuger;
-		debuger->debugDrawBoundingBoxWireframe(true);
-		debuger->debugDrawOctree(true);
-		debuger->setDebugDrawColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
+		debuger->debugDrawBoundingBoxWireframe(true, veVec4(1.0f, 0.0f, 0.0f, 0.1f));
+		debuger->debugDrawOctree(true, veVec4(1.0f, 1.0f, 1.0f, 0.1f));
+		debuger->setLineWidth(2.0f);
 		_sceneManager->getRootNode()->addRenderableObject(debuger);
 
 		auto ih = new IntersectionHandler;

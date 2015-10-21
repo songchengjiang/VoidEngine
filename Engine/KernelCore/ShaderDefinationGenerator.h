@@ -16,6 +16,7 @@ static const std::string SHADER_VERSION = "#version";
 static const std::string SHADER_DEFINE_BONES = "#define VE_USE_BONES";
 static const std::string SHADER_DEFINE_LIGHTS = "#define VE_USE_LIGHTS";
 static const std::string SHADER_DEFINE_TEXTURES = "#define VE_USE_TEXTURES";
+static const std::string SHADER_DEFINE_TRANSFORMFEEDBACK = "#define VE_USE_TRANSFORMFEEDBACK";
 static const std::string SHADER_DEFINE_DEFERRED_PATH = "#define VE_USE_DEFERRED_PATH";
 static const std::string SHADER_DEFINE_ATTRIBUTE_ARRAY[] = {
 	"#define ATTR_POSITION",
@@ -100,6 +101,10 @@ public:
 						}
 					}
 				}
+			}
+
+			if (_command.pass->getTransformFeedback()) {
+				definations += SHADER_DEFINE_TRANSFORMFEEDBACK + std::string(" 1\n");
 			}
 		}
 

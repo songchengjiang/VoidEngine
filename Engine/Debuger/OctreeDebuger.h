@@ -11,7 +11,10 @@ public:
 
 	virtual void update(veNode *node, veSceneManager *sm) override;
 
-	void debugDrawOctree(bool isDraw) { _isDrawOctree = isDraw; }
+	void debugDrawOctree(bool isDraw, const veVec4 &color = veVec4::WHITE) {
+		_isDrawOctree = isDraw; 
+		_drawDrawOctreeColor = color;
+	}
 
 protected:
 
@@ -20,6 +23,7 @@ protected:
 protected:
 
 	bool _isDrawOctree;
+	veVec4 _drawDrawOctreeColor;
 };
 
 #endif

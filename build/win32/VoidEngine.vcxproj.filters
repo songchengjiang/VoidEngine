@@ -207,6 +207,9 @@
     <ClCompile Include="..\..\Engine\KernelCore\Ray.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\TransformFeedback.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -391,6 +394,9 @@
       <Filter>KernelCore\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\Ray.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\TransformFeedback.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>

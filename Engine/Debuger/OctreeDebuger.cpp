@@ -26,7 +26,7 @@ void veOctreeDebuger::update(veNode *node, veSceneManager *sm)
 void veOctreeDebuger::renderOctree(veOctree *octree)
 {
 	if (!octree) return;
-	renderBoundingBoxWireframe(octree->boundingBox);
+	renderBoundingBoxWireframe(octree->boundingBox, _drawDrawOctreeColor);
 	for (unsigned int i = 0; i < 8; ++i) {
 		renderOctree(octree->children[i]);
 	}

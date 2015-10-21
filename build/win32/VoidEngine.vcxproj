@@ -70,6 +70,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\Texture.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\TextureManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Transformer.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\TransformFeedback.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Visualiser.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +134,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\Texture.h" />
     <ClInclude Include="..\..\Engine\KernelCore\TextureManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Transformer.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\TransformFeedback.h" />
     <ClInclude Include="..\..\Engine\KernelCore\VE_Ptr.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Visualiser.h" />
     <ClInclude Include="..\..\Engine\Prerequisites.h" />

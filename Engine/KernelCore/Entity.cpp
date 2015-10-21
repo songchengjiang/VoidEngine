@@ -44,7 +44,16 @@ bool veEntity::intersectWith(veRay *ray, veNode *node)
 			ray->setEnd(meshToRoot * localEnd);
 			if (ray->isIntersectWith(iter->getBoundingBox())) {
 				veRay::Intersection inters;
-				if (iter->intersectWith(ray, inters.position, inters.normal)) {
+				if (iter->intersectWith(ray, inters.localPosition, inters.localNormal)) {
+					veMat4 mtow = node->getNodeToWorldMatrix() * iter->getAttachedNode()->toMeshNodeRootMatrix();
+					veMat3 normMat(mtow[0][0], mtow[0][1], mtow[0][2]
+						         , mtow[1][0], mtow[1][1], mtow[1][2]
+						         , mtow[2][0], mtow[2][1], mtow[2][2]);
+					normMat.inverse();
+					normMat.transpose();
+					inters.worldPosition = mtow * inters.localPosition;
+					inters.worldNormal = normMat * inters.localNormal;
+					inters.worldNormal.normalize();
 					inters.node = node;
 					inters.renderable = this;
 					ray->addIntersection(inters);

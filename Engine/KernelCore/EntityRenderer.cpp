@@ -6,6 +6,7 @@
 #include "Node.h"
 #include "Material.h"
 #include "Constants.h"
+#include "TransformFeedback.h"
 #include <unordered_map>
 
 veEntityRenderer::veEntityRenderer()
@@ -61,6 +62,35 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 					ibos.resize(mesh->getPrimitiveNum(), 0);
 				}
 
+				if (0 < mesh->getBoneNum()) {
+					GLsizei tfBufferSize = 0;
+					for (unsigned int i = 0; i < mesh->getVertexAtrributeNum(); ++i) {
+						auto attri = mesh->getVertexAtrribute(i);
+						if (attri.attributeType == veMesh::VertexAtrribute::VERTEX_ATTRIB_POSITION
+					     || attri.attributeType == veMesh::VertexAtrribute::VERTEX_ATTRIB_NORMAL) {
+							if (attri.valueType == veMesh::VertexAtrribute::FLOAT) tfBufferSize += sizeof(GLfloat) * attri.valueNum;
+							else if (attri.valueType == veMesh::VertexAtrribute::UINT) tfBufferSize += sizeof(GLuint) * attri.valueNum;
+							else if (attri.valueType == veMesh::VertexAtrribute::USHORT) tfBufferSize += sizeof(GLushort) * attri.valueNum;
+						}
+					}
+					unsigned int vertexCount = (mesh->getVertexArray()->size() * sizeof(GLfloat)) / stride;
+					tfBufferSize *= vertexCount;
+					auto material = mesh->getMaterial();
+					for (size_t tech = 0; tech < material->getTechniqueNum(); ++tech) {
+						auto technique = material->getTechnique(tech);
+						for (size_t p = 0; p < technique->getPassNum(); ++p) {
+							auto pass = technique->getPass(p);
+							if (!pass->getTransformFeedback()) {
+								veTransformFeedback *tfback = new veTransformFeedback;
+								tfback->addVarying(TF_VARYING_POSITION_KEY.c_str());
+								tfback->addVarying(TF_VARYING_NORMAL_KEY.c_str());
+								tfback->setBufferSize(GL_ARRAY_BUFFER, tfBufferSize);
+								pass->setTransformFeedback(tfback);
+							}
+						}
+					}
+				}
+
 				for (unsigned int i = 0; i < mesh->getPrimitiveNum(); ++i) {
 					if (!ibos[i]) {
 						glGenBuffers(1, &ibos[i]);
@@ -107,8 +137,24 @@ void veEntityRenderer::draw(const veRenderCommand &command)
 	MeshBuffers *meshBuffers = static_cast<MeshBuffers *>(command.userData);
 	auto mesh = meshBuffers->mesh;
 	glBindVertexArray(meshBuffers->vao);
+
+	auto transformFeedback = command.pass->getTransformFeedback();
 	for (unsigned int i = 0; i < mesh->getPrimitiveNum(); ++i) {
 		auto primitive = mesh->getPrimitive(i);
+		if (transformFeedback) {
+			transformFeedback->bind(primitive.primitiveType);
+		}
 		glDrawElements(primitive.primitiveType, GLsizei(primitive.indices->size()), GL_UNSIGNED_INT, nullptr);
+		if (transformFeedback) {
+			transformFeedback->unBind();
+		}
 	}
+
+	//GLfloat *vertex = (GLfloat *)transformFeedback->mapingBuffer(GL_READ_ONLY);
+	//unsigned int vertexSize = transformFeedback->getBufferSize() / sizeof(GLfloat);
+	//for (unsigned int i = 0; i < vertexSize; ++i) {
+	//	GLfloat val = vertex[i];
+	//	std::cout << val <<std::endl;
+	//}
+	//transformFeedback->unMapingBuffer();
 }

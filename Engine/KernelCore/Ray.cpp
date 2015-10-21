@@ -6,12 +6,27 @@ veRay::veRay(const veVec3 &start, const veVec3 &end)
 	, _start(start)
 	, _end(end)
 {
-
+	_dir = (_end - _start);
+	_dir.normalize();
 }
 
 veRay::~veRay()
 {
 
+}
+
+void veRay::setStart(const veVec3 &start)
+{
+	_start = start;
+	_dir = (_end - _start);
+	_dir.normalize();
+}
+
+void veRay::setEnd(const veVec3 &end)
+{
+	_end = end;
+	_dir = (_end - _start);
+	_dir.normalize();
 }
 
 void veRay::apply(veSceneManager *sm)
@@ -49,7 +64,27 @@ bool veRay::isIntersectWith(const veBoundingBox &bbox)
 	return true;
 }
 
-bool veRay::isIntersectWith(const veVec3 &p1, const veVec3 &p2, const veVec3 &p3, veVec3 *intersectPoint, veVec3 *intersectNormal)
+bool veRay::isIntersectWith(const veVec3 &p0, const veVec3 &p1, const veVec3 &p2, veVec3 &intersectPoint, veVec3 &intersectNormal, bool isCullingBack)
 {
-	return false;
+	veVec3 e1 = p1 - p0;
+	veVec3 e2 = p2 - p0;
+	veVec3 n = e1.crossProduct(e2);
+	if (isCullingBack) {
+		if (0 < (_end - p0).dotProduct(n))
+			return false;
+	}
+	veReal a = n.dotProduct(_dir);
+	if (-1e-5 < a && a < 1e-5) return false;
+	veReal f = -1.0 / a;
+	veVec3 s = _start - p0;
+	veVec3 m = s.crossProduct(_dir);
+	veReal u = f * m.dotProduct(e2);
+	if (u < 0.0f) return false;
+	veReal v = -f * m.dotProduct(e1);
+	if (v < 0.0f || 1.0 < (u + v)) return false;
+	veReal t = f * n.dotProduct(s);
+	intersectPoint = _start + t * _dir;
+	intersectNormal = n;
+	intersectNormal.normalize();
+	return true;
 }

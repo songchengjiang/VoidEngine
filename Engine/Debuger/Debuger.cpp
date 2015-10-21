@@ -30,10 +30,11 @@ private:
 veDebuger::veDebuger()
 	: _vao(0)
 	, _vbo(0)
-	, _color(veVec4::WHITE)
 	, _isDrawMeshWireframe(false)
 	, _isDrawBoundingBoxWireframe(false)
 	, _isDrawFrustumPlane(false)
+	, _lineWidth(1.0f)
+	, _vertexStride(0)
 {
 	initMaterial();
 }
@@ -62,7 +63,7 @@ void veDebuger::update(veNode *node, veSceneManager *sm)
 		}
 		if (0 < iter->getRenderableObjectCount()) {
 			if (_isDrawBoundingBoxWireframe)
-				renderBoundingBoxWireframe(iter->getBoundingBox());
+				renderBoundingBoxWireframe(iter->getBoundingBox(), _drawBoundingBoxWireframeColor);
 
 			veMat4 rnToNode = iter->getNodeToWorldMatrix();
 			for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
@@ -94,26 +95,29 @@ void veDebuger::render(veNode *node, veCamera *camera)
 	veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
 }
 
-void veDebuger::debugDrawLine(const veVec3 &start, const veVec3 &end)
+void veDebuger::debugDrawLine(const veVec3 &start, const veVec3 &end, const veVec4 &color)
 {
-	drawLine(start, end);
+	drawLine(start, end, color);
 }
 
 void veDebuger::initMaterial()
 {
 	const char *V_SHADER = " \
 	layout(location = 0) in vec3 position; \n \
+	layout(location = 1) in vec4 color; \n \
 	uniform mat4 u_ModelViewProjectMat; \n \
+	out vec4 v_color; \n \
 	void main() \n \
 	{                   \n \
+	    v_color = color;               \n \
 		gl_Position = u_ModelViewProjectMat * vec4(position, 1.0); \n \
 	}";
 
 	const char *F_SHADER = " \
 	layout(location = 0) out vec4 fragColor; \n \
-	uniform vec4 u_Color; \n \
+	in vec4 v_color; \n \
 	void main() {  \n \
-		fragColor = u_Color; \n \
+		fragColor = v_color; \n \
 	}";
 
 	_materials = new veMaterialArray;
@@ -126,6 +130,7 @@ void veDebuger::initMaterial()
 	pass->depthTest() = true;
 	pass->depthWrite() = false;
 	pass->cullFace() = true;
+	pass->blendFunc() = veBlendFunc::ALPHA;
 
 	auto vShader = new veShader(veShader::VERTEX_SHADER, V_SHADER);
 	auto fShader = new veShader(veShader::FRAGMENT_SHADER, F_SHADER);
@@ -133,10 +138,10 @@ void veDebuger::initMaterial()
 	pass->setShader(fShader);
 
 	pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
-	_colorUniform = new veUniform("u_Color", _color);
-	pass->addUniform(_colorUniform.get());
 
 	_materials->addMaterial(material);
+
+	_vertexStride = sizeof(GLfloat) * (3 + 4);
 }
 
 void veDebuger::renderMeshWireframe(veMesh *mesh, const veMat4 &trans)
@@ -157,13 +162,14 @@ void veDebuger::renderMeshWireframe(veMesh *mesh, const veMat4 &trans)
 	for (size_t p = 0; p < mesh->getPrimitiveNum(); ++p) {
 		auto primitive = mesh->getPrimitive(p);
 		if (primitive.primitiveType == veMesh::Primitive::LINES) {
-			for (size_t i = 0; i < primitive.indices->size(); ++i) {
-				unsigned int vID = (*primitive.indices)[i] * stride + offset;
-				veVec3 v = veVec3(va->buffer()[vID], va->buffer()[vID + 1], va->buffer()[vID + 2]);
-				v = trans * v;
-				_vertices.push_back(v.x());
-				_vertices.push_back(v.y());
-				_vertices.push_back(v.z());
+			for (size_t i = 0; i < primitive.indices->size(); i += 2) {
+				unsigned int v0ID = (*primitive.indices)[i] * stride + offset;
+				unsigned int v1ID = (*primitive.indices)[i + 1] * stride + offset;
+				veVec3 v0(va->buffer()[v0ID], va->buffer()[v0ID + 1], va->buffer()[v0ID + 2]);
+				veVec3 v1(va->buffer()[v1ID], va->buffer()[v1ID + 1], va->buffer()[v1ID + 2]);
+				v0 = trans * v0;
+				v1 = trans * v1;
+				drawLine(v0, v1, _drawMeshWireframeColor);
 			}
 		}
 		else if (primitive.primitiveType == veMesh::Primitive::TRIANGLES) {
@@ -177,18 +183,15 @@ void veDebuger::renderMeshWireframe(veMesh *mesh, const veMat4 &trans)
 				v0 = trans * v0;
 				v1 = trans * v1;
 				v2 = trans * v2;
-				_vertices.push_back(v0.x()); _vertices.push_back(v0.y()); _vertices.push_back(v0.z());
-				_vertices.push_back(v1.x()); _vertices.push_back(v1.y()); _vertices.push_back(v1.z());
-				_vertices.push_back(v0.x()); _vertices.push_back(v0.y()); _vertices.push_back(v0.z());
-				_vertices.push_back(v2.x()); _vertices.push_back(v2.y()); _vertices.push_back(v2.z());
-				_vertices.push_back(v1.x()); _vertices.push_back(v1.y()); _vertices.push_back(v1.z());
-				_vertices.push_back(v2.x()); _vertices.push_back(v2.y()); _vertices.push_back(v2.z());
+				drawLine(v0, v1, _drawMeshWireframeColor);
+				drawLine(v0, v2, _drawMeshWireframeColor);
+				drawLine(v1, v2, _drawMeshWireframeColor);
 			}
 		}
 	}
 }
 
-void veDebuger::renderBoundingBoxWireframe(const veBoundingBox &bbox)
+void veDebuger::renderBoundingBoxWireframe(const veBoundingBox &bbox, const veVec4 &color)
 {
 	if (bbox.isNull()) return;
 	const veVec3 &bbmin = bbox.min();
@@ -202,20 +205,20 @@ void veDebuger::renderBoundingBoxWireframe(const veBoundingBox &bbox)
 	veVec3 v6 = bbmax;
 	veVec3 v7 = veVec3(bbmin.x(), bbmax.y(), bbmax.z());
 
-	drawLine(v0, v1);
-	drawLine(v1, v2);
-	drawLine(v2, v3);
-	drawLine(v3, v0);
+	drawLine(v0, v1, color);
+	drawLine(v1, v2, color);
+	drawLine(v2, v3, color);
+	drawLine(v3, v0, color);
 
-	drawLine(v4, v5);
-	drawLine(v5, v6);
-	drawLine(v6, v7);
-	drawLine(v7, v4);
+	drawLine(v4, v5, color);
+	drawLine(v5, v6, color);
+	drawLine(v6, v7, color);
+	drawLine(v7, v4, color);
 
-	drawLine(v0, v4);
-	drawLine(v1, v5);
-	drawLine(v2, v6);
-	drawLine(v3, v7);
+	drawLine(v0, v4, color);
+	drawLine(v1, v5, color);
+	drawLine(v2, v6, color);
+	drawLine(v3, v7, color);
 }
 
 void veDebuger::renderFrustumPlanes(veCamera *camera)
@@ -238,20 +241,20 @@ void veDebuger::renderFrustumPlanes(veCamera *camera)
 	veVec3 far3 = getPlaneCrossPoint(farPlane, leftPlane, topPlane);
 
 
-	drawLine(near0, near1);
-	drawLine(near1, near2);
-	drawLine(near2, near3);
-	drawLine(near3, near0);
+	drawLine(near0, near1, _drawFrustumPlaneColor);
+	drawLine(near1, near2, _drawFrustumPlaneColor);
+	drawLine(near2, near3, _drawFrustumPlaneColor);
+	drawLine(near3, near0, _drawFrustumPlaneColor);
 
-	drawLine(far0, far1);
-	drawLine(far1, far2);
-	drawLine(far2, far3);
-	drawLine(far3, far0);
+	drawLine(far0, far1, _drawFrustumPlaneColor);
+	drawLine(far1, far2, _drawFrustumPlaneColor);
+	drawLine(far2, far3, _drawFrustumPlaneColor);
+	drawLine(far3, far0, _drawFrustumPlaneColor);
 
-	drawLine(near0, far0);
-	drawLine(near1, far1);
-	drawLine(near2, far2);
-	drawLine(near3, far3);
+	drawLine(near0, far0, _drawFrustumPlaneColor);
+	drawLine(near1, far1, _drawFrustumPlaneColor);
+	drawLine(near2, far2, _drawFrustumPlaneColor);
+	drawLine(near3, far3, _drawFrustumPlaneColor);
 }
 
 veVec3 veDebuger::getPlaneCrossPoint(const vePlane &p0, const vePlane &p1, const vePlane &p2)
@@ -264,16 +267,18 @@ veVec3 veDebuger::getPlaneCrossPoint(const vePlane &p0, const vePlane &p1, const
 	return mat * -veVec3(p0.constantD(), p1.constantD(), p2.constantD());
 }
 
-void veDebuger::drawLine(const veVec3 &start, const veVec3 &end)
+void veDebuger::drawLine(const veVec3 &start, const veVec3 &end, const veVec4 &color)
 {
 	_vertices.push_back(start.x()); _vertices.push_back(start.y()); _vertices.push_back(start.z());
+	_vertices.push_back(color.x()); _vertices.push_back(color.y()); _vertices.push_back(color.z()); _vertices.push_back(color.w());
 	_vertices.push_back(end.x()); _vertices.push_back(end.y()); _vertices.push_back(end.z());
+	_vertices.push_back(color.x()); _vertices.push_back(color.y()); _vertices.push_back(color.z()); _vertices.push_back(color.w());
 }
 
 void veDebuger::draw(const veRenderCommand &command)
 {
 	command.pass->apply(command);
-	_colorUniform->setValue(_color);
+	glLineWidth(_lineWidth);
 
 	if (!_vao) {
 		glGenVertexArrays(1, &_vao);
@@ -286,9 +291,13 @@ void veDebuger::draw(const veRenderCommand &command)
 	if (!_vertices.empty())
 		glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(_vertices[0]), _vertices.buffer(), GL_STATIC_DRAW);
 
-	//v
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	//vertex
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, _vertexStride, 0);
 	glEnableVertexAttribArray(0);
+
+	//color
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, _vertexStride, (GLvoid *)(sizeof(GLfloat) * 3));
+	glEnableVertexAttribArray(1);
 
 	glDrawArrays(GL_LINES, 0, _vertices.size());
 

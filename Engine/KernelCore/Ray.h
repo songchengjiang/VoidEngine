@@ -14,8 +14,10 @@ public:
 	{
 		veNode *node;
 		veRenderableObject *renderable;
-		veVec3 normal;
-		veVec3 position;
+		veVec3 localNormal;
+		veVec3 localPosition;
+		veVec3 worldNormal;
+		veVec3 worldPosition;
 	};
 	typedef std::vector<Intersection> Intersections;
 	veRay(const veVec3 &start, const veVec3 &end);
@@ -23,8 +25,8 @@ public:
 
 	USE_VE_PTR;
 
-	void setStart(const veVec3 &start) { _start = start; }
-	void setEnd(const veVec3 &end) { _end = end; }
+	void setStart(const veVec3 &start);
+	void setEnd(const veVec3 &end);
 	const veVec3& getStart() const { return _start; }
 	const veVec3& getEnd() const { return _end; }
 	const Intersections& getIntersections() const { return _intersections; }
@@ -33,11 +35,12 @@ public:
 	void apply(veSceneManager *sm);
 
 	bool isIntersectWith(const veBoundingBox &bbox);
-	bool isIntersectWith(const veVec3 &p1, const veVec3 &p2, const veVec3 &p3, veVec3 *intersectPoint = nullptr, veVec3 *intersectNormal = nullptr);
+	bool isIntersectWith(const veVec3 &p0, const veVec3 &p1, const veVec3 &p2, veVec3 &intersectPoint, veVec3 &intersectNormal, bool isCullingBack = true);
 
 private:
 	veVec3 _start;
 	veVec3 _end;
+	veVec3 _dir;
 	Intersections _intersections;
 };
 

@@ -168,7 +168,8 @@ void veMesh::traversePrimitive(const Primitive &primitive, const PrimitiveCallba
 			veReal *n2 = &(*_vertices)[id1 * stride + nOffset];
 			veReal *n3 = &(*_vertices)[id2 * stride + nOffset];
 			if (callback != nullptr) {
-				callback(p1, p2, p3, n1, n2, n3);
+				if (callback(p1, p2, p3, n1, n2, n3))
+					return;
 			}
 		}
 	}
@@ -191,14 +192,10 @@ void veMesh::updateBoundingBox(const veMat4 &meshToRoot)
 bool veMesh::intersectWith(veRay *ray, veVec3 &position, veVec3 &normal)
 {
 	bool state = false;
-	veVec3 intersectPoint;
-	veVec3 intersectNormal;
 	for (auto &prim : _primitives) {
 		traversePrimitive(prim, [&](const veReal *p1, const veReal *p2, const veReal *p3
 			                      , const veReal *n1, const veReal *n2, const veReal *n3) -> bool {
-			if (ray->isIntersectWith(veVec3(p1[0], p1[1], p1[2]), veVec3(p2[0], p2[1], p2[2]), veVec3(p3[0], p3[1], p3[2]), &intersectPoint, &intersectNormal)) {
-				position = intersectPoint;
-				normal = intersectNormal;
+			if (ray->isIntersectWith(veVec3(p1[0], p1[1], p1[2]), veVec3(p2[0], p2[1], p2[2]), veVec3(p3[0], p3[1], p3[2]), position, normal)) {
 				state = true;
 				return true;
 			}

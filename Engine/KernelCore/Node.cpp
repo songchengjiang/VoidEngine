@@ -128,9 +128,10 @@ bool veNode::isInScene()
 
 veMat4 veNode::getNodeToWorldMatrix() const
 {
-	if (_refresh)
-		return computeNodeToWorldMatrix();
-	else
+	if (_refresh) {
+		veMat4 worldMatrix = _parent == nullptr ? _matrix : _parent->getNodeToWorldMatrix() * _matrix;
+		return worldMatrix;
+	}else
 		return _worldMatrix;
 }
 

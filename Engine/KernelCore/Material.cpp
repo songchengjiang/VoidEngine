@@ -172,6 +172,8 @@ void vePass::applyProgram(const veRenderCommand &command)
 			GLuint id = iter.second->compile();
 			glAttachShader(_program, id);
 		}
+		if (_transformFeedback.valid())
+			_transformFeedback->applyTransformFeedback(_program);
 		glLinkProgram(_program);
 		_needLinkProgram = false;
 	}
