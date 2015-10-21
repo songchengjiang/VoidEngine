@@ -37,6 +37,8 @@ public:
 
 protected:
 
+	void refreshMeshes();
+
 protected:
 
 	MeshList           _meshList;

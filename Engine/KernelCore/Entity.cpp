@@ -24,6 +24,10 @@ void veEntity::update(veNode *node, veSceneManager *sm)
 		dirtyBoundingBox();
 		_isDirtyBoundingBox = false;
 	}
+	if (_needRefresh) {
+		refreshMeshes();
+		_needRefresh = false;
+	}
 	if (_renderer.valid())
 		_renderer->visit(node, this, sm);
 }
@@ -80,6 +84,7 @@ int veEntity::addMesh(veMesh *mesh)
 	auto iter = std::find(_meshList.begin(), _meshList.end(), mesh);
 	if (iter != _meshList.end()) return -1;
 	_meshList.push_back(mesh);
+	_needRefresh = true;
 	return int(_meshList.size() - 1);
 }
 
@@ -88,6 +93,7 @@ bool veEntity::removeMesh(veMesh *mesh)
 	auto iter = std::find(_meshList.begin(), _meshList.end(), mesh);
 	if (iter == _meshList.end()) return false;
 	_meshList.erase(iter);
+	_needRefresh = true;
 	return true;
 }
 
@@ -96,6 +102,7 @@ veMesh* veEntity::removeMesh(unsigned int mIndex)
 	veAssert(mIndex < _meshList.size());
 	veMesh* mesh = _meshList[mIndex].get();
 	_meshList.erase(_meshList.begin() + mIndex);
+	_needRefresh = true;
 	return mesh;
 }
 
@@ -112,5 +119,12 @@ void veEntity::dirtyBoundingBox()
 		veMat4 meshToRoot = iter->getAttachedNode()->toMeshNodeRootMatrix();
 		iter->updateBoundingBox(meshToRoot);
 		_boundingBox.expandBy(iter->getBoundingBox() * meshToRoot);
+	}
+}
+
+void veEntity::refreshMeshes()
+{
+	for (auto &iter : _meshList) {
+		iter->generateTransformFeedbackBuffer();
 	}
 }

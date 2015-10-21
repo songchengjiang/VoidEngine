@@ -21,6 +21,7 @@ vePass::vePass()
 	, _depthTest(true)
 	, _depthWirte(true)
 	, _cullFace(true)
+	, _transformFeedback(false)
 	, _blendFunc(veBlendFunc::DISABLE)
 	, _polygonMode(GL_FILL)
 	, _program(0)
@@ -172,8 +173,10 @@ void vePass::applyProgram(const veRenderCommand &command)
 			GLuint id = iter.second->compile();
 			glAttachShader(_program, id);
 		}
-		if (_transformFeedback.valid())
-			_transformFeedback->applyTransformFeedback(_program);
+		if (_transformFeedback.valid()) {
+			auto varyingList = _transformFeedback->getVaryingList();
+			glTransformFeedbackVaryings(_program, varyingList.size(), &varyingList[0], GL_INTERLEAVED_ATTRIBS);
+		}
 		glLinkProgram(_program);
 		_needLinkProgram = false;
 	}

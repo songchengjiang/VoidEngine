@@ -11,6 +11,8 @@ class veRay;
 class veMeshNode;
 class VE_EXPORT veMesh
 {
+	friend class veEntity;
+	friend class veEntityRenderer;
 public:
 	static const unsigned int MAX_ATTRIBUTE_NUM;
 
@@ -76,6 +78,8 @@ public:
 	void setVertexAtrribute(unsigned int attrIndex, const VertexAtrribute &attri) { veAssert(attrIndex < _attributes.size());  _attributes[attrIndex] = attri; _needRefresh = true; }
 	void addVertexAtrribute(const VertexAtrribute &attri);
 	const VertexAtrribute& getVertexAtrribute(size_t attrIndex) const { return _attributes[attrIndex]; }
+	bool getVertexAtrribute(VertexAtrribute::AtrributeType aType, VertexAtrribute &attri) const;
+	bool getVertexAtrributeSizeInByte(VertexAtrribute::AtrributeType aType, unsigned int &sizeInByte) const;
 	size_t getVertexAtrributeNum() const { return _attributes.size();  };
 
 	void addPrimitive(const Primitive &primitive);
@@ -107,6 +111,10 @@ public:
 
 	bool& needRefresh();
 
+protected:
+
+	void generateTransformFeedbackBuffer();
+	GLuint getTransformFeedbackBuffer() { return _transformFeedbackBuffer; }
 
 protected:
 
@@ -117,6 +125,7 @@ protected:
 	std::vector<Primitive>             _primitives;
 	std::vector< VE_Ptr<veBone> >      _bones;
 	veBoundingBox                      _boundingBox;
+	GLuint                             _transformFeedbackBuffer;
 	unsigned int                       _vertexStride;
 	bool                               _needRefresh;
 };

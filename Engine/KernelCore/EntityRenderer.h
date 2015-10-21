@@ -14,7 +14,7 @@ public:
 			: node(nullptr)
 			, mesh(nullptr)
 			, vao(0)
-			, vbo(0) {
+			, vbo(0){
 
 		}
 		veNode *node;
