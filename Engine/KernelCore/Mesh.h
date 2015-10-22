@@ -107,7 +107,7 @@ public:
 
 	typedef std::function<bool(const veReal* /*p1*/, const veReal* /*p2*/, const veReal* /*p3*/
 		                     , const veReal* /*n1*/, const veReal* /*n2*/, const veReal* /*n3*/)> PrimitiveCallback;
-	void traversePrimitive(const Primitive &primitive, const PrimitiveCallback &callback);
+	void traversePrimitives(const PrimitiveCallback &callback);
 
 	bool& needRefresh();
 

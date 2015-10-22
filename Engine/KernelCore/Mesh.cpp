@@ -160,8 +160,11 @@ void veMesh::generateTransformFeedbackBuffer()
 {
 	if (!_bones.empty()) {
 		unsigned int stride = (3 + 3) * sizeof(GLfloat);
-		unsigned int vertexCount = (_vertices->size() * sizeof(GLfloat)) / getVertexStride();
-		unsigned int bufSize = stride * vertexCount;
+		unsigned int primitivesCount = 0;
+		for (auto &prim : _primitives) {
+			primitivesCount += prim.indices->size();
+		}
+		unsigned int bufSize = stride * primitivesCount;
 		if (!_transformFeedbackBuffer) {
 			glGenBuffers(1, &_transformFeedbackBuffer);
 		}
@@ -170,74 +173,80 @@ void veMesh::generateTransformFeedbackBuffer()
 	}
 }
 
-void veMesh::traversePrimitive(const Primitive &primitive, const PrimitiveCallback &callback)
+void veMesh::traversePrimitives(const PrimitiveCallback &callback)
 {
-	if (primitive.primitiveType == Primitive::TRIANGLES) {
-		if (!_bones.empty() || _transformFeedbackBuffer) {
-			unsigned int stride = (3 + 3);
-			unsigned int vOffset = 0;
-			unsigned int nOffset = 3;
-			glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, _transformFeedbackBuffer);
-			veReal *vertices = (veReal *)glMapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, GL_READ_ONLY);
-			for (size_t idx = 0; idx < primitive.indices->size(); idx += 3) {
-				unsigned int id0 = (*primitive.indices)[idx];
-				unsigned int id1 = (*primitive.indices)[idx + 1];
-				unsigned int id2 = (*primitive.indices)[idx + 2];
-				veReal *p1 = &(vertices)[id0 * stride + vOffset];
-				veReal *p2 = &(vertices)[id1 * stride + vOffset];
-				veReal *p3 = &(vertices)[id2 * stride + vOffset];
-				veReal *n1 = &(vertices)[id0 * stride + nOffset];
-				veReal *n2 = &(vertices)[id1 * stride + nOffset];
-				veReal *n3 = &(vertices)[id2 * stride + nOffset];
-				if (callback != nullptr) {
-					if (callback(p1, p2, p3, n1, n2, n3))
-						return;
+	unsigned int totalPrimitiveIndices = 0;
+	for (auto &primitive : _primitives) {
+		if (primitive.primitiveType == Primitive::TRIANGLES) {
+			if (!_bones.empty() && _transformFeedbackBuffer) {
+				unsigned int stride = (3 + 3);
+				unsigned int vOffset = 0;
+				unsigned int nOffset = 3;
+				glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, _transformFeedbackBuffer);
+				veReal *vertices = (veReal *)glMapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, GL_READ_ONLY);
+				for (size_t idx = 0; idx < primitive.indices->size(); idx += 3) {
+					unsigned int id0 = totalPrimitiveIndices + idx;
+					unsigned int id1 = totalPrimitiveIndices + idx + 1;
+					unsigned int id2 = totalPrimitiveIndices + idx + 2;
+					veReal *p1 = &(vertices)[id0 * stride + vOffset];
+					veReal *p2 = &(vertices)[id1 * stride + vOffset];
+					veReal *p3 = &(vertices)[id2 * stride + vOffset];
+					veReal *n1 = &(vertices)[id0 * stride + nOffset];
+					veReal *n2 = &(vertices)[id1 * stride + nOffset];
+					veReal *n3 = &(vertices)[id2 * stride + nOffset];
+					if (callback != nullptr) {
+						if (callback(p1, p2, p3, n1, n2, n3))
+							return;
+					}
 				}
+				glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+				glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, 0);
 			}
-			glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
-			glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, 0);
-		}
-		else {
-			unsigned int stride = 0;
-			unsigned int vOffset = 0;
-			unsigned int vCount = 0;
-			unsigned int nOffset = 0;
-			unsigned int nCount = 0;
-			for (auto iter : _attributes) {
-				if (iter.attributeType == VertexAtrribute::VERTEX_ATTRIB_POSITION) {
-					vOffset = stride;
-					vCount = iter.valueNum;
+			else {
+				unsigned int stride = 0;
+				unsigned int vOffset = 0;
+				unsigned int vCount = 0;
+				unsigned int nOffset = 0;
+				unsigned int nCount = 0;
+				for (auto iter : _attributes) {
+					if (iter.attributeType == VertexAtrribute::VERTEX_ATTRIB_POSITION) {
+						vOffset = stride;
+						vCount = iter.valueNum;
+					}
+					else if (iter.attributeType == VertexAtrribute::VERTEX_ATTRIB_NORMAL) {
+						nOffset = stride;
+						nCount = iter.valueNum;
+					}
+					if (iter.valueType == veMesh::VertexAtrribute::FLOAT) stride += sizeof(GLfloat) * iter.valueNum / sizeof(GLfloat);
+					else if (iter.valueType == veMesh::VertexAtrribute::UINT) stride += sizeof(GLuint) * iter.valueNum / sizeof(GLfloat);
+					else if (iter.valueType == veMesh::VertexAtrribute::USHORT) stride += sizeof(GLushort) * iter.valueNum / sizeof(GLfloat);
 				}
-				else if (iter.attributeType == VertexAtrribute::VERTEX_ATTRIB_NORMAL) {
-					nOffset = stride;
-					nCount = iter.valueNum;
-				}
-				if (iter.valueType == veMesh::VertexAtrribute::FLOAT) stride += sizeof(GLfloat) * iter.valueNum / sizeof(GLfloat);
-				else if (iter.valueType == veMesh::VertexAtrribute::UINT) stride += sizeof(GLuint) * iter.valueNum / sizeof(GLfloat);
-				else if (iter.valueType == veMesh::VertexAtrribute::USHORT) stride += sizeof(GLushort) * iter.valueNum / sizeof(GLfloat);
-			}
 
-			if (vCount < 3 || nCount < 3) {
-				veLog("Vertex or Normal Size < 3, not support in traversePrimitive function.");
-				return;
-			}
-			for (size_t idx = 0; idx < primitive.indices->size(); idx += 3) {
-				unsigned int id0 = (*primitive.indices)[idx];
-				unsigned int id1 = (*primitive.indices)[idx + 1];
-				unsigned int id2 = (*primitive.indices)[idx + 2];
-				veReal *p1 = &(*_vertices)[id0 * stride + vOffset];
-				veReal *p2 = &(*_vertices)[id1 * stride + vOffset];
-				veReal *p3 = &(*_vertices)[id2 * stride + vOffset];
-				veReal *n1 = &(*_vertices)[id0 * stride + nOffset];
-				veReal *n2 = &(*_vertices)[id1 * stride + nOffset];
-				veReal *n3 = &(*_vertices)[id2 * stride + nOffset];
-				if (callback != nullptr) {
-					if (callback(p1, p2, p3, n1, n2, n3))
-						return;
+				if (vCount < 3 || nCount < 3) {
+					veLog("Vertex or Normal Size < 3, not support in traversePrimitive function.");
+					return;
+				}
+				for (size_t idx = 0; idx < primitive.indices->size(); idx += 3) {
+					unsigned int id0 = (*primitive.indices)[idx];
+					unsigned int id1 = (*primitive.indices)[idx + 1];
+					unsigned int id2 = (*primitive.indices)[idx + 2];
+					veReal *p1 = &(*_vertices)[id0 * stride + vOffset];
+					veReal *p2 = &(*_vertices)[id1 * stride + vOffset];
+					veReal *p3 = &(*_vertices)[id2 * stride + vOffset];
+					veReal *n1 = &(*_vertices)[id0 * stride + nOffset];
+					veReal *n2 = &(*_vertices)[id1 * stride + nOffset];
+					veReal *n3 = &(*_vertices)[id2 * stride + nOffset];
+					if (callback != nullptr) {
+						if (callback(p1, p2, p3, n1, n2, n3))
+							return;
+					}
 				}
 			}
 		}
+
+		totalPrimitiveIndices += primitive.indices->size();
 	}
+
 }
 
 void veMesh::updateBoundingBox(const veMat4 &meshToRoot)
@@ -257,15 +266,13 @@ void veMesh::updateBoundingBox(const veMat4 &meshToRoot)
 bool veMesh::intersectWith(veRay *ray, veVec3 &position, veVec3 &normal)
 {
 	bool state = false;
-	for (auto &prim : _primitives) {
-		traversePrimitive(prim, [&](const veReal *p1, const veReal *p2, const veReal *p3
-			                      , const veReal *n1, const veReal *n2, const veReal *n3) -> bool {
-			if (ray->isIntersectWith(veVec3(p1[0], p1[1], p1[2]), veVec3(p2[0], p2[1], p2[2]), veVec3(p3[0], p3[1], p3[2]), position, normal)) {
-				state = true;
-				return true;
-			}
-			return false;
-		});
-	}
+	traversePrimitives([&](const veReal *p1, const veReal *p2, const veReal *p3
+		, const veReal *n1, const veReal *n2, const veReal *n3) -> bool {
+		if (ray->isIntersectWith(veVec3(p1[0], p1[1], p1[2]), veVec3(p2[0], p2[1], p2[2]), veVec3(p3[0], p3[1], p3[2]), position, normal)) {
+			state = true;
+			return true;
+		}
+		return false;
+	});
 	return state;
 }

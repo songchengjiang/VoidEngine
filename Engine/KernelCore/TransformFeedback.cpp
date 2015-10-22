@@ -35,7 +35,6 @@ void veTransformFeedback::bind(GLuint buffer, GLenum primitiveMode)
 	if (!_tfBuffer) {
 		glGenTransformFeedbacks(1, &_tfBuffer);
 	}
-	if (!_tfBuffer) return;
 
 	if (_rasterizerDiscard)
 		glEnable(GL_RASTERIZER_DISCARD);

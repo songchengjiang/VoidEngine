@@ -174,7 +174,7 @@ void vePass::applyProgram(const veRenderCommand &command)
 			glAttachShader(_program, id);
 		}
 		if (_transformFeedback.valid()) {
-			auto varyingList = _transformFeedback->getVaryingList();
+			auto &varyingList = _transformFeedback->getVaryingList();
 			glTransformFeedbackVaryings(_program, varyingList.size(), &varyingList[0], GL_INTERLEAVED_ATTRIBS);
 		}
 		glLinkProgram(_program);
