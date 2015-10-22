@@ -1,4 +1,5 @@
 #include "Quaternion.h"
+#include "BaseCore/Matrix3.h"
 
 const veQuat veQuat::ZERO = veQuat(0.0f, 0.0f, 0.0f, 0.0f);
 const veQuat veQuat::IDENTITY = veQuat();
@@ -36,6 +37,11 @@ veQuat::veQuat(const veQuat &copy)
 
 }
 
+veQuat::veQuat(const veMat3 &rotMat)
+{
+	this->fromMat3(rotMat);
+}
+
 veQuat::~veQuat()
 {
 
@@ -44,6 +50,11 @@ veQuat::~veQuat()
 void veQuat::set(const veReal angle, const veVec3 &axes)
 {
 	this->fromAngleAxis(angle, axes);
+}
+
+void veQuat::set(const veMat3 &rotMat)
+{
+	this->fromMat3(rotMat);
 }
 
 veReal veQuat::dot(const veQuat &rkQ) const
@@ -227,4 +238,9 @@ void veQuat::fromAngleAxis(const veReal angle, const veVec3 &axes)
 	_x = fSin * axes.x();
 	_y = fSin * axes.y();
 	_z = fSin * axes.z();
+}
+
+void veQuat::fromMat3(const veMat3 &mat)
+{
+
 }

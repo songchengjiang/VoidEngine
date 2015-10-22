@@ -1,4 +1,5 @@
 #include "Matrix4.h"
+#include "Matrix3.h"
 
 static veReal MINOR(const veMat4& m, const size_t r0, const size_t r1, const size_t r2,
 				const size_t c0, const size_t c1, const size_t c2)
@@ -191,19 +192,39 @@ void veMat4::makeLookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &u
 
 void veMat4::decomposition(veVec3* position, veVec3* scale, veQuat* orientation) const
 {
-	veAssert(false);
 	if (position){
 		position->x() = m[0][3];
 		position->y() = m[1][3];
 		position->z() = m[2][3];
 	}
 
-	if (scale){
+	if (scale || orientation){
+		veVec3 row0 = veVec3(m[0][0], m[0][1], m[0][2]);
+		veVec3 row1 = veVec3(m[1][0], m[1][1], m[1][2]);
+		veVec3 row2 = veVec3(m[2][0], m[2][1], m[2][2]);
+		if (scale) {
+			scale->x() = row0.length();
+			scale->y() = row1.length();
+			scale->z() = row2.length();
+		}
 
-	}
+		if (orientation) {
+			if (scale->x()) {
+				row0 /= scale->x();
+			}
 
-	if (orientation){
+			if (scale->y()) {
+				row1 /= scale->y();
+			}
 
+			if (scale->z()) {
+				row2 /= scale->z();
+			}
+
+			orientation->set(veMat3(row0.x(), row0.y(), row0.z()
+				                 ,  row1.x(), row1.y(), row1.z()
+				                 ,  row2.x(), row2.y(), row2.z()));
+		}
 	}
 }
 

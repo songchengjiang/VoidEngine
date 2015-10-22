@@ -38,6 +38,8 @@ public:
 				_animationContainer->pause();
 			}
 		}
+
+		return false;
 	}
 
 	virtual void update(veNode *node, veSceneManager *sm) override{

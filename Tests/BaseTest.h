@@ -2,6 +2,10 @@
 #define _BASE_TEST_
 #include "VoidEngine.h"
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4996 )
+#endif
+
 class LightUpdater : public veComponent
 {
 public:
