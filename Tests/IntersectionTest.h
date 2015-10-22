@@ -61,7 +61,7 @@ public:
 		auto ih = new IntersectionHandler;
 		veNode *root = _sceneManager->createNode();
 		{
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem"));
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot"));
 			entity->setName("teapot");
 			veNode *node = _sceneManager->createNode();
 			node->addRenderableObject(entity);
@@ -75,7 +75,7 @@ public:
 		}
 
 		{
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/plane.vem"));
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/plane.vem", "plane"));
 			entity->setName("plane");
 			veNode *node = _sceneManager->createNode();
 			node->addRenderableObject(entity);
@@ -88,7 +88,7 @@ public:
 		}
 
 		{
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem"));
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "sphere"));
 			entity->setName("sphere");
 			veNode *node = _sceneManager->createNode();
 			node->addRenderableObject(entity);
@@ -102,7 +102,7 @@ public:
 		}
 
 		{
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem"));
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu-0"));
 			entity->setName("laoshu-1");
 			veNode *node = _sceneManager->createNode();
 			node->addRenderableObject(entity);
@@ -115,7 +115,7 @@ public:
 			//transer->setRotation(veQuat(veMath::HALF_PI, veVec3::UNIT_Y));
 			root->addChild(node);
 
-			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim"));
+			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim-0"));
 			animationContainer->start();
 			animationContainer->setLoopAnimation(true);
 			entity->setAnimationContainer(animationContainer);
@@ -123,7 +123,7 @@ public:
 		}
 
 		{
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem"));
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu-1"));
 			entity->setName("laoshu-2");
 			veNode *node = _sceneManager->createNode();
 			node->addRenderableObject(entity);
@@ -136,7 +136,7 @@ public:
 			//transer->setRotation(veQuat(veMath::HALF_PI, veVec3::UNIT_Y));
 			root->addChild(node);
 
-			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim"));
+			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim-1"));
 			animationContainer->start();
 			animationContainer->setFrameRate(10.0f);
 			animationContainer->setLoopAnimation(true);

@@ -12,11 +12,11 @@ public:
 	{};
 	virtual ~veFileReaderWriterPNG(){};
 
-	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name) override{
 		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
-		_name = fullPath.substr(fullPath.find_last_of("/\\") + 1);
 		FILE *fp = fopen(fullPath.c_str(), "rb");
 		if (fp){
+			_name = name;
 			unsigned char header[8];
 			fread(header, 1, 8, fp);
 			if (png_sig_cmp(header, 0, 8) == 0){

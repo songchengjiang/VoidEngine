@@ -18,9 +18,10 @@ public:
 	{};
 	~veFileReaderWriterVEMTL(){};
 
-	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name) override{
 		if (!_doucument) _doucument = new Document;
 		_sceneManager = sm;
+		_name = name;
 		_fileFolder = filePath.substr(0, filePath.find_last_of("/\\") + 1);
 		std::string buffer = veFile::readFileToBuffer(filePath);
 		_doucument->Parse(buffer.c_str());
@@ -39,6 +40,7 @@ private:
 	void parseDoc(){
 		if (_doucument->HasMember(MATERIALS_KEY.c_str())){
 			_materials = new veMaterialArray;
+			_materials->setName(_name);
 			const Value &mats = (*_doucument)[MATERIALS_KEY.c_str()];
 			for (unsigned int i = 0; i < mats.Size(); ++i){
 				readMaterial(mats[i]);
@@ -178,8 +180,8 @@ private:
 			if (texVal.HasMember(TYPE_KEY.c_str())) {
 				texType = getTextureType(texVal[TYPE_KEY.c_str()].GetString());
 			}
-			veTexture *texture = veTextureManager::instance()->getOrCreateTexture(source, texType);
-			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source));
+			veTexture *texture = _sceneManager->createTexture(source, texType);
+			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, _name + std::string("-Image")));
 			if (!texture) return;
 			if (image)
 				texture->setImage(image);
@@ -305,6 +307,7 @@ private:
 	Document *_doucument;
 	veMaterialArray *_materials;
 	std::string _fileFolder;
+	std::string _name;
 	veSceneManager *_sceneManager;
 };
 

@@ -10,7 +10,7 @@ public:
 	veFileReaderWriter();
 	virtual ~veFileReaderWriter();
 
-	virtual void* readFile(veSceneManager *sm, const std::string &filePath) = 0;
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name) = 0;
 	virtual bool writeFile(veSceneManager *sm, void *data, const std::string &filePath) = 0;
 };
 

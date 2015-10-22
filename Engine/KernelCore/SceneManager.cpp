@@ -1,16 +1,21 @@
 #include "SceneManager.h"
 #include "Event.h"
-#include "LightManager.h"
 #include "Overlay.h"
 #include "Entity.h"
 #include "Text.h"
 #include "Animation.h"
+
+#include "LightManager.h"
+#include "TextureManager.h"
+#include "EntityManager.h"
 
 veSceneManager::veSceneManager()
 	: _deltaTime(0.0)
 	, _renderQueue(nullptr)
 {
 	_managerList[veLightManager::TYPE()] = new veLightManager;
+	_managerList[veTextureManager::TYPE()] = new veTextureManager;
+	_managerList[veEntityManager::TYPE()] = new veEntityManager;
 }
 
 veSceneManager::~veSceneManager()
@@ -48,10 +53,9 @@ veOverlay* veSceneManager::createOverlay()
 	return overlay;
 }
 
-veEntity* veSceneManager::createEntity()
+veEntity* veSceneManager::createEntity(const std::string &name)
 {
-	auto entity = new veEntity;
-	return entity;
+	return static_cast<veEntityManager *>(_managerList[veEntityManager::TYPE()])->createEntity(name);
 }
 
 veText* veSceneManager::createText(veFont *font, const std::string &content)
@@ -64,6 +68,11 @@ veAnimation* veSceneManager::createAnimation()
 {
 	auto anim = new veAnimation;
 	return anim;
+}
+
+veTexture* veSceneManager::createTexture(const std::string &name, veTexture::TextureType texType)
+{
+	return static_cast<veTextureManager *>(_managerList[veTextureManager::TYPE()])->createTexture(name, texType);
 }
 
 void veSceneManager::loadLightConfiguration(const std::string &filePath)

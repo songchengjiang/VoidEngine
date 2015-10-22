@@ -39,6 +39,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\Component.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Director.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Entity.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\EntityManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\EntityRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\EventDispatcher.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Font.cpp" />
@@ -98,6 +99,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\Component.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Director.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Entity.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\EntityManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\EntityRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Event.h" />
     <ClInclude Include="..\..\Engine\KernelCore\EventDispatcher.h" />

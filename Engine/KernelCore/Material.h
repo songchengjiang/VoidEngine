@@ -162,6 +162,7 @@ public:
 	~veMaterialArray();
 
 	USE_VE_PTR;
+	USE_NAME_PROPERTY;
 
 	void addMaterial(veMaterial *material);
 	const veMaterial* getMaterial(unsigned int idx) const;

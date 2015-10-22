@@ -19,9 +19,10 @@ public:
 	{};
 	~veFileReaderWriterCAMERA(){};
 
-	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name) override{
 		if (!_doucument) _doucument = new Document;
 		_sceneManager = sm;
+		_name = name;
 		std::string buffer = veFile::readFileToBuffer(filePath);
 		_doucument->Parse(buffer.c_str());
         if (_doucument->HasParseError()) return  nullptr;
@@ -38,9 +39,10 @@ private:
 
 	void readCamera() {
 		_camera = _sceneManager->createCamera();
-		if ((*_doucument).HasMember(NAME_KEY.c_str())) {
-			_camera->setName((*_doucument)[NAME_KEY.c_str()].GetString());
-		}
+		_camera->setName(_name);
+		//if ((*_doucument).HasMember(NAME_KEY.c_str())) {
+		//	_camera->setName((*_doucument)[NAME_KEY.c_str()].GetString());
+		//}
 
 		if ((*_doucument).HasMember(RENDERPATH_KEY.c_str())) {
 			const char *str = (*_doucument)[RENDERPATH_KEY.c_str()].GetString();
@@ -168,8 +170,15 @@ private:
 		auto fbo = veFrameBufferObjectManager::instance()->getOrCreateFrameBufferObject(_camera->getName());
 		for (unsigned int i = 0; i < fboVal.Size(); ++i) {
 			const Value &attachmentVal = fboVal[i];
-			GLenum attachment = GL_COLOR_ATTACHMENT0;
 			veTexture *texture = nullptr;
+
+			if (attachmentVal.HasMember(SOURCE_KEY.c_str())) {
+				std::string name = attachmentVal[SOURCE_KEY.c_str()].GetString();
+				texture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->getTexture(name);
+			}
+			if (!texture) continue;
+
+			GLenum attachment = GL_COLOR_ATTACHMENT0;
 			int width = _camera->getViewport().width;
 			int height = _camera->getViewport().height;
 			GLuint internalFormat = GL_RGBA32F;
@@ -180,18 +189,6 @@ private:
 
 			if (attachmentVal.HasMember(TYPE_KEY.c_str())) {
 				texType = getTextureType(attachmentVal[TYPE_KEY.c_str()].GetString());
-			}
-
-			if (attachmentVal.HasMember(SOURCE_KEY.c_str())) {
-				std::string name = attachmentVal[SOURCE_KEY.c_str()].GetString();
-				texture = veTextureManager::instance()->getOrCreateTexture(name, texType);
-			}
-
-			if (!texture) continue;
-
-			if (attachmentVal.HasMember(SOURCE_KEY.c_str())) {
-				std::string name = attachmentVal[SOURCE_KEY.c_str()].GetString();
-				texture = veTextureManager::instance()->getOrCreateTexture(name, texType);
 			}
 
 			if (attachmentVal.HasMember(WIDTH_KEY.c_str())) {
@@ -256,6 +253,7 @@ private:
 	Document *_doucument;
 	veCamera *_camera;
 	veSceneManager *_sceneManager;
+	std::string _name;
 };
 
 VE_READERWRITER_REG("vecamera", veFileReaderWriterCAMERA);

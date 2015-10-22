@@ -10,7 +10,7 @@ public:
 	~veFile();
 
 	static veFile* instance();
-	void* readFile(veSceneManager *sm, const std::string &filePath);
+	void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name);
 	bool writeFile(veSceneManager *sm, void *data, const std::string &filePath);
 
 	static std::string readFileToBuffer(const std::string &filePath);

@@ -19,11 +19,11 @@ public:
 	{};
 	virtual ~veFileReaderWriterJPEG(){};
 
-	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name) override{
 		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
-		_name = fullPath.substr(fullPath.find_last_of("/\\") + 1);
 		FILE *fp = fopen(fullPath.c_str(), "rb");
 		if (fp){
+			_name = name;
 			struct jpeg_decompress_struct cinfo;
 			struct jpeg_error_mgr jerr;
 			cinfo.err = jpeg_std_error(&jerr);
@@ -63,6 +63,7 @@ private:
 		}
 		jpeg_finish_decompress(&cinfo);
 		_image = new veImage;
+		_image->setName(_name);
 		_image->set(width, height, 1, internalFormat, pixelFormat, dataType, buffer);
 		delete[] buffer;
 	}

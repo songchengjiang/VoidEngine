@@ -6,6 +6,7 @@
 
 class VE_EXPORT veTexture
 {
+	friend class veTextureManager;
 public:
 	static const int DEFAULT_WIDTH;
 	static const int DEFAULT_HEIGHT;

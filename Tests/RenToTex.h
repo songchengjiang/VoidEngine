@@ -27,7 +27,7 @@ public:
 		root->addChild(scene);
 
 		{
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem"));
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu-0"));
 			veNode *node = _sceneManager->createNode();
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
@@ -39,14 +39,14 @@ public:
 			transer->setRotation(veQuat(veMath::HALF_PI, veVec3::UNIT_X));
 			scene->addChild(node);
 
-			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim"));
+			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim-0"));
 			animationContainer->start();
 			animationContainer->setLoopAnimation(true);
 			entity->setAnimationContainer(animationContainer);
 		}
 
 		{
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem"));
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot"));
 			veNode *node = _sceneManager->createNode();
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
@@ -59,7 +59,7 @@ public:
 		}
 
 		{
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem"));
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "sphere"));
 			veNode *node = _sceneManager->createNode();
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
@@ -71,7 +71,7 @@ public:
 		}
 
 		{
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/plane.vem"));
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/plane.vem", "plane"));
 			veNode *node = _sceneManager->createNode();
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
@@ -82,7 +82,7 @@ public:
 		}
 
 		{
-			veLight *directional0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight"));
+			veLight *directional0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight", "directional0"));
 			veTransformer *lightTranser = new veTransformer;
 			directional0->addComponent(lightTranser);
 			//directional0->addComponent(new LightUpdater);
@@ -90,7 +90,7 @@ public:
 			auto param = directional0->getParameter("intensity");
 			param->set(0.1f);
 
-			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem"));
+			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "directional0-sphere"));
 			veNode *lightModel = _sceneManager->createNode();
 			lightModel->addRenderableObject(lightentity);
 			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
@@ -99,7 +99,7 @@ public:
 		}
 
 		{
-			veLight *directional0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight"));
+			veLight *directional0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight", "directional1"));
 			veTransformer *lightTranser = new veTransformer;
 			directional0->addComponent(lightTranser);
 			directional0->addComponent(new LightUpdater);
@@ -107,7 +107,7 @@ public:
 			auto param = directional0->getParameter("intensity");
 			param->set(veMath::randomUnitization());
 
-			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem"));
+			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "directional1-sphere"));
 			veNode *lightModel = _sceneManager->createNode();
 			lightModel->addRenderableObject(lightentity);
 			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
@@ -116,7 +116,7 @@ public:
 		}
 
 		{
-			veLight *point0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight"));
+			veLight *point0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "point0"));
 			veTransformer *lightTranser = new veTransformer;
 			point0->addComponent(lightTranser);
 			point0->addComponent(new LightUpdater);
@@ -124,7 +124,7 @@ public:
 			auto param = point0->getParameter("intensity");
 			param->set(veMath::randomUnitization());
 
-			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem"));
+			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "point0-sphere"));
 			veNode *lightModel = _sceneManager->createNode();
 			lightModel->addRenderableObject(lightentity);
 			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
@@ -133,7 +133,7 @@ public:
 		}
 
 		{
-			veLight *spot0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/spot0.velight"));
+			veLight *spot0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/spot0.velight", "spot0"));
 			veTransformer *lightTranser = new veTransformer;
 			spot0->addComponent(lightTranser);
 			spot0->addComponent(new LightUpdater);
@@ -141,7 +141,7 @@ public:
 			auto param = spot0->getParameter("intensity");
 			param->set(veMath::randomUnitization());
 
-			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem"));
+			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "spot0-sphere"));
 			veNode *lightModel = _sceneManager->createNode();
 			lightModel->addRenderableObject(lightentity);
 			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
@@ -150,7 +150,7 @@ public:
 		}
 
 		{
-			veMaterialArray *mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "models/DeferredRendering.vemtl"));
+			veMaterialArray *mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "models/DeferredRendering.vemtl", "DeferredRenderingMaterial"));
 			veNode *node = _sceneManager->createNode();
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
@@ -164,7 +164,7 @@ public:
 		}
 
 		{
-			veCamera *camera = static_cast<veCamera *>(veFile::instance()->readFile(_sceneManager, "cameras/deferred.vecamera"));
+			veCamera *camera = static_cast<veCamera *>(veFile::instance()->readFile(_sceneManager, "cameras/deferred.vecamera", "deferredCamera"));
 			camera->setMask(RTT_CAMERA);
 			root->addChild(camera);
 			_camera = camera;

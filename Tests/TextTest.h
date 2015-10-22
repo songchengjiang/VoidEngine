@@ -49,7 +49,7 @@ public:
 		}
 
 		{
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem"));
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu"));
 			veNode *node = _sceneManager->createNode();
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
@@ -60,7 +60,7 @@ public:
 			//transer->setRotation(veQuat(veMath::HALF_PI, veVec3::UNIT_Y));
 			root->addChild(node);
 
-			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim"));
+			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim"));
 			animationContainer->start();
 			animationContainer->setLoopAnimation(true);
 			entity->setAnimationContainer(animationContainer);

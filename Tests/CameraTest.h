@@ -52,7 +52,7 @@ public:
 		veNode *root = _sceneManager->createNode();
 		{
 			veNode *node = _sceneManager->createNode();
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem"));
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot"));
 			auto mat = entity->getMaterialArray()->getMaterial(0);
 			mat->activateTechnique(mat->getTechnique("forwardRender"));
 			node->addRenderableObject(entity);
@@ -66,10 +66,10 @@ public:
 		}
 
 		{
-			veCamera *cam0 = static_cast<veCamera*>(veFile::instance()->readFile(_sceneManager, "cameras/cam0.vecamera"));
-			veCamera *cam1 = static_cast<veCamera*>(veFile::instance()->readFile(_sceneManager, "cameras/cam1.vecamera"));
-			veCamera *cam2 = static_cast<veCamera*>(veFile::instance()->readFile(_sceneManager, "cameras/cam2.vecamera"));
-			veCamera *cam3 = static_cast<veCamera*>(veFile::instance()->readFile(_sceneManager, "cameras/cam3.vecamera"));
+			veCamera *cam0 = static_cast<veCamera*>(veFile::instance()->readFile(_sceneManager, "cameras/cam0.vecamera", "cam0"));
+			veCamera *cam1 = static_cast<veCamera*>(veFile::instance()->readFile(_sceneManager, "cameras/cam1.vecamera", "cam1"));
+			veCamera *cam2 = static_cast<veCamera*>(veFile::instance()->readFile(_sceneManager, "cameras/cam2.vecamera", "cam2"));
+			veCamera *cam3 = static_cast<veCamera*>(veFile::instance()->readFile(_sceneManager, "cameras/cam3.vecamera", "cam3"));
 			//cam1->setClearColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
 			//cam2->setClearColor(veVec4(0.0f, 1.0f, 0.0f, 1.0f));
 			//cam3->setClearColor(veVec4(0.0f, 0.0f, 1.0f, 1.0f));

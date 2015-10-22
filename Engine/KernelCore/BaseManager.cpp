@@ -1,11 +1,12 @@
 #include "BaseManager.h"
 
-veBaseManager::~veBaseManager()
+veBaseManager::veBaseManager()
+	: _sceneManager(nullptr)
 {
 
 }
 
-veBaseManager::veBaseManager()
+veBaseManager::~veBaseManager()
 {
 
 }

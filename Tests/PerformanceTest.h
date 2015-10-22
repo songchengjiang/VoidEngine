@@ -33,12 +33,14 @@ public:
 		float lineHalfSize = (lineCount / 2) * 100;
 		veNode *root = _sceneManager->createNode();
 		auto pu = new PerformanceUpdater();
+		char str[256];
 		for (float  z = -lineHalfSize; z <= lineHalfSize; z += 100) {
 			for (float  y = -lineHalfSize; y <= lineHalfSize; y += 100) {
 				for (float x = -lineHalfSize; x <= lineHalfSize; x += 100) {
 					//unsigned int idx = (veMath::randomUnitization() * 0.999f) * (sizeof(MODEL_FILES) / sizeof(MODEL_FILES[0]));
 					unsigned int idx = 2;
-					veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, MODEL_FILES[idx]));
+					sprintf(str, "testing-%d-%d-%d", int(x), int(y), int(z));
+					veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, MODEL_FILES[idx], str));
 					veNode *node = _sceneManager->createNode();
 					node->addRenderableObject(entity);
 					veTransformer *transer = new veTransformer;
@@ -48,7 +50,7 @@ public:
 					root->addChild(node);
 
 					if (!MODEL_ANIM_FILES[idx].empty()) {
-						veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, MODEL_ANIM_FILES[idx]));
+						veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, MODEL_ANIM_FILES[idx], str));
 						animationContainer->start();
 						animationContainer->setLoopAnimation(true);
 						entity->setAnimationContainer(animationContainer);

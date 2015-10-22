@@ -17,7 +17,7 @@ public:
 			auto overlay = _sceneManager->createOverlay();
 			node->addRenderableObject(overlay);
 
-			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_sceneManager, "textures/Desk.exr"));
+			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_sceneManager, "textures/Desk.exr", "desk"));
 			overlay->setImage(image);
 
 			root->addChild(node);
@@ -32,7 +32,7 @@ public:
 			auto overlay = _sceneManager->createOverlay();
 			node->addRenderableObject(overlay);
 
-			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_sceneManager, "textures/kill.png"));
+			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_sceneManager, "textures/kill.png", "kill"));
 			overlay->setImage(image);
 			//overlay->setAlphaThreshold(1.0f);
 
@@ -49,7 +49,7 @@ public:
 			auto overlay = _sceneManager->createOverlay();
 			node->addRenderableObject(overlay);
 
-			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_sceneManager, "textures/sphere.jpg"));
+			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_sceneManager, "textures/sphere.jpg", "sphere"));
 			overlay->setImage(image);
 
 			root->addChild(node);

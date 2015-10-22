@@ -8,11 +8,9 @@
 
 class VE_EXPORT veFrameBufferObject
 {
+	friend class veFrameBufferObjectManager;
 public:
 	static veFrameBufferObject* CURRENT_FBO;
-
-	veFrameBufferObject();
-	veFrameBufferObject(const veVec2 &size);
 	~veFrameBufferObject();
 
 	USE_VE_PTR;
@@ -25,6 +23,9 @@ public:
 	static void unBind();
 
 private:
+
+	veFrameBufferObject();
+	veFrameBufferObject(const veVec2 &size);
 
 	void refreshBuffers(unsigned int clearMask);
 	void refreshAttachments();

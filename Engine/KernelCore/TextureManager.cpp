@@ -10,25 +10,24 @@ veTextureManager::~veTextureManager()
 
 }
 
-veTextureManager* veTextureManager::instance()
-{
-	static veTextureManager manager;
-	return &manager;
-}
-
-veTexture* veTextureManager::getOrCreateTexture(const std::string &name, veTexture::TextureType texType)
+veTexture* veTextureManager::getTexture(const std::string &name)
 {
 	auto iter = _texturePool.find(name);
-	if (iter != _texturePool.end()) return iter->second.get();
+	if (iter == _texturePool.end()) return nullptr;
 
+	return iter->second.get();
+}
+
+veTexture* veTextureManager::createTexture(const std::string &name, veTexture::TextureType texType /*= veTexture::TEXTURE_2D*/)
+{
 	veTexture *texture = nullptr;
 	if (texType == veTexture::TEXTURE_2D) {
 		texture = new veTexture2D;
 	}
-	else if (texType == veTexture::TEXTURE_RECT){
+	else if (texType == veTexture::TEXTURE_RECT) {
 		texture = new veTextureRECT;
 	}
-
+	texture->setName(name);
 	_texturePool[name] = texture;
 	return texture;
 }

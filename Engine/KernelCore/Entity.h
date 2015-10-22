@@ -10,10 +10,10 @@
 
 class VE_EXPORT veEntity : public veRenderableObject
 {
+	friend class veEntityManager;
 public:
 	typedef std::vector< VE_Ptr<veMesh> > MeshList;
 
-	veEntity();
 	virtual ~veEntity();
 
 	virtual void update(veNode *node, veSceneManager *sm) override;
@@ -37,6 +37,7 @@ public:
 
 protected:
 
+	veEntity();
 	void refreshMeshes();
 
 protected:

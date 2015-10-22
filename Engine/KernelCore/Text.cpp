@@ -6,8 +6,7 @@
 #include "FileCore/File.h"
 
 veText::veText(veFont *font, const std::string &content)
-	: USE_VE_PTR_INIT
-	, _type(HUD)
+	: _type(HUD)
 	, _font(font)
 	, _content(content)
 	, _color(veVec4::WHITE)

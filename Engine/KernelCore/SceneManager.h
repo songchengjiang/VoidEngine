@@ -29,12 +29,14 @@ public:
 	veVisualiser* createVisualiser(int w, int h, const std::string &title);
 	veVisualiser* getVisualiser() { return _visualiser.get(); }
 	virtual veNode* createNode() = 0;
+	virtual veOverlay* createOverlay();
 	virtual veCamera* createCamera(const veViewport &vp = { 0, 0, 0, 0 }) = 0;
 	virtual veLight* createLight(const std::string &type);
-	virtual veOverlay* createOverlay();
-	virtual veEntity* createEntity();
+	virtual veEntity* createEntity(const std::string &name);
 	virtual veText* createText(veFont *font, const std::string &content = "");
 	virtual veAnimation* createAnimation();
+
+	virtual veTexture* createTexture(const std::string &name, veTexture::TextureType texType = veTexture::TEXTURE_2D);
 
 	virtual void requestRender(veNode *node) = 0;
 	virtual void requestRayCast(veRay *ray) = 0;

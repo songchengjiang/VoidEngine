@@ -18,9 +18,10 @@ public:
 	{};
 	virtual ~veFileReaderWriterVEM(){};
 
-	virtual void* readFile(veSceneManager *sm, const std::string &filePath) override{
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name) override{
 		if (!_doucument) _doucument = new Document;
 		_sceneManager = sm;
+		_name = name;
 		_fileFolder = filePath.substr(0, filePath.find_last_of("/\\") + 1);
 		std::string buffer = veFile::readFileToBuffer(filePath);
 		_doucument->Parse(buffer.c_str());
@@ -39,7 +40,7 @@ public:
 private:
 
 	void parseDoc(){
-		_entity = _sceneManager->createEntity();
+		_entity = _sceneManager->createEntity(_name);
 		loadMaterials();
 		readMeshs();
 		readNodes();
@@ -47,7 +48,7 @@ private:
 
 	void loadMaterials(){
 		std::string matFile = (*_doucument)[MATERIALS_KEY.c_str()].GetString();
-		_materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, _fileFolder + matFile));
+		_materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, _fileFolder + matFile, _name + std::string("-Materials")));
 		_entity->setMaterialArray(_materials);
 	}
 
@@ -237,6 +238,7 @@ private:
 	std::unordered_map<std::string, veBone * > _boneList;
 	veMaterialArray *_materials;
 	std::string _fileFolder;
+	std::string _name;
 	veSceneManager *_sceneManager;
 };
 

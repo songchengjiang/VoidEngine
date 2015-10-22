@@ -43,6 +43,11 @@ protected: std::string _name;\
 public: void setName(const std::string &name) { _name = name; } \
 public: const std::string& getName() const { return _name; }
 
+//#define  USE_ALIAS_NAME_PROPERTY \
+//protected: std::string _aliasName;\
+//protected: void setAliasName(const std::string &name) { _aliasName = name; } \
+//public: const std::string& getAliasName() const { return _aliasName; }
+
 #if defined(_MSC_VER)
 #if defined(_DEBUG)
 #include <assert.h>
