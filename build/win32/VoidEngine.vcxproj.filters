@@ -210,6 +210,9 @@
     <ClCompile Include="..\..\Engine\KernelCore\TransformFeedback.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\MatrixPtr.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -397,6 +400,9 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\TransformFeedback.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\MatrixPtr.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>

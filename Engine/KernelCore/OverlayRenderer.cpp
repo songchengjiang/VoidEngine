@@ -3,6 +3,7 @@
 #include "Visualiser.h"
 #include "Node.h"
 #include "Overlay.h"
+#include "MatrixPtr.h"
 
 veOverlayRenderer::veOverlayRenderer()
 	: _vao(0)
@@ -69,7 +70,7 @@ void veOverlayRenderer::render(veNode *node, veRenderableObject *renderableObj, 
 			if (camera->getMask() & pass->drawMask()) {
 				veRenderCommand rc;
 				rc.pass = pass;
-				rc.worldMatrix = node->getNodeToWorldMatrix();
+				rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix());
 				//rc.attachedNode = node;
 				rc.renderableObj = renderableObj;
 				rc.camera = camera;

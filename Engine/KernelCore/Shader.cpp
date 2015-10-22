@@ -158,8 +158,8 @@ void veUniform::apply(const veRenderCommand &command)
 	case Type::AUTO:
 	{
 		if (!_autoBindingValue.empty()) {
-			const veMat4 &w = command.worldMatrix;
-			veMat4 mv = command.camera->viewMatrix() * w;
+			const veMat4 &worldMat = command.worldMatrix->value();
+			veMat4 mv = command.camera->viewMatrix() * worldMat;
 			if (_autoBindingValue == MVP_MATRIX) {
 				veMat4 mvp = command.camera->projectionMatrix() * mv;
 				float m[16];
@@ -200,16 +200,16 @@ void veUniform::apply(const veRenderCommand &command)
 			}
 			else if (_autoBindingValue == M_MATRIX) {
 				float m[16];
-				m[0] = w[0][0]; m[4] = w[0][1]; m[8] = w[0][2]; m[12] = w[0][3];
-				m[1] = w[1][0]; m[5] = w[1][1]; m[9] = w[1][2]; m[13] = w[1][3];
-				m[2] = w[2][0]; m[6] = w[2][1]; m[10] = w[2][2]; m[14] = w[2][3];
-				m[3] = w[3][0]; m[7] = w[3][1]; m[11] = w[3][2]; m[15] = w[3][3];
+				m[0] = worldMat[0][0]; m[4] = worldMat[0][1]; m[8]  = worldMat[0][2]; m[12] = worldMat[0][3];
+				m[1] = worldMat[1][0]; m[5] = worldMat[1][1]; m[9]  = worldMat[1][2]; m[13] = worldMat[1][3];
+				m[2] = worldMat[2][0]; m[6] = worldMat[2][1]; m[10] = worldMat[2][2]; m[14] = worldMat[2][3];
+				m[3] = worldMat[3][0]; m[7] = worldMat[3][1]; m[11] = worldMat[3][2]; m[15] = worldMat[3][3];
 				glUniformMatrix4fv(_location, 1, GL_FALSE, m);
 			}
 			else if (_autoBindingValue == BONE_MATRIXES) {
 				static float boneMates[60 * 16];
 				veEntityRenderer::MeshBuffers *meshbuffers = static_cast<veEntityRenderer::MeshBuffers *>(command.userData);
-				veMat4 worldToMesh = command.worldMatrix;
+				veMat4 worldToMesh = worldMat;
 				worldToMesh.inverse();
 				for (unsigned int i = 0; i < meshbuffers->mesh->getBoneNum(); ++i) {
 					unsigned int idx = 16 * i;

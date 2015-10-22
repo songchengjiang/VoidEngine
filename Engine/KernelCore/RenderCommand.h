@@ -1,7 +1,8 @@
 #ifndef _VE_RENDER_COMMAND_
 #define _VE_RENDER_COMMAND_
 #include "Prerequisites.h"
-#include "BaseCore/Matrix4.h"
+#include "MatrixPtr.h"
+#include "VE_Ptr.h"
 #include <functional>
 #include <unordered_map>
 
@@ -27,7 +28,7 @@ struct veRenderCommand
 	};
 
 	int                 priority;
-	veMat4              worldMatrix;
+	VE_Ptr<veMat4Ptr>   worldMatrix;
 	veReal              depthInCamera;
 	vePass             *pass;
 	//veNode             *attachedNode;

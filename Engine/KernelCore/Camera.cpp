@@ -7,7 +7,7 @@ veLoopQueue<veRenderCommand>::SortFunc PASS_SORT = [](const veRenderCommand &lef
 };
 
 veLoopQueue<veRenderCommand>::SortFunc ENTITY_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
-	return right.priority == left.priority ? left.pass <= right.pass : right.priority < left.priority;
+	return right.priority == left.priority ? right.depthInCamera <= left.depthInCamera : right.priority < left.priority;
 };
 
 veLoopQueue<veRenderCommand>::SortFunc TRANSPARENT_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
@@ -141,7 +141,7 @@ void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 		auto bgQueue = renderList.find(veRenderQueue::RENDER_QUEUE_BACKGROUND);
 		if (bgQueue != renderList.end()) {
 			if (!bgQueue->second.empty()) {
-				bgQueue->second.sort(PASS_SORT);
+				bgQueue->second.quickSort(PASS_SORT);
 				renderQueue(bgQueue->second);
 			}
 		}
@@ -149,7 +149,7 @@ void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 		auto entityQueue = renderList.find(veRenderQueue::RENDER_QUEUE_ENTITY);
 		if (entityQueue != renderList.end()) {
 			if (!entityQueue->second.empty()) {
-				entityQueue->second.sort(ENTITY_SORT);
+				entityQueue->second.quickSort(ENTITY_SORT);
 				renderQueue(entityQueue->second);
 			}
 		}
@@ -157,7 +157,7 @@ void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 		auto tpQueue = renderList.find(veRenderQueue::RENDER_QUEUE_TRANSPARENT);
 		if (tpQueue != renderList.end()) {
 			if (!tpQueue->second.empty()) {
-				tpQueue->second.sort(TRANSPARENT_SORT);
+				tpQueue->second.quickSort(TRANSPARENT_SORT);
 				renderQueue(tpQueue->second);
 			}
 		}
@@ -165,7 +165,7 @@ void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 		auto olQueue = renderList.find(veRenderQueue::RENDER_QUEUE_OVERLAY);
 		if (olQueue != renderList.end()) {
 			if (!olQueue->second.empty()) {
-				olQueue->second.sort(PASS_SORT);
+				olQueue->second.quickSort(PASS_SORT);
 				renderQueue(olQueue->second);
 			}
 		}

@@ -184,6 +184,7 @@ void veMesh::traversePrimitives(const PrimitiveCallback &callback)
 				unsigned int nOffset = 3;
 				glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, _transformFeedbackBuffer);
 				veReal *vertices = (veReal *)glMapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, GL_READ_ONLY);
+				if (!vertices) return;
 				for (size_t idx = 0; idx < primitive.indices->size(); idx += 3) {
 					unsigned int id0 = totalPrimitiveIndices + idx;
 					unsigned int id1 = totalPrimitiveIndices + idx + 1;

@@ -8,6 +8,7 @@
 #include "KernelCore/RenderQueue.h"
 #include "KernelCore/Camera.h"
 #include "KernelCore/SceneManager.h"
+#include "KernelCore/MatrixPtr.h"
 #include "Constants.h"
 
 class RenderableObjectFinder : public veNodeVisitor
@@ -88,7 +89,7 @@ void veDebuger::render(veNode *node, veCamera *camera)
 	veRenderCommand rc;
 	rc.priority = veRenderCommand::LOW_PRIORITY;
 	rc.pass = _materials->getMaterial(0)->getTechnique(0)->getPass(0);
-	rc.worldMatrix = veMat4::IDENTITY;
+	rc.worldMatrix = new veMat4Ptr(veMat4::IDENTITY);
 	rc.renderableObj = nullptr;
 	rc.camera = camera;
 	rc.drawFunc = VE_CALLBACK_1(veDebuger::draw, this);

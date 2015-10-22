@@ -47,6 +47,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\Light.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\LightManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Material.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\MatrixPtr.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Mesh.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\MeshNode.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Node.cpp" />
@@ -108,6 +109,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\LightManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\LoopQueue.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Material.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\MatrixPtr.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Mesh.h" />
     <ClInclude Include="..\..\Engine\KernelCore\MeshNode.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Node.h" />

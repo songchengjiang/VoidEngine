@@ -7,6 +7,7 @@
 #include "Material.h"
 #include "Constants.h"
 #include "TransformFeedback.h"
+#include "MatrixPtr.h"
 #include <unordered_map>
 
 veEntityRenderer::veEntityRenderer()
@@ -100,13 +101,13 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 					bool isTransparent = pass->blendFunc() != veBlendFunc::DISABLE ? true : false;
 					veRenderCommand rc;
 					rc.pass = pass;
-					rc.worldMatrix = nTow * meshRootMat;
+					rc.worldMatrix = new veMat4Ptr(nTow * meshRootMat);
 					//rc.attachedNode = node;
 					rc.renderableObj = renderableObj;
 					rc.userData = &buffers;
 					rc.camera = camera;
 					rc.drawFunc = VE_CALLBACK_1(veEntityRenderer::draw, this);
-					rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix)[2][3];
+					rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
 					pass->visit(rc);
 					if (isTransparent)
 						veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);

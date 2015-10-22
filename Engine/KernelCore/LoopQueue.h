@@ -32,12 +32,12 @@ public:
 
 	const T& back() const {
 		veAssert(_front != _end);
-		return _queue[_end - 1];
+		return _queue[dec(_end)];
 	}
 
 	T& back() {
 		veAssert(_front != _end);
-		return _queue[_end - 1];
+		return _queue[dec(_end)];
 	}
 
 	unsigned int size() const {
@@ -46,18 +46,19 @@ public:
 
 	bool pop_front() {
 		veAssert(_front != _end);
-		inc(_front);
+		_front = inc(_front);
 		return true;
 	}
 
 	bool push_back(const T& val) {
 		veAssert(_front != (_end + 1) % CAPACITY);
 		_queue[_end] = val;
-		inc(_end);
+		_end = inc(_end);
 		return true;
 	}
 
 	void sort(const SortFunc &cmpFunc){
+		if (size() <= 1) return;
 		for (size_t f = _front; f != _end;){
 			for (size_t p = (f + 1) % CAPACITY; p != _end;){
 				if (!cmpFunc(_queue[f], _queue[p])){
@@ -65,17 +66,51 @@ public:
 					_queue[f] = _queue[p];
 					_queue[p] = temp;
 				}
-				inc(p);
+				p = inc(p);
 			}
-			inc(f);
+			f = inc(f);
 		}
+	}
+
+	void quickSort(const SortFunc &cmpFunc) {
+		if (size() <= 1) return;
+		quickSort(_front, dec(_end), cmpFunc);
 	}
 
 private:
 
-	void inc(size_t &iter) {
+	size_t inc(size_t iter) {
 		++iter;
-		iter = iter % CAPACITY;
+		return iter % CAPACITY;
+	}
+
+	size_t dec(size_t iter) {
+		return iter != 0 ? --iter : CAPACITY - 1;
+	}
+
+	size_t partition(size_t low, size_t high, const SortFunc &cmpFunc)
+	{
+		T privotKey = _queue[low];
+		while (low != high) {
+			while (low != high  && cmpFunc(privotKey, _queue[high])) high = dec(high);
+			if (low != high)
+				std::swap(_queue[low], _queue[high]);
+			while (low != high  && cmpFunc(_queue[low], privotKey)) low = inc(low);
+			if (low != high)
+				std::swap(_queue[low], _queue[high]);
+		}
+		return low;
+	}
+
+
+	void quickSort(size_t low, size_t high, const SortFunc &cmpFunc) {
+		if (low != high) {
+			size_t privotLoc = partition(low, high, cmpFunc);
+			if (low != privotLoc)
+				quickSort(low, dec(privotLoc), cmpFunc);
+			if (high != privotLoc)
+				quickSort(inc(privotLoc), high, cmpFunc);
+		}
 	}
 
 private:
