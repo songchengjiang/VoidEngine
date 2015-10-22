@@ -130,6 +130,8 @@ const vePlane& veCamera::getFrustumPlane(FrustumPlane fp)
 
 void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 {
+	if (_viewport.isNull()) 
+		return;
 	if (_fbo.valid()) {
 		_fbo->bind(_clearMask);
 	}

@@ -171,6 +171,7 @@ veAnimationContainer::veAnimationContainer()
 	, _activeAnimationChannel(nullptr)
 	, _smimulationFrame(0.0)
 	, _startFrame(0)
+	, _pauseFrame(0)
 	, _endFrame(-1)
 	, _frameRate(0.0)
 	, _needUpdate(false)
@@ -236,13 +237,14 @@ void veAnimationContainer::start(double sFrame, double eFrame)
 void veAnimationContainer::pause()
 {
 	if (_needUpdate) {
-		_startFrame = _smimulationFrame;
+		_pauseFrame = _smimulationFrame;
 		_needUpdate = false;
 		_requestNoUpdate = true;
 	}
 	else {
-		_smimulationFrame = _startFrame;
+		_smimulationFrame = _pauseFrame;
 		_needUpdate = true;
+		_requestNoUpdate = false;
 	}
 }
 

@@ -12,7 +12,7 @@ public:
 
 	virtual bool handle(veNode *node, veSceneManager *sm, const veEvent &event) override {
 		if (event.getEventType() & veEvent::VE_MOUSE_EVENT) {
-			if (event.getEventType() == veEvent::VE_PRESS) {
+			if (event.getEventType() == veEvent::VE_PRESS && event.getMouseSymbol() == veEvent::VE_MOUSE_BUTTON_LEFT) {
 				veVec2 screenCoords = veVec2(event.getMouseX(), event.getMouseY());
 				veVec3 start = sm->getVisualiser()->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
 				veVec3 end = sm->getVisualiser()->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
@@ -32,6 +32,12 @@ public:
 			}
 			return false;
 		}
+
+		if (event.getEventType() & veEvent::VE_KEYBOARD_EVENT) {
+			if (event.getEventType() == veEvent::VE_DOWN && event.getKeySymbol() == veEvent::VE_KEY_S) {
+				_animationContainer->pause();
+			}
+		}
 	}
 
 	virtual void update(veNode *node, veSceneManager *sm) override{
@@ -41,6 +47,7 @@ public:
 	}
 
 	veDebuger *debuger;
+	veAnimationContainer* _animationContainer;
 	std::vector<std::pair<veVec3, veVec3> > _lines;
 };
 
@@ -49,6 +56,7 @@ class IntersectionTest : public BaseTest
 {
 public:
 	IntersectionTest() {
+		auto ih = new IntersectionHandler;
 		veNode *root = _sceneManager->createNode();
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem"));
@@ -109,6 +117,7 @@ public:
 			animationContainer->start();
 			animationContainer->setLoopAnimation(true);
 			entity->setAnimationContainer(animationContainer);
+			ih->_animationContainer = animationContainer;
 		}
 
 		{
@@ -138,7 +147,6 @@ public:
 		debuger->setLineWidth(2.0f);
 		_sceneManager->getRootNode()->addRenderableObject(debuger);
 
-		auto ih = new IntersectionHandler;
 		ih->debuger = debuger;
 		root->addComponent(ih);
 

@@ -36,6 +36,7 @@ veDebuger::veDebuger()
 	, _isDrawFrustumPlane(false)
 	, _lineWidth(1.0f)
 	, _vertexStride(0)
+	, _drawCount(0)
 {
 	initMaterial();
 }
@@ -86,6 +87,26 @@ void veDebuger::update(veNode *node, veSceneManager *sm)
 
 void veDebuger::render(veNode *node, veCamera *camera)
 {
+	if (!_vao) {
+		glGenVertexArrays(1, &_vao);
+		glGenBuffers(1, &_vbo);
+	}
+
+	glBindVertexArray(_vao);
+	glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+	if (!_vertices.empty())
+		glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(_vertices[0]), _vertices.buffer(), GL_STATIC_DRAW);
+
+	//vertex
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, _vertexStride, 0);
+	glEnableVertexAttribArray(0);
+
+	//color
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, _vertexStride, (GLvoid *)(sizeof(GLfloat) * 3));
+	glEnableVertexAttribArray(1);
+	_drawCount = _vertices.size();
+	_vertices.clear();
+
 	veRenderCommand rc;
 	rc.priority = veRenderCommand::LOW_PRIORITY;
 	rc.pass = _materials->getMaterial(0)->getTechnique(0)->getPass(0);
@@ -281,26 +302,6 @@ void veDebuger::draw(const veRenderCommand &command)
 	command.pass->apply(command);
 	glLineWidth(_lineWidth);
 
-	if (!_vao) {
-		glGenVertexArrays(1, &_vao);
-		glGenBuffers(1, &_vbo);
-	}
-
 	glBindVertexArray(_vao);
-
-	glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-	if (!_vertices.empty())
-		glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(_vertices[0]), _vertices.buffer(), GL_STATIC_DRAW);
-
-	//vertex
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, _vertexStride, 0);
-	glEnableVertexAttribArray(0);
-
-	//color
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, _vertexStride, (GLvoid *)(sizeof(GLfloat) * 3));
-	glEnableVertexAttribArray(1);
-
-	glDrawArrays(GL_LINES, 0, _vertices.size());
-
-	_vertices.clear();
+	glDrawArrays(GL_LINES, 0, _drawCount);
 }

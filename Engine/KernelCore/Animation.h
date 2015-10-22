@@ -94,6 +94,7 @@ private:
 	veAnimation* _activeAnimationChannel;
 	double _smimulationFrame;
 	double _startFrame;
+	double _pauseFrame;
 	double _endFrame;
 	double _frameRate;
 	bool   _needUpdate;

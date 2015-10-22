@@ -24,6 +24,10 @@ struct VE_EXPORT veViewport
 	inline bool operator != (const veViewport& rkVp) const {
 		return (x != rkVp.x || y != rkVp.y || width != rkVp.width || height != rkVp.height);
 	}
+
+	bool isNull() {
+		return x == y == width == height;
+	}
 };
 
 class VE_EXPORT veCamera : public veNode

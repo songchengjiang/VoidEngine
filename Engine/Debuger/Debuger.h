@@ -50,6 +50,7 @@ protected:
     
     std::vector<veNode *> _renderableNodes;
 	veRealArray     _vertices;
+	unsigned int    _drawCount;
 	GLuint          _vao;
 	GLuint          _vbo;
 
