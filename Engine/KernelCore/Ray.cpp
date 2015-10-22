@@ -42,6 +42,7 @@ void veRay::addIntersection(const Intersection &inters)
 
 bool veRay::isIntersectWith(const veBoundingBox &bbox)
 {
+	if (bbox.isNull()) return false;
 	veVec3 c = (_start + _end) * 0.5f;
 	veVec3 w = (_end - _start) * 0.5f;
 	veVec3 h = (bbox.max() - bbox.min()) * 0.5f;

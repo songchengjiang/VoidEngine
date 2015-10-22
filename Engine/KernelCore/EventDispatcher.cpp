@@ -61,6 +61,7 @@ void veEventDispatcher::caculateMouseUnitCoords(GLFWwindow* window, double x, do
 {
 	int width, height;
 	glfwGetWindowSize(window, &width, &height);
+	if (width == 0 || height == 0) return;
 	double coordX = x / (double)width;
 	double coordY = 1.0 - y / (double)height;
 	veEventDispatcher::instance()->_currentEvent.setMouseX((coordX - 0.5) * 2.0);
@@ -114,6 +115,7 @@ void veEventDispatcher::collectScrollEvent(GLFWwindow* window, double x, double 
 
 void veEventDispatcher::collectWindowSizeEvent(GLFWwindow* window, int width, int height)
 {
+	if (width == 0 || height == 0) return;
 	veEvent &event = veEventDispatcher::instance()->_currentEvent;
 	event.setEventType(veEvent::VE_WIN_RESIZE);
 	event.setWindowWidth(width);
