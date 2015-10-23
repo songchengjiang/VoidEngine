@@ -227,7 +227,7 @@ void veText::rebuildContentBitmap(int divWidth, int divHeight)
 	if (_type == HUD)
 		_scaleMatUniform->setValue(veMat4::scale(veVec3((float)width / (float)divWidth, (float)height / (float)divHeight, 0.0f)));
 	else if (_type == PLANE)
-		_scaleMatUniform->setValue(veMat4::scale(veVec3(width / 2.0f, height / 2.0f, 0.0f)));
+		_scaleMatUniform->setValue(veMat4::scale(veVec3(width / (float)divWidth, height / (float)divWidth, 0.0f)));
 
 	_width = width;
 	_height = height;

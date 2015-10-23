@@ -35,7 +35,7 @@ public:
 			node->addRenderableObject(text);
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
-			transer->setPosition(veVec3(0.0f, 0.5f, 0.0f));
+			transer->setPosition(veVec3(0.0f, 0.8f, 0.0f));
 			root->addChild(node);
 		}
 
@@ -66,10 +66,16 @@ public:
 			animationContainer->setLoopAnimation(true);
 			entity->setAnimationContainer(animationContainer);
 
-			auto text = _sceneManager->createText(new veFont(fontFile), "Boss");
+			veNode *textNode = _sceneManager->createNode("textnode");
+			auto text = _sceneManager->createText(new veFont(fontFile, 128), "Boss");
 			text->setTextType(veText::PLANE);
-			//text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
-			mouseNode->addRenderableObject(text);
+			text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
+			textNode->addRenderableObject(text);
+			transer = new veTransformer;
+			textNode->addComponent(transer);
+			transer->setPosition(veVec3(0.0f, 3.5f, 0.0f));
+
+			mouseNode->addChild(textNode);
 			root->addChild(mouseNode);
 		}
 
