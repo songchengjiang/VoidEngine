@@ -1,33 +1,13 @@
 #include "Font.h"
 #include "FileCore/File.h"
-
-class FTLibraryHandler
-{
-public:
-	FTLibraryHandler(){
-		FT_Error error = FT_Init_FreeType(&ft_library);
-		if (error) {
-			veLog("Initialize FreeType error.");
-		}
-	}
-	~FTLibraryHandler() {
-		FT_Done_FreeType(ft_library);
-	}
-	FT_Library ft_library;
-};
+#include "FontCharDictionary.h"
 
 veFont::veFont(const std::string &fontFile, int fontSize)
 	: USE_VE_PTR_INIT
-	, _fontSize(fontSize)
+	, _fontFile(fontFile)
+	, _fontSize(0)
+	, _fontCharList(nullptr)
 {
-	static FTLibraryHandler ftlib;
-	_fontData = veFile::instance()->readFileToBuffer(fontFile);
-	//FT_Error error = FT_New_Face(ftlib.ft_library, fontFile.c_str(), 0, &_face);
-	FT_Error error = FT_New_Memory_Face(ftlib.ft_library, (const FT_Byte*)_fontData.c_str(), _fontData.size(), 0, &_face);
-	if (error) {
-		veLog("New FreeType face error.");
-	}
-
 	setFontSize(fontSize);
 }
 
@@ -37,17 +17,13 @@ veFont::~veFont()
 
 void veFont::setFontSize(int fontSize)
 {
+	if (_fontSize == fontSize) return;
 	_fontSize = fontSize;
-	int dpi = 72;
-	int fontSizePoints = 64 * _fontSize * VE_DEVICE_PIXEL_RATIO;
-	FT_Set_Char_Size(_face, fontSizePoints, fontSizePoints, dpi, dpi);
+	_fontCharList = veFontCharDictionary::instance()->getOrCreateFontCharList(_fontFile, _fontSize);
 }
 
-FT_GlyphSlot veFont::getGlyphOfCharCode(unsigned long charCode)
+veFont::CharBitmap* veFont::getCharBitmap(char ch)
 {
-	//auto glyphIndex = FT_Get_Char_Index(_face, charCode);
-	//FT_Load_Glyph(_face, glyphIndex, FT_LOAD_DEFAULT);
-	//FT_Render_Glyph(_face->glyph, FT_RENDER_MODE_NORMAL);
-	FT_Load_Char(_face, charCode, FT_LOAD_RENDER);
-	return _face->glyph;
+	veAssert(ch < 128);
+	return &_fontCharList->charBitmapList[ch];
 }

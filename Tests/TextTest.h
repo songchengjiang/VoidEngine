@@ -49,6 +49,7 @@ public:
 		}
 
 		{
+			veNode *mouseNode = _sceneManager->createNode("MouseNode");
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu"));
 			veNode *node = _sceneManager->createNode("node2");
 			node->addRenderableObject(entity);
@@ -58,12 +59,18 @@ public:
 			//transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
 			transer->setScale(veVec3(0.3f));
 			//transer->setRotation(veQuat(veMath::HALF_PI, veVec3::UNIT_Y));
-			root->addChild(node);
+			mouseNode->addChild(node);
 
 			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim"));
 			animationContainer->start();
 			animationContainer->setLoopAnimation(true);
 			entity->setAnimationContainer(animationContainer);
+
+			auto text = _sceneManager->createText(new veFont(fontFile), "Boss");
+			text->setTextType(veText::PLANE);
+			//text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
+			mouseNode->addRenderableObject(text);
+			root->addChild(mouseNode);
 		}
 
 		_sceneManager->getRootNode()->addChild(root);

@@ -6,8 +6,10 @@
 
 class VE_EXPORT veFont
 {
+	friend class veFontCharDictionary;
 	friend class veText;
 public:
+
 	veFont(const std::string &fontFile, int fontSize = 16);
 	~veFont();
 
@@ -18,12 +20,26 @@ public:
 
 protected:
 
-	FT_GlyphSlot getGlyphOfCharCode(unsigned long charCode);
+	struct CharBitmap
+	{
+		FT_Bitmap         bitmap;
+		FT_Int            bitmap_left;
+		FT_Int            bitmap_top;
+		FT_Vector         advance;
+	};
+
+	struct FontCharList
+	{
+		FT_Face face;
+		std::vector<CharBitmap> charBitmapList;
+	};
+
+	CharBitmap* getCharBitmap(char ch);
 
 protected:
 
-	FT_Face _face;
-	std::string _fontData;
+	FontCharList *_fontCharList;
+	std::string _fontFile;
 	int _fontSize;
 };
 

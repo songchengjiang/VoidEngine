@@ -30,6 +30,7 @@ public:
 			transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
 
 			auto overlay = _sceneManager->createOverlay("image1");
+			overlay->setRenderOrder(10);
 			node->addRenderableObject(overlay);
 
 			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_sceneManager, "textures/kill.png", "kill"));

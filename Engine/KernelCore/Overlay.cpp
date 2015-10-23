@@ -5,7 +5,6 @@
 #include "TextureManager.h"
 
 veOverlay::veOverlay()
-	: _renderOrder(0)
 {
 	_renderer = new veOverlayRenderer;
 	_materials = new veMaterialArray;
@@ -15,6 +14,16 @@ veOverlay::veOverlay()
 veOverlay::~veOverlay()
 {
 
+}
+
+void veOverlay::setRenderOrder(int order)
+{
+	static_cast<veOverlayRenderer *>(_renderer.get())->setRenderOrder(order);
+}
+
+int veOverlay::getRenderOrder() const
+{
+	return static_cast<veOverlayRenderer *>(_renderer.get())->getRenderOrder();
 }
 
 void veOverlay::setImage(veImage *image)

@@ -3,15 +3,19 @@
 #include "NodeVisitor.h"
 
 veLoopQueue<veRenderCommand>::SortFunc PASS_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
-	return right.priority == left.priority? left.pass <= right.pass: right.priority < left.priority;
+	return right.priority == left.priority? left.pass <= right.pass: right.priority <= left.priority;
 };
 
 veLoopQueue<veRenderCommand>::SortFunc ENTITY_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
-	return right.priority == left.priority ? right.depthInCamera <= left.depthInCamera : right.priority < left.priority;
+	return right.priority == left.priority ? right.depthInCamera <= left.depthInCamera : right.priority <= left.priority;
 };
 
 veLoopQueue<veRenderCommand>::SortFunc TRANSPARENT_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
-	return right.priority == left.priority ? left.depthInCamera <= right.depthInCamera : right.priority < left.priority;
+	return right.priority == left.priority ? left.depthInCamera <= right.depthInCamera : right.priority <= left.priority;
+};
+
+veLoopQueue<veRenderCommand>::SortFunc OVERLAY_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
+	return left.priority <= right.priority;
 };
 
 veCamera::veCamera()
@@ -167,7 +171,7 @@ void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 		auto olQueue = renderList.find(veRenderQueue::RENDER_QUEUE_OVERLAY);
 		if (olQueue != renderList.end()) {
 			if (!olQueue->second.empty()) {
-				//olQueue->second.quickSort(PASS_SORT);
+				olQueue->second.quickSort(OVERLAY_SORT);
 				renderQueue(olQueue->second);
 			}
 		}

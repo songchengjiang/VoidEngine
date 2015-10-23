@@ -13,8 +13,9 @@ public:
 	veOverlay();
 	~veOverlay();
 
-	void setRenderOrder(int order) { _renderOrder = order; }
-	int getRenderOrder() const { return _renderOrder; }
+	void setRenderOrder(int order);
+	int getRenderOrder() const;
+
 	void setImage(veImage *image);
 	veImage* getImage();
 	void setAlphaThreshold(veReal threshold);
@@ -28,7 +29,6 @@ protected:
 
 	VE_Ptr<veUniform> _alphaThreshold;
 	VE_Ptr<veTexture> _texture;
-	int _renderOrder;
 };
 
 #endif
