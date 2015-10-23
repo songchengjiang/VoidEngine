@@ -40,16 +40,17 @@ veVisualiser* veSceneManager::createVisualiser(int w, int h, const std::string &
 	return visualiser;
 }
 
-veLight* veSceneManager::createLight(const std::string &type)
+veLight* veSceneManager::createLight(const std::string &type, const std::string &name)
 {
-	auto light = static_cast<veLightManager *>(_managerList[veLightManager::TYPE()])->createLight(type);
+	auto light = static_cast<veLightManager *>(_managerList[veLightManager::TYPE()])->createLight(type, name);
 	_lightList.push_back(light);
 	return light;
 }
 
-veOverlay* veSceneManager::createOverlay()
+veOverlay* veSceneManager::createOverlay(const std::string &name)
 {
 	auto overlay = new veOverlay;
+	overlay->setName(name);
 	return overlay;
 }
 
@@ -64,9 +65,10 @@ veText* veSceneManager::createText(veFont *font, const std::string &content)
 	return text;
 }
 
-veAnimation* veSceneManager::createAnimation()
+veAnimation* veSceneManager::createAnimation(const std::string &name)
 {
 	auto anim = new veAnimation;
+	anim->setName(name);
 	return anim;
 }
 

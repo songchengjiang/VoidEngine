@@ -59,11 +59,11 @@ class IntersectionTest : public BaseTest
 public:
 	IntersectionTest() {
 		auto ih = new IntersectionHandler;
-		veNode *root = _sceneManager->createNode();
+		veNode *root = _sceneManager->createNode("root");
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot"));
 			entity->setName("teapot");
-			veNode *node = _sceneManager->createNode();
+			veNode *node = _sceneManager->createNode("node0");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
@@ -77,7 +77,7 @@ public:
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/plane.vem", "plane"));
 			entity->setName("plane");
-			veNode *node = _sceneManager->createNode();
+			veNode *node = _sceneManager->createNode("node1");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
@@ -90,7 +90,7 @@ public:
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "sphere"));
 			entity->setName("sphere");
-			veNode *node = _sceneManager->createNode();
+			veNode *node = _sceneManager->createNode("node2");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
@@ -104,7 +104,7 @@ public:
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu-0"));
 			entity->setName("laoshu-1");
-			veNode *node = _sceneManager->createNode();
+			veNode *node = _sceneManager->createNode("node3");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
@@ -125,7 +125,7 @@ public:
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu-1"));
 			entity->setName("laoshu-2");
-			veNode *node = _sceneManager->createNode();
+			veNode *node = _sceneManager->createNode("node4");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;

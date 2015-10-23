@@ -2,9 +2,8 @@
 #define _VE_LIGHT_MANAGER_
 #include "Prerequisites.h"
 #include "BaseManager.h"
-#include <unordered_map>
+#include "Light.h"
 
-class veLight;
 class VE_EXPORT veLightManager : public veBaseManager
 {
 	friend class veSceneManager;
@@ -21,7 +20,9 @@ public:
 
 	bool loadLightTemplates(const std::string &filePath);
 	const LightTemplateList& getLightTemplateList() const { return _lightTemplate; }
-	veLight* createLight(const std::string &type);
+
+	veLight* findLight(const std::string &name);
+	veLight* createLight(const std::string &type, const std::string &name);
 
 	static std::string TYPE() { return "LIGHT"; }
 
@@ -31,6 +32,7 @@ private:
 private:
 
 	LightTemplateList _lightTemplate;
+	std::vector< VE_Ptr<veLight> > _lightPool;
 };
 
 #endif

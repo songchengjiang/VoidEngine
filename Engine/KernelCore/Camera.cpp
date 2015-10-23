@@ -167,7 +167,7 @@ void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 		auto olQueue = renderList.find(veRenderQueue::RENDER_QUEUE_OVERLAY);
 		if (olQueue != renderList.end()) {
 			if (!olQueue->second.empty()) {
-				olQueue->second.quickSort(PASS_SORT);
+				//olQueue->second.quickSort(PASS_SORT);
 				renderQueue(olQueue->second);
 			}
 		}

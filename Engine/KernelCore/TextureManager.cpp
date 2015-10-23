@@ -10,12 +10,14 @@ veTextureManager::~veTextureManager()
 
 }
 
-veTexture* veTextureManager::getTexture(const std::string &name)
+veTexture* veTextureManager::findTexture(const std::string &name)
 {
-	auto iter = _texturePool.find(name);
-	if (iter == _texturePool.end()) return nullptr;
+	for (auto &iter : _texturePool) {
+		if (iter->getName() == name)
+			return iter.get();
+	}
 
-	return iter->second.get();
+	return nullptr;
 }
 
 veTexture* veTextureManager::createTexture(const std::string &name, veTexture::TextureType texType /*= veTexture::TEXTURE_2D*/)
@@ -28,6 +30,6 @@ veTexture* veTextureManager::createTexture(const std::string &name, veTexture::T
 		texture = new veTextureRECT;
 	}
 	texture->setName(name);
-	_texturePool[name] = texture;
+	_texturePool.push_back(texture);
 	return texture;
 }

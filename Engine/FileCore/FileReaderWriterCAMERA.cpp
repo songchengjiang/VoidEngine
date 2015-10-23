@@ -38,12 +38,11 @@ public:
 private:
 
 	void readCamera() {
-		_camera = _sceneManager->createCamera();
-		_camera->setName(_name);
+		_camera = _sceneManager->createCamera(_name);
 		//if ((*_doucument).HasMember(NAME_KEY.c_str())) {
 		//	_camera->setName((*_doucument)[NAME_KEY.c_str()].GetString());
 		//}
-
+		if (!_camera) return;
 		if ((*_doucument).HasMember(RENDERPATH_KEY.c_str())) {
 			const char *str = (*_doucument)[RENDERPATH_KEY.c_str()].GetString();
 			if (strcmp(FORWARD_KEY.c_str(), str) == 0) {
@@ -174,7 +173,7 @@ private:
 
 			if (attachmentVal.HasMember(SOURCE_KEY.c_str())) {
 				std::string name = attachmentVal[SOURCE_KEY.c_str()].GetString();
-				texture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->getTexture(name);
+				texture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture(name);
 			}
 			if (!texture) continue;
 

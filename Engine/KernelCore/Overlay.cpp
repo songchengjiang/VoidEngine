@@ -5,6 +5,7 @@
 #include "TextureManager.h"
 
 veOverlay::veOverlay()
+	: _renderOrder(0)
 {
 	_renderer = new veOverlayRenderer;
 	_materials = new veMaterialArray;

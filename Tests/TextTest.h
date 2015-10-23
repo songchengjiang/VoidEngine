@@ -25,13 +25,13 @@ class TextTest : public BaseTest
 {
 public:
 	TextTest() {
-		veNode *root = _sceneManager->createNode();
+		veNode *root = _sceneManager->createNode("root");
 
 		std::string fontFile = "fonts/arial.ttf";
 		{
 			auto text = _sceneManager->createText(new veFont(fontFile, 64), "Hello Void Engine");
 			text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
-			auto node = _sceneManager->createNode();
+			auto node = _sceneManager->createNode("node0");
 			node->addRenderableObject(text);
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
@@ -42,7 +42,7 @@ public:
 		{
 			auto text = _sceneManager->createText(new veFont(fontFile));
 			//text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
-			auto node = _sceneManager->createNode();
+			auto node = _sceneManager->createNode("node1");
 			node->addRenderableObject(text);
 			node->addComponent(new TextUpdater(text));
 			root->addChild(node);
@@ -50,7 +50,7 @@ public:
 
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu"));
-			veNode *node = _sceneManager->createNode();
+			veNode *node = _sceneManager->createNode("node2");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;

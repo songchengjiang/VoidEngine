@@ -31,7 +31,7 @@ public:
 	PerformanceTest() {
 		int lineCount = 10;
 		float lineHalfSize = (lineCount / 2) * 100;
-		veNode *root = _sceneManager->createNode();
+		veNode *root = _sceneManager->createNode("root");
 		auto pu = new PerformanceUpdater();
 		char str[256];
 		for (float  z = -lineHalfSize; z <= lineHalfSize; z += 100) {
@@ -41,7 +41,7 @@ public:
 					unsigned int idx = 2;
 					sprintf(str, "testing-%d-%d-%d", int(x), int(y), int(z));
 					veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, MODEL_FILES[idx], str));
-					veNode *node = _sceneManager->createNode();
+					veNode *node = _sceneManager->createNode(str);
 					node->addRenderableObject(entity);
 					veTransformer *transer = new veTransformer;
 					node->addComponent(transer);
@@ -62,7 +62,7 @@ public:
 		{
 			auto text = _sceneManager->createText(new veFont("fonts/arial.ttf", 32));
 			text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
-			auto node = _sceneManager->createNode();
+			auto node = _sceneManager->createNode("text node");
 			node->addRenderableObject(text);
 			root->addChild(node);
 			veTransformer *transer = new veTransformer;

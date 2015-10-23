@@ -15,8 +15,8 @@ public:
 
 	void setOctreeMaxDeep(unsigned int maxDeep) { _octreeMaxDeep = maxDeep; }
 
-	virtual veNode* createNode() override;
-	virtual veCamera* createCamera(const veViewport &vp = { 0, 0, 0, 0 }) override;
+	virtual veNode* createNode(const std::string &name) override;
+	virtual veCamera* createCamera(const std::string &name, const veViewport &vp = { 0, 0, 0, 0 }) override;
 
 	virtual void requestRender(veNode *node) override;
 	virtual void requestRayCast(veRay *ray) override;

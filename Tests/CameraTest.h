@@ -49,9 +49,9 @@ class CameraTest : public BaseTest
 {
 public:
 	CameraTest() {
-		veNode *root = _sceneManager->createNode();
+		veNode *root = _sceneManager->createNode("root");
 		{
-			veNode *node = _sceneManager->createNode();
+			veNode *node = _sceneManager->createNode("node0");
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot"));
 			auto mat = entity->getMaterialArray()->getMaterial(0);
 			mat->activateTechnique(mat->getTechnique("forwardRender"));
@@ -73,7 +73,7 @@ public:
 			//cam1->setClearColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
 			//cam2->setClearColor(veVec4(0.0f, 1.0f, 0.0f, 1.0f));
 			//cam3->setClearColor(veVec4(0.0f, 0.0f, 1.0f, 1.0f));
-			veNode *cameras = _sceneManager->createNode();
+			veNode *cameras = _sceneManager->createNode("cameras node");
 			cameras->addChild(cam0);
 			cameras->addChild(cam1);
 			cameras->addChild(cam2);

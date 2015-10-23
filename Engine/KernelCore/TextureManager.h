@@ -3,7 +3,6 @@
 #include "Prerequisites.h"
 #include "BaseManager.h"
 #include "Texture.h"
-#include <unordered_map>
 
 class VE_EXPORT veTextureManager : public veBaseManager
 {
@@ -12,7 +11,7 @@ public:
 
 	~veTextureManager();
 
-	veTexture* getTexture(const std::string &name);
+	veTexture* findTexture(const std::string &name);
 	veTexture* createTexture(const std::string &name, veTexture::TextureType texType);
 
 	static std::string TYPE() { return "TEXTURE"; }
@@ -20,7 +19,7 @@ public:
 private:
 
 	veTextureManager();
-	std::unordered_map< std::string, VE_Ptr<veTexture> > _texturePool;
+	std::vector< VE_Ptr<veTexture> > _texturePool;
 };
 
 #endif

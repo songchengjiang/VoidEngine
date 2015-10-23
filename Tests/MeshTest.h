@@ -6,10 +6,10 @@ class MeshTest : public BaseTest
 {
 public:
 	MeshTest() {
-		veNode *root = _sceneManager->createNode();
+		veNode *root = _sceneManager->createNode("root");
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot-0"));
-			veNode *node = _sceneManager->createNode();
+			veNode *node = _sceneManager->createNode("node0");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
@@ -22,7 +22,7 @@ public:
 
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/plane.vem", "plane-0"));
-			veNode *node = _sceneManager->createNode();
+			veNode *node = _sceneManager->createNode("node1");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
@@ -34,7 +34,7 @@ public:
 
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "sphere-0"));
-			veNode *node = _sceneManager->createNode();
+			veNode *node = _sceneManager->createNode("node2");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
@@ -47,7 +47,7 @@ public:
 
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu-0"));
-			veNode *node = _sceneManager->createNode();
+			veNode *node = _sceneManager->createNode("node3");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
@@ -66,7 +66,7 @@ public:
 
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu-1"));
-			veNode *node = _sceneManager->createNode();
+			veNode *node = _sceneManager->createNode("node4");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;

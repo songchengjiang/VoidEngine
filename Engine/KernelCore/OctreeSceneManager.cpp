@@ -34,17 +34,19 @@ void veOctreeSceneManager::init()
 	_octree->originBoundingBox = _octree->boundingBox = _boundingBox;
 }
 
-veNode* veOctreeSceneManager::createNode()
+veNode* veOctreeSceneManager::createNode(const std::string &name)
 {
 	auto node = new veOctreeNode;
+	node->setName(name);
 	node->setSceneManager(this);
 	_nodeList.push_back(node);
 	return node;
 }
 
-veCamera* veOctreeSceneManager::createCamera(const veViewport &vp)
+veCamera* veOctreeSceneManager::createCamera(const std::string &name, const veViewport &vp)
 {
 	auto camera = new veOctreeCamera(vp);
+	camera->setName(name);
 	camera->setSceneManager(this);
 	_cameraList.push_back(camera);
 	return camera;

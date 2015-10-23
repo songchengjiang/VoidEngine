@@ -39,7 +39,17 @@ bool veLightManager::loadLightTemplates(const std::string &filePath)
 	return false;
 }
 
-veLight* veLightManager::createLight(const std::string &type)
+veLight* veLightManager::findLight(const std::string &name)
+{
+	for (auto &iter : _lightPool) {
+		if (iter->getName() == name)
+			return iter.get();
+	}
+
+	return nullptr;
+}
+
+veLight* veLightManager::createLight(const std::string &type, const std::string &name)
 {
 	auto iter = _lightTemplate.find(type);
 	if (iter == _lightTemplate.end()) return nullptr;
@@ -50,6 +60,8 @@ veLight* veLightManager::createLight(const std::string &type)
 		params.push_back(param);
 	}
 	auto light = new veLight(type, params);
+	light->setName(name);
+	_lightPool.push_back(light);
 	return light;
 }
 

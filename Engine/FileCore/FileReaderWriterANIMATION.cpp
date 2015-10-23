@@ -44,11 +44,11 @@ private:
 	}
 
 	void readAnimation(const Value &animVal) {
-		veAnimation *animation = _sceneManager->createAnimation();
-
+		veAnimation *animation = nullptr;
 		if (animVal.HasMember(NAME_KEY.c_str())) {
-			animation->setName(animVal[NAME_KEY.c_str()].GetString());
-		}
+			animation = _sceneManager->createAnimation(animVal[NAME_KEY.c_str()].GetString());
+		}	
+		if (!animation) return;
 
 		if (animVal.HasMember(FRAMES_KEY.c_str())) {
 			animation->setDuration(animVal[FRAMES_KEY.c_str()].GetDouble());

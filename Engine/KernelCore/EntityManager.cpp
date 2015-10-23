@@ -10,20 +10,20 @@ veEntityManager::~veEntityManager()
 
 }
 
-veEntity* veEntityManager::getEntity(const std::string &name)
+veEntity* veEntityManager::findEntity(const std::string &name)
 {
-	auto iter = _entityPool.find(name);
-	if (iter == _entityPool.end()) return nullptr;
+	for (auto &iter : _entityPool) {
+		if (iter->getName() == name)
+			return iter.get();
+	}
 
-	return iter->second.get();
+	return nullptr;
 }
 
 veEntity* veEntityManager::createEntity(const std::string &name)
 {
-	auto iter = _entityPool.find(name);
-	if (iter != _entityPool.end()) veAssert("Entity had existed!");
 	veEntity *entity = new veEntity;
 	entity->setName(name);
-	_entityPool[name] = entity;
+	_entityPool.push_back(entity);
 	return entity;
 }

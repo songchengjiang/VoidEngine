@@ -3,7 +3,6 @@
 #include "Prerequisites.h"
 #include "BaseManager.h"
 #include "Entity.h"
-#include <unordered_map>
 
 
 class VE_EXPORT veEntityManager : public veBaseManager
@@ -13,7 +12,7 @@ public:
 
 	~veEntityManager();
 
-	veEntity* getEntity(const std::string &name);
+	veEntity* findEntity(const std::string &name);
 	veEntity* createEntity(const std::string &name);
 
 	static std::string TYPE() { return "ENTITY"; }
@@ -21,7 +20,7 @@ public:
 private:
 
 	veEntityManager();
-	std::unordered_map< std::string, VE_Ptr<veEntity> > _entityPool;
+	std::vector< VE_Ptr<veEntity> > _entityPool;
 };
 
 

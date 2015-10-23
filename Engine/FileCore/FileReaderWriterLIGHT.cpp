@@ -38,7 +38,7 @@ private:
 	void readLight() {
 		//std::string name = (*_doucument)[NAME_KEY.c_str()].GetString();
 		std::string type = (*_doucument)[TYPE_KEY.c_str()].GetString();
-		_light = _sceneManager->createLight(type);
+		_light = _sceneManager->createLight(type, _name);
 		if (!_light) return;
 		const Value &paramsVals = (*_doucument)[PARAMETERS_KEY.c_str()];
 		if (!paramsVals.Empty()) {
