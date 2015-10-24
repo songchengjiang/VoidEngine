@@ -14,11 +14,9 @@ public:
 			transer->setPosition(veVec3(-0.5f, -0.5f, 0.0f));
 			transer->setScale(veVec3(0.5f));
 
-			auto overlay = _sceneManager->createOverlay("image0");
+			veTexture *texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/Desk.exr", "desk"));
+			auto overlay = _sceneManager->createOverlay("image0", texture);
 			node->addRenderableObject(overlay);
-
-			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_sceneManager, "textures/Desk.exr", "desk"));
-			overlay->setImage(image);
 
 			root->addChild(node);
 		}
@@ -29,12 +27,10 @@ public:
 			node->addComponent(transer);
 			transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
 
-			auto overlay = _sceneManager->createOverlay("image1");
+			veTexture *texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/kill.png", "kill"));
+			auto overlay = _sceneManager->createOverlay("image1", texture);
 			overlay->setRenderOrder(10);
 			node->addRenderableObject(overlay);
-
-			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_sceneManager, "textures/kill.png", "kill"));
-			overlay->setImage(image);
 			//overlay->setAlphaThreshold(1.0f);
 
 			root->addChild(node);
@@ -47,11 +43,9 @@ public:
 			transer->setPosition(veVec3(0.5f, 0.5f, 0.0f));
 			transer->setScale(veVec3(0.5f));
 
-			auto overlay = _sceneManager->createOverlay("image2");
+			veTexture *texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/sphere.jpg", "sphere"));
+			auto overlay = _sceneManager->createOverlay("image2", texture);
 			node->addRenderableObject(overlay);
-
-			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_sceneManager, "textures/sphere.jpg", "sphere"));
-			overlay->setImage(image);
 
 			root->addChild(node);
 		}

@@ -1,6 +1,7 @@
 #include "FileReaderWriter.h"
 #include <unordered_map>
-#include "KernelCore/Image.h"
+#include "KernelCore/Texture.h"
+#include "KernelCore/SceneManager.h"
 #include "libpng/include/png.h"
 
 #pragma comment(lib, "libpng/lib/libpng.lib")
@@ -8,12 +9,13 @@ class veFileReaderWriterPNG : public veFileReaderWriter
 {
 public:
 	veFileReaderWriterPNG()
-		: _image(nullptr)
+		: _texture(nullptr)
 	{};
 	virtual ~veFileReaderWriterPNG(){};
 
 	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
 		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
+		_sceneManager = sm;
 		FILE *fp = fopen(fullPath.c_str(), "rb");
 		if (fp){
 			_name = name;
@@ -35,8 +37,8 @@ public:
 			}
 			fclose(fp);
 		}
-		if (!_image) veLog(std::string("veFileReaderWriterPNG: read ") + filePath + std::string(" failed!"));
-		return _image;
+		if (!_texture) veLog(std::string("veFileReaderWriterPNG: read ") + filePath + std::string(" failed!"));
+		return _texture;
 	}
 
 	virtual bool writeFile(veSceneManager *sm, void *data, const std::string &filePath) override{
@@ -103,19 +105,19 @@ private:
 		}
 
 		if (buffer){
-			_image = new veImage;
-			_image->setName(_name);
-			_image->setFileName(_fileName);
-			_image->set(width, height, 1, internalFormat, pixelFormat, dataType, buffer);
+			_texture = _sceneManager->createTexture(_name);
+			_texture->setFileName(_fileName);
+			_texture->storage(width, height, 1, internalFormat, pixelFormat, dataType, buffer);
 			delete[] buffer;
 		}
 	}
 
 private:
 
-	veImage *_image;
+	veTexture *_texture;
 	std::string _name;
 	std::string _fileName;
+	veSceneManager *_sceneManager;
 };
 
 VE_READERWRITER_REG("png", veFileReaderWriterPNG);

@@ -7,8 +7,13 @@
 veOverlay::veOverlay()
 {
 	_renderer = new veOverlayRenderer;
+}
+
+veOverlay::veOverlay(veTexture *texture)
+{
+	_renderer = new veOverlayRenderer;
 	_materials = new veMaterialArray;
-	initMaterial();
+	initMaterial(texture);
 }
 
 veOverlay::~veOverlay()
@@ -26,16 +31,6 @@ int veOverlay::getRenderOrder() const
 	return static_cast<veOverlayRenderer *>(_renderer.get())->getRenderOrder();
 }
 
-void veOverlay::setImage(veImage *image)
-{
-	_texture->setImage(image);
-}
-
-veImage* veOverlay::getImage()
-{
-	return _texture->getImage();
-}
-
 void veOverlay::setAlphaThreshold(veReal threshold)
 {
 	_alphaThreshold->setValue(threshold);
@@ -48,7 +43,7 @@ veReal veOverlay::getAlphaThreshold() const
 	return val;
 }
 
-void veOverlay::initMaterial()
+void veOverlay::initMaterial(veTexture *texture)
 {
 	static const char *V_SHADER = " \
 	layout(location = 0) in vec3 position; \n \
@@ -82,10 +77,9 @@ void veOverlay::initMaterial()
 	auto material = new veMaterial;
 	auto tech = new veTechnique;
 	auto pass = new vePass;
-	_texture = new veTexture2D;
 	material->addTechnique(tech);
 	tech->addPass(pass);
-	pass->addTexture(_texture.get());
+	pass->addTexture(texture);
 
 	pass->depthTest() = false;
 	pass->depthWrite() = false;

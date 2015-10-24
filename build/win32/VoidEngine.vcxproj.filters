@@ -111,9 +111,6 @@
     <ClCompile Include="..\..\Engine\KernelCore\FrameBufferObject.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\Image.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\Light.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
@@ -222,9 +219,6 @@
     <ClCompile Include="..\..\Engine\KernelCore\FontCharDictionary.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\ImageManager.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -297,9 +291,6 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\IDGenerator.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\Image.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\Light.h">
@@ -424,9 +415,6 @@
       <Filter>KernelCore\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\FontCharDictionary.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\ImageManager.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>

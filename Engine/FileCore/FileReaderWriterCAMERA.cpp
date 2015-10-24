@@ -215,7 +215,7 @@ private:
 				}
 			}
 
-			texture->storage(internalFormat, width, height);
+			texture->storage(width, height, 1, internalFormat);
 			fbo->attach(attachment, texture);
 		}
 		_camera->setFrameBufferObject(fbo);

@@ -59,6 +59,13 @@ std::string veFile::getFullFilePath(const std::string &filePath)
 	return filePath;
 }
 
+bool veFile::isSupportFile(const std::string &filePath)
+{
+	std::string ext = getFileExt(filePath);
+	auto fileReader = FileReaderWriterRegistrar::instance()->getRegContent(ext);
+	return fileReader == nullptr ? false : true;
+}
+
 std::string veFile::getFileExt(const std::string &filePath)
 {
 	return filePath.substr(filePath.find_last_of(".") + 1);

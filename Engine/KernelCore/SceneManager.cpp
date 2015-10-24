@@ -47,9 +47,9 @@ veLight* veSceneManager::createLight(const std::string &type, const std::string 
 	return light;
 }
 
-veOverlay* veSceneManager::createOverlay(const std::string &name)
+veOverlay* veSceneManager::createOverlay(const std::string &name, veTexture *texture)
 {
-	auto overlay = new veOverlay;
+	auto overlay = new veOverlay(texture);
 	overlay->setName(name);
 	return overlay;
 }

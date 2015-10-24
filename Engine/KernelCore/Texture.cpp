@@ -11,9 +11,8 @@ veTexture::~veTexture()
 	glDeleteTextures(1, &_texID);
 }
 
-veTexture::veTexture(veImage *image, GLenum target)
+veTexture::veTexture(GLenum target)
 	: USE_VE_PTR_INIT
-	, _image(image)
 	, _wrapMode(REPEAT)
 	, _filterMode(NEAREST)
 	, _needRefreshTex(true)
@@ -24,20 +23,63 @@ veTexture::veTexture(veImage *image, GLenum target)
 	, _width(DEFAULT_WIDTH)
 	, _height(DEFAULT_HEIGHT)
 	, _depth(DEFAULT_DEPTH)
+	, _dataType(GL_UNSIGNED_BYTE)
 	, _internalFormat(GL_RGBA8)
-	, _autoWidth(false)
-	, _autoHeight(false)
+	, _pixelFormat(GL_RGBA)
+	, _needReleaseData(true)
+	, _data(nullptr)
 {
-	if (_image.valid()) {
-		_width = _image->width();
-		_height = _image->height();
-		_depth = _image->depth();
-		_internalFormat = _image->internalFormat();
+}
+
+unsigned int veTexture::perPixelSize()
+{
+	switch (_internalFormat)
+	{
+	case GL_ALPHA:
+	case GL_DEPTH_COMPONENT:
+	case GL_R8:
+		return 1;
+
+	case GL_R16F:
+	case GL_DEPTH_COMPONENT16:
+	case GL_RG8:
+		//case GL_LUMINANCE16:
+		return 2;
+
+	case GL_DEPTH_COMPONENT32F:
+		return 4;
+
+	case GL_RGB:
+	case GL_RGB8:
+		return 3;
+
+	case GL_RGBA:
+	case GL_RGBA8:
+		return 4;
+
+	case GL_RGB16:
+	case GL_RGB16F:
+		return 6;
+
+	case GL_RGBA16:
+	case GL_RGBA16F:
+		return 8;
+
+	case GL_RGB32F:
+		return 12;
+
+	case GL_RGBA32F:
+		return 16;
 	}
+	return 0;
 }
 
 void veTexture::bind(unsigned int textureUnit)
 {
+	if (_needRefreshTex && _texID) {
+		glDeleteTextures(1, &_texID);
+		_texID = 0;
+	}
 	if (!_texID) {
         glGenTextures(1, &_texID);
 		//glCreateTextures(_target, 1, &_texID);
@@ -59,22 +101,21 @@ void veTexture::bind(unsigned int textureUnit)
 	//glBindSampler(textureUnit, _samplerID);
 }
 
-void veTexture::setImage(veImage *image)
-{
-	_image = image; 
-	_width = _image->width();
-	_height = _image->height();
-	_depth = _image->depth();
-	_internalFormat = _image->internalFormat();
-	_needRefreshTex = true;
-}
-
-void veTexture::storage(GLint internalFormat, int width, int height, int depth)
+void veTexture::storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat, GLenum dataType, unsigned char *data, bool needReleaseData)
 {
 	_width = width;
 	_height = height;
 	_depth = depth;
 	_internalFormat = internalFormat;
+	_pixelFormat = pixelFormat;
+	_dataType = dataType;
+	VE_SAFE_DELETE_ARRAY(_data);
+	if (data) {
+		unsigned int pixelSize = perPixelSize();
+		_data = new unsigned char[_width * _height * _depth * pixelSize];
+		memcpy(_data, data, _width * _height * _depth * pixelSize);
+	}
+	_needReleaseData = needReleaseData;
 	_needRefreshTex = true;
 }
 
@@ -87,8 +128,8 @@ GLuint veTexture::glTex()
 	return _texID;
 }
 
-veTexture2D::veTexture2D(veImage *image)
-	: veTexture(image, GL_TEXTURE_2D)
+veTexture2D::veTexture2D()
+	: veTexture(GL_TEXTURE_2D)
 {
 	_type = veTexture::TEXTURE_2D;
 }
@@ -99,22 +140,20 @@ veTexture2D::~veTexture2D()
 
 void veTexture2D::bind(unsigned int textureUnit)
 {
-	if (_needRefreshTex && _texID) {
-		glDeleteTextures(1, &_texID);
-		_texID = 0;
-	}
 	veTexture::bind(textureUnit);
 	if (_needRefreshTex) {
 		glTexStorage2D(_target, 1, _internalFormat, _width, _height);
-		if (_image.valid()) {
-			glTexSubImage2D(_target, 0, 0, 0, _image->width(), _image->height(), _image->pixelFormat(), _image->dataType(), _image->data());
+		if (_data) {
+			glTexSubImage2D(_target, 0, 0, 0, _width, _height, _pixelFormat, _dataType, _data);
+			if (_needReleaseData)
+				VE_SAFE_DELETE_ARRAY(_data);
 		}
 		_needRefreshTex = false;
 	}
 }
 
-veTextureRECT::veTextureRECT(veImage *image /*= nullptr*/)
-	: veTexture(image, GL_TEXTURE_RECTANGLE)
+veTextureRECT::veTextureRECT()
+	: veTexture(GL_TEXTURE_RECTANGLE)
 {
 	_type = veTexture::TEXTURE_RECT;
 }
@@ -129,8 +168,11 @@ void veTextureRECT::bind(unsigned int textureUnit)
 	veTexture::bind(textureUnit);
 	if (_needRefreshTex) {
 		glTexStorage2D(_target, 1, _internalFormat, _width, _height);
-		if (_image.valid())
-			glTexSubImage2D(_target, 0, 0, 0, _image->width(), _image->height(), _image->pixelFormat(), _image->dataType(), _image->data());
+		if (_data) {
+			glTexSubImage2D(_target, 0, 0, 0, _width, _height, _pixelFormat, _dataType, _data);
+			if (_needReleaseData)
+				VE_SAFE_DELETE_ARRAY(_data);
+		}
 		_needRefreshTex = false;
 	}
 }

@@ -27,6 +27,8 @@ public:
 
 	static std::string readFileToBuffer(const std::string &filePath);
 	static std::string getFullFilePath(const std::string &filePath);
+	bool isSupportFile(const std::string &filePath);
+	
 
 private:
 

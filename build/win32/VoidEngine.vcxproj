@@ -45,8 +45,6 @@
     <ClCompile Include="..\..\Engine\KernelCore\Font.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\FontCharDictionary.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\FrameBufferObject.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\Image.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\ImageManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Light.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\LightManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Material.cpp" />
@@ -110,8 +108,6 @@
     <ClInclude Include="..\..\Engine\KernelCore\FontCharDictionary.h" />
     <ClInclude Include="..\..\Engine\KernelCore\FrameBufferObject.h" />
     <ClInclude Include="..\..\Engine\KernelCore\IDGenerator.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\Image.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\ImageManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Light.h" />
     <ClInclude Include="..\..\Engine\KernelCore\LightManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\LoopQueue.h" />

@@ -151,8 +151,8 @@ void veFrameBufferObject::refreshAttachments()
 			if (iter.second.valid()) {
 				if (iter.first >= GL_COLOR_ATTACHMENT0 && iter.first <= GL_COLOR_ATTACHMENT15)
 					mrt.push_back(iter.first);
-				iter.second->setWidth(_size.x() * VE_DEVICE_PIXEL_RATIO);
-				iter.second->setHeight(_size.y() * VE_DEVICE_PIXEL_RATIO);
+				iter.second->storage(_size.x() * VE_DEVICE_PIXEL_RATIO, _size.y() * VE_DEVICE_PIXEL_RATIO, 1
+					, iter.second->getInternalFormat(), iter.second->getPixelFormat(), iter.second->getDataType(), nullptr);
 				iter.second->bind(0);
 				glFramebufferTexture2D(GL_FRAMEBUFFER, iter.first, iter.second->glTarget(), iter.second->glTex(), 0);
 			}

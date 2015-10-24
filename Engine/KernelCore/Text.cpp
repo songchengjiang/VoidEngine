@@ -221,9 +221,7 @@ void veText::rebuildContentBitmap(int divWidth, int divHeight)
 	//	veLog(" ");
 	//}
 
-	auto image = new veImage;
-	image->set(width, height, 1, GL_R8, GL_RED, GL_UNSIGNED_BYTE, buf);
-	_texture->setImage(image);
+	_texture->storage(width, height, 1, GL_R8, GL_RED, GL_UNSIGNED_BYTE, buf);
 	if (_type == HUD)
 		_scaleMatUniform->setValue(veMat4::scale(veVec3((float)width / (float)divWidth, (float)height / (float)divHeight, 0.0f)));
 	else if (_type == PLANE)

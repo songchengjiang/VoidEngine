@@ -30,7 +30,7 @@ public:
 	veVisualiser* createVisualiser(int w, int h, const std::string &title);
 	veVisualiser* getVisualiser() { return _visualiser.get(); }
 	virtual veNode* createNode(const std::string &name) = 0;
-	virtual veOverlay* createOverlay(const std::string &name);
+	virtual veOverlay* createOverlay(const std::string &name, veTexture *texture);
 	virtual veLight* createLight(const std::string &type, const std::string &name);
 	virtual veText* createText(veFont *font, const std::string &content = "");
 	virtual veAnimation* createAnimation(const std::string &name);

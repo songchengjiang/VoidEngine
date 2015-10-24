@@ -190,12 +190,15 @@ private:
 			if (texVal.HasMember(TYPE_KEY.c_str())) {
 				texType = getTextureType(texVal[TYPE_KEY.c_str()].GetString());
 			}
-			veTexture *texture = _sceneManager->createTexture(source, texType);
-			veImage *image = static_cast<veImage *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, _name + std::string("-Image")));
+			//veTexture *texture = _sceneManager->createTexture(source, texType);
+			veTexture *texture = nullptr;
+			if (veFile::instance()->isSupportFile(source)) {
+				texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, name));
+			}
+			else {
+				texture = _sceneManager->createTexture(name, texType);
+			}
 			if (!texture) return;
-			if (image)
-				texture->setImage(image);
-			texture->setName(name);
 			std::string wrap = texVal[WRAP_KEY.c_str()].GetString();
 			if (wrap == REPEAT_KEY) texture->setWrapMode(veTexture2D::REPEAT);
 			else if (wrap == MIRROR_KEY) texture->setWrapMode(veTexture2D::MIRROR);
