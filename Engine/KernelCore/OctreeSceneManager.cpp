@@ -5,6 +5,7 @@
 #include "OctreeRenderQueue.h"
 #include "RenderableObject.h"
 #include "Ray.h"
+#include "FileCore/File.h"
 
 veOctreeSceneManager::veOctreeSceneManager()
 	: _boundingBox(veVec3(-10000.0f), veVec3(10000.0f))

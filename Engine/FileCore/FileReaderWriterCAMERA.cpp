@@ -19,11 +19,12 @@ public:
 	{};
 	~veFileReaderWriterCAMERA(){};
 
-	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name) override{
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
 		if (!_doucument) _doucument = new Document;
+		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
 		_sceneManager = sm;
 		_name = name;
-		std::string buffer = veFile::readFileToBuffer(filePath);
+		std::string buffer = veFile::readFileToBuffer(fullPath);
 		_doucument->Parse(buffer.c_str());
         if (_doucument->HasParseError()) return  nullptr;
 		readCamera();

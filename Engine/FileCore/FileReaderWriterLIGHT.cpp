@@ -16,12 +16,12 @@ public:
 	{};
 	~veFileReaderWriterLIGHT(){};
 
-	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name) override{
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
 		if (!_doucument) _doucument = new Document;
+		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
 		_sceneManager = sm;
 		_name = name;
-		_fileFolder = filePath.substr(0, filePath.find_last_of("/\\") + 1);
-		std::string buffer = veFile::readFileToBuffer(filePath);
+		std::string buffer = veFile::readFileToBuffer(fullPath);
 		_doucument->Parse(buffer.c_str());
         if (_doucument->HasParseError()) return  nullptr;
 		readLight();
@@ -77,7 +77,6 @@ private:
 private:
 
 	Document *_doucument;
-	std::string _fileFolder;
 	std::string _className;
 	veLight *_light;
 	veSceneManager *_sceneManager;

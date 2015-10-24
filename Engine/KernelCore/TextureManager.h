@@ -18,7 +18,7 @@ public:
 
 private:
 
-	veTextureManager();
+	veTextureManager(veSceneManager *sm);
 	std::vector< VE_Ptr<veTexture> > _texturePool;
 };
 

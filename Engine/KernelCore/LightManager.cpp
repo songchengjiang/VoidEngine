@@ -5,6 +5,13 @@
 #include <rapidjson/include/document.h>
 
 using namespace rapidjson;
+
+veLightManager::veLightManager(veSceneManager *sm)
+	: veBaseManager(sm)
+{
+
+}
+
 veLightManager::~veLightManager()
 {
 
@@ -63,9 +70,4 @@ veLight* veLightManager::createLight(const std::string &type, const std::string 
 	light->setName(name);
 	_lightPool.push_back(light);
 	return light;
-}
-
-veLightManager::veLightManager()
-{
-
 }

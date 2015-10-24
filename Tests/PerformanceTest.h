@@ -29,7 +29,7 @@ class PerformanceTest : public BaseTest
 public:
 
 	PerformanceTest() {
-		int lineCount = 10;
+		int lineCount = 7;
 		float lineHalfSize = (lineCount / 2) * 100;
 		veNode *root = _sceneManager->createNode("root");
 		auto pu = new PerformanceUpdater();

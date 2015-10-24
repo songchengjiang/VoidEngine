@@ -13,6 +13,8 @@ public:
 	USE_NAME_PROPERTY;
 
 	void set(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat, GLenum dataType, unsigned char *data);
+	void setFileName(const std::string &fileName) { _fileName = fileName; }
+	const std::string& getFileName() const { return _fileName; }
 	veVec4 getColor(int s, int t, int r) const;
 	const unsigned char* data() const { return _data; }
 	int width() const { return _width; }
@@ -37,6 +39,7 @@ private:
 	GLenum         _pixelFormat;
 	GLenum         _dataType;
 	unsigned char *_data;
+	std::string    _fileName;
 
 	bool           _needRefresh;
 };

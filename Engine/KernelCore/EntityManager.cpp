@@ -1,6 +1,7 @@
 #include "EntityManager.h"
 
-veEntityManager::veEntityManager()
+veEntityManager::veEntityManager(veSceneManager *sm)
+	: veBaseManager(sm)
 {
 
 }

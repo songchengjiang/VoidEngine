@@ -1,6 +1,7 @@
 #include "TextureManager.h"
 
-veTextureManager::veTextureManager()
+veTextureManager::veTextureManager(veSceneManager *sm)
+	: veBaseManager(sm)
 {
 
 }

@@ -25,12 +25,13 @@ public:
 	{};
 	virtual ~veFileReaderWriterEXR(){};
 
-	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name) override{
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
 		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
 		Imf::Array2D<Imf::Rgba> pixels;
 		Imf::RgbaInputFile file(fullPath.c_str());
 		if (file.isComplete()){
 			_name = name;
+			_fileName = filePath;
 			Imath::Box2i dw = file.dataWindow();
 			int width = dw.max.x - dw.min.x + 1;
 			int height = dw.max.y - dw.min.y + 1;
@@ -65,6 +66,7 @@ private:
 		}
 		_image = new veImage;
 		_image->setName(_name);
+		_image->setFileName(_fileName);
 		_image->set(int(pixels.width()), int(pixels.height()), 1, internalFormat, pixelFormat, dataType, (unsigned char *)buffer);
 	}
 
@@ -72,6 +74,7 @@ private:
 
 	veImage *_image;
 	std::string _name;
+	std::string _fileName;
 };
 
 VE_READERWRITER_REG("exr", veFileReaderWriterEXR);

@@ -69,7 +69,7 @@ public:
 		//_root->accept(*this);
 		std::string definations;
         char str[16];
-        sprintf(str, " %d%d0\n", VE_GLSL_VERSION_MAJOR, VE_GLSL_VERSION_MINOR);
+        sprintf(str, " %d%d0\n", VE_GL_VERSION_MAJOR, VE_GL_VERSION_MINOR);
         definations += SHADER_VERSION + std::string(str);
 
 		if (_command.camera->getRenderPath() == veCamera::RenderPath::DEFERRED_PATH) {

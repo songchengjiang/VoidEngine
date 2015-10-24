@@ -13,9 +13,9 @@ veSceneManager::veSceneManager()
 	: _deltaTime(0.0)
 	, _renderQueue(nullptr)
 {
-	_managerList[veLightManager::TYPE()] = new veLightManager;
-	_managerList[veTextureManager::TYPE()] = new veTextureManager;
-	_managerList[veEntityManager::TYPE()] = new veEntityManager;
+	_managerList[veLightManager::TYPE()] = new veLightManager(this);
+	_managerList[veTextureManager::TYPE()] = new veTextureManager(this);
+	_managerList[veEntityManager::TYPE()] = new veEntityManager(this);
 }
 
 veSceneManager::~veSceneManager()
@@ -63,6 +63,13 @@ veText* veSceneManager::createText(veFont *font, const std::string &content)
 {
 	auto text = new veText(font, content);
 	return text;
+}
+
+veAnimationContainer* veSceneManager::createAnimationContainer(const std::string &name)
+{
+	auto anim = new veAnimationContainer;
+	anim->setName(name);
+	return anim;
 }
 
 veAnimation* veSceneManager::createAnimation(const std::string &name)

@@ -11,7 +11,7 @@ public:
 	virtual ~veBaseManager();
 
 protected:
-	veBaseManager();
+	veBaseManager(veSceneManager *sm);
 
 protected:
 

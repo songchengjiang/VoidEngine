@@ -77,8 +77,8 @@ public: const std::string& getName() const { return _name; }
 #define VE_DEVICE_PIXEL_RATIO 1
 #endif
 
-#define VE_GLSL_VERSION_MAJOR 4
-#define VE_GLSL_VERSION_MINOR 1
+#define VE_GL_VERSION_MAJOR 4
+#define VE_GL_VERSION_MINOR 1
 
 
 #if defined(_MSC_VER)

@@ -1,7 +1,7 @@
 #include "BaseManager.h"
 
-veBaseManager::veBaseManager()
-	: _sceneManager(nullptr)
+veBaseManager::veBaseManager(veSceneManager *sm)
+	: _sceneManager(sm)
 {
 
 }

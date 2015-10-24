@@ -12,17 +12,27 @@ public:
 	veFileReaderWriterANIMATION()
 		: _doucument(nullptr)
 	{};
-	~veFileReaderWriterANIMATION(){};
+	~veFileReaderWriterANIMATION(){
+		for (auto & iter : _doucumentMap) {
+			VE_SAFE_DELETE(iter.second);
+		}
+	};
 
-	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name) override{
-		if (!_doucument) _doucument = new Document;
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
+		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
+		auto doc = _doucumentMap.find(fullPath);
+		if (doc != _doucumentMap.end())
+			_doucument = doc->second;
+		else {
+			_doucument = new Document;
+			std::string buffer = veFile::readFileToBuffer(fullPath);
+			_doucument->Parse(buffer.c_str());
+			if (_doucument->HasParseError()) return  nullptr;
+			_doucumentMap[fullPath] = _doucument;
+		}
 		_sceneManager = sm;
 		_name = name;
-		std::string buffer = veFile::readFileToBuffer(filePath);
-		_doucument->Parse(buffer.c_str());
-        if (_doucument->HasParseError()) return  nullptr;
 		readAnimations();
-		VE_SAFE_DELETE(_doucument);
 		return _animationContainer;
 	}
 
@@ -33,8 +43,7 @@ public:
 private:
 
 	void readAnimations() {
-		_animationContainer = new veAnimationContainer;
-		_animationContainer->setName(_name);
+		_animationContainer = _sceneManager->createAnimationContainer(_name);
 		if ((*_doucument).HasMember(ANIMATIONS_KEY.c_str())) {
 			const Value &anims = (*_doucument)[ANIMATIONS_KEY.c_str()];
 			for (unsigned int i = 0; i < anims.Size(); ++i) {
@@ -105,6 +114,7 @@ private:
 	veAnimationContainer *_animationContainer;
 	veSceneManager *_sceneManager;
 	std::string _name;
+	std::map<std::string, Document *> _doucumentMap;
 };
 
 VE_READERWRITER_REG("veanim", veFileReaderWriterANIMATION);

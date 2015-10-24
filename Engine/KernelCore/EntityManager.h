@@ -19,7 +19,7 @@ public:
 
 private:
 
-	veEntityManager();
+	veEntityManager(veSceneManager *sm);
 	std::vector< VE_Ptr<veEntity> > _entityPool;
 };
 

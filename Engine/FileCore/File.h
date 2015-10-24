@@ -2,6 +2,18 @@
 #define _VE_FILE_
 #include "Prerequisites.h"
 
+struct veFileParam
+{
+
+	enum MemeryCreate
+	{
+		INSTACNE,
+		COPY,
+	};
+
+	MemeryCreate  create;
+};
+
 class veSceneManager;
 class VE_EXPORT veFile
 {
@@ -10,7 +22,7 @@ public:
 	~veFile();
 
 	static veFile* instance();
-	void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name);
+	void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param = {veFileParam::COPY});
 	bool writeFile(veSceneManager *sm, void *data, const std::string &filePath);
 
 	static std::string readFileToBuffer(const std::string &filePath);

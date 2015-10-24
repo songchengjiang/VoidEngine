@@ -27,7 +27,7 @@ public:
 	static std::string TYPE() { return "LIGHT"; }
 
 private:
-	veLightManager();
+	veLightManager(veSceneManager *sm);
 
 private:
 
