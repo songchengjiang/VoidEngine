@@ -5,13 +5,13 @@
 struct veFileParam
 {
 
-	enum MemeryCreate
+	enum MemoryCreate
 	{
 		INSTACNE,
 		COPY,
 	};
 
-	MemeryCreate  create;
+	MemoryCreate  create;
 };
 
 class veSceneManager;

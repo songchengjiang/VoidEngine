@@ -19,7 +19,6 @@ public:
 		FILE *fp = fopen(fullPath.c_str(), "rb");
 		if (fp){
 			_name = name;
-			_fileName = filePath;
 			unsigned char header[8];
 			fread(header, 1, 8, fp);
 			if (png_sig_cmp(header, 0, 8) == 0){
@@ -106,7 +105,6 @@ private:
 
 		if (buffer){
 			_texture = _sceneManager->createTexture(_name);
-			_texture->setFileName(_fileName);
 			_texture->storage(width, height, 1, internalFormat, pixelFormat, dataType, buffer);
 			delete[] buffer;
 		}
@@ -116,7 +114,6 @@ private:
 
 	veTexture *_texture;
 	std::string _name;
-	std::string _fileName;
 	veSceneManager *_sceneManager;
 };
 

@@ -29,7 +29,7 @@ public:
 
 		std::string fontFile = "fonts/arial.ttf";
 		{
-			auto text = _sceneManager->createText(new veFont(fontFile, 64), "Hello Void Engine");
+			auto text = _sceneManager->createText("text0", new veFont(fontFile, 64), "Hello Void Engine");
 			text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
 			auto node = _sceneManager->createNode("node0");
 			node->addRenderableObject(text);
@@ -40,7 +40,7 @@ public:
 		}
 
 		{
-			auto text = _sceneManager->createText(new veFont(fontFile));
+			auto text = _sceneManager->createText("text1", new veFont(fontFile));
 			//text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
 			auto node = _sceneManager->createNode("node1");
 			node->addRenderableObject(text);
@@ -67,7 +67,7 @@ public:
 			entity->setAnimationContainer(animationContainer);
 
 			veNode *textNode = _sceneManager->createNode("textnode");
-			auto text = _sceneManager->createText(new veFont(fontFile, 128), "Boss");
+			auto text = _sceneManager->createText("text2", new veFont(fontFile, 128), "Boss");
 			text->setTextType(veText::PLANE);
 			text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
 			textNode->addRenderableObject(text);

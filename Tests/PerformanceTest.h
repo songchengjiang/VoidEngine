@@ -60,7 +60,7 @@ public:
 		}
 
 		{
-			auto text = _sceneManager->createText(new veFont("fonts/arial.ttf", 32));
+			auto text = _sceneManager->createText("text0", new veFont("fonts/arial.ttf", 32));
 			text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
 			auto node = _sceneManager->createNode("text node");
 			node->addRenderableObject(text);

@@ -15,9 +15,9 @@ veText::veText(veFont *font, const std::string &content)
 	, _width(0)
 	, _height(0)
 	, _needRefresh(true)
+	, _needReInitMaterials(true)
 {
 	_renderer = new veOverlayRenderer;
-	initMaterial();
 }
 
 veText::~veText()
@@ -28,8 +28,7 @@ veText::~veText()
 bool veText::handle(veNode *node, veSceneManager *sm, const veEvent &event)
 {
 	if (event.getEventType() == veEvent::VE_WIN_RESIZE) {
-		if (_type == HUD)
-			_scaleMatUniform->setValue(veMat4::scale(veVec3((float)_width / (float)sm->getVisualiser()->width(), (float)_height / (float)sm->getVisualiser()->height(), 0.0f)));
+		_needRefresh = true;
 	}
 
 	return false;
@@ -38,6 +37,10 @@ bool veText::handle(veNode *node, veSceneManager *sm, const veEvent &event)
 void veText::update(veNode *node, veSceneManager *sm)
 {
 	if (!_isVisible) return;
+	if (_needReInitMaterials) {
+		initMaterial();
+		_needReInitMaterials = false;
+	}
 	if (_needRefresh) {
 		rebuildContentBitmap(sm->getVisualiser()->width(), sm->getVisualiser()->height());
 		_needRefresh = false;
@@ -56,7 +59,8 @@ void veText::setTextType(TextType type)
 	else if (_type == PLANE) {
 		_renderer = new veSurfaceRenderer;
 	}
-	initMaterial();
+	_needReInitMaterials = true;
+	_needRefresh = true;
 }
 
 void veText::setFont(veFont *font)
@@ -68,7 +72,7 @@ void veText::setFont(veFont *font)
 void veText::setColor(const veVec4 &color)
 {
 	_color = color;
-	_colorUniform->setValue(_color);
+	_needRefresh = true;
 }
 
 void veText::setContent(const std::string &content)
@@ -126,7 +130,8 @@ void veText::initMaterial()
 	auto material = new veMaterial;
 	auto tech = new veTechnique;
 	auto pass = new vePass;
-	_texture = new veTexture2D;
+	_texture = _sceneManager->createTexture(_name + std::string("-Texture"));
+	_texture->setMemoryKeeping(true);
 	//_texture->setFilterMode(veTexture::LINEAR);
 	_texture->setWrapMode(veTexture::CLAMP);
 	material->addTechnique(tech);

@@ -2,7 +2,6 @@
 #define _VE_TEXT_
 #include "Prerequisites.h"
 #include "RenderableObject.h"
-#include "Image.h"
 #include "VE_Ptr.h"
 #include "Font.h"
 
@@ -56,6 +55,7 @@ protected:
 	int               _height;
 
 	bool              _needRefresh;
+	bool              _needReInitMaterials;
 };
 
 #endif

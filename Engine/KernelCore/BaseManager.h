@@ -10,6 +10,9 @@ public:
 
 	virtual ~veBaseManager();
 
+	virtual void update(veSceneManager *sm){}
+	veSceneManager* getSceneManager() { return _sceneManager; }
+
 protected:
 	veBaseManager(veSceneManager *sm);
 

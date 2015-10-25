@@ -33,7 +33,6 @@ public:
 		Imf::RgbaInputFile file(fullPath.c_str());
 		if (file.isComplete()){
 			_name = name;
-			_fileName = filePath;
 			Imath::Box2i dw = file.dataWindow();
 			int width = dw.max.x - dw.min.x + 1;
 			int height = dw.max.y - dw.min.y + 1;
@@ -67,7 +66,6 @@ private:
 			}
 		}
 		_texture = _sceneManager->createTexture(_name);
-		_texture->setFileName(_fileName);
 		_texture->storage(int(pixels.width()), int(pixels.height()), 1, internalFormat, pixelFormat, dataType, (unsigned char *)buffer);
 	}
 
@@ -75,7 +73,6 @@ private:
 
 	veTexture *_texture;
 	std::string _name;
-	std::string _fileName;
 	veSceneManager *_sceneManager;
 };
 

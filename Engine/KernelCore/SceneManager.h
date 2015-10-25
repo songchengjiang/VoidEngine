@@ -32,7 +32,7 @@ public:
 	virtual veNode* createNode(const std::string &name) = 0;
 	virtual veOverlay* createOverlay(const std::string &name, veTexture *texture);
 	virtual veLight* createLight(const std::string &type, const std::string &name);
-	virtual veText* createText(veFont *font, const std::string &content = "");
+	virtual veText* createText(const std::string &name, veFont *font, const std::string &content = "");
 	virtual veAnimation* createAnimation(const std::string &name);
 
 	virtual veCamera* createCamera(const std::string &name, const veViewport &vp = { 0, 0, 0, 0 }) = 0;

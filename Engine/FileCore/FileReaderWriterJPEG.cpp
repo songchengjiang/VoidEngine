@@ -26,7 +26,6 @@ public:
 		FILE *fp = fopen(fullPath.c_str(), "rb");
 		if (fp){
 			_name = name;
-			_fileName = filePath;
 			struct jpeg_decompress_struct cinfo;
 			struct jpeg_error_mgr jerr;
 			cinfo.err = jpeg_std_error(&jerr);
@@ -66,7 +65,6 @@ private:
 		}
 		jpeg_finish_decompress(&cinfo);
 		_texture = _sceneManager->createTexture(_name);
-		_texture->setFileName(_fileName);
 		_texture->storage(width, height, 1, internalFormat, pixelFormat, dataType, buffer);
 		delete[] buffer;
 	}
@@ -89,7 +87,6 @@ private:
 
 	veTexture *_texture;
 	std::string _name;
-	std::string _fileName;
 	veSceneManager *_sceneManager;
 };
 

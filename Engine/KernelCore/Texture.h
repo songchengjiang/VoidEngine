@@ -1,7 +1,6 @@
 #ifndef _VE_TEXTURE_
 #define _VE_TEXTURE_
 #include "Prerequisites.h"
-#include "Image.h"
 #include "VE_Ptr.h"
 
 class VE_EXPORT veTexture
@@ -41,15 +40,13 @@ public:
 
 	virtual void bind(unsigned int textureUnit);
 
-	void setFileName(const std::string &fileName) { _fileName = fileName; }
-	const std::string& getFileName() const { return _fileName; }
-
 	void setWrapMode(WrapMode wrapMode) { _wrapMode = wrapMode; _needRefreshSampler = true; }
 	WrapMode getWrapMode() const { return _wrapMode; }
 	void setFilterMode(FilterMode filterMode){ _filterMode = filterMode; _needRefreshSampler = true; }
 	FilterMode getFilterMode() const { return _filterMode; }
+	void setMemoryKeeping(bool isKeeping) { _memoryKeeping = isKeeping; }
 
-	void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE, unsigned char *data = nullptr, bool needReleaseData = true);
+	void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE, unsigned char *data = nullptr);
 
 	int getWidth() const { return _width; }
 	int getHeight() const { return _height; }
@@ -57,6 +54,8 @@ public:
 	GLint getInternalFormat() const { return _internalFormat; }
 	GLenum getPixelFormat() const { return _pixelFormat; }
 	GLenum getDataType() const { return _dataType; }
+	unsigned char* getData() { return _data; }
+	unsigned int getDataSize() { return _dataSize; }
 
 	GLuint glTex();
 	GLenum glTarget() { return _target; }
@@ -66,6 +65,8 @@ protected:
 	veTexture(GLenum target);
 
 	unsigned int perPixelSize();
+	void releaseTextureData();
+	unsigned int getTextureTotalMemory();
 
 protected:
 
@@ -85,34 +86,39 @@ protected:
 	GLenum          _pixelFormat;
 	GLenum          _dataType;
 	unsigned char  *_data;
-	bool            _needReleaseData;
+	unsigned int    _dataSize;
+	unsigned int    _usage;
+	bool            _memoryKeeping;
+	bool            _isExchanged;
 
-	std::string    _fileName;
+	veTextureManager *_manager;
 };
 
 class VE_EXPORT veTexture2D : public veTexture
 {
+	friend class veTextureManager;
 public:
 
-	veTexture2D();
 	~veTexture2D();
 
 	virtual void bind(unsigned int textureUnit) override;
 
 protected:
+	veTexture2D();
 
 };
 
 class VE_EXPORT veTextureRECT : public veTexture
 {
+	friend class veTextureManager;
 public:
 
-	veTextureRECT();
 	~veTextureRECT();
 
 	virtual void bind(unsigned int textureUnit) override;
 
 protected:
+	veTextureRECT();
 
 };
 

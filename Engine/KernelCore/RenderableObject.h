@@ -11,6 +11,7 @@ class veVisualiser;
 class veSceneManager;
 class VE_EXPORT veRenderableObject
 {
+	friend class veSceneManager;
 public:
 
 	veRenderableObject();
@@ -45,6 +46,7 @@ protected:
 	bool              _isVisible;
 	bool              _isDirtyBoundingBox;
 	unsigned int      _mask;
+	veSceneManager   *_sceneManager;
 };
 
 #endif

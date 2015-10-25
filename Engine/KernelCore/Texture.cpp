@@ -1,5 +1,6 @@
 #include "Texture.h"
-
+#include "TextureManager.h"
+#include "FileCore/File.h"
 const int veTexture::DEFAULT_WIDTH = 512;
 const int veTexture::DEFAULT_HEIGHT = 512;
 
@@ -26,8 +27,12 @@ veTexture::veTexture(GLenum target)
 	, _dataType(GL_UNSIGNED_BYTE)
 	, _internalFormat(GL_RGBA8)
 	, _pixelFormat(GL_RGBA)
-	, _needReleaseData(true)
+	, _dataSize(0)
+	, _usage(0)
 	, _data(nullptr)
+	, _manager(nullptr)
+	, _memoryKeeping(false)
+	, _isExchanged(false)
 {
 }
 
@@ -74,6 +79,22 @@ unsigned int veTexture::perPixelSize()
 	return 0;
 }
 
+void veTexture::releaseTextureData()
+{
+	if (!_texID || !_data) return;
+	if (_texID) {
+		glDeleteTextures(1, &_texID);
+		_manager->releaseTextureMemory(this);
+		_texID = 0;
+		_needRefreshTex = true;
+	}
+}
+
+unsigned int veTexture::getTextureTotalMemory()
+{
+	return _dataSize;
+}
+
 void veTexture::bind(unsigned int textureUnit)
 {
 	if (_needRefreshTex && _texID) {
@@ -98,10 +119,11 @@ void veTexture::bind(unsigned int textureUnit)
 
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
 	glBindTexture(_target, _texID);
+	_usage |= 1;
 	//glBindSampler(textureUnit, _samplerID);
 }
 
-void veTexture::storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat, GLenum dataType, unsigned char *data, bool needReleaseData)
+void veTexture::storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat, GLenum dataType, unsigned char *data)
 {
 	_width = width;
 	_height = height;
@@ -109,13 +131,18 @@ void veTexture::storage(int width, int height, int depth, GLint internalFormat, 
 	_internalFormat = internalFormat;
 	_pixelFormat = pixelFormat;
 	_dataType = dataType;
-	VE_SAFE_DELETE_ARRAY(_data);
+	unsigned int pixelSize = perPixelSize();
+	_dataSize = _width * _height * _depth * pixelSize;
+	releaseTextureData();
 	if (data) {
-		unsigned int pixelSize = perPixelSize();
-		_data = new unsigned char[_width * _height * _depth * pixelSize];
-		memcpy(_data, data, _width * _height * _depth * pixelSize);
+		_data = new unsigned char[_dataSize];
+		memcpy(_data, data, _dataSize);
+		//if (_manager->requestTextureMemory(getTextureTotalMemory())) {
+		//	_data = new unsigned char[_dataSize];
+		//	memcpy(_data, data, _dataSize);
+		//	_manager->assignTextureMemory(getTextureTotalMemory());
+		//}
 	}
-	_needReleaseData = needReleaseData;
 	_needRefreshTex = true;
 }
 
@@ -142,13 +169,13 @@ void veTexture2D::bind(unsigned int textureUnit)
 {
 	veTexture::bind(textureUnit);
 	if (_needRefreshTex) {
-		glTexStorage2D(_target, 1, _internalFormat, _width, _height);
-		if (_data) {
-			glTexSubImage2D(_target, 0, 0, 0, _width, _height, _pixelFormat, _dataType, _data);
-			if (_needReleaseData)
-				VE_SAFE_DELETE_ARRAY(_data);
+		if (_manager->exchangeTextureMemory(this)) {
+			glTexStorage2D(_target, 1, _internalFormat, _width, _height);
+			if (_data) {
+				glTexSubImage2D(_target, 0, 0, 0, _width, _height, _pixelFormat, _dataType, _data);
+			}
+			_needRefreshTex = false;
 		}
-		_needRefreshTex = false;
 	}
 }
 
@@ -167,12 +194,12 @@ void veTextureRECT::bind(unsigned int textureUnit)
 {
 	veTexture::bind(textureUnit);
 	if (_needRefreshTex) {
-		glTexStorage2D(_target, 1, _internalFormat, _width, _height);
-		if (_data) {
-			glTexSubImage2D(_target, 0, 0, 0, _width, _height, _pixelFormat, _dataType, _data);
-			if (_needReleaseData)
-				VE_SAFE_DELETE_ARRAY(_data);
+		if (_manager->exchangeTextureMemory(this)) {
+			glTexStorage2D(_target, 1, _internalFormat, _width, _height);
+			if (_data) {
+				glTexSubImage2D(_target, 0, 0, 0, _width, _height, _pixelFormat, _dataType, _data);
+			}
+			_needRefreshTex = false;
 		}
-		_needRefreshTex = false;
 	}
 }

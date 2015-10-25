@@ -8,6 +8,7 @@ veRenderableObject::veRenderableObject()
 	, _isVisible(true)
 	, _isDirtyBoundingBox(true)
 	, _mask(0xffffffff)
+	, _sceneManager(nullptr)
 {
 }
 
