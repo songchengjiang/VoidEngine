@@ -149,6 +149,8 @@ static const std::string VERTEX_ATTRIB_USER = "VERTEX_ATTRIB_USER";
 
 //internal unifrom names
 static const std::string M_MATRIX_KEY = "u_ModelMat";
+static const std::string V_MATRIX_KEY = "u_ViewMat";
+static const std::string INV_V_MATRIX_KEY = "u_InvViewMat";
 static const std::string MV_MATRIX_KEY = "u_ModelViewMat";
 static const std::string P_MATRIX_KEY = "u_ProjectMat";
 static const std::string MVP_MATRIX_KEY = "u_ModelViewProjectMat";
@@ -157,6 +159,8 @@ static const std::string BONE_MATRIXES_KEY = "u_BoneMates";
 static const std::string TF_VARYING_POSITION_KEY = "tf_position";
 static const std::string TF_VARYING_NORMAL_KEY = "tf_normal";
 static const std::string M_MATRIX      = "M_MATRIX";
+static const std::string V_MATRIX      = "V_MATRIX";
+static const std::string INV_V_MATRIX  = "INV_V_MATRIX";
 static const std::string MV_MATRIX     = "MV_MATRIX";
 static const std::string P_MATRIX      = "P_MATRIX";
 static const std::string MVP_MATRIX    = "MVP_MATRIX";

@@ -27,9 +27,9 @@
                             ],
                             "textureUnits": [
                               {
-                                "name":  "skyboxTex",
+                                "name":  "skybox.snow.texture",
                                 "type": "TEX_CUBE",
-                                "source": [ "canyon_right.png", "canyon_left.png", "canyon_down.png", "canyon_top.png", "canyon_front.png", "canyon_back.png" ],
+                                "source": [ "snow_posx.jpg", "snow_negx.jpg", "snow_posy.jpg", "snow_negy.jpg", "snow_posz.jpg", "snow_negz.jpg" ],
                                 "wrap": "CLAMP",
                                 "filter": "LINEAR"
                               }

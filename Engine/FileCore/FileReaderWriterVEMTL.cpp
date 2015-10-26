@@ -207,8 +207,8 @@ private:
 		{
 			if (!name.empty() && !texVal.HasMember(SOURCE_KEY.c_str())) {
 				texture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture(name);
-				if (!texture)
-					texture = _sceneManager->createTexture(name, texType);
+				if (texture) break;
+				texture = _sceneManager->createTexture(name, texType);
 			}
 			if (!texture) {
 				if (texVal.HasMember(SOURCE_KEY.c_str())) {

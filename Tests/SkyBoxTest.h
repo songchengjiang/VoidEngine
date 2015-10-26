@@ -13,26 +13,36 @@ public:
 			node->addRenderableObject(skyBox);
 			root->addChild(node);
 
-			veMaterialArray *materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "skyboxs/skybox-canyon.vemtl", "skybox-mats"));
+			veMaterialArray *materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "skyboxs/skybox-snow.vemtl", "skybox-mats"));
 			skyBox->setMaterialArray(materials);
 		}
 
 		{
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu-0"));
-			veNode *node = _sceneManager->createNode("node3");
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot-0"));
+			auto material = entity->getMaterialArray()->getMaterial("mat-0");
+			material->activateTechnique(material->getTechnique("ReflectionRendering"));
+			veNode *node = _sceneManager->createNode("node0");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
-			//transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
-			transer->setScale(veVec3(0.3f));
-			//transer->setRotation(veQuat(veMath::HALF_PI, veVec3::UNIT_Y));
+			transer->setScale(veVec3(2.0f));
+			transer->setPosition(veVec3(-5.0f, 0.0f, 0.0f));
 			root->addChild(node);
+		}
 
-			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim-0"));
-			animationContainer->start();
-			animationContainer->setLoopAnimation(true);
-			entity->setAnimationContainer(animationContainer);
+		{
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot-1"));
+			auto material = entity->getMaterialArray()->getMaterial("mat-0");
+			material->activateTechnique(material->getTechnique("RefractionRendering"));
+			veNode *node = _sceneManager->createNode("node1");
+			node->addRenderableObject(entity);
+			//node->addComponent(new KeyboardInputer);
+			veTransformer *transer = new veTransformer;
+			node->addComponent(transer);
+			transer->setScale(veVec3(2.0f));
+			transer->setPosition(veVec3(5.0f, 0.0f, 0.0f));
+			root->addChild(node);
 		}
 
 		_sceneManager->getRootNode()->addChild(root);

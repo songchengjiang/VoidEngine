@@ -6,7 +6,7 @@
             "name": "mat-0",
             "techniques": [
                 {
-                    "name": "forwardRender",
+                    "name": "NoLightingRendering",
                     "passes": [
                         {
                             "depthTest": true,
@@ -39,36 +39,66 @@
                     ]
                 },
                 {
-                    "name": "deferredRender",
-                    "passes": [
+                  "name": "ReflectionRendering",
+                  "passes": [
+                    {
+                      "depthTest": true,
+                      "depthWrite": true,
+                      "cullFace": true,
+                      "shaders": [
                         {
-                            "depthTest": true,
-                            "depthWrite": true,
-                            "cullFace": true,
-                            "shaders": [
-                                {
-                                    "type": "VERTEX_SHADER",
-                                    "source": "DeferredBlinnPhoneShader.vert",
-                                    "u_ModelViewProjectMat": "MVP_MATRIX",
-                                    "u_ModelViewMat": "MV_MATRIX",
-                                    "u_NormalMat": "NORMAL_MATRIX"
-                                },
-                                {
-                                    "type": "FRAGMENT_SHADER",
-                                    "source": "DeferredBlinnPhoneShader.frag",
-                                    "u_diffuseTex": 0
-                                }
-                            ],
-                            "textureUnits": [
-                                {
-                                    "source": "sphere.png",
-                                    "wrap": "REPEAT",
-                                    "filter": "NERAEST"
-                                }
-                            ]  
+                          "type": "VERTEX_SHADER",
+                          "source": "ReflectionShader.vert",
+                          "u_ModelViewProjectMat": "MVP_MATRIX",
+                          "u_ModelViewMat": "MV_MATRIX",
+                          "u_InvViewMat": "INV_V_MATRIX",
+                          "u_NormalMat": "NORMAL_MATRIX"
+                        },
+                        {
+                          "type": "FRAGMENT_SHADER",
+                          "source": "ReflectionAndRefractionShader.frag",
+                          "u_cubeMap": 0
                         }
-                    ]
-                }
+                      ],
+                      "textureUnits": [
+                        {
+                          "name": "skybox.snow.texture"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                      "name": "RefractionRendering",
+                      "passes": [
+                          {
+                              "depthTest": true,
+                              "depthWrite": true,
+                              "cullFace": true,
+                              "shaders": [
+                                  {
+                                      "type": "VERTEX_SHADER",
+                                      "source": "RefractionShader.vert",
+                                      "u_ModelViewProjectMat": "MVP_MATRIX",
+                                      "u_ModelViewMat": "MV_MATRIX",
+                                      "u_InvViewMat": "INV_V_MATRIX",
+                                      "u_NormalMat": "NORMAL_MATRIX",
+                                      "u_refractivity": 0.9
+                                  },
+                                  {
+                                      "type": "FRAGMENT_SHADER",
+                                      "source": "ReflectionAndRefractionShader.frag",
+                                      "u_cubeMap": 0
+                                  }
+                              ],
+                              "textureUnits": [
+                                  {
+                                      "name": "skybox.snow.texture"
+                                  }
+                              ]  
+                          }
+                      ]
+                  }
             ]
         }
     ]
