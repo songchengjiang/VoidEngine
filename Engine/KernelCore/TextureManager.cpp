@@ -41,6 +41,9 @@ veTexture* veTextureManager::createTexture(const std::string &name, veTexture::T
 	else if (texType == veTexture::TEXTURE_RECT) {
 		texture = new veTextureRECT;
 	}
+	else if (texType == veTexture::TEXTURE_CUBE) {
+		texture = new veTextureCube;
+	}
 	texture->setName(name);
 	texture->_manager = this;
 	_texturePool.push_back(texture);
@@ -53,7 +56,7 @@ bool veTextureManager::exchangeTextureMemory(veTexture *texture)
 		return true;
 	std::map<float, std::vector<veTexture *> > pendingReplacetextureList;
 	for (auto &iter : _allocatedTexturePool) {
-		if (!iter->_memoryKeeping && iter != texture && !iter->_isExchanged)
+		if (iter != texture && !iter->_isExchanged)
 			pendingReplacetextureList[getTextureUsageRate(iter) * iter->getTextureTotalMemory()].push_back(iter);
 	}
 

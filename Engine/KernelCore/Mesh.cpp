@@ -252,6 +252,9 @@ void veMesh::traversePrimitives(const PrimitiveCallback &callback)
 
 void veMesh::updateBoundingBox(const veMat4 &meshToRoot)
 {
+	if (_needRefresh) {
+		caculateBoundingBox();
+	}
 	if (!_bones.empty()) {
 		_boundingBox.dirty();
 		veMat4 thisToNodeMatrix = meshToRoot;

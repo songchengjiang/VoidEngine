@@ -31,7 +31,8 @@ public:
 			_doucument = new Document;
 			std::string buffer = veFile::readFileToBuffer(fullPath);
 			_doucument->Parse(buffer.c_str());
-			if (_doucument->HasParseError()) return  nullptr;
+			if (_doucument->HasParseError())
+				return nullptr;
 			_doucumentMap[fullPath] = _doucument;
 		}
 		_sceneManager = sm;
@@ -109,6 +110,18 @@ private:
 			pass->depthWrite() = passVal[DEPTHWRITE_KEY.c_str()].GetBool();
 		if (passVal.HasMember(CULLFACE_KEY.c_str()))
 			pass->cullFace() = passVal[CULLFACE_KEY.c_str()].GetBool();
+		if (passVal.HasMember(CULLFACEMODE_KEY.c_str())) {
+			std::string cfm = passVal[CULLFACEMODE_KEY.c_str()].GetString();
+			if (cfm == FRONT_KEY) {
+				pass->cullFaceMode() = GL_FRONT;
+			}
+			else if (cfm == BACK_KEY){
+				pass->cullFaceMode() = GL_BACK;
+			}
+			else if (cfm == FRONTANDBACK_KEY) {
+				pass->cullFaceMode() = GL_FRONT_AND_BACK;
+			}
+		}
 		if (passVal.HasMember(DRAWMASK_KEY.c_str()))
 			pass->drawMask() = passVal[DRAWMASK_KEY.c_str()].GetUint();
 		if (passVal.HasMember(BLENDFUNC_KEY.c_str())) {
@@ -179,40 +192,61 @@ private:
 	}
 
 	void readTexture(const Value &texVal, vePass *pass){
-		if (texVal.HasMember(SOURCE_KEY.c_str())) {
-			std::string source = texVal[SOURCE_KEY.c_str()].GetString();
-			std::string name = source;
-			if (texVal.HasMember(NAME_KEY.c_str())) {
-				name = texVal[NAME_KEY.c_str()].GetString();
-			}
 
-			veTexture::TextureType texType = veTexture::TEXTURE_2D;
+		veTexture::TextureType texType = veTexture::TEXTURE_2D;
+		veTexture *texture = nullptr;
+		if (texVal.HasMember(SOURCE_KEY.c_str())) {
 			if (texVal.HasMember(TYPE_KEY.c_str())) {
 				texType = getTextureType(texVal[TYPE_KEY.c_str()].GetString());
 			}
-			//veTexture *texture = _sceneManager->createTexture(source, texType);
-			veTexture *texture = nullptr;
-			if (veFile::instance()->isSupportFile(source)) {
-				texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, name));
+			std::string name;
+			if (texVal.HasMember(NAME_KEY.c_str())) {
+				name = texVal[NAME_KEY.c_str()].GetString();
+			}
+			if (texType == veTexture::TEXTURE_CUBE) {
+				const Value &sources = texVal[SOURCE_KEY.c_str()];
+				if (sources.Size() != 6) return;
+				texture = _sceneManager->createTexture(name, texType);
+				for (unsigned int i = 0; i < sources.Size(); ++i) {
+					std::string source = sources[i].GetString();
+					std::string subName = name + std::string("-") + source;
+					veTexture *subTexture = nullptr;
+					if (veFile::instance()->isSupportFile(source)) {
+						subTexture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, subName));
+					}
+					static_cast<veTextureCube *>(texture)->setTexture((veTextureCube::CubeMapTexType)i, subTexture);
+				}
 			}
 			else {
-				texture = _sceneManager->createTexture(name, texType);
+				std::string source = texVal[SOURCE_KEY.c_str()].GetString();
+				std::string name = source;
+				if (texVal.HasMember(NAME_KEY.c_str())) {
+					name = texVal[NAME_KEY.c_str()].GetString();
+				}
+				//veTexture *texture = _sceneManager->createTexture(source, texType);
+				if (veFile::instance()->isSupportFile(source)) {
+					texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, name));
+				}
+				else {
+					texture = _sceneManager->createTexture(name, texType);
+				}
 			}
-			if (!texture) return;
-			std::string wrap = texVal[WRAP_KEY.c_str()].GetString();
-			if (wrap == REPEAT_KEY) texture->setWrapMode(veTexture2D::REPEAT);
-			else if (wrap == MIRROR_KEY) texture->setWrapMode(veTexture2D::MIRROR);
-			else if (wrap == CLAMP_KEY) texture->setWrapMode(veTexture2D::CLAMP);
-			else if (wrap == DECAL_KEY) texture->setWrapMode(veTexture2D::DECAL);
-			else texture->setWrapMode(veTexture2D::REPEAT);
-
-			std::string filter = texVal[FILTER_KEY.c_str()].GetString();
-			if (filter == NEREAST_KEY) texture->setFilterMode(veTexture2D::NEAREST);
-			else if (filter == LINEAR_KEY) texture->setFilterMode(veTexture2D::LINEAR);
-			else texture->setFilterMode(veTexture2D::NEAREST);
-
-			pass->addTexture(texture);
 		}
+
+		if (!texture) return;
+		std::string wrap = texVal[WRAP_KEY.c_str()].GetString();
+		if (wrap == REPEAT_KEY) texture->setWrapMode(veTexture2D::REPEAT);
+		else if (wrap == MIRROR_KEY) texture->setWrapMode(veTexture2D::MIRROR);
+		else if (wrap == CLAMP_KEY) texture->setWrapMode(veTexture2D::CLAMP);
+		else if (wrap == DECAL_KEY) texture->setWrapMode(veTexture2D::DECAL);
+		else texture->setWrapMode(veTexture2D::REPEAT);
+
+		std::string filter = texVal[FILTER_KEY.c_str()].GetString();
+		if (filter == NEREAST_KEY) texture->setFilterMode(veTexture2D::NEAREST);
+		else if (filter == LINEAR_KEY) texture->setFilterMode(veTexture2D::LINEAR);
+		else texture->setFilterMode(veTexture2D::NEAREST);
+
+		pass->addTexture(texture);
 		//else if (texVal.HasMember(TARGET_KEY.c_str())) {
 		//	std::string target = texVal[TARGET_KEY.c_str()].GetString();
 		//	if (target.find_last_of(":") != std::string::npos) {
@@ -311,6 +345,9 @@ private:
 		}
 		else if (strcmp(TEX_RECT_KEY.c_str(), str) == 0) {
 			return veTexture::TEXTURE_RECT;
+		}
+		else if (strcmp(TEX_CUBE_KEY.c_str(), str) == 0) {
+			return veTexture::TEXTURE_CUBE;
 		}
 		return veTexture::TEXTURE_2D;
 	}

@@ -25,6 +25,9 @@
     <Filter Include="IntersectionTest">
       <UniqueIdentifier>{f635f1f8-a5cd-43b8-aade-a4ac4505cd46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SkyBoxTest">
+      <UniqueIdentifier>{caddcd8a-0348-4dd0-95a6-4e60f735c0af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Tests\CameraTest.h">
@@ -51,6 +54,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Tests\IntersectionTest.h">
       <Filter>IntersectionTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tests\SkyBoxTest.h">
+      <Filter>SkyBoxTest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -38,6 +38,7 @@ public:
 	static bool CURRENT_DEPTH_TEST;
 	static bool CURRENT_DEPTH_WRITE;
 	static bool CURRENT_CULL_FACE;
+	static GLenum CURRENT_CULL_FACE_MODE;
 	static veBlendFunc CURRENT_BLEND_FUNC;
 	static GLenum CURRENT_POLYGON_MODE;
 
@@ -57,6 +58,9 @@ public:
 
 	const bool& cullFace() const{ return _cullFace; }
 	bool& cullFace(){ return _cullFace; }
+
+	const GLenum& cullFaceMode() const { return _cullFaceMode; }
+	GLenum& cullFaceMode() { return _cullFaceMode; }
 
 	const veBlendFunc& blendFunc() const { return _blendFunc; }
 	veBlendFunc& blendFunc() { return _blendFunc; }
@@ -98,6 +102,7 @@ private:
 	bool _depthTest;
 	bool _depthWirte;
 	bool _cullFace;
+	GLenum _cullFaceMode;
 	veBlendFunc _blendFunc;
 	unsigned int _mask;
 	GLenum _polygonMode;

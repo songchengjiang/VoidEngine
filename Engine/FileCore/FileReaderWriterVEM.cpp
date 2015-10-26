@@ -113,7 +113,7 @@ private:
 			}
 		}
 
-		mesh->caculateBoundingBox();
+		//mesh->caculateBoundingBox();
 		_meshList[mesh->getName()] = mesh;
 	}
 

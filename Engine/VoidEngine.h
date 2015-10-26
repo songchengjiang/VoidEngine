@@ -23,6 +23,7 @@
 #include "KernelCore/SceneManager.h"
 #include "KernelCore/OctreeSceneManager.h"
 #include "KernelCore/Ray.h"
+#include "KernelCore/SkyBox.h"
 
 #include "FileCore/Printer.h"
 #include "FileCore/File.h"

@@ -17,6 +17,7 @@ public:
 		TEXTURE_2D,
 		TEXTURE_3D,
 		TEXTURE_RECT,
+		TEXTURE_CUBE,
 	};
 
 	enum WrapMode{
@@ -44,7 +45,6 @@ public:
 	WrapMode getWrapMode() const { return _wrapMode; }
 	void setFilterMode(FilterMode filterMode){ _filterMode = filterMode; _needRefreshSampler = true; }
 	FilterMode getFilterMode() const { return _filterMode; }
-	void setMemoryKeeping(bool isKeeping) { _memoryKeeping = isKeeping; }
 
 	void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE, unsigned char *data = nullptr);
 
@@ -56,9 +56,11 @@ public:
 	GLenum getDataType() const { return _dataType; }
 	unsigned char* getData() { return _data; }
 	unsigned int getDataSize() { return _dataSize; }
+	virtual unsigned int getTextureTotalMemory();
 
 	GLuint glTex();
 	GLenum glTarget() { return _target; }
+
 
 protected:
 
@@ -66,7 +68,6 @@ protected:
 
 	unsigned int perPixelSize();
 	void releaseTextureData();
-	unsigned int getTextureTotalMemory();
 
 protected:
 
@@ -88,7 +89,6 @@ protected:
 	unsigned char  *_data;
 	unsigned int    _dataSize;
 	unsigned int    _usage;
-	bool            _memoryKeeping;
 	bool            _isExchanged;
 
 	veTextureManager *_manager;
@@ -120,6 +120,39 @@ public:
 protected:
 	veTextureRECT();
 
+};
+
+
+class VE_EXPORT veTextureCube : public veTexture
+{
+	friend class veTextureManager;
+public:
+
+	enum CubeMapTexType
+	{
+		CUBE_MAP_POSITIVE_X = 0,
+		CUBE_MAP_NEGATIVE_X = 1,
+		CUBE_MAP_POSITIVE_Y = 2,
+		CUBE_MAP_NEGATIVE_Y = 3,
+		CUBE_MAP_POSITIVE_Z = 4,
+		CUBE_MAP_NEGATIVE_Z = 5,
+	};
+
+	~veTextureCube();
+
+	virtual void bind(unsigned int textureUnit) override;
+
+	void setTexture(CubeMapTexType texType, veTexture *texture);
+	virtual unsigned int getTextureTotalMemory();
+
+protected:
+	veTextureCube();
+
+	void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE, unsigned char *data = nullptr){}
+
+protected:
+
+	VE_Ptr<veTexture> _textures[6];
 };
 
 #endif

@@ -35,6 +35,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\BaseManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Bone.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\BoudingBox.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\BoxRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Camera.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Component.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Director.cpp" />
@@ -68,6 +69,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\RenderQueue.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\SceneManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Shader.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\SkyBox.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\SurfaceRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Text.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Texture.cpp" />
@@ -96,6 +98,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\BaseManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Bone.h" />
     <ClInclude Include="..\..\Engine\KernelCore\BoudingBox.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\BoxRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Camera.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Component.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Director.h" />
@@ -135,6 +138,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\SceneManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Shader.h" />
     <ClInclude Include="..\..\Engine\KernelCore\ShaderDefinationGenerator.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\SkyBox.h" />
     <ClInclude Include="..\..\Engine\KernelCore\SurfaceRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Text.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Texture.h" />

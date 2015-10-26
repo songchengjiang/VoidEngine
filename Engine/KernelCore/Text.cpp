@@ -131,7 +131,6 @@ void veText::initMaterial()
 	auto tech = new veTechnique;
 	auto pass = new vePass;
 	_texture = _sceneManager->createTexture(_name + std::string("-Texture"));
-	_texture->setMemoryKeeping(true);
 	//_texture->setFilterMode(veTexture::LINEAR);
 	_texture->setWrapMode(veTexture::CLAMP);
 	material->addTechnique(tech);

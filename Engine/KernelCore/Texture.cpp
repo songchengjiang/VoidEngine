@@ -31,7 +31,6 @@ veTexture::veTexture(GLenum target)
 	, _usage(0)
 	, _data(nullptr)
 	, _manager(nullptr)
-	, _memoryKeeping(false)
 	, _isExchanged(false)
 {
 }
@@ -119,8 +118,8 @@ void veTexture::bind(unsigned int textureUnit)
 
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
 	glBindTexture(_target, _texID);
+	glBindSampler(textureUnit, _samplerID);
 	_usage |= 1;
-	//glBindSampler(textureUnit, _samplerID);
 }
 
 void veTexture::storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat, GLenum dataType, unsigned char *data)
@@ -202,4 +201,49 @@ void veTextureRECT::bind(unsigned int textureUnit)
 			_needRefreshTex = false;
 		}
 	}
+}
+
+
+veTextureCube::veTextureCube()
+	: veTexture(GL_TEXTURE_CUBE_MAP)
+{
+
+}
+
+unsigned int veTextureCube::getTextureTotalMemory()
+{
+	unsigned int totalMemory = 0;
+	for (unsigned int i = 0; i < 6; ++i) {
+		totalMemory += _textures[i]->getTextureTotalMemory();
+	}
+	return totalMemory;
+}
+
+veTextureCube::~veTextureCube()
+{
+
+}
+
+void veTextureCube::bind(unsigned int textureUnit)
+{
+	veTexture::bind(textureUnit);
+	if (_needRefreshTex) {
+		if (_manager->exchangeTextureMemory(this)) {
+			glTexStorage2D(_target, 1, _textures[0]->getInternalFormat(), _textures[0]->getWidth(), _textures[0]->getHeight());
+			for (unsigned int i = 0; i < 6; ++i) {
+				auto &tex = _textures[i];
+				//glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, tex->getInternalFormat(), tex->getWidth(), tex->getHeight(), 0, tex->getPixelFormat(), tex->getDataType(), tex->getData());
+				if (tex->getData()) {
+					glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, 0, 0, tex->getWidth(), tex->getHeight(), tex->getPixelFormat(), tex->getDataType(), tex->getData());
+				}
+			}
+			_needRefreshTex = false;
+		}
+	}
+}
+
+void veTextureCube::setTexture(CubeMapTexType texType, veTexture *texture)
+{
+	_textures[texType] = texture;
+	_needRefreshTex = true;
 }

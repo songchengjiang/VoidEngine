@@ -12,6 +12,7 @@ class veCamera;
 class veLight;
 class veOverlay;
 class veEntity;
+class veSkyBox;
 class veFont;
 class veText;
 class veAnimation;
@@ -37,6 +38,7 @@ public:
 
 	virtual veCamera* createCamera(const std::string &name, const veViewport &vp = { 0, 0, 0, 0 }) = 0;
 	virtual veEntity* createEntity(const std::string &name);
+	virtual veSkyBox* createSkyBox(const std::string &name, veReal size = 500.0f);
 	virtual veAnimationContainer* createAnimationContainer(const std::string &name);
 	virtual veTexture* createTexture(const std::string &name, veTexture::TextureType texType = veTexture::TEXTURE_2D);
 

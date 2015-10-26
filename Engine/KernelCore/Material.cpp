@@ -13,6 +13,8 @@ vePass* vePass::CURRENT_PASS = nullptr;
 bool vePass::CURRENT_DEPTH_TEST = false;
 bool vePass::CURRENT_DEPTH_WRITE = true;
 bool vePass::CURRENT_CULL_FACE = false;
+GLenum vePass::CURRENT_CULL_FACE_MODE = GL_BACK;
+
 veBlendFunc vePass::CURRENT_BLEND_FUNC = veBlendFunc::DISABLE;
 GLenum vePass::CURRENT_POLYGON_MODE = GL_FILL;
 
@@ -21,6 +23,7 @@ vePass::vePass()
 	, _depthTest(true)
 	, _depthWirte(true)
 	, _cullFace(true)
+	, _cullFaceMode(GL_BACK)
 	, _transformFeedback(false)
 	, _blendFunc(veBlendFunc::DISABLE)
 	, _polygonMode(GL_FILL)
@@ -67,6 +70,13 @@ void vePass::apply(const veRenderCommand &command)
 	if (_cullFace != CURRENT_CULL_FACE) {
 		_cullFace ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
 		CURRENT_CULL_FACE = _cullFace;
+	}
+
+	if (CURRENT_CULL_FACE) {
+		if (_cullFaceMode != CURRENT_CULL_FACE_MODE) {
+			glCullFace(_cullFaceMode);
+			CURRENT_CULL_FACE_MODE = _cullFaceMode;
+		}
 	}
 	
 	if (_polygonMode != CURRENT_POLYGON_MODE) {

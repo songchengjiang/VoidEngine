@@ -219,6 +219,12 @@
     <ClCompile Include="..\..\Engine\KernelCore\FontCharDictionary.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\SkyBox.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\BoxRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -416,6 +422,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\FontCharDictionary.h">
       <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\SkyBox.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\BoxRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

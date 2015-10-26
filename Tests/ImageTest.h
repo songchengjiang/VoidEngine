@@ -14,7 +14,7 @@ public:
 			transer->setPosition(veVec3(-0.5f, -0.5f, 0.0f));
 			transer->setScale(veVec3(0.5f));
 
-			veTexture *texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/Desk.exr", "desk"));
+			veTexture *texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "skyboxs/Desk.exr", "desk"));
 			auto overlay = _sceneManager->createOverlay("image0", texture);
 			node->addRenderableObject(overlay);
 

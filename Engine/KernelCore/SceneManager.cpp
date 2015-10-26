@@ -2,6 +2,7 @@
 #include "Event.h"
 #include "Overlay.h"
 #include "Entity.h"
+#include "SkyBox.h"
 #include "Text.h"
 #include "Animation.h"
 
@@ -58,6 +59,14 @@ veOverlay* veSceneManager::createOverlay(const std::string &name, veTexture *tex
 veEntity* veSceneManager::createEntity(const std::string &name)
 {
 	return static_cast<veEntityManager *>(_managerList[veEntityManager::TYPE()])->createEntity(name);
+}
+
+veSkyBox* veSceneManager::createSkyBox(const std::string &name, veReal size)
+{
+	auto skybox = new veSkyBox(size);
+	skybox->_sceneManager = this;
+	skybox->setName(name);
+	return skybox;
 }
 
 veText* veSceneManager::createText(const std::string &name, veFont *font, const std::string &content)

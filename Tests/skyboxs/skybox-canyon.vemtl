@@ -1,0 +1,43 @@
+{
+    "version": "1.0",
+    "name": "skybox.vemtl",
+    "materials": [
+        {
+            "name": "skyboxMat",
+            "techniques": [
+                {
+                    "name": "normal",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": false,
+                            "cullFaceMode":  "FRONT",
+                            "shaders": [
+                              {
+                                "type": "VERTEX_SHADER",
+                                "source": "skybox.vert",
+                                "u_ModelViewProjectMat": "MVP_MATRIX"
+                              },
+                              {
+                                "type": "FRAGMENT_SHADER",
+                                "source": "skybox.frag",
+                                "u_cubeMap": 0
+                              }
+                            ],
+                            "textureUnits": [
+                              {
+                                "name":  "skyboxTex",
+                                "type": "TEX_CUBE",
+                                "source": [ "canyon_right.png", "canyon_left.png", "canyon_down.png", "canyon_top.png", "canyon_front.png", "canyon_back.png" ],
+                                "wrap": "CLAMP",
+                                "filter": "LINEAR"
+                              }
+                            ]
+                        }  
+                    ]
+                }
+            ]
+        }
+    ]
+}
