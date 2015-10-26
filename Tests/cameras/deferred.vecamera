@@ -15,17 +15,17 @@
   "fbo": [
     {
       "attachment": "COLOR0",
-      "source": "deferred.camera.color",
+      "name": "deferred.camera.color",
       "format": "RGBA8"
     },
     {
       "attachment": "COLOR1",
-      "source": "deferred.camera.position",
+      "name": "deferred.camera.position",
       "format": "RGBA32F"
     },
     {
       "attachment": "COLOR2",
-      "source": "deferred.camera.normAndepth",
+      "name": "deferred.camera.normAndepth",
       "format": "RGBA32F"
     }
   ]

@@ -28,17 +28,17 @@
                             ],
                             "textureUnits": [
                               {
-                                "source": "deferred.camera.color",
+                                "name": "deferred.camera.color",
                                 "wrap": "CLAMP",
                                 "filter": "LINEAR"
                               },
                               {
-                                "source": "deferred.camera.position",
+                                "name": "deferred.camera.position",
                                 "wrap": "CLAMP",
                                 "filter": "LINEAR"
                               },
                               {
-                                "source": "deferred.camera.normAndepth",
+                                "name": "deferred.camera.normAndepth",
                                 "wrap": "CLAMP",
                                 "filter": "LINEAR"
                               }

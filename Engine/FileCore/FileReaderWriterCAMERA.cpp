@@ -172,9 +172,12 @@ private:
 			const Value &attachmentVal = fboVal[i];
 			veTexture *texture = nullptr;
 
-			if (attachmentVal.HasMember(SOURCE_KEY.c_str())) {
-				std::string name = attachmentVal[SOURCE_KEY.c_str()].GetString();
+			if (attachmentVal.HasMember(NAME_KEY.c_str())) {
+				std::string name = attachmentVal[NAME_KEY.c_str()].GetString();
 				texture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture(name);
+				if (!texture) {
+					texture = _sceneManager->createTexture(name);
+				}
 			}
 			if (!texture) continue;
 
