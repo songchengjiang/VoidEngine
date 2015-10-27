@@ -33,6 +33,7 @@
     <ClCompile Include="..\..\Engine\FileCore\Printer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Animation.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\BaseManager.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\BillboardRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Bone.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\BoudingBox.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\BoxRenderer.cpp" />
@@ -46,6 +47,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\Font.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\FontCharDictionary.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\FrameBufferObject.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Image.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Light.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\LightManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Material.cpp" />
@@ -59,7 +61,6 @@
     <ClCompile Include="..\..\Engine\KernelCore\OctreeNode.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\OctreeRenderQueue.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\OctreeSceneManager.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\Overlay.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\OverlayRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Parameter.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Plane.cpp" />
@@ -70,6 +71,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\SceneManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Shader.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\SkyBox.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Surface.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\SurfaceRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Text.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Texture.cpp" />
@@ -96,6 +98,7 @@
     <ClInclude Include="..\..\Engine\FileCore\Printer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Animation.h" />
     <ClInclude Include="..\..\Engine\KernelCore\BaseManager.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\BillboardRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Bone.h" />
     <ClInclude Include="..\..\Engine\KernelCore\BoudingBox.h" />
     <ClInclude Include="..\..\Engine\KernelCore\BoxRenderer.h" />
@@ -111,6 +114,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\FontCharDictionary.h" />
     <ClInclude Include="..\..\Engine\KernelCore\FrameBufferObject.h" />
     <ClInclude Include="..\..\Engine\KernelCore\IDGenerator.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Image.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Light.h" />
     <ClInclude Include="..\..\Engine\KernelCore\LightManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\LoopQueue.h" />
@@ -125,7 +129,6 @@
     <ClInclude Include="..\..\Engine\KernelCore\OctreeNode.h" />
     <ClInclude Include="..\..\Engine\KernelCore\OctreeRenderQueue.h" />
     <ClInclude Include="..\..\Engine\KernelCore\OctreeSceneManager.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\Overlay.h" />
     <ClInclude Include="..\..\Engine\KernelCore\OverlayRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Parameter.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Plane.h" />
@@ -139,6 +142,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\Shader.h" />
     <ClInclude Include="..\..\Engine\KernelCore\ShaderDefinationGenerator.h" />
     <ClInclude Include="..\..\Engine\KernelCore\SkyBox.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Surface.h" />
     <ClInclude Include="..\..\Engine\KernelCore\SurfaceRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Text.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Texture.h" />

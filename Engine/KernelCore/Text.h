@@ -1,34 +1,22 @@
 #ifndef _VE_TEXT_
 #define _VE_TEXT_
 #include "Prerequisites.h"
-#include "RenderableObject.h"
+#include "Surface.h"
 #include "VE_Ptr.h"
 #include "Font.h"
 
-class VE_EXPORT veText : public veRenderableObject
+class VE_EXPORT veText : public veSurface
 {
+	friend class veSceneManager;
 public:
 
-	enum TextType
-	{
-		HUD,
-		PLANE,
-	};
-
-	veText(veFont *font, const std::string &content = "");
 	~veText();
 
 	virtual bool handle(veNode *node, veSceneManager *sm, const veEvent &event) override;
 	virtual void update(veNode *node, veSceneManager *sm) override;
 
-	void setTextType(TextType type);
-	TextType getTextType() const { return _type; }
-
 	void setFont(veFont *font);
 	const veFont* getFont() const { return _font.get(); }
-
-	void setColor(const veVec4 &color);
-	const veVec4& getColor() const { return _color; }
 
 	void setContent(const std::string &content);
 	const std::string& getContent() const { return _content; }
@@ -37,25 +25,23 @@ public:
 
 protected:
 
-	void initMaterial();
+	veText(veFont *font, const std::string &content = "");
+
+	virtual void appendMaterial(veMaterial *material);
+	virtual veShader* getFragmentShader();
+
 	void rebuildContentBitmap(int divWidth, int divHeight);
 
 protected:
 
-	TextType          _type;
-	VE_Ptr<veTexture> _texture;
 	VE_Ptr<veFont>    _font;
 	std::string       _content;
-	veVec4            _color;
-	VE_Ptr<veUniform> _colorUniform;
-	VE_Ptr<veUniform> _scaleMatUniform;
 	float             _charSpace;
 
 	int               _width;
 	int               _height;
 
 	bool              _needRefresh;
-	bool              _needReInitMaterials;
 };
 
 #endif

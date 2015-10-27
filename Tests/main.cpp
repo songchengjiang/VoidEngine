@@ -17,9 +17,9 @@ int main(int argc, char **argv)
 	//auto test = new RenToTex;
 	//auto test = new MeshTest;
 	//auto test = new ImageTest;
-	//auto test = new TextTest;
+	auto test = new TextTest;
 	//auto test = new PerformanceTest;
 	//auto test = new IntersectionTest;
-	auto test = new SkyBoxTest;
+	//auto test = new SkyBoxTest;
 	return test->run();
 }

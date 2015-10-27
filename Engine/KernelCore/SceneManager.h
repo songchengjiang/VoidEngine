@@ -10,11 +10,12 @@ class veEvent;
 class veNode;
 class veCamera;
 class veLight;
-class veOverlay;
+class veSurface;
 class veEntity;
 class veSkyBox;
 class veFont;
 class veText;
+class veImage;
 class veAnimation;
 class veAnimationContainer;
 class veBaseManager;
@@ -31,8 +32,9 @@ public:
 	veVisualiser* createVisualiser(int w, int h, const std::string &title);
 	veVisualiser* getVisualiser() { return _visualiser.get(); }
 	virtual veNode* createNode(const std::string &name) = 0;
-	virtual veOverlay* createOverlay(const std::string &name, veTexture *texture);
 	virtual veLight* createLight(const std::string &type, const std::string &name);
+	virtual veSurface* createSurface(const std::string &name);
+	virtual veImage* createImage(const std::string &name, veTexture *texture);
 	virtual veText* createText(const std::string &name, veFont *font, const std::string &content = "");
 	virtual veAnimation* createAnimation(const std::string &name);
 

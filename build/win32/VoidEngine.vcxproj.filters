@@ -126,9 +126,6 @@
     <ClCompile Include="..\..\Engine\KernelCore\NodeVisitor.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\Overlay.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\Parameter.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
@@ -225,6 +222,15 @@
     <ClCompile Include="..\..\Engine\KernelCore\BoxRenderer.cpp">
       <Filter>KernelCore\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Surface.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Image.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\BillboardRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -315,9 +321,6 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\NodeVisitor.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\Overlay.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\Parameter.h">
@@ -427,6 +430,15 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\BoxRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Surface.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Image.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\BillboardRenderer.h">
       <Filter>KernelCore\Renderer</Filter>
     </ClInclude>
   </ItemGroup>

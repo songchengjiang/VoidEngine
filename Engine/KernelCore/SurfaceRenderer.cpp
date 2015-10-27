@@ -2,7 +2,6 @@
 #include "RenderQueue.h"
 #include "Visualiser.h"
 #include "Node.h"
-#include "Overlay.h"
 #include "MatrixPtr.h"
 
 veSurfaceRenderer::veSurfaceRenderer()

@@ -7,17 +7,13 @@
 #include "FileCore/File.h"
 
 veText::veText(veFont *font, const std::string &content)
-	: _type(HUD)
-	, _font(font)
+	: _font(font)
 	, _content(content)
-	, _color(veVec4::WHITE)
 	, _charSpace(0)
 	, _width(0)
 	, _height(0)
 	, _needRefresh(true)
-	, _needReInitMaterials(true)
 {
-	_renderer = new veOverlayRenderer;
 }
 
 veText::~veText()
@@ -37,41 +33,21 @@ bool veText::handle(veNode *node, veSceneManager *sm, const veEvent &event)
 void veText::update(veNode *node, veSceneManager *sm)
 {
 	if (!_isVisible) return;
-	if (_needReInitMaterials) {
-		initMaterial();
-		_needReInitMaterials = false;
+
+	if (_needRefreshMaterial) {
+		initDefaultMaterial();
+		_needRefreshMaterial = false;
 	}
 	if (_needRefresh) {
 		rebuildContentBitmap(sm->getVisualiser()->width(), sm->getVisualiser()->height());
 		_needRefresh = false;
 	}
-	if (_renderer.valid())
-		_renderer->visit(node, this, sm);
-}
-
-void veText::setTextType(TextType type)
-{
-	if (type == _type) return;
-	_type = type;
-	if (_type == HUD) {
-		_renderer = new veOverlayRenderer;
-	}
-	else if (_type == PLANE) {
-		_renderer = new veSurfaceRenderer;
-	}
-	_needReInitMaterials = true;
-	_needRefresh = true;
+	veRenderableObject::update(node, sm);
 }
 
 void veText::setFont(veFont *font)
 {
 	_font = font;
-	_needRefresh = true;
-}
-
-void veText::setColor(const veVec4 &color)
-{
-	_color = color;
 	_needRefresh = true;
 }
 
@@ -81,38 +57,20 @@ void veText::setContent(const std::string &content)
 	_needRefresh = true;
 }
 
-void veText::initMaterial()
+void veText::appendMaterial(veMaterial *material)
 {
-	static const char *PLANE_V_SHADER = " \
-	layout(location = 0) in vec3 position; \n \
-	layout(location = 1) in vec3 normal; \n \
-	layout(location = 2) in vec2 texcoord; \n \
-	uniform mat4 u_ModelViewProjectMat; \n \
-	uniform mat4 u_ScaleMat; \n \
-	out vec3 v_normal; \n \
-	out vec2 v_texcoord; \n \
-	void main() \n \
-	{                   \n \
-		v_normal = normal;  \n \
-		v_texcoord = texcoord; \n \
-		gl_Position = u_ModelViewProjectMat * u_ScaleMat * vec4(position, 1.0); \n \
-	}";
+	auto pass = material->getTechnique(0)->getPass(0);
+	pass->blendFunc().src = GL_ONE;
+	pass->blendFunc().dst = GL_ONE_MINUS_SRC_ALPHA;
 
-	static const char *HUD_V_SHADER = " \
-	layout(location = 0) in vec3 position; \n \
-	layout(location = 1) in vec3 normal; \n \
-	layout(location = 2) in vec2 texcoord; \n \
-	uniform mat4 u_ModelMat; \n \
-	uniform mat4 u_ScaleMat; \n \
-	out vec3 v_normal; \n \
-	out vec2 v_texcoord; \n \
-	void main() \n \
-	{                   \n \
-		v_normal = normal;  \n \
-		v_texcoord = texcoord; \n \
-		gl_Position = u_ModelMat * u_ScaleMat * vec4(position, 1.0); \n \
-	}";
+	if (!_texture.valid())
+		_texture = _sceneManager->createTexture(_name + std::string("-TextTexture"));
 
+	veSurface::appendMaterial(material);
+}
+
+veShader* veText::getFragmentShader()
+{
 	static const char *F_SHADER = " \
 	uniform sampler2D u_texture; \n \
 	uniform vec4 u_Color; \n \
@@ -126,47 +84,8 @@ void veText::initMaterial()
 		fragColor = u_Color * glyph; \n \
 	}";
 
-	_materials = new veMaterialArray;
-	auto material = new veMaterial;
-	auto tech = new veTechnique;
-	auto pass = new vePass;
-	_texture = _sceneManager->createTexture(_name + std::string("-Texture"));
-	//_texture->setFilterMode(veTexture::LINEAR);
-	_texture->setWrapMode(veTexture::CLAMP);
-	material->addTechnique(tech);
-	tech->addPass(pass);
-	pass->addTexture(_texture.get());
-
-	pass->depthTest() = false;
-	pass->depthWrite() = false;
-	pass->cullFace() = true;
-	pass->blendFunc().src = GL_ONE;
-	pass->blendFunc().dst = GL_ONE_MINUS_SRC_ALPHA;
-
-	veShader *vShader = nullptr;
-	if (_type == HUD) {
-		vShader = new veShader(veShader::VERTEX_SHADER, HUD_V_SHADER);
-		pass->addUniform(new veUniform("u_ModelMat", M_MATRIX));
-	}
-	else if (_type == PLANE) {
-		vShader = new veShader(veShader::VERTEX_SHADER, PLANE_V_SHADER);
-		pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
-	}	
-
-	auto fShader = new veShader(veShader::FRAGMENT_SHADER, F_SHADER);
-
-	pass->setShader(vShader);
-	pass->setShader(fShader);
-
-	pass->addUniform(new veUniform("u_texture", 0));
-	_colorUniform = new veUniform("u_Color", _color);
-	pass->addUniform(_colorUniform.get());
-	_scaleMatUniform = new veUniform("u_ScaleMat", veMat4::IDENTITY);
-	pass->addUniform(_scaleMatUniform.get());
-
-	_materials->addMaterial(material);
+	return new veShader(veShader::FRAGMENT_SHADER, F_SHADER);
 }
-
 
 void veText::rebuildContentBitmap(int divWidth, int divHeight)
 {
@@ -200,36 +119,11 @@ void veText::rebuildContentBitmap(int divWidth, int divHeight)
 		widthOffset += (charBitmap->advance.x >> 6);
 	}
 
-
-	//unsigned char *temp = new unsigned char[width * fontSpace];
-	//memset(temp, 0, width * fontSpace * sizeof(unsigned char));
-	//int charStartOffset = charSpace;
-	//for (size_t i = 0; i < _content.size(); ++i) {
-	//	auto glyph = _font->getGlyphOfCharCode(_content[i]);
-	//	for (unsigned int h = 0; h < glyph->bitmap.rows; ++h) {
-	//		memcpy(&temp[(h + horiSpace - (glyph->bitmap.rows - glyph->bitmap_top)) * width + charStartOffset + offset], &glyph->bitmap.buffer[(glyph->bitmap.rows - h - 1) * glyph->bitmap.width], glyph->bitmap.width * sizeof(unsigned char));
-	//	}
-	//	charStartOffset += charSpace + (glyph->advance.x >> 6);
-	//}
-	//actualWidth = FOUR_BYTES_ALIGN(charStartOffset);
-
-	//unsigned char *buf = new unsigned char[actualWidth * fontSpace];
-	//for (int h = 0; h < fontSpace; ++h) {
-	//	memcpy(&buf[h * actualWidth], &temp[h * width], actualWidth * sizeof(unsigned char));
-	//}
-
-	//for (unsigned int h = 0; h < height; ++h) {
-	//	for (unsigned int w = 0; w < width; ++w) {
-	//		std::cout << (unsigned int)buf[h * width + w] << " ";
-	//	}
-	//	veLog(" ");
-	//}
-
 	_texture->storage(width, height, 1, GL_R8, GL_RED, GL_UNSIGNED_BYTE, buf);
-	if (_type == HUD)
-		_scaleMatUniform->setValue(veMat4::scale(veVec3((float)width / (float)divWidth, (float)height / (float)divHeight, 0.0f)));
-	else if (_type == PLANE)
-		_scaleMatUniform->setValue(veMat4::scale(veVec3(width / (float)divWidth, height / (float)divWidth, 0.0f)));
+	if (_type == OVERLAY)
+		_scaleMat->setValue(veMat4::scale(veVec3((float)width / (float)divWidth, (float)height / (float)divHeight, 0.0f)));
+	else if (_type == SURFACE || _type == veSurface::BILLBOARD)
+		_scaleMat->setValue(veMat4::scale(veVec3(width / 2.0f, height / 2.0f, 0.0f)));
 
 	_width = width;
 	_height = height;

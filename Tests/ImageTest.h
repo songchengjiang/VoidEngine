@@ -14,8 +14,8 @@ public:
 			transer->setPosition(veVec3(-0.5f, -0.5f, 0.0f));
 			transer->setScale(veVec3(0.5f));
 
-			veTexture *texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "skyboxs/Desk.exr", "desk"));
-			auto overlay = _sceneManager->createOverlay("image0", texture);
+			veTexture *texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/Desk.exr", "desk"));
+			auto overlay = _sceneManager->createImage("image0", texture);
 			node->addRenderableObject(overlay);
 
 			root->addChild(node);
@@ -28,10 +28,9 @@ public:
 			transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
 
 			veTexture *texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/kill.png", "kill"));
-			auto overlay = _sceneManager->createOverlay("image1", texture);
-			overlay->setRenderOrder(10);
+			auto overlay = _sceneManager->createImage("image1", texture);
 			node->addRenderableObject(overlay);
-			//overlay->setAlphaThreshold(1.0f);
+			overlay->setAlphaThreshold(0.5f);
 
 			root->addChild(node);
 		}
@@ -44,7 +43,7 @@ public:
 			transer->setScale(veVec3(0.5f));
 
 			veTexture *texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/sphere.jpg", "sphere"));
-			auto overlay = _sceneManager->createOverlay("image2", texture);
+			auto overlay = _sceneManager->createImage("image2", texture);
 			node->addRenderableObject(overlay);
 
 			root->addChild(node);

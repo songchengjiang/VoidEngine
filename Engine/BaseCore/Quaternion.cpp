@@ -242,5 +242,40 @@ void veQuat::fromAngleAxis(const veReal angle, const veVec3 &axes)
 
 void veQuat::fromMat3(const veMat3 &mat)
 {
+	// Algorithm in Ken Shoemake's article in 1987 SIGGRAPH course notes
+	// article "Quaternion Calculus and Fast Animation".
 
+	veReal fTrace = mat[0][0] + mat[1][1] + mat[2][2];
+	veReal fRoot;
+
+	if (fTrace > 0.0)
+	{
+		// |w| > 1/2, may as well choose w > 1/2
+		fRoot = veMath::sqrt(fTrace + 1.0f);  // 2w
+		_w = 0.5f*fRoot;
+		fRoot = 0.5f / fRoot;  // 1/(4w)
+		_x = (mat[2][1] - mat[1][2])*fRoot;
+		_y = (mat[0][2] - mat[2][0])*fRoot;
+		_z = (mat[1][0] - mat[0][1])*fRoot;
+	}
+	else
+	{
+		// |w| <= 1/2
+		static size_t s_iNext[3] = { 1, 2, 0 };
+		size_t i = 0;
+		if (mat[1][1] > mat[0][0])
+			i = 1;
+		if (mat[2][2] > mat[i][i])
+			i = 2;
+		size_t j = s_iNext[i];
+		size_t k = s_iNext[j];
+
+		fRoot = veMath::sqrt(mat[i][i] - mat[j][j] - mat[k][k] + 1.0f);
+		veReal* apkQuat[3] = { &_x, &_y, &_z };
+		*apkQuat[i] = 0.5f*fRoot;
+		fRoot = 0.5f / fRoot;
+		_w = (mat[k][j] - mat[j][k])*fRoot;
+		*apkQuat[j] = (mat[j][i] + mat[i][j])*fRoot;
+		*apkQuat[k] = (mat[k][i] + mat[i][k])*fRoot;
+	}
 }

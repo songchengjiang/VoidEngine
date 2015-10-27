@@ -1,9 +1,10 @@
 #include "SceneManager.h"
 #include "Event.h"
-#include "Overlay.h"
+#include "Surface.h"
+#include "Image.h"
+#include "Text.h"
 #include "Entity.h"
 #include "SkyBox.h"
-#include "Text.h"
 #include "Animation.h"
 
 #include "LightManager.h"
@@ -48,12 +49,20 @@ veLight* veSceneManager::createLight(const std::string &type, const std::string 
 	return light;
 }
 
-veOverlay* veSceneManager::createOverlay(const std::string &name, veTexture *texture)
+veSurface* veSceneManager::createSurface(const std::string &name)
 {
-	auto overlay = new veOverlay(texture);
-	overlay->_sceneManager = this;
-	overlay->setName(name);
-	return overlay;
+	auto surface = new veSurface;
+	surface->_sceneManager = this;
+	surface->setName(name);
+	return surface;
+}
+
+veImage* veSceneManager::createImage(const std::string &name, veTexture *texture)
+{
+	auto image = new veImage(texture);
+	image->_sceneManager = this;
+	image->setName(name);
+	return image;
 }
 
 veEntity* veSceneManager::createEntity(const std::string &name)

@@ -156,7 +156,7 @@ public:
 			node->addComponent(transer);
 			//transer->setScale(veVec3(0.5f));
 
-			auto overlay = new veOverlay;
+			auto overlay = _sceneManager->createSurface("overlay");
 			node->addRenderableObject(overlay);
 			overlay->setMaterialArray(mats);
 			root->addChild(node);

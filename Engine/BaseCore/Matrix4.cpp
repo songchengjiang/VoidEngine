@@ -202,23 +202,26 @@ void veMat4::decomposition(veVec3* position, veVec3* scale, veQuat* orientation)
 		veVec3 row0 = veVec3(m[0][0], m[0][1], m[0][2]);
 		veVec3 row1 = veVec3(m[1][0], m[1][1], m[1][2]);
 		veVec3 row2 = veVec3(m[2][0], m[2][1], m[2][2]);
+		float row0Length = row0.length();
+		float row1Length = row1.length();
+		float row2Length = row2.length();
 		if (scale) {
-			scale->x() = row0.length();
-			scale->y() = row1.length();
-			scale->z() = row2.length();
+			scale->x() = row0Length;
+			scale->y() = row1Length;
+			scale->z() = row2Length;
 		}
 
 		if (orientation) {
-			if (scale->x()) {
-				row0 /= scale->x();
+			if (row0Length) {
+				row0 /= row0Length;
 			}
 
-			if (scale->y()) {
-				row1 /= scale->y();
+			if (row1Length) {
+				row1 /= row1Length;
 			}
 
-			if (scale->z()) {
-				row2 /= scale->z();
+			if (row2Length) {
+				row2 /= row2Length;
 			}
 
 			orientation->set(veMat3(row0.x(), row0.y(), row0.z()

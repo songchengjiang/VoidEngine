@@ -67,16 +67,48 @@ public:
 			entity->setAnimationContainer(animationContainer);
 
 			veNode *textNode = _sceneManager->createNode("textnode");
-			auto text = _sceneManager->createText("text2", new veFont(fontFile, 128), "Boss");
-			text->setTextType(veText::PLANE);
+			auto text = _sceneManager->createText("text2", new veFont(fontFile, 64), "Boss");
+			text->setType(veSurface::BILLBOARD);
 			text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
 			textNode->addRenderableObject(text);
 			transer = new veTransformer;
 			textNode->addComponent(transer);
 			transer->setPosition(veVec3(0.0f, 3.5f, 0.0f));
+			transer->setScale(veVec3(0.005f));
 
 			mouseNode->addChild(textNode);
 			root->addChild(mouseNode);
+		}
+
+		{
+			veNode *node = _sceneManager->createNode("node3");
+			veTransformer *transer = new veTransformer;
+			node->addComponent(transer);
+			transer->setPosition(veVec3(5.0f, 2.0f, 0.0f));
+			transer->setScale(veVec3(0.005f));
+
+			veTexture *texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/Desk.exr", "desk"));
+			auto image = _sceneManager->createImage("image0", texture);
+			image->setType(veSurface::SURFACE);
+			node->addRenderableObject(image);
+
+			root->addChild(node);
+		}
+
+		{
+			veNode *node = _sceneManager->createNode("node4");
+			veTransformer *transer = new veTransformer;
+			node->addComponent(transer);
+			transer->setPosition(veVec3(-5.0f, 2.0f, 0.0f));
+			transer->setScale(veVec3(0.01f));
+
+			veTexture *texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/kill.png", "kill"));
+			auto image = _sceneManager->createImage("image0", texture);
+			image->setType(veSurface::BILLBOARD);
+			image->setAlphaThreshold(0.5f);
+			node->addRenderableObject(image);
+
+			root->addChild(node);
 		}
 
 		_sceneManager->getRootNode()->addChild(root);
