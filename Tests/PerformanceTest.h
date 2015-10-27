@@ -32,13 +32,14 @@ public:
 		int lineCount = 7;
 		float lineHalfSize = (lineCount / 2) * 100;
 		veNode *root = _sceneManager->createNode("root");
+		veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, MODEL_ANIM_FILES[2], "animContainer"));
 		auto pu = new PerformanceUpdater();
 		char str[256];
 		for (float  z = -lineHalfSize; z <= lineHalfSize; z += 100) {
 			for (float  y = -lineHalfSize; y <= lineHalfSize; y += 100) {
 				for (float x = -lineHalfSize; x <= lineHalfSize; x += 100) {
-					//unsigned int idx = (veMath::randomUnitization() * 0.999f) * (sizeof(MODEL_FILES) / sizeof(MODEL_FILES[0]));
-					unsigned int idx = 2;
+					unsigned int idx = (veMath::randomUnitization() * 0.999f) * (sizeof(MODEL_FILES) / sizeof(MODEL_FILES[0]));
+					//unsigned int idx = 1;
 					sprintf(str, "testing-%d-%d-%d", int(x), int(y), int(z));
 					veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, MODEL_FILES[idx], str));
 					veNode *node = _sceneManager->createNode(str);
@@ -50,10 +51,11 @@ public:
 					root->addChild(node);
 
 					if (!MODEL_ANIM_FILES[idx].empty()) {
-						veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, MODEL_ANIM_FILES[idx], str));
-						animationContainer->start();
-						animationContainer->setLoopAnimation(true);
-						entity->setAnimationContainer(animationContainer);
+						veAnimationPlayer* player = _sceneManager->createAnimationPlayer(str, animationContainer);
+						player->start();
+						player->setFrameRate(animationContainer->getFrameRate() * veMath::randomUnitization());
+						player->setLoopAnimation(true);
+						player->attachEntity(entity);
 					}
 				}
 			}
@@ -78,8 +80,8 @@ public:
 		_sceneManager->getRootNode()->addComponent(pu);
 
 		auto debuger = new veOctreeDebuger;
-		debuger->debugDrawBoundingBoxWireframe(true);
-		debuger->debugDrawOctree(false);
+		debuger->debugDrawBoundingBoxWireframe(true, veVec4(1.0f, 0.0f, 0.0f, 1.0));
+		debuger->debugDrawOctree(true);
 		_sceneManager->getRootNode()->addRenderableObject(debuger);
 
 		_sceneManager->getRootNode()->addChild(root);

@@ -11,6 +11,7 @@ class veVisualiser;
 class veSceneManager;
 class VE_EXPORT veRenderableObject
 {
+	friend class veNode;
 	friend class veSceneManager;
 public:
 
@@ -36,12 +37,15 @@ public:
 	void setBoundingBox(const veBoundingBox &bbox) { _boundingBox = bbox; }
 	const veBoundingBox& getBoundingBox() const { return _boundingBox; }
 
+	const std::vector<veNode *> getParents() const { return _parents; }
+
 	void dirtyBoundingBox() { _isDirtyBoundingBox = true; }
 
 protected:
 
 	VE_Ptr<veRenderer> _renderer;
 	VE_Ptr<veMaterialArray> _materials;
+	std::vector<veNode *> _parents;
 	veBoundingBox      _boundingBox;
 	bool              _isVisible;
 	bool              _isDirtyBoundingBox;

@@ -40,9 +40,10 @@ public:
 			scene->addChild(node);
 
 			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim-0"));
-			animationContainer->start();
-			animationContainer->setLoopAnimation(true);
-			entity->setAnimationContainer(animationContainer);
+			veAnimationPlayer* player = _sceneManager->createAnimationPlayer("player0", animationContainer);
+			player->start();
+			player->setLoopAnimation(true);
+			player->attachEntity(entity);
 		}
 
 		{

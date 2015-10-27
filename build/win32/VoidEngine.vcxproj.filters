@@ -231,6 +231,9 @@
     <ClCompile Include="..\..\Engine\KernelCore\BillboardRenderer.cpp">
       <Filter>KernelCore\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\AnimationManager.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -440,6 +443,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\BillboardRenderer.h">
       <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\AnimationManager.h">
+      <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

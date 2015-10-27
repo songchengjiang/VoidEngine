@@ -10,6 +10,7 @@
 #include "LightManager.h"
 #include "TextureManager.h"
 #include "EntityManager.h"
+#include "AnimationManager.h"
 
 veSceneManager::veSceneManager()
 	: _deltaTime(0.0)
@@ -18,6 +19,7 @@ veSceneManager::veSceneManager()
 	_managerList[veLightManager::TYPE()] = new veLightManager(this);
 	_managerList[veTextureManager::TYPE()] = new veTextureManager(this);
 	_managerList[veEntityManager::TYPE()] = new veEntityManager(this);
+	_managerList[veAnimationManager::TYPE()] = new veAnimationManager(this);
 }
 
 veSceneManager::~veSceneManager()
@@ -88,16 +90,17 @@ veText* veSceneManager::createText(const std::string &name, veFont *font, const 
 
 veAnimationContainer* veSceneManager::createAnimationContainer(const std::string &name)
 {
-	auto anim = new veAnimationContainer;
-	anim->setName(name);
-	return anim;
+	return static_cast<veAnimationManager *>(_managerList[veAnimationManager::TYPE()])->createAnimationContainer(name);
 }
 
 veAnimation* veSceneManager::createAnimation(const std::string &name)
 {
-	auto anim = new veAnimation;
-	anim->setName(name);
-	return anim;
+	return static_cast<veAnimationManager *>(_managerList[veAnimationManager::TYPE()])->createAnimation(name);
+}
+
+veAnimationPlayer* veSceneManager::createAnimationPlayer(const std::string &name, veAnimationContainer *container)
+{
+	return static_cast<veAnimationManager *>(_managerList[veAnimationManager::TYPE()])->createAnimationPlayer(name, container);
 }
 
 veTexture* veSceneManager::createTexture(const std::string &name, veTexture::TextureType texType)
@@ -133,11 +136,22 @@ bool veSceneManager::simulation()
 	if (glfwWindowShouldClose(_visualiser->_hwnd)) return false;
 	glfwMakeContextCurrent(_visualiser->_hwnd);
 
+	for (auto &manager : _managerList) {
+		manager.second->preUpdate();
+	}
 	update();
+	for (auto &manager : _managerList) {
+		manager.second->postUpdate();
+	}
+
+	for (auto &manager : _managerList) {
+		manager.second->preDraw();
+	}
 	render();
 	for (auto &manager : _managerList) {
-		manager.second->update(this);
+		manager.second->postDraw();
 	}
+
 	return true;
 }
 

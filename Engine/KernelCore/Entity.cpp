@@ -17,9 +17,6 @@ veEntity::~veEntity()
 void veEntity::update(veNode *node, veSceneManager *sm)
 {
 	if (!_isVisible) return;
-	if (_animationContainer.valid()) {
-		_animationContainer->update(node, this, sm);
-	}
 	if (_isDirtyBoundingBox) {
 		dirtyBoundingBox();
 		_isDirtyBoundingBox = false;

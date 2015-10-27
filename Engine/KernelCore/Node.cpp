@@ -95,6 +95,7 @@ int veNode::addRenderableObject(veRenderableObject *obj)
 	if (!obj) return -1;
 	auto iter = std::find(_renderableObjects.begin(), _renderableObjects.end(), obj);
 	if (iter != _renderableObjects.end()) return -1;
+	obj->_parents.push_back(this);
 	_renderableObjects.push_back(obj);
 	return int(_renderableObjects.size() - 1);
 }
@@ -103,6 +104,10 @@ bool veNode::removeRenderableObject(veRenderableObject *obj)
 {
 	auto iter = std::find(_renderableObjects.begin(), _renderableObjects.end(), obj);
 	if (iter == _renderableObjects.end()) return false;
+	auto parent = std::find(iter->get()->_parents.begin(), iter->get()->_parents.end(), this);
+	if (parent != iter->get()->_parents.end()) {
+		iter->get()->_parents.erase(parent);
+	}
 	_renderableObjects.erase(iter);
 	return true;
 }
@@ -111,6 +116,10 @@ veRenderableObject* veNode::removeRenderableObject(size_t objIndex)
 {
 	veAssert(objIndex < _renderableObjects.size());
 	veRenderableObject* obj = _renderableObjects[objIndex].get();
+	auto parent = std::find(obj->_parents.begin(), obj->_parents.end(), this);
+	if (parent != obj->_parents.end()) {
+		obj->_parents.erase(parent);
+	}
 	_renderableObjects.erase(_renderableObjects.begin() + objIndex);
 	return obj;
 }

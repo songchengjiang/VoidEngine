@@ -32,9 +32,6 @@ public:
 	void setRootMeshNode(veMeshNode *meshNode) { _meshNodeRoot = meshNode; }
 	veMeshNode* getRootMeshNode() { return _meshNodeRoot.get(); }
 
-	void setAnimationContainer(veAnimationContainer *animContainer) { _animationContainer = animContainer; }
-	veAnimationContainer* getAnimationContainer() { return _animationContainer.get(); }
-
 	void dirtyBoundingBox();
 
 protected:
@@ -46,7 +43,6 @@ protected:
 
 	MeshList           _meshList;
 	VE_Ptr<veMeshNode> _meshNodeRoot;
-	VE_Ptr<veAnimationContainer> _animationContainer;
 	std::string        _fileName;
 	bool               _needRefresh;
 };

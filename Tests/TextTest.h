@@ -61,15 +61,16 @@ public:
 			//transer->setRotation(veQuat(veMath::HALF_PI, veVec3::UNIT_Y));
 			mouseNode->addChild(node);
 
-			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim"));
-			animationContainer->start();
-			animationContainer->setLoopAnimation(true);
-			entity->setAnimationContainer(animationContainer);
+			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim-0"));
+			veAnimationPlayer* player = _sceneManager->createAnimationPlayer("player0", animationContainer);
+			player->start();
+			player->setLoopAnimation(true);
+			player->attachEntity(entity);
 
 			veNode *textNode = _sceneManager->createNode("textnode");
 			auto text = _sceneManager->createText("text2", new veFont(fontFile, 64), "Boss");
 			text->setType(veSurface::BILLBOARD);
-			text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
+			text->setColor(veVec4(0.0f, 1.0f, 0.0f, 1.0f));
 			textNode->addRenderableObject(text);
 			transer = new veTransformer;
 			textNode->addComponent(transer);

@@ -35,7 +35,7 @@ public:
 
 		if (event.getEventType() & veEvent::VE_KEYBOARD_EVENT) {
 			if (event.getEventType() == veEvent::VE_DOWN && event.getKeySymbol() == veEvent::VE_KEY_S) {
-				_animationContainer->pause();
+				_animationPlayer->pause();
 			}
 		}
 
@@ -49,7 +49,7 @@ public:
 	}
 
 	veDebuger *debuger;
-	veAnimationContainer* _animationContainer;
+	veAnimationPlayer* _animationPlayer;
 	std::vector<std::pair<veVec3, veVec3> > _lines;
 };
 
@@ -116,10 +116,12 @@ public:
 			root->addChild(node);
 
 			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim-0"));
-			animationContainer->start();
-			animationContainer->setLoopAnimation(true);
-			entity->setAnimationContainer(animationContainer);
-			ih->_animationContainer = animationContainer;
+			veAnimationPlayer* player = _sceneManager->createAnimationPlayer("player0", animationContainer);
+			player->start();
+			player->setLoopAnimation(true);
+			player->attachEntity(entity);
+
+			ih->_animationPlayer = player;
 		}
 
 		{
@@ -137,10 +139,11 @@ public:
 			root->addChild(node);
 
 			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim-1"));
-			animationContainer->start();
-			animationContainer->setFrameRate(10.0f);
-			animationContainer->setLoopAnimation(true);
-			entity->setAnimationContainer(animationContainer);
+			veAnimationPlayer* player = _sceneManager->createAnimationPlayer("player1", animationContainer);
+			player->start();
+			player->setFrameRate(10.0f);
+			player->setLoopAnimation(true);
+			player->attachEntity(entity);
 		}
 
 		auto debuger = new veOctreeDebuger;

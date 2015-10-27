@@ -18,6 +18,7 @@ class veText;
 class veImage;
 class veAnimation;
 class veAnimationContainer;
+class veAnimationPlayer;
 class veBaseManager;
 class veRay;
 typedef std::vector< veNode* > NodeList;
@@ -37,11 +38,12 @@ public:
 	virtual veImage* createImage(const std::string &name, veTexture *texture);
 	virtual veText* createText(const std::string &name, veFont *font, const std::string &content = "");
 	virtual veAnimation* createAnimation(const std::string &name);
+	virtual veAnimationContainer* createAnimationContainer(const std::string &name);
 
 	virtual veCamera* createCamera(const std::string &name, const veViewport &vp = { 0, 0, 0, 0 }) = 0;
 	virtual veEntity* createEntity(const std::string &name);
 	virtual veSkyBox* createSkyBox(const std::string &name, veReal size = 500.0f);
-	virtual veAnimationContainer* createAnimationContainer(const std::string &name);
+	virtual veAnimationPlayer* createAnimationPlayer(const std::string &name, veAnimationContainer *container);
 	virtual veTexture* createTexture(const std::string &name, veTexture::TextureType texType = veTexture::TEXTURE_2D);
 
 	virtual void requestRender(veNode *node) = 0;

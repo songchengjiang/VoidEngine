@@ -45,6 +45,7 @@ public:
 
 		}
 
+		veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim"));
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu-0"));
 			veNode *node = _sceneManager->createNode("node3");
@@ -58,10 +59,10 @@ public:
 			//transer->setRotation(veQuat(veMath::HALF_PI, veVec3::UNIT_Y));
 			root->addChild(node);
 
-			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim-0"));
-			animationContainer->start();
-			animationContainer->setLoopAnimation(true);
-			entity->setAnimationContainer(animationContainer);
+			veAnimationPlayer* player = _sceneManager->createAnimationPlayer("player0", animationContainer);
+			player->start();
+			player->setLoopAnimation(true);
+			player->attachEntity(entity);
 		}
 
 		{
@@ -77,11 +78,11 @@ public:
 			//transer->setRotation(veQuat(veMath::HALF_PI, veVec3::UNIT_Y));
 			root->addChild(node);
 
-			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim-1"));
-			animationContainer->start();
-			animationContainer->setFrameRate(10.0f);
-			animationContainer->setLoopAnimation(true);
-			entity->setAnimationContainer(animationContainer);
+			veAnimationPlayer* player = _sceneManager->createAnimationPlayer("player1", animationContainer);
+			player->start();
+			player->setFrameRate(10.0f);
+			player->setLoopAnimation(true);
+			player->attachEntity(entity);
 		}
 
 		auto debuger = new veOctreeDebuger;

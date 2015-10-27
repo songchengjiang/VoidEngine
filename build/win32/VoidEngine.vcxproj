@@ -32,6 +32,7 @@
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterVEMTL.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\Printer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Animation.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\AnimationManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\BaseManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\BillboardRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Bone.cpp" />
@@ -97,6 +98,7 @@
     <ClInclude Include="..\..\Engine\FileCore\FileReaderWriter.h" />
     <ClInclude Include="..\..\Engine\FileCore\Printer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Animation.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\AnimationManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\BaseManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\BillboardRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Bone.h" />

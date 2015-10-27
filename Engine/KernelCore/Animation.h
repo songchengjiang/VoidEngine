@@ -10,6 +10,12 @@
 
 class veEntity;
 class veMeshNode;
+class veAnimKeyValues;
+class veAnimation;
+typedef std::pair<veMeshNode*, veAnimKeyValues*> BoneAnimationKeyValues;
+typedef std::vector<BoneAnimationKeyValues> BoneAnimations;
+typedef std::map< veAnimation*, BoneAnimations> AnimationMap;
+
 class VE_EXPORT veAnimKeyValues
 {
 public:
@@ -34,7 +40,7 @@ private:
 
 class VE_EXPORT veAnimation
 {
-	friend class veSceneManager;
+	friend class veAnimationManager;
 public:
 	~veAnimation();
 
@@ -47,38 +53,56 @@ public:
 	void setFrameRate(double fRate) { _frameRate = fRate; }
 	double getFrameRate() const { return _frameRate; }
 
-	void update(veEntity *entity, double frame);
+	void update(const BoneAnimations &bonesAnims, double simulationFrame);
 
-private:
-
-	veAnimation();
 	veAnimKeyValues* getAnimKeyValuesByName(const std::string &name);
 
 private:
 
+	veAnimation();
+
+private:
+
 	std::vector< VE_Ptr<veAnimKeyValues> > _animsKeyValuse;
-	std::map< veMeshNode*, veAnimKeyValues* > _boneAnims;
 	double _duration;
 	double _frameRate;
-	bool _needRefresh;
 };
 
 class VE_EXPORT veAnimationContainer
 {
+	friend class veAnimationManager;
 public:
-	veAnimationContainer();
 	~veAnimationContainer();
 
 	USE_VE_PTR;
 	USE_NAME_PROPERTY;
 
-	void update(veNode *node, veEntity *entity, veSceneManager *sm);
-
 	void addAnimationChannel(veAnimation *anim);
 	veAnimation* getAnimationChannel(unsigned int idx);
 	size_t getAnimationChannelNum() const { return _animations.size(); }
 
-	void setActiveAnimationChannel(unsigned int idx);
+	double getDuration() const;
+	double getFrameRate() const;
+
+private:
+
+	veAnimationContainer();
+
+private:
+
+	std::vector<VE_Ptr<veAnimation>> _animations;
+};
+
+class VE_EXPORT veAnimationPlayer
+{
+	friend class veAnimationManager;
+public:
+	~veAnimationPlayer();
+
+	USE_VE_PTR;
+	USE_NAME_PROPERTY;
+
+	void update(veSceneManager *sm);
 
 	void start(double sFrame = 0, double eFrame = -1);
 	void pause();
@@ -88,9 +112,21 @@ public:
 	void setLoopAnimation(bool isLoop) { _isLoop = isLoop; }
 	bool isLoopAnimation() { return _isLoop; }
 
+	void attachEntity(veEntity *entity);
+
+	veAnimationContainer* getAnimationContainer() { return _animationContainer.get(); }
+	void setActiveAnimationChannel(veAnimation *animation) { _activeAnimationChannel = animation; }
+
 private:
 
-	std::vector<VE_Ptr<veAnimation>> _animations;
+	veAnimationPlayer(veAnimationContainer *animationContainer);
+	void updateAnimations();
+
+private:
+
+	VE_Ptr<veAnimationContainer> _animationContainer;
+	AnimationMap _animationMap;
+	veEntity * _entity;
 	veAnimation* _activeAnimationChannel;
 	double _smimulationFrame;
 	double _startFrame;
@@ -100,6 +136,8 @@ private:
 	bool   _needUpdate;
 	bool   _requestNoUpdate;
 	bool   _isLoop;
+
+	veAnimationManager *_manager;
 };
 
 #endif
