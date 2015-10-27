@@ -28,6 +28,7 @@ veCamera::veCamera()
 	, _renderPath(RenderPath::FORWARD_PATH)
 	, _renderStateChanged(true)
 	, _needRefreshFrustumPlane(true)
+	, _renderQueue(nullptr)
 {
 }
 
@@ -41,12 +42,13 @@ veCamera::veCamera(const veViewport &vp)
 	, _renderPath(RenderPath::FORWARD_PATH)
 	, _renderStateChanged(true)
 	, _needRefreshFrustumPlane(true)
+	, _renderQueue(nullptr)
 {
 }
 
 veCamera::~veCamera()
 {
-
+	VE_SAFE_DELETE(_renderQueue);
 }
 
 void veCamera::setProjectionMatrixAsOrtho(float left, float right, float bottom, float top, float zNear, float zFar)
@@ -183,6 +185,13 @@ void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 
 	vePass::restoreGLState();
 	_renderStateChanged = false;
+}
+
+void veCamera::render()
+{
+	if (_renderQueue) {
+		_renderQueue->execute(this);
+	}
 }
 
 void veCamera::setMatrix(const veMat4 &mat)

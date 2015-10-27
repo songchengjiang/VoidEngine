@@ -39,6 +39,8 @@ veDebuger::veDebuger()
 	, _drawCount(0)
 {
 	initMaterial();
+	_boundingBox.min() = -FLT_MIN;
+	_boundingBox.max() = FLT_MAX;
 }
 
 veDebuger::~veDebuger()
@@ -114,7 +116,7 @@ void veDebuger::render(veNode *node, veCamera *camera)
 	rc.renderableObj = nullptr;
 	rc.camera = camera;
 	rc.drawFunc = VE_CALLBACK_1(veDebuger::draw, this);
-	veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
+	camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
 }
 
 void veDebuger::debugDrawLine(const veVec3 &start, const veVec3 &end, const veVec4 &color)

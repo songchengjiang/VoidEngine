@@ -110,9 +110,9 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 					rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
 					pass->visit(rc);
 					if (isTransparent)
-						veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
+						camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
 					else
-						veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
+						camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
 				}
 			}
 		}

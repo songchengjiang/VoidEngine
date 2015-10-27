@@ -12,7 +12,7 @@ public:
 
 	~veTextureManager();
 
-	virtual void postDraw() override;
+	virtual void update() override;
 
 	veTexture* findTexture(const std::string &name);
 	veTexture* createTexture(const std::string &name, veTexture::TextureType texType);

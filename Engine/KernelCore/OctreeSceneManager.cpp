@@ -31,7 +31,6 @@ void veOctreeSceneManager::init()
 {
 	_root = new veOctreeNode;
 	_root->setSceneManager(this);
-	_renderQueue = new veOctreeRenderQueue;
 	_octree->originBoundingBox = _octree->boundingBox = _boundingBox;
 }
 
@@ -87,20 +86,15 @@ void veOctreeSceneManager::requestRayCast(veRay *ray)
 bool veOctreeSceneManager::isNodeVisibleInScene(veNode *node)
 {
 	veOctreeNode *ocNode = static_cast<veOctreeNode *>(node);
-	bool isVisible = ocNode->octant == nullptr ? false : ocNode->octant->isVisible;
-	if (isVisible) {
-		isVisible = isVisible ? ocNode->isVisibleInOctant : false;
-		if (isVisible) {
-			veOctree *parent = ocNode->octant->parent;
-			while (parent)
-			{
-				isVisible = parent->isVisible;
-				if (!isVisible) break;
-				parent = parent->parent;
-			}
+	for (auto &cam : _cameraList) {
+		if (cam->isInScene()) {
+			veOctreeCamera *octreeCam = static_cast<veOctreeCamera *>(cam);
+			auto iter = std::find(octreeCam->visibleOctreeNodeList.begin(), octreeCam->visibleOctreeNodeList.end(), ocNode);
+			if (iter != octreeCam->visibleOctreeNodeList.end())
+				return true;
 		}
 	}
-	return isVisible;
+	return false;
 }
 
 void veOctreeSceneManager::addOctreeNode(veOctreeNode *node, veOctree *octant, unsigned int depth)
@@ -192,54 +186,19 @@ void veOctreeSceneManager::update()
 void veOctreeSceneManager::render()
 {
 	//glClear(_clearMask);
-	veRenderQueue::CURRENT_RENDER_QUEUE = _renderQueue;
 	auto mainCamera = _visualiser->getCamera();
 	for (auto &iter : _cameraList) {
 		if (iter->isVisible() && iter->isInScene() && iter != mainCamera) {
 			if (iter->getFrameBufferObject()) {
 				//_root->render(iter);
-				traverseOctree(_octree, iter);
-				_renderQueue->execute(iter);
+				static_cast<veOctreeCamera *>(iter)->render(_octree);
 			}
 		}
 	}
 
 	if (mainCamera && mainCamera->isInScene() && mainCamera->isVisible()) {
 		//_root->render(mainCamera);
-		traverseOctree(_octree, mainCamera);
-		_renderQueue->execute(mainCamera);
+		static_cast<veOctreeCamera *>(mainCamera)->render(_octree);
 	}
 	veSceneManager::render();
-}
-
-void veOctreeSceneManager::traverseOctree(veOctree *octant, veCamera *camera)
-{
-	if (camera->isOutOfFrustum(octant->boundingBox)) {
-		octant->isVisible = false;
-		return;
-	}
-
-	octant->isVisible = true;
-	if (!octant->nodeList.empty()) {
-		for (auto &iter : octant->nodeList) {
-			if (iter->isVisible() && (iter->getMask() & camera->getMask())) {
-				if (!camera->isOutOfFrustum(iter->getBoundingBox())) {
-					for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
-						if (iter->getRenderableObject(i)->isVisible())
-							iter->getRenderableObject(i)->render(iter, camera);
-					}
-					iter->isVisibleInOctant = true;
-				}
-				else {
-					iter->isVisibleInOctant = false;
-				}
-			}
-		}
-	}
-
-	for (unsigned int i = 0; i < 8; ++i) {
-		if (octant->children[i]) {
-			traverseOctree(octant->children[i], camera);
-		}
-	}
 }

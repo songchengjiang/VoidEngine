@@ -23,7 +23,7 @@ public:
 					rc.camera = camera;
 					rc.drawFunc = VE_CALLBACK_1(veSkyBoxRenderer::draw, this);
 					pass->visit(rc);
-					veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_BACKGROUND, rc);
+					camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_BACKGROUND, rc);
 				}
 			}
 		}

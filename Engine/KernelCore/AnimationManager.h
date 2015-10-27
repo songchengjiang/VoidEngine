@@ -11,7 +11,7 @@ public:
 
 	~veAnimationManager();
 
-	virtual void preUpdate() override;
+	virtual void update() override;
 
 	veAnimationPlayer* findAnimationPlayer(const std::string &name);
 	veAnimationPlayer* createAnimationPlayer(const std::string &name, veAnimationContainer *container);

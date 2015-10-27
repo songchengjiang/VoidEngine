@@ -4,7 +4,6 @@
 veOctree::veOctree()
 	: parent(nullptr)
 	, _needUpdateBoundingBox(true)
-	, isVisible(false)
 {
 	memset(children, 0, sizeof(veOctree*) * 8);
 }

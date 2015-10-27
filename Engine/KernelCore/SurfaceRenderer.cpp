@@ -53,9 +53,9 @@ void veSurfaceRenderer::render(veNode *node, veRenderableObject *renderableObj, 
 				rc.drawFunc = VE_CALLBACK_1(veSurfaceRenderer::draw, this);
 				pass->visit(rc);
 				if (isTransparent)
-					veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
+					camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
 				else
-					veRenderQueue::CURRENT_RENDER_QUEUE->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
+					camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
 			}
 		}
 	}

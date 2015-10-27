@@ -72,7 +72,6 @@ protected:
 
 protected:
 
-	veRenderQueue *_renderQueue;
 	VE_Ptr<veVisualiser> _visualiser;
 	VE_Ptr<veNode> _root;
 	NodeList _nodeList;

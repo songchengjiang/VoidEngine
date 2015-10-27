@@ -35,7 +35,6 @@ public:
 	typedef std::vector<veOctreeNode *> OctreeNodeList;
 	OctreeNodeList  nodeList;
 	veOctree* parent;
-	bool isVisible;
 
 private:
 

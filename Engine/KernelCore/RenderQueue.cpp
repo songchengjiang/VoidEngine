@@ -3,8 +3,6 @@
 #include "Renderer.h"
 #include "Camera.h"
 
-veRenderQueue * veRenderQueue::CURRENT_RENDER_QUEUE = nullptr;
-
 veRenderQueue::veRenderQueue()
 {
 

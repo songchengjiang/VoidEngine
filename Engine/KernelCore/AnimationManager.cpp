@@ -12,7 +12,7 @@ veAnimationManager::veAnimationManager(veSceneManager *sm)
 
 }
 
-void veAnimationManager::preUpdate()
+void veAnimationManager::update()
 {
 	for (auto &animPlayer : _animationPlayerPool) {
 		animPlayer->update(_sceneManager);

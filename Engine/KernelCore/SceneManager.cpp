@@ -14,7 +14,6 @@
 
 veSceneManager::veSceneManager()
 	: _deltaTime(0.0)
-	, _renderQueue(nullptr)
 {
 	_managerList[veLightManager::TYPE()] = new veLightManager(this);
 	_managerList[veTextureManager::TYPE()] = new veTextureManager(this);
@@ -27,7 +26,6 @@ veSceneManager::~veSceneManager()
 	for (auto &iter : _managerList) {
 		VE_SAFE_DELETE(iter.second);
 	}
-	VE_SAFE_DELETE(_renderQueue);
 }
 
 veVisualiser* veSceneManager::createVisualiser(int w, int h, const std::string &title)
@@ -137,20 +135,10 @@ bool veSceneManager::simulation()
 	glfwMakeContextCurrent(_visualiser->_hwnd);
 
 	for (auto &manager : _managerList) {
-		manager.second->preUpdate();
+		manager.second->update();
 	}
 	update();
-	for (auto &manager : _managerList) {
-		manager.second->postUpdate();
-	}
-
-	for (auto &manager : _managerList) {
-		manager.second->preDraw();
-	}
 	render();
-	for (auto &manager : _managerList) {
-		manager.second->postDraw();
-	}
 
 	return true;
 }

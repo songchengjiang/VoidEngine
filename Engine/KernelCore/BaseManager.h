@@ -10,10 +10,7 @@ public:
 
 	virtual ~veBaseManager();
 
-	virtual void preUpdate() {}
-	virtual void postUpdate() {}
-	virtual void preDraw() {}
-	virtual void postDraw(){}
+	virtual void update() {}
 	veSceneManager* getSceneManager() { return _sceneManager; }
 
 protected:

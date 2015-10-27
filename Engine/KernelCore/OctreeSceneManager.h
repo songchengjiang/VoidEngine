@@ -31,7 +31,6 @@ protected:
 	virtual void update() override;
 	virtual void render() override;
 
-	void traverseOctree(veOctree *octant, veCamera *camera);
 	void addOctreeNode(veOctreeNode *node, veOctree *octant, unsigned int depth = 0);
 	void intersectByRay(veOctree *octant, veRay *ray);
 	void init();

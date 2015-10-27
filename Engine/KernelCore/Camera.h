@@ -81,7 +81,10 @@ public:
 
 	bool isRenderStateChanged() { return _renderStateChanged; }
 
+	virtual void render();
 	void render(veRenderQueue::RenderCommandList &renderList);
+
+	veRenderQueue* getRenderQueue() { return _renderQueue; }
 
 	virtual void setMatrix(const veMat4 &mat);
 	virtual void refresh();
@@ -114,6 +117,8 @@ protected:
 
 	RenderPath _renderPath;
 	bool _renderStateChanged;
+
+	veRenderQueue *_renderQueue;
 };
 
 typedef std::vector< veCamera* > veCameraList;

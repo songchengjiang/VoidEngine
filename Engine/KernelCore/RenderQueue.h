@@ -10,7 +10,6 @@ class veCamera;
 class veRenderQueue
 {
 public:
-	static veRenderQueue *CURRENT_RENDER_QUEUE;
 	typedef std::map<unsigned int, veLoopQueue< veRenderCommand > > RenderCommandList;
 
 	enum RenderQueueType

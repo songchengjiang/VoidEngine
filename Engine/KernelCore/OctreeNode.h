@@ -12,7 +12,6 @@ public:
 	bool isIn(const veBoundingBox & bbox);
 
 	veOctree *octant;
-	bool isVisibleInOctant;
 };
 
 #endif
