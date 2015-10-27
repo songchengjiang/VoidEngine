@@ -224,6 +224,11 @@ private:
 							if (veFile::instance()->isSupportFile(source)) {
 								subTexture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, subName));
 							}
+							else {
+								subTexture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture(source);
+								if (!subTexture)
+									subTexture = _sceneManager->createTexture(source);
+							}
 							static_cast<veTextureCube *>(texture)->setTexture((veTextureCube::CubeMapTexType)i, subTexture);
 						}
 					}
