@@ -7,6 +7,7 @@
 #include "Entity.h"
 #include "SkyBox.h"
 #include "Animation.h"
+#include "Ray.h"
 
 #include "LightManager.h"
 #include "TextureManager.h"
@@ -96,6 +97,13 @@ veAnimationContainer* veSceneManager::createAnimationContainer(const std::string
 	return static_cast<veAnimationManager *>(_managerList[veAnimationManager::TYPE()])->createAnimationContainer(name);
 }
 
+veRay* veSceneManager::createRay(const veVec3 &start, const veVec3 &end)
+{
+	auto ray = new veRay(start, end);
+	_rayList.push_back(ray);
+	return ray;
+}
+
 veAnimation* veSceneManager::createAnimation(const std::string &name)
 {
 	return static_cast<veAnimationManager *>(_managerList[veAnimationManager::TYPE()])->createAnimation(name);
@@ -109,6 +117,11 @@ veAnimationPlayer* veSceneManager::createAnimationPlayer(const std::string &name
 veTexture* veSceneManager::createTexture(const std::string &name, veTexture::TextureType texType)
 {
 	return static_cast<veTextureManager *>(_managerList[veTextureManager::TYPE()])->createTexture(name, texType);
+}
+
+void veSceneManager::requestRayCast(veRay *ray)
+{
+	ray->_callBack();
 }
 
 void veSceneManager::loadLightConfiguration(const std::string &filePath)
@@ -164,6 +177,7 @@ void veSceneManager::startThreading()
 			this->_renderingCondition.wait(lock);
 			if (this->_stopThreading) return;
 			this->render();
+			this->handleRequests();
 		}
 	});
 }
@@ -180,6 +194,23 @@ void veSceneManager::stopThreading()
 void veSceneManager::render()
 {
 	glfwSwapBuffers(_visualiser->_hwnd);
+}
+
+void veSceneManager::handleRequests()
+{
+	std::unique_lock<std::mutex> lock(_requestQueueMutex);
+	while (!_requestQueue.empty())
+	{
+		auto &func = _requestQueue.front();
+		func();
+		_requestQueue.pop_front();
+	}
+}
+
+void veSceneManager::enqueueRequest(const std::function<void()> &func)
+{
+	std::unique_lock<std::mutex> lock(_requestQueueMutex);
+	_requestQueue.push_back(func);
 }
 
 void veSceneManager::makeContextCurrent()

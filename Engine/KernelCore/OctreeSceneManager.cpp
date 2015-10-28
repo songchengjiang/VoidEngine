@@ -82,7 +82,10 @@ void veOctreeSceneManager::requestRender(veNode *node)
 
 void veOctreeSceneManager::requestRayCast(veRay *ray)
 {
-	intersectByRay(_octree, ray);
+	enqueueRequest([this, ray] {
+		this->intersectByRay(_octree, ray);
+		veSceneManager::requestRayCast(ray);
+	});
 }
 
 bool veOctreeSceneManager::isNodeVisibleInScene(veNode *node)

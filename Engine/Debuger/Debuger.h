@@ -5,6 +5,7 @@
 #include "BaseCore/Array.h"
 #include "KernelCore/Material.h"
 #include "KernelCore/Node.h"
+#include <mutex>
 
 class veNode;
 class veMesh;
@@ -16,7 +17,6 @@ public:
     veDebuger();
     virtual ~veDebuger();
     
-	virtual void update(veNode *node, veSceneManager *sm) override;
 	virtual void render(veNode *node, veCamera *camera) override;
 
 	void debugDrawMeshWireframe(bool isDraw, const veVec4 &color = veVec4::WHITE) {

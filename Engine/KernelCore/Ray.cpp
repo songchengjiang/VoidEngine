@@ -10,6 +10,12 @@ veRay::veRay(const veVec3 &start, const veVec3 &end)
 	_dir.normalize();
 }
 
+veRay::veRay()
+	: USE_VE_PTR_INIT
+{
+
+}
+
 veRay::~veRay()
 {
 
@@ -29,9 +35,10 @@ void veRay::setEnd(const veVec3 &end)
 	_dir.normalize();
 }
 
-void veRay::apply(veSceneManager *sm)
+void veRay::apply(veSceneManager *sm, const RayCallback &callBack)
 {
 	_intersections.clear();
+	_callBack = callBack;
 	sm->requestRayCast(this);
 }
 

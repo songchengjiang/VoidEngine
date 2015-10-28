@@ -5,6 +5,7 @@
 #include "Visualiser.h"
 #include "RenderQueue.h"
 #include "ThreadPool.h"
+#include "LoopQueue.h"
 #include <unordered_map>
 
 class veEvent;
@@ -25,6 +26,7 @@ class veRay;
 typedef std::vector< veNode* > NodeList;
 typedef std::vector< veCamera* > CameraList;
 typedef std::vector< veLight* > LightList;
+typedef std::vector< veRay* > RayList;
 class VE_EXPORT veSceneManager
 {
 public:
@@ -43,6 +45,7 @@ public:
 	virtual veAnimation* createAnimation(const std::string &name);
 	virtual veAnimationContainer* createAnimationContainer(const std::string &name);
 
+	virtual veRay* createRay(const veVec3 &start, const veVec3 &end);
 	virtual veCamera* createCamera(const std::string &name, const veViewport &vp = { 0, 0, 0, 0 }) = 0;
 	virtual veEntity* createEntity(const std::string &name);
 	virtual veSkyBox* createSkyBox(const std::string &name, veReal size = 500.0f);
@@ -75,6 +78,8 @@ protected:
 
 	virtual void update() = 0;
 	virtual void render() = 0;
+	void handleRequests();
+	void enqueueRequest(const std::function<void()> &func);
 	void makeContextCurrent();
 
 protected:
@@ -84,10 +89,13 @@ protected:
 	NodeList _nodeList;
 	CameraList _cameraList;
 	LightList _lightList;
+	RayList   _rayList;
 
 	std::unordered_map<std::string, veBaseManager *> _managerList;
 
 	veThreadPool _threadPool;
+	std::mutex                           _requestQueueMutex;
+	veLoopQueue< std::function<void()> > _requestQueue;
 
 	std::mutex  _renderingMutex;
 	std::condition_variable _renderingCondition;

@@ -30,7 +30,7 @@ class PerformanceTest : public BaseTest
 public:
 
 	PerformanceTest() {
-		int lineCount = 7;
+		int lineCount = 10;
 		float lineHalfSize = (lineCount / 2) * 100;
 		veNode *root = _sceneManager->createNode("root");
 		veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, MODEL_ANIM_FILES[2], "animContainer"));

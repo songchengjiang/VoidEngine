@@ -48,17 +48,15 @@ veDebuger::~veDebuger()
 
 }
 
-void veDebuger::update(veNode *node, veSceneManager *sm)
+void veDebuger::render(veNode *node, veCamera *camera)
 {
-	veRenderableObject::update(node, sm);
-	_renderableNodes.clear();
-	RenderableObjectFinder finder(_renderableNodes);
-	node->accept(finder);
 
 	//if (_isDrawBoundingBoxWireframe) {
 	//	renderBoundingBoxWireframe(_attachedNode->getBoundingBox(), nTow);
 	//}
-
+	_renderableNodes.clear();
+	RenderableObjectFinder finder(_renderableNodes);
+	node->accept(finder);
 	for (auto &iter : _renderableNodes) {
 		if (_isDrawFrustumPlane) {
 			auto camera = dynamic_cast<veCamera *>(iter);
@@ -85,10 +83,6 @@ void veDebuger::update(veNode *node, veSceneManager *sm)
 		}
 	}
 
-}
-
-void veDebuger::render(veNode *node, veCamera *camera)
-{
 	if (!_vao) {
 		glGenVertexArrays(1, &_vao);
 		glGenBuffers(1, &_vbo);
@@ -96,8 +90,13 @@ void veDebuger::render(veNode *node, veCamera *camera)
 
 	glBindVertexArray(_vao);
 	glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-	if (!_vertices.empty())
-		glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(_vertices[0]), _vertices.buffer(), GL_STATIC_DRAW);
+	{
+		if (!_vertices.empty())
+			glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(_vertices[0]), _vertices.buffer(), GL_STATIC_DRAW);
+		_drawCount = _vertices.size();
+		_vertices.clear();
+	}
+
 
 	//vertex
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, _vertexStride, 0);
@@ -106,8 +105,6 @@ void veDebuger::render(veNode *node, veCamera *camera)
 	//color
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, _vertexStride, (GLvoid *)(sizeof(GLfloat) * 3));
 	glEnableVertexAttribArray(1);
-	_drawCount = _vertices.size();
-	_vertices.clear();
 
 	veRenderCommand rc;
 	rc.priority = veRenderCommand::LOW_PRIORITY;

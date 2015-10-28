@@ -2,9 +2,11 @@
 #define _VE_ARRAY_
 #include "Prerequisites.h"
 
+
 template<typename TYPE>
 class veArray
 {
+#define MAX_SIZE 10000000
 	USE_VE_PTR
 public:
 	explicit veArray()
@@ -110,6 +112,7 @@ private:
 			}
 			else{
 				size_t newSize = _size * _size;
+				if (MAX_SIZE < newSize) newSize = MAX_SIZE;
 				resizeImp(newSize);
 			}
 		}

@@ -16,19 +16,23 @@ public:
 				veVec2 screenCoords = veVec2(event.getMouseX(), event.getMouseY());
 				veVec3 start = sm->getVisualiser()->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
 				veVec3 end = sm->getVisualiser()->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
-				veRay ray(start, end);
-				ray.apply(sm);
-				if (!ray.getIntersections().empty()) {
-					char str[256];
-					for (auto &inters : ray.getIntersections()) {
-						_lines.push_back(std::make_pair(inters.worldPosition, inters.worldPosition + inters.worldNormal * 2.0f));
-						sprintf(str, "Intersection info: position(%f, %f, %f) \n \t \t normal(%f, %f, %f)"
-							, inters.worldPosition.x(), inters.worldPosition.y(), inters.worldPosition.z()
-							, inters.worldNormal.x(), inters.worldNormal.y(), inters.worldNormal.z());
-						veLog(str);
-					}
-					return true;
+				if (!_ray.valid()) {
+					_ray = sm->createRay(start, end);
 				}
+				_ray->setStart(start);
+				_ray->setEnd(end);
+				_ray->apply(sm, [this] {
+					if (!_ray->getIntersections().empty()) {
+						char str[256];
+						for (auto &inters : _ray->getIntersections()) {
+							this->_lines.push_back(std::make_pair(inters.worldPosition, inters.worldPosition + inters.worldNormal * 2.0f));
+							sprintf(str, "Intersection info: position(%f, %f, %f) \n \t \t normal(%f, %f, %f)"
+								, inters.worldPosition.x(), inters.worldPosition.y(), inters.worldPosition.z()
+								, inters.worldNormal.x(), inters.worldNormal.y(), inters.worldNormal.z());
+							veLog(str);
+						}
+					}
+				});
 			}
 			return false;
 		}
@@ -51,6 +55,7 @@ public:
 	veDebuger *debuger;
 	veAnimationPlayer* _animationPlayer;
 	std::vector<std::pair<veVec3, veVec3> > _lines;
+	VE_Ptr<veRay> _ray;
 };
 
 
