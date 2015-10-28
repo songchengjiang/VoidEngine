@@ -53,8 +53,6 @@ public:
 		{
 			veNode *node = _sceneManager->createNode("node0");
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot"));
-			auto mat = entity->getMaterialArray()->getMaterial(0);
-			mat->activateTechnique(mat->getTechnique("forwardRender"));
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;

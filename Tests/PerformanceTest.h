@@ -1,6 +1,7 @@
 #ifndef _PERFORMANCE_TEST_
 #define _PERFORMANCE_TEST_
 #include "BaseTest.h"
+#include <iostream>
 static const std::string MODEL_FILES[] = { "models/teapot.vem", "models/sphere.vem", "models/laoshu_ani_v03.vem" };
 static const std::string MODEL_ANIM_FILES[] = { "", "", "models/laoshu_ani_v03.veanim" };
 

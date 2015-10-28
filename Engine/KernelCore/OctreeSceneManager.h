@@ -44,6 +44,7 @@ protected:
 	veOctree *_octree;
 	OctreeNodeList _octreeNodeList;
 
+	std::mutex _renderingMutex;
 };
 
 #endif

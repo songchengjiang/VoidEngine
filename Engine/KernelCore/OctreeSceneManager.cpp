@@ -187,23 +187,25 @@ void veOctreeSceneManager::update()
 void veOctreeSceneManager::render()
 {
 	culling();
-	veSceneManager::makeContextCurrent();
-	auto mainCamera = _visualiser->getCamera();
-	for (auto &iter : _cameraList) {
-		if (iter->isVisible() && iter->isInScene() && iter != mainCamera) {
-			if (iter->getFrameBufferObject()) {
-				veOctreeCamera *rttCam = static_cast<veOctreeCamera *>(iter);
-				rttCam->render();
+	//_threadPool.enqueue(nullptr, nullptr, [this] {
+		//std::unique_lock<std::mutex> lock(this->_renderingMutex);
+		veSceneManager::makeContextCurrent();
+		auto mainCamera = _visualiser->getCamera();
+		for (auto &iter : _cameraList) {
+			if (iter->isVisible() && iter->isInScene() && iter != mainCamera) {
+				if (iter->getFrameBufferObject()) {
+					veOctreeCamera *rttCam = static_cast<veOctreeCamera *>(iter);
+					rttCam->render();
+				}
 			}
 		}
-	}
 
-	if (mainCamera && mainCamera->isInScene() && mainCamera->isVisible()) {
-		veOctreeCamera *mainCam = static_cast<veOctreeCamera *>(mainCamera);
-		mainCam->render();
-	}
-
-	veSceneManager::render();
+		if (mainCamera && mainCamera->isInScene() && mainCamera->isVisible()) {
+			veOctreeCamera *mainCam = static_cast<veOctreeCamera *>(mainCamera);
+			mainCam->render();
+		}
+		veSceneManager::render();
+	//});
 }
 
 void veOctreeSceneManager::culling()
