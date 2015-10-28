@@ -5,6 +5,7 @@
 #include <thread>
 #include <mutex>
 #include <queue>
+#include "LoopQueue.h"
 
 class VE_EXPORT veThreadPool
 {
@@ -30,8 +31,9 @@ protected:
     
 protected:
     
-	std::queue< std::function<void()> > _tasks;
-	std::queue<AsyncTaskCallBack>       _taskCallBacks;
+	veLoopQueue< std::function<void()> > _tasks;
+	//std::queue< std::function<void()> > _tasks;
+	//std::queue<AsyncTaskCallBack>       _taskCallBacks;
 
 	std::vector<std::thread *>          _threadPool;
 	unsigned int                        _maxThreads;
@@ -47,12 +49,12 @@ inline void veThreadPool::enqueue(const TaskCallBack& callback, void* callbackPa
 {
 	if (_stop) return;
 	{
-		std::unique_lock<std::mutex> lock(_queueMutex);
-		AsyncTaskCallBack taskCallBack;
-		taskCallBack.callback = callback;
-		taskCallBack.callbackParam = callbackParam;
-		_tasks.emplace(f);
-		_taskCallBacks.emplace(taskCallBack);
+		//std::unique_lock<std::mutex> lock(_queueMutex);
+		//AsyncTaskCallBack taskCallBack;
+		//taskCallBack.callback = callback;
+		//taskCallBack.callbackParam = callbackParam;
+		_tasks.push_back(f);
+		//_taskCallBacks.emplace(taskCallBack);
 	}
 	_condition.notify_one();
 }

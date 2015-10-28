@@ -18,10 +18,10 @@ void veThreadPool::start()
 							[this] { return this->_stop || !this->_tasks.empty(); });
 						if (this->_stop && this->_tasks.empty())
 							return;
-						task = std::move(this->_tasks.front());
-						callback = std::move(this->_taskCallBacks.front());
-						this->_tasks.pop();
-						this->_taskCallBacks.pop();
+						task = this->_tasks.front();
+						//callback = std::move(this->_taskCallBacks.front());
+						this->_tasks.pop_front();
+						//this->_taskCallBacks.pop();
 					}
 
 					task();
@@ -38,10 +38,10 @@ void veThreadPool::stop()
 	{
 		std::unique_lock<std::mutex> lock(_queueMutex);
 
-		while (_tasks.size())
-			_tasks.pop();
-		while (_taskCallBacks.size())
-			_taskCallBacks.pop();
+		while (!_tasks.empty())
+			_tasks.pop_front();
+		//while (_taskCallBacks.size())
+		//	_taskCallBacks.pop();
 	}
 	_condition.notify_all();
 	for (auto &thread : _threadPool) {
