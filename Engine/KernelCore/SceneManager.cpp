@@ -16,6 +16,8 @@
 veSceneManager::veSceneManager()
 	: USE_VE_PTR_INIT
 	, _deltaTime(0.0)
+	, _stopThreading(true)
+	, _isInited(false)
 {
 	_managerList[veLightManager::TYPE()] = new veLightManager(this);
 	_managerList[veTextureManager::TYPE()] = new veTextureManager(this);
@@ -35,10 +37,10 @@ veVisualiser* veSceneManager::createVisualiser(int w, int h, const std::string &
 {
 	auto visualiser = new veVisualiser(w, h, title);
 	veVisualiserRegistrar::instance()->reg(visualiser->_hwnd, visualiser);
-	glfwMakeContextCurrent(visualiser->_hwnd);
-#if defined(_MSC_VER)
-	if (glewInit() != GLEW_OK) veLog("glewInit error!");
-#endif
+//	glfwMakeContextCurrent(visualiser->_hwnd);
+//#if defined(_MSC_VER)
+//	if (glewInit() != GLEW_OK) veLog("glewInit error!");
+//#endif
 	visualiser->_sceneManager = this;
 	if (_visualiser.valid()) veVisualiserRegistrar::instance()->unReg(_visualiser->_hwnd);
 	_visualiser = visualiser;
@@ -136,22 +138,42 @@ bool veSceneManager::simulation()
 {
 	if (glfwWindowShouldClose(_visualiser->_hwnd)) return false;
 	veEventDispatcher::instance()->dispatch(this);
-	for (auto &manager : _managerList) {
-		manager.second->update();
+
+	{
+		for (auto &manager : _managerList) {
+			manager.second->update();
+		}
+		update();
+		std::unique_lock<std::mutex> lock(_renderingMutex);
+		_renderingCondition.notify_all();
 	}
-	update();
-	render();
+	//render();
 
 	return true;
 }
 
 void veSceneManager::startThreading()
 {
+	if (!_stopThreading) return;
+	_stopThreading = false;
 	_threadPool.start();
+	_renderingThread = std::thread([this] {
+		for (;;)
+		{
+			std::unique_lock<std::mutex> lock(this->_renderingMutex);
+			this->_renderingCondition.wait(lock);
+			if (this->_stopThreading) return;
+			this->render();
+		}
+	});
 }
 
 void veSceneManager::stopThreading()
 {
+	if (_stopThreading) return;
+	_renderingCondition.notify_all();
+	_stopThreading = true;
+	_renderingThread.join();
 	_threadPool.stop();
 }
 
@@ -163,4 +185,10 @@ void veSceneManager::render()
 void veSceneManager::makeContextCurrent()
 {
 	glfwMakeContextCurrent(_visualiser->_hwnd);
+	if (!_isInited) {
+#if defined(_MSC_VER)
+		if (glewInit() != GLEW_OK) veLog("glewInit error!");
+#endif
+		_isInited = true;
+	}
 }

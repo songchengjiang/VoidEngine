@@ -25,7 +25,7 @@ public:
     
 protected:
 
-    veThreadPool(unsigned int maxThreads = 3);
+    veThreadPool(unsigned int maxThreads = 6);
     ~veThreadPool();
     
 protected:

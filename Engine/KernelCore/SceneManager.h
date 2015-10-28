@@ -89,6 +89,12 @@ protected:
 
 	veThreadPool _threadPool;
 
+	std::mutex  _renderingMutex;
+	std::condition_variable _renderingCondition;
+	std::thread _renderingThread;
+	bool        _stopThreading;
+	bool        _isInited;
+
 	double _deltaTime;
 };
 

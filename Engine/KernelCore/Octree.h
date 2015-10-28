@@ -36,11 +36,11 @@ public:
 	typedef std::vector<veOctreeNode *> OctreeNodeList;
 	OctreeNodeList  nodeList;
 	veOctree* parent;
+	std::mutex nodeListMutex;
 
 private:
 
 	bool _needUpdateBoundingBox;
-	std::mutex _nodeListMutex;
 };
 
 #endif

@@ -21,9 +21,9 @@ veOctreeCamera::~veOctreeCamera()
 
 void veOctreeCamera::render()
 {
+	std::unique_lock<std::mutex> lock(_visitMutex);
 	if (!_visibleOctreeNodeList.empty()) {
 		{
-			std::unique_lock<std::mutex> lock(_visitMutex);
 			for (auto &iter : _visibleOctreeNodeList) {
 				for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
 					if (iter->getRenderableObject(i)->isVisible())
@@ -33,9 +33,9 @@ void veOctreeCamera::render()
 		}
 		veCamera::render();
 	}
-	else {
-		veLog("visibleOctreeNodeList is empty!");
-	}
+	//else {
+	//	veLog("visibleOctreeNodeList is empty!");
+	//}
 }
 
 void veOctreeCamera::walkingOctree(veOctree *octree)
@@ -62,6 +62,7 @@ void veOctreeCamera::traverseOctree(veOctree *octant)
 	}
 
 	if (!octant->nodeList.empty()) {
+		std::unique_lock<std::mutex> lock(octant->nodeListMutex);
 		for (auto &iter : octant->nodeList) {
 			if (iter->isVisible() && (iter->getMask() & getMask())) {
 				if (!isOutOfFrustum(iter->getBoundingBox())) {

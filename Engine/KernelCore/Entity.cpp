@@ -14,16 +14,21 @@ veEntity::~veEntity()
 
 }
 
+void veEntity::render(veNode *node, veCamera *camera)
+{
+	if (_needRefresh) {
+		refreshMeshes();
+		_needRefresh = false;
+	}
+	veRenderableObject::render(node, camera);
+}
+
 void veEntity::update(veNode *node, veSceneManager *sm)
 {
 	if (!_isVisible) return;
 	if (_isDirtyBoundingBox) {
 		dirtyBoundingBox();
 		_isDirtyBoundingBox = false;
-	}
-	if (_needRefresh) {
-		refreshMeshes();
-		_needRefresh = false;
 	}
 	if (_renderer.valid())
 		_renderer->visit(node, this, sm);

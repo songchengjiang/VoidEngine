@@ -16,6 +16,7 @@ public:
 
 	virtual ~veEntity();
 
+	virtual void render(veNode *node, veCamera *camera);
 	virtual void update(veNode *node, veSceneManager *sm) override;
 	virtual bool intersectWith(veRay *ray, veNode *node) override;
 
