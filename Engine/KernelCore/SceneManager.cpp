@@ -135,7 +135,6 @@ void veSceneManager::dispatchEvents(veEvent &event)
 bool veSceneManager::simulation()
 {
 	if (glfwWindowShouldClose(_visualiser->_hwnd)) return false;
-	glfwMakeContextCurrent(_visualiser->_hwnd);
 	veEventDispatcher::instance()->dispatch(this);
 	for (auto &manager : _managerList) {
 		manager.second->update();
@@ -159,4 +158,9 @@ void veSceneManager::stopThreading()
 void veSceneManager::render()
 {
 	glfwSwapBuffers(_visualiser->_hwnd);
+}
+
+void veSceneManager::makeContextCurrent()
+{
+	glfwMakeContextCurrent(_visualiser->_hwnd);
 }

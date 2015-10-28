@@ -21,23 +21,37 @@ veOctreeCamera::~veOctreeCamera()
 
 void veOctreeCamera::render()
 {
-	if (!visibleOctreeNodeList.empty()) {
-		for (auto &iter : visibleOctreeNodeList) {
-			for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
-				if (iter->getRenderableObject(i)->isVisible())
-					iter->getRenderableObject(i)->render(iter, this);
+	if (!_visibleOctreeNodeList.empty()) {
+		{
+			std::unique_lock<std::mutex> lock(_visitMutex);
+			for (auto &iter : _visibleOctreeNodeList) {
+				for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
+					if (iter->getRenderableObject(i)->isVisible())
+						iter->getRenderableObject(i)->render(iter, this);
+				}
 			}
 		}
 		veCamera::render();
 	}
 }
 
-void veOctreeCamera::render(veOctree *octree)
+void veOctreeCamera::walkingOctree(veOctree *octree)
 {
-	if (!visibleOctreeNodeList.empty())
-		visibleOctreeNodeList.clear();
+	{
+		std::unique_lock<std::mutex> lock(_visitMutex);
+		if (!_visibleOctreeNodeList.empty())
+			_visibleOctreeNodeList.clear();
+	}
 	traverseOctree(octree);
-	render();
+}
+
+bool veOctreeCamera::isNodeVisibleInCamera(veOctreeNode *node)
+{
+	std::unique_lock<std::mutex> lock(_visitMutex);
+	auto iter = std::find(_visibleOctreeNodeList.begin(), _visibleOctreeNodeList.end(), node);
+	if (iter != _visibleOctreeNodeList.end())
+		return true;
+	return false;
 }
 
 void veOctreeCamera::traverseOctree(veOctree *octant)
@@ -50,7 +64,8 @@ void veOctreeCamera::traverseOctree(veOctree *octant)
 		for (auto &iter : octant->nodeList) {
 			if (iter->isVisible() && (iter->getMask() & getMask())) {
 				if (!isOutOfFrustum(iter->getBoundingBox())) {
-					visibleOctreeNodeList.push_back(static_cast<veOctreeNode *>(iter));
+					std::unique_lock<std::mutex> lock(_visitMutex);
+					_visibleOctreeNodeList.push_back(static_cast<veOctreeNode *>(iter));
 				}
 			}
 		}

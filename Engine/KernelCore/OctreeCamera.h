@@ -1,6 +1,7 @@
 #ifndef _VE_OCTREE_CAMERA_
 #define _VE_OCTREE_CAMERA_
 #include "Camera.h"
+#include <mutex>
 
 class veOctreeNode;
 class veOctree;
@@ -11,14 +12,19 @@ public:
 	veOctreeCamera(const veViewport &vp);
 	~veOctreeCamera();
 
-	void render(veOctree *octree);
 	virtual void render() override;
+	void walkingOctree(veOctree *octree);
 
-	std::vector<veOctreeNode *> visibleOctreeNodeList;
+	bool isNodeVisibleInCamera(veOctreeNode *node);
 
 protected:
 
 	void traverseOctree(veOctree *octant);
+
+protected:
+
+	std::vector<veOctreeNode *> _visibleOctreeNodeList;
+	std::mutex _visitMutex;
 };
 
 #endif

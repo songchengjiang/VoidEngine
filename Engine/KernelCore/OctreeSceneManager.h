@@ -6,6 +6,7 @@
 
 class veOctree;
 class veOctreeNode;
+class veOctreeCamera;
 class VE_EXPORT veOctreeSceneManager : public veSceneManager
 {
 public:
@@ -30,11 +31,11 @@ protected:
 
 	virtual void update() override;
 	virtual void render() override;
+	void culling();
 
 	void addOctreeNode(veOctreeNode *node, veOctree *octant, unsigned int depth = 0);
 	void intersectByRay(veOctree *octant, veRay *ray);
 	void init();
-	void waitSync();
 
 protected:
 
@@ -43,11 +44,6 @@ protected:
 	veOctree *_octree;
 	OctreeNodeList _octreeNodeList;
 
-	std::mutex              _octantUpdateMutex;
-	unsigned int            _octantUpdateCount;
-	std::condition_variable _octreesUpdateDoneCondition;
-
-	std::mutex              _renderMutex;
 };
 
 #endif

@@ -11,7 +11,6 @@ veOctreeSceneManager::veOctreeSceneManager()
 	: _boundingBox(veVec3(-10000.0f), veVec3(10000.0f))
 	, _octreeMaxDeep(8)
 	, _octree(new veOctree)
-	, _octantUpdateCount(0)
 {
 	init();
 }
@@ -20,7 +19,6 @@ veOctreeSceneManager::veOctreeSceneManager(const veBoundingBox &bbox, unsigned i
 	: _boundingBox(bbox)
 	, _octreeMaxDeep(octreeDeep)
 	, _octree(new veOctree)
-	, _octantUpdateCount(0)
 {
 	init();
 }
@@ -58,10 +56,6 @@ void veOctreeSceneManager::requestRender(veNode *node)
 {
 	veOctreeNode *ocNode = static_cast<veOctreeNode *>(node);
 	if (!ocNode) return;
-	{
-		std::unique_lock<std::mutex> lock(this->_octantUpdateMutex);
-		++_octantUpdateCount;
-	}
 	_threadPool.enqueue(nullptr, nullptr, [this, ocNode] {
 		if (!ocNode->octant) {
 			if (!ocNode->isIn(this->_octree->boundingBox)) {
@@ -83,13 +77,6 @@ void veOctreeSceneManager::requestRender(veNode *node)
 				}
 			}
 		}
-		{
-			std::unique_lock<std::mutex> lock(this->_octantUpdateMutex);
-			--_octantUpdateCount;
-			if (_octantUpdateCount == 0) {
-				_octreesUpdateDoneCondition.notify_all();
-			}
-		}
 	});
 }
 
@@ -104,8 +91,7 @@ bool veOctreeSceneManager::isNodeVisibleInScene(veNode *node)
 	for (auto &cam : _cameraList) {
 		if (cam->isInScene()) {
 			veOctreeCamera *octreeCam = static_cast<veOctreeCamera *>(cam);
-			auto iter = std::find(octreeCam->visibleOctreeNodeList.begin(), octreeCam->visibleOctreeNodeList.end(), ocNode);
-			if (iter != octreeCam->visibleOctreeNodeList.end())
+			if (octreeCam->isNodeVisibleInCamera(ocNode))
 				return true;
 		}
 	}
@@ -200,27 +186,34 @@ void veOctreeSceneManager::update()
 
 void veOctreeSceneManager::render()
 {
-	waitSync();
-	//glClear(_clearMask);
+	culling();
+	veSceneManager::makeContextCurrent();
 	auto mainCamera = _visualiser->getCamera();
 	for (auto &iter : _cameraList) {
 		if (iter->isVisible() && iter->isInScene() && iter != mainCamera) {
 			if (iter->getFrameBufferObject()) {
-				//_root->render(iter);
-				static_cast<veOctreeCamera *>(iter)->render(_octree);
+				veOctreeCamera *rttCam = static_cast<veOctreeCamera *>(iter);
+				rttCam->render();
 			}
 		}
 	}
 
 	if (mainCamera && mainCamera->isInScene() && mainCamera->isVisible()) {
-		//_root->render(mainCamera);
-		static_cast<veOctreeCamera *>(mainCamera)->render(_octree);
+		veOctreeCamera *mainCam = static_cast<veOctreeCamera *>(mainCamera);
+		mainCam->render();
 	}
+
 	veSceneManager::render();
 }
 
-void veOctreeSceneManager::waitSync()
+void veOctreeSceneManager::culling()
 {
-	std::unique_lock<std::mutex> lock(_octantUpdateMutex);
-	_octreesUpdateDoneCondition.wait(lock, [this] { return this->_octantUpdateCount == 0; });
+	for (auto &iter : _cameraList) {
+		if (iter->isVisible() && iter->isInScene()) {
+			veOctreeCamera *cam = static_cast<veOctreeCamera *>(iter);
+			_threadPool.enqueue(nullptr, nullptr, [this, cam] {
+				cam->walkingOctree(this->_octree);
+			});
+		}
+	}
 }
