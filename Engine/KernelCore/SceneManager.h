@@ -4,6 +4,7 @@
 #include "VE_Ptr.h"
 #include "Visualiser.h"
 #include "RenderQueue.h"
+#include "ThreadPool.h"
 #include <unordered_map>
 
 class veEvent;
@@ -29,6 +30,8 @@ class VE_EXPORT veSceneManager
 public:
 	veSceneManager();
 	~veSceneManager();
+
+	USE_VE_PTR;
 
 	veVisualiser* createVisualiser(int w, int h, const std::string &title);
 	veVisualiser* getVisualiser() { return _visualiser.get(); }
@@ -65,6 +68,9 @@ public:
 	void dispatchEvents(veEvent &event);
 	bool simulation();
 
+	void startThreading();
+	void stopThreading();
+
 protected:
 
 	virtual void update() = 0;
@@ -79,6 +85,8 @@ protected:
 	LightList _lightList;
 
 	std::unordered_map<std::string, veBaseManager *> _managerList;
+
+	veThreadPool _threadPool;
 
 	double _deltaTime;
 };

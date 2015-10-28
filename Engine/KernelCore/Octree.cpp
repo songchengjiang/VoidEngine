@@ -17,6 +17,7 @@ veOctree::~veOctree()
 
 void veOctree::addNode(veOctreeNode *node)
 {
+	std::unique_lock<std::mutex> lock(_nodeListMutex);
 	node->octant = this;
 	nodeList.push_back(node);
 	_needUpdateBoundingBox = true;
@@ -24,6 +25,7 @@ void veOctree::addNode(veOctreeNode *node)
 
 void veOctree::removeNode(veOctreeNode *node)
 {
+	std::unique_lock<std::mutex> lock(_nodeListMutex);
 	auto iter = std::find(nodeList.begin(), nodeList.end(), node);
 	if (iter == nodeList.end()) return;
 	(*iter)->octant = nullptr;
@@ -77,6 +79,7 @@ bool veOctree::updateBoundingBox()
 {
 	bool state = false;
 	if (_needUpdateBoundingBox) {
+		std::unique_lock<std::mutex> lock(_nodeListMutex);
 		boundingBox = originBoundingBox;
 		for (auto &iter : nodeList) {
 			boundingBox.expandBy(iter->getBoundingBox());

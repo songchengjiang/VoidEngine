@@ -77,6 +77,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\Text.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Texture.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\TextureManager.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\ThreadPool.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Transformer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\TransformFeedback.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Visualiser.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\Text.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Texture.h" />
     <ClInclude Include="..\..\Engine\KernelCore\TextureManager.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\ThreadPool.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Transformer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\TransformFeedback.h" />
     <ClInclude Include="..\..\Engine\KernelCore\VE_Ptr.h" />

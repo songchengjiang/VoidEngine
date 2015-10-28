@@ -89,6 +89,7 @@ veShader* veText::getFragmentShader()
 
 void veText::rebuildContentBitmap(int divWidth, int divHeight)
 {
+	if (_content.empty()) return;
 #define FOUR_BYTES_ALIGN(BYTES)  ((((BYTES + 4))>>2)<<2)  
 
 	unsigned int borderSpace = _font->getFontSize() * 0.5;

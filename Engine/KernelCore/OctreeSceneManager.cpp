@@ -11,6 +11,7 @@ veOctreeSceneManager::veOctreeSceneManager()
 	: _boundingBox(veVec3(-10000.0f), veVec3(10000.0f))
 	, _octreeMaxDeep(8)
 	, _octree(new veOctree)
+	, _octantUpdateCount(0)
 {
 	init();
 }
@@ -19,6 +20,7 @@ veOctreeSceneManager::veOctreeSceneManager(const veBoundingBox &bbox, unsigned i
 	: _boundingBox(bbox)
 	, _octreeMaxDeep(octreeDeep)
 	, _octree(new veOctree)
+	, _octantUpdateCount(0)
 {
 	init();
 }
@@ -56,26 +58,39 @@ void veOctreeSceneManager::requestRender(veNode *node)
 {
 	veOctreeNode *ocNode = static_cast<veOctreeNode *>(node);
 	if (!ocNode) return;
-	if (!ocNode->octant) {
-		if (!ocNode->isIn(_octree->boundingBox)) {
-			_octree->addNode(ocNode);
-		}
-		else {
-			addOctreeNode(ocNode, _octree);
-		}
+	{
+		std::unique_lock<std::mutex> lock(this->_octantUpdateMutex);
+		++_octantUpdateCount;
 	}
-	else {
-		if (!ocNode->isIn(ocNode->octant->boundingBox)) {
-			ocNode->octant->removeNode(ocNode);
-			
-			if (!ocNode->isIn(_octree->boundingBox)) {
-				_octree->addNode(ocNode);
+	_threadPool.enqueue(nullptr, nullptr, [this, ocNode] {
+		if (!ocNode->octant) {
+			if (!ocNode->isIn(this->_octree->boundingBox)) {
+				this->_octree->addNode(ocNode);
 			}
 			else {
-				addOctreeNode(ocNode, _octree);
+				addOctreeNode(ocNode, this->_octree);
 			}
 		}
-	}
+		else {
+			if (!ocNode->isIn(ocNode->octant->boundingBox)) {
+				ocNode->octant->removeNode(ocNode);
+
+				if (!ocNode->isIn(this->_octree->boundingBox)) {
+					this->_octree->addNode(ocNode);
+				}
+				else {
+					addOctreeNode(ocNode, this->_octree);
+				}
+			}
+		}
+		{
+			std::unique_lock<std::mutex> lock(this->_octantUpdateMutex);
+			--_octantUpdateCount;
+			if (_octantUpdateCount == 0) {
+				_octreesUpdateDoneCondition.notify_all();
+			}
+		}
+	});
 }
 
 void veOctreeSceneManager::requestRayCast(veRay *ray)
@@ -185,6 +200,7 @@ void veOctreeSceneManager::update()
 
 void veOctreeSceneManager::render()
 {
+	waitSync();
 	//glClear(_clearMask);
 	auto mainCamera = _visualiser->getCamera();
 	for (auto &iter : _cameraList) {
@@ -201,4 +217,10 @@ void veOctreeSceneManager::render()
 		static_cast<veOctreeCamera *>(mainCamera)->render(_octree);
 	}
 	veSceneManager::render();
+}
+
+void veOctreeSceneManager::waitSync()
+{
+	std::unique_lock<std::mutex> lock(_octantUpdateMutex);
+	_octreesUpdateDoneCondition.wait(lock, [this] { return this->_octantUpdateCount == 0; });
 }

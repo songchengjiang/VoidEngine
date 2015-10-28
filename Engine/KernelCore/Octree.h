@@ -2,6 +2,7 @@
 #define _VE_OCTREE_
 #include "Prerequisites.h"
 #include "BoudingBox.h"
+#include <mutex>
 
 class veOctreeNode;
 /*
@@ -39,6 +40,7 @@ public:
 private:
 
 	bool _needUpdateBoundingBox;
+	std::mutex _nodeListMutex;
 };
 
 #endif

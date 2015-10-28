@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include "Event.h"
+#include "EventDispatcher.h"
 #include "Surface.h"
 #include "Image.h"
 #include "Text.h"
@@ -13,7 +14,8 @@
 #include "AnimationManager.h"
 
 veSceneManager::veSceneManager()
-	: _deltaTime(0.0)
+	: USE_VE_PTR_INIT
+	, _deltaTime(0.0)
 {
 	_managerList[veLightManager::TYPE()] = new veLightManager(this);
 	_managerList[veTextureManager::TYPE()] = new veTextureManager(this);
@@ -23,6 +25,7 @@ veSceneManager::veSceneManager()
 
 veSceneManager::~veSceneManager()
 {
+	stopThreading();
 	for (auto &iter : _managerList) {
 		VE_SAFE_DELETE(iter.second);
 	}
@@ -133,7 +136,7 @@ bool veSceneManager::simulation()
 {
 	if (glfwWindowShouldClose(_visualiser->_hwnd)) return false;
 	glfwMakeContextCurrent(_visualiser->_hwnd);
-
+	veEventDispatcher::instance()->dispatch(this);
 	for (auto &manager : _managerList) {
 		manager.second->update();
 	}
@@ -141,6 +144,16 @@ bool veSceneManager::simulation()
 	render();
 
 	return true;
+}
+
+void veSceneManager::startThreading()
+{
+	_threadPool.start();
+}
+
+void veSceneManager::stopThreading()
+{
+	_threadPool.stop();
 }
 
 void veSceneManager::render()

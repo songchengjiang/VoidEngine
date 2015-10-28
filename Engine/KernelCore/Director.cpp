@@ -1,11 +1,9 @@
 #include "Director.h"
 #include "EventDispatcher.h"
-#include "SceneManager.h"
 #include "OctreeSceneManager.h"
 
 veDirector::veDirector()
-	: _sceneManager(nullptr)
-	, _isRunning(false)
+	: _isRunning(false)
 {
 	glfwInit();
 #if defined(__APPLE_CC__)
@@ -19,6 +17,7 @@ veDirector::veDirector()
 
 veDirector::~veDirector()
 {
+	stop();
 	glfwTerminate();
 }
 
@@ -26,6 +25,13 @@ veDirector* veDirector::instance()
 {
 	static veDirector director;
 	return &director;
+}
+
+void veDirector::setSceneManager(veSceneManager *sm)
+{
+	if (_sceneManager.valid())
+		_sceneManager->stopThreading();
+	_sceneManager = sm;
 }
 
 //veVisualiser* veDirector::createVisualiser(int w, int h, const std::string &title)
@@ -38,16 +44,18 @@ veDirector* veDirector::instance()
 
 bool veDirector::run()
 {
+	if (!_sceneManager.valid()) return false;
     _isRunning = true;
+	_sceneManager->startThreading();
 	double preFrameTime = glfwGetTime();
 	while (_isRunning)
 	{
 		double currentFrameTime = glfwGetTime();
 		_sceneManager->setDeltaTime(currentFrameTime - preFrameTime);
-		veEventDispatcher::instance()->dispatch(_sceneManager);
 		if (!_sceneManager->simulation()) _isRunning = false;
 		preFrameTime = currentFrameTime;
 	}
+	_sceneManager->stopThreading();
 	return true;
 }
 

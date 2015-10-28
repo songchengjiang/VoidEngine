@@ -234,6 +234,9 @@
     <ClCompile Include="..\..\Engine\KernelCore\AnimationManager.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\ThreadPool.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -445,6 +448,9 @@
       <Filter>KernelCore\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\AnimationManager.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\ThreadPool.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>
