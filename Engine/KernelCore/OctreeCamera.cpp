@@ -31,8 +31,8 @@ void veOctreeCamera::render()
 				}
 			}
 		}
-		veCamera::render();
 	}
+	veCamera::render();
 	//else {
 	//	veLog("visibleOctreeNodeList is empty!");
 	//}

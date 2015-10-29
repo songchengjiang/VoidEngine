@@ -39,8 +39,6 @@ veDebuger::veDebuger()
 	, _drawCount(0)
 {
 	initMaterial();
-	_boundingBox.min() = -FLT_MIN;
-	_boundingBox.max() = FLT_MAX;
 }
 
 veDebuger::~veDebuger()
@@ -54,9 +52,13 @@ void veDebuger::render(veNode *node, veCamera *camera)
 	//if (_isDrawBoundingBoxWireframe) {
 	//	renderBoundingBoxWireframe(_attachedNode->getBoundingBox(), nTow);
 	//}
+
 	_renderableNodes.clear();
 	RenderableObjectFinder finder(_renderableNodes);
 	node->accept(finder);
+	if (_renderableNodes.size() != 8) {
+		veLog("_renderableNodes Size changed!");
+	}
 	for (auto &iter : _renderableNodes) {
 		if (_isDrawFrustumPlane) {
 			auto camera = dynamic_cast<veCamera *>(iter);
@@ -91,6 +93,7 @@ void veDebuger::render(veNode *node, veCamera *camera)
 	glBindVertexArray(_vao);
 	glBindBuffer(GL_ARRAY_BUFFER, _vbo);
 	{
+		std::unique_lock<std::mutex> lock(_verticesMutex);
 		if (!_vertices.empty())
 			glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(_vertices[0]), _vertices.buffer(), GL_STATIC_DRAW);
 		_drawCount = _vertices.size();
@@ -290,6 +293,7 @@ veVec3 veDebuger::getPlaneCrossPoint(const vePlane &p0, const vePlane &p1, const
 
 void veDebuger::drawLine(const veVec3 &start, const veVec3 &end, const veVec4 &color)
 {
+	std::unique_lock<std::mutex> lock(_verticesMutex);
 	_vertices.push_back(start.x()); _vertices.push_back(start.y()); _vertices.push_back(start.z());
 	_vertices.push_back(color.x()); _vertices.push_back(color.y()); _vertices.push_back(color.z()); _vertices.push_back(color.w());
 	_vertices.push_back(end.x()); _vertices.push_back(end.y()); _vertices.push_back(end.z());

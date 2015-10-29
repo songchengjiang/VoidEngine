@@ -13,14 +13,14 @@ veOctreeDebuger::~veOctreeDebuger()
 
 }
 
-void veOctreeDebuger::update(veNode *node, veSceneManager *sm)
+void veOctreeDebuger::render(veNode *node, veCamera *camera)
 {
-	veDebuger::update(node, sm);
 	if (_isDrawOctree) {
-		auto octreesm = static_cast<veOctreeSceneManager *>(sm);
+		auto octreesm = static_cast<veOctreeSceneManager *>(camera->getSceneManager());
 		//_boundingBox = octreesm->getRootOctree()->boundingBox;
 		renderOctree(octreesm->getRootOctree());
 	}
+	veDebuger::render(node, camera);
 }
 
 void veOctreeDebuger::renderOctree(veOctree *octree)

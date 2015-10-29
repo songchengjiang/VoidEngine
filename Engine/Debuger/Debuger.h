@@ -65,6 +65,7 @@ protected:
 
 	bool            _isDrawFrustumPlane;
 	veVec4          _drawFrustumPlaneColor;
+	std::mutex      _verticesMutex;
 };
 
 #endif /* Debuger_h */

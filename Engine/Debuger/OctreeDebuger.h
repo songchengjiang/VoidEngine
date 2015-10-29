@@ -9,7 +9,7 @@ public:
 	veOctreeDebuger();
 	~veOctreeDebuger();
 
-	virtual void update(veNode *node, veSceneManager *sm) override;
+	virtual void render(veNode *node, veCamera *camera) override;
 
 	void debugDrawOctree(bool isDraw, const veVec4 &color = veVec4::WHITE) {
 		_isDrawOctree = isDraw; 

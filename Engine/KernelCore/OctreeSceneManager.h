@@ -24,6 +24,7 @@ public:
 	virtual bool isNodeVisibleInScene(veNode *node) override;
 
 	veOctree* getRootOctree() { return _octree; }
+	const veBoundingBox& getOctreeSceneArea() const { return _boundingBox; }
 
 protected:
 
