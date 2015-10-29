@@ -13,8 +13,8 @@
 
 #include <unordered_map>
 
-#if defined(_MSC_VER) || defined(__APPLE_CC__)
-#include "Visualiser-pc.h"
+#if (VE_PLATFORM == VE_PLATFORM_WIN32)
+#include "Visualiser-desktop.h"
 #endif
 
 class veEvent;

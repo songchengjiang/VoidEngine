@@ -1,6 +1,6 @@
 #include "File.h"
 #include "FileReaderWriter.h"
-#if defined(_MSC_VER)
+#if (VE_PLATFORM == VE_PLATFORM_WIN32)
 #include "File-win32.h"
 #endif
 
@@ -16,7 +16,7 @@ veFile::~veFile()
 
 veFile* veFile::instance()
 {
-#if defined(_MSC_VER)
+#if (VE_PLATFORM == VE_PLATFORM_WIN32)
 	static veFileWin32 fileReader;
 #endif
 	return &fileReader;

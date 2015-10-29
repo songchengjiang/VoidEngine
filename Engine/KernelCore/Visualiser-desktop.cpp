@@ -1,4 +1,4 @@
-#include "Visualiser-pc.h"
+#include "Visualiser-desktop.h"
 #include "SceneManager.h"
 
 veVisualiserPC::veVisualiserPC(int w, int h, const std::string &title)

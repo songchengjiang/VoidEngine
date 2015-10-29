@@ -4,13 +4,13 @@
 #include "KernelCore/Texture.h"
 #include "KernelCore/SceneManager.h"
 extern "C" {
-#if defined(_MSC_VER)
+#if (VE_PLATFORM == VE_PLATFORM_WIN32)
 #include "libjpeg/include/win/jpeglib.h"
-#elif defined(__APPLE_CC__)
+#elif (VE_PLATFORM == VE_PLATFORM_MAC)
 #include "libjpeg/include/mac/jpeglib.h"
 #endif
 }
-#if defined(_MSC_VER)
+#if (VE_PLATFORM == VE_PLATFORM_WIN32)
 #pragma comment(lib, "libjpeg/lib/libjpeg.lib")
 #endif
 class veFileReaderWriterJPEG : public veFileReaderWriter

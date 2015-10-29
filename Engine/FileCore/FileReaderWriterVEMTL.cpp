@@ -29,8 +29,9 @@ public:
 			_doucument = doc->second;
 		else {
 			_doucument = new Document;
-			std::string buffer = veFile::instance()->readFileToBuffer(fullPath);
-			_doucument->Parse(buffer.c_str());
+			auto fileData = veFile::instance()->readFileToBuffer(fullPath);
+			_doucument->Parse(fileData->buffer);
+			VE_SAFE_DELETE(fileData);
 			if (_doucument->HasParseError())
 				return nullptr;
 			_doucumentMap[fullPath] = _doucument;

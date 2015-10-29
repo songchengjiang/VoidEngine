@@ -203,7 +203,7 @@ public:
 		veDirector::instance()->setSceneManager(_sceneManager);
 		int width = 800;
 		int height = 600;
-		_sceneManager->createVisualiser(width, height, "Game");
+		_sceneManager->createVisualiser(width, height, "VoidEngine");
 		_camera = _sceneManager->createCamera("MainCamera", {0, 0, width, height });
 		_camera->setProjectionMatrixAsPerspective(30.0f, (float)width / (float)height, 1.0f, 1000.0f);
 		_camera->setViewMatrixAslookAt(veVec3(0.0f, 0.0f, 30.0f), veVec3::ZERO, veVec3::UNIT_Y);

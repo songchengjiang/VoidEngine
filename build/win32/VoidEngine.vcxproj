@@ -80,7 +80,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\ThreadPool.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Transformer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\TransformFeedback.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\Visualiser-pc.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Visualiser-desktop.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Visualiser.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -155,7 +155,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\Transformer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\TransformFeedback.h" />
     <ClInclude Include="..\..\Engine\KernelCore\VE_Ptr.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\Visualiser-pc.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Visualiser-desktop.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Visualiser.h" />
     <ClInclude Include="..\..\Engine\Prerequisites.h" />
     <ClInclude Include="..\..\Engine\VoidEngine.h" />

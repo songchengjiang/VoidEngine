@@ -19,9 +19,10 @@ veLightManager::~veLightManager()
 
 bool veLightManager::loadLightTemplates(const std::string &filePath)
 {
-	std::string buffer = veFile::instance()->readFileToBuffer(filePath);
+	auto fileData = veFile::instance()->readFileToBuffer(filePath);
 	Document document;
-	document.Parse(buffer.c_str());
+	document.Parse(fileData->buffer);
+	VE_SAFE_DELETE(fileData);
 
 	if (document.HasMember(LIGHT_TEMPLATES_KEY.c_str())) {
 		_lightTemplate.clear();

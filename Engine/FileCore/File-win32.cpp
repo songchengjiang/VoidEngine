@@ -11,10 +11,10 @@ veFileWin32::~veFileWin32()
 
 }
 
-std::string veFileWin32::readFileToBuffer(const std::string &filePath)
+veFileData* veFileWin32::readFileToBuffer(const std::string &filePath)
 {
 	FILE* file = fopen(filePath.c_str(), "rb");
-	if (!file) return std::string("null");
+	if (!file) return nullptr;
 	fseek(file, 0, SEEK_END);
 	size_t size = ftell(file);
 	//rewind(file);
@@ -25,12 +25,11 @@ std::string veFileWin32::readFileToBuffer(const std::string &filePath)
 	size_t result = fread(buffer, sizeof(char), size, file);
 	buffer[result] = '\0';
     //veLog(buffer);
-	std::string buf;
-	buf.assign(buffer, result);
 	fclose(file);
-	delete[] buffer;
-
-	return buf;
+	auto fileData = new veFileData();
+	fileData->buffer = buffer;
+	fileData->size = size + 1;
+	return fileData;
 }
 
 std::string veFileWin32::getFullFilePath(const std::string &filePath)

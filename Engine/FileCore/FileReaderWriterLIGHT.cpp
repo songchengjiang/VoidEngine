@@ -21,8 +21,9 @@ public:
 		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
 		_sceneManager = sm;
 		_name = name;
-		std::string buffer = veFile::instance()->readFileToBuffer(fullPath);
-		_doucument->Parse(buffer.c_str());
+		auto fileData = veFile::instance()->readFileToBuffer(fullPath);
+		_doucument->Parse(fileData->buffer);
+		VE_SAFE_DELETE(fileData);
         if (_doucument->HasParseError()) return  nullptr;
 		readLight();
 		VE_SAFE_DELETE(_doucument);

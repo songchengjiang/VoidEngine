@@ -237,7 +237,7 @@
     <ClCompile Include="..\..\Engine\FileCore\File-win32.cpp">
       <Filter>FileCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\Visualiser-pc.cpp">
+    <ClCompile Include="..\..\Engine\KernelCore\Visualiser-desktop.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
   </ItemGroup>
@@ -456,7 +456,7 @@
     <ClInclude Include="..\..\Engine\FileCore\File-win32.h">
       <Filter>FileCore</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\Visualiser-pc.h">
+    <ClInclude Include="..\..\Engine\KernelCore\Visualiser-desktop.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>

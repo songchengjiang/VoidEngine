@@ -80,6 +80,21 @@ public: const std::string& getName() const { return _name; }
 #define VE_GL_VERSION_MAJOR 4
 #define VE_GL_VERSION_MINOR 1
 
+#define VE_PLATFORM_IOS                1
+#define VE_PLATFORM_ANDROID            2
+#define VE_PLATFORM_WIN32              3
+#define VE_PLATFORM_LINUX              4
+#define VE_PLATFORM_MAC                5
+#define VE_PLATFORM_UNKNOW             6
+
+#if defined(_MSC_VER)
+#define VE_PLATFORM     VE_PLATFORM_WIN32
+#elif defined(__APPLE_CC__)
+#define VE_PLATFORM     VE_PLATFORM_MAC
+#else
+#define VE_PLATFORM     VE_PLATFORM_UNKNOW
+#endif
+
 
 #if defined(_MSC_VER) || defined(__APPLE_CC__)
 #if defined(_MSC_VER)

@@ -2,7 +2,7 @@
 #define _VE_FILE_
 #include "Prerequisites.h"
 
-struct veFileParam
+struct VE_EXPORT veFileParam
 {
 
 	enum MemoryCreate
@@ -12,6 +12,15 @@ struct veFileParam
 	};
 
 	MemoryCreate  create;
+};
+
+struct VE_EXPORT veFileData
+{
+	~veFileData() {
+		VE_SAFE_DELETE_ARRAY(buffer);
+	}
+	char          *buffer;
+	size_t         size;
 };
 
 class veSceneManager;
@@ -24,7 +33,7 @@ public:
 	void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param = {veFileParam::COPY});
 	bool writeFile(veSceneManager *sm, void *data, const std::string &filePath);
 
-	virtual std::string readFileToBuffer(const std::string &filePath) = 0;
+	virtual veFileData* readFileToBuffer(const std::string &filePath) = 0;
 	virtual std::string getFullFilePath(const std::string &filePath) = 0;
 	bool isSupportFile(const std::string &filePath);
 	
