@@ -1,5 +1,4 @@
 #include "Director.h"
-#include "EventDispatcher.h"
 #include "OctreeSceneManager.h"
 
 veDirector::veDirector()
@@ -12,7 +11,6 @@ veDirector::veDirector()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, VE_GL_VERSION_MAJOR);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, VE_GL_VERSION_MINOR);
 #endif
-	veEventDispatcher::instance()->registerCallback();
 }
 
 veDirector::~veDirector()
@@ -33,14 +31,6 @@ void veDirector::setSceneManager(veSceneManager *sm)
 		_sceneManager->stopThreading();
 	_sceneManager = sm;
 }
-
-//veVisualiser* veDirector::createVisualiser(int w, int h, const std::string &title)
-//{
-//	auto visualiser = new veVisualiser(w, h, title);
-//	veVisualiserRegistrar::instance()->reg(visualiser->_hwnd, visualiser);
-//	_visualiserList.push_back(visualiser);
-//	return visualiser;
-//}
 
 bool veDirector::run()
 {

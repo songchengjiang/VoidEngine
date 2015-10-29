@@ -81,15 +81,19 @@ public: const std::string& getName() const { return _name; }
 #define VE_GL_VERSION_MINOR 1
 
 
+#if defined(_MSC_VER) || defined(__APPLE_CC__)
 #if defined(_MSC_VER)
 #define GLEW_STATIC
 #include "glew/include/GL/glew.h"
 #endif
 
 #if defined(__APPLE_CC__)
-#define GLFW_INCLUDE_GLCOREARB
-#define GLFW_INCLUDE_GLEXT
+//#define GLFW_INCLUDE_GLCOREARB
+//#define GLFW_INCLUDE_GLEXT
+#include <OpenGL/gl3.h>
+#include <OpenGL/gl3ext.h>
 #endif
 #include "glfw/include/GLFW/glfw3.h"
+#endif
 
 #endif

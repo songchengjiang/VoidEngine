@@ -525,7 +525,7 @@ veShader::veShader(Type type, const std::string &filePath)
 	, _shader(0)
 	, _isCompiled(false)
 {
-	_source = veFile::readFileToBuffer(filePath);
+	_source = veFile::instance()->readFileToBuffer(filePath);
 }
 
 veShader::veShader(Type type, const char *str)
@@ -553,7 +553,7 @@ veShader::~veShader()
 
 void veShader::setSource(const std::string &filePath)
 {
-	_source = veFile::readFileToBuffer(filePath);
+	_source = veFile::instance()->readFileToBuffer(filePath);
 	_isCompiled = false;
 }
 

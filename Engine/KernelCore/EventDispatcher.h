@@ -25,7 +25,6 @@ protected:
 private:
 
 	static void caculateMouseUnitCoords(GLFWwindow* window, double x, double y);
-
 	static void collectKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
 	//static void collectCharEvent(GLFWwindow* window, unsigned int codepoint, int mods);
 	static void collectMouseEvent(GLFWwindow* window, int button, int action, int mods);

@@ -105,9 +105,6 @@
     <ClCompile Include="..\..\Engine\KernelCore\Director.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\EventDispatcher.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\FrameBufferObject.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
@@ -237,6 +234,12 @@
     <ClCompile Include="..\..\Engine\KernelCore\ThreadPool.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\FileCore\File-win32.cpp">
+      <Filter>FileCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Visualiser-pc.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -300,9 +303,6 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\Event.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\EventDispatcher.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\FrameBufferObject.h">
@@ -451,6 +451,12 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\ThreadPool.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\File-win32.h">
+      <Filter>FileCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Visualiser-pc.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>

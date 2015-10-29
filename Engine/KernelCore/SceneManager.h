@@ -2,7 +2,6 @@
 #define _VE_SCENE_MANAGER_
 #include "Prerequisites.h"
 #include "VE_Ptr.h"
-#include "Visualiser.h"
 #include "RenderQueue.h"
 #include "ThreadPool.h"
 #include "LoopQueue.h"
@@ -13,6 +12,10 @@
 #include "Ray.h"
 
 #include <unordered_map>
+
+#if defined(_MSC_VER) || defined(__APPLE_CC__)
+#include "Visualiser-pc.h"
+#endif
 
 class veEvent;
 class veNode;
@@ -83,7 +86,7 @@ protected:
 	virtual void render() = 0;
 	void handleRequests();
 	void enqueueRequest(const std::function<void()> &func);
-	void makeContextCurrent();
+	void setContextCurrent();
 
 protected:
 
@@ -104,7 +107,6 @@ protected:
 	std::condition_variable _renderingCondition;
 	std::thread _renderingThread;
 	bool        _stopThreading;
-	bool        _isInited;
 
 	double _deltaTime;
 };

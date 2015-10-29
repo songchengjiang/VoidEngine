@@ -20,6 +20,7 @@
     <ClCompile Include="..\..\Engine\BaseCore\Vector4.cpp" />
     <ClCompile Include="..\..\Engine\Debuger\Debuger.cpp" />
     <ClCompile Include="..\..\Engine\Debuger\OctreeDebuger.cpp" />
+    <ClCompile Include="..\..\Engine\FileCore\File-win32.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\File.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriter.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterANIMATION.cpp" />
@@ -44,7 +45,6 @@
     <ClCompile Include="..\..\Engine\KernelCore\Entity.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\EntityManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\EntityRenderer.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\EventDispatcher.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Font.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\FontCharDictionary.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\FrameBufferObject.cpp" />
@@ -80,6 +80,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\ThreadPool.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Transformer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\TransformFeedback.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Visualiser-pc.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Visualiser.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +96,7 @@
     <ClInclude Include="..\..\Engine\Debuger\Debuger.h" />
     <ClInclude Include="..\..\Engine\Debuger\OctreeDebuger.h" />
     <ClInclude Include="..\..\Engine\Export.h" />
+    <ClInclude Include="..\..\Engine\FileCore\File-win32.h" />
     <ClInclude Include="..\..\Engine\FileCore\File.h" />
     <ClInclude Include="..\..\Engine\FileCore\FileReaderWriter.h" />
     <ClInclude Include="..\..\Engine\FileCore\Printer.h" />
@@ -112,7 +114,6 @@
     <ClInclude Include="..\..\Engine\KernelCore\EntityManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\EntityRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Event.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\EventDispatcher.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Font.h" />
     <ClInclude Include="..\..\Engine\KernelCore\FontCharDictionary.h" />
     <ClInclude Include="..\..\Engine\KernelCore\FrameBufferObject.h" />
@@ -154,6 +155,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\Transformer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\TransformFeedback.h" />
     <ClInclude Include="..\..\Engine\KernelCore\VE_Ptr.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Visualiser-pc.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Visualiser.h" />
     <ClInclude Include="..\..\Engine\Prerequisites.h" />
     <ClInclude Include="..\..\Engine\VoidEngine.h" />

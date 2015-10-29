@@ -29,7 +29,7 @@ public:
 			_doucument = doc->second;
 		else {
 			_doucument = new Document;
-			std::string buffer = veFile::readFileToBuffer(fullPath);
+			std::string buffer = veFile::instance()->readFileToBuffer(fullPath);
 			_doucument->Parse(buffer.c_str());
 			if (_doucument->HasParseError()) return  nullptr;
 			_doucumentMap[fullPath] = _doucument;

@@ -21,31 +21,33 @@ public:
 
 	USE_VE_PTR;
 
-	int width();
-	int height();
+	int width() { return _width; }
+	int height() { return _height; }
 
 	void setCamera(veCamera *camera) { _mainCamera = camera; }
 	veCamera* getCamera() { return _mainCamera.get(); }
-	//int addCamera(veCamera *camera);
-	//veCamera* getCamera(unsigned int idx);
-	//veCamera* removeCamera(unsigned int idx);
-	//unsigned int getCameraNum() const { return _cameras.size(); }
 
-private:
+	virtual bool dispatchEvents() = 0;
+
+protected:
 
 	veVisualiser(int w, int h, const std::string &title);
+	virtual void setContextCurrent() = 0;
+	virtual void swapBuffers() = 0;
+	virtual bool isWindowShouldClose() = 0;
 
-private:
+protected:
 
 	int _width;
 	int _height;
 	std::string _title;
-	GLFWwindow *_hwnd;
+	bool        _isInited;
 	VE_Ptr<veCamera> _mainCamera;
+
+	Events  _events;
+	veEvent _currentEvent;
 
 	veSceneManager *_sceneManager;
 };
-
-typedef veRegistrar<GLFWwindow*, veVisualiser> veVisualiserRegistrar;
 
 #endif

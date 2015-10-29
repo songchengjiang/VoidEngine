@@ -1,3 +1,4 @@
+#if defined(_MSC_VER) || defined(__APPLE_CC__)
 #include "FileReaderWriter.h"
 #include <unordered_map>
 #include "KernelCore/Texture.h"
@@ -91,3 +92,5 @@ private:
 };
 
 VE_READERWRITER_REG("jpg", veFileReaderWriterJPEG);
+
+#endif

@@ -1,6 +1,5 @@
 #include "SceneManager.h"
 #include "Event.h"
-#include "EventDispatcher.h"
 #include "Surface.h"
 #include "Image.h"
 #include "Text.h"
@@ -17,7 +16,6 @@ veSceneManager::veSceneManager()
 	: USE_VE_PTR_INIT
 	, _deltaTime(0.0)
 	, _stopThreading(true)
-	, _isInited(false)
 {
 	_managerList[veLightManager::TYPE()] = new veLightManager(this);
 	_managerList[veTextureManager::TYPE()] = new veTextureManager(this);
@@ -35,14 +33,10 @@ veSceneManager::~veSceneManager()
 
 veVisualiser* veSceneManager::createVisualiser(int w, int h, const std::string &title)
 {
-	auto visualiser = new veVisualiser(w, h, title);
-	veVisualiserRegistrar::instance()->reg(visualiser->_hwnd, visualiser);
-//	glfwMakeContextCurrent(visualiser->_hwnd);
-//#if defined(_MSC_VER)
-//	if (glewInit() != GLEW_OK) veLog("glewInit error!");
-//#endif
+#if defined(_MSC_VER)
+	auto visualiser = new veVisualiserPC(w, h, title);
+#endif
 	visualiser->_sceneManager = this;
-	if (_visualiser.valid()) veVisualiserRegistrar::instance()->unReg(_visualiser->_hwnd);
 	_visualiser = visualiser;
 	return visualiser;
 }
@@ -148,8 +142,9 @@ void veSceneManager::dispatchEvents(veEvent &event)
 
 bool veSceneManager::simulation()
 {
-	if (glfwWindowShouldClose(_visualiser->_hwnd)) return false;
-	veEventDispatcher::instance()->dispatch(this);
+	if (_visualiser->isWindowShouldClose()) 
+		return false;
+	_visualiser->dispatchEvents();
 
 	{
 		for (auto &manager : _managerList) {
@@ -192,7 +187,7 @@ void veSceneManager::stopThreading()
 
 void veSceneManager::render()
 {
-	glfwSwapBuffers(_visualiser->_hwnd);
+	_visualiser->swapBuffers();
 }
 
 void veSceneManager::handleRequests()
@@ -212,13 +207,7 @@ void veSceneManager::enqueueRequest(const std::function<void()> &func)
 	_requestQueue.push_back(func);
 }
 
-void veSceneManager::makeContextCurrent()
+void veSceneManager::setContextCurrent()
 {
-	glfwMakeContextCurrent(_visualiser->_hwnd);
-	if (!_isInited) {
-#if defined(_MSC_VER)
-		if (glewInit() != GLEW_OK) veLog("glewInit error!");
-#endif
-		_isInited = true;
-	}
+	_visualiser->setContextCurrent();
 }
