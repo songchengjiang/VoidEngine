@@ -25,8 +25,8 @@ public:
 		veReal m20, veReal m21, veReal m22);
 	~veMat3();
 
-	inline void identity();
-	inline void set(veReal m00, veReal m01, veReal m02,
+    void identity();
+    void set(veReal m00, veReal m01, veReal m02,
 		veReal m10, veReal m11, veReal m12,
 		veReal m20, veReal m21, veReal m22);
     void transpose();

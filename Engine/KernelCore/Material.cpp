@@ -24,7 +24,6 @@ vePass::vePass()
 	, _depthWirte(true)
 	, _cullFace(true)
 	, _cullFaceMode(GL_BACK)
-	, _transformFeedback(false)
 	, _blendFunc(veBlendFunc::DISABLE)
 	, _polygonMode(GL_FILL)
 	, _program(0)
@@ -321,19 +320,19 @@ void veTechnique::addPass(vePass *pass)
 	_passes.push_back(pass);
 }
 
-const vePass* veTechnique::getPass(unsigned int idx) const
+const vePass* veTechnique::getPass(size_t idx) const
 {
 	veAssert(idx < _passes.size());
 	return _passes[idx].get();
 }
 
-vePass* veTechnique::getPass(unsigned int idx)
+vePass* veTechnique::getPass(size_t idx)
 {
 	veAssert(idx < _passes.size());
 	return _passes[idx].get();
 }
 
-vePass* veTechnique::removePass(unsigned int idx)
+vePass* veTechnique::removePass(size_t idx)
 {
 	veAssert(idx < _passes.size());
 	vePass *pass = _passes[idx].get();
@@ -361,13 +360,13 @@ void veMaterial::addTechnique(veTechnique *tech)
 	}
 }
 
-const veTechnique* veMaterial::getTechnique(unsigned int idx) const
+const veTechnique* veMaterial::getTechnique(size_t idx) const
 {
 	veAssert(idx < _techniques.size());
 	return _techniques[idx].get();
 }
 
-veTechnique* veMaterial::getTechnique(unsigned int idx)
+veTechnique* veMaterial::getTechnique(size_t idx)
 {
 	veAssert(idx < _techniques.size());
 	return _techniques[idx].get();
@@ -393,7 +392,7 @@ veTechnique* veMaterial::getTechnique(const std::string &name)
 	return nullptr;
 }
 
-veTechnique* veMaterial::removeTechnique(unsigned int idx)
+veTechnique* veMaterial::removeTechnique(size_t idx)
 {
 	veAssert(idx < _techniques.size());
 	veTechnique *tech = _techniques[idx].get();

@@ -16,7 +16,7 @@ public:
 
 	virtual ~veEntity();
 
-	virtual void render(veNode *node, veCamera *camera);
+	virtual void render(veNode *node, veCamera *camera) override;
 	virtual void update(veNode *node, veSceneManager *sm) override;
 	virtual bool intersectWith(veRay *ray, veNode *node) override;
 
@@ -24,8 +24,8 @@ public:
 
 	int addMesh(veMesh *mesh);
 	bool removeMesh(veMesh *mesh);
-	veMesh* removeMesh(unsigned int mIndex);
-	veMesh* getMesh(unsigned int mIndex);
+	veMesh* removeMesh(size_t mIndex);
+	veMesh* getMesh(size_t mIndex);
 	size_t getMeshCount() const { return _meshList.size(); }
 
 	void setRootMeshNode(veMeshNode *meshNode) { _meshNodeRoot = meshNode; }

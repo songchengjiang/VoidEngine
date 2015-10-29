@@ -3,6 +3,7 @@
 #include "Prerequisites.h"
 #include "VE_Ptr.h"
 
+class veTextureManager;
 class VE_EXPORT veTexture
 {
 	friend class veTextureManager;
@@ -143,7 +144,7 @@ public:
 	virtual void bind(unsigned int textureUnit) override;
 
 	void setTexture(CubeMapTexType texType, veTexture *texture);
-	virtual unsigned int getTextureTotalMemory();
+	virtual unsigned int getTextureTotalMemory() override;
 
 protected:
 	veTextureCube();

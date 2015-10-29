@@ -21,7 +21,7 @@ public:
 	void setAlphaThreshold(veReal threshold);
 	veReal getAlphaThreshold() const;
 
-	void setColor(veVec4 &color);
+	void setColor(const veVec4 &color);
 	veVec4 getColor() const;
 
 	void setType(Type type);

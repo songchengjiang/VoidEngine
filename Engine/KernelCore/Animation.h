@@ -12,6 +12,7 @@ class veEntity;
 class veMeshNode;
 class veAnimKeyValues;
 class veAnimation;
+class veAnimationManager;
 typedef std::pair<veMeshNode*, veAnimKeyValues*> BoneAnimationKeyValues;
 typedef std::vector<BoneAnimationKeyValues> BoneAnimations;
 typedef std::map< veAnimation*, BoneAnimations> AnimationMap;

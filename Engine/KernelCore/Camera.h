@@ -86,8 +86,8 @@ public:
 
 	veRenderQueue* getRenderQueue() { return _renderQueue; }
 
-	virtual void setMatrix(const veMat4 &mat);
-	virtual void refresh();
+	virtual void setMatrix(const veMat4 &mat) override;
+	virtual void refresh() override;
 
 	virtual bool routeEvent(const veEvent &event, veSceneManager *sm) override;
 	virtual void visit(veNodeVisitor &visitor) override;

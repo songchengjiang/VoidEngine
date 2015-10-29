@@ -124,9 +124,9 @@ public:
 	USE_NAME_PROPERTY;
 
 	void addPass(vePass *pass);
-	const vePass* getPass(unsigned int idx) const;
-	vePass* getPass(unsigned int idx);
-	vePass* removePass(unsigned int idx);
+	const vePass* getPass(size_t idx) const;
+	vePass* getPass(size_t idx);
+	vePass* removePass(size_t idx);
 	size_t getPassNum() const { return _passes.size(); }
 
 private:
@@ -146,11 +146,11 @@ public:
 	veTechnique* activeTechnique() { return _activeTechnique; }
 	void activateTechnique(veTechnique *tech) { _activeTechnique = tech; };
 	void addTechnique(veTechnique *tech);
-	const veTechnique* getTechnique(unsigned int idx) const;
-	veTechnique* getTechnique(unsigned int idx);
+	const veTechnique* getTechnique(size_t idx) const;
+	veTechnique* getTechnique(size_t idx);
 	const veTechnique* getTechnique(const std::string &name) const;
 	veTechnique* getTechnique(const std::string &name);
-	veTechnique* removeTechnique(unsigned int idx);
+	veTechnique* removeTechnique(size_t idx);
 	size_t getTechniqueNum() const { return _techniques.size(); }
 
 private:

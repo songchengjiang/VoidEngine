@@ -38,8 +38,8 @@ public:
 	virtual std::string getFullFilePath(const std::string &filePath);
 
 	void addSearchPath(const std::string &path);
-	void removeSearchPath(unsigned int idx);
-	unsigned int getSearchPathCount() const { return _searchPaths.size(); }
+	void removeSearchPath(size_t idx);
+	size_t getSearchPathCount() const { return _searchPaths.size(); }
 	bool isSupportFile(const std::string &filePath);
 
 protected:

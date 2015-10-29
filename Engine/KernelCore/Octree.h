@@ -18,10 +18,10 @@ public:
 	veOctree();
 	~veOctree();
 
-	inline void addNode(veOctreeNode *node);
-	inline void removeNode(veOctreeNode *node);
+    void addNode(veOctreeNode *node);
+    void removeNode(veOctreeNode *node);
 
-	inline void setChild(unsigned int x, unsigned int y, unsigned int z, veOctree *child);
+    void setChild(unsigned int x, unsigned int y, unsigned int z, veOctree *child);
 	veOctree* getChild(unsigned int x, unsigned int y, unsigned int z);
 	void getChildIndex(const veBoundingBox &bbox, unsigned int &x, unsigned int &y, unsigned int &z);
 

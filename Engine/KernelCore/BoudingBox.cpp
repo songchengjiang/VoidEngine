@@ -1,7 +1,7 @@
 #include "BoudingBox.h"
-
-static const veVec3 VEC3_MAX = veVec3(FLT_MAX);
-static const veVec3 VEC3_MIN = veVec3(-FLT_MAX);
+#define VE_FLT_MAX 3.402823466e+38F
+static const veVec3 VEC3_MAX = veVec3(VE_FLT_MAX);
+static const veVec3 VEC3_MIN = veVec3(-VE_FLT_MAX);
 veBoundingBox::veBoundingBox(const veVec3 &min, const veVec3 &max)
 	: _min(min)
 	, _max(max)
@@ -10,8 +10,8 @@ veBoundingBox::veBoundingBox(const veVec3 &min, const veVec3 &max)
 }
 
 veBoundingBox::veBoundingBox()
-	: _min(FLT_MAX)
-	, _max(-FLT_MAX)
+	: _min(VE_FLT_MAX)
+	, _max(-VE_FLT_MAX)
 {
 
 }

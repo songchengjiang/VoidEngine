@@ -99,7 +99,7 @@ bool veEntity::removeMesh(veMesh *mesh)
 	return true;
 }
 
-veMesh* veEntity::removeMesh(unsigned int mIndex)
+veMesh* veEntity::removeMesh(size_t mIndex)
 {
 	veAssert(mIndex < _meshList.size());
 	veMesh* mesh = _meshList[mIndex].get();
@@ -108,7 +108,7 @@ veMesh* veEntity::removeMesh(unsigned int mIndex)
 	return mesh;
 }
 
-veMesh* veEntity::getMesh(unsigned int mIndex)
+veMesh* veEntity::getMesh(size_t mIndex)
 {
 	veAssert(mIndex < _meshList.size());
 	return _meshList[mIndex].get();

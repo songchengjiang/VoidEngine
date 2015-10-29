@@ -13,7 +13,7 @@
 
 #include <unordered_map>
 
-#if (VE_PLATFORM == VE_PLATFORM_WIN32)
+#if (VE_PLATFORM == VE_PLATFORM_WIN32 || VE_PLATFORM == VE_PLATFORM_MAC)
 #include "Visualiser-desktop.h"
 #endif
 
@@ -37,7 +37,7 @@ class VE_EXPORT veSceneManager
 {
 public:
 	veSceneManager();
-	~veSceneManager();
+	virtual ~veSceneManager();
 
 	USE_VE_PTR;
 

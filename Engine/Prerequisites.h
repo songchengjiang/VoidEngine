@@ -52,9 +52,9 @@ public: const std::string& getName() const { return _name; }
 #if defined(_DEBUG)
 #include <assert.h>
 #define veAssert(_Expression)     assert(_Expression)
+#endif
 #else
 #define veAssert(_Expression)     ((void)0)
-#endif
 #endif
 
 #if defined(_DEBUG)
@@ -103,8 +103,8 @@ public: const std::string& getName() const { return _name; }
 #endif
 
 #if defined(__APPLE_CC__)
-//#define GLFW_INCLUDE_GLCOREARB
-//#define GLFW_INCLUDE_GLEXT
+#define GLFW_INCLUDE_GLCOREARB
+#define GLFW_INCLUDE_GLEXT
 #include <OpenGL/gl3.h>
 #include <OpenGL/gl3ext.h>
 #endif

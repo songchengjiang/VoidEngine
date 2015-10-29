@@ -33,7 +33,7 @@ veSceneManager::~veSceneManager()
 
 veVisualiser* veSceneManager::createVisualiser(int w, int h, const std::string &title)
 {
-#if (VE_PLATFORM == VE_PLATFORM_WIN32)
+#if (VE_PLATFORM == VE_PLATFORM_WIN32 || VE_PLATFORM == VE_PLATFORM_MAC)
 	auto visualiser = new veVisualiserPC(w, h, title);
 #endif
 	visualiser->_sceneManager = this;

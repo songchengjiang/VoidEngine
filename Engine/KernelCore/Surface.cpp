@@ -76,7 +76,7 @@ veReal veSurface::getAlphaThreshold() const
 	return val;
 }
 
-void veSurface::setColor(veVec4 &color)
+void veSurface::setColor(const veVec4 &color)
 {
 	_color->setValue(color);
 }

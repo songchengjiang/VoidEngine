@@ -2,6 +2,8 @@
 #include "FileReaderWriter.h"
 #if (VE_PLATFORM == VE_PLATFORM_WIN32)
 #include "File-win32.h"
+#elif (VE_PLATFORM == VE_PLATFORM_MAC)
+#include "File-mac.h"
 #endif
 
 veFile::veFile()
@@ -20,6 +22,8 @@ veFile* veFile::instance()
 {
 #if (VE_PLATFORM == VE_PLATFORM_WIN32)
 	static veFileWin32 fileReader;
+#elif (VE_PLATFORM == VE_PLATFORM_MAC)
+    static veFileMac fileReader;
 #endif
 	return &fileReader;
 }
@@ -63,7 +67,7 @@ void veFile::addSearchPath(const std::string &path)
 	_searchPaths.push_back(fullPath);
 }
 
-void veFile::removeSearchPath(unsigned int idx)
+void veFile::removeSearchPath(size_t idx)
 {
 	veAssert(idx < _searchPaths.size());
 	_searchPaths.erase(_searchPaths.begin() + idx);
