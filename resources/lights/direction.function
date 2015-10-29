@@ -1,0 +1,17 @@
+{
+  "name": "direction",
+  "params": [
+    {
+      "in": "vec3",
+      "name": "normal"
+    },
+    {
+      "in": "vec3",
+      "name": "dir"
+    }
+  ],
+  "return": "float",
+  "implement": [
+    "return dot(normal, dir);"
+  ]
+}
