@@ -1,6 +1,7 @@
 #ifndef _VE_FILE_
 #define _VE_FILE_
 #include "Prerequisites.h"
+#include <unordered_map>
 
 struct VE_EXPORT veFileParam
 {
@@ -34,14 +35,28 @@ public:
 	bool writeFile(veSceneManager *sm, void *data, const std::string &filePath);
 
 	virtual veFileData* readFileToBuffer(const std::string &filePath) = 0;
-	virtual std::string getFullFilePath(const std::string &filePath) = 0;
+	virtual std::string getFullFilePath(const std::string &filePath);
+
+	void addSearchPath(const std::string &path);
+	void removeSearchPath(unsigned int idx);
+	unsigned int getSearchPathCount() const { return _searchPaths.size(); }
 	bool isSupportFile(const std::string &filePath);
-	
 
 protected:
 
 	veFile();
+
+protected:
+
 	std::string getFileExt(const std::string &filePath);
+	virtual bool isAbsolutePath(const std::string &filePath) = 0;
+	virtual bool isFileExist(const std::string &filePath) = 0;
+
+protected:
+
+	std::string _defaultResourcesPath;
+	std::vector<std::string> _searchPaths;
+	std::unordered_map<std::string, veFileData *> _fileDataCache;
 };
 
 #endif

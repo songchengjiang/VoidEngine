@@ -38,7 +38,6 @@ veFont::FontCharList* veFontCharDictionary::getOrCreateFontCharList(const std::s
 	FT_Error error = FT_New_Memory_Face(_ftLibrary, (const FT_Byte*)fontData->buffer, fontData->size, 0, &face);
 	if (error) {
 		veLog("New FreeType face error.");
-		VE_SAFE_DELETE(fontData);
 		return nullptr;
 	}
 	int dpi = 72;
@@ -60,6 +59,5 @@ veFont::FontCharList* veFontCharDictionary::getOrCreateFontCharList(const std::s
 		charList.charBitmapList.push_back(charbitmap);
 	}
 
-	VE_SAFE_DELETE(fontData);
 	return &charList;
 }

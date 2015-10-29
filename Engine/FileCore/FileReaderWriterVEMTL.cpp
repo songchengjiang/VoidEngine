@@ -24,22 +24,15 @@ public:
 
 	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
 		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
-		auto doc = _doucumentMap.find(fullPath);
-		if (doc != _doucumentMap.end())
-			_doucument = doc->second;
-		else {
-			_doucument = new Document;
-			auto fileData = veFile::instance()->readFileToBuffer(fullPath);
-			_doucument->Parse(fileData->buffer);
-			VE_SAFE_DELETE(fileData);
-			if (_doucument->HasParseError())
-				return nullptr;
-			_doucumentMap[fullPath] = _doucument;
-		}
+		_doucument = new Document;
+		auto fileData = veFile::instance()->readFileToBuffer(fullPath);
+		_doucument->Parse(fileData->buffer);
+		if (_doucument->HasParseError()) return nullptr;
 		_sceneManager = sm;
 		_name = name;
 		_fileFolder = fullPath.substr(0, fullPath.find_last_of("/\\") + 1);
 		parseDoc();
+		VE_SAFE_DELETE(_doucument);
 		return _materials;
 	}
 

@@ -22,8 +22,6 @@ public:
 
 	bool& needRefresh();
 
-	void setFileName(const std::string &fileName) { _fileName = fileName; }
-	const std::string& getFileName() const { return _fileName; }
 	int addMesh(veMesh *mesh);
 	bool removeMesh(veMesh *mesh);
 	veMesh* removeMesh(unsigned int mIndex);
@@ -44,7 +42,6 @@ protected:
 
 	MeshList           _meshList;
 	VE_Ptr<veMeshNode> _meshNodeRoot;
-	std::string        _fileName;
 	bool               _needRefresh;
 };
 

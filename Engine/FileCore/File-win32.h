@@ -2,6 +2,7 @@
 #define _VE_FILE_WIN32_
 #include "File.h"
 
+#pragma warning( disable : 4005 )
 class VE_EXPORT veFileWin32 : public veFile
 {
 public:
@@ -9,8 +10,11 @@ public:
 	~veFileWin32();
 
 	virtual veFileData* readFileToBuffer(const std::string &filePath) override;
-	virtual std::string getFullFilePath(const std::string &filePath) override;
 
+protected:
+
+	virtual bool isAbsolutePath(const std::string &filePath) override;
+	virtual bool isFileExist(const std::string &filePath) override;
 };
 
 #endif

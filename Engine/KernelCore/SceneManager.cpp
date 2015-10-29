@@ -153,8 +153,11 @@ bool veSceneManager::simulation()
 		}
 		update();
 	}
-	std::unique_lock<std::mutex> renderLock(_renderingMutex);
-	_renderingCondition.notify_all();
+
+	{
+		std::unique_lock<std::mutex> renderLock(_renderingMutex);
+		_renderingCondition.notify_all();
+	}
 	//render();
 
 	return true;
@@ -166,11 +169,10 @@ void veSceneManager::startThreading()
 	_stopThreading = false;
 	_threadPool.start();
 	_renderingThread = std::thread([this] {
-		for (;;)
+		while(!this->_stopThreading)
 		{
 			std::unique_lock<std::mutex> renderLock(this->_renderingMutex);
 			this->_renderingCondition.wait(renderLock);
-			if (this->_stopThreading) return;
 			this->render();
 			{
 				std::unique_lock<std::mutex> updateLock(_updatingMutex);
@@ -183,10 +185,10 @@ void veSceneManager::startThreading()
 void veSceneManager::stopThreading()
 {
 	if (_stopThreading) return;
-	_renderingCondition.notify_all();
-	_stopThreading = true;
-	_renderingThread.join();
 	_threadPool.stop();
+	_stopThreading = true;
+	_renderingCondition.notify_all();
+	_renderingThread.join();
 }
 
 void veSceneManager::render()

@@ -13,27 +13,17 @@ public:
 		: _doucument(nullptr)
 	{};
 	~veFileReaderWriterANIMATION(){
-		for (auto & iter : _doucumentMap) {
-			VE_SAFE_DELETE(iter.second);
-		}
 	};
 
 	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
-		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
-		auto doc = _doucumentMap.find(fullPath);
-		if (doc != _doucumentMap.end())
-			_doucument = doc->second;
-		else {
-			_doucument = new Document;
-			auto fileData = veFile::instance()->readFileToBuffer(fullPath);
-			_doucument->Parse(fileData->buffer);
-			VE_SAFE_DELETE(fileData);
-			if (_doucument->HasParseError()) return  nullptr;
-			_doucumentMap[fullPath] = _doucument;
-		}
+		_doucument = new Document;
+		auto fileData = veFile::instance()->readFileToBuffer(filePath);
+		_doucument->Parse(fileData->buffer);
+		if (_doucument->HasParseError()) return nullptr;
 		_sceneManager = sm;
 		_name = name;
 		readAnimations();
+		VE_SAFE_DELETE(_doucument);
 		return _animationContainer;
 	}
 
@@ -115,7 +105,6 @@ private:
 	veAnimationContainer *_animationContainer;
 	veSceneManager *_sceneManager;
 	std::string _name;
-	std::map<std::string, Document *> _doucumentMap;
 };
 
 VE_READERWRITER_REG("veanim", veFileReaderWriterANIMATION);

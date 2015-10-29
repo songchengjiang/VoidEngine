@@ -555,7 +555,6 @@ void veShader::setSource(const std::string &filePath)
 {
 	auto fileData = veFile::instance()->readFileToBuffer(filePath);
 	_source.assign(fileData->buffer, fileData->size);
-	VE_SAFE_DELETE(fileData);
 	_isCompiled = false;
 }
 

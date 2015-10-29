@@ -17,14 +17,12 @@ public:
 	~veFileReaderWriterLIGHT(){};
 
 	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
-		if (!_doucument) _doucument = new Document;
-		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
 		_sceneManager = sm;
 		_name = name;
-		auto fileData = veFile::instance()->readFileToBuffer(fullPath);
+		_doucument = new Document;
+		auto fileData = veFile::instance()->readFileToBuffer(filePath);
 		_doucument->Parse(fileData->buffer);
-		VE_SAFE_DELETE(fileData);
-        if (_doucument->HasParseError()) return  nullptr;
+		if (_doucument->HasParseError()) return nullptr;
 		readLight();
 		VE_SAFE_DELETE(_doucument);
 		return _light;

@@ -11,7 +11,9 @@ veFile::veFile()
 
 veFile::~veFile()
 {
-
+	for (auto &iter : _fileDataCache) {
+		VE_SAFE_DELETE(iter.second);
+	}
 }
 
 veFile* veFile::instance()
@@ -35,6 +37,36 @@ bool veFile::writeFile(veSceneManager *sm, void *data, const std::string &filePa
 	std::string ext = getFileExt(filePath);
 	auto fileReader = FileReaderWriterRegistrar::instance()->getRegContent(ext);
 	return fileReader->writeFile(sm, data, filePath);
+}
+
+std::string veFile::getFullFilePath(const std::string &filePath)
+{
+	if (!isAbsolutePath(filePath)) {
+		if (isFileExist(_defaultResourcesPath + filePath)) {
+			return _defaultResourcesPath + filePath;
+		}
+		for (auto &searchPath : _searchPaths) {
+			if (isFileExist(searchPath + filePath)) {
+				return searchPath + filePath;
+			}
+		}
+	}
+	return filePath;
+}
+
+void veFile::addSearchPath(const std::string &path)
+{
+	std::string fullPath = path;
+	if (!isAbsolutePath(path)) {
+		fullPath = _defaultResourcesPath + path;
+	}
+	_searchPaths.push_back(fullPath);
+}
+
+void veFile::removeSearchPath(unsigned int idx)
+{
+	veAssert(idx < _searchPaths.size());
+	_searchPaths.erase(_searchPaths.begin() + idx);
 }
 
 bool veFile::isSupportFile(const std::string &filePath)

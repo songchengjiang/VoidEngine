@@ -199,6 +199,7 @@ class BaseTest
 {
 public:
 	BaseTest() {
+		veFile::instance()->addSearchPath("../resources/");
 		_sceneManager = new veOctreeSceneManager(veBoundingBox(veVec3(-1000.0f), veVec3(1000.0f)), 8);
 		veDirector::instance()->setSceneManager(_sceneManager);
 		int width = 800;
