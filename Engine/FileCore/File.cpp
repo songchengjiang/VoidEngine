@@ -46,14 +46,15 @@ bool veFile::writeFile(veSceneManager *sm, void *data, const std::string &filePa
 std::string veFile::getFullFilePath(const std::string &filePath)
 {
 	if (!isAbsolutePath(filePath)) {
-		if (isFileExist(_defaultResourcesPath + filePath)) {
-			return _defaultResourcesPath + filePath;
-		}
 		for (auto &searchPath : _searchPaths) {
 			if (isFileExist(searchPath + filePath)) {
 				return searchPath + filePath;
 			}
 		}
+        if (isFileExist(_defaultResourcesPath + filePath)) {
+            return _defaultResourcesPath + filePath;
+        }
+
 	}
 	return filePath;
 }
