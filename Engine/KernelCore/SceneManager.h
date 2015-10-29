@@ -103,6 +103,7 @@ protected:
 	std::mutex                           _requestQueueMutex;
 	veLoopQueue< std::function<void()> > _requestQueue;
 
+	std::mutex  _updatingMutex;
 	std::mutex  _renderingMutex;
 	std::condition_variable _renderingCondition;
 	std::thread _renderingThread;

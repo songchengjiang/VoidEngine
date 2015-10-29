@@ -161,6 +161,7 @@ void veOctreeSceneManager::intersectByRay(veOctree *octant, veRay *ray)
 	if (!octant) return;
 	if (ray->isIntersectWith(octant->boundingBox)) {
 		if (!octant->nodeList.empty()) {
+			std::unique_lock<std::mutex> lock(octant->nodeListMutex);
 			for (auto &iter : octant->nodeList) {
 				if (iter->isVisible()) {
 					if (ray->isIntersectWith(iter->getBoundingBox())) {

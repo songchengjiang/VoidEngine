@@ -144,16 +144,17 @@ bool veSceneManager::simulation()
 {
 	if (_visualiser->isWindowShouldClose()) 
 		return false;
-	_visualiser->dispatchEvents();
-
+	
 	{
+		std::unique_lock<std::mutex> updateLock(_updatingMutex);
+		_visualiser->dispatchEvents();
 		for (auto &manager : _managerList) {
 			manager.second->update();
 		}
 		update();
-		std::unique_lock<std::mutex> lock(_renderingMutex);
-		_renderingCondition.notify_all();
 	}
+	std::unique_lock<std::mutex> renderLock(_renderingMutex);
+	_renderingCondition.notify_all();
 	//render();
 
 	return true;
@@ -167,11 +168,14 @@ void veSceneManager::startThreading()
 	_renderingThread = std::thread([this] {
 		for (;;)
 		{
-			std::unique_lock<std::mutex> lock(this->_renderingMutex);
-			this->_renderingCondition.wait(lock);
+			std::unique_lock<std::mutex> renderLock(this->_renderingMutex);
+			this->_renderingCondition.wait(renderLock);
 			if (this->_stopThreading) return;
 			this->render();
-			this->handleRequests();
+			{
+				std::unique_lock<std::mutex> updateLock(_updatingMutex);
+				this->handleRequests();
+			}
 		}
 	});
 }
