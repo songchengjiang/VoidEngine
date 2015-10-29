@@ -10,6 +10,7 @@ const int veTexture::DEFAULT_INTERNAL_FORMAT = GL_RGBA32F;
 veTexture::~veTexture()
 {
 	glDeleteTextures(1, &_texID);
+	VE_SAFE_DELETE_ARRAY(_data);
 }
 
 veTexture::veTexture(GLenum target)
@@ -80,7 +81,6 @@ unsigned int veTexture::perPixelSize()
 
 void veTexture::releaseTextureData()
 {
-	if (!_texID || !_data) return;
 	if (_texID) {
 		glDeleteTextures(1, &_texID);
 		_manager->releaseTextureMemory(this);
@@ -96,9 +96,8 @@ unsigned int veTexture::getTextureTotalMemory()
 
 void veTexture::bind(unsigned int textureUnit)
 {
-	if (_needRefreshTex && _texID) {
-		glDeleteTextures(1, &_texID);
-		_texID = 0;
+	if (_needRefreshTex) {
+		releaseTextureData();
 	}
 	if (!_texID) {
         glGenTextures(1, &_texID);
@@ -132,7 +131,7 @@ void veTexture::storage(int width, int height, int depth, GLint internalFormat, 
 	_dataType = dataType;
 	unsigned int pixelSize = perPixelSize();
 	_dataSize = _width * _height * _depth * pixelSize;
-	releaseTextureData();
+	VE_SAFE_DELETE_ARRAY(_data);
 	if (data) {
 		_data = new unsigned char[_dataSize];
 		memcpy(_data, data, _dataSize);

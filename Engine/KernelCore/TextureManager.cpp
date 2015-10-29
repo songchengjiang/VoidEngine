@@ -85,10 +85,12 @@ bool veTextureManager::assignTextureMemory(veTexture *texture)
 
 bool veTextureManager::releaseTextureMemory(veTexture *texture)
 {
+	auto iter = std::find(_allocatedTexturePool.begin(), _allocatedTexturePool.end(), texture);
+	if (iter == _allocatedTexturePool.end()) return false;
 	if (_currentTextureMemory < texture->getTextureTotalMemory()) return false;
 	_currentTextureMemory -= texture->getTextureTotalMemory();
 	texture->_isExchanged = false;
-	_allocatedTexturePool.erase(std::find(_allocatedTexturePool.begin(), _allocatedTexturePool.end(), texture));
+	_allocatedTexturePool.erase(iter);
 	return true;
 }
 

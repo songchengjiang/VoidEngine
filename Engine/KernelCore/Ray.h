@@ -3,6 +3,7 @@
 #include "Prerequisites.h"
 #include "BaseCore/Vector3.h"
 #include "BoudingBox.h"
+#include "VE_Ptr.h"
 #include <functional>
 
 class veNode;
@@ -41,7 +42,6 @@ public:
 
 private:
 
-	veRay();
 	veRay(const veVec3 &start, const veVec3 &end);
 
 private:
@@ -51,5 +51,7 @@ private:
 	Intersections _intersections;
 	RayCallback _callBack;
 };
+
+typedef std::vector< VE_Ptr<veRay> > veRayList;
 
 #endif

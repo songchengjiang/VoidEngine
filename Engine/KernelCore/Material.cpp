@@ -195,7 +195,7 @@ void vePass::applyProgram(const veRenderCommand &command)
 
 void vePass::applyLightsUniforms(const veRenderCommand &command)
 {
-	const LightList &lightList = command.sceneManager->getLightList();
+	const veLightList &lightList = command.sceneManager->getLightList();
 	if (lightList.empty()) return;
 	std::unordered_map<std::string, int> currentLights;
 	for (auto &iter : static_cast<veLightManager *>(command.sceneManager->getManager(veLightManager::TYPE()))->getLightTemplateList()) {
@@ -204,7 +204,7 @@ void vePass::applyLightsUniforms(const veRenderCommand &command)
 	for (auto &iter : lightList) {
 		if (iter->isInScene()) {
 			int &count = currentLights[iter->getType()];
-			applyLightUniforms(count, iter, command.camera);
+			applyLightUniforms(count, iter.get(), command.camera);
 			++count;
 		}
 	}

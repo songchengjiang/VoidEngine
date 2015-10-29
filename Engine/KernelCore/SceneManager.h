@@ -6,6 +6,12 @@
 #include "RenderQueue.h"
 #include "ThreadPool.h"
 #include "LoopQueue.h"
+
+#include "Node.h"
+#include "Camera.h"
+#include "Light.h"
+#include "Ray.h"
+
 #include <unordered_map>
 
 class veEvent;
@@ -23,10 +29,7 @@ class veAnimationContainer;
 class veAnimationPlayer;
 class veBaseManager;
 class veRay;
-typedef std::vector< veNode* > NodeList;
-typedef std::vector< veCamera* > CameraList;
-typedef std::vector< veLight* > LightList;
-typedef std::vector< veRay* > RayList;
+
 class VE_EXPORT veSceneManager
 {
 public:
@@ -56,9 +59,9 @@ public:
 	virtual void requestRayCast(veRay *ray) = 0;
 	virtual bool isNodeVisibleInScene(veNode *node) { return true; }
 
-	const NodeList& getNodeList() const { return _nodeList; }
-	const CameraList& getCameraList() const { return _cameraList; }
-	const LightList& getLightList() const { return _lightList; }
+	const veNodeList& getNodeList() const { return _nodeList; }
+	const veCameraList& getCameraList() const { return _cameraList; }
+	const veLightList& getLightList() const { return _lightList; }
 
 	void loadLightConfiguration(const std::string &filePath);
 
@@ -86,10 +89,10 @@ protected:
 
 	VE_Ptr<veVisualiser> _visualiser;
 	VE_Ptr<veNode> _root;
-	NodeList _nodeList;
-	CameraList _cameraList;
-	LightList _lightList;
-	RayList   _rayList;
+	veNodeList _nodeList;
+	veCameraList _cameraList;
+	veLightList _lightList;
+	veRayList   _rayList;
 
 	std::unordered_map<std::string, veBaseManager *> _managerList;
 

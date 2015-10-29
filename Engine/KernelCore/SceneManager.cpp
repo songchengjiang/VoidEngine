@@ -7,7 +7,6 @@
 #include "Entity.h"
 #include "SkyBox.h"
 #include "Animation.h"
-#include "Ray.h"
 
 #include "LightManager.h"
 #include "TextureManager.h"

@@ -121,6 +121,6 @@ protected:
 	veRenderQueue *_renderQueue;
 };
 
-typedef std::vector< veCamera* > veCameraList;
+typedef std::vector< VE_Ptr<veCamera> > veCameraList;
 
 #endif

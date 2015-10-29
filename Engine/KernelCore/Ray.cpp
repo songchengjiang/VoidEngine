@@ -10,12 +10,6 @@ veRay::veRay(const veVec3 &start, const veVec3 &end)
 	_dir.normalize();
 }
 
-veRay::veRay()
-	: USE_VE_PTR_INIT
-{
-
-}
-
 veRay::~veRay()
 {
 

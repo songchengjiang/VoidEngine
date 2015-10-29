@@ -93,7 +93,7 @@ bool veOctreeSceneManager::isNodeVisibleInScene(veNode *node)
 	veOctreeNode *ocNode = static_cast<veOctreeNode *>(node);
 	for (auto &cam : _cameraList) {
 		if (cam->isInScene()) {
-			veOctreeCamera *octreeCam = static_cast<veOctreeCamera *>(cam);
+			veOctreeCamera *octreeCam = static_cast<veOctreeCamera *>(cam.get());
 			if (octreeCam->isNodeVisibleInCamera(ocNode))
 				return true;
 		}
@@ -195,7 +195,7 @@ void veOctreeSceneManager::render()
 	for (auto &iter : _cameraList) {
 		if (iter->isVisible() && iter->isInScene() && iter != mainCamera) {
 			if (iter->getFrameBufferObject()) {
-				veOctreeCamera *rttCam = static_cast<veOctreeCamera *>(iter);
+				veOctreeCamera *rttCam = static_cast<veOctreeCamera *>(iter.get());
 				rttCam->walkingOctree(this->_octree);
 				rttCam->render();
 			}

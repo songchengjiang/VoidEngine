@@ -34,4 +34,6 @@ protected:
 	veMat4 _lightMatrix;
 };
 
+typedef std::vector< VE_Ptr<veLight> > veLightList;
+
 #endif

@@ -55,7 +55,7 @@ public:
 	void setSceneManager(veSceneManager *sm) { _sceneManager = sm; }
 	veSceneManager* getSceneManager() { return _sceneManager; }
 
-	bool isInScene();
+	bool isInScene() const;
 
 	veMat4 getNodeToWorldMatrix() const;
 	veMat4 getWorldToNodeMatrix() const;
@@ -99,5 +99,7 @@ protected:
 
 	veSceneManager   *_sceneManager;
 };
+
+typedef std::vector< VE_Ptr<veNode> > veNodeList;
 
 #endif

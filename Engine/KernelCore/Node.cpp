@@ -130,7 +130,7 @@ veRenderableObject* veNode::getRenderableObject(size_t objIndex)
 	return _renderableObjects[objIndex].get();
 }
 
-bool veNode::isInScene()
+bool veNode::isInScene() const
 {
 	return _isInScene;
 }
