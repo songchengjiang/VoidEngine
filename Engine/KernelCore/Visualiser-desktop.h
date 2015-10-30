@@ -1,12 +1,12 @@
-#ifndef _VE_VISUALISER_PC_
-#define _VE_VISUALISER_PC_
+#ifndef _VE_VISUALISER_DESKTOP_
+#define _VE_VISUALISER_DESKTOP_
 #include "Visualiser.h"
 
-class VE_EXPORT veVisualiserPC : public veVisualiser
+class VE_EXPORT veVisualiserDesktop : public veVisualiser
 {
 	friend class veSceneManager;
 public:
-	~veVisualiserPC();
+	~veVisualiserDesktop();
 
 	//int addCamera(veCamera *camera);
 	//veCamera* getCamera(unsigned int idx);
@@ -17,7 +17,7 @@ public:
 
 protected:
 
-	veVisualiserPC(int w, int h, const std::string &title);
+	veVisualiserDesktop(int w, int h, const std::string &title);
 	virtual void setContextCurrent() override;
 	virtual void swapBuffers() override;
 	virtual bool isWindowShouldClose() override;
@@ -47,6 +47,6 @@ protected:
 	veSceneManager *_sceneManager;
 };
 
-typedef veRegistrar<GLFWwindow*, veVisualiserPC> veVisualiserRegistrar;
+typedef veRegistrar<GLFWwindow*, veVisualiserDesktop> veVisualiserRegistrar;
 
 #endif

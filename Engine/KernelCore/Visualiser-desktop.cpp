@@ -153,7 +153,7 @@ static void initSymbolsMap() {
 
 }
 
-veVisualiserPC::veVisualiserPC(int w, int h, const std::string &title)
+veVisualiserDesktop::veVisualiserDesktop(int w, int h, const std::string &title)
 	: veVisualiser(w, h, title)
 	, _width(w)
 	, _height(h)
@@ -171,14 +171,14 @@ veVisualiserPC::veVisualiserPC(int w, int h, const std::string &title)
 	//_mainCamera->setProjectionMatrixAsPerspective(30.0f, (float)_width / (float)_height, 1.0f, 1000.0f);
 }
 
-veVisualiserPC::~veVisualiserPC()
+veVisualiserDesktop::~veVisualiserDesktop()
 {
 	//veVisualiserRegistrar::instance()->unReg(_hwnd);
 	unRegisterCallbacks();
 	glfwDestroyWindow(_hwnd);
 }
 
-bool veVisualiserPC::dispatchEvents()
+bool veVisualiserDesktop::dispatchEvents()
 {
 	glfwPollEvents();
 	for (auto &event : _events) {
@@ -189,7 +189,7 @@ bool veVisualiserPC::dispatchEvents()
 	return false;
 }
 
-void veVisualiserPC::setContextCurrent()
+void veVisualiserDesktop::setContextCurrent()
 {
 	glfwMakeContextCurrent(_hwnd);
 	if (!_isInited) {
@@ -200,17 +200,17 @@ void veVisualiserPC::setContextCurrent()
 	}
 }
 
-void veVisualiserPC::swapBuffers()
+void veVisualiserDesktop::swapBuffers()
 {
 	glfwSwapBuffers(_hwnd);
 }
 
-bool veVisualiserPC::isWindowShouldClose()
+bool veVisualiserDesktop::isWindowShouldClose()
 {
 	return glfwWindowShouldClose(_hwnd) != 0;
 }
 
-void veVisualiserPC::registerCallbacks()
+void veVisualiserDesktop::registerCallbacks()
 {
 	glfwSetKeyCallback(_hwnd, collectKeyEvent);
 	//glfwSetCharModsCallback(wnd, collectCharEvent);
@@ -222,7 +222,7 @@ void veVisualiserPC::registerCallbacks()
 	glfwSetWindowCloseCallback(_hwnd, collectWindowClose);
 }
 
-void veVisualiserPC::unRegisterCallbacks()
+void veVisualiserDesktop::unRegisterCallbacks()
 {
 	glfwSetKeyCallback(_hwnd, nullptr);
 	//glfwSetCharModsCallback(wnd, nullptr);
@@ -234,9 +234,9 @@ void veVisualiserPC::unRegisterCallbacks()
 	glfwSetWindowCloseCallback(_hwnd, nullptr);
 }
 
-void veVisualiserPC::caculateMouseUnitCoords(GLFWwindow* window, double x, double y)
+void veVisualiserDesktop::caculateMouseUnitCoords(GLFWwindow* window, double x, double y)
 {
-	veVisualiserPC *vs = static_cast<veVisualiserPC *>(glfwGetWindowUserPointer(window));
+	veVisualiserDesktop *vs = static_cast<veVisualiserDesktop *>(glfwGetWindowUserPointer(window));
 	int width, height;
 	glfwGetWindowSize(window, &width, &height);
 	if (width == 0 || height == 0) return;
@@ -246,9 +246,9 @@ void veVisualiserPC::caculateMouseUnitCoords(GLFWwindow* window, double x, doubl
 	vs->_currentEvent.setMouseY((coordY - 0.5) * 2.0);
 }
 
-void veVisualiserPC::collectKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods)
+void veVisualiserDesktop::collectKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	veVisualiserPC *vs = static_cast<veVisualiserPC *>(glfwGetWindowUserPointer(window));
+	veVisualiserDesktop *vs = static_cast<veVisualiserDesktop *>(glfwGetWindowUserPointer(window));
 	veEvent &event = vs->_currentEvent;
 	event.setKeySymbol(g_KeySymbolMap[key]);
 	event.setEventType(action == GLFW_PRESS ? veEvent::VE_DOWN : veEvent::VE_UP);
@@ -256,9 +256,9 @@ void veVisualiserPC::collectKeyEvent(GLFWwindow* window, int key, int scancode, 
 	vs->_events.push_back(event);
 }
 
-void veVisualiserPC::collectMouseEvent(GLFWwindow* window, int button, int action, int mods)
+void veVisualiserDesktop::collectMouseEvent(GLFWwindow* window, int button, int action, int mods)
 {
-	veVisualiserPC *vs = static_cast<veVisualiserPC *>(glfwGetWindowUserPointer(window));
+	veVisualiserDesktop *vs = static_cast<veVisualiserDesktop *>(glfwGetWindowUserPointer(window));
 	veEvent &event = vs->_currentEvent;
 	event.setMouseSymbol(g_MouseSymbolMap[button]);
 	event.setEventType(action == GLFW_PRESS ? veEvent::VE_PRESS : veEvent::VE_RELEASE);
@@ -266,9 +266,9 @@ void veVisualiserPC::collectMouseEvent(GLFWwindow* window, int button, int actio
 	vs->_events.push_back(event);
 }
 
-void veVisualiserPC::collectMouseMoveEvent(GLFWwindow* window, double x, double y)
+void veVisualiserDesktop::collectMouseMoveEvent(GLFWwindow* window, double x, double y)
 {
-	veVisualiserPC *vs = static_cast<veVisualiserPC *>(glfwGetWindowUserPointer(window));
+	veVisualiserDesktop *vs = static_cast<veVisualiserDesktop *>(glfwGetWindowUserPointer(window));
 	caculateMouseUnitCoords(window, x, y);
 	veEvent &event = vs->_currentEvent;
 	if (event.getEventType() != veEvent::VE_DRAG) {
@@ -283,18 +283,18 @@ void veVisualiserPC::collectMouseMoveEvent(GLFWwindow* window, double x, double 
 	vs->_events.push_back(event);
 }
 
-void veVisualiserPC::collectScrollEvent(GLFWwindow* window, double x, double y)
+void veVisualiserDesktop::collectScrollEvent(GLFWwindow* window, double x, double y)
 {
-	veVisualiserPC *vs = static_cast<veVisualiserPC *>(glfwGetWindowUserPointer(window));
+	veVisualiserDesktop *vs = static_cast<veVisualiserDesktop *>(glfwGetWindowUserPointer(window));
 	veEvent &event = vs->_currentEvent;
 	event.setEventType(0.0 < y ? veEvent::VE_SCROLL_UP : veEvent::VE_SCROLL_DOWN);
 	vs->_events.push_back(event);
 }
 
-void veVisualiserPC::collectWindowSizeEvent(GLFWwindow* window, int width, int height)
+void veVisualiserDesktop::collectWindowSizeEvent(GLFWwindow* window, int width, int height)
 {
 	if (width == 0 || height == 0) return;
-	veVisualiserPC *vs = static_cast<veVisualiserPC *>(glfwGetWindowUserPointer(window));
+	veVisualiserDesktop *vs = static_cast<veVisualiserDesktop *>(glfwGetWindowUserPointer(window));
 	veEvent &event = vs->_currentEvent;
 	event.setEventType(veEvent::VE_WIN_RESIZE);
 	event.setWindowWidth(width);
@@ -302,19 +302,19 @@ void veVisualiserPC::collectWindowSizeEvent(GLFWwindow* window, int width, int h
 	vs->_events.push_back(event);
 }
 
-void veVisualiserPC::collectWindowFocusEvent(GLFWwindow* window, int focused)
+void veVisualiserDesktop::collectWindowFocusEvent(GLFWwindow* window, int focused)
 {
 	if (focused) {
-		veVisualiserPC *vs = static_cast<veVisualiserPC *>(glfwGetWindowUserPointer(window));
+		veVisualiserDesktop *vs = static_cast<veVisualiserDesktop *>(glfwGetWindowUserPointer(window));
 		veEvent &event = vs->_currentEvent;
 		event.setEventType(veEvent::VE_WIN_FOCUS);
 		vs->_events.push_back(event);
 	}
 }
 
-void veVisualiserPC::collectWindowClose(GLFWwindow* window)
+void veVisualiserDesktop::collectWindowClose(GLFWwindow* window)
 {
-	veVisualiserPC *vs = static_cast<veVisualiserPC *>(glfwGetWindowUserPointer(window));
+	veVisualiserDesktop *vs = static_cast<veVisualiserDesktop *>(glfwGetWindowUserPointer(window));
 	veEvent &event = vs->_currentEvent;
 	event.setEventType(veEvent::VE_WIN_CLOSE);
 	vs->_events.push_back(event);
