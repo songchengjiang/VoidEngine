@@ -110,7 +110,7 @@
 		BE1B50721BB049E30039A346 /* Vector4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE3D41D01BAF0B8D0063041C /* Vector4.cpp */; };
 		BE1B50731BB049F00039A346 /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DA71BB002960001AA36 /* libGLEW.a */; };
 		BE1B50741BB049F30039A346 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DA91BB0029A0001AA36 /* libglfw3.a */; };
-		BE1B50751BB049F90039A346 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DAB1BB002A00001AA36 /* libpng.a */; };
+		BE1B50751BB049F90039A346 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DAB1BB002A00001AA36 /* libpng.a */; settings = {ATTRIBUTES = (Required, ); }; };
 		BE1B50761BB049FF0039A346 /* libHalf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DAD1BB002A80001AA36 /* libHalf.a */; };
 		BE1B50771BB049FF0039A346 /* libIex-2_2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DAE1BB002A80001AA36 /* libIex-2_2.a */; };
 		BE1B50781BB049FF0039A346 /* libIexMath-2_2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DAF1BB002A80001AA36 /* libIexMath-2_2.a */; };
@@ -351,6 +351,7 @@
 				BE0E4DA91BB0029A0001AA36 /* libglfw3.a */,
 				BE0E4DA71BB002960001AA36 /* libGLEW.a */,
 				BE0E4DA51BB002900001AA36 /* libassimp.a */,
+				BE1A0B1D1BE2540300A1A20D /* libfreetype.a */,
 			);
 			name = libs;
 			sourceTree = "<group>";
@@ -415,7 +416,6 @@
 		BE3D40DE1BAEFF690063041C = {
 			isa = PBXGroup;
 			children = (
-				BE1A0B1D1BE2540300A1A20D /* libfreetype.a */,
 				BE1B503B1BB0499F0039A346 /* libVoidEngine.dylib */,
 				BE0E4DBF1BB002EA0001AA36 /* libs */,
 				BE3D41281BAF0AFC0063041C /* Engine */,
