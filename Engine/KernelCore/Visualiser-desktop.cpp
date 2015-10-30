@@ -137,7 +137,6 @@ static void initSymbolsMap() {
 	g_ModKeySymbolMap[GLFW_MOD_ALT    ] = veEvent::VE_MOD_ALT    ;
 	g_ModKeySymbolMap[GLFW_MOD_SUPER  ] = veEvent::VE_MOD_SUPER  ;
 
-	g_MouseSymbolMap[-1                      ] = veEvent::VE_MOUSE_UNKNOWN      ;
 	g_MouseSymbolMap[GLFW_MOUSE_BUTTON_1     ] = veEvent::VE_MOUSE_BUTTON_1     ;
 	g_MouseSymbolMap[GLFW_MOUSE_BUTTON_2     ] = veEvent::VE_MOUSE_BUTTON_2     ;
 	g_MouseSymbolMap[GLFW_MOUSE_BUTTON_3     ] = veEvent::VE_MOUSE_BUTTON_3     ;
@@ -278,8 +277,6 @@ void veVisualiserDesktop::collectMouseMoveEvent(GLFWwindow* window, double x, do
 			event.setEventType(veEvent::VE_MOVE);
 		}
 	}
-	//auto action = glfwGetMouseButton(window, event.getMouseSymbol());
-	//if (action != GLFW_PRESS) event.setMouseSymbol(veEvent::VE_MOUSE_UNKNOWN);
 	vs->_events.push_back(event);
 }
 
