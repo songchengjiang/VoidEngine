@@ -11,6 +11,7 @@ veOctreeSceneManager::veOctreeSceneManager()
 	: _boundingBox(veVec3(-10000.0f), veVec3(10000.0f))
 	, _octreeMaxDeep(8)
 	, _octree(new veOctree)
+	, _parallelUpdateOctantNum(0)
 {
 	init();
 }
@@ -19,6 +20,7 @@ veOctreeSceneManager::veOctreeSceneManager(const veBoundingBox &bbox, unsigned i
 	: _boundingBox(bbox)
 	, _octreeMaxDeep(octreeDeep)
 	, _octree(new veOctree)
+	, _parallelUpdateOctantNum(0)
 {
 	init();
 }
@@ -56,9 +58,13 @@ void veOctreeSceneManager::requestRender(veNode *node)
 {
 	veOctreeNode *ocNode = static_cast<veOctreeNode *>(node);
 	if (!ocNode) return;
+	{
+		std::unique_lock<std::mutex> lock(_parallelUpdateOctantMutex);
+		++_parallelUpdateOctantNum;
+	}
 	_threadPool.enqueue(nullptr, nullptr, [this, ocNode] {
 		if (!ocNode->octant) {
-			if (!ocNode->isIn(this->_octree->boundingBox)) {
+			if (ocNode->getBoundingBox().isNull() || !ocNode->isIn(this->_octree->boundingBox)) {
 				this->_octree->addNode(ocNode);
 			}
 			else {
@@ -75,6 +81,13 @@ void veOctreeSceneManager::requestRender(veNode *node)
 				else {
 					addOctreeNode(ocNode, this->_octree);
 				}
+			}
+		}
+		{
+			std::unique_lock<std::mutex> lock(_parallelUpdateOctantMutex);
+			--_parallelUpdateOctantNum;
+			if (_parallelUpdateOctantNum == 0) {
+				_parallelUpdateOctantCondition.notify_all();
 			}
 		}
 	});
@@ -185,6 +198,8 @@ void veOctreeSceneManager::intersectByRay(veOctree *octant, veRay *ray)
 void veOctreeSceneManager::update()
 {
 	_root->update(this, veMat4::IDENTITY);
+	std::unique_lock<std::mutex> lock(_parallelUpdateOctantMutex);
+	_parallelUpdateOctantCondition.wait(lock, [this] { return _parallelUpdateOctantNum == 0; });
 	_octree->updateBoundingBox();
 }
 

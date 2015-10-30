@@ -123,8 +123,11 @@ void veText::rebuildContentBitmap(int divWidth, int divHeight)
 	_texture->storage(width, height, 1, GL_R8, GL_RED, GL_UNSIGNED_BYTE, buf);
 	if (_type == OVERLAY)
 		_scaleMat->setValue(veMat4::scale(veVec3((float)width / (float)divWidth, (float)height / (float)divHeight, 0.0f)));
-	else if (_type == SURFACE || _type == veSurface::BILLBOARD)
-		_scaleMat->setValue(veMat4::scale(veVec3(width / 2.0f, height / 2.0f, 0.0f)));
+	else if (_type == SURFACE || _type == veSurface::BILLBOARD) {
+		_scaleMat->setValue(veMat4::scale(veVec3(width * 0.5f, height * 0.5f, 0.0f)));
+		_boundingBox.min() = veVec3(-(width * 0.5f), -(height * 0.5f), -0.5f);
+		_boundingBox.max() = veVec3(width * 0.5f, height * 0.5f, 0.5f);
+	}
 
 	_width = width;
 	_height = height;

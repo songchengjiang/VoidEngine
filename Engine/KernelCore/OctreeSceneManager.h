@@ -44,6 +44,10 @@ protected:
 	unsigned int _octreeMaxDeep;
 	veOctree *_octree;
 	OctreeNodeList _octreeNodeList;
+
+	unsigned int _parallelUpdateOctantNum;
+	std::mutex   _parallelUpdateOctantMutex;
+	std::condition_variable _parallelUpdateOctantCondition;
 };
 
 #endif

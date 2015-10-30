@@ -12,7 +12,7 @@ public:
 
 	virtual void update(veNode *node, veSceneManager *sm) override;
 
-	void setTexture(veTexture *texture) { _texture = texture; _needRefreshMaterial = true; }
+	void setTexture(veTexture *texture);
 	veTexture* getTexture() { return _texture.get(); }
 
 protected:

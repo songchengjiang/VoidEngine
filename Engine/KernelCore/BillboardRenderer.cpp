@@ -5,6 +5,7 @@
 #include "MatrixPtr.h"
 
 veBillboardRenderer::veBillboardRenderer()
+	: _firstUpdate(true)
 {
 }
 
@@ -16,6 +17,10 @@ veBillboardRenderer::~veBillboardRenderer()
 void veBillboardRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
 	if (_technique) {
+		if (_firstUpdate) {
+			_originBoundingBox = renderableObj->getBoundingBox();
+			_firstUpdate = false;
+		}
 		updateBuffer();
 		for (unsigned int i = 0; i < _technique->getPassNum(); ++i) {
 			auto pass = _technique->getPass(i);
@@ -23,9 +28,12 @@ void veBillboardRenderer::render(veNode *node, veRenderableObject *renderableObj
 				bool isTransparent = pass->blendFunc() != veBlendFunc::DISABLE ? true : false;
 				veQuat cameraRot;
 				camera->getNodeToWorldMatrix().decomposition(nullptr, nullptr, &cameraRot);
+				veMat4 rotMat;
+				rotMat.makeRotation(cameraRot);
+				renderableObj->setBoundingBox(_originBoundingBox * rotMat);
 				veRenderCommand rc;
 				rc.pass = pass;
-				rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix() * veMat4::rotation(cameraRot));
+				rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix() * rotMat);
 				//rc.attachedNode = node;
 				rc.renderableObj = renderableObj;
 				rc.camera = camera;

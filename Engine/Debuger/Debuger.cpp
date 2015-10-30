@@ -56,9 +56,6 @@ void veDebuger::render(veNode *node, veCamera *camera)
 	_renderableNodes.clear();
 	RenderableObjectFinder finder(_renderableNodes);
 	node->accept(finder);
-	if (_renderableNodes.size() != 8) {
-		veLog("_renderableNodes Size changed!");
-	}
 	for (auto &iter : _renderableNodes) {
 		if (_isDrawFrustumPlane) {
 			auto camera = dynamic_cast<veCamera *>(iter);

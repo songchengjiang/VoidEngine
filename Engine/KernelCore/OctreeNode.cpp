@@ -13,7 +13,7 @@ veOctreeNode::~veOctreeNode()
 
 bool veOctreeNode::isIn(const veBoundingBox & bbox)
 {
-	if (_boundingBox.isNull() || bbox.isNull() || !_isInScene) return false;
+	if (bbox.isNull() || !_isInScene) return false;
 
 	veVec3 center = _boundingBox.center();
 	veVec3 bmin = bbox.min();

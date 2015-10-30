@@ -52,6 +52,8 @@ public: const std::string& getName() const { return _name; }
 #if defined(_DEBUG)
 #include <assert.h>
 #define veAssert(_Expression)     assert(_Expression)
+#else
+#define veAssert(_Expression)     ((void)0)
 #endif
 #else
 #define veAssert(_Expression)     ((void)0)

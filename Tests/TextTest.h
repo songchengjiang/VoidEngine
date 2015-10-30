@@ -112,6 +112,11 @@ public:
 			root->addChild(node);
 		}
 
+		auto debuger = new veOctreeDebuger;
+		debuger->debugDrawBoundingBoxWireframe(true, veVec4(1.0f, 0.0f, 0.0f, 1.0f));
+		debuger->debugDrawOctree(true);
+		_sceneManager->getRootNode()->addRenderableObject(debuger);
+
 		_sceneManager->getRootNode()->addChild(root);
 	}
 	~TextTest() {};
