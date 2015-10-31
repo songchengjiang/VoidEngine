@@ -36,7 +36,7 @@ public:
 			}
 			fclose(fp);
 		}
-		if (!_texture) veLog(std::string("veFileReaderWriterPNG: read ") + filePath + std::string(" failed!"));
+		if (!_texture) veLog("veFileReaderWriterPNG: read %s failed!\n", filePath.c_str());
 		return _texture;
 	}
 

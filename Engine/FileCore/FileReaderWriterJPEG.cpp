@@ -37,7 +37,7 @@ public:
 			jpeg_destroy_decompress(&cinfo);
 			fclose(fp);
 		}
-		if (!_texture) veLog(std::string("veFileReaderWriterJPEG: read ") + filePath + std::string(" failed!"));
+		if (!_texture) veLog("veFileReaderWriterJPEG: read %s failed!\n", filePath.c_str());
 		return _texture;
 	}
 

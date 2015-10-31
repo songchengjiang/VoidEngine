@@ -23,13 +23,11 @@ public:
 				_ray->setEnd(end);
 				_ray->apply(sm, [this] {
 					if (!_ray->getIntersections().empty()) {
-						char str[256];
 						for (auto &inters : _ray->getIntersections()) {
 							this->_lines.push_back(std::make_pair(inters.worldPosition, inters.worldPosition + inters.worldNormal * 2.0f));
-							sprintf(str, "Intersection info: position(%f, %f, %f) \n \t \t normal(%f, %f, %f)"
+							veLog("Intersection info: position(%f, %f, %f) \n \t \t normal(%f, %f, %f)\n"
 								, inters.worldPosition.x(), inters.worldPosition.y(), inters.worldPosition.z()
 								, inters.worldNormal.x(), inters.worldNormal.y(), inters.worldNormal.z());
-							veLog(str);
 						}
 					}
 				});

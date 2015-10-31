@@ -4,6 +4,7 @@
 #include "KernelCore/SceneManager.h"
 #include "openexr/include/ImfRgbaFile.h"
 #include "openexr/include/ImfRgba.h"
+#include "openexr/include/ImfIO.h"
 #include "openexr/include/ImfArray.h"
 #include "openexr/include/ImathBox.h"
 
@@ -18,6 +19,47 @@
 #pragma comment(lib, "openexr/lib/IlmImf-2_2.lib")
 #pragma comment(lib, "openexr/lib/IlmThread-2_2.lib")
 #endif
+
+class MemStream : public Imf::IStream
+{
+public:
+
+public:
+	MemStream(char *exrbuf, int exrsize)
+		: Imf::IStream("")
+		, _exrsize(exrsize)
+		, _exrpos(0)
+		, _exrbuf(exrbuf)
+	{}
+	virtual ~MemStream(){}
+
+	virtual bool read(char c[/*n*/], int n) {
+		if (n + _exrpos < _exrsize)
+		{
+			memcpy(c, &(_exrbuf[_exrpos]), n);
+			_exrpos += n;
+			return true;
+		}
+		else
+			return false;
+	}
+	virtual Imf::Int64 tellg() {
+		return _exrpos;
+	}
+	virtual void seekg(Imf::Int64 pos) {
+		_exrpos = pos;
+	}
+
+	virtual void clear() {
+
+	}
+
+private:
+
+	Imf::Int64 _exrpos;
+	Imf::Int64 _exrsize;
+	char *_exrbuf;
+};
 class veFileReaderWriterEXR : public veFileReaderWriter
 {
 public:
@@ -28,9 +70,11 @@ public:
 
 	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
 		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
+		auto fileData = veFile::instance()->readFileToBuffer(filePath);
 		_sceneManager = sm;
 		Imf::Array2D<Imf::Rgba> pixels;
-		Imf::RgbaInputFile file(fullPath.c_str());
+		MemStream memStream(fileData->buffer, fileData->size);
+		Imf::RgbaInputFile file(memStream);
 		if (file.isComplete()){
 			_name = name;
 			Imath::Box2i dw = file.dataWindow();
@@ -41,7 +85,7 @@ public:
 			file.readPixels(dw.min.y, dw.max.y);
 			readImage(pixels);
 		}
-		if (!_texture) veLog(std::string("veFileReaderWriterEXR: read ") + filePath + std::string(" failed!"));
+		if (!_texture) veLog("veFileReaderWriterEXR: read %s failed!\n", filePath.c_str());
 		return _texture;
 	}
 
