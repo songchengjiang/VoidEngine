@@ -69,7 +69,6 @@ public:
 	virtual ~veFileReaderWriterEXR(){};
 
 	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
-		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
 		auto fileData = veFile::instance()->readFileToBuffer(filePath);
 		_sceneManager = sm;
 		Imf::Array2D<Imf::Rgba> pixels;
