@@ -60,7 +60,7 @@ public:
 		};
 
 		PrimitiveType primitiveType;
-		VE_Ptr<veUintArray> indices;
+		VE_Ptr<veUint16Array> indices;
 	};
 
 	veMesh();

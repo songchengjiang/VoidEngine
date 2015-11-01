@@ -148,7 +148,7 @@ private:
 
 		if (partVal.HasMember(INDICES_KEY.c_str())){
 			const Value &indices = partVal[INDICES_KEY.c_str()];
-			primitive.indices = new veUintArray(indices.Size());
+			primitive.indices = new veUint16Array(indices.Size());
 			for (unsigned int i = 0; i < indices.Size(); ++i){
 				(*primitive.indices)[i] = indices[i].GetUint();
 			}

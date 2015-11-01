@@ -136,6 +136,6 @@ private:
 };
 
 typedef veArray<veReal> veRealArray;
-typedef veArray<unsigned int> veUintArray;
+typedef veArray<uint16_t> veUint16Array;
 
 #endif
