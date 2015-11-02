@@ -9,6 +9,5 @@
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "VoidEngine", __VA_ARGS__))
 
 void android_main(struct android_app* app){
-
 }
 

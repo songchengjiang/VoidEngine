@@ -59,12 +59,17 @@ public: const std::string& getName() const { return _name; }
 #define veAssert(_Expression)     ((void)0)
 #endif
 
-#if defined(_DEBUG)
+#if defined(_MSC_VER)
 #include <stdio.h>
 #define veLog(...) printf(__VA_ARGS__);
 #elif defined(__APPLE_CC__)
 #include <stdio.h>
 #define veLog(...) printf(__VA_ARGS__);
+#elif defined(_ANDROID_)
+#include <android/log.h>
+#define veLogI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "VoidEngine", __VA_ARGS__))
+#define veLogW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "VoidEngine", __VA_ARGS__))
+#define veLog veLogI
 #else
 #define veLog(...) ((void)0);
 #endif
@@ -96,6 +101,8 @@ public: const std::string& getName() const { return _name; }
 #define VE_PLATFORM     VE_PLATFORM_WIN32
 #elif defined(__APPLE_CC__)
 #define VE_PLATFORM     VE_PLATFORM_MAC
+#elif defined(_ANDROID_)
+#define VE_PLATFORM     VE_PLATFORM_ANDROID
 #else
 #define VE_PLATFORM     VE_PLATFORM_UNKNOW
 #endif

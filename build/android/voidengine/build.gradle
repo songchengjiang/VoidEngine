@@ -1,5 +1,4 @@
 apply plugin: 'com.android.model.application'
-
 model {
     android {
         compileSdkVersion = 23
@@ -22,6 +21,7 @@ model {
     android.ndk {
         moduleName = "VoidEngine"
         CFlags += "-I${file("src/main/jni/native_app_glue")}".toString()
+        cppFlags += "-I${file("../../../Engine")}".toString()
         cppFlags += "-Werror"
         cppFlags += "-frtti"
         cppFlags += "-fno-exceptions"
