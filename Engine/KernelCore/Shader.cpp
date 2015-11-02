@@ -590,10 +590,10 @@ GLuint veShader::compile()
 			glGetShaderInfoLog(_shader, maxLen, &maxLen, errors);
 			if (strcmp(errors, "") != 0) {
                 std::string shaderType = typeToString();
-                veLog(shaderType + std::string(" Shader Errors"));
+                veLog("%s Shader Errors\n", shaderType.c_str());
 				veLog(errors);
-                veLog(shaderType + std::string(" Shader Source"));
-                veLog(source);
+				veLog("%s Shader Source\n", shaderType.c_str());
+                veLog(source.c_str());
 			}
 			delete[] errors;
 		}

@@ -132,7 +132,7 @@ void veEntityRenderer::draw(const veRenderCommand &command)
 		if (transformFeedback) {
 			transformFeedback->bind(mesh->getTransformFeedbackBuffer(), primitive.primitiveType);
 		}
-		glDrawElements(primitive.primitiveType, GLsizei(primitive.indices->size()), GL_UNSIGNED_INT, nullptr);
+		glDrawElements(primitive.primitiveType, GLsizei(primitive.indices->size()), GL_UNSIGNED_SHORT, nullptr);
 		if (transformFeedback) {
 			transformFeedback->unBind();
 		}

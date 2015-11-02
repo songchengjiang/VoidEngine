@@ -153,7 +153,7 @@ void veBoxRenderer::draw(const veRenderCommand &command)
 {
 	command.pass->apply(command);
 	glBindVertexArray(_vao);
-	glDrawElements(GL_TRIANGLES, GLsizei(_indices.size()), GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_TRIANGLES, GLsizei(_indices.size()), GL_UNSIGNED_SHORT, nullptr);
 }
 
 void veBoxRenderer::updateBuffer()

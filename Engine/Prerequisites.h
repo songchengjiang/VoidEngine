@@ -60,13 +60,13 @@ public: const std::string& getName() const { return _name; }
 #endif
 
 #if defined(_DEBUG)
-#include <iostream>
-#define veLog(STR) std::cout<<STR<<std::endl; 
+#include <stdio.h>
+#define veLog(...) printf(__VA_ARGS__);
 #elif defined(__APPLE_CC__)
-#include <iostream>
-#define veLog(STR) std::cout<<STR<<std::endl;
+#include <stdio.h>
+#define veLog(...) printf(__VA_ARGS__);
 #else
-#define veLog(STR) ((void)0);
+#define veLog(...) ((void)0);
 #endif
 
 #include <memory.h>
@@ -81,6 +81,9 @@ public: const std::string& getName() const { return _name; }
 
 #define VE_GL_VERSION_MAJOR 4
 #define VE_GL_VERSION_MINOR 1
+
+#define VE_GLSL_ES_VERSION_MAJOR 3
+#define VE_GLSL_ES_VERSION_MINOR 0
 
 #define VE_PLATFORM_IOS                1
 #define VE_PLATFORM_ANDROID            2

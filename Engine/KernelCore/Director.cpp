@@ -1,22 +1,15 @@
 #include "Director.h"
 #include "OctreeSceneManager.h"
+#include <time.h>
 
 veDirector::veDirector()
 	: _isRunning(false)
 {
-	glfwInit();
-#if (VE_PLATFORM == VE_PLATFORM_MAC)
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, VE_GL_VERSION_MAJOR);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, VE_GL_VERSION_MINOR);
-#endif
 }
 
 veDirector::~veDirector()
 {
 	stop();
-	glfwTerminate();
 }
 
 veDirector* veDirector::instance()
@@ -36,20 +29,37 @@ bool veDirector::run()
 {
 	if (!_sceneManager.valid()) return false;
     _isRunning = true;
-	_sceneManager->startThreading();
-	double preFrameTime = glfwGetTime();
+	startThreading();
+	double preFrameTime = (double)clock() / (double)CLOCKS_PER_SEC;
 	while (_isRunning)
 	{
-		double currentFrameTime = glfwGetTime();
-		_sceneManager->setDeltaTime(currentFrameTime - preFrameTime);
-		if (!_sceneManager->simulation()) _isRunning = false;
+		double currentFrameTime = (double)clock() / (double)CLOCKS_PER_SEC;
+		frame(currentFrameTime - preFrameTime);
 		preFrameTime = currentFrameTime;
 	}
-	_sceneManager->stopThreading();
+	stopThreading();
 	return true;
 }
 
 void veDirector::stop()
 {
 	_isRunning = false;
+}
+
+void veDirector::startThreading()
+{
+	if (_sceneManager.valid())
+		_sceneManager->startThreading();
+}
+
+void veDirector::stopThreading()
+{
+	if (_sceneManager.valid())
+		_sceneManager->stopThreading();
+}
+
+bool veDirector::frame(double deltaTime)
+{
+	_sceneManager->setDeltaTime(deltaTime);
+	return _sceneManager->simulation();
 }

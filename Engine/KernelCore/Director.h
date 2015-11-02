@@ -2,7 +2,6 @@
 #define _VE_DIRECTOR_
 #include "Prerequisites.h"
 #include "VE_Ptr.h"
-#include "Visualiser.h"
 #include "SceneManager.h"
 
 class veSceneManager;
@@ -18,6 +17,9 @@ public:
 
 	bool run();
 	void stop();
+	void startThreading();
+	void stopThreading();
+	bool frame(double deltaTime);
 
 private:
 
@@ -28,7 +30,7 @@ private:
 	//typedef std::vector< VE_Ptr<veVisualiser> > VisualiserList;
 	//VisualiserList _visualiserList;
 	VE_Ptr<veSceneManager> _sceneManager;
-	bool           _isRunning;
+	bool                   _isRunning;
 };
 
 #endif

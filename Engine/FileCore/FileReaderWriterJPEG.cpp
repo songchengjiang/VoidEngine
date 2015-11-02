@@ -1,4 +1,3 @@
-#if defined(_MSC_VER) || defined(__APPLE_CC__)
 #include "FileReaderWriter.h"
 #include <unordered_map>
 #include "KernelCore/Texture.h"
@@ -22,22 +21,21 @@ public:
 	virtual ~veFileReaderWriterJPEG(){};
 
 	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
-		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
+		auto fileData = veFile::instance()->readFileToBuffer(filePath);
 		_sceneManager = sm;
-		FILE *fp = fopen(fullPath.c_str(), "rb");
-		if (fp){
+		if (fileData){
 			_name = name;
 			struct jpeg_decompress_struct cinfo;
 			struct jpeg_error_mgr jerr;
 			cinfo.err = jpeg_std_error(&jerr);
 			jpeg_create_decompress(&cinfo);
-			jpeg_stdio_src(&cinfo, fp);
+			//jpeg_stdio_src(&cinfo, fp);
+			jpeg_mem_src(&cinfo, (unsigned char *)fileData->buffer, fileData->size);
 			jpeg_read_header(&cinfo, true);
 			readImage(cinfo);
 			jpeg_destroy_decompress(&cinfo);
-			fclose(fp);
 		}
-		if (!_texture) veLog(std::string("veFileReaderWriterJPEG: read ") + filePath + std::string(" failed!"));
+		if (!_texture) veLog("veFileReaderWriterJPEG: read %s failed!\n", filePath.c_str());
 		return _texture;
 	}
 
@@ -92,5 +90,3 @@ private:
 };
 
 VE_READERWRITER_REG("jpg", veFileReaderWriterJPEG);
-
-#endif

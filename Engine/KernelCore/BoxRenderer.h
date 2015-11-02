@@ -22,7 +22,7 @@ protected:
 	GLuint          _vbo;
 	GLuint          _ibo;
 	veRealArray     _vertices;
-	veUintArray     _indices;
+	veUint16Array     _indices;
 	bool            _needRefresh;
 };
 

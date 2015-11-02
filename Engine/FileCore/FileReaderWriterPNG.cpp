@@ -14,29 +14,25 @@ public:
 	virtual ~veFileReaderWriterPNG(){};
 
 	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
-		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
+		auto fileData = veFile::instance()->readFileToBuffer(filePath);
 		_sceneManager = sm;
-		FILE *fp = fopen(fullPath.c_str(), "rb");
-		if (fp){
+		if (fileData){
 			_name = name;
-			unsigned char header[8];
-			fread(header, 1, 8, fp);
-			if (png_sig_cmp(header, 0, 8) == 0){
+			if (png_sig_cmp((unsigned char *)fileData->buffer, 0, 8) == 0){
 				png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 				if (png_ptr){
 					png_infop info_ptr = png_create_info_struct(png_ptr);
 					if (info_ptr){
 						if (!setjmp(png_jmpbuf(png_ptr))){
-							png_init_io(png_ptr, fp);
+							png_set_read_fn(png_ptr, fileData, readDataFromMemory);
 							readImage(png_ptr, info_ptr);
 						}
 						png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 					}
 				}
 			}
-			fclose(fp);
 		}
-		if (!_texture) veLog(std::string("veFileReaderWriterPNG: read ") + filePath + std::string(" failed!"));
+		if (!_texture) veLog("veFileReaderWriterPNG: read %s failed!\n", filePath.c_str());
 		return _texture;
 	}
 
@@ -51,6 +47,7 @@ private:
 		GLenum pixelFormat = GL_RGB;
 		GLenum dataType = GL_UNSIGNED_BYTE;
 		png_set_sig_bytes(png_ptr, 8);
+		_currentByteIndex = 8;
 		png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_EXPAND, 0);
 		png_byte color_type = png_get_color_type(png_ptr, info_ptr);
 		int width = png_get_image_width(png_ptr, info_ptr);
@@ -110,11 +107,21 @@ private:
 		}
 	}
 
+	static void readDataFromMemory(png_structp png_ptr, png_bytep outBytes,
+		png_size_t byteCountToRead) {
+		png_voidp io_ptr = png_get_io_ptr(png_ptr);
+		veFileData *fileData = static_cast<veFileData *>(io_ptr);
+		memcpy(outBytes, &fileData->buffer[_currentByteIndex], byteCountToRead);
+		_currentByteIndex += byteCountToRead;
+	}
 private:
 
 	veTexture *_texture;
 	std::string _name;
 	veSceneManager *_sceneManager;
+	static png_size_t  _currentByteIndex;
 };
+
+png_size_t veFileReaderWriterPNG::_currentByteIndex = 0;
 
 VE_READERWRITER_REG("png", veFileReaderWriterPNG);

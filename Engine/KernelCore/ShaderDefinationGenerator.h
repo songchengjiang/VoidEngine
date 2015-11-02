@@ -13,6 +13,7 @@
 #include <sstream>
 //shader definations
 static const std::string SHADER_VERSION = "#version";
+static const std::string PRECISION_DEFINE_FLOAT = "precision mediump float;";
 static const std::string SHADER_DEFINE_BONES = "#define VE_USE_BONES";
 static const std::string SHADER_DEFINE_LIGHTS = "#define VE_USE_LIGHTS";
 static const std::string SHADER_DEFINE_TEXTURES = "#define VE_USE_TEXTURES";
@@ -69,8 +70,11 @@ public:
 		//_root->accept(*this);
 		std::string definations;
         char str[16];
-        sprintf(str, " %d%d0\n", VE_GL_VERSION_MAJOR, VE_GL_VERSION_MINOR);
+        sprintf(str, " %d%d0 es\n", VE_GLSL_ES_VERSION_MAJOR, VE_GLSL_ES_VERSION_MINOR);
         definations += SHADER_VERSION + std::string(str);
+		if (type == veShader::FRAGMENT_SHADER) {
+			definations += PRECISION_DEFINE_FLOAT + std::string("\n");
+		}
 
 		if (_command.camera->getRenderPath() == veCamera::RenderPath::DEFERRED_PATH) {
 			definations += SHADER_DEFINE_DEFERRED_PATH + std::string(" 1\n");
