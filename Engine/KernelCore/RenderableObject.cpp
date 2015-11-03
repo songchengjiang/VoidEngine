@@ -1,5 +1,5 @@
 #include "RenderableObject.h"
-#include "Visualiser.h"
+#include "Camera.h"
 #include "RenderQueue.h"
 
 veRenderableObject::veRenderableObject()

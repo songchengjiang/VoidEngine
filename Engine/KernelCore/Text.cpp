@@ -3,7 +3,7 @@
 #include "SurfaceRenderer.h"
 #include "Constants.h"
 #include "SceneManager.h"
-#include "Visualiser.h"
+#include "Application.h"
 #include "FileCore/File.h"
 
 veText::veText(veFont *font, const std::string &content)
@@ -39,7 +39,7 @@ void veText::update(veNode *node, veSceneManager *sm)
 		_needRefreshMaterial = false;
 	}
 	if (_needRefresh) {
-		rebuildContentBitmap(sm->getVisualiser()->width(), sm->getVisualiser()->height());
+		rebuildContentBitmap(veApplication::instance()->width(), veApplication::instance()->height());
 		_needRefresh = false;
 	}
 	veRenderableObject::update(node, sm);

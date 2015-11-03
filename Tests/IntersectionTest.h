@@ -14,8 +14,8 @@ public:
 		if (event.getEventType() & veEvent::VE_MOUSE_EVENT) {
 			if (event.getEventType() == veEvent::VE_PRESS && event.getMouseSymbol() == veEvent::VE_MOUSE_BUTTON_LEFT) {
 				veVec2 screenCoords = veVec2(event.getMouseX(), event.getMouseY());
-				veVec3 start = sm->getVisualiser()->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
-				veVec3 end = sm->getVisualiser()->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
+				veVec3 start = sm->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
+				veVec3 end = sm->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
 				if (!_ray.valid()) {
 					_ray = sm->createRay(start, end);
 				}

@@ -20,7 +20,7 @@ public:
 				--CURRENT_CAMERA;
 				if (CURRENT_CAMERA < 0) CURRENT_CAMERA = node->getChildCount() - 1;
 				auto cam = static_cast<veCamera *>(node->getChild(CURRENT_CAMERA));
-				sm->getVisualiser()->setCamera(cam);
+				sm->setCamera(cam);
 			}
 				break;
 
@@ -29,7 +29,7 @@ public:
 				++CURRENT_CAMERA;
 				if ((int)node->getChildCount() <= CURRENT_CAMERA) CURRENT_CAMERA = 0;
 				auto cam = static_cast<veCamera *>(node->getChild(CURRENT_CAMERA));
-				sm->getVisualiser()->setCamera(cam);
+				sm->setCamera(cam);
 			}
 				break;
 

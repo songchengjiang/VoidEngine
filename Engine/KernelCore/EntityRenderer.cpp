@@ -1,6 +1,6 @@
 #include "EntityRenderer.h"
 #include "RenderCommand.h"
-#include "Visualiser.h"
+#include "Camera.h"
 #include "RenderableObject.h"
 #include "Entity.h"
 #include "Node.h"

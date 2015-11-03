@@ -6,6 +6,7 @@
 #include "RenderableObject.h"
 #include "Ray.h"
 #include "FileCore/File.h"
+#include "Application.h"
 
 veOctreeSceneManager::veOctreeSceneManager()
 	: _boundingBox(veVec3(-10000.0f), veVec3(10000.0f))
@@ -206,10 +207,9 @@ void veOctreeSceneManager::update()
 void veOctreeSceneManager::render()
 {
 	//culling();
-	veSceneManager::setContextCurrent();
-	auto mainCamera = _visualiser->getCamera();
+	veApplication::instance()->makeContextCurrent();
 	for (auto &iter : _cameraList) {
-		if (iter->isVisible() && iter->isInScene() && iter != mainCamera) {
+		if (iter->isVisible() && iter->isInScene() && iter != _mainCamera) {
 			if (iter->getFrameBufferObject()) {
 				veOctreeCamera *rttCam = static_cast<veOctreeCamera *>(iter.get());
 				rttCam->walkingOctree(this->_octree);
@@ -218,12 +218,12 @@ void veOctreeSceneManager::render()
 		}
 	}
 
-	if (mainCamera && mainCamera->isInScene() && mainCamera->isVisible()) {
-		veOctreeCamera *mainCam = static_cast<veOctreeCamera *>(mainCamera);
+	if (_mainCamera.valid() && _mainCamera->isInScene() && _mainCamera->isVisible()) {
+		veOctreeCamera *mainCam = static_cast<veOctreeCamera *>(_mainCamera.get());
 		mainCam->walkingOctree(this->_octree);
 		mainCam->render();
 	}
-	veSceneManager::render();
+	veApplication::instance()->swapBuffers();
 }
 
 void veOctreeSceneManager::culling()

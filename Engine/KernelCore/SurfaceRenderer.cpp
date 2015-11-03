@@ -1,8 +1,8 @@
 #include "SurfaceRenderer.h"
 #include "RenderQueue.h"
-#include "Visualiser.h"
 #include "Node.h"
 #include "MatrixPtr.h"
+#include "Camera.h"
 
 veSurfaceRenderer::veSurfaceRenderer()
 	: _vao(0)

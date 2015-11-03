@@ -49,7 +49,7 @@ void main() {
 	vec4 position = texture(u_position, v_texcoord);
 	vec4 normAndepth = texture(u_normAndepth, v_texcoord);
 	vec3 norm = normalize(normAndepth.xyz);
-	float depth = normAndepth.w / (normAndepth.w + 1);
+	float depth = normAndepth.w / (normAndepth.w + 1.0);
 
 #ifdef VE_USE_LIGHTS
 #ifndef VE_USE_DEFERRED_PATH

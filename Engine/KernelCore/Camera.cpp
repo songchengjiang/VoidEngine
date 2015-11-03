@@ -1,5 +1,4 @@
 #include "Camera.h"
-#include "Visualiser.h"
 #include "NodeVisitor.h"
 
 veLoopQueue<veRenderCommand>::SortFunc PASS_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {

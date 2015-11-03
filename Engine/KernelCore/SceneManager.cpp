@@ -31,16 +31,6 @@ veSceneManager::~veSceneManager()
 	}
 }
 
-veVisualiser* veSceneManager::createVisualiser(int w, int h, const std::string &title)
-{
-#if (VE_PLATFORM == VE_PLATFORM_WIN32 || VE_PLATFORM == VE_PLATFORM_MAC)
-	auto visualiser = new veVisualiserDesktop(w, h, title);
-#endif
-	visualiser->_sceneManager = this;
-	_visualiser = visualiser;
-	return visualiser;
-}
-
 veLight* veSceneManager::createLight(const std::string &type, const std::string &name)
 {
 	auto light = static_cast<veLightManager *>(_managerList[veLightManager::TYPE()])->createLight(type, name);
@@ -132,22 +122,14 @@ veBaseManager* veSceneManager::getManager(const std::string &mgType)
 
 void veSceneManager::dispatchEvents(veEvent &event)
 {
-	if (event.getEventType() == veEvent::VE_WIN_RESIZE) {
-		_visualiser->_width = event.getWindowWidth();
-		_visualiser->_height = event.getWindowHeight();
-	}
 	if (_root.valid())
 		_root->routeEvent(event, this);
 }
 
 bool veSceneManager::simulation()
 {
-	if (_visualiser->isWindowShouldClose()) 
-		return false;
-	
 	{
 		std::unique_lock<std::mutex> updateLock(_updatingMutex);
-		_visualiser->dispatchEvents();
 		for (auto &manager : _managerList) {
 			manager.second->update();
 		}
@@ -191,11 +173,6 @@ void veSceneManager::stopThreading()
 	_renderingThread.join();
 }
 
-void veSceneManager::render()
-{
-	_visualiser->swapBuffers();
-}
-
 void veSceneManager::handleRequests()
 {
 	std::unique_lock<std::mutex> lock(_requestQueueMutex);
@@ -211,9 +188,4 @@ void veSceneManager::enqueueRequest(const std::function<void()> &func)
 {
 	std::unique_lock<std::mutex> lock(_requestQueueMutex);
 	_requestQueue.push_back(func);
-}
-
-void veSceneManager::setContextCurrent()
-{
-	_visualiser->setContextCurrent();
 }

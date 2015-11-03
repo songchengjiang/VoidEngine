@@ -172,7 +172,7 @@ public:
 		}
 
 		_sceneManager->getRootNode()->addChild(root);
-		_sceneManager->getVisualiser()->getCamera()->setMask(DEFERRED_CAMERA);
+		_sceneManager->getCamera()->setMask(DEFERRED_CAMERA);
 
 		BaseTest::init();
 	}

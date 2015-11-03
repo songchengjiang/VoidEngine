@@ -1,7 +1,7 @@
 #ifndef _TEST_CREATOR_
 #define _TEST_CREATOR_
 #include "BaseTest.h"
-#include "ImageTest.h"
+#include "LightTest.h"
 #include "CameraTest.h"
 #include "RenToTex.h"
 #include "MeshTest.h"
@@ -18,8 +18,8 @@ public:
 	static void createTest() {
 		//auto test = new LightTest;
 		//auto test = new CameraTest;
-		//auto test = new RenToTex;
-		auto test = new MeshTest;
+		auto test = new RenToTex;
+		//auto test = new MeshTest;
 		//auto test = new ImageTest;
 		//auto test = new TextTest;
 		//auto test = new PerformanceTest;

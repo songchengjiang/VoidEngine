@@ -1,6 +1,6 @@
 #include "BillboardRenderer.h"
 #include "RenderQueue.h"
-#include "Visualiser.h"
+#include "Camera.h"
 #include "Node.h"
 #include "MatrixPtr.h"
 

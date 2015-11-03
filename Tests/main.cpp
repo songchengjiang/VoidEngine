@@ -3,6 +3,7 @@
 
 int main(int argc, char **argv)
 {
+	veApplication::instance()->initWindow(800, 600, "VoidEngineTest");
 	TestCreator::createTest();
-	return veDirector::instance()->run();
+	return veApplication::instance()->run();
 }

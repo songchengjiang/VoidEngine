@@ -13,10 +13,6 @@
 
 #include <unordered_map>
 
-#if (VE_PLATFORM == VE_PLATFORM_WIN32 || VE_PLATFORM == VE_PLATFORM_MAC)
-#include "Visualiser-desktop.h"
-#endif
-
 class veEvent;
 class veNode;
 class veCamera;
@@ -41,8 +37,6 @@ public:
 
 	USE_VE_PTR;
 
-	veVisualiser* createVisualiser(int w, int h, const std::string &title);
-	veVisualiser* getVisualiser() { return _visualiser.get(); }
 	virtual veNode* createNode(const std::string &name) = 0;
 	virtual veLight* createLight(const std::string &type, const std::string &name);
 	virtual veSurface* createSurface(const std::string &name);
@@ -74,6 +68,9 @@ public:
 	void setDeltaTime(double deltaTime) { _deltaTime = deltaTime; }
 	double getDeltaTime() { return _deltaTime; }
 
+	void setCamera(veCamera *camera) { _mainCamera = camera; }
+	veCamera* getCamera() { return _mainCamera.get(); }
+
 	void dispatchEvents(veEvent &event);
 	bool simulation();
 
@@ -86,17 +83,15 @@ protected:
 	virtual void render() = 0;
 	void handleRequests();
 	void enqueueRequest(const std::function<void()> &func);
-	void setContextCurrent();
 
 protected:
 
-	VE_Ptr<veVisualiser> _visualiser;
 	VE_Ptr<veNode> _root;
 	veNodeList _nodeList;
 	veCameraList _cameraList;
 	veLightList _lightList;
 	veRayList   _rayList;
-
+	VE_Ptr<veCamera> _mainCamera;
 	std::unordered_map<std::string, veBaseManager *> _managerList;
 
 	veThreadPool _threadPool;

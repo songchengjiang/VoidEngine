@@ -1,5 +1,4 @@
 #include "Node.h"
-#include "Visualiser.h"
 #include "NodeVisitor.h"
 #include "SceneManager.h"
 

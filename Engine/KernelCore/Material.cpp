@@ -1,6 +1,5 @@
 #include "Material.h"
 #include "FrameBufferObject.h"
-#include "Visualiser.h"
 #include "ShaderDefinationGenerator.h"
 #include "Light.h"
 #include "SceneManager.h"

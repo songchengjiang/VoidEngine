@@ -201,15 +201,14 @@ public:
 	BaseTest() {
 		veFile::instance()->addSearchPath("../resources/");
 		_sceneManager = new veOctreeSceneManager(veBoundingBox(veVec3(-1000.0f), veVec3(1000.0f)), 8);
-		veDirector::instance()->setSceneManager(_sceneManager);
-		int width = 800;
-		int height = 600;
-		_sceneManager->createVisualiser(width, height, "VoidEngine");
+		veApplication::instance()->setSceneManager(_sceneManager);
+		int width = veApplication::instance()->width();
+		int height = veApplication::instance()->height();
 		_camera = _sceneManager->createCamera("MainCamera", {0, 0, width, height });
 		_camera->setProjectionMatrixAsPerspective(30.0f, (float)width / (float)height, 1.0f, 1000.0f);
 		_camera->setViewMatrixAslookAt(veVec3(0.0f, 0.0f, 30.0f), veVec3::ZERO, veVec3::UNIT_Y);
 		_sceneManager->getRootNode()->addChild(_camera);
-		_sceneManager->getVisualiser()->setCamera(_camera);
+		_sceneManager->setCamera(_camera);
 		_defaultCameraDistance = 30.0f;
 		_defaultCameraZoomScale = 1.0f;
 	};

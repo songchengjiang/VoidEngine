@@ -2,9 +2,9 @@
 #include "Material.h"
 #include "Constants.h"
 #include "FileCore/File.h"
-#include "Visualiser.h"
 #include "Mesh.h"
 #include "MeshNode.h"
+#include "Camera.h"
 #include "EntityRenderer.h"
 
 veUniform::veUniform(const std::string &name)
