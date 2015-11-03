@@ -11,7 +11,13 @@ model {
             versionCode = 1
             versionName = "1.0"
         }
+
     }
+
+    /*android.sourceSets.main {
+        jni.srcDirs = ["${file("../../../Engine")}".toString()]
+        jniLibs.srcDir = 'src/main/libs'
+    }*/
 
     compileOptions.with {
         sourceCompatibility = JavaVersion.VERSION_1_7
@@ -37,7 +43,6 @@ model {
         ldLibs += ["log", "GLESv3", "EGL", "android"]
         stl = "gnustl_static"
 
-        //cppFlags += "${file("../../../Engine/KernelCore/Visualiser.cpp")}".toString()
     }
 
     android.buildTypes {
