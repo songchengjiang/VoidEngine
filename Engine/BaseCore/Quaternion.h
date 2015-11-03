@@ -1,7 +1,7 @@
 #ifndef _VE_QUATERNION_
 #define _VE_QUATERNION_
 #include "Prerequisites.h"
-#include "BaseCore/Math.h"
+#include "BaseCore/MathAlgorithm.h"
 #include "Vector3.h"
 
 class veVec3;

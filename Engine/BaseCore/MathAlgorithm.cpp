@@ -1,4 +1,4 @@
-#include "Math.h"
+#include "MathAlgorithm.h"
 
 const veReal veMath::PI = 3.14159265358979323846f;
 const veReal veMath::TWO_PI = 6.28318530717958647692f;

@@ -2,7 +2,6 @@
 #define _VE_APPLICATION_DESKTOP_
 #include "Application.h"
 
-class veSceneManager;
 class VE_EXPORT veApplicationDesktop : public veApplication
 {
 	friend class veApplication;
@@ -20,7 +19,7 @@ private:
 	void unRegisterCallbacks();
 
 	virtual void dispatchEvents() override;
-	virtual void initWindowImplementation() override;
+	virtual void initWindowImplementation(void *param) override;
 	virtual bool isWindowShouldClose() override;
 
 	static void caculateMouseUnitCoords(GLFWwindow* window, double x, double y);

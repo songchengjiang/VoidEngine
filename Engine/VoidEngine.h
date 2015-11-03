@@ -4,7 +4,7 @@
 #include "BaseCore/Quaternion.h"
 #include "BaseCore/Matrix3.h"
 #include "BaseCore/Matrix4.h"
-#include "BaseCore/Math.h"
+#include "BaseCore/MathAlgorithm.h"
 
 #include "KernelCore/VE_Ptr.h"
 #include "KernelCore/Renderer.h"

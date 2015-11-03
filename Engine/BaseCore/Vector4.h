@@ -1,7 +1,7 @@
 #ifndef _VE_VECTOR4_
 #define _VE_VECTOR4_
 #include "Prerequisites.h"
-#include "BaseCore/Math.h"
+#include "BaseCore/MathAlgorithm.h"
 
 class VE_EXPORT veVec4
 {

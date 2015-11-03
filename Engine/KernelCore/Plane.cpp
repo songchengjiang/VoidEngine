@@ -1,5 +1,5 @@
 #include "Plane.h"
-#include "BaseCore/Math.h"
+#include "BaseCore/MathAlgorithm.h"
 
 veReal AbsDotProduct(const veVec3 &lval, const veVec3 &rval) {
 	return veMath::veAbs(lval.x() * rval.x()) + veMath::veAbs(lval.y() * rval.y()) + veMath::veAbs(lval.z() * rval.z());

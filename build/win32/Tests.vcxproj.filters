@@ -58,6 +58,7 @@
     <ClInclude Include="..\..\Tests\SkyBoxTest.h">
       <Filter>SkyBoxTest</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Tests\TestCreator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Tests\main.cpp" />

@@ -20,15 +20,24 @@ model {
 
     android.ndk {
         moduleName = "VoidEngine"
-        CFlags += "-I${file("src/main/jni/native_app_glue")}".toString()
+        cppFlags += "-I${file("src/main/jni/native_app_glue")}".toString()
         cppFlags += "-I${file("../../../Engine")}".toString()
+        cppFlags += "-I${file("../../../Engine/BaseCore")}".toString()
+        cppFlags += "-I${file("../../../Engine/Debuger")}".toString()
+        cppFlags += "-I${file("../../../Engine/FileCore")}".toString()
+        cppFlags += "-I${file("../../../Engine/KernelCore")}".toString()
+        cppFlags += "-I${file("../../../Tests")}".toString()
+        cppFlags += "-I${file("../../../Dependents")}".toString()
+        cppFlags += "-I${file("../../../Dependents/freetype/include")}".toString()
         cppFlags += "-Werror"
         cppFlags += "-frtti"
         cppFlags += "-fno-exceptions"
+        cppFlags += "-DANDROID"
         cppFlags += "-std=c++11"
-        CFlags += ["-Werror"]
         ldLibs += ["log", "GLESv3", "EGL", "android"]
         stl = "gnustl_static"
+
+        //cppFlags += "${file("../../../Engine/KernelCore/Visualiser.cpp")}".toString()
     }
 
     android.buildTypes {

@@ -23,12 +23,12 @@ veApplication* veApplication::instance()
 	return &director;
 }
 
-void veApplication::initWindow(int w, int h, const std::string &title)
+void veApplication::initWindow(int w, int h, const std::string &title, void *param)
 {
 	_width = w;
 	_height = h;
 	_title = title;
-	initWindowImplementation();
+	initWindowImplementation(param);
 }
 
 void veApplication::setSceneManager(veSceneManager *sm)

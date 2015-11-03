@@ -27,9 +27,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Engine\BaseCore\Math.cpp">
-      <Filter>BaseCore</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Engine\BaseCore\Matrix3.cpp">
       <Filter>BaseCore</Filter>
     </ClCompile>
@@ -102,9 +99,6 @@
     <ClCompile Include="..\..\Engine\KernelCore\Component.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\Director.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\FrameBufferObject.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
@@ -139,9 +133,6 @@
       <Filter>KernelCore</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\Transformer.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\Visualiser.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\BoudingBox.cpp">
@@ -237,15 +228,18 @@
     <ClCompile Include="..\..\Engine\FileCore\File-win32.cpp">
       <Filter>FileCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\Visualiser-desktop.cpp">
+    <ClCompile Include="..\..\Engine\KernelCore\Application.cpp">
       <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Application-desktop.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\BaseCore\MathAlgorithm.cpp">
+      <Filter>BaseCore</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
-      <Filter>BaseCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\BaseCore\Math.h">
       <Filter>BaseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\BaseCore\Matrix3.h">
@@ -297,9 +291,6 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\Component.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\Director.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\Event.h">
@@ -354,9 +345,6 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\VE_Ptr.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\Visualiser.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\Constants.h" />
@@ -456,8 +444,14 @@
     <ClInclude Include="..\..\Engine\FileCore\File-win32.h">
       <Filter>FileCore</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\Visualiser-desktop.h">
+    <ClInclude Include="..\..\Engine\KernelCore\Application.h">
       <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Application-desktop.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\BaseCore\MathAlgorithm.h">
+      <Filter>BaseCore</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

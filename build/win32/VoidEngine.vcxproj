@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Engine\BaseCore\Math.cpp" />
+    <ClCompile Include="..\..\Engine\BaseCore\MathAlgorithm.cpp" />
     <ClCompile Include="..\..\Engine\BaseCore\Matrix3.cpp" />
     <ClCompile Include="..\..\Engine\BaseCore\Matrix4.cpp" />
     <ClCompile Include="..\..\Engine\BaseCore\Quaternion.cpp" />
@@ -34,6 +34,8 @@
     <ClCompile Include="..\..\Engine\FileCore\Printer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Animation.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\AnimationManager.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Application-desktop.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Application.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\BaseManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\BillboardRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Bone.cpp" />
@@ -41,7 +43,6 @@
     <ClCompile Include="..\..\Engine\KernelCore\BoxRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Camera.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Component.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\Director.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Entity.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\EntityManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\EntityRenderer.cpp" />
@@ -80,12 +81,10 @@
     <ClCompile Include="..\..\Engine\KernelCore\ThreadPool.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Transformer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\TransformFeedback.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\Visualiser-desktop.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\Visualiser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h" />
-    <ClInclude Include="..\..\Engine\BaseCore\Math.h" />
+    <ClInclude Include="..\..\Engine\BaseCore\MathAlgorithm.h" />
     <ClInclude Include="..\..\Engine\BaseCore\Matrix3.h" />
     <ClInclude Include="..\..\Engine\BaseCore\Matrix4.h" />
     <ClInclude Include="..\..\Engine\BaseCore\Quaternion.h" />
@@ -102,6 +101,8 @@
     <ClInclude Include="..\..\Engine\FileCore\Printer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Animation.h" />
     <ClInclude Include="..\..\Engine\KernelCore\AnimationManager.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Application-desktop.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Application.h" />
     <ClInclude Include="..\..\Engine\KernelCore\BaseManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\BillboardRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Bone.h" />
@@ -109,7 +110,6 @@
     <ClInclude Include="..\..\Engine\KernelCore\BoxRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Camera.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Component.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\Director.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Entity.h" />
     <ClInclude Include="..\..\Engine\KernelCore\EntityManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\EntityRenderer.h" />
@@ -155,8 +155,6 @@
     <ClInclude Include="..\..\Engine\KernelCore\Transformer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\TransformFeedback.h" />
     <ClInclude Include="..\..\Engine\KernelCore\VE_Ptr.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\Visualiser-desktop.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\Visualiser.h" />
     <ClInclude Include="..\..\Engine\Prerequisites.h" />
     <ClInclude Include="..\..\Engine\VoidEngine.h" />
   </ItemGroup>

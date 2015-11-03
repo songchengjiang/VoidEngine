@@ -13,7 +13,7 @@ public:
 
 	static veApplication* instance();
 
-	void initWindow(int w, int h, const std::string &title);
+	void initWindow(int w, int h, const std::string &title, void *param);
 	int width() { return _width; }
 	int height() { return _height; }
 
@@ -31,7 +31,7 @@ protected:
 	veApplication();
 
 	virtual void dispatchEvents() = 0;
-	virtual void initWindowImplementation() = 0;
+	virtual void initWindowImplementation(void *param) = 0;
 	virtual bool isWindowShouldClose() = 0;
 
 protected:

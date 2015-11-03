@@ -200,7 +200,7 @@ veApplicationDesktop::~veApplicationDesktop()
 	glfwTerminate();
 }
 
-void veApplicationDesktop::initWindowImplementation()
+void veApplicationDesktop::initWindowImplementation(void *param)
 {
 	_hwnd = glfwCreateWindow(_width, _height, _title.c_str(), nullptr, nullptr);
 	glfwSetWindowUserPointer(_hwnd, this);
@@ -299,12 +299,10 @@ void veApplicationDesktop::collectWindowSizeEvent(GLFWwindow* window, int width,
 
 void veApplicationDesktop::collectWindowFocusEvent(GLFWwindow* window, int focused)
 {
-	if (focused) {
-		veApplicationDesktop *app = static_cast<veApplicationDesktop *>(glfwGetWindowUserPointer(window));
-		veEvent &event = app->_currentEvent;
-		event.setEventType(veEvent::VE_WIN_FOCUS);
-		app->_events.push_back(event);
-	}
+	veApplicationDesktop *app = static_cast<veApplicationDesktop *>(glfwGetWindowUserPointer(window));
+	veEvent &event = app->_currentEvent;
+	event.setEventType(focused != 0? veEvent::VE_WIN_FOCUS: veEvent::VE_WIN_NOFOCUS);
+	app->_events.push_back(event);
 }
 
 void veApplicationDesktop::collectWindowClose(GLFWwindow* window)
