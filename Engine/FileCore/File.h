@@ -28,7 +28,7 @@ class veSceneManager;
 class VE_EXPORT veFile
 {
 public:
-	~veFile();
+	virtual ~veFile();
 
 	static veFile* instance();
 	void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param = {veFileParam::COPY});

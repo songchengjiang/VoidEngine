@@ -27,7 +27,7 @@ public:
 	veReal& y() { return _y; };
 	const veReal& y() const { return _y; };
 
-	veReal length() const { return veMath::sqrt(_x * _x + _y * _y); }
+	veReal length() const { return veMath::veSqrt(_x * _x + _y * _y); }
 	veReal squaredLength() const { return _x * _x + _y * _y; }
 	veReal distance(const veVec2& rhs) const { return (*this - rhs).length(); }
 	veReal squaredDistance(const veVec2& rhs) const{ return (*this - rhs).squaredLength(); }
@@ -35,7 +35,7 @@ public:
 	veReal crossProduct(const veVec2 &vec) const { return _x * vec._y - _y * vec._x; }
 
 	veReal normalize(){
-		veReal fLength = veMath::sqrt(_x * _x + _y * _y);
+		veReal fLength = veMath::veSqrt(_x * _x + _y * _y);
 
 		if (fLength > veReal(0.0f)){
 			veReal fInvLength = 1.0f / fLength;

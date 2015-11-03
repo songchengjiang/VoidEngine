@@ -37,14 +37,7 @@ private:
 
 protected:
 
-	int _width;
-	int _height;
-	std::string _title;
-	bool        _isInited;
 	GLFWwindow *_hwnd;
-	VE_Ptr<veCamera> _mainCamera;
-
-	veSceneManager *_sceneManager;
 };
 
 typedef veRegistrar<GLFWwindow*, veVisualiserDesktop> veVisualiserRegistrar;

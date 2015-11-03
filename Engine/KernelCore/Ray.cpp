@@ -48,20 +48,20 @@ bool veRay::isIntersectWith(const veBoundingBox &bbox)
 	veVec3 w = (_end - _start) * 0.5f;
 	veVec3 h = (bbox.max() - bbox.min()) * 0.5f;
 	c = c - bbox.center();
-	veReal vx = veMath::abs(w.x());
-	veReal vy = veMath::abs(w.y());
-	veReal vz = veMath::abs(w.z());
-	if ((vx + h.x()) < veMath::abs(c.x())) 
+	veReal vx = veMath::veAbs(w.x());
+	veReal vy = veMath::veAbs(w.y());
+	veReal vz = veMath::veAbs(w.z());
+	if ((vx + h.x()) < veMath::veAbs(c.x())) 
 		return false;
-	if ((vy + h.y()) < veMath::abs(c.y())) 
+	if ((vy + h.y()) < veMath::veAbs(c.y())) 
 		return false;
-	if ((vz + h.z()) < veMath::abs(c.z()))
+	if ((vz + h.z()) < veMath::veAbs(c.z()))
 		return false;
-	if ((h.y() * vz + h.z() * vy) < veMath::abs(c.y() * w.z() - c.z() * w.y())) 
+	if ((h.y() * vz + h.z() * vy) < veMath::veAbs(c.y() * w.z() - c.z() * w.y())) 
 		return false;
-	if ((h.x() * vz + h.z() * vx) < veMath::abs(c.x() * w.z() - c.z() * w.x())) 
+	if ((h.x() * vz + h.z() * vx) < veMath::veAbs(c.x() * w.z() - c.z() * w.x())) 
 		return false;
-	if ((h.x() * vy + h.y() * vx) < veMath::abs(c.x() * w.y() - c.y() * w.x())) 
+	if ((h.x() * vy + h.y() * vx) < veMath::veAbs(c.x() * w.y() - c.y() * w.x())) 
 		return false;
 	return true;
 }

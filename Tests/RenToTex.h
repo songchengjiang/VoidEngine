@@ -6,7 +6,7 @@
 #define RTT_CAMERA  0x02
 
 float randomNEGONEtoPOSONE(){
-	return veMath::randomUnitization() * 2.0 - 1.0;
+	return veMath::veRandomUnitization() * 2.0 - 1.0;
 }
 
 class RenToTex : public BaseTest
@@ -106,7 +106,7 @@ public:
 			directional0->addComponent(new LightUpdater);
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
 			auto param = directional0->getParameter("intensity");
-			param->set(veMath::randomUnitization());
+			param->set(veMath::veRandomUnitization());
 
 			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "directional1-sphere"));
 			veNode *lightModel = _sceneManager->createNode("lightnode1");
@@ -123,7 +123,7 @@ public:
 			point0->addComponent(new LightUpdater);
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
 			auto param = point0->getParameter("intensity");
-			param->set(veMath::randomUnitization());
+			param->set(veMath::veRandomUnitization());
 
 			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "point0-sphere"));
 			veNode *lightModel = _sceneManager->createNode("lightnode2");
@@ -140,7 +140,7 @@ public:
 			spot0->addComponent(new LightUpdater);
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
 			auto param = spot0->getParameter("intensity");
-			param->set(veMath::randomUnitization());
+			param->set(veMath::veRandomUnitization());
 
 			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "spot0-sphere"));
 			veNode *lightModel = _sceneManager->createNode("lightnode3");
@@ -173,6 +173,8 @@ public:
 
 		_sceneManager->getRootNode()->addChild(root);
 		_sceneManager->getVisualiser()->getCamera()->setMask(DEFERRED_CAMERA);
+
+		BaseTest::init();
 	}
 
 private:

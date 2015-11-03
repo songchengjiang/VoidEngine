@@ -17,7 +17,7 @@ class VE_EXPORT veVisualiser
 	friend class veSceneManager;
 	friend class veCamera;
 public:
-	~veVisualiser();
+	virtual ~veVisualiser();
 
 	USE_VE_PTR;
 

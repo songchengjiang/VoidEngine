@@ -12,10 +12,10 @@ public:
 
 	LightUpdater()
 		: _lastChangeColorTime(0.0) {
-		_angle = veMath::randomUnitization() * veMath::TWO_PI;
-		_radius = 10.0f * veMath::randomUnitization() + 2.0f;
-		_height = 10.0f * (veMath::randomUnitization());
-		_oriColor = _desColor = veVec3(veMath::randomUnitization(), veMath::randomUnitization(), veMath::randomUnitization());
+		_angle = veMath::veRandomUnitization() * veMath::TWO_PI;
+		_radius = 10.0f * veMath::veRandomUnitization() + 2.0f;
+		_height = 10.0f * (veMath::veRandomUnitization());
+		_oriColor = _desColor = veVec3(veMath::veRandomUnitization(), veMath::veRandomUnitization(), veMath::veRandomUnitization());
 	}
 	virtual bool handle(veNode *node, veSceneManager *sm, const veEvent &event) override{
 		return false;
@@ -38,15 +38,15 @@ private:
 
 		if (1.0 < _lastChangeColorTime) {
 			_oriColor = _desColor;
-			_desColor = veVec3(veMath::randomUnitization(), veMath::randomUnitization(), veMath::randomUnitization());
+			_desColor = veVec3(veMath::veRandomUnitization(), veMath::veRandomUnitization(), veMath::veRandomUnitization());
 			_lastChangeColorTime = 0.0f;
 		}
 		_lastChangeColorTime += deltaTime;
 	}
 
 	void updateMatrix(veLight *light, double deltaTime) {
-		veReal x = _radius * veMath::cos(_angle);
-		veReal y = _radius * veMath::sin(_angle);
+		veReal x = _radius * veMath::veCos(_angle);
+		veReal y = _radius * veMath::veSin(_angle);
 		light->setMatrix(veMat4::lookAt(veVec3(x, y, _height), veVec3::ZERO, veVec3::UNIT_Y));
 		_angle += veMath::QUARTER_PI * deltaTime;
 	}
@@ -218,12 +218,7 @@ public:
 	};
 
 	virtual void init() {
-	}
-
-	int run() {
-		init();
 		_camera->addComponent(new CameraManipulator(_defaultCameraDistance, _defaultCameraZoomScale));
-		return veDirector::instance()->run();
 	}
 
 protected:

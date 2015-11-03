@@ -65,7 +65,7 @@ veReal veQuat::dot(const veQuat &rkQ) const
 veReal veQuat::normalize()
 {
 	veReal len = normLength();
-	veReal factor = 1.0f / veMath::sqrt(len);
+	veReal factor = 1.0f / veMath::veSqrt(len);
 	*this = *this * factor;
 	return len;
 }
@@ -106,12 +106,12 @@ veReal veQuat::roll(bool reprojectAxis) const
 
 		// Vector3(1.0-(fTyy+fTzz), fTxy+fTwz, fTxz-fTwy);
 
-		return veMath::atan2(fTxy + fTwz, 1.0f - (fTyy + fTzz));
+		return veMath::veAtan2(fTxy + fTwz, 1.0f - (fTyy + fTzz));
 
 	}
 	else
 	{
-		return veMath::atan2(2 * (_x * _y + _w * _z), _w * _w + _x * _x - _y * _y - _z * _z);
+		return veMath::veAtan2(2 * (_x * _y + _w * _z), _w * _w + _x * _x - _y * _y - _z * _z);
 	}
 }
 
@@ -130,12 +130,12 @@ veReal veQuat::pitch(bool reprojectAxis) const
 		veReal fTzz = fTz * _z;
 
 		// Vector3(fTxy-fTwz, 1.0-(fTxx+fTzz), fTyz+fTwx);
-		return veMath::atan2(fTyz + fTwx, 1.0f - (fTxx + fTzz));
+		return veMath::veAtan2(fTyz + fTwx, 1.0f - (fTxx + fTzz));
 	}
 	else
 	{
 		// internal version
-		return veMath::atan2(2 * (_y * _z + _w * _x), _w * _w - _x * _x - _y * _y + _z * _z);
+		return veMath::veAtan2(2 * (_y * _z + _w * _x), _w * _w - _x * _x - _y * _y + _z * _z);
 	}
 }
 
@@ -155,13 +155,13 @@ veReal veQuat::yaw(bool reprojectAxis) const
 
 		// Vector3(fTxz+fTwy, fTyz-fTwx, 1.0-(fTxx+fTyy));
 
-		return veMath::atan2(fTxz + fTwy, 1.0f - (fTxx + fTyy));
+		return veMath::veAtan2(fTxz + fTwy, 1.0f - (fTxx + fTyy));
 
 	}
 	else
 	{
 		// internal version
-		return veMath::asin(-2 * (_x * _z - _w * _y));
+		return veMath::veAsin(-2 * (_x * _z - _w * _y));
 	}
 }
 
@@ -181,14 +181,14 @@ veQuat veQuat::slerp(veReal fT, const veQuat& rkP, const veQuat& rkQ, bool short
 		rkT = rkQ;
 	}
 
-	if (veMath::abs(fCos) < 1 - msEpsilon)
+	if (veMath::veAbs(fCos) < 1 - msEpsilon)
 	{
 		// Standard case (slerp)
-		veReal fSin = veMath::sqrt(1 - veMath::sqr(fCos));
-		veReal fAngle = veMath::atan2(fSin, fCos);
+		veReal fSin = veMath::veSqrt(1 - veMath::veSqr(fCos));
+		veReal fAngle = veMath::veAtan2(fSin, fCos);
 		veReal fInvSin = 1.0f / fSin;
-		veReal fCoeff0 = veMath::sin((1.0f - fT) * fAngle) * fInvSin;
-		veReal fCoeff1 = veMath::sin(fT * fAngle) * fInvSin;
+		veReal fCoeff0 = veMath::veSin((1.0f - fT) * fAngle) * fInvSin;
+		veReal fCoeff1 = veMath::veSin(fT * fAngle) * fInvSin;
 		return fCoeff0 * rkP + fCoeff1 * rkT;
 	}
 	else
@@ -233,8 +233,8 @@ veQuat veQuat::squad(veReal fT, const veQuat& rkP, const veQuat& rkA, const veQu
 void veQuat::fromAngleAxis(const veReal angle, const veVec3 &axes)
 {
 	veReal fHalfAngle(0.5f*angle);
-	veReal fSin = veMath::sin(fHalfAngle);
-	_w = veMath::cos(fHalfAngle);
+	veReal fSin = veMath::veSin(fHalfAngle);
+	_w = veMath::veCos(fHalfAngle);
 	_x = fSin * axes.x();
 	_y = fSin * axes.y();
 	_z = fSin * axes.z();
@@ -251,7 +251,7 @@ void veQuat::fromMat3(const veMat3 &mat)
 	if (fTrace > 0.0)
 	{
 		// |w| > 1/2, may as well choose w > 1/2
-		fRoot = veMath::sqrt(fTrace + 1.0f);  // 2w
+		fRoot = veMath::veSqrt(fTrace + 1.0f);  // 2w
 		_w = 0.5f*fRoot;
 		fRoot = 0.5f / fRoot;  // 1/(4w)
 		_x = (mat[2][1] - mat[1][2])*fRoot;
@@ -270,7 +270,7 @@ void veQuat::fromMat3(const veMat3 &mat)
 		size_t j = s_iNext[i];
 		size_t k = s_iNext[j];
 
-		fRoot = veMath::sqrt(mat[i][i] - mat[j][j] - mat[k][k] + 1.0f);
+		fRoot = veMath::veSqrt(mat[i][i] - mat[j][j] - mat[k][k] + 1.0f);
 		veReal* apkQuat[3] = { &_x, &_y, &_z };
 		*apkQuat[i] = 0.5f*fRoot;
 		fRoot = 0.5f / fRoot;

@@ -62,7 +62,7 @@ void veCamera::setProjectionMatrixAsOrtho(float left, float right, float bottom,
 
 void veCamera::setProjectionMatrixAsPerspective(float fovy, float aspectRatio, float zNear, float zFar)
 {
-	float top = zNear * tan(veMath::radian(fovy * 0.5f));
+	float top = zNear * tan(veMath::veRadian(fovy * 0.5f));
 	float bottom = -top;
 	float right = top * aspectRatio;
 	float left = -right;

@@ -65,7 +65,7 @@ public: const std::string& getName() const { return _name; }
 #elif defined(__APPLE_CC__)
 #include <stdio.h>
 #define veLog(...) printf(__VA_ARGS__);
-#elif defined(_ANDROID_)
+#elif defined(ANDROID)
 #include <android/log.h>
 #define veLogI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "VoidEngine", __VA_ARGS__))
 #define veLogW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "VoidEngine", __VA_ARGS__))
@@ -101,7 +101,7 @@ public: const std::string& getName() const { return _name; }
 #define VE_PLATFORM     VE_PLATFORM_WIN32
 #elif defined(__APPLE_CC__)
 #define VE_PLATFORM     VE_PLATFORM_MAC
-#elif defined(_ANDROID_)
+#elif defined(ANDROID)
 #define VE_PLATFORM     VE_PLATFORM_ANDROID
 #else
 #define VE_PLATFORM     VE_PLATFORM_UNKNOW
@@ -121,6 +121,11 @@ public: const std::string& getName() const { return _name; }
 #include <OpenGL/gl3ext.h>
 #endif
 #include "glfw/include/GLFW/glfw3.h"
+#endif
+
+#if defined(ANDROID)
+#include <EGL/egl.h>
+#include <GLES3/gl3.h>
 #endif
 
 #endif

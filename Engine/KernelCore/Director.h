@@ -8,7 +8,7 @@ class veSceneManager;
 class VE_EXPORT veDirector
 {
 public:
-	~veDirector();
+	virtual ~veDirector();
 
 	static veDirector* instance();
 
@@ -17,9 +17,6 @@ public:
 
 	bool run();
 	void stop();
-	void startThreading();
-	void stopThreading();
-	bool frame(double deltaTime);
 
 private:
 

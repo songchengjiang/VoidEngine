@@ -154,11 +154,6 @@ static void initSymbolsMap() {
 
 veVisualiserDesktop::veVisualiserDesktop(int w, int h, const std::string &title)
 	: veVisualiser(w, h, title)
-	, _width(w)
-	, _height(h)
-	, _title(title)
-	, _isInited(false)
-	, _sceneManager(nullptr)
 {
 	if (g_KeySymbolMap.empty())
 		initSymbolsMap();

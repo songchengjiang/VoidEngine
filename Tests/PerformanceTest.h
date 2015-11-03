@@ -39,7 +39,7 @@ public:
 		for (float  z = -lineHalfSize; z <= lineHalfSize; z += 100) {
 			for (float  y = -lineHalfSize; y <= lineHalfSize; y += 100) {
 				for (float x = -lineHalfSize; x <= lineHalfSize; x += 100) {
-					unsigned int idx = (veMath::randomUnitization() * 0.999f) * (sizeof(MODEL_FILES) / sizeof(MODEL_FILES[0]));
+					unsigned int idx = (veMath::veRandomUnitization() * 0.999f) * (sizeof(MODEL_FILES) / sizeof(MODEL_FILES[0]));
 					//unsigned int idx = 1;
 					sprintf(str, "testing-%d-%d-%d", int(x), int(y), int(z));
 					veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, MODEL_FILES[idx], str));
@@ -54,7 +54,7 @@ public:
 					if (!MODEL_ANIM_FILES[idx].empty()) {
 						veAnimationPlayer* player = _sceneManager->createAnimationPlayer(str, animationContainer);
 						player->start();
-						player->setFrameRate(animationContainer->getFrameRate() * veMath::randomUnitization());
+						player->setFrameRate(animationContainer->getFrameRate() * veMath::veRandomUnitization());
 						player->setLoopAnimation(true);
 						player->attachEntity(entity);
 					}
