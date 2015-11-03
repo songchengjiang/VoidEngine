@@ -7,4 +7,3 @@ void android_main(struct android_app* app){
     TestCreator::createTest();
     veApplication::instance()->run();
 }
-
