@@ -3,7 +3,8 @@ glew-1.11.0
 glfw-3.1.1
 ilmbase-2.2.0
 openexr-2.2.0
-jpeg-6b
+jpeg-9
 lpng1618
 rapidjson-1.0
+freetype-2.6
 zlib-1.2.8
