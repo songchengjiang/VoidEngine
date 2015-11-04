@@ -1,2 +1,2 @@
-include ':voidengine'
 include ':tests'
+include ':voidengine'

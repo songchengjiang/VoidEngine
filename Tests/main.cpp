@@ -1,4 +1,5 @@
 #include "VoidEngine.h"
+#if (VE_PLATFORM == VE_PLATFORM_WIN32) || (VE_PLATFORM == VE_PLATFORM_MAC)
 #include "TestCreator.h"
 
 int main(int argc, char **argv)
@@ -7,3 +8,5 @@ int main(int argc, char **argv)
 	TestCreator::createTest();
 	return veApplication::instance()->run();
 }
+
+#endif

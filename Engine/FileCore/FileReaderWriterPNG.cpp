@@ -4,7 +4,9 @@
 #include "KernelCore/SceneManager.h"
 #include "libpng/include/png.h"
 
+#if (VE_PLATFORM == VE_PLATFORM_WIN32)
 #pragma comment(lib, "libpng/lib/libpng.lib")
+#endif
 class veFileReaderWriterPNG : public veFileReaderWriter
 {
 public:
