@@ -5,7 +5,7 @@ model {
         buildToolsVersion = "23.0.2"
 
         defaultConfig.with {
-            applicationId = "com.voidengine"
+            applicationId = "com.voidengine.tests"
             minSdkVersion.apiLevel = 18
             targetSdkVersion.apiLevel = 23
             versionCode = 1
@@ -15,10 +15,15 @@ model {
     }
 
     android.sources {
-        main{
-            jni{
-                source{
-                    srcDirs = ["../../../Engine"]
+        main {
+            jni {
+                source {
+                    srcDirs = ["../../../Tests"]
+                }
+            }
+            assets {
+                source {
+                    srcDirs = ["../../../resources"]
                 }
             }
         }
@@ -32,7 +37,8 @@ model {
     }
 
     android.ndk {
-        moduleName = "VoidEngine"
+        moduleName = "VETests"
+        CFlags += "-I${file("../../../Engine")}".toString()
         cppFlags += "-I${file("../../../Engine")}".toString()
         //cppFlags += "-I${file("../../../Engine/BaseCore")}".toString()
         //cppFlags += "-I${file("../../../Engine/Debuger")}".toString()
@@ -72,4 +78,7 @@ model {
         // build one including all cpu architectures
         create("all")
     }
+}
+dependencies {
+    compile project(':voidengine')
 }
