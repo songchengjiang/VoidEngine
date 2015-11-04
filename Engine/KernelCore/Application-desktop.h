@@ -1,6 +1,7 @@
 #ifndef _VE_APPLICATION_DESKTOP_
 #define _VE_APPLICATION_DESKTOP_
 #include "Application.h"
+#if (VE_PLATFORM == VE_PLATFORM_WIN32) || (VE_PLATFORM == VE_PLATFORM_MAC)
 
 class VE_EXPORT veApplicationDesktop : public veApplication
 {
@@ -36,5 +37,6 @@ private:
 	GLFWwindow *_hwnd;
 	bool        _isInited;
 };
+#endif
 
 #endif

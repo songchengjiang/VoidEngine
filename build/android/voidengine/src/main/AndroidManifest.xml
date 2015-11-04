@@ -4,7 +4,8 @@
 
     <application
         android:allowBackup="false"
-        android:label="libvoidengine">
+        android:label="libvoidengine"
+        android:supportsRtl="true">
     </application>
 
 </manifest>

@@ -1,4 +1,5 @@
 #include "File-mac.h"
+#if (VE_PLATFORM == VE_PLATFORM_MAC)
 #include "FileReaderWriter.h"
 
 veFileMac::veFileMac()
@@ -53,3 +54,4 @@ bool veFileMac::isFileExist(const std::string &filePath)
 		return false;
 	return true;
 }
+#endif

@@ -1,4 +1,5 @@
 #include "File-win32.h"
+#if (VE_PLATFORM == VE_PLATFORM_WIN32)
 #include "FileReaderWriter.h"
 #include <windows.h>
 #include <shlwapi.h>  
@@ -107,3 +108,5 @@ bool veFileWin32::isFileExist(const std::string &filePath)
 		return false;
 	return true;
 }
+
+#endif

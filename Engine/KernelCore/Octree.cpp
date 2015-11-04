@@ -1,5 +1,6 @@
 #include "Octree.h"
 #include "OctreeNode.h"
+#include <algorithm>
 
 veOctree::veOctree()
 	: parent(nullptr)

@@ -10,6 +10,8 @@
 #include "MatrixPtr.h"
 #include <unordered_map>
 
+#define BUFFER_OFFSET(idx) (static_cast<char*>(0) + (idx))
+
 veEntityRenderer::veEntityRenderer()
 	: _drawUsage(GL_STATIC_DRAW)
 {
@@ -52,7 +54,7 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 				for (unsigned int i = 0; i < mesh->getVertexAtrributeNum(); ++i) {
 					auto attri = mesh->getVertexAtrribute(i);
 					GLboolean normalize = attri.valueType == veMesh::VertexAtrribute::FLOAT ? GL_FALSE : GL_TRUE;
-					glVertexAttribPointer(i, attri.valueNum, attri.valueType, normalize, stride, (GLvoid*)offset);
+					glVertexAttribPointer(i, attri.valueNum, attri.valueType, normalize, stride, BUFFER_OFFSET(offset));
 					glEnableVertexAttribArray(i);
 					if (attri.valueType == veMesh::VertexAtrribute::FLOAT) offset += sizeof(GLfloat) * attri.valueNum;
 					else if (attri.valueType == veMesh::VertexAtrribute::UINT) offset += sizeof(GLuint) * attri.valueNum;

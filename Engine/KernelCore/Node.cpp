@@ -1,6 +1,7 @@
 #include "Node.h"
 #include "NodeVisitor.h"
 #include "SceneManager.h"
+#include <algorithm>
 
 veNode::veNode()
 	: USE_VE_PTR_INIT

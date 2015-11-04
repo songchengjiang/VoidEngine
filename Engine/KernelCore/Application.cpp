@@ -3,6 +3,8 @@
 #include <time.h>
 #if (VE_PLATFORM == VE_PLATFORM_WIN32) || (VE_PLATFORM == VE_PLATFORM_MAC)
 #include "Application-desktop.h"
+#elif VE_PLATFORM == VE_PLATFORM_ANDROID
+#include "Application-android.h"
 #endif
 
 veApplication::veApplication()
@@ -18,9 +20,11 @@ veApplication::~veApplication()
 veApplication* veApplication::instance()
 {
 #if (VE_PLATFORM == VE_PLATFORM_WIN32) || (VE_PLATFORM == VE_PLATFORM_MAC)
-	static veApplicationDesktop director;
+	static veApplicationDesktop application;
+#elif VE_PLATFORM == VE_PLATFORM_ANDROID
+	static veApplicationAndroid application;
 #endif
-	return &director;
+	return &application;
 }
 
 void veApplication::initWindow(int w, int h, const std::string &title, void *param)

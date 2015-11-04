@@ -17,7 +17,7 @@ public:
 	{
 		TEXTURE_2D,
 		TEXTURE_3D,
-		TEXTURE_RECT,
+		//TEXTURE_RECT,
 		TEXTURE_CUBE,
 	};
 
@@ -109,19 +109,19 @@ protected:
 
 };
 
-class VE_EXPORT veTextureRECT : public veTexture
-{
-	friend class veTextureManager;
-public:
-
-	~veTextureRECT();
-
-	virtual void bind(unsigned int textureUnit) override;
-
-protected:
-	veTextureRECT();
-
-};
+//class VE_EXPORT veTextureRECT : public veTexture
+//{
+//	friend class veTextureManager;
+//public:
+//
+//	~veTextureRECT();
+//
+//	virtual void bind(unsigned int textureUnit) override;
+//
+//protected:
+//	veTextureRECT();
+//
+//};
 
 
 class VE_EXPORT veTextureCube : public veTexture

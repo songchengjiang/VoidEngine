@@ -98,7 +98,7 @@ void veFrameBufferObject::unBind()
 	if (CURRENT_FBO == nullptr) return;
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glDrawBuffer(GL_BACK);
+	//glDrawBuffer(GL_BACK);
 	CURRENT_FBO = nullptr;
 }
 

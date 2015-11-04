@@ -1,4 +1,5 @@
 #include "Application-desktop.h"
+#if (VE_PLATFORM == VE_PLATFORM_WIN32) || (VE_PLATFORM == VE_PLATFORM_MAC)
 
 static std::unordered_map<int, veEvent::KeySymbol> g_KeySymbolMap;
 static std::unordered_map<int, veEvent::ModKeySymbol> g_ModKeySymbolMap;
@@ -312,3 +313,4 @@ void veApplicationDesktop::collectWindowClose(GLFWwindow* window)
 	event.setEventType(veEvent::VE_WIN_CLOSE);
 	app->_events.push_back(event);
 }
+#endif

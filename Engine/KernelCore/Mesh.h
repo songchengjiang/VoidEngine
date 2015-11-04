@@ -126,6 +126,7 @@ protected:
 	std::vector< VE_Ptr<veBone> >      _bones;
 	veBoundingBox                      _boundingBox;
 	GLuint                             _transformFeedbackBuffer;
+	GLsizeiptr                         _transformFeedbackBufferSize;
 	unsigned int                       _vertexStride;
 	bool                               _needRefresh;
 };

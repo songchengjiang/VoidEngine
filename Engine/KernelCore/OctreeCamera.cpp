@@ -2,6 +2,7 @@
 #include "OctreeRenderQueue.h"
 #include "OctreeNode.h"
 #include "Octree.h"
+#include <algorithm>
 
 veOctreeCamera::veOctreeCamera()
 {

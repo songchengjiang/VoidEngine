@@ -2,6 +2,7 @@
 #include "EntityRenderer.h"
 #include "Node.h"
 #include "Ray.h"
+#include <algorithm>
 
 veEntity::veEntity()
 	: _needRefresh(true)

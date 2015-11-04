@@ -7,6 +7,8 @@ extern "C" {
 #include "libjpeg/include/win/jpeglib.h"
 #elif (VE_PLATFORM == VE_PLATFORM_MAC)
 #include "libjpeg/include/mac/jpeglib.h"
+#elif (VE_PLATFORM == VE_PLATFORM_ANDROID)
+#include "libjpeg/include/android/jpeglib.h"
 #endif
 }
 #if (VE_PLATFORM == VE_PLATFORM_WIN32)
@@ -31,7 +33,7 @@ public:
 			jpeg_create_decompress(&cinfo);
 			//jpeg_stdio_src(&cinfo, fp);
 			jpeg_mem_src(&cinfo, (unsigned char *)fileData->buffer, fileData->size);
-			jpeg_read_header(&cinfo, true);
+			jpeg_read_header(&cinfo, boolean(true));
 			readImage(cinfo);
 			jpeg_destroy_decompress(&cinfo);
 		}

@@ -21,6 +21,14 @@ model {
                     srcDirs = ["../../../Engine"]
                 }
             }
+            jniLibs{
+                source{
+                    srcDirs = ["../../../Dependents/freetype/lib/android",
+                               "../../../Dependents/libjpeg/lib/android",
+                               "../../../Dependents/libpng/lib/android",
+                               "../../../Dependents/zlib/lib/android",]
+                }
+            }
         }
         //jni.srcFiles = ["../../../Engine/Vector2.cpp"]
         //jniLibs.srcDir = 'src/main/libs'

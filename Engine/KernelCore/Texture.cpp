@@ -62,11 +62,11 @@ unsigned int veTexture::perPixelSize()
 	case GL_RGBA8:
 		return 4;
 
-	case GL_RGB16:
+	//case GL_RGB16:
 	case GL_RGB16F:
 		return 6;
 
-	case GL_RGBA16:
+	//case GL_RGBA16:
 	case GL_RGBA16F:
 		return 8;
 
@@ -177,30 +177,30 @@ void veTexture2D::bind(unsigned int textureUnit)
 	}
 }
 
-veTextureRECT::veTextureRECT()
-	: veTexture(GL_TEXTURE_RECTANGLE)
-{
-	_type = veTexture::TEXTURE_RECT;
-}
-
-veTextureRECT::~veTextureRECT()
-{
-
-}
-
-void veTextureRECT::bind(unsigned int textureUnit)
-{
-	veTexture::bind(textureUnit);
-	if (_needRefreshTex) {
-		if (_manager->exchangeTextureMemory(this)) {
-			glTexStorage2D(_target, 1, _internalFormat, _width, _height);
-			if (_data) {
-				glTexSubImage2D(_target, 0, 0, 0, _width, _height, _pixelFormat, _dataType, _data);
-			}
-			_needRefreshTex = false;
-		}
-	}
-}
+//veTextureRECT::veTextureRECT()
+//	: veTexture(GL_TEXTURE_RECTANGLE)
+//{
+//	_type = veTexture::TEXTURE_RECT;
+//}
+//
+//veTextureRECT::~veTextureRECT()
+//{
+//
+//}
+//
+//void veTextureRECT::bind(unsigned int textureUnit)
+//{
+//	veTexture::bind(textureUnit);
+//	if (_needRefreshTex) {
+//		if (_manager->exchangeTextureMemory(this)) {
+//			glTexStorage2D(_target, 1, _internalFormat, _width, _height);
+//			if (_data) {
+//				glTexSubImage2D(_target, 0, 0, 0, _width, _height, _pixelFormat, _dataType, _data);
+//			}
+//			_needRefreshTex = false;
+//		}
+//	}
+//}
 
 
 veTextureCube::veTextureCube()

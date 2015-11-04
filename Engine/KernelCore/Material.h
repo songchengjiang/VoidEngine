@@ -40,7 +40,7 @@ public:
 	static bool CURRENT_CULL_FACE;
 	static GLenum CURRENT_CULL_FACE_MODE;
 	static veBlendFunc CURRENT_BLEND_FUNC;
-	static GLenum CURRENT_POLYGON_MODE;
+	//static GLenum CURRENT_POLYGON_MODE;
 
 	vePass();
 	~vePass();
@@ -68,8 +68,8 @@ public:
 	const unsigned int& drawMask() const { return _mask; }
 	unsigned int& drawMask() { return _mask; }
 
-	const GLenum& polygonMode() const { return _polygonMode; }
-	GLenum& polygonMode() { return _polygonMode; }
+	//const GLenum& polygonMode() const { return _polygonMode; }
+	//GLenum& polygonMode() { return _polygonMode; }
 
 	void setShader(veShader *shader);
 	veShader* getShader(veShader::Type type);
@@ -105,7 +105,7 @@ private:
 	GLenum _cullFaceMode;
 	veBlendFunc _blendFunc;
 	unsigned int _mask;
-	GLenum _polygonMode;
+	//GLenum _polygonMode;
 	GLuint _program;
 	bool    _needLinkProgram;
 	std::map<veShader::Type, VE_Ptr<veShader> >           _shaders;

@@ -2,6 +2,7 @@
 #include "EntityRenderer.h"
 #include "MeshNode.h"
 #include "Ray.h"
+#include <algorithm>
 
 const unsigned int veMesh::MAX_ATTRIBUTE_NUM = 16;
 
@@ -11,6 +12,7 @@ veMesh::veMesh()
 	, _meshNode(nullptr)
 	, _vertexStride(0)
 	, _transformFeedbackBuffer(0)
+	, _transformFeedbackBufferSize(0)
 {
 }
 
@@ -170,6 +172,7 @@ void veMesh::generateTransformFeedbackBuffer()
 		}
 		glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, _transformFeedbackBuffer);
 		glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, bufSize, nullptr, GL_DYNAMIC_COPY);
+		_transformFeedbackBufferSize = bufSize;
 	}
 }
 
@@ -183,7 +186,7 @@ void veMesh::traversePrimitives(const PrimitiveCallback &callback)
 				unsigned int vOffset = 0;
 				unsigned int nOffset = 3;
 				glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, _transformFeedbackBuffer);
-				veReal *vertices = (veReal *)glMapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, GL_READ_ONLY);
+				veReal *vertices = (veReal *)glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, _transformFeedbackBufferSize, GL_MAP_READ_BIT);
 				if (!vertices) return;
 				for (size_t idx = 0; idx < primitive.indices->size(); idx += 3) {
 					unsigned int id0 = totalPrimitiveIndices + idx;

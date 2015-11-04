@@ -15,7 +15,7 @@ bool vePass::CURRENT_CULL_FACE = false;
 GLenum vePass::CURRENT_CULL_FACE_MODE = GL_BACK;
 
 veBlendFunc vePass::CURRENT_BLEND_FUNC = veBlendFunc::DISABLE;
-GLenum vePass::CURRENT_POLYGON_MODE = GL_FILL;
+//GLenum vePass::CURRENT_POLYGON_MODE = GL_FILL;
 
 vePass::vePass()
 	: USE_VE_PTR_INIT
@@ -24,7 +24,7 @@ vePass::vePass()
 	, _cullFace(true)
 	, _cullFaceMode(GL_BACK)
 	, _blendFunc(veBlendFunc::DISABLE)
-	, _polygonMode(GL_FILL)
+	//, _polygonMode(GL_FILL)
 	, _program(0)
 	, _needLinkProgram(true)
 	, _mask(0xffffffff)
@@ -77,10 +77,10 @@ void vePass::apply(const veRenderCommand &command)
 		}
 	}
 	
-	if (_polygonMode != CURRENT_POLYGON_MODE) {
-		glPolygonMode(GL_FRONT_AND_BACK, _polygonMode);
-		CURRENT_POLYGON_MODE = _polygonMode;
-	}
+	//if (_polygonMode != CURRENT_POLYGON_MODE) {
+	//	glPolygonMode(GL_FRONT_AND_BACK, _polygonMode);
+	//	CURRENT_POLYGON_MODE = _polygonMode;
+	//}
 
 	if (_blendFunc != CURRENT_BLEND_FUNC) {
 		if (_blendFunc != veBlendFunc::DISABLE) {

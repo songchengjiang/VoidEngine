@@ -4,6 +4,8 @@
 #include "File-win32.h"
 #elif (VE_PLATFORM == VE_PLATFORM_MAC)
 #include "File-mac.h"
+#elif (VE_PLATFORM == VE_PLATFORM_ANDROID)
+#include "File-android.h"
 #endif
 
 veFile::veFile()
@@ -24,6 +26,8 @@ veFile* veFile::instance()
 	static veFileWin32 fileReader;
 #elif (VE_PLATFORM == VE_PLATFORM_MAC)
     static veFileMac fileReader;
+#elif (VE_PLATFORM == VE_PLATFORM_ANDROID)
+	static veFileAndroid fileReader;
 #endif
 	return &fileReader;
 }

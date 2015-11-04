@@ -1,5 +1,6 @@
 #include "MeshNode.h"
 #include "Mesh.h"
+#include <algorithm>
 
 veMeshNode::veMeshNode()
 	: USE_VE_PTR_INIT

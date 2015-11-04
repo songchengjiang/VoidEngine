@@ -230,9 +230,9 @@ private:
 		else if (strcmp(TEX_3D_KEY.c_str(), str) == 0) {
 			return veTexture::TEXTURE_3D;
 		}
-		else if (strcmp(TEX_RECT_KEY.c_str(), str) == 0) {
-			return veTexture::TEXTURE_RECT;
-		}
+		//else if (strcmp(TEX_RECT_KEY.c_str(), str) == 0) {
+		//	return veTexture::TEXTURE_RECT;
+		//}
 		return veTexture::TEXTURE_2D;
 	}
 
