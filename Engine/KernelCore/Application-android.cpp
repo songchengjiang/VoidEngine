@@ -11,7 +11,8 @@ veApplicationAndroid::veApplicationAndroid()
 }
 
 veApplicationAndroid::~veApplicationAndroid() {
-
+    eglDestroyContext(_display, _context);
+    eglDestroySurface(_display, _surface);
 }
 
 bool veApplicationAndroid::makeContextCurrent() {
@@ -108,7 +109,7 @@ void veApplicationAndroid::initGLContext() {
         eglGetConfigAttrib(_display, config, EGL_NATIVE_VISUAL_ID, &format);
         ANativeWindow_setBuffersGeometry(_androidApp->window, _width, _height, format);
 
-        const EGLint context_attribs[] = { EGL_CONTEXT_CLIENT_VERSION, 3, //Request opengl ES3.0
+        const EGLint context_attribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, //Request opengl ES3.0
                                            EGL_NONE };
         _context = eglCreateContext(_display, config, NULL, context_attribs);
         if (!_surface) veLog("_surface null");

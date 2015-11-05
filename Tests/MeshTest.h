@@ -6,6 +6,7 @@ class MeshTest : public BaseTest
 {
 public:
 	MeshTest() {
+		//int n = rand();
 		veNode *root = _sceneManager->createNode("root");
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot-0"));

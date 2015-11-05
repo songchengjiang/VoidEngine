@@ -15,7 +15,7 @@ public:
 	size_t getVaryingCount() const { return _tfVaryingList.size(); }
 	const std::vector<char *>& getVaryingList() const { return _tfVaryingList; }
 
-	void bind(GLuint buffer, GLenum primitiveMode);
+	void bind(GLuint buffer, GLsizeiptr bufSize, GLenum primitiveMode);
 	void unBind();
 
 	void setRasterizerDiscard(bool isDiscard) { _rasterizerDiscard = isDiscard; }

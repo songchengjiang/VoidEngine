@@ -115,6 +115,7 @@ protected:
 
 	void generateTransformFeedbackBuffer();
 	GLuint getTransformFeedbackBuffer() { return _transformFeedbackBuffer; }
+	GLsizeiptr getTransformFeedbackBufferSize() { return _transformFeedbackBufferSize; }
 
 protected:
 

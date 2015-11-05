@@ -5,7 +5,7 @@
 #include "TestCreator.h"
 
 void android_main(struct android_app* app){
-    veApplication::instance()->initWindow(720, 1280, "", app);
+    veApplication::instance()->initWindow(1280, 720, "", app);
     TestCreator::createTest();
     veApplication::instance()->run();
 }

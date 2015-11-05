@@ -132,13 +132,15 @@ void veEntityRenderer::draw(const veRenderCommand &command)
 	auto transformFeedback = command.pass->getTransformFeedback();
 	for (unsigned int i = 0; i < mesh->getPrimitiveNum(); ++i) {
 		auto primitive = mesh->getPrimitive(i);
-		if (transformFeedback) {
-			transformFeedback->bind(mesh->getTransformFeedbackBuffer(), primitive.primitiveType);
-		}
-		glDrawElements(primitive.primitiveType, GLsizei(primitive.indices->size()), GL_UNSIGNED_SHORT, nullptr);
-		if (transformFeedback) {
+		if (transformFeedback){
+			glEnable(GL_RASTERIZER_DISCARD);
+			transformFeedback->bind(mesh->getTransformFeedbackBuffer(), mesh->getTransformFeedbackBufferSize(), primitive.primitiveType);
+			glDrawElements(primitive.primitiveType, GLsizei(primitive.indices->size()), GL_UNSIGNED_SHORT, nullptr);
 			transformFeedback->unBind();
+			glDisable(GL_RASTERIZER_DISCARD);
 		}
+
+		glDrawElements(primitive.primitiveType, GLsizei(primitive.indices->size()), GL_UNSIGNED_SHORT, nullptr);
 	}
 
 }

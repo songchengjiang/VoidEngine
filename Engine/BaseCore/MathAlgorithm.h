@@ -3,7 +3,6 @@
 #include "Prerequisites.h"
 #include <math.h>
 #include <stdlib.h>
-//#include <random>
 
 class VE_EXPORT veMath
 {
@@ -16,6 +15,7 @@ public:
 	veMath();
 	~veMath();
 
+	
 	static veReal veSqrt(veReal val) { return sqrt(val); }
 	static veReal veSqr(veReal val) { return val * val; }
 	static veReal veSin(veReal val) { return sin(val); }
@@ -28,7 +28,7 @@ public:
 	static veReal veAbs(veReal val) { return fabs(val); }
 	static veReal veRadian(veReal deg) { return deg * PI / 180.0f; }
 	static veReal veDegree(veReal rad) { return rad * 180.0f / PI; }
-	static veReal veRandomUnitization() { return (veReal)rand() / RAND_MAX; }
+	static veReal veRandomUnitization() { return (veReal)rand() / (veReal)RAND_MAX; }
 	static bool isNaN(veReal val) { return val != val; }
 	template<typename T> static T minimum(const T& lVal, const T& rVal) { return lVal < rVal ? lVal : rVal; }
 	template<typename T> static T maximum(const T& lVal, const T& rVal) { return lVal < rVal ? rVal : lVal; }
