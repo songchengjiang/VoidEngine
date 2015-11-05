@@ -207,7 +207,7 @@ void veOctreeSceneManager::update()
 void veOctreeSceneManager::render()
 {
 	//culling();
-	veApplication::instance()->makeContextCurrent();
+	if (!veApplication::instance()->makeContextCurrent()) return;
 	for (auto &iter : _cameraList) {
 		if (iter->isVisible() && iter->isInScene() && iter != _mainCamera) {
 			if (iter->getFrameBufferObject()) {

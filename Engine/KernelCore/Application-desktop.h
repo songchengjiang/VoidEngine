@@ -9,7 +9,7 @@ class VE_EXPORT veApplicationDesktop : public veApplication
 public:
 	virtual ~veApplicationDesktop();
 
-	virtual void makeContextCurrent() override;
+	virtual bool makeContextCurrent() override;
 	virtual void swapBuffers() override;
 
 private:

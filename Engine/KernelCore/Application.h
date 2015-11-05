@@ -20,11 +20,11 @@ public:
 	void setSceneManager(veSceneManager *sm);
 	veSceneManager* getSceneManager() { return _sceneManager.get(); }
 
-	virtual void makeContextCurrent() = 0;
+	virtual bool makeContextCurrent() = 0;
 	virtual void swapBuffers() = 0;
 
-	bool run();
-	void stop();
+	virtual bool run();
+	virtual void stop();
 
 protected:
 

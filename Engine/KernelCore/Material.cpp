@@ -46,7 +46,6 @@ void vePass::apply(const veRenderCommand &command)
 	applyProgram(command);
 	applyLightsUniforms(command);
 	applyUniforms(command);
-
 	if (CURRENT_PASS == this) return;
 	CURRENT_PASS = this;
 
@@ -169,13 +168,13 @@ void vePass::applyProgram(const veRenderCommand &command)
 {
 	if (!_program)
 		_program = glCreateProgram();
-
 	if (_needLinkProgram) {
 		ShaderDefinatiosGenerator sdg(command);
 		//sdg.traversalMode() = ShaderDefinatiosGenerator::TRAVERSE_PARENT;
 		//command.attachedNode->accept(sdg);
 		//sdg.traversalMode() = ShaderDefinatiosGenerator::TRAVERSE_CHILDREN;
 		//sdg.getRoot()->accept(sdg);
+        veLog("program id: %d", _program);
 		for (auto &iter : _shaders) {
 			iter.second->setShaderHeader(iter.first, sdg.getDefinations(iter.first));
 			GLuint id = iter.second->compile();

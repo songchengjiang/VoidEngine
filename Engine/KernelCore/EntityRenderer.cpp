@@ -123,6 +123,9 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 
 void veEntityRenderer::draw(const veRenderCommand &command)
 {
+	GLuint  prog = 0;
+	prog = glCreateProgram();
+	veLog("Program id: %d", prog);
 	command.pass->apply(command);
 	MeshBuffers *meshBuffers = static_cast<MeshBuffers *>(command.userData);
 	auto mesh = meshBuffers->mesh;

@@ -208,7 +208,7 @@ void veApplicationDesktop::initWindowImplementation(void *param)
 	registerCallbacks();
 }
 
-void veApplicationDesktop::makeContextCurrent()
+bool veApplicationDesktop::makeContextCurrent()
 {
 	glfwMakeContextCurrent(_hwnd);
 	if (!_isInited) {
@@ -217,6 +217,8 @@ void veApplicationDesktop::makeContextCurrent()
 #endif
 		_isInited = true;
 	}
+
+	return true;
 }
 
 void veApplicationDesktop::swapBuffers()

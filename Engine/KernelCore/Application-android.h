@@ -2,6 +2,8 @@
 #define _VE_APPLICATION_ANDROID_
 #include "Application.h"
 #include "android_native_app_glue.h"
+#include <mutex>
+#include <condition_variable>
 
 class VE_EXPORT veApplicationAndroid : public veApplication
 {
@@ -9,8 +11,10 @@ class VE_EXPORT veApplicationAndroid : public veApplication
 public:
     virtual ~veApplicationAndroid();
 
-    virtual void makeContextCurrent() override;
+    virtual bool makeContextCurrent() override;
     virtual void swapBuffers() override;
+
+    virtual bool run() override ;
 
 private:
 
@@ -29,7 +33,6 @@ private:
 private:
 
     android_app* _androidApp;
-
     EGLDisplay _display;
     EGLSurface _surface;
     EGLContext _context;

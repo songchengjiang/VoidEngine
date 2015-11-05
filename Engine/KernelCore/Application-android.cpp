@@ -3,7 +3,10 @@
 #include <android/input.h>
 
 veApplicationAndroid::veApplicationAndroid()
-    : _androidApp(nullptr){
+    : _androidApp(nullptr)
+    , _display(nullptr)
+    , _surface(nullptr)
+    , _context(nullptr){
 
 }
 
@@ -11,12 +14,19 @@ veApplicationAndroid::~veApplicationAndroid() {
 
 }
 
-void veApplicationAndroid::makeContextCurrent() {
-    eglMakeCurrent(_display, _surface, _surface, _context);
+bool veApplicationAndroid::makeContextCurrent() {
+    //veLog("makeContextCurrent");
+    if (_display && _surface && _context){
+        eglMakeCurrent(_display, _surface, _surface, _context);
+        return true;
+    }
+    return false;
 }
 
 void veApplicationAndroid::swapBuffers() {
-    eglSwapBuffers(_display, _surface);
+    //veLog("swapBuffers");
+    if (_display && _surface)
+        eglSwapBuffers(_display, _surface);
 }
 
 void veApplicationAndroid::dispatchEvents() {
@@ -33,11 +43,29 @@ void veApplicationAndroid::initWindowImplementation(void *param) {
     _androidApp->onAppCmd = veApplicationAndroid::collectWindowEvents;
     _androidApp->onInputEvent = veApplicationAndroid::collectInputEvents;
     veFileAndroid::ASSET_MANAGER = _androidApp->activity->assetManager;
-    initGLContext();
 }
 
 bool veApplicationAndroid::isWindowShouldClose() {
     return  _androidApp->destroyRequested != 0;
+}
+
+bool veApplicationAndroid::run()
+{
+    if (!_sceneManager.valid()) return false;
+    _isRunning = true;
+    _sceneManager->startThreading();
+    veLog("startThreading!!!!!!!");
+    double preFrameTime = (double)clock() / (double)CLOCKS_PER_SEC;
+    while (_isRunning && !isWindowShouldClose())
+    {
+        double currentFrameTime = (double)clock() / (double)CLOCKS_PER_SEC;
+        _sceneManager->setDeltaTime(currentFrameTime - preFrameTime);
+        this->dispatchEvents();
+        _sceneManager->simulation();
+        preFrameTime = currentFrameTime;
+    }
+    _sceneManager->stopThreading();
+    return true;
 }
 
 void veApplicationAndroid::pollAllEvents() {
@@ -55,6 +83,7 @@ void veApplicationAndroid::pollAllEvents() {
 
 void veApplicationAndroid::initGLContext() {
     _display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    if (!_display) veLog("_display null");
     eglInitialize(_display, nullptr, nullptr);
     EGLint attribs[] = {
             EGL_RED_SIZE,       8,
@@ -79,6 +108,9 @@ void veApplicationAndroid::initGLContext() {
     _surface = eglCreateWindowSurface(_display, config, _androidApp->window, NULL);
     _context = eglCreateContext(_display, config, NULL, NULL);
 
+    if (!_surface) veLog("_surface null");
+    if (!_context) veLog("_context null");
+    veLog("initGLContext Done!!!");
 }
 
 void veApplicationAndroid::collectWindowEvents(struct android_app *app, int32_t cmd) {
@@ -88,6 +120,9 @@ void veApplicationAndroid::collectWindowEvents(struct android_app *app, int32_t 
         case APP_CMD_SAVE_STATE:
             break;
         case APP_CMD_INIT_WINDOW:
+        {
+            thisApp->initGLContext();
+        }
             break;
         case APP_CMD_TERM_WINDOW:
         {

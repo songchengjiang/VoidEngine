@@ -143,7 +143,6 @@ void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 	glViewport(_viewport.x, _viewport.y, _viewport.width * VE_DEVICE_PIXEL_RATIO, _viewport.height * VE_DEVICE_PIXEL_RATIO);
 	glClear(_clearMask);
 	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
-
 	if (!renderList.empty()) {
 		auto bgQueue = renderList.find(veRenderQueue::RENDER_QUEUE_BACKGROUND);
 		if (bgQueue != renderList.end()) {

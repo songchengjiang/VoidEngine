@@ -586,13 +586,13 @@ GLuint veShader::compile()
 		GLint maxLen;
 		glGetShaderiv(_shader, GL_INFO_LOG_LENGTH, &maxLen);
 		if (maxLen > 0) {
-			GLchar *errors = new GLchar[maxLen];
+			GLchar *errors = new GLchar[maxLen + 1];
 			glGetShaderInfoLog(_shader, maxLen, &maxLen, errors);
 			if (strcmp(errors, "") != 0) {
                 std::string shaderType = typeToString();
-                veLog("%s Shader Errors\n", shaderType.c_str());
+                veLog("%s Shader Errors", shaderType.c_str());
 				veLog(errors);
-				veLog("%s Shader Source\n", shaderType.c_str());
+				veLog("%s Shader Source", shaderType.c_str());
                 veLog(source.c_str());
 			}
 			delete[] errors;

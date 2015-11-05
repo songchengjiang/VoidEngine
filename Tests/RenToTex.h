@@ -5,16 +5,16 @@
 #define DEFERRED_CAMERA 0x01
 #define RTT_CAMERA  0x02
 
-float randomNEGONEtoPOSONE(){
-	return veMath::veRandomUnitization() * 2.0 - 1.0;
-}
-
 class RenToTex : public BaseTest
 {
 public:
 	RenToTex() {
 	}
 	~RenToTex() {};
+
+	//float randomNEGONEtoPOSONE() {
+	//	return veMath::veRandomUnitization() * 2.0 - 1.0;
+	//}
 
 	virtual void init() override {
         

@@ -1,11 +1,12 @@
 apply plugin: 'com.android.model.application'
+
 model {
     android {
         compileSdkVersion = 23
         buildToolsVersion = "23.0.2"
 
         defaultConfig.with {
-            applicationId = "com.voidengine"
+            applicationId = "jasoncheng.voidenginetests"
             minSdkVersion.apiLevel = 18
             targetSdkVersion.apiLevel = 23
             versionCode = 1
@@ -15,21 +16,17 @@ model {
     }
 
     android.sources {
-        main{
-            jni{
-                source{
-                    srcDirs = ["../../../Engine"]
+        main {
+            jni {
+                source {
+                    srcDirs = ["../../../Engine", "../../../Tests"]
                 }
             }
-            /*jniLibs{
-                source{
-                    srcDirs = ["../../../Dependents/freetype/lib/android",
-                               "../../../Dependents/libjpeg/lib/android",
-                               "../../../Dependents/libpng/lib/android",
-                               "../../../Dependents/openexr/lib/android",
-                               "../../../Dependents/zlib/lib/android"]
+            assets {
+                source {
+                    srcDirs = ["../../../resources"]
                 }
-            }*/
+            }
         }
         //jni.srcFiles = ["../../../Engine/Vector2.cpp"]
         //jniLibs.srcDir = 'src/main/libs'
@@ -41,7 +38,8 @@ model {
     }
 
     android.ndk {
-        moduleName = "VoidEngine"
+        moduleName = "voidenginetests"
+        CFlags += "-I${file("../../../Engine")}".toString()
         cppFlags += "-I${file("../../../Engine")}".toString()
         //cppFlags += "-I${file("../../../Engine/BaseCore")}".toString()
         //cppFlags += "-I${file("../../../Engine/Debuger")}".toString()
@@ -94,6 +92,6 @@ model {
         // https://developer.android.com/ndk/guides/abis.html#sa
 
         // build one including all cpu architectures
-        //create("all")
+        // create("all")
     }
 }
