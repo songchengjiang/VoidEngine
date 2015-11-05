@@ -103,14 +103,18 @@ void veApplicationAndroid::initGLContext() {
     EGLConfig config;
     EGLint numConfigs;
     eglChooseConfig(_display, attribs, &config, 1, &numConfigs);
-    eglGetConfigAttrib(_display, config, EGL_NATIVE_VISUAL_ID, &format);
-    ANativeWindow_setBuffersGeometry(_androidApp->window, _width, _height, format);
-    _surface = eglCreateWindowSurface(_display, config, _androidApp->window, NULL);
-    _context = eglCreateContext(_display, config, NULL, NULL);
+    if (numConfigs){
+        _surface = eglCreateWindowSurface(_display, config, _androidApp->window, NULL);
+        eglGetConfigAttrib(_display, config, EGL_NATIVE_VISUAL_ID, &format);
+        ANativeWindow_setBuffersGeometry(_androidApp->window, _width, _height, format);
 
-    if (!_surface) veLog("_surface null");
-    if (!_context) veLog("_context null");
-    veLog("initGLContext Done!!!");
+        const EGLint context_attribs[] = { EGL_CONTEXT_CLIENT_VERSION, 3, //Request opengl ES3.0
+                                           EGL_NONE };
+        _context = eglCreateContext(_display, config, NULL, context_attribs);
+        if (!_surface) veLog("_surface null");
+        if (!_context) veLog("_context null");
+                veLog("initGLContext Done!!!");
+    }
 }
 
 void veApplicationAndroid::collectWindowEvents(struct android_app *app, int32_t cmd) {

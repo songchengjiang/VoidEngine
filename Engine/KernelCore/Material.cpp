@@ -174,7 +174,6 @@ void vePass::applyProgram(const veRenderCommand &command)
 		//command.attachedNode->accept(sdg);
 		//sdg.traversalMode() = ShaderDefinatiosGenerator::TRAVERSE_CHILDREN;
 		//sdg.getRoot()->accept(sdg);
-        veLog("program id: %d", _program);
 		for (auto &iter : _shaders) {
 			iter.second->setShaderHeader(iter.first, sdg.getDefinations(iter.first));
 			GLuint id = iter.second->compile();
