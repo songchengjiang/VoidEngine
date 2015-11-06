@@ -28,7 +28,13 @@ public:
 	static veReal veAbs(veReal val) { return fabs(val); }
 	static veReal veRadian(veReal deg) { return deg * PI / 180.0f; }
 	static veReal veDegree(veReal rad) { return rad * 180.0f / PI; }
-	static veReal veRandomUnitization() { return (veReal)rand() / (veReal)RAND_MAX; }
+	static veReal veRandomUnitization() {
+#if (VE_PLATFORM == VE_PLATFORM_ANDROID)
+		return veReal(drand48());
+#else
+		return (veReal)rand() / (veReal)RAND_MAX;
+#endif
+	}
 	static bool isNaN(veReal val) { return val != val; }
 	template<typename T> static T minimum(const T& lVal, const T& rVal) { return lVal < rVal ? lVal : rVal; }
 	template<typename T> static T maximum(const T& lVal, const T& rVal) { return lVal < rVal ? rVal : lVal; }

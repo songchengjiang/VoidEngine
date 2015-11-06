@@ -4,9 +4,9 @@
 
 veApplicationAndroid::veApplicationAndroid()
     : _androidApp(nullptr)
-    , _display(nullptr)
-    , _surface(nullptr)
-    , _context(nullptr){
+    , _display(EGL_NO_DISPLAY)
+    , _surface(EGL_NO_SURFACE)
+    , _context(EGL_NO_CONTEXT){
 
 }
 
@@ -18,8 +18,8 @@ veApplicationAndroid::~veApplicationAndroid() {
 bool veApplicationAndroid::makeContextCurrent() {
     //veLog("makeContextCurrent");
     if (_display && _surface && _context){
-        eglMakeCurrent(_display, _surface, _surface, _context);
-        return true;
+        if (eglMakeCurrent(_display, _surface, _surface, _context) == EGL_TRUE);
+            return true;
     }
     return false;
 }
@@ -83,39 +83,65 @@ void veApplicationAndroid::pollAllEvents() {
 }
 
 void veApplicationAndroid::initGLContext() {
-    _display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-    if (!_display) veLog("_display null");
-    eglInitialize(_display, nullptr, nullptr);
-    EGLint attribs[] = {
-            EGL_RED_SIZE,       8,
-            EGL_GREEN_SIZE,     8,
-            EGL_BLUE_SIZE,      8,
-            EGL_ALPHA_SIZE,     8,
-            EGL_DEPTH_SIZE,     24,
-           // EGL_STENCIL_SIZE,   0,
-            //EGL_SAMPLE_BUFFERS, 0,
-            //EGL_LEVEL,            0,
-            EGL_SURFACE_TYPE,    EGL_WINDOW_BIT,
-            EGL_RENDERABLE_TYPE,EGL_OPENGL_ES2_BIT,
-            EGL_NONE
-    };
+    if (_display == EGL_NO_DISPLAY){
+        _display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+        if (!_display) veLog("_display is null!");
+        eglInitialize(_display, nullptr, nullptr);
+        EGLint attribs[] = {
+                EGL_RED_SIZE,       8,
+                EGL_GREEN_SIZE,     8,
+                EGL_BLUE_SIZE,      8,
+                EGL_ALPHA_SIZE,     8,
+                EGL_DEPTH_SIZE,     24,
+                // EGL_STENCIL_SIZE,   0,
+                //EGL_SAMPLE_BUFFERS, 0,
+                //EGL_LEVEL,            0,
+                EGL_SURFACE_TYPE,    EGL_WINDOW_BIT,
+                EGL_RENDERABLE_TYPE,EGL_OPENGL_ES2_BIT,
+                EGL_NONE
+        };
 
-    EGLint w, h, dummy, format;
-    EGLConfig config;
-    EGLint numConfigs;
-    eglChooseConfig(_display, attribs, &config, 1, &numConfigs);
-    if (numConfigs){
-        _surface = eglCreateWindowSurface(_display, config, _androidApp->window, NULL);
-        eglGetConfigAttrib(_display, config, EGL_NATIVE_VISUAL_ID, &format);
-        ANativeWindow_setBuffersGeometry(_androidApp->window, _width, _height, format);
+        EGLint w, h, dummy, format;
+        EGLint numConfigs;
+        eglChooseConfig(_display, attribs, &_config, 1, &numConfigs);
+        if (!numConfigs){
+            veLog("eglChooseConfig failed!");
+            return;
+        }
 
+        eglGetConfigAttrib(_display, _config, EGL_NATIVE_VISUAL_ID, &format);
+        ANativeWindow_setBuffersGeometry(_androidApp->window, 0, 0, format);
+        if (_display){
+           veLog("init display");
+        }
+    }
+
+    if (_surface == EGL_NO_SURFACE){
+        _surface = eglCreateWindowSurface(_display, _config, _androidApp->window, NULL);
+        eglQuerySurface( _display, _surface, EGL_WIDTH, &_width );
+        eglQuerySurface( _display, _surface, EGL_HEIGHT, &_height );
+        if (_surface){
+           veLog("init surface");
+        }
+    }
+
+    if (_context == EGL_NO_CONTEXT){
         const EGLint context_attribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, //Request opengl ES3.0
                                            EGL_NONE };
-        _context = eglCreateContext(_display, config, NULL, context_attribs);
-        if (!_surface) veLog("_surface null");
-        if (!_context) veLog("_context null");
-                veLog("initGLContext Done!!!");
+        _context = eglCreateContext(_display, _config, NULL, context_attribs);
+        if (_context){
+           veLog("init context");
+        }
     }
+    veLog("initGLContext()");
+}
+
+void veApplicationAndroid::terminate() {
+    //eglDestroyContext(_display, _context);
+    eglDestroySurface(_display, _surface);
+    //_context = EGL_NO_CONTEXT;
+    _surface = EGL_NO_SURFACE;
+    veLog("terminate()");
 }
 
 void veApplicationAndroid::collectWindowEvents(struct android_app *app, int32_t cmd) {
@@ -127,10 +153,14 @@ void veApplicationAndroid::collectWindowEvents(struct android_app *app, int32_t 
         case APP_CMD_INIT_WINDOW:
         {
             thisApp->initGLContext();
+            event.setEventType(veEvent::VE_WIN_RESIZE);
+            event.setWindowWidth(thisApp->width());
+            event.setWindowHeight(thisApp->height());
         }
             break;
         case APP_CMD_TERM_WINDOW:
         {
+            thisApp->terminate();
             event.setEventType(veEvent::VE_WIN_CLOSE);
         }
             break;

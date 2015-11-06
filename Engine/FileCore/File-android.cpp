@@ -27,10 +27,9 @@ veFileData* veFileAndroid::readFileToBuffer(const std::string &filePath) {
         char *buffer = new char[fileSize + 1];
         buffer[fileSize] = '\0';
         int bytesread = AAsset_read(asset, (void*)buffer, fileSize);
-
         auto fileData = new veFileData();
         fileData->buffer = buffer;
-        fileData->size = bytesread;
+        fileData->size = fileSize + 1;
         //veLog("filebuffer: %s", buffer);
         _fileDataCache[fullPath] = fileData;
         AAsset_close(asset);

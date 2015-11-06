@@ -26,6 +26,7 @@ private:
 
     void pollAllEvents();
     void initGLContext();
+    void terminate();
 
     static void collectWindowEvents(struct android_app* app, int32_t cmd);
     static int32_t collectInputEvents(struct android_app* app, AInputEvent* event);
@@ -36,6 +37,7 @@ private:
     EGLDisplay _display;
     EGLSurface _surface;
     EGLContext _context;
+    EGLConfig  _config;
 };
 
 #endif //ANDROID_APPLICATION_ANDROID_H

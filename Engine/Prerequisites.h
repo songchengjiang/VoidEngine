@@ -60,8 +60,12 @@ public: const std::string& getName() const { return _name; }
 #endif
 
 #if defined(_MSC_VER)
+#if defined(_DEBUG)
 #include <stdio.h>
 #define veLog(...) printf(__VA_ARGS__);
+#else
+#define veLog(...) ((void)0);
+#endif
 #elif defined(__APPLE_CC__)
 #include <stdio.h>
 #define veLog(...) printf(__VA_ARGS__);
