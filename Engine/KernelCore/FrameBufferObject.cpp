@@ -125,7 +125,7 @@ void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
 		if (_dsbo) {
 			glBindRenderbuffer(GL_RENDERBUFFER, _dsbo);
 			if (hasDepthBuffer && !hasStencilBuffer)
-				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, _size.x() * VE_DEVICE_PIXEL_RATIO, _size.y() * VE_DEVICE_PIXEL_RATIO);
+				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, _size.x() * VE_DEVICE_PIXEL_RATIO, _size.y() * VE_DEVICE_PIXEL_RATIO);
 			else
 				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _size.x() * VE_DEVICE_PIXEL_RATIO, _size.y() * VE_DEVICE_PIXEL_RATIO);
 
@@ -138,8 +138,10 @@ void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
 	glBindRenderbuffer(GL_RENDERBUFFER, _dsbo);
 
 	for (auto &iter : _attachments) {
-		float clearColorZero[4] = { 1.f, 0.f, 0.f, 0.f };
+		float clearColorZero[4] = { 0.f, 0.f, 0.f, 0.f };
 		glClearBufferfv(GL_COLOR, iter.first - GL_COLOR_ATTACHMENT0, clearColorZero);
+		float clearDepthOne[4] = { 1.f, 1.f, 1.f, 1.f };
+		glClearBufferfv(GL_DEPTH, iter.first - GL_COLOR_ATTACHMENT0, clearDepthOne);
 	}
 }
 
@@ -163,6 +165,18 @@ void veFrameBufferObject::refreshAttachments()
 		if (!mrt.empty())
 			glDrawBuffers(GLsizei(mrt.size()), &mrt[0]);
 
+		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		if ( status == GL_FRAMEBUFFER_COMPLETE ) {
+			veLog("GL_FRAMEBUFFER_COMPLETE");
+		}else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT){
+			veLog("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
+		}else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT){
+			veLog("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
+		}else if (status == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT){
+			veLog("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
+		}else if (status == GL_FRAMEBUFFER_UNSUPPORTED){
+			veLog("GL_FRAMEBUFFER_UNSUPPORTED");
+		}
 		_needRefresh = false;
 	}
 }

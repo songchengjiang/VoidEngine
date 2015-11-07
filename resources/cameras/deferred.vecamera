@@ -21,12 +21,12 @@
     {
       "attachment": "COLOR1",
       "name": "deferred.camera.position",
-      "format": "RGBA32F"
+      "format": "RGBA8"
     },
     {
       "attachment": "COLOR2",
       "name": "deferred.camera.normAndepth",
-      "format": "RGBA32F"
+      "format": "RGBA8"
     }
   ]
 }

@@ -239,24 +239,23 @@ private:
 				if (!texture) return;
 			}
 
-			if (texVal.HasMember(WRAP_KEY.c_str())) {
-				std::string wrap = texVal[WRAP_KEY.c_str()].GetString();
-				if (wrap == REPEAT_KEY) texture->setWrapMode(veTexture2D::REPEAT);
-				else if (wrap == MIRROR_KEY) texture->setWrapMode(veTexture2D::MIRROR);
-				else if (wrap == CLAMP_KEY) texture->setWrapMode(veTexture2D::CLAMP);
-				else if (wrap == DECAL_KEY) texture->setWrapMode(veTexture2D::DECAL);
-				else texture->setWrapMode(veTexture2D::REPEAT);
-			}
-	
-			if (texVal.HasMember(FILTER_KEY.c_str())) {
-				std::string filter = texVal[FILTER_KEY.c_str()].GetString();
-				if (filter == NEREAST_KEY) texture->setFilterMode(veTexture2D::NEAREST);
-				else if (filter == LINEAR_KEY) texture->setFilterMode(veTexture2D::LINEAR);
-				else texture->setFilterMode(veTexture2D::NEAREST);
-			}
-
-
 		} while (false);
+
+		if (texVal.HasMember(WRAP_KEY.c_str())) {
+			std::string wrap = texVal[WRAP_KEY.c_str()].GetString();
+			if (wrap == REPEAT_KEY) texture->setWrapMode(veTexture2D::REPEAT);
+			else if (wrap == MIRROR_KEY) texture->setWrapMode(veTexture2D::MIRROR);
+			else if (wrap == CLAMP_KEY) texture->setWrapMode(veTexture2D::CLAMP);
+			else if (wrap == DECAL_KEY) texture->setWrapMode(veTexture2D::DECAL);
+			else texture->setWrapMode(veTexture2D::REPEAT);
+		}
+
+		if (texVal.HasMember(FILTER_KEY.c_str())) {
+			std::string filter = texVal[FILTER_KEY.c_str()].GetString();
+			if (filter == NEREAST_KEY) texture->setFilterMode(veTexture2D::NEAREST);
+			else if (filter == LINEAR_KEY) texture->setFilterMode(veTexture2D::LINEAR);
+			else texture->setFilterMode(veTexture2D::NEAREST);
+		}
 
 		pass->addTexture(texture);
 		//else if (texVal.HasMember(TARGET_KEY.c_str())) {

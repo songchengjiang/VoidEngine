@@ -146,10 +146,6 @@ void veTexture::storage(int width, int height, int depth, GLint internalFormat, 
 
 GLuint veTexture::glTex()
 {
-	if (!_texID) {
-        glGenTextures(1, &_texID);
-		//glCreateTextures(_target, 1, &_texID);
-	}
 	return _texID;
 }
 
