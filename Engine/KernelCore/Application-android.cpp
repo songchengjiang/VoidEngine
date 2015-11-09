@@ -178,13 +178,75 @@ void veApplicationAndroid::collectWindowEvents(struct android_app *app, int32_t 
     thisApp->_events.push_back(event);
 }
 
-int32_t veApplicationAndroid::collectInputEvents(struct android_app *app, AInputEvent *event) {
+int32_t veApplicationAndroid::collectInputEvents(struct android_app *app, AInputEvent *aEvent) {
     veApplicationAndroid* thisApp = static_cast<veApplicationAndroid *>(app->userData);
-    veEvent &veEvent = thisApp->_currentEvent;
-    if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION){
+    veEvent &event = thisApp->_currentEvent;
+    bool state = false;
+    if (AInputEvent_getType(aEvent) == AINPUT_EVENT_TYPE_MOTION){
+        int32_t action = AMotionEvent_getAction( aEvent );
+        int32_t index = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK)
+                        >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
+        uint32_t flags = action & AMOTION_EVENT_ACTION_MASK;
+        int32_t count = AMotionEvent_getPointerCount( aEvent );
 
-    }else if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_KEY){
-
+        switch( flags )
+        {
+            case AMOTION_EVENT_ACTION_DOWN:
+            case AMOTION_EVENT_ACTION_UP:
+            case AMOTION_EVENT_ACTION_POINTER_DOWN:
+            case AMOTION_EVENT_ACTION_POINTER_UP:
+            {
+                int32_t idx = (flags == AMOTION_EVENT_ACTION_DOWN || flags == AMOTION_EVENT_ACTION_UP)? 0: index;
+                int32_t id = AMotionEvent_getPointerId(aEvent, idx);
+                if (flags == AMOTION_EVENT_ACTION_DOWN || flags == AMOTION_EVENT_ACTION_POINTER_DOWN){
+                    veReal x = (AMotionEvent_getX(aEvent, idx) / veReal(thisApp->width()));
+                    veReal y = 1.0 - AMotionEvent_getY(aEvent, idx) / veReal(thisApp->height());
+                    x = (x - 0.5) * 2.0;
+                    y = (y - 0.5) * 2.0;
+                    event.addTouch({id, x, y, x, y});
+                    event.setEventType(veEvent::VE_TOUCH_START);
+                   //veLog("VE_TOUCH_START(%d): (%f, %f)", id, x, y);
+                }else{
+                    event.removeTouch(id);
+                    event.setEventType(veEvent::VE_TOUCH_END);
+                    //veLog("VE_TOUCH_END");
+                }
+            }
+                break;
+            case AMOTION_EVENT_ACTION_MOVE:
+            {
+                for (int32_t i = 0; i < count; ++i){
+                    veReal x = (AMotionEvent_getX(aEvent, i) / veReal(thisApp->width()));
+                    veReal y = 1.0 - AMotionEvent_getY(aEvent, i) / veReal(thisApp->height());
+                    x = (x - 0.5) * 2.0;
+                    y = (y - 0.5) * 2.0;
+                    int32_t id = AMotionEvent_getPointerId(aEvent, i);
+                    auto &touches = event.getTouches();
+                    for (auto iter = touches.begin(); iter != touches.end(); ++iter) {
+                        if (iter->id == id) {
+                            iter->latestx = iter->x;
+                            iter->latesty = iter->y;
+                            iter->x = x;
+                            iter->y = y;
+                            //veLog("VE_TOUCH_MOVE(%d): (%f, %f, %f, %f)", id, iter->latestx, iter->latesty, iter->x, iter->y);
+                        }
+                    }
+                }
+                if (0 < count){
+                    event.setEventType(veEvent::VE_TOUCH_MOVE);
+                }
+            }
+                break;
+            case AMOTION_EVENT_ACTION_CANCEL:
+                break;
+        }
+        state = true;
+    }else if (AInputEvent_getType(aEvent) == AINPUT_EVENT_TYPE_KEY){
+        state = true;
     }
-    thisApp->_events.push_back(veEvent);
+    if (state){
+        thisApp->_events.push_back(event);
+        return 1;
+    }
+    return 0;
 }

@@ -1,5 +1,7 @@
 #ifndef _VE_EVENT_
 #define _VE_EVENT_
+
+#include <unordered_map>
 #include "Prerequisites.h"
 
 class VE_EXPORT veEvent
@@ -31,12 +33,16 @@ public:
 		VE_SCROLL_UP   = 1 << 6,
 		VE_MOVE        = 1 << 7,
 		VE_DRAG        = 1 << 8,
-		VE_WIN_RESIZE  = 1 << 9,
-		VE_WIN_FOCUS   = 1 << 10,
-		VE_WIN_NOFOCUS = 1 << 11,
-		VE_WIN_CLOSE   = 1 << 12,
+		VE_TOUCH_START = 1 << 9,
+		VE_TOUCH_MOVE  = 1 << 10,
+		VE_TOUCH_END   = 1 << 11,
+		VE_WIN_RESIZE  = 1 << 12,
+		VE_WIN_FOCUS   = 1 << 13,
+		VE_WIN_NOFOCUS = 1 << 14,
+		VE_WIN_CLOSE   = 1 << 15,
 		VE_KEYBOARD_EVENT = VE_DOWN | VE_UP | VE_REPEAT,
 		VE_MOUSE_EVENT = VE_RELEASE | VE_PRESS | VE_SCROLL_DOWN | VE_SCROLL_UP | VE_MOVE | VE_DRAG,
+		VE_TOUCH_EVENT = VE_TOUCH_START | VE_TOUCH_MOVE | VE_TOUCH_END,
 		VE_WIN_EVENT   = VE_WIN_RESIZE | VE_WIN_FOCUS | VE_WIN_NOFOCUS |VE_WIN_CLOSE,
 		VE_ALL_EVENT   = 0xFFFF,
 	};
@@ -190,8 +196,16 @@ public:
 		VE_MOUSE_BUTTON_LEFT,
 		VE_MOUSE_BUTTON_RIGHT,
 		VE_MOUSE_BUTTON_MIDDLE,
-
 	};
+
+	struct Touch{
+		int    id;
+		veReal latestx;
+		veReal latesty;
+		veReal x;
+		veReal y;
+	};
+	typedef std::vector<Touch> Touchs;
 
 	void setEventType(const EventType et) { _eventType = et; }
 	EventType getEventType() const { return _eventType; }
@@ -207,6 +221,19 @@ public:
 	void setMouseY(veReal y) { _mouseY = y; }
 	veReal getMouseY() const { return _mouseY; }
 
+	void addTouch(const Touch &touch) { _touches.push_back(touch); }
+	void removeTouch(int id) {
+		for (auto iter = _touches.begin(); iter != _touches.end(); ++iter) {
+			if (iter->id == id) {
+				_touches.erase(iter);
+				return;
+			}
+		}
+	}
+
+	Touchs& getTouches() { return _touches; }
+	const Touchs& getTouches() const { return _touches;}
+
 	void setWindowWidth(int width) { _wndWidth = width; }
 	int getWindowWidth() const { return _wndWidth; }
 	void setWindowHeight(int height) { _wndHeight = height; }
@@ -218,6 +245,7 @@ private:
 	KeySymbol _keySymbol;
 	ModKeySymbol _modKeySymbol;
 	MouseSymbol _mouseSymbol;
+	Touchs    _touches;
 
 	veReal _mouseX;
 	veReal _mouseY;

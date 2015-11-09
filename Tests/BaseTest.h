@@ -68,10 +68,16 @@ public:
 		: _camera(nullptr)
 		, _defaultCameraDistance(defaultCameraDistance)
 		, _defaultCameraZoomScale(defaultCameraZoomScale)
+		, _simulationTime(0.0)
+		, _latesTouchTime(0.0)
 	{
 		resetCamera();
 	}
 	~CameraManipulator(){}
+
+	virtual void update(veNode *node, veSceneManager *sm) override {
+		_simulationTime += sm->getDeltaTime();
+	}
 
 	virtual bool handle(veNode *node, veSceneManager *sm, const veEvent &event) override{
 		_camera = static_cast<veCamera *>(node);
@@ -80,14 +86,16 @@ public:
 				_g1 = _g0 = veVec2(event.getMouseX(), event.getMouseY());
 			}
 			else if (event.getEventType() == veEvent::VE_DRAG) {
-				_g1 = veVec2(event.getMouseX(), event.getMouseY());
-				if (event.getMouseSymbol() == veEvent::VE_MOUSE_BUTTON_LEFT) {
-					rotateCamera(_g0, _g1);
+				if (event.getEventType() == veEvent::VE_DRAG) {
+					_g1 = veVec2(event.getMouseX(), event.getMouseY());
+					if (event.getMouseSymbol() == veEvent::VE_MOUSE_BUTTON_LEFT) {
+						rotateCamera(_g0, _g1);
+					}
+					else if (event.getMouseSymbol() == veEvent::VE_MOUSE_BUTTON_MIDDLE) {
+						moveCamera(_g0, _g1);
+					}
+					_g0 = _g1;
 				}
-				else if (event.getMouseSymbol() == veEvent::VE_MOUSE_BUTTON_MIDDLE) {
-					moveCamera(_g0, _g1);
-				}
-				_g0 = _g1;
 			}
 			else if (event.getEventType() == veEvent::VE_SCROLL_UP) {
 				zoomCamera(-1.0f);
@@ -99,6 +107,51 @@ public:
 		else if (event.getEventType() & veEvent::VE_KEYBOARD_EVENT) {
 			if (event.getKeySymbol() == veEvent::VE_KEY_SPACE) {
 				resetCamera();
+			}
+		}
+		else if (event.getEventType() & veEvent::VE_TOUCH_EVENT) {
+			auto touchs = event.getTouches();
+			if (event.getEventType() == veEvent::VE_TOUCH_MOVE) {
+				if (touchs.size() == 1) {
+					auto touch = touchs[0];
+					_g0 = veVec2(touch.latestx, touch.latesty);
+					_g1 = veVec2(touch.x, touch.y);
+					rotateCamera(_g0, _g1);
+				}
+				else if (touchs.size() == 2) {
+					veVec2 latest0 = veVec2(touchs[0].latestx, touchs[0].latesty);
+					veVec2 latest1 = veVec2(touchs[1].latestx, touchs[1].latesty);
+					veVec2 current0 = veVec2(touchs[0].x, touchs[0].y);
+					veVec2 current1 = veVec2(touchs[1].x, touchs[1].y);
+					veReal latestDelta = (latest0 - latest1).squaredLength();
+					veReal currentDelta = (current0 - current1).squaredLength();
+					//veLog("veMath::veAbs(latestDelta - currentDelta): %f", veMath::veAbs(latestDelta - currentDelta));
+					veReal  absDis = veMath::veAbs(latestDelta - currentDelta);
+					if (0.01 < absDis){
+						if (latestDelta < currentDelta) {
+							zoomCamera(-absDis * 10.0f);
+						}
+						else {
+							zoomCamera(absDis * 10.0f);
+						}
+					}
+
+					_g0 = (latest0 + latest1) * 0.5f;
+					_g1 = (current0 + current1) * 0.5f;
+					moveCamera(_g0, _g1);
+				}
+			}else if (event.getEventType() == veEvent::VE_TOUCH_END) {
+				if (touchs.size() == 0) {
+					if (_latesTouchTime != 0.0) {
+						if ((_simulationTime - _latesTouchTime) < 0.6) {
+							resetCamera();
+						}
+						_latesTouchTime = 0.0;
+					}
+					else {
+						_latesTouchTime = _simulationTime;
+					}
+				}
 			}
 		}
 		return false;
@@ -193,6 +246,8 @@ private:
 	veVec2 _g1;
 	veReal _defaultCameraDistance;
 	veReal _defaultCameraZoomScale;
+	double _simulationTime;
+	double _latesTouchTime;
 };
 
 class BaseTest

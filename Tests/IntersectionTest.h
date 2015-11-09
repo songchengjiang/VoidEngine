@@ -11,9 +11,22 @@ public:
 	~IntersectionHandler() {}
 
 	virtual bool handle(veNode *node, veSceneManager *sm, const veEvent &event) override {
-		if (event.getEventType() & veEvent::VE_MOUSE_EVENT) {
+		if (event.getEventType() & veEvent::VE_MOUSE_EVENT || event.getEventType() & veEvent::VE_TOUCH_EVENT) {
+			veVec2 screenCoords;
+			bool state = false;
 			if (event.getEventType() == veEvent::VE_PRESS && event.getMouseSymbol() == veEvent::VE_MOUSE_BUTTON_LEFT) {
-				veVec2 screenCoords = veVec2(event.getMouseX(), event.getMouseY());
+				screenCoords = veVec2(event.getMouseX(), event.getMouseY());
+				state = true;
+			}
+			else if (event.getEventType() == veEvent::VE_TOUCH_START) {
+				auto touchs = event.getTouches();
+				if (touchs.size() == 1) {
+					screenCoords = veVec2(touchs[0].x, touchs[0].y);
+					state = true;
+				}
+			}
+
+			if (state) {
 				veVec3 start = sm->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
 				veVec3 end = sm->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
 				if (!_ray.valid()) {
@@ -32,6 +45,7 @@ public:
 					}
 				});
 			}
+
 			return false;
 		}
 
