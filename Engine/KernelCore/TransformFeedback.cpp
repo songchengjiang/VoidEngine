@@ -47,7 +47,7 @@ void veTransformFeedback::unBind()
 {
 	if (_rasterizerDiscard)
 		glDisable(GL_RASTERIZER_DISCARD);
-	glBindBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 0, 0, 0);
 	glEndTransformFeedback();
+	glBindBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 0, 0, 0);
 	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
 }

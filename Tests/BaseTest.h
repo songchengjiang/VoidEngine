@@ -143,7 +143,7 @@ public:
 			}else if (event.getEventType() == veEvent::VE_TOUCH_END) {
 				if (touchs.size() == 0) {
 					if (_latesTouchTime != 0.0) {
-						if ((_simulationTime - _latesTouchTime) < 0.6) {
+						if ((_simulationTime - _latesTouchTime) < 0.4) {
 							resetCamera();
 						}
 						_latesTouchTime = 0.0;

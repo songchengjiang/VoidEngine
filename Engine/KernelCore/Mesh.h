@@ -74,6 +74,7 @@ public:
 	void setVertexArray(veRealArray *vAry) { _vertices = vAry; _needRefresh = true; }
 	veRealArray* getVertexArray() { return _vertices.get(); }
 	unsigned int getVertexStride();
+	unsigned int getVertexCount();
 
 	void setVertexAtrribute(unsigned int attrIndex, const VertexAtrribute &attri) { veAssert(attrIndex < _attributes.size());  _attributes[attrIndex] = attri; _needRefresh = true; }
 	void addVertexAtrribute(const VertexAtrribute &attri);
