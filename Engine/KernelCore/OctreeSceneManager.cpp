@@ -227,17 +227,12 @@ void veOctreeSceneManager::render()
 		else {
 
 			mainCam->setFrameBufferObject(_postProcesserFBOS[0].get());
-			mainCam->render();
-			for (size_t i = 0; i < _postProcesserList.size() - 1; ++i) {
-				postProcesserBindingTex(_postProcesserList[i].get(), i);
-				_postProcesserList[i]->process(_root.get(), mainCam);
-				mainCam->setFrameBufferObject(_postProcesserFBOS[(i + 1) & 1].get());
+			for (size_t i = 0; i < _postProcesserList.size(); ++i) {
+				_postProcesserFBOS[0]->attach(GL_COLOR_ATTACHMENT0, _postProcesserList[i]->getMaterialArray()->getMaterial(0)->getTechnique(0)->getPass(0)->getTexture(0));
 				mainCam->render();
+				_postProcesserList[i]->process(_root.get(), mainCam);
 			}
 
-			unsigned int lastProcesser = _postProcesserList.size() - 1;
-			postProcesserBindingTex(_postProcesserList[lastProcesser].get(), lastProcesser);
-			_postProcesserList[lastProcesser]->process(_root.get(), mainCam);
 			mainCam->setFrameBufferObject(nullptr);
 			mainCam->render();
 		}

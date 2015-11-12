@@ -23,6 +23,13 @@
                                     "source": "grey.frag",
                                     "u_colorTex":0
                                 }
+                            ],
+                            "textureUnits": [
+                                {
+                                    "name": "greytexture",
+                                    "wrap": "CLAMP",
+                                    "filter": "NERAEST"
+                                }
                             ]
                         }
                     ]
