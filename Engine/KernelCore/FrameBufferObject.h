@@ -34,7 +34,8 @@ private:
 	GLuint _fbo;
 	GLuint _dsbo;
 	veVec2 _size;
-	bool _needRefresh;
+	bool _needRefreshAttachments;
+	bool _needRefreshBuffers;
 	std::map<GLenum, VE_Ptr<veTexture>> _attachments;
 };
 

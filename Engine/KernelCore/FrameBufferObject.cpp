@@ -52,7 +52,8 @@ veFrameBufferObject::veFrameBufferObject()
 	, _fbo(0)
 	, _dsbo(0)
 	, _size(512, 512)
-	, _needRefresh(true)
+	, _needRefreshAttachments(true)
+	, _needRefreshBuffers(true)
 {
 
 }
@@ -62,7 +63,8 @@ veFrameBufferObject::veFrameBufferObject(const veVec2 &size)
 	, _fbo(0)
 	, _dsbo(0)
 	, _size(size)
-	, _needRefresh(true)
+	, _needRefreshAttachments(true)
+	, _needRefreshBuffers(true)
 {
 
 }
@@ -76,13 +78,14 @@ void veFrameBufferObject::setFrameBufferSize(const veVec2 &size)
 {
 	if (size == _size) return;
 	_size = size;
-	_needRefresh = true;
+	_needRefreshBuffers = true;
+	_needRefreshAttachments = true;
 }
 
 void veFrameBufferObject::attach(GLenum attachment, veTexture *attachTex)
 {
 	_attachments[attachment] = attachTex;
-	_needRefresh = true;
+	_needRefreshAttachments = true;
 }
 
 void veFrameBufferObject::bind(unsigned int clearMask)
@@ -104,10 +107,13 @@ void veFrameBufferObject::unBind()
 
 void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
 {
-	if (_needRefresh) {
-		glDeleteRenderbuffers(1, &_dsbo);
-		glDeleteFramebuffers(1, &_fbo);
+	if (_needRefreshBuffers) {
+		if (_dsbo)
+			glDeleteRenderbuffers(1, &_dsbo);
+		if (_fbo)
+			glDeleteFramebuffers(1, &_fbo);
 		_dsbo = _fbo = 0;
+		_needRefreshBuffers = false;
 	}
 
 	if (!_fbo) {
@@ -120,6 +126,11 @@ void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
 		bool hasStencilBuffer = (clearMask & GL_STENCIL_BUFFER_BIT) != 0;
 		if (hasDepthBuffer || hasStencilBuffer) {
 			glGenRenderbuffers(1, &_dsbo);
+		}
+
+		int Er = glGetError();
+		if (Er != GL_NO_ERROR) {
+			veLog("GL ERROR CODE: %d", Er);
 		}
 
 		if (_dsbo) {
@@ -137,17 +148,17 @@ void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
 	}
 	glBindRenderbuffer(GL_RENDERBUFFER, _dsbo);
 
-	for (auto &iter : _attachments) {
-		float clearColorZero[4] = { 0.f, 0.f, 0.f, 0.f };
-		glClearBufferfv(GL_COLOR, iter.first - GL_COLOR_ATTACHMENT0, clearColorZero);
-		float clearDepthOne[4] = { 1.f, 1.f, 1.f, 1.f };
-		glClearBufferfv(GL_DEPTH, iter.first - GL_COLOR_ATTACHMENT0, clearDepthOne);
-	}
+	//for (auto &iter : _attachments) {
+	//	float clearColorZero[4] = { 0.f, 0.f, 0.f, 0.f };
+	//	glClearBufferfv(GL_COLOR, iter.first - GL_COLOR_ATTACHMENT0, clearColorZero);
+	//	float clearDepthOne[4] = { 1.f, 1.f, 1.f, 1.f };
+	//	glClearBufferfv(GL_DEPTH, iter.first - GL_COLOR_ATTACHMENT0, clearDepthOne);
+	//}
 }
 
 void veFrameBufferObject::refreshAttachments()
 {
-	if (_needRefresh) {
+	if (_needRefreshAttachments) {
 		std::vector<GLenum> mrt;
 		for (auto &iter : _attachments) {
 			if (iter.second.valid()) {
@@ -177,6 +188,11 @@ void veFrameBufferObject::refreshAttachments()
 		}else if (status == GL_FRAMEBUFFER_UNSUPPORTED){
 			veLog("GL_FRAMEBUFFER_UNSUPPORTED");
 		}
-		_needRefresh = false;
+
+		int ec = glGetError();
+		if (ec != GL_NO_ERROR) {
+			veLog("veFrameBufferObject: GL ERROR CODE: %d", ec);
+		}
+		_needRefreshAttachments = false;
 	}
 }

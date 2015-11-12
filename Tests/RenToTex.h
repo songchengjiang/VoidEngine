@@ -19,7 +19,7 @@ public:
 	virtual void init() override {
         
         
-		_sceneManager->loadLightConfiguration("lights/point.velightemplates");
+		_sceneManager->loadLightConfiguration("lights/lights.velightemplates");
 
 		veNode *root = _sceneManager->createNode("root");
 		veNode *scene = _sceneManager->createNode("scene");

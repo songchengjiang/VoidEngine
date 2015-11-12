@@ -6,7 +6,7 @@ class LightTest : public BaseTest
 {
 public:
 	LightTest() {
-		_sceneManager->loadLightConfiguration("lights/point.velightemplates");
+		_sceneManager->loadLightConfiguration("lights/lights.velightemplates");
 
 		veRenderableObject *obj = nullptr;
 		veNode *root = _sceneManager->createNode("root");
