@@ -60,10 +60,6 @@ private:
 			for (unsigned int i = 0; i < meshs.Size(); ++i){
 				readMesh(meshs[i]);
 			}
-
-			for (auto &iter : _meshList) {
-				_entity->addMesh(iter.second);
-			}
 		}
 	}
 
@@ -103,6 +99,7 @@ private:
 			}
 		}
 
+		_entity->addMesh(mesh);
 		//mesh->caculateBoundingBox();
 		_meshList[mesh->getName()] = mesh;
 	}
