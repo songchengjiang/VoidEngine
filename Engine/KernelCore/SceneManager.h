@@ -94,8 +94,7 @@ protected:
 	veLightList _lightList;
 	veRayList   _rayList;
 	vePostProcesserList _postProcesserList;
-	VE_Ptr<veFrameBufferObject> _postProcesserFBOS[2];
-	VE_Ptr<veTexture> _postProcesserTexs[2];
+	VE_Ptr<veFrameBufferObject> _postProcesserFBO;
 
 	VE_Ptr<veCamera> _mainCamera;
 	std::unordered_map<std::string, veBaseManager *> _managerList;

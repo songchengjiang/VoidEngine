@@ -4,6 +4,7 @@
 #include "Material.h"
 #include "Surface.h"
 
+class veFrameBufferObject;
 class VE_EXPORT vePostProcesser
 {
 	friend class veSceneManager;
@@ -16,7 +17,8 @@ public:
 	virtual void setMaterialArray(veMaterialArray *material) { _materials = material; }
 	veMaterialArray* getMaterialArray() { return _materials.get(); }
 
-	void process(veNode *node, veCamera *camera);
+	void process(veCamera *camera);
+	void attachFrameBuffer(veFrameBufferObject *fb);
 
 private:
 

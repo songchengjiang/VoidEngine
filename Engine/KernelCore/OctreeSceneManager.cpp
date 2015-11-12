@@ -213,6 +213,7 @@ void veOctreeSceneManager::render()
 			if (iter->getFrameBufferObject()) {
 				veOctreeCamera *rttCam = static_cast<veOctreeCamera *>(iter.get());
 				rttCam->walkingOctree(this->_octree);
+				rttCam->renderingOctree();
 				rttCam->render();
 			}
 		}
@@ -221,38 +222,24 @@ void veOctreeSceneManager::render()
 	if (_mainCamera.valid() && _mainCamera->isInScene() && _mainCamera->isVisible()) {
 		veOctreeCamera *mainCam = static_cast<veOctreeCamera *>(_mainCamera.get());
 		mainCam->walkingOctree(this->_octree);
-		if (_postProcesserList.empty()) {
-			mainCam->render();
-		}
-		else {
+		mainCam->renderingOctree();
 
-			mainCam->setFrameBufferObject(_postProcesserFBOS[0].get());
-			for (size_t i = 0; i < _postProcesserList.size(); ++i) {
-				_postProcesserFBOS[0]->attach(GL_COLOR_ATTACHMENT0, _postProcesserList[i]->getMaterialArray()->getMaterial(0)->getTechnique(0)->getPass(0)->getTexture(0));
-				mainCam->render();
-				_postProcesserList[i]->process(_root.get(), mainCam);
+		if (!_postProcesserList.empty()) {
+			if (!_postProcesserFBO.valid()) {
+				_postProcesserFBO = veFrameBufferObjectManager::instance()->getOrCreateFrameBufferObject("postProcesserFBO");
 			}
-
+			mainCam->setFrameBufferObject(_postProcesserFBO.get());
+			for (size_t i = 0; i < _postProcesserList.size(); ++i) {
+				_postProcesserList[i]->attachFrameBuffer(_postProcesserFBO.get());
+				mainCam->render();
+				_postProcesserList[i]->process(mainCam);
+			}
 			mainCam->setFrameBufferObject(nullptr);
-			mainCam->render();
 		}
+		mainCam->render();
 	}
 	veApplication::instance()->swapBuffers();
 }
-
-void veOctreeSceneManager::postProcesserBindingTex(vePostProcesser *processer, unsigned short bindIdx)
-{
-	auto pass = processer->getMaterialArray()->getMaterial(0)->getTechnique(0)->getPass(0);
-	if (pass) {
-		if (pass->getTextureNum()) {
-			pass->setTexture(0, _postProcesserTexs[bindIdx & 1].get());
-		}
-		else {
-			pass->addTexture(_postProcesserTexs[bindIdx & 1].get());
-		}
-	}
-}
-
 
 void veOctreeSceneManager::culling()
 {

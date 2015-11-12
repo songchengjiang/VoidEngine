@@ -81,7 +81,7 @@ public:
 
 	bool isRenderStateChanged() { return _renderStateChanged; }
 
-	virtual void render();
+	void render();
 	void render(veRenderQueue::RenderCommandList &renderList);
 
 	veRenderQueue* getRenderQueue() { return _renderQueue; }

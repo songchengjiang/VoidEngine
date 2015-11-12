@@ -123,6 +123,10 @@ void veTexture::bind(unsigned int textureUnit)
 
 void veTexture::storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat, GLenum dataType, unsigned char *data)
 {
+	if (_width == width && _height == height && _depth == depth
+		&& _internalFormat == internalFormat && _pixelFormat == pixelFormat && _dataType == dataType
+		&& _data == data)
+		return;
 	_width = width;
 	_height = height;
 	_depth = depth;

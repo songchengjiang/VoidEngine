@@ -71,7 +71,10 @@ veFrameBufferObject::veFrameBufferObject(const veVec2 &size)
 
 veFrameBufferObject::~veFrameBufferObject()
 {
-
+	if (_dsbo)
+		glDeleteRenderbuffers(1, &_dsbo);
+	if (_fbo)
+		glDeleteFramebuffers(1, &_fbo);
 }
 
 void veFrameBufferObject::setFrameBufferSize(const veVec2 &size)
@@ -84,6 +87,8 @@ void veFrameBufferObject::setFrameBufferSize(const veVec2 &size)
 
 void veFrameBufferObject::attach(GLenum attachment, veTexture *attachTex)
 {
+	if (_attachments[attachment] == attachTex) 
+		return;
 	_attachments[attachment] = attachTex;
 	_needRefreshAttachments = true;
 }
@@ -176,23 +181,23 @@ void veFrameBufferObject::refreshAttachments()
 		if (!mrt.empty())
 			glDrawBuffers(GLsizei(mrt.size()), &mrt[0]);
 
-		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-		if ( status == GL_FRAMEBUFFER_COMPLETE ) {
-			veLog("GL_FRAMEBUFFER_COMPLETE");
-		}else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT){
-			veLog("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
-		}else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT){
-			veLog("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
-		}else if (status == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT){
-			veLog("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
-		}else if (status == GL_FRAMEBUFFER_UNSUPPORTED){
-			veLog("GL_FRAMEBUFFER_UNSUPPORTED");
-		}
+		//GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		//if ( status == GL_FRAMEBUFFER_COMPLETE ) {
+		//	veLog("GL_FRAMEBUFFER_COMPLETE");
+		//}else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT){
+		//	veLog("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
+		//}else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT){
+		//	veLog("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
+		//}else if (status == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT){
+		//	veLog("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
+		//}else if (status == GL_FRAMEBUFFER_UNSUPPORTED){
+		//	veLog("GL_FRAMEBUFFER_UNSUPPORTED");
+		//}
 
-		int ec = glGetError();
-		if (ec != GL_NO_ERROR) {
-			veLog("veFrameBufferObject: GL ERROR CODE: %d", ec);
-		}
+		//int ec = glGetError();
+		//if (ec != GL_NO_ERROR) {
+		//	veLog("veFrameBufferObject: GL ERROR CODE: %d", ec);
+		//}
 		_needRefreshAttachments = false;
 	}
 }

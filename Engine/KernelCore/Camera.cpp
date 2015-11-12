@@ -194,9 +194,9 @@ void veCamera::render()
 
 void veCamera::setMatrix(const veMat4 &mat)
 {
-	_matrix = mat;
-	_viewMat = computeWorldToNodeMatrix();
 	refresh();
+	_matrix = mat;
+	_viewMat = getWorldToNodeMatrix();
 }
 
 void veCamera::refresh()

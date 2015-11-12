@@ -15,7 +15,7 @@ veTextureManager::~veTextureManager()
 
 }
 
-void veTextureManager::update()
+void veTextureManager::render()
 {
 	for (auto &tex : _allocatedTexturePool) {
 		tex->_usage = tex->_usage << 1;

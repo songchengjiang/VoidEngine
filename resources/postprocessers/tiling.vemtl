@@ -1,6 +1,6 @@
 {
     "version": "1.0",
-    "name": "grey.vemtl",
+    "name": "tiling.vemtl",
     "materials": [
         {
             "name": "mat-0",
@@ -20,15 +20,17 @@
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "grey.frag",
-                                    "u_colorTex":0
+                                    "source": "tiling.frag",
+                                    "u_colorTex": 0,
+                                    "u_NumTiles": 100.0,
+                                    "u_Threshold": 0.5
                                 }
                             ],
                             "textureUnits": [
                                 {
-                                    "name": "greytexture",
+                                    "name": "tilingtexture",
                                     "wrap": "CLAMP",
-                                    "filter": "LINEAR"
+                                    "filter": "NERAEST"
                                 }
                             ]
                         }

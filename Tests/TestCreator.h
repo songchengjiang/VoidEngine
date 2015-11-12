@@ -10,6 +10,8 @@
 #include "PerformanceTest.h"
 #include "IntersectionTest.h"
 #include "SkyBoxTest.h"
+#include "PostProcesserTest.h"
+
 //
 class TestCreator
 {
@@ -19,12 +21,13 @@ public:
 		//auto test = new LightTest;
 		//auto test = new CameraTest;
 		//auto test = new RenToTex;
-		auto test = new MeshTest;
+		//auto test = new MeshTest;
 		//auto test = new ImageTest;
 		//auto test = new TextTest;
 		//auto test = new PerformanceTest;
 		//auto test = new IntersectionTest;
 		//auto test = new SkyBoxTest;
+		auto test = new PostProcesserTest;
 		test->init();
 	}
 
