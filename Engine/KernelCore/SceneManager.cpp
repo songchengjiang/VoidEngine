@@ -102,6 +102,22 @@ veTexture* veSceneManager::createTexture(const std::string &name, veTexture::Tex
 	return static_cast<veTextureManager *>(_managerList[veTextureManager::TYPE()])->createTexture(name, texType);
 }
 
+vePostProcesser* veSceneManager::createPostProcesser(const std::string &name)
+{
+	auto postProcesser = new vePostProcesser(this);
+	postProcesser->setName(name);
+	_postProcesserList.push_back(postProcesser);
+	if (!_postProcesserFBOS[0].valid() && !_postProcesserFBOS[1].valid() && !_postProcesserTexs[0].valid() && !_postProcesserTexs[1].valid()) {
+		_postProcesserFBOS[0] = veFrameBufferObjectManager::instance()->getOrCreateFrameBufferObject("postProcesserFBO[0]");
+		_postProcesserFBOS[1] = veFrameBufferObjectManager::instance()->getOrCreateFrameBufferObject("postProcesserFBO[1]");
+		_postProcesserTexs[0] = createTexture("_postProcesserTexs[0]");
+		_postProcesserTexs[1] = createTexture("_postProcesserTexs[1]");
+		_postProcesserFBOS[0]->attach(GL_COLOR_ATTACHMENT0, _postProcesserTexs[0].get());
+		_postProcesserFBOS[1]->attach(GL_COLOR_ATTACHMENT0, _postProcesserTexs[1].get());
+	}
+	return postProcesser;
+}
+
 void veSceneManager::requestRayCast(veRay *ray)
 {
 	ray->_callBack();

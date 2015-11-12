@@ -24,6 +24,7 @@
 #include "KernelCore/OctreeSceneManager.h"
 #include "KernelCore/Ray.h"
 #include "KernelCore/SkyBox.h"
+#include "KernelCore/PostProcesser.h"
 
 #include "FileCore/Printer.h"
 #include "FileCore/File.h"

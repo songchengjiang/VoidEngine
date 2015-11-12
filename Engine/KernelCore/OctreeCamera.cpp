@@ -20,9 +20,12 @@ veOctreeCamera::~veOctreeCamera()
 
 }
 
-void veOctreeCamera::render()
+void veOctreeCamera::walkingOctree(veOctree *octree)
 {
 	std::unique_lock<std::mutex> lock(_visitMutex);
+	if (!_visibleOctreeNodeList.empty())
+		_visibleOctreeNodeList.clear();
+	traverseOctree(octree);
 	if (!_visibleOctreeNodeList.empty()) {
 		{
 			for (auto &iter : _visibleOctreeNodeList) {
@@ -33,18 +36,6 @@ void veOctreeCamera::render()
 			}
 		}
 	}
-	veCamera::render();
-	//else {
-	//	veLog("visibleOctreeNodeList is empty!");
-	//}
-}
-
-void veOctreeCamera::walkingOctree(veOctree *octree)
-{
-	std::unique_lock<std::mutex> lock(_visitMutex);
-	if (!_visibleOctreeNodeList.empty())
-		_visibleOctreeNodeList.clear();
-	traverseOctree(octree);
 }
 
 bool veOctreeCamera::isNodeVisibleInCamera(veOctreeNode *node)

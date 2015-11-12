@@ -221,10 +221,43 @@ void veOctreeSceneManager::render()
 	if (_mainCamera.valid() && _mainCamera->isInScene() && _mainCamera->isVisible()) {
 		veOctreeCamera *mainCam = static_cast<veOctreeCamera *>(_mainCamera.get());
 		mainCam->walkingOctree(this->_octree);
-		mainCam->render();
+		if (_postProcesserList.empty()) {
+			mainCam->render();
+		}
+		else {
+
+			mainCam->setFrameBufferObject(_postProcesserFBOS[0].get());
+			mainCam->render();
+			for (size_t i = 0; i < _postProcesserList.size() - 1; ++i) {
+				postProcesserBindingTex(_postProcesserList[i].get(), i);
+				_postProcesserList[i]->process(_root.get(), mainCam);
+				mainCam->setFrameBufferObject(_postProcesserFBOS[(i + 1) & 1].get());
+				mainCam->render();
+			}
+
+			unsigned int lastProcesser = _postProcesserList.size() - 1;
+			postProcesserBindingTex(_postProcesserList[lastProcesser].get(), lastProcesser);
+			_postProcesserList[lastProcesser]->process(_root.get(), mainCam);
+			mainCam->setFrameBufferObject(nullptr);
+			mainCam->render();
+		}
 	}
 	veApplication::instance()->swapBuffers();
 }
+
+void veOctreeSceneManager::postProcesserBindingTex(vePostProcesser *processer, unsigned short bindIdx)
+{
+	auto pass = processer->getMaterialArray()->getMaterial(0)->getTechnique(0)->getPass(0);
+	if (pass) {
+		if (pass->getTextureNum()) {
+			pass->setTexture(0, _postProcesserTexs[bindIdx & 1].get());
+		}
+		else {
+			pass->addTexture(_postProcesserTexs[bindIdx & 1].get());
+		}
+	}
+}
+
 
 void veOctreeSceneManager::culling()
 {

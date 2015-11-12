@@ -86,6 +86,10 @@ public:
 			player->attachEntity(entity);
 		}
 
+		auto greymats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/grey.vemtl", "grey-mats"));
+		auto greyPostProcesser = _sceneManager->createPostProcesser("grey");
+		greyPostProcesser->setMaterialArray(greymats);
+
 		auto debuger = new veOctreeDebuger;
 		debuger->debugDrawBoundingBoxWireframe(true);
 		debuger->debugDrawOctree(false);

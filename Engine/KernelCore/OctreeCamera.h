@@ -12,7 +12,6 @@ public:
 	veOctreeCamera(const veViewport &vp);
 	~veOctreeCamera();
 
-	virtual void render() override;
 	void walkingOctree(veOctree *octree);
 
 	bool isNodeVisibleInCamera(veOctreeNode *node);

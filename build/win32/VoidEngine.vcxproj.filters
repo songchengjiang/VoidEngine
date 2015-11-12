@@ -237,6 +237,9 @@
     <ClCompile Include="..\..\Engine\BaseCore\MathAlgorithm.cpp">
       <Filter>BaseCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\PostProcesser.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -452,6 +455,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\BaseCore\MathAlgorithm.h">
       <Filter>BaseCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\PostProcesser.h">
+      <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

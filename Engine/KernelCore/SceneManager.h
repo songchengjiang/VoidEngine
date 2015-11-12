@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "Light.h"
 #include "Ray.h"
+#include "PostProcesser.h"
 
 #include <unordered_map>
 
@@ -51,6 +52,7 @@ public:
 	virtual veSkyBox* createSkyBox(const std::string &name, veReal size = 500.0f);
 	virtual veAnimationPlayer* createAnimationPlayer(const std::string &name, veAnimationContainer *container);
 	virtual veTexture* createTexture(const std::string &name, veTexture::TextureType texType = veTexture::TEXTURE_2D);
+	virtual vePostProcesser* createPostProcesser(const std::string &name);
 
 	virtual void requestRender(veNode *node) = 0;
 	virtual void requestRayCast(veRay *ray) = 0;
@@ -91,6 +93,10 @@ protected:
 	veCameraList _cameraList;
 	veLightList _lightList;
 	veRayList   _rayList;
+	vePostProcesserList _postProcesserList;
+	VE_Ptr<veFrameBufferObject> _postProcesserFBOS[2];
+	VE_Ptr<veTexture> _postProcesserTexs[2];
+
 	VE_Ptr<veCamera> _mainCamera;
 	std::unordered_map<std::string, veBaseManager *> _managerList;
 

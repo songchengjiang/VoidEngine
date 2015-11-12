@@ -33,6 +33,7 @@ protected:
 	virtual void update() override;
 	virtual void render() override;
 	void culling();
+	void postProcesserBindingTex(vePostProcesser *processer, unsigned short bindIdx);
 
 	void addOctreeNode(veOctreeNode *node, veOctree *octant, unsigned int depth = 0);
 	void intersectByRay(veOctree *octant, veRay *ray);
