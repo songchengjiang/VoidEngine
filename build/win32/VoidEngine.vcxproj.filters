@@ -240,6 +240,9 @@
     <ClCompile Include="..\..\Engine\KernelCore\PostProcesser.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\PostProcesserRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -458,6 +461,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\PostProcesser.h">
       <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\PostProcesserRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

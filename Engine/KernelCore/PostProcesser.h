@@ -3,6 +3,7 @@
 #include "Prerequisites.h"
 #include "Material.h"
 #include "Surface.h"
+#include "PostProcesserRenderer.h"
 
 class veFrameBufferObject;
 class VE_EXPORT vePostProcesser
@@ -17,8 +18,7 @@ public:
 	virtual void setMaterialArray(veMaterialArray *material) { _materials = material; }
 	veMaterialArray* getMaterialArray() { return _materials.get(); }
 
-	void process(veCamera *camera);
-	void attachFrameBuffer(veFrameBufferObject *fb);
+	void process(veFrameBufferObject *fb, veCamera *camera);
 
 private:
 
@@ -28,6 +28,7 @@ private:
 
 	VE_Ptr<veMaterialArray> _materials;
 	VE_Ptr<veSurface> _surface;
+	VE_Ptr<vePostProcesserRenderer> _render;
 	veSceneManager   *_sceneManager;
 };
 

@@ -125,10 +125,12 @@ veBoxRenderer::~veBoxRenderer()
 
 void veBoxRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
-	if (_technique) {
-		updateBuffer();
-		for (unsigned int i = 0; i < _technique->getPassNum(); ++i) {
-			auto pass = _technique->getPass(i);
+	updateBuffer();
+	auto materials = renderableObj->getMaterialArray();
+	for (unsigned int mat = 0; mat < materials->getMaterialNum(); ++mat) {
+		auto material = materials->getMaterial(mat);
+		for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {
+			auto pass = material->activeTechnique()->getPass(i);
 			if (camera->getMask() & pass->drawMask()) {
 				bool isTransparent = pass->blendFunc() != veBlendFunc::DISABLE ? true : false;
 				veRenderCommand rc;

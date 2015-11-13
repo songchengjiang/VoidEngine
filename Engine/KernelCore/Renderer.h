@@ -21,11 +21,6 @@ public:
 
 protected:
 
-	virtual veTechnique* findOptimalTechnique(veMaterial *material);
-
-protected:
-
-	veTechnique     *_technique;
 };
 
 #endif

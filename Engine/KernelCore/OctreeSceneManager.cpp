@@ -206,13 +206,13 @@ void veOctreeSceneManager::update()
 
 void veOctreeSceneManager::render()
 {
-	//culling();
 	if (!veApplication::instance()->makeContextCurrent()) return;
+	culling();
 	for (auto &iter : _cameraList) {
 		if (iter->isVisible() && iter->isInScene() && iter != _mainCamera) {
 			if (iter->getFrameBufferObject()) {
 				veOctreeCamera *rttCam = static_cast<veOctreeCamera *>(iter.get());
-				rttCam->walkingOctree(this->_octree);
+				//rttCam->walkingOctree(this->_octree);
 				rttCam->renderingOctree();
 				rttCam->render();
 			}
@@ -221,7 +221,7 @@ void veOctreeSceneManager::render()
 
 	if (_mainCamera.valid() && _mainCamera->isInScene() && _mainCamera->isVisible()) {
 		veOctreeCamera *mainCam = static_cast<veOctreeCamera *>(_mainCamera.get());
-		mainCam->walkingOctree(this->_octree);
+		//mainCam->walkingOctree(this->_octree);
 		mainCam->renderingOctree();
 
 		if (!_postProcesserList.empty()) {
@@ -230,9 +230,7 @@ void veOctreeSceneManager::render()
 			}
 			mainCam->setFrameBufferObject(_postProcesserFBO.get());
 			for (size_t i = 0; i < _postProcesserList.size(); ++i) {
-				_postProcesserList[i]->attachFrameBuffer(_postProcesserFBO.get());
-				mainCam->render();
-				_postProcesserList[i]->process(mainCam);
+				_postProcesserList[i]->process(_postProcesserFBO.get(), mainCam);
 			}
 			mainCam->setFrameBufferObject(nullptr);
 		}
@@ -243,12 +241,12 @@ void veOctreeSceneManager::render()
 
 void veOctreeSceneManager::culling()
 {
-	//for (auto &iter : _cameraList) {
-	//	if (iter->isVisible() && iter->isInScene()) {
-	//		veOctreeCamera *cam = static_cast<veOctreeCamera *>(iter);
-	//		//_threadPool.enqueue(nullptr, nullptr, [this, cam] {
-	//			cam->walkingOctree(this->_octree);
-	//		//});
-	//	}
-	//}
+	for (auto &iter : _cameraList) {
+		if (iter->isVisible() && iter->isInScene()) {
+			veOctreeCamera *cam = static_cast<veOctreeCamera *>(iter.get());
+			_threadPool.enqueue(nullptr, nullptr, [this, cam] {
+				cam->walkingOctree(this->_octree);
+			});
+		}
+	}
 }

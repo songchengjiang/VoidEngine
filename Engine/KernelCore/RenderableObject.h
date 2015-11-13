@@ -30,7 +30,7 @@ public:
 	bool isVisible() const { return _isVisible; };
 	void setMask(unsigned int mask) { _mask = mask; }
 	unsigned int getMask() const { return _mask; }
-	inline void setRenderer(veRenderer *renderer);
+	void setRenderer(veRenderer *renderer) { _renderer = renderer; }
 	veRenderer* getRenderer() const { return _renderer.get(); }
 	virtual void setMaterialArray(veMaterialArray *material) { _materials = material; }
 	veMaterialArray* getMaterialArray() { return _materials.get(); }

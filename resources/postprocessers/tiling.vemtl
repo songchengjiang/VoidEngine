@@ -23,7 +23,7 @@
                                     "source": "tiling.frag",
                                     "u_colorTex": 0,
                                     "u_NumTiles": 100.0,
-                                    "u_Threshold": 0.5
+                                    "u_Threshold": 0.1
                                 }
                             ],
                             "textureUnits": [

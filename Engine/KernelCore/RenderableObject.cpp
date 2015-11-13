@@ -32,8 +32,3 @@ void veRenderableObject::render(veNode *node, veCamera *camera)
 			_renderer->render(node, this, camera);
 	}
 }
-
-void veRenderableObject::setRenderer(veRenderer *renderer)
-{
-	_renderer = renderer;
-}

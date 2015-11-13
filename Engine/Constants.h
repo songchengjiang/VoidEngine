@@ -166,6 +166,8 @@ static const std::string P_MATRIX      = "P_MATRIX";
 static const std::string MVP_MATRIX    = "MVP_MATRIX";
 static const std::string NORMAL_MATRIX = "NORMAL_MATRIX";
 static const std::string BONE_MATRIXES = "BONE_MATRIXES";
+static const std::string SCREEN_WIDTH = "SCREEN_WIDTH";
+static const std::string SCREEN_HEIGHT = "SCREEN_HEIGHT";
 
 static const std::string MODEL_EXT = ".vem";
 static const std::string MATERIAL_EXT = ".vemtl";

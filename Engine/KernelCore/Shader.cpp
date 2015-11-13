@@ -158,6 +158,16 @@ void veUniform::apply(const veRenderCommand &command)
 	case Type::AUTO:
 	{
 		if (!_autoBindingValue.empty()) {
+
+			if (_autoBindingValue == SCREEN_WIDTH) {
+				glUniform1f(_location, command.camera->getViewport().width - command.camera->getViewport().x);
+				return;
+			}
+			else if (_autoBindingValue == SCREEN_HEIGHT) {
+				glUniform1f(_location, command.camera->getViewport().height - command.camera->getViewport().y);
+				return;
+			}
+
 			const veMat4 &worldMat = command.worldMatrix->value();
 			const veMat4 &viewMat = command.camera->viewMatrix();
 			const veMat4 &invViewMat = command.camera->getNodeToWorldMatrix();

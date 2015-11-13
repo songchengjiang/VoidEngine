@@ -7,7 +7,6 @@
 
 veRenderer::veRenderer()
 	: USE_VE_PTR_INIT
-	, _technique(nullptr)
 {
 }
 
@@ -17,12 +16,4 @@ veRenderer::~veRenderer()
 
 void veRenderer::visit(veNode *node, veRenderableObject *renderableObj, veSceneManager *sm)
 {
-	auto materials = renderableObj->getMaterialArray();
-	if (materials)
-		_technique = findOptimalTechnique(materials->getMaterial(0));
-}
-
-veTechnique* veRenderer::findOptimalTechnique(veMaterial *material)
-{
-	return material->activeTechnique();
 }

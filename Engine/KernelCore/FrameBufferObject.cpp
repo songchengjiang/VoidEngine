@@ -51,7 +51,7 @@ veFrameBufferObject::veFrameBufferObject()
 	: USE_VE_PTR_INIT
 	, _fbo(0)
 	, _dsbo(0)
-	, _size(512, 512)
+	, _size(0, 0)
 	, _needRefreshAttachments(true)
 	, _needRefreshBuffers(true)
 {

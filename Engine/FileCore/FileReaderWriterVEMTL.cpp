@@ -178,6 +178,12 @@ private:
 						, values[8].GetDouble(), values[9].GetDouble(), values[10].GetDouble(), values[11].GetDouble()
 						, values[12].GetDouble(), values[13].GetDouble(), values[14].GetDouble(), values[15].GetDouble());
 					uniform->setValue(mat);
+				}else {
+					veRealArray vals;
+					for (unsigned int i = 0; i < values.Size(); ++i) {
+						vals.push_back(values[i].GetDouble());
+					}
+					uniform->setValue(vals);
 				}
 				pass->addUniform(uniform);
 			}

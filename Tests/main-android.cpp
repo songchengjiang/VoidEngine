@@ -8,4 +8,5 @@ void android_main(struct android_app* app){
     veApplication::instance()->initWindow(800, 600, "", app);
     TestCreator::createTest();
     veApplication::instance()->run();
+
 }

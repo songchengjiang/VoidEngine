@@ -138,18 +138,17 @@ bool veSceneManager::simulation()
 {
 	{
 		std::unique_lock<std::mutex> updateLock(_updatingMutex);
-		for (auto &manager : _managerList) {
-			manager.second->update();
-		}
 		update();
 	}
 
 	{
 		std::unique_lock<std::mutex> renderLock(_renderingMutex);
+		for (auto &manager : _managerList) {
+			manager.second->update();
+		}
 		_renderingCondition.notify_all();
 	}
 	//render();
-
 	return true;
 }
 
@@ -166,9 +165,6 @@ void veSceneManager::startThreading()
 			this->render();
 			{
 				std::unique_lock<std::mutex> updateLock(_updatingMutex);
-				for (auto &manager : _managerList) {
-					manager.second->render();
-				}
 				this->handleRequests();
 			}
 		}
