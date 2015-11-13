@@ -6,6 +6,7 @@
 #include "MeshNode.h"
 #include "Camera.h"
 #include "EntityRenderer.h"
+#include "SceneManager.h"
 
 veUniform::veUniform(const std::string &name)
 	: USE_VE_PTR_INIT
@@ -161,96 +162,100 @@ void veUniform::apply(const veRenderCommand &command)
 
 			if (_autoBindingValue == SCREEN_WIDTH) {
 				glUniform1f(_location, command.camera->getViewport().width - command.camera->getViewport().x);
-				return;
 			}
 			else if (_autoBindingValue == SCREEN_HEIGHT) {
 				glUniform1f(_location, command.camera->getViewport().height - command.camera->getViewport().y);
-				return;
 			}
-
-			const veMat4 &worldMat = command.worldMatrix->value();
-			const veMat4 &viewMat = command.camera->viewMatrix();
-			const veMat4 &invViewMat = command.camera->getNodeToWorldMatrix();
-			veMat4 modelViewMat = viewMat * worldMat;
-			if (_autoBindingValue == MVP_MATRIX) {
-				veMat4 mvp = command.camera->projectionMatrix() * modelViewMat;
-				float m[16];
-				m[0] = mvp[0][0]; m[4] = mvp[0][1]; m[8]  = mvp[0][2]; m[12] = mvp[0][3];
-				m[1] = mvp[1][0]; m[5] = mvp[1][1]; m[9]  = mvp[1][2]; m[13] = mvp[1][3];
-				m[2] = mvp[2][0]; m[6] = mvp[2][1]; m[10] = mvp[2][2]; m[14] = mvp[2][3];
-				m[3] = mvp[3][0]; m[7] = mvp[3][1]; m[11] = mvp[3][2]; m[15] = mvp[3][3];
-				glUniformMatrix4fv(_location, 1, GL_FALSE, m);
+			else if (_autoBindingValue == SIM_TIME) {
+				glUniform1f(_location, command.sceneManager->getSimulationTime());
 			}
-			else if (_autoBindingValue == MV_MATRIX) {
-				float m[16];
-				m[0] = modelViewMat[0][0]; m[4] = modelViewMat[0][1]; m[8] = modelViewMat[0][2]; m[12] = modelViewMat[0][3];
-				m[1] = modelViewMat[1][0]; m[5] = modelViewMat[1][1]; m[9] = modelViewMat[1][2]; m[13] = modelViewMat[1][3];
-				m[2] = modelViewMat[2][0]; m[6] = modelViewMat[2][1]; m[10] = modelViewMat[2][2]; m[14] = modelViewMat[2][3];
-				m[3] = modelViewMat[3][0]; m[7] = modelViewMat[3][1]; m[11] = modelViewMat[3][2]; m[15] = modelViewMat[3][3];
-				glUniformMatrix4fv(_location, 1, GL_FALSE, m);
+			else if (_autoBindingValue == SIM_SIN_TIME) {
+				glUniform1f(_location, veMath::veSin(command.sceneManager->getSimulationTime()));
 			}
-			else if (_autoBindingValue == P_MATRIX) {
-				const veMat4 &p = command.camera->projectionMatrix();
-				float m[16];
-				m[0] = p[0][0]; m[4] = p[0][1]; m[8] = p[0][2]; m[12] = p[0][3];
-				m[1] = p[1][0]; m[5] = p[1][1]; m[9] = p[1][2]; m[13] = p[1][3];
-				m[2] = p[2][0]; m[6] = p[2][1]; m[10] = p[2][2]; m[14] = p[2][3];
-				m[3] = p[3][0]; m[7] = p[3][1]; m[11] = p[3][2]; m[15] = p[3][3];
-				glUniformMatrix4fv(_location, 1, GL_FALSE, m);
-			}
-			else if (_autoBindingValue == NORMAL_MATRIX) {
-				veMat3 normMat(modelViewMat[0][0], modelViewMat[0][1], modelViewMat[0][2]
-					, modelViewMat[1][0], modelViewMat[1][1], modelViewMat[1][2]
-					, modelViewMat[2][0], modelViewMat[2][1], modelViewMat[2][2]);
-				normMat.inverse();
-				normMat.transpose();
-				float m[9];
-				m[0] = normMat[0][0]; m[3] = normMat[0][1]; m[6] = normMat[0][2];
-				m[1] = normMat[1][0]; m[4] = normMat[1][1]; m[7] = normMat[1][2];
-				m[2] = normMat[2][0]; m[5] = normMat[2][1]; m[8] = normMat[2][2];
-				glUniformMatrix3fv(_location, 1, GL_FALSE, m);
-			}
-			else if (_autoBindingValue == M_MATRIX) {
-				float m[16];
-				m[0] = worldMat[0][0]; m[4] = worldMat[0][1]; m[8]  = worldMat[0][2]; m[12] = worldMat[0][3];
-				m[1] = worldMat[1][0]; m[5] = worldMat[1][1]; m[9]  = worldMat[1][2]; m[13] = worldMat[1][3];
-				m[2] = worldMat[2][0]; m[6] = worldMat[2][1]; m[10] = worldMat[2][2]; m[14] = worldMat[2][3];
-				m[3] = worldMat[3][0]; m[7] = worldMat[3][1]; m[11] = worldMat[3][2]; m[15] = worldMat[3][3];
-				glUniformMatrix4fv(_location, 1, GL_FALSE, m);
-			}
-			else if (_autoBindingValue == V_MATRIX) {
-				float m[16];
-				m[0] = viewMat[0][0]; m[4] = viewMat[0][1]; m[8] = viewMat[0][2]; m[12] = viewMat[0][3];
-				m[1] = viewMat[1][0]; m[5] = viewMat[1][1]; m[9] = viewMat[1][2]; m[13] = viewMat[1][3];
-				m[2] = viewMat[2][0]; m[6] = viewMat[2][1]; m[10] = viewMat[2][2]; m[14] = viewMat[2][3];
-				m[3] = viewMat[3][0]; m[7] = viewMat[3][1]; m[11] = viewMat[3][2]; m[15] = viewMat[3][3];
-				glUniformMatrix4fv(_location, 1, GL_FALSE, m);
-			}
-			else if (_autoBindingValue == INV_V_MATRIX) {
-				float m[16];
-				m[0] = invViewMat[0][0]; m[4] = invViewMat[0][1]; m[8] = invViewMat[0][2]; m[12] = invViewMat[0][3];
-				m[1] = invViewMat[1][0]; m[5] = invViewMat[1][1]; m[9] = invViewMat[1][2]; m[13] = invViewMat[1][3];
-				m[2] = invViewMat[2][0]; m[6] = invViewMat[2][1]; m[10] = invViewMat[2][2]; m[14] = invViewMat[2][3];
-				m[3] = invViewMat[3][0]; m[7] = invViewMat[3][1]; m[11] = invViewMat[3][2]; m[15] = invViewMat[3][3];
-				glUniformMatrix4fv(_location, 1, GL_FALSE, m);
-			}
-			else if (_autoBindingValue == BONE_MATRIXES) {
-				static float boneMates[60 * 16];
-				veEntityRenderer::MeshBuffers *meshbuffers = static_cast<veEntityRenderer::MeshBuffers *>(command.userData);
-				veMat4 worldToMesh = worldMat;
-				worldToMesh.inverse();
-				for (unsigned int i = 0; i < meshbuffers->mesh->getBoneNum(); ++i) {
-					unsigned int idx = 16 * i;
-					const auto &bone = meshbuffers->mesh->getBone(i);
-					veMat4 boneMat = worldToMesh * meshbuffers->node->getNodeToWorldMatrix() * bone->getBoneNode()->toMeshNodeRootMatrix() * bone->getOffsetMat();
-					boneMates[idx + 0] = boneMat[0][0]; boneMates[idx + 4] = boneMat[0][1]; boneMates[idx +  8] = boneMat[0][2]; boneMates[idx + 12] = boneMat[0][3];
-					boneMates[idx + 1] = boneMat[1][0]; boneMates[idx + 5] = boneMat[1][1]; boneMates[idx +  9] = boneMat[1][2]; boneMates[idx + 13] = boneMat[1][3];
-					boneMates[idx + 2] = boneMat[2][0]; boneMates[idx + 6] = boneMat[2][1]; boneMates[idx + 10] = boneMat[2][2]; boneMates[idx + 14] = boneMat[2][3];
-					boneMates[idx + 3] = boneMat[3][0]; boneMates[idx + 7] = boneMat[3][1]; boneMates[idx + 11] = boneMat[3][2]; boneMates[idx + 15] = boneMat[3][3];
+			else {
+				const veMat4 &worldMat = command.worldMatrix->value();
+				const veMat4 &viewMat = command.camera->viewMatrix();
+				const veMat4 &invViewMat = command.camera->getNodeToWorldMatrix();
+				veMat4 modelViewMat = viewMat * worldMat;
+				if (_autoBindingValue == MVP_MATRIX) {
+					veMat4 mvp = command.camera->projectionMatrix() * modelViewMat;
+					float m[16];
+					m[0] = mvp[0][0]; m[4] = mvp[0][1]; m[8] = mvp[0][2]; m[12] = mvp[0][3];
+					m[1] = mvp[1][0]; m[5] = mvp[1][1]; m[9] = mvp[1][2]; m[13] = mvp[1][3];
+					m[2] = mvp[2][0]; m[6] = mvp[2][1]; m[10] = mvp[2][2]; m[14] = mvp[2][3];
+					m[3] = mvp[3][0]; m[7] = mvp[3][1]; m[11] = mvp[3][2]; m[15] = mvp[3][3];
+					glUniformMatrix4fv(_location, 1, GL_FALSE, m);
 				}
-				glUniformMatrix4fv(_location, 60, GL_FALSE, boneMates);
+				else if (_autoBindingValue == MV_MATRIX) {
+					float m[16];
+					m[0] = modelViewMat[0][0]; m[4] = modelViewMat[0][1]; m[8] = modelViewMat[0][2]; m[12] = modelViewMat[0][3];
+					m[1] = modelViewMat[1][0]; m[5] = modelViewMat[1][1]; m[9] = modelViewMat[1][2]; m[13] = modelViewMat[1][3];
+					m[2] = modelViewMat[2][0]; m[6] = modelViewMat[2][1]; m[10] = modelViewMat[2][2]; m[14] = modelViewMat[2][3];
+					m[3] = modelViewMat[3][0]; m[7] = modelViewMat[3][1]; m[11] = modelViewMat[3][2]; m[15] = modelViewMat[3][3];
+					glUniformMatrix4fv(_location, 1, GL_FALSE, m);
+				}
+				else if (_autoBindingValue == P_MATRIX) {
+					const veMat4 &p = command.camera->projectionMatrix();
+					float m[16];
+					m[0] = p[0][0]; m[4] = p[0][1]; m[8] = p[0][2]; m[12] = p[0][3];
+					m[1] = p[1][0]; m[5] = p[1][1]; m[9] = p[1][2]; m[13] = p[1][3];
+					m[2] = p[2][0]; m[6] = p[2][1]; m[10] = p[2][2]; m[14] = p[2][3];
+					m[3] = p[3][0]; m[7] = p[3][1]; m[11] = p[3][2]; m[15] = p[3][3];
+					glUniformMatrix4fv(_location, 1, GL_FALSE, m);
+				}
+				else if (_autoBindingValue == NORMAL_MATRIX) {
+					veMat3 normMat(modelViewMat[0][0], modelViewMat[0][1], modelViewMat[0][2]
+						, modelViewMat[1][0], modelViewMat[1][1], modelViewMat[1][2]
+						, modelViewMat[2][0], modelViewMat[2][1], modelViewMat[2][2]);
+					normMat.inverse();
+					normMat.transpose();
+					float m[9];
+					m[0] = normMat[0][0]; m[3] = normMat[0][1]; m[6] = normMat[0][2];
+					m[1] = normMat[1][0]; m[4] = normMat[1][1]; m[7] = normMat[1][2];
+					m[2] = normMat[2][0]; m[5] = normMat[2][1]; m[8] = normMat[2][2];
+					glUniformMatrix3fv(_location, 1, GL_FALSE, m);
+				}
+				else if (_autoBindingValue == M_MATRIX) {
+					float m[16];
+					m[0] = worldMat[0][0]; m[4] = worldMat[0][1]; m[8] = worldMat[0][2]; m[12] = worldMat[0][3];
+					m[1] = worldMat[1][0]; m[5] = worldMat[1][1]; m[9] = worldMat[1][2]; m[13] = worldMat[1][3];
+					m[2] = worldMat[2][0]; m[6] = worldMat[2][1]; m[10] = worldMat[2][2]; m[14] = worldMat[2][3];
+					m[3] = worldMat[3][0]; m[7] = worldMat[3][1]; m[11] = worldMat[3][2]; m[15] = worldMat[3][3];
+					glUniformMatrix4fv(_location, 1, GL_FALSE, m);
+				}
+				else if (_autoBindingValue == V_MATRIX) {
+					float m[16];
+					m[0] = viewMat[0][0]; m[4] = viewMat[0][1]; m[8] = viewMat[0][2]; m[12] = viewMat[0][3];
+					m[1] = viewMat[1][0]; m[5] = viewMat[1][1]; m[9] = viewMat[1][2]; m[13] = viewMat[1][3];
+					m[2] = viewMat[2][0]; m[6] = viewMat[2][1]; m[10] = viewMat[2][2]; m[14] = viewMat[2][3];
+					m[3] = viewMat[3][0]; m[7] = viewMat[3][1]; m[11] = viewMat[3][2]; m[15] = viewMat[3][3];
+					glUniformMatrix4fv(_location, 1, GL_FALSE, m);
+				}
+				else if (_autoBindingValue == INV_V_MATRIX) {
+					float m[16];
+					m[0] = invViewMat[0][0]; m[4] = invViewMat[0][1]; m[8] = invViewMat[0][2]; m[12] = invViewMat[0][3];
+					m[1] = invViewMat[1][0]; m[5] = invViewMat[1][1]; m[9] = invViewMat[1][2]; m[13] = invViewMat[1][3];
+					m[2] = invViewMat[2][0]; m[6] = invViewMat[2][1]; m[10] = invViewMat[2][2]; m[14] = invViewMat[2][3];
+					m[3] = invViewMat[3][0]; m[7] = invViewMat[3][1]; m[11] = invViewMat[3][2]; m[15] = invViewMat[3][3];
+					glUniformMatrix4fv(_location, 1, GL_FALSE, m);
+				}
+				else if (_autoBindingValue == BONE_MATRIXES) {
+					static float boneMates[60 * 16];
+					veEntityRenderer::MeshBuffers *meshbuffers = static_cast<veEntityRenderer::MeshBuffers *>(command.userData);
+					veMat4 worldToMesh = worldMat;
+					worldToMesh.inverse();
+					for (unsigned int i = 0; i < meshbuffers->mesh->getBoneNum(); ++i) {
+						unsigned int idx = 16 * i;
+						const auto &bone = meshbuffers->mesh->getBone(i);
+						veMat4 boneMat = worldToMesh * meshbuffers->node->getNodeToWorldMatrix() * bone->getBoneNode()->toMeshNodeRootMatrix() * bone->getOffsetMat();
+						boneMates[idx + 0] = boneMat[0][0]; boneMates[idx + 4] = boneMat[0][1]; boneMates[idx + 8] = boneMat[0][2]; boneMates[idx + 12] = boneMat[0][3];
+						boneMates[idx + 1] = boneMat[1][0]; boneMates[idx + 5] = boneMat[1][1]; boneMates[idx + 9] = boneMat[1][2]; boneMates[idx + 13] = boneMat[1][3];
+						boneMates[idx + 2] = boneMat[2][0]; boneMates[idx + 6] = boneMat[2][1]; boneMates[idx + 10] = boneMat[2][2]; boneMates[idx + 14] = boneMat[2][3];
+						boneMates[idx + 3] = boneMat[3][0]; boneMates[idx + 7] = boneMat[3][1]; boneMates[idx + 11] = boneMat[3][2]; boneMates[idx + 15] = boneMat[3][3];
+					}
+					glUniformMatrix4fv(_location, 60, GL_FALSE, boneMates);
+				}
 			}
-
 			//uniform->setValue(values);
 		}
 	}

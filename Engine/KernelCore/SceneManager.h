@@ -67,8 +67,9 @@ public:
 	veBaseManager* getManager(const std::string &mgType);
 
 	veNode* getRootNode() { return _root.get(); }
-	void setDeltaTime(double deltaTime) { _deltaTime = deltaTime; }
+	void setDeltaTime(double deltaTime);
 	double getDeltaTime() { return _deltaTime; }
+	double getSimulationTime() { return _simulationTime; }
 
 	void setCamera(veCamera *camera) { _mainCamera = camera; }
 	veCamera* getCamera() { return _mainCamera.get(); }
@@ -110,6 +111,7 @@ protected:
 	bool        _stopThreading;
 
 	double _deltaTime;
+	double _simulationTime;
 };
 
 #endif

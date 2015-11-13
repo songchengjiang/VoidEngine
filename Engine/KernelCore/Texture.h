@@ -109,19 +109,19 @@ protected:
 
 };
 
-//class VE_EXPORT veTextureRECT : public veTexture
-//{
-//	friend class veTextureManager;
-//public:
-//
-//	~veTextureRECT();
-//
-//	virtual void bind(unsigned int textureUnit) override;
-//
-//protected:
-//	veTextureRECT();
-//
-//};
+class VE_EXPORT veTexture3D : public veTexture
+{
+	friend class veTextureManager;
+public:
+
+	~veTexture3D();
+
+	virtual void bind(unsigned int textureUnit) override;
+
+protected:
+	veTexture3D();
+
+};
 
 
 class VE_EXPORT veTextureCube : public veTexture

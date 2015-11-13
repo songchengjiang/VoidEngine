@@ -15,6 +15,7 @@
 veSceneManager::veSceneManager()
 	: USE_VE_PTR_INIT
 	, _deltaTime(0.0)
+	, _simulationTime(0)
 	, _stopThreading(true)
 {
 	_managerList[veLightManager::TYPE()] = new veLightManager(this);
@@ -126,6 +127,12 @@ veBaseManager* veSceneManager::getManager(const std::string &mgType)
 	if (iter == _managerList.end()) return nullptr;
 
 	return iter->second;
+}
+
+void veSceneManager::setDeltaTime(double deltaTime)
+{
+	_deltaTime = deltaTime;
+	_simulationTime += deltaTime;
 }
 
 void veSceneManager::dispatchEvents(veEvent &event)
