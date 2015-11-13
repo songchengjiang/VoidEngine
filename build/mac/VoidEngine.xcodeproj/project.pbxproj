@@ -72,7 +72,6 @@
 		BE1B504A1BB049E30039A346 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE3D41381BAF0B520063041C /* Camera.cpp */; };
 		BE1B504B1BB049E30039A346 /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE3D413A1BAF0B520063041C /* Component.cpp */; };
 		BE1B504C1BB049E30039A346 /* Director.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE3D413C1BAF0B520063041C /* Director.cpp */; };
-		BE1B504D1BB049E30039A346 /* EventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE3D413F1BAF0B520063041C /* EventDispatcher.cpp */; };
 		BE1B504E1BB049E30039A346 /* FrameBufferObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE3D41411BAF0B520063041C /* FrameBufferObject.cpp */; };
 		BE1B504F1BB049E30039A346 /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE3D41441BAF0B520063041C /* Image.cpp */; };
 		BE1B50501BB049E30039A346 /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE3D41461BAF0B520063041C /* Light.cpp */; };
@@ -224,8 +223,6 @@
 		BE3D413C1BAF0B520063041C /* Director.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Director.cpp; path = ../../Engine/KernelCore/Director.cpp; sourceTree = "<group>"; };
 		BE3D413D1BAF0B520063041C /* Director.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Director.h; path = ../../Engine/KernelCore/Director.h; sourceTree = "<group>"; };
 		BE3D413E1BAF0B520063041C /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Event.h; path = ../../Engine/KernelCore/Event.h; sourceTree = "<group>"; };
-		BE3D413F1BAF0B520063041C /* EventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EventDispatcher.cpp; path = ../../Engine/KernelCore/EventDispatcher.cpp; sourceTree = "<group>"; };
-		BE3D41401BAF0B520063041C /* EventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventDispatcher.h; path = ../../Engine/KernelCore/EventDispatcher.h; sourceTree = "<group>"; };
 		BE3D41411BAF0B520063041C /* FrameBufferObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FrameBufferObject.cpp; path = ../../Engine/KernelCore/FrameBufferObject.cpp; sourceTree = "<group>"; };
 		BE3D41421BAF0B520063041C /* FrameBufferObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameBufferObject.h; path = ../../Engine/KernelCore/FrameBufferObject.h; sourceTree = "<group>"; };
 		BE3D41431BAF0B520063041C /* IDGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDGenerator.h; path = ../../Engine/KernelCore/IDGenerator.h; sourceTree = "<group>"; };
@@ -525,8 +522,6 @@
 				BE3D413C1BAF0B520063041C /* Director.cpp */,
 				BE3D413D1BAF0B520063041C /* Director.h */,
 				BE3D413E1BAF0B520063041C /* Event.h */,
-				BE3D413F1BAF0B520063041C /* EventDispatcher.cpp */,
-				BE3D41401BAF0B520063041C /* EventDispatcher.h */,
 				BE3D41411BAF0B520063041C /* FrameBufferObject.cpp */,
 				BE3D41421BAF0B520063041C /* FrameBufferObject.h */,
 				BE3D41431BAF0B520063041C /* IDGenerator.h */,
@@ -681,7 +676,6 @@
 				BE1B504B1BB049E30039A346 /* Component.cpp in Sources */,
 				BE1B504C1BB049E30039A346 /* Director.cpp in Sources */,
 				BE1A0ACD1BE24D6400A1A20D /* OctreeCamera.cpp in Sources */,
-				BE1B504D1BB049E30039A346 /* EventDispatcher.cpp in Sources */,
 				BE1B504E1BB049E30039A346 /* FrameBufferObject.cpp in Sources */,
 				BE1A0B211BE260D900A1A20D /* File-mac.cpp in Sources */,
 				BE1A0B181BE24E5C00A1A20D /* TransformFeedback.cpp in Sources */,
