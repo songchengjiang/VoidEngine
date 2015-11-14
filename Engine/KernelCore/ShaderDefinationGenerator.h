@@ -70,7 +70,11 @@ public:
 		//_root->accept(*this);
 		std::string definations;
         char str[16];
+#if (VE_PLATFORM == VE_PLATFORM_MAC)
+        sprintf(str, " %d%d0\n", VE_GL_VERSION_MAJOR, VE_GL_VERSION_MINOR);
+#else
         sprintf(str, " %d%d0 es\n", VE_GLSL_ES_VERSION_MAJOR, VE_GLSL_ES_VERSION_MINOR);
+#endif
         definations += SHADER_VERSION + std::string(str);
 		if (type == veShader::FRAGMENT_SHADER) {
 			definations += PRECISION_DEFINE_FLOAT + std::string("\n");

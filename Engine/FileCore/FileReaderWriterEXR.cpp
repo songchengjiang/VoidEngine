@@ -25,7 +25,7 @@ class MemStream : public Imf::IStream
 public:
 
 public:
-	MemStream(char *exrbuf, int exrsize)
+	MemStream(char *exrbuf, size_t exrsize)
 		: Imf::IStream("")
 		, _exrsize(exrsize)
 		, _exrpos(0)

@@ -166,7 +166,7 @@ public:
 		auto debuger = new veOctreeDebuger;
 		debuger->debugDrawBoundingBoxWireframe(true, veVec4(1.0f, 0.0f, 0.0f, 0.1f));
 		debuger->debugDrawOctree(true, veVec4(1.0f, 1.0f, 1.0f, 0.1f));
-		debuger->setLineWidth(2.0f);
+		//debuger->setLineWidth(2.0f);
 		_sceneManager->getRootNode()->addRenderableObject(debuger);
 
 		ih->debuger = debuger;

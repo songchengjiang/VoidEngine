@@ -20,8 +20,8 @@ public:
 
 	int addChild(veMeshNode *child);
 	bool removeChild(veMeshNode *child);
-	veMeshNode* removeChild(unsigned int cIndex);
-	veMeshNode* getChild(unsigned int cIndex);
+	veMeshNode* removeChild(size_t cIndex);
+	veMeshNode* getChild(size_t cIndex);
 	size_t getChildCount() const { return _children.size(); }
 
 	void setMatrix(const veMat4 &mat);

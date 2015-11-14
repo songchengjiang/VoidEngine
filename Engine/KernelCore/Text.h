@@ -27,8 +27,8 @@ protected:
 
 	veText(veFont *font, const std::string &content = "");
 
-	virtual void appendMaterial(veMaterial *material);
-	virtual veShader* getFragmentShader();
+	virtual void appendMaterial(veMaterial *material) override;
+	virtual veShader* getFragmentShader() override;
 
 	void rebuildContentBitmap(int divWidth, int divHeight);
 
