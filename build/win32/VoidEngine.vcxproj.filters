@@ -243,6 +243,9 @@
     <ClCompile Include="..\..\Engine\KernelCore\PostProcesserRenderer.cpp">
       <Filter>KernelCore\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterDDS.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">

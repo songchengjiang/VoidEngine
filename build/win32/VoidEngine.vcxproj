@@ -25,6 +25,7 @@
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriter.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterANIMATION.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterCAMERA.cpp" />
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterDDS.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterEXR.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterJPEG.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterLIGHT.cpp" />
