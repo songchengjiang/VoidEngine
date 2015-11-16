@@ -126,7 +126,10 @@ void veTexture::bind(unsigned int textureUnit)
 	}
 	if (_needRefreshSampler) {
 		glSamplerParameteri(_samplerID, GL_TEXTURE_MIN_FILTER, _filterMode);
-		glSamplerParameteri(_samplerID, GL_TEXTURE_MAG_FILTER, _filterMode);
+		if (_filterMode == NEAREST_MIP_MAP || _filterMode == LINEAR_MIP_MAP)
+			glSamplerParameteri(_samplerID, GL_TEXTURE_MAG_FILTER, _filterMode == NEAREST_MIP_MAP? GL_NEAREST: GL_LINEAR);
+		else
+			glSamplerParameteri(_samplerID, GL_TEXTURE_MAG_FILTER, _filterMode);
 		glSamplerParameteri(_samplerID, GL_TEXTURE_WRAP_S, _wrapMode);
 		glSamplerParameteri(_samplerID, GL_TEXTURE_WRAP_T, _wrapMode);
 		glSamplerParameteri(_samplerID, GL_TEXTURE_WRAP_R, _wrapMode);
@@ -209,6 +212,10 @@ void veTexture2D::bind(unsigned int textureUnit)
 					height = veMath::maximum(1, height / 2);
 					offset += imageSize;
 				}
+
+				if (_mipMapLevels == 1 && !_isCompressedTex) {
+					glGenerateMipmap(_target);
+				}
 			}
 			_needRefreshTex = false;
 		}
@@ -249,6 +256,10 @@ void veTexture3D::bind(unsigned int textureUnit)
 					width = veMath::maximum(1, width / 2);
 					height = veMath::maximum(1, height / 2);
 					offset += imageSize;
+				}
+
+				if (_mipMapLevels == 1 && !_isCompressedTex) {
+					glGenerateMipmap(_target);
 				}
 			}
 			_needRefreshTex = false;
@@ -301,6 +312,10 @@ void veTextureCube::bind(unsigned int textureUnit)
 						width = veMath::maximum(1, width / 2);
 						height = veMath::maximum(1, height / 2);
 						offset += imageSize;
+					}
+
+					if (_mipMapLevels == 1 && !_isCompressedTex) {
+						glGenerateMipmap(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
 					}
 				}
 			}
