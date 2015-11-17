@@ -1,6 +1,7 @@
 #include "Texture.h"
 #include "TextureManager.h"
 #include "FileCore/File.h"
+#include "BaseCore/MathAlgorithm.h"
 const int veTexture::DEFAULT_WIDTH = 512;
 const int veTexture::DEFAULT_HEIGHT = 512;
 
@@ -29,6 +30,8 @@ veTexture::veTexture(GLenum target)
 	, _internalFormat(GL_RGBA8)
 	, _pixelFormat(GL_RGBA)
 	, _dataSize(0)
+	, _mipMapLevels(1)
+	, _isCompressedTex(false)
 	, _usage(0)
 	, _data(nullptr)
 	, _manager(nullptr)
@@ -68,15 +71,30 @@ unsigned int veTexture::perPixelSize()
 
 	//case GL_RGBA16:
 	case GL_RGBA16F:
+	case GL_COMPRESSED_R11_EAC:
+	case GL_COMPRESSED_SIGNED_R11_EAC:
+	case GL_COMPRESSED_RGB8_ETC2:
+	case GL_COMPRESSED_SRGB8_ETC2:
+	case GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2:
+	case GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2:
 		return 8;
 
 	case GL_RGB32F:
 		return 12;
 
 	case GL_RGBA32F:
+	case GL_COMPRESSED_RG11_EAC:
+	case GL_COMPRESSED_SIGNED_RG11_EAC:
+	case GL_COMPRESSED_RGBA8_ETC2_EAC:
+	case GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC:
 		return 16;
 	}
 	return 0;
+}
+
+unsigned int veTexture::getImageSize(int width, int height)
+{
+	return ((width + 3) / 4) * ((height + 3) / 4) * perPixelSize();
 }
 
 void veTexture::releaseTextureData()
@@ -108,7 +126,10 @@ void veTexture::bind(unsigned int textureUnit)
 	}
 	if (_needRefreshSampler) {
 		glSamplerParameteri(_samplerID, GL_TEXTURE_MIN_FILTER, _filterMode);
-		glSamplerParameteri(_samplerID, GL_TEXTURE_MAG_FILTER, _filterMode);
+		if (_filterMode == NEAREST_MIP_MAP || _filterMode == LINEAR_MIP_MAP)
+			glSamplerParameteri(_samplerID, GL_TEXTURE_MAG_FILTER, _filterMode == NEAREST_MIP_MAP? GL_NEAREST: GL_LINEAR);
+		else
+			glSamplerParameteri(_samplerID, GL_TEXTURE_MAG_FILTER, _filterMode);
 		glSamplerParameteri(_samplerID, GL_TEXTURE_WRAP_S, _wrapMode);
 		glSamplerParameteri(_samplerID, GL_TEXTURE_WRAP_T, _wrapMode);
 		glSamplerParameteri(_samplerID, GL_TEXTURE_WRAP_R, _wrapMode);
@@ -121,18 +142,23 @@ void veTexture::bind(unsigned int textureUnit)
 	_usage |= 1;
 }
 
-void veTexture::storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat, GLenum dataType, unsigned char *data)
+void veTexture::storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat, GLenum dataType
+	, unsigned char *data, unsigned int mipMapLevels, bool isCompressedTex)
 {
 	if (_width == width && _height == height && _depth == depth
 		&& _internalFormat == internalFormat && _pixelFormat == pixelFormat && _dataType == dataType
-		&& _data == data)
+		&& _data == data && _mipMapLevels == mipMapLevels && _isCompressedTex == isCompressedTex)
 		return;
+
 	_width = width;
 	_height = height;
 	_depth = depth;
 	_internalFormat = internalFormat;
 	_pixelFormat = pixelFormat;
 	_dataType = dataType;
+	_mipMapLevels = mipMapLevels;
+	_isCompressedTex = isCompressedTex;
+
 	unsigned int pixelSize = perPixelSize();
 	_dataSize = _width * _height * _depth * pixelSize;
 	VE_SAFE_DELETE_ARRAY(_data);
@@ -168,9 +194,28 @@ void veTexture2D::bind(unsigned int textureUnit)
 	veTexture::bind(textureUnit);
 	if (_needRefreshTex) {
 		if (_manager->exchangeTextureMemory(this)) {
-			glTexStorage2D(_target, 1, _internalFormat, _width, _height);
+			glTexStorage2D(_target, _mipMapLevels, _internalFormat, _width, _height);
+
 			if (_data) {
-				glTexSubImage2D(_target, 0, 0, 0, _width, _height, _pixelFormat, _dataType, _data);
+				int width = _width;
+				int height = _height;
+				unsigned int offset = 0;
+				for (unsigned int lev = 0; lev < _mipMapLevels; ++lev) {
+					unsigned int imageSize = getImageSize(width, height);
+					if (_isCompressedTex) {
+						glCompressedTexSubImage2D(_target, lev, 0, 0, width, height, _internalFormat, imageSize, _data + offset);
+					}
+					else {
+						glTexSubImage2D(_target, lev, 0, 0, width, height, _pixelFormat, _dataType, _data + offset);
+					}
+					width = veMath::maximum(1, width / 2);
+					height = veMath::maximum(1, height / 2);
+					offset += imageSize;
+				}
+
+				if (_mipMapLevels == 1 && !_isCompressedTex) {
+					glGenerateMipmap(_target);
+				}
 			}
 			_needRefreshTex = false;
 		}
@@ -193,9 +238,29 @@ void veTexture3D::bind(unsigned int textureUnit)
 	veTexture::bind(textureUnit);
 	if (_needRefreshTex) {
 		if (_manager->exchangeTextureMemory(this)) {
-			glTexStorage3D(_target, 1, _internalFormat, _width, _height, _depth);
+			glTexStorage3D(_target, _mipMapLevels, _internalFormat, _width, _height, _depth);
+
 			if (_data) {
-				glTexSubImage3D(_target, 0, 0, 0, 0, _width, _height, _depth, _pixelFormat, _dataType, _data);
+				int width = _width;
+				int height = _height;
+				int depth = _depth;
+				unsigned int offset = 0;
+				for (unsigned int lev = 0; lev < _mipMapLevels; ++lev) {
+					unsigned int imageSize = getImageSize(width, height);
+					if (_isCompressedTex) {
+						glCompressedTexSubImage3D(_target, lev, 0, 0, 0, width, height, depth, _internalFormat, imageSize, _data + offset);
+					}
+					else {
+						glTexSubImage3D(_target, lev, 0, 0, 0, width, height, depth, _pixelFormat, _dataType, _data + offset);
+					}
+					width = veMath::maximum(1, width / 2);
+					height = veMath::maximum(1, height / 2);
+					offset += imageSize;
+				}
+
+				if (_mipMapLevels == 1 && !_isCompressedTex) {
+					glGenerateMipmap(_target);
+				}
 			}
 			_needRefreshTex = false;
 		}
@@ -228,12 +293,30 @@ void veTextureCube::bind(unsigned int textureUnit)
 	veTexture::bind(textureUnit);
 	if (_needRefreshTex) {
 		if (_manager->exchangeTextureMemory(this)) {
-			glTexStorage2D(_target, 1, _textures[0]->getInternalFormat(), _textures[0]->getWidth(), _textures[0]->getHeight());
+			glTexStorage2D(_target, _mipMapLevels, _textures[0]->getInternalFormat(), _textures[0]->getWidth(), _textures[0]->getHeight());
 			for (unsigned int i = 0; i < 6; ++i) {
 				auto &tex = _textures[i];
-				//glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, tex->getInternalFormat(), tex->getWidth(), tex->getHeight(), 0, tex->getPixelFormat(), tex->getDataType(), tex->getData());
 				if (tex->getData()) {
-					glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, 0, 0, tex->getWidth(), tex->getHeight(), tex->getPixelFormat(), tex->getDataType(), tex->getData());
+					int width = tex->getWidth();
+					int height = tex->getHeight();
+					unsigned int offset = 0;
+					for (unsigned int lev = 0; lev < _mipMapLevels; ++lev) {
+						unsigned int imageSize = getImageSize(width, height);
+						if (_isCompressedTex) {
+							glCompressedTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, lev, 0, 0, width, height, tex->getInternalFormat(), imageSize, tex->getData() + offset);
+						}
+						else {
+							glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, lev, 0, 0, width, height, tex->getPixelFormat(), tex->getDataType(), tex->getData() + offset);
+						}
+
+						width = veMath::maximum(1, width / 2);
+						height = veMath::maximum(1, height / 2);
+						offset += imageSize;
+					}
+
+					if (_mipMapLevels == 1 && !_isCompressedTex) {
+						glGenerateMipmap(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
+					}
 				}
 			}
 			_needRefreshTex = false;

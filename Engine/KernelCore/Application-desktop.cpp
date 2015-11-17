@@ -158,6 +158,12 @@ veApplicationDesktop::veApplicationDesktop()
 {
 	initSymbolsMap();
 	glfwInit();
+#if (VE_PLATFORM == VE_PLATFORM_MAC)
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, VE_GL_VERSION_MAJOR);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, VE_GL_VERSION_MINOR);
+#endif
 }
 
 void veApplicationDesktop::registerCallbacks()

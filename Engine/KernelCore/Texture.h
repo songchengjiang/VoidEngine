@@ -2,6 +2,7 @@
 #define _VE_TEXTURE_
 #include "Prerequisites.h"
 #include "VE_Ptr.h"
+#include <functional>
 
 class veTextureManager;
 class VE_EXPORT veTexture
@@ -47,7 +48,8 @@ public:
 	void setFilterMode(FilterMode filterMode){ _filterMode = filterMode; _needRefreshSampler = true; }
 	FilterMode getFilterMode() const { return _filterMode; }
 
-	void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE, unsigned char *data = nullptr);
+	void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE
+		, unsigned char *data = nullptr, unsigned int mipMapLevels = 1, bool isCompressedTex = false);
 
 	int getWidth() const { return _width; }
 	int getHeight() const { return _height; }
@@ -68,6 +70,7 @@ protected:
 	veTexture(GLenum target);
 
 	unsigned int perPixelSize();
+	unsigned int getImageSize(int width, int height);
 	void releaseTextureData();
 
 protected:
@@ -89,7 +92,9 @@ protected:
 	GLenum          _dataType;
 	unsigned char  *_data;
 	unsigned int    _dataSize;
+	unsigned int    _mipMapLevels;
 	unsigned int    _usage;
+	bool            _isCompressedTex;
 	bool            _isExchanged;
 
 	veTextureManager *_manager;

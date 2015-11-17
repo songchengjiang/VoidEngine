@@ -34,7 +34,7 @@ bool veMeshNode::removeChild(veMeshNode *child)
 	return true;
 }
 
-veMeshNode* veMeshNode::removeChild(unsigned int cIndex)
+veMeshNode* veMeshNode::removeChild(size_t cIndex)
 {
 	veAssert(cIndex < _children.size());
 	veMeshNode* child = _children[cIndex].get();
@@ -43,7 +43,7 @@ veMeshNode* veMeshNode::removeChild(unsigned int cIndex)
 	return child;
 }
 
-veMeshNode* veMeshNode::getChild(unsigned int cIndex)
+veMeshNode* veMeshNode::getChild(size_t cIndex)
 {
 	veAssert(cIndex < _children.size());
 	return _children[cIndex].get();

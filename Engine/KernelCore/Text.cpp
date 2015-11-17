@@ -103,7 +103,7 @@ void veText::rebuildContentBitmap(int divWidth, int divHeight)
 		if (i != _content.size() - 1)
 			width += (charBitmap->advance.x >> 6);
 	}
-	width += 2 * borderSpace;
+	width += 2 * borderSpace * VE_DEVICE_PIXEL_RATIO;
 	height += 2 * borderSpace;
 	width = FOUR_BYTES_ALIGN(width);
 
@@ -122,7 +122,7 @@ void veText::rebuildContentBitmap(int divWidth, int divHeight)
 
 	_texture->storage(width, height, 1, GL_R8, GL_RED, GL_UNSIGNED_BYTE, buf);
 	if (_type == OVERLAY)
-		_scaleMat->setValue(veMat4::scale(veVec3((float)width / (float)divWidth, (float)height / (float)divHeight, 0.0f)));
+		_scaleMat->setValue(veMat4::scale(veVec3((float)width / (float)(divWidth * VE_DEVICE_PIXEL_RATIO), (float)height / (float)(divHeight * VE_DEVICE_PIXEL_RATIO), 0.0f)));
 	else if (_type == SURFACE || _type == veSurface::BILLBOARD) {
 		_scaleMat->setValue(veMat4::scale(veVec3(width * 0.5f, height * 0.5f, 0.0f)));
 		_boundingBox.min() = veVec3(-(width * 0.5f), -(height * 0.5f), -0.5f);
