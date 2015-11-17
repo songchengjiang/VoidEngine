@@ -225,17 +225,14 @@ void veTexture::storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenu
 	VE_SAFE_DELETE_ARRAY(_data);
 	releaseMipmapData();
 	_dataSize = 0;
-	unsigned int pixelSize = perPixelSize();
-
 	for (auto &level : mipmaps) {
 		MipmapLevel mipmap;
 		mipmap.width = level.width;
 		mipmap.height = level.height;
 		mipmap.depth = level.depth;
-		unsigned int mipmapDataSize = level.width * level.height * level.depth * pixelSize;
-		mipmap.data = new unsigned char[mipmapDataSize];
-		memcpy(mipmap.data, level.data, mipmapDataSize);
-		_dataSize += mipmapDataSize;
+		mipmap.data = new unsigned char[level.dataSize];
+		memcpy(mipmap.data, level.data, level.dataSize);
+		_dataSize += level.dataSize;
 		_mipmapLevels.push_back(mipmap);
 	}
 

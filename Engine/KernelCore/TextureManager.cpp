@@ -39,9 +39,9 @@ veTexture* veTextureManager::createTexture(const std::string &name, veTexture::T
 	if (texType == veTexture::TEXTURE_2D) {
 		texture = new veTexture2D;
 	}
-	//else if (texType == veTexture::TEXTURE_RECT) {
-	//	texture = new veTextureRECT;
-	//}
+	else if (texType == veTexture::TEXTURE_3D) {
+		texture = new veTexture3D;
+	}
 	else if (texType == veTexture::TEXTURE_CUBE) {
 		texture = new veTextureCube;
 	}

@@ -42,7 +42,7 @@ public:
 			transer->setPosition(veVec3(0.5f, 0.5f, 0.0f));
 			transer->setScale(veVec3(0.5f));
 
-			veTexture *texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/sphere.jpg", "sphere"));
+			veTexture *texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/kueken7_rgb_etc2_srgb.ktx", "kueken7_rgb_etc2_srgb"));
 			auto overlay = _sceneManager->createImage("image2", texture);
 			node->addRenderableObject(overlay);
 
