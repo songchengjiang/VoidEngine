@@ -36,6 +36,15 @@ public:
 		LINEAR_MIP_MAP = GL_LINEAR_MIPMAP_LINEAR,
 	};
 
+	struct MipmapLevel
+	{
+		int width;
+		int height;
+		int depth;
+		unsigned char  *data;
+	};
+	typedef std::vector<MipmapLevel> MipmapLevels;
+
 	virtual ~veTexture();
 
 	USE_VE_PTR;
@@ -49,7 +58,9 @@ public:
 	FilterMode getFilterMode() const { return _filterMode; }
 
 	void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE
-		, unsigned char *data = nullptr, unsigned int mipMapLevels = 1, bool isCompressedTex = false);
+		, unsigned char *data = nullptr);
+
+	void storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE);
 
 	int getWidth() const { return _width; }
 	int getHeight() const { return _height; }
@@ -60,6 +71,8 @@ public:
 	unsigned char* getData() { return _data; }
 	unsigned int getDataSize() { return _dataSize; }
 	virtual unsigned int getTextureTotalMemory();
+	const MipmapLevels& getMipmapLevels() const { return _mipmapLevels; }
+	unsigned int getImageSize(int width, int height);
 
 	GLuint glTex();
 	GLenum glTarget() { return _target; }
@@ -70,8 +83,9 @@ protected:
 	veTexture(GLenum target);
 
 	unsigned int perPixelSize();
-	unsigned int getImageSize(int width, int height);
 	void releaseTextureData();
+	void releaseMipmapData();
+	static bool isCompressedTex(GLint internalformat);
 
 protected:
 
@@ -92,10 +106,11 @@ protected:
 	GLenum          _dataType;
 	unsigned char  *_data;
 	unsigned int    _dataSize;
-	unsigned int    _mipMapLevels;
 	unsigned int    _usage;
 	bool            _isCompressedTex;
 	bool            _isExchanged;
+
+	MipmapLevels    _mipmapLevels;
 
 	veTextureManager *_manager;
 };

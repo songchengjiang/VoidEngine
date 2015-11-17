@@ -24,14 +24,15 @@
     <ClCompile Include="..\..\Converter\ConverterFactory.cpp" />
     <ClCompile Include="..\..\Converter\main.cpp" />
     <ClCompile Include="..\..\Converter\ModelConverter.cpp" />
+    <ClCompile Include="..\..\Converter\TextureConverter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Converter\Argument.h" />
     <ClInclude Include="..\..\Converter\Converter.h" />
     <ClInclude Include="..\..\Converter\ConverterFactory.h" />
     <ClInclude Include="..\..\Converter\ModelConverter.h" />
-    <ClInclude Include="..\..\Converter\Prerequisites.h" />
     <ClInclude Include="..\..\Converter\PrettyWriterExt.h" />
+    <ClInclude Include="..\..\Converter\TextureConverter.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{111143A9-C8B6-4509-8215-0C4C0DB412ED}</ProjectGuid>
@@ -109,7 +110,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Dependents;$(SolutionDir)..\..\Engine</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Dependents;$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents\gli;$(SolutionDir)..\..\Dependents\glm</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -140,7 +141,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Dependents;$(SolutionDir)..\..\Engine</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Dependents;$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents\gli;$(SolutionDir)..\..\Dependents\glm</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
