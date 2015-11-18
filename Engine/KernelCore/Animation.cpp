@@ -215,7 +215,7 @@ veAnimationPlayer::~veAnimationPlayer()
 
 void veAnimationPlayer::update(veSceneManager *sm)
 {
-	if (!_entity) return;
+	if (!_entity || _animationMap.empty()) return;
 	if (_needUpdate) {
 		if (!_activeAnimationChannel && _animationContainer->getAnimationChannelNum()) {
 			_activeAnimationChannel = _animationContainer->getAnimationChannel(0);

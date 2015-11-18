@@ -5,7 +5,6 @@
 #include "Light.h"
 #include "LightManager.h"
 #include "RenderCommand.h"
-#include "EntityRenderer.h"
 #include "Mesh.h"
 #include "Material.h"
 #include "Shader.h"
@@ -94,17 +93,16 @@ public:
 		}
 		if (type == veShader::VERTEX_SHADER) {
 			if (_command.renderableObj) {
-				auto entityRender = dynamic_cast<veEntityRenderer *>(_command.renderableObj->getRenderer());
-				if (entityRender) {
-					auto meshBuffers = static_cast<veEntityRenderer::MeshBuffers *>(_command.userData);
-					if (meshBuffers->mesh) {
-						if (meshBuffers->mesh->getBoneNum())
+				if (_command.userDataList.valid()) {
+					auto mesh = static_cast<veMesh *>(_command.userDataList->buffer()[1]);
+					if (mesh) {
+						if (mesh->getBoneNum())
 							definations += SHADER_DEFINE_BONES + std::string(" 1\n");
 
 						char str[8];
-						for (unsigned int i = 0; i < meshBuffers->mesh->getVertexAtrributeNum(); ++i) {
+						for (unsigned int i = 0; i < mesh->getVertexAtrributeNum(); ++i) {
 							sprintf(str, " %d\n", i);
-							auto attr = meshBuffers->mesh->getVertexAtrribute(i);
+							auto attr = mesh->getVertexAtrribute(i);
 							definations += SHADER_DEFINE_ATTRIBUTE_ARRAY[attr.attributeType] + std::string(str);
 						}
 					}

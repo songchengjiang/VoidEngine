@@ -107,7 +107,7 @@ private:
 	void reallocSize(){
 		if (_size <= _end){
 			if (_size == 0){
-				_size = 1000;
+				_size = 10;
 				_buffer = new TYPE[_size];
 			}
 			else{

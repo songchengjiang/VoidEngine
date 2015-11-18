@@ -3,6 +3,7 @@
 #include "Prerequisites.h"
 #include "MatrixPtr.h"
 #include "VE_Ptr.h"
+#include "BaseCore/Array.h"
 #include <functional>
 #include <unordered_map>
 
@@ -35,7 +36,7 @@ struct veRenderCommand
 	veRenderableObject *renderableObj;
 	veCamera           *camera;
 	veSceneManager     *sceneManager;
-	void               *userData;
+	VE_Ptr< veArray<void*> > userDataList;
 	//veRenderer         *renderer;
     std::function<void(const veRenderCommand &)> drawFunc;
 };

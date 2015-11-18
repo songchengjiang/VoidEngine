@@ -8,29 +8,26 @@ class veNode;
 class VE_EXPORT veEntityRenderer : public veRenderer
 {
 public:
-	struct MeshBuffers
-	{
-		MeshBuffers()
-			: node(nullptr)
-			, mesh(nullptr)
-			, vao(0)
-			, vbo(0){
-
-		}
-		veNode *node;
-		veMesh *mesh;
-		GLuint vao;
-		GLuint vbo;
-		std::vector<GLuint> ibos;
-	};
 
 	veEntityRenderer();
 	~veEntityRenderer();
 
 	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override;
-	void draw(const veRenderCommand &command);
 
 protected:
+
+	struct MeshBuffers
+	{
+		MeshBuffers()
+			: vao(0)
+			, vbo(0) {
+
+		}
+
+		GLuint vao;
+		GLuint vbo;
+		std::vector<GLuint> ibos;
+	};
 
 	std::vector<MeshBuffers> _meshBuffersList;
 	GLenum _drawUsage;
