@@ -47,6 +47,8 @@ model {
         //cppFlags += "-I${file("../../../Engine/KernelCore")}".toString()
         cppFlags += "-I${file("../../../Dependents")}".toString()
         cppFlags += "-I${file("../../../Dependents/freetype/include")}".toString()
+        cppFlags += "-I${file("../../../Dependents/gli")}".toString()
+        cppFlags += "-I${file("../../../Dependents/glm")}".toString()
         cppFlags += "-Werror"
         cppFlags += "-frtti"
         cppFlags += "-fno-exceptions"

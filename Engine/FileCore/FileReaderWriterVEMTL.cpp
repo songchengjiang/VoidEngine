@@ -148,7 +148,12 @@ private:
 			}
 			else if (member->name.GetString() == SOURCE_KEY){
 				std::string source = member->value.GetString();
-				shader->setSource(_fileFolder + source);
+				if (veFile::instance()->isFileExist(source)) {
+					shader->setSource(source);
+				}
+				else {
+					shader->setSource(_fileFolder + source);
+				}
 			}else{
 				veUniform *uniform = new veUniform(member->name.GetString());
 				const Value &values = member->value;
@@ -222,7 +227,12 @@ private:
 							std::string subName = name + std::string("-") + source;
 							veTexture *subTexture = nullptr;
 							if (veFile::instance()->isSupportFile(source)) {
-								subTexture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, subName));
+								if (veFile::instance()->isFileExist(source)) {
+									subTexture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, source, subName));
+								}
+								else {
+									subTexture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, subName));
+								}							
 							}
 							else {
 								subTexture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture(source);
@@ -237,7 +247,12 @@ private:
 						if (name.empty()) name = source;
 						//veTexture *texture = _sceneManager->createTexture(source, texType);					
 						if (veFile::instance()->isSupportFile(source)) {
-							texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, name));
+							if (veFile::instance()->isFileExist(source)) {
+								texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, source, name));
+							}
+							else {
+								texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, name));
+							}
 						}
 					}
 				}

@@ -46,6 +46,7 @@ unsigned int veTexture::perPixelSize()
 	case GL_ALPHA:
 	case GL_DEPTH_COMPONENT:
 	case GL_R8:
+	case GL_LUMINANCE:
 		return 1;
 
 	case GL_R16F:
@@ -165,6 +166,7 @@ void veTexture::bind(unsigned int textureUnit)
 		glSamplerParameteri(_samplerID, GL_TEXTURE_WRAP_S, _wrapMode);
 		glSamplerParameteri(_samplerID, GL_TEXTURE_WRAP_T, _wrapMode);
 		glSamplerParameteri(_samplerID, GL_TEXTURE_WRAP_R, _wrapMode);
+
 		_needRefreshSampler = false;
 	}
 
@@ -231,6 +233,7 @@ void veTexture::storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenu
 		mipmap.height = level.height;
 		mipmap.depth = level.depth;
 		mipmap.data = new unsigned char[level.dataSize];
+		mipmap.dataSize = level.dataSize;
 		memcpy(mipmap.data, level.data, level.dataSize);
 		_dataSize += level.dataSize;
 		_mipmapLevels.push_back(mipmap);

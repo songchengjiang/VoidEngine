@@ -1,0 +1,63 @@
+{
+    "version": "1.0",
+    "name": "oldTV.vemtl",
+    "materials": [
+        {
+            "name": "mat-0",
+            "techniques": [
+                {
+                    "name": "tech-0",
+                    "passes": [
+                        {
+                            "depthTest": false,
+                            "depthWrite": false,
+                            "cullFace": true,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "postprocesser.vert",
+                                    "u_ModelMat": "M_MATRIX"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "oldTV.frag",
+                                    "u_time": "SIM_TIME",
+                                    "u_sinTime": "SIM_SIN_TIME",
+                                    "u_distortionFreq": 2.7,
+                                    "u_distortionScale": 2.5,
+                                    "u_distortionRoll": 0.93,
+                                    "u_interference": 0.5,
+                                    "u_frameLimit": 0.4,
+                                    "u_frameShape": 0.26,
+                                    "u_frameSharpness": 6.0,
+                                    "u_colorTex": 0,
+                                    "u_randomTex": 1,
+                                    "u_noiseTex": 2
+                                }
+                            ],
+                            "textureUnits": [
+                                {
+                                    "name": "scenetexture",
+                                    "wrap": "CLAMP",
+                                    "filter": "NERAEST"
+                                },
+                                {
+                                    "name": "randomTex",
+                                    "source": "textures/random3D.ktx",
+                                    "wrap": "REPEAT",
+                                    "filter": "LINEAR"
+                                },                            
+                                {
+                                    "name": "noiseTex",
+                                    "source": "textures/noiseVolume.ktx",
+                                    "wrap": "REPEAT",
+                                    "filter": "LINEAR"
+                                }                            
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -53,9 +53,9 @@ private:
 					glm::tvec3<GLsizei> dims(tex.dimensions(level));
 					size_t mipmapSize = tex.size(level);
 					veTexture::MipmapLevel mipmap;
-					mipmap.width  = glm::max(dims.x, 1);
-					mipmap.height = glm::max(dims.y, 1);
-					mipmap.depth  = glm::max(dims.z, 1);
+					mipmap.width  = dims.x;
+					mipmap.height = dims.y;
+					mipmap.depth  = dims.z;
 					mipmap.data = new unsigned char[mipmapSize];
 					mipmap.dataSize = mipmapSize;
 					memcpy(mipmap.data, tex.data(layer, face, level), mipmapSize);

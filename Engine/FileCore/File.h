@@ -41,6 +41,7 @@ public:
 	void removeSearchPath(size_t idx);
 	size_t getSearchPathCount() const { return _searchPaths.size(); }
 	bool isSupportFile(const std::string &filePath);
+	virtual bool isFileExist(const std::string &filePath) = 0;
 
 protected:
 
@@ -50,7 +51,6 @@ protected:
 
 	std::string getFileExt(const std::string &filePath);
 	virtual bool isAbsolutePath(const std::string &filePath) = 0;
-	virtual bool isFileExist(const std::string &filePath) = 0;
 
 protected:
 
