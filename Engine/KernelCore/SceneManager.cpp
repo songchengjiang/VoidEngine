@@ -170,10 +170,7 @@ void veSceneManager::startThreading()
 			std::unique_lock<std::mutex> renderLock(this->_renderingMutex);
 			this->_renderingCondition.wait(renderLock);
 			this->render();
-			{
-				std::unique_lock<std::mutex> updateLock(_updatingMutex);
-				this->handleRequests();
-			}
+			this->handleRequests();
 		}
 	});
 }
@@ -189,6 +186,9 @@ void veSceneManager::stopThreading()
 
 void veSceneManager::handleRequests()
 {
+	if (_requestQueue.empty())
+		return;
+	std::unique_lock<std::mutex> updateLock(_updatingMutex);
 	std::unique_lock<std::mutex> lock(_requestQueueMutex);
 	while (!_requestQueue.empty())
 	{

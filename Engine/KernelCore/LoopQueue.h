@@ -3,7 +3,7 @@
 #include "Prerequisites.h"
 #include <functional>
 
-#define CAPACITY 512
+#define CAPACITY 10000
 template<class T>
 class veLoopQueue
 {
