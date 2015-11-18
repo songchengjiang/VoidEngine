@@ -140,6 +140,30 @@ bool veTexture::isCompressedTex(GLint internalformat)
 	return false;
 }
 
+bool veTexture::isSupportFormat(GLenum pixelFormat)
+{
+	switch (pixelFormat)
+	{
+	case GL_RED:
+	case GL_RED_INTEGER:
+	case GL_RG:
+	case GL_RGB:
+	case GL_RGB_INTEGER:
+	case GL_RGBA:
+	case GL_RGBA_INTEGER:
+	case GL_DEPTH_COMPONENT:
+	case GL_DEPTH_STENCIL:
+	case GL_LUMINANCE_ALPHA:
+	case GL_LUMINANCE:
+	case GL_ALPHA:
+		return true;
+	default:
+		return false;
+	}
+
+	return false;
+}
+
 unsigned int veTexture::getTextureTotalMemory()
 {
 	return _dataSize;
@@ -179,6 +203,8 @@ void veTexture::bind(unsigned int textureUnit)
 void veTexture::storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat, GLenum dataType
 	, unsigned char *data)
 {
+	if (!isSupportFormat(pixelFormat))
+		return;
 	if (_width == width && _height == height && _depth == depth
 		&& _internalFormat == internalFormat && _pixelFormat == pixelFormat && _dataType == dataType
 		&& _data == data)
@@ -210,6 +236,9 @@ void veTexture::storage(int width, int height, int depth, GLint internalFormat, 
 
 void veTexture::storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenum pixelFormat, GLenum dataType)
 {
+	if (!isSupportFormat(pixelFormat))
+		return;
+
 	if (mipmaps.empty()) 
 		return;
 

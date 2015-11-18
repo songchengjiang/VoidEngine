@@ -78,6 +78,8 @@ public:
 	GLuint glTex();
 	GLenum glTarget() { return _target; }
 
+	static bool isCompressedTex(GLint internalformat);
+	static bool isSupportFormat(GLenum pixelFormat);
 
 protected:
 
@@ -86,7 +88,6 @@ protected:
 	unsigned int perPixelSize();
 	void releaseTextureData();
 	void releaseMipmapData();
-	static bool isCompressedTex(GLint internalformat);
 
 protected:
 

@@ -40,6 +40,10 @@ private:
 		GLenum pixelFormat = Format.External;
 		GLenum dataType = Format.Type;
 		veTexture::MipmapLevels mipmapLevels;
+		if (!veTexture::isSupportFormat(pixelFormat)) {
+			veLog("veFileReaderWriterKTX: Not support format!");
+			return;
+		}
 		if (tex.target() == gli::TARGET_2D) {
 			_texture = _sceneManager->createTexture(_name, veTexture::TEXTURE_2D);
 		}
