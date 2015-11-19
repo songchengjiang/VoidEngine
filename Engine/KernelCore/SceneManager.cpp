@@ -65,6 +65,7 @@ veSkyBox* veSceneManager::createSkyBox(const std::string &name, veReal size)
 	auto skybox = new veSkyBox(size);
 	skybox->_sceneManager = this;
 	skybox->setName(name);
+	_skyBox = skybox;
 	return skybox;
 }
 

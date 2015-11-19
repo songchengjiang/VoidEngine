@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "Light.h"
 #include "Ray.h"
+#include "SkyBox.h"
 #include "PostProcesser.h"
 
 #include <unordered_map>
@@ -20,7 +21,6 @@ class veCamera;
 class veLight;
 class veSurface;
 class veEntity;
-class veSkyBox;
 class veFont;
 class veText;
 class veImage;
@@ -61,6 +61,7 @@ public:
 	const veNodeList& getNodeList() const { return _nodeList; }
 	const veCameraList& getCameraList() const { return _cameraList; }
 	const veLightList& getLightList() const { return _lightList; }
+	const veSkyBox* getSkyBox() const { return _skyBox.get(); }
 
 	void loadLightConfiguration(const std::string &filePath);
 
@@ -94,6 +95,7 @@ protected:
 	veCameraList _cameraList;
 	veLightList _lightList;
 	veRayList   _rayList;
+	VE_Ptr<veSkyBox> _skyBox;
 	vePostProcesserList _postProcesserList;
 	VE_Ptr<veFrameBufferObject> _postProcesserFBO;
 

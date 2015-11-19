@@ -18,23 +18,31 @@
                                     "source": "shaders/CookTorrance_OrenNayarShader.vert",
                                     "u_ModelViewProjectMat": "MVP_MATRIX",
                                     "u_ModelViewMat": "MV_MATRIX",
+                                    "u_InvViewMat": "INV_V_MATRIX",
                                     "u_NormalMat": "NORMAL_MATRIX"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "shaders/CookTorrance_OrenNayarShader.frag",
-                                    "u_ambient": [0.000000,0.000000,0.000000
+                                    "u_ambient": [0.00000,0.00000,0.00000
                                     ],
-                                    "u_diffuse": [0.800000,0.800000,0.800000
+                                    "u_diffuse": [0.500000,0.500000,0.500000
                                     ],
-                                    "u_specular": [0.200000,0.200000,0.200000
+                                    "u_specular": [0.800000,0.800000,0.800000
                                     ],
-                                    "u_smoothness":0.5,
+                                    "u_smoothness": 0.8,
+                                    "u_fresnelFactor":1.0,
                                     "u_opacity": 1.0,
-                                    "u_refractivity":0.5,
-                                    "u_reflectivity":0.000000
+                                    "u_refractivity":0.8,
+                                    "u_reflectivity": 0.2,
+                                    "u_cubeMap": 0
                                 }
-                            ]
+                            ],
+                          "textureUnits": [
+                            {
+                              "name": "skybox.snow.texture"
+                            }
+                          ]
                         }
                     ]
                 },

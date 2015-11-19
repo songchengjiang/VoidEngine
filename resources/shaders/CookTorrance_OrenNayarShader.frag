@@ -3,12 +3,23 @@ uniform vec3 u_diffuse;
 uniform vec3 u_specular;
 uniform float u_smoothness; 
 uniform float u_opacity;    
+uniform float u_fresnelFactor; 
 uniform float u_refractivity; 
-uniform float u_reflectivity;   
+uniform float u_reflectivity;
+#ifdef VE_USE_TEXTURES   
 uniform sampler2D u_diffuseTex;
+#endif
+#ifdef VE_USE_SKYBOX
+uniform samplerCube u_cubeMap;
+#endif
 in vec4 v_position;
 in vec4 v_normalAndepth;                   
 in vec2 v_texcoord;  
+
+#ifdef VE_USE_SKYBOX
+in vec3 v_refract; 
+in vec3 v_reflect;
+#endif
 
 layout(location=0) out vec4 fragColor;
 #ifdef VE_USE_DEFERRED_PATH
@@ -41,7 +52,7 @@ float CookTorrance(float NdotL, float NdotV, float HdotV, float NdotH){
 	float Gv = NdotV / (NdotV * (1.0 - k) + k);
 	float G = Gl * Gv;
 
-	float F = u_refractivity + (1.0 - u_refractivity) * pow(1.0 - HdotV, 5.0);
+	float F = u_fresnelFactor + (1.0 - u_fresnelFactor) * pow(1.0 - HdotV, 5.0);
 	
 	float Db = PI * pow(NdotH * NdotH * (alpha2 - 1) + 1, 2.0);
 	float D = alpha2 / Db; 	
@@ -103,11 +114,20 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
              
 void main(){
     
+	vec3 ambient = u_ambient;
+#ifdef VE_USE_SKYBOX
+	if (0.0 < u_refractivity)
+		ambient += texture(u_cubeMap, vec3(v_refract.x, -v_refract.yz)).xyz * u_refractivity;
+	if (0.0 < u_reflectivity)
+		ambient += texture(u_cubeMap, vec3(v_reflect.x, -v_reflect.yz)).xyz * u_reflectivity;
+	ambient = clamp(ambient, 0.0, 1.0);
+#endif
+
 #ifdef VE_USE_DEFERRED_PATH
 #ifdef VE_USE_TEXTURES
     fragColor = clamp(vec4(texture(u_diffuseTex, v_texcoord).xyz, u_opacity), 0.0, 1.0);
 #else //NOT VE_USE_TEXTURES
-    fragColor = clamp(vec4(u_diffuse + u_specular + u_ambient, u_opacity), 0.0, 1.0);
+    fragColor = clamp(vec4(u_diffuse + u_specular + ambient, u_opacity), 0.0, 1.0);
 #endif
     position = vec4(v_position.xyz, u_shininess);
     normAndepth = v_normalAndepth;
@@ -117,15 +137,15 @@ void main(){
     vec3 specfactor;
     Lighting(diffactor, specfactor);    
 #ifdef VE_USE_TEXTURES
-    fragColor = clamp(vec4(diffactor * u_diffuse * texture(u_diffuseTex, v_texcoord).xyz + specfactor * u_specular + u_ambient, u_opacity), 0.0, 1.0);
+    fragColor = clamp(vec4(diffactor * u_diffuse * texture(u_diffuseTex, v_texcoord).xyz + specfactor * u_specular + ambient, u_opacity), 0.0, 1.0);
 #else //NOT VE_USE_TEXTURES
-    fragColor = clamp(vec4(diffactor * u_diffuse + specfactor * u_specular + u_ambient, u_opacity), 0.0, 1.0);
+    fragColor = clamp(vec4(diffactor * u_diffuse + specfactor * u_specular + ambient, u_opacity), 0.0, 1.0);
 #endif //VE_USE_TEXTURES
 #else //NOT VE_USE_LIGHTS
 #ifdef VE_USE_TEXTURES
     fragColor = clamp(vec4(texture(u_diffuseTex, v_texcoord).xyz, u_opacity), 0.0, 1.0);
 #else //NOT VE_USE_TEXTURES
-    fragColor = clamp(vec4(u_diffuse + u_specular + u_ambient, u_opacity), 0.0, 1.0);
+    fragColor = clamp(vec4(u_diffuse + u_specular + ambient, u_opacity), 0.0, 1.0);
 #endif //VE_USE_TEXTURES
 #endif //END VE_USE_LIGHTS
 #endif //END VE_USE_DEFERRED_PATH

@@ -126,6 +126,12 @@ veTexture* vePass::getTexture(unsigned int idx)
 	return _textures[idx].get();
 }
 
+const veTexture* vePass::getTexture(unsigned int idx) const
+{
+	veAssert(idx < _textures.size());
+	return _textures[idx].get();
+}
+
 veTexture* vePass::removeTexture(unsigned int idx)
 {
 	veAssert(idx < _textures.size());

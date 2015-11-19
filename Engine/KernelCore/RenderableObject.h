@@ -34,6 +34,7 @@ public:
 	veRenderer* getRenderer() const { return _renderer.get(); }
 	virtual void setMaterialArray(veMaterialArray *material) { _materials = material; }
 	veMaterialArray* getMaterialArray() { return _materials.get(); }
+	const veMaterialArray* getMaterialArray() const { return _materials.get(); }
 	void setBoundingBox(const veBoundingBox &bbox) { _boundingBox = bbox; }
 	const veBoundingBox& getBoundingBox() const { return _boundingBox; }
 

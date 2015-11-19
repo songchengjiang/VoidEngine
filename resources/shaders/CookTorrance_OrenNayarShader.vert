@@ -25,6 +25,7 @@ layout (location = ATTR_BONE_WEIGHTS) in vec4 boneWeights;
 uniform mat4 u_ModelViewProjectMat;
 uniform mat4 u_ModelViewMat;                       
 uniform mat3 u_NormalMat;
+
 #ifdef VE_USE_BONES
 uniform mat4 u_BoneMates[60];
 void updateBonePositionAndNormal(out vec4 pos, out vec3 norm)
@@ -49,6 +50,14 @@ out vec3 tf_normal;
 out vec4 v_position;          
 out vec4 v_normalAndepth;                   
 out vec2 v_texcoord;  
+
+#ifdef VE_USE_SKYBOX
+uniform mat4 u_InvViewMat;
+uniform float u_refractivity; 
+uniform float u_reflectivity;
+out vec3 v_refract; 
+out vec3 v_reflect;
+#endif
 
 void main()                                                 
 {   
@@ -75,5 +84,22 @@ void main()
 	gl_Position = u_ModelViewProjectMat * finalPos; 
 	v_normalAndepth = vec4(u_NormalMat * finalNorm, gl_Position.w);
 #endif	
-	  
+
+#ifdef VE_USE_SKYBOX
+	vec3 pos = normalize(v_position.xyz);
+	vec3 norm = normalize(v_normalAndepth.xyz);
+	if (0.0 < u_refractivity){
+		v_refract = refract(pos, norm, u_refractivity);
+		v_refract = (u_InvViewMat * vec4(v_refract, 0.0)).xyz;
+	}else{
+		v_refract = vec3(0);
+	}
+
+	if (0.0 < u_reflectivity){
+		v_reflect = reflect(pos, norm);
+		v_reflect = (u_InvViewMat * vec4(v_reflect, 0.0)).xyz;
+	}else{
+		v_reflect = vec3(0);
+	}
+#endif
 }

@@ -18,6 +18,7 @@ static const std::string SHADER_DEFINE_LIGHTS = "#define VE_USE_LIGHTS";
 static const std::string SHADER_DEFINE_TEXTURES = "#define VE_USE_TEXTURES";
 static const std::string SHADER_DEFINE_TRANSFORMFEEDBACK = "#define VE_USE_TRANSFORMFEEDBACK";
 static const std::string SHADER_DEFINE_DEFERRED_PATH = "#define VE_USE_DEFERRED_PATH";
+static const std::string SHADER_DEFINE_SKYBOX = "#define VE_USE_SKYBOX";
 static const std::string SHADER_DEFINE_ATTRIBUTE_ARRAY[] = {
 	"#define ATTR_POSITION",
 	"#define ATTR_NORMAL",
@@ -114,8 +115,26 @@ public:
 			}
 		}
 
-		if (type == veShader::FRAGMENT_SHADER) {
-			if (0 < _command.pass->getTextureNum()) {
+		if (true) {
+			bool hasTex = false;
+			if (_command.camera->getSceneManager()->getSkyBox()) {
+				if (0 < _command.pass->getTextureNum()) {
+					for (size_t i = 0; i < _command.pass->getTextureNum(); ++i) {
+						if (_command.pass->getTexture(i)->getName()
+							== _command.camera->getSceneManager()->getSkyBox()->getMaterialArray()->getMaterial(0)->getTechnique(0)->getPass(0)->getTexture(0)->getName()) {
+							definations += SHADER_DEFINE_SKYBOX + std::string(" 1\n");
+						}else {
+							hasTex = true;
+						}
+					}
+				}
+			}
+			else {
+				if (0 < _command.pass->getTextureNum()) {
+					hasTex = true;
+				}
+			}
+			if (hasTex) {
 				definations += SHADER_DEFINE_TEXTURES + std::string(" 1\n");
 			}
 		}

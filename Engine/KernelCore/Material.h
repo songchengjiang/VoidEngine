@@ -77,6 +77,7 @@ public:
 	void addTexture(veTexture *texture);
 	void setTexture(unsigned int idx, veTexture *texture);
 	veTexture* getTexture(unsigned int idx);
+	const veTexture* getTexture(unsigned int idx) const;
 	veTexture* removeTexture(unsigned int idx);
 	size_t getTextureNum() const { return _textures.size(); }
 
