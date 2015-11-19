@@ -79,8 +79,8 @@ veShader* veText::getFragmentShader()
 	layout(location = 0) out vec4 fragColor; \n \
 	void main() {  \n \
 		float glyph = texture(u_texture, v_texcoord).r; \n \
-		//if (glyph <= 0.1)  \n \
-		//	discard;  \n \
+		if (glyph <= 0.1)  \n \
+			discard;  \n \
 		fragColor = u_Color * glyph; \n \
 	}";
 
