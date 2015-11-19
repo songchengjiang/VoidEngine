@@ -6,32 +6,32 @@
             "name": "mat-0",
             "techniques": [
                 {
-                    "name": "NoLightingRendering",
+                    "name": "NormalRendering",
                     "passes": [
                         {
                             "depthTest": true,
                             "depthWrite": true,
                             "cullFace": true,
-                            "blendFunc": ["ONE", "ZERO"],
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "BlinnPhoneShader.vert",
+                                    "source": "shaders/CookTorrance_OrenNayarShader.vert",
                                     "u_ModelViewProjectMat": "MVP_MATRIX",
                                     "u_ModelViewMat": "MV_MATRIX",
                                     "u_NormalMat": "NORMAL_MATRIX"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "BlinnPhoneShader.frag",
+                                    "source": "shaders/CookTorrance_OrenNayarShader.frag",
                                     "u_ambient": [0.000000,0.000000,0.000000
                                     ],
-                                    "u_diffuse": [0.500000,0.500000,0.500000
+                                    "u_diffuse": [0.800000,0.800000,0.800000
                                     ],
                                     "u_specular": [0.800000,0.800000,0.800000
                                     ],
-                                    "u_shininess":5.656854,
-                                    "u_opacity":1.0,
+                                    "u_smoothness":0.5,
+                                    "u_opacity": 1.0,
+                                    "u_refractivity":0.5,
                                     "u_reflectivity":0.000000
                                 }
                             ]

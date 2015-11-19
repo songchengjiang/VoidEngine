@@ -22,3 +22,5 @@ Debug
 *.ipdb
 *.exp
 local.properties
+*.jks
+/*.suo
