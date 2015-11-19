@@ -3,6 +3,9 @@
 #include <time.h>
 #if (VE_PLATFORM == VE_PLATFORM_WIN32) || (VE_PLATFORM == VE_PLATFORM_MAC)
 #include "Application-desktop.h"
+#if (VE_PLATFORM == VE_PLATFORM_WIN32)
+#include <windows.h>
+#endif
 #elif VE_PLATFORM == VE_PLATFORM_ANDROID
 #include "Application-android.h"
 #endif
@@ -42,29 +45,39 @@ void veApplication::setSceneManager(veSceneManager *sm)
 	_sceneManager = sm;
 }
 
+#if (VE_PLATFORM == VE_PLATFORM_WIN32)
 bool veApplication::run()
 {
 	if (!_sceneManager.valid()) return false;
     _isRunning = true;
+
+	LARGE_INTEGER  frequency;
+	LARGE_INTEGER frameTimeLimit;
+	LARGE_INTEGER preFrameTime;
+	QueryPerformanceFrequency(&frequency);
+	frameTimeLimit.QuadPart = (1.0 / 60.0) * frequency.QuadPart;
+	QueryPerformanceCounter(&preFrameTime);
+	double frequencyPreSec = 1.0 / frequency.QuadPart;
 	_sceneManager->startThreading();
-    clock_t frameTimeClocks = 1.0 / 60.0 * CLOCKS_PER_SEC;
-	clock_t preFrameTime = clock();
-    double invertClocksSec = 1.0 / (double)CLOCKS_PER_SEC;
 	while (_isRunning && !isWindowShouldClose())
 	{
-		clock_t currentFrameTime = clock();
-		_sceneManager->setDeltaTime((currentFrameTime - preFrameTime) * invertClocksSec);
-        //veLog("DeltaTime: %f\n", _sceneManager->getDeltaTime());
-		this->dispatchEvents();
-		_sceneManager->simulation();
-        while ((clock() - currentFrameTime) < frameTimeClocks) {
-            std::this_thread::sleep_for(std::chrono::microseconds(1));
-        }
-        preFrameTime = currentFrameTime;
+		LARGE_INTEGER currentFrameTime;
+		QueryPerformanceCounter(&currentFrameTime);
+		if (frameTimeLimit.QuadPart <= (currentFrameTime.QuadPart - preFrameTime.QuadPart)) {
+			_sceneManager->setDeltaTime((currentFrameTime.QuadPart - preFrameTime.QuadPart) * frequencyPreSec);
+			//veLog("DeltaTime: %f\n", _sceneManager->getDeltaTime());
+			this->dispatchEvents();
+			_sceneManager->simulation();
+			preFrameTime.QuadPart = currentFrameTime.QuadPart;
+		}else {
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		}
 	}
 	_sceneManager->stopThreading();
+
 	return true;
 }
+#endif
 
 void veApplication::stop()
 {

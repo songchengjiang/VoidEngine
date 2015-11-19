@@ -95,14 +95,14 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 			}
 
 			auto technique = mesh->getMaterial()->activeTechnique();
-			veMat4 meshRootMat =  mesh->getAttachedNode()->toMeshNodeRootMatrix();
+			veMat4 meshRootMat = nTow * mesh->getAttachedNode()->toMeshNodeRootMatrix();
 			for (unsigned int i = 0; i < technique->getPassNum(); ++i) {
 				auto pass = technique->getPass(i);
 				if (camera->getMask() & pass->drawMask()) {
 					bool isTransparent = pass->blendFunc() != veBlendFunc::DISABLE ? true : false;
 					veRenderCommand rc;
 					rc.pass = pass;
-					rc.worldMatrix = new veMat4Ptr(nTow * meshRootMat);
+					rc.worldMatrix = new veMat4Ptr(meshRootMat);
 					//rc.attachedNode = node;
 					rc.renderableObj = renderableObj;
 					rc.userDataList = new veArray<void *>;

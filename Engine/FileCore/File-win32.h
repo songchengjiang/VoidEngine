@@ -3,7 +3,6 @@
 #include "File.h"
 
 #if (VE_PLATFORM == VE_PLATFORM_WIN32)
-#pragma warning( disable : 4005 )
 class VE_EXPORT veFileWin32 : public veFile
 {
 public:
