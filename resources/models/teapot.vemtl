@@ -27,7 +27,7 @@
                                     ],
                                     "u_diffuse": [0.800000,0.800000,0.800000
                                     ],
-                                    "u_specular": [0.800000,0.800000,0.800000
+                                    "u_specular": [0.200000,0.200000,0.200000
                                     ],
                                     "u_smoothness":0.5,
                                     "u_opacity": 1.0,
@@ -48,7 +48,7 @@
                       "shaders": [
                         {
                           "type": "VERTEX_SHADER",
-                          "source": "ReflectionShader.vert",
+                          "source": "shaders/ReflectionShader.vert",
                           "u_ModelViewProjectMat": "MVP_MATRIX",
                           "u_ModelViewMat": "MV_MATRIX",
                           "u_InvViewMat": "INV_V_MATRIX",
@@ -56,7 +56,7 @@
                         },
                         {
                           "type": "FRAGMENT_SHADER",
-                          "source": "ReflectionAndRefractionShader.frag",
+                          "source": "shaders/ReflectionAndRefractionShader.frag",
                           "u_cubeMap": 0
                         }
                       ],
@@ -78,7 +78,7 @@
                               "shaders": [
                                   {
                                       "type": "VERTEX_SHADER",
-                                      "source": "RefractionShader.vert",
+                                      "source": "shaders/RefractionShader.vert",
                                       "u_ModelViewProjectMat": "MVP_MATRIX",
                                       "u_ModelViewMat": "MV_MATRIX",
                                       "u_InvViewMat": "INV_V_MATRIX",
@@ -87,7 +87,7 @@
                                   },
                                   {
                                       "type": "FRAGMENT_SHADER",
-                                      "source": "ReflectionAndRefractionShader.frag",
+                                      "source": "shaders/ReflectionAndRefractionShader.frag",
                                       "u_cubeMap": 0
                                   }
                               ],
