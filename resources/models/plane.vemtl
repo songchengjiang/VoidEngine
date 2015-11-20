@@ -38,6 +38,7 @@
                             ],
                             "textureUnits": [
                                 {
+                                    "name":  "sphere",
                                     "source": "sphere.png",
                                     "wrap": "REPEAT",
                                     "filter": "NERAEST"

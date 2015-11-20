@@ -41,6 +41,7 @@
                                 {
                                     "name": "ASCIITex",
                                     "source": "textures/ASCII.ktx",
+                                    "type": "TEX_3D",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }                          

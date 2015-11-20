@@ -40,7 +40,7 @@ private:
 		GLenum pixelFormat = Format.External;
 		GLenum dataType = Format.Type;
 		veTexture::MipmapLevels mipmapLevels;
-		if (!veTexture::isSupportFormat(pixelFormat)) {
+		if (!veTexture::isCompressedTex(internalFormat) && !veTexture::isSupportFormat(pixelFormat)) {
 			veLog("veFileReaderWriterKTX: Not support format!");
 			return;
 		}

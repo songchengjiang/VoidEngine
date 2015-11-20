@@ -6,7 +6,40 @@
             "name": "mat-0",
             "techniques": [
                 {
-                    "name": "NormalRendering",
+                    "name": "NoLightingRendering",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": true,
+                            "blendFunc": ["ONE", "ZERO"],
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "BlinnPhoneShader.vert",
+                                    "u_ModelViewProjectMat": "MVP_MATRIX",
+                                    "u_ModelViewMat": "MV_MATRIX",
+                                    "u_NormalMat": "NORMAL_MATRIX"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "BlinnPhoneShader.frag",
+                                    "u_ambient": [0.000000,0.000000,0.000000
+                                    ],
+                                    "u_diffuse": [0.500000,0.500000,0.500000
+                                    ],
+                                    "u_specular": [0.800000,0.800000,0.800000
+                                    ],
+                                    "u_shininess":5.656854,
+                                    "u_opacity":1.0,
+                                    "u_reflectivity":0.000000
+                                }
+                            ]
+                        }
+                    ]
+                },                
+                {
+                    "name": "CookTorrance_OrenNayarRendering",
                     "passes": [
                         {
                             "depthTest": true,
@@ -33,14 +66,15 @@
                                     "u_smoothness": 0.8,
                                     "u_fresnelFactor":1.0,
                                     "u_opacity": 1.0,
-                                    "u_refractivity":0.8,
-                                    "u_reflectivity": 0.2,
+                                    "u_refractivity":0.0,
+                                    "u_reflectivity": 1.0,
                                     "u_cubeMap": 0
                                 }
                             ],
                           "textureUnits": [
                             {
-                              "name": "skybox.snow.texture"
+                              "name": "skybox.snow.texture",
+                              "type": "TEX_CUBE"
                             }
                           ]
                         }
@@ -70,7 +104,8 @@
                       ],
                       "textureUnits": [
                         {
-                          "name": "skybox.snow.texture"
+                          "name": "skybox.snow.texture",
+                          "type": "TEX_CUBE"                        
                         }
                       ]
                     }
@@ -101,7 +136,8 @@
                               ],
                               "textureUnits": [
                                   {
-                                      "name": "skybox.snow.texture"
+                                      "name": "skybox.snow.texture",
+                                      "type": "TEX_CUBE"                                   
                                   }
                               ]  
                           }

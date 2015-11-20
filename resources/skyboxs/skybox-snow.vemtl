@@ -31,7 +31,7 @@
                                 "type": "TEX_CUBE",
                                 "source": [ "snow_posx.jpg", "snow_negx.jpg", "snow_posy.jpg", "snow_negy.jpg", "snow_posz.jpg", "snow_negz.jpg" ],
                                 "wrap": "CLAMP",
-                                "filter": "LINEAR_MIP_MAP_KEY"
+                                "filter": "LINEAR_MIP_MAP"
                               }
                             ]
                         }  

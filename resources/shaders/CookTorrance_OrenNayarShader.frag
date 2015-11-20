@@ -129,7 +129,7 @@ void main(){
 #else //NOT VE_USE_TEXTURES
     fragColor = clamp(vec4(u_diffuse + u_specular + ambient, u_opacity), 0.0, 1.0);
 #endif
-    position = vec4(v_position.xyz, u_shininess);
+    position = vec4(v_position.xyz, u_smoothness);
     normAndepth = v_normalAndepth;
 #else //NOT VE_USE_DEFERRED_PATH
 #ifdef VE_USE_LIGHTS

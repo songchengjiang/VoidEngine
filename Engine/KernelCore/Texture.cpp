@@ -2,16 +2,15 @@
 #include "TextureManager.h"
 #include "FileCore/File.h"
 #include "BaseCore/MathAlgorithm.h"
-const int veTexture::DEFAULT_WIDTH = 512;
-const int veTexture::DEFAULT_HEIGHT = 512;
-
-const int veTexture::DEFAULT_DEPTH = 1;
+const int veTexture::DEFAULT_WIDTH = 0;
+const int veTexture::DEFAULT_HEIGHT = 0;
+const int veTexture::DEFAULT_DEPTH = 0;
 const int veTexture::DEFAULT_INTERNAL_FORMAT = GL_RGBA32F;
 
 veTexture::~veTexture()
 {
-	glDeleteTextures(1, &_texID);
 	VE_SAFE_DELETE_ARRAY(_data);
+	releaseTextureData();
 	releaseMipmapData();
 }
 
@@ -184,13 +183,12 @@ void veTexture::bind(unsigned int textureUnit)
 	if (_needRefreshSampler) {
 		glSamplerParameteri(_samplerID, GL_TEXTURE_MIN_FILTER, _filterMode);
 		if (_filterMode == NEAREST_MIP_MAP || _filterMode == LINEAR_MIP_MAP)
-			glSamplerParameteri(_samplerID, GL_TEXTURE_MAG_FILTER, _filterMode == NEAREST_MIP_MAP? GL_NEAREST: GL_LINEAR);
+			glSamplerParameteri(_samplerID, GL_TEXTURE_MAG_FILTER, _filterMode == NEAREST_MIP_MAP ? GL_NEAREST : GL_LINEAR);
 		else
 			glSamplerParameteri(_samplerID, GL_TEXTURE_MAG_FILTER, _filterMode);
 		glSamplerParameteri(_samplerID, GL_TEXTURE_WRAP_S, _wrapMode);
 		glSamplerParameteri(_samplerID, GL_TEXTURE_WRAP_T, _wrapMode);
 		glSamplerParameteri(_samplerID, GL_TEXTURE_WRAP_R, _wrapMode);
-
 		_needRefreshSampler = false;
 	}
 
@@ -371,7 +369,7 @@ void veTexture3D::bind(unsigned int textureUnit)
 veTextureCube::veTextureCube()
 	: veTexture(GL_TEXTURE_CUBE_MAP)
 {
-
+	_type = veTexture::TEXTURE_CUBE;
 }
 
 unsigned int veTextureCube::getTextureTotalMemory()

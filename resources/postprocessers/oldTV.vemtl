@@ -44,12 +44,14 @@
                                 {
                                     "name": "randomTex",
                                     "source": "textures/random3D.ktx",
+                                    "type": "TEX_3D",
                                     "wrap": "REPEAT",
                                     "filter": "LINEAR"
                                 },                            
                                 {
                                     "name": "noiseTex",
                                     "source": "textures/noiseVolume.ktx",
+                                    "type": "TEX_3D",
                                     "wrap": "REPEAT",
                                     "filter": "LINEAR"
                                 }                            

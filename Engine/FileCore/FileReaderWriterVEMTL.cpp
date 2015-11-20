@@ -204,24 +204,25 @@ private:
 		if (texVal.HasMember(NAME_KEY.c_str())) {
 			name = texVal[NAME_KEY.c_str()].GetString();
 		}
+		if (name.empty())
+			return;
 		if (texVal.HasMember(TYPE_KEY.c_str())) {
 			texType = getTextureType(texVal[TYPE_KEY.c_str()].GetString());
 		}
 
 		do 
 		{
-			if (!name.empty() && !texVal.HasMember(SOURCE_KEY.c_str())) {
+			if (true) {
 				texture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture(name);
-				if (texture) break;
-				texture = _sceneManager->createTexture(name, texType);
-			}
-			if (!texture) {
+				if (!texture && !name.empty()) {
+					texture = _sceneManager->createTexture(name, texType);
+				}
+
 				if (texVal.HasMember(SOURCE_KEY.c_str())) {
 					if (texType == veTexture::TEXTURE_CUBE) {
 						const Value &sources = texVal[SOURCE_KEY.c_str()];
 						if (sources.Size() != 6) return;
-						if (name.empty()) name = sources[0].GetString();
-						texture = _sceneManager->createTexture(name, texType);
+						//texture = _sceneManager->createTexture(name, texType);
 						for (unsigned int i = 0; i < sources.Size(); ++i) {
 							std::string source = sources[i].GetString();
 							std::string subName = name + std::string("-") + source;
@@ -244,15 +245,23 @@ private:
 					}
 					else {
 						std::string source = texVal[SOURCE_KEY.c_str()].GetString();
-						if (name.empty()) name = source;
 						//veTexture *texture = _sceneManager->createTexture(source, texType);					
 						if (veFile::instance()->isSupportFile(source)) {
+							veTexture *tempTex = nullptr;
 							if (veFile::instance()->isFileExist(source)) {
-								texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, source, name));
+								tempTex = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, source, _name + std::string("-temp")));
 							}
 							else {
-								texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, name));
+								tempTex = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, _name + std::string("-temp")));
 							}
+
+							if (tempTex->getMipmapLevels().empty()) {
+								texture->storage(tempTex->getWidth(), tempTex->getHeight(), tempTex->getDepth(), tempTex->getInternalFormat(), tempTex->getPixelFormat(), tempTex->getDataType(), tempTex->getData());
+							}
+							else {
+								texture->storage(tempTex->getMipmapLevels(), tempTex->getInternalFormat(), tempTex->getPixelFormat(), tempTex->getDataType());
+							}
+							static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->removeTexture(tempTex);
 						}
 					}
 				}

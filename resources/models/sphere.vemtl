@@ -35,7 +35,49 @@
                             ]
                         }
                     ]
-                }
+                },
+                {
+                    "name": "NormalRendering",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": true,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "shaders/CookTorrance_OrenNayarShader.vert",
+                                    "u_ModelViewProjectMat": "MVP_MATRIX",
+                                    "u_ModelViewMat": "MV_MATRIX",
+                                    "u_InvViewMat": "INV_V_MATRIX",
+                                    "u_NormalMat": "NORMAL_MATRIX"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "shaders/CookTorrance_OrenNayarShader.frag",
+                                    "u_ambient": [0.00000,0.00000,0.00000
+                                    ],
+                                    "u_diffuse": [1.00000,1.00000,1.00000
+                                    ],
+                                    "u_specular": [1.00000,1.00000,1.00000
+                                    ],
+                                    "u_smoothness": 0.0,
+                                    "u_fresnelFactor":0.0,
+                                    "u_opacity": 1.0,
+                                    "u_refractivity":0.9,
+                                    "u_reflectivity": 0.1,
+                                    "u_cubeMap": 0
+                                }
+                            ],
+                          "textureUnits": [
+                            {
+                              "name": "skybox.snow.texture",
+                              "type": "TEX_CUBE"
+                            }
+                          ]
+                        }
+                    ]
+                }            
             ]
         }
     ]
