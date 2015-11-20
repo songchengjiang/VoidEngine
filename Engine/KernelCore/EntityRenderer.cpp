@@ -131,7 +131,7 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 
 						int ec = glGetError();
 						if (ec != GL_NO_ERROR) {
-							veLog("GL ERROR CODE: %d", ec);
+							veLog("GL ERROR CODE: 0x%x", ec);
 						}
 					};
 					pass->visit(rc);

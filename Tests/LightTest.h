@@ -13,6 +13,7 @@ public:
 		root->setMatrix(veMat4::rotation(veQuat(-veMath::HALF_PI, veVec3::UNIT_X)));
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot"));
+			entity->getMaterialArray()->getMaterial(0)->activateTechnique(entity->getMaterialArray()->getMaterial(0)->getTechnique("CookTorrance_OrenNayarRendering"));
 			veNode *node = _sceneManager->createNode("node0");
 			node->addRenderableObject(entity);
 			obj = entity;
@@ -20,6 +21,7 @@ public:
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
 			transer->setScale(veVec3(2.0f));
+			transer->setPosition(veVec3(-5.0f, 0.0f, 0.0f));
 			transer->setRotation(veQuat(veMath::HALF_PI, veVec3::UNIT_X));
 			root->addChild(node);
 		}
@@ -42,7 +44,22 @@ public:
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
 			transer->setScale(veVec3(2.0f));
+			transer->setPosition(veVec3(-5.0f, 0.0f, 0.0f));
 			transer->setRotation(veQuat(-veMath::HALF_PI, veVec3::UNIT_X));
+			root->addChild(node);
+		}
+
+
+		{
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "sphere"));
+			entity->getMaterialArray()->getMaterial(0)->activateTechnique(entity->getMaterialArray()->getMaterial(0)->getTechnique(1));
+			veNode *node = _sceneManager->createNode("node3");
+			node->addRenderableObject(entity);
+			//node->addComponent(new KeyboardInputer);
+			veTransformer *transer = new veTransformer;
+			node->addComponent(transer);
+			transer->setScale(veVec3(2.0f));
+			transer->setPosition(veVec3(5.0f, 0.0f, 2.0f));
 			root->addChild(node);
 		}
 

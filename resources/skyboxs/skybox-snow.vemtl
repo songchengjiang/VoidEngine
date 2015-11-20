@@ -29,7 +29,7 @@
                               {
                                 "name":  "skybox.snow.texture",
                                 "type": "TEX_CUBE",
-                                "source": [ "snow_posx.jpg", "snow_negx.jpg", "snow_posy.jpg", "snow_negy.jpg", "snow_posz.jpg", "snow_negz.jpg" ],
+                                "source": [ "snow_posx.ktx", "snow_negx.ktx", "snow_posy.ktx", "snow_negy.ktx", "snow_posz.ktx", "snow_negz.ktx" ],
                                 "wrap": "CLAMP",
                                 "filter": "LINEAR_MIP_MAP"
                               }

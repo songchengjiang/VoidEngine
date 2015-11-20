@@ -117,9 +117,9 @@ void main(){
 	vec3 ambient = u_ambient;
 #ifdef VE_USE_SKYBOX
 	if (0.0 < u_refractivity)
-		ambient += texture(u_cubeMap, vec3(v_refract.x, -v_refract.yz)).xyz * u_refractivity;
+		ambient += texture(u_cubeMap, vec3(v_refract.x, -v_refract.yz)).xyz * u_smoothness;
 	if (0.0 < u_reflectivity)
-		ambient += texture(u_cubeMap, vec3(v_reflect.x, -v_reflect.yz)).xyz * u_reflectivity;
+		ambient += texture(u_cubeMap, vec3(v_reflect.x, -v_reflect.yz)).xyz * u_smoothness;
 	ambient = clamp(ambient, 0.0, 1.0);
 #endif
 

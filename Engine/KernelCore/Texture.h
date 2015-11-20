@@ -36,6 +36,14 @@ public:
 		LINEAR_MIP_MAP = GL_LINEAR_MIPMAP_LINEAR,
 	};
 
+	enum SwizzleMode
+	{
+		SWIZZLE_R = GL_RED,
+		SWIZZLE_G = GL_GREEN,
+		SWIZZLE_B = GL_BLUE,
+		SWIZZLE_A = GL_ALPHA,
+	};
+
 	struct MipmapLevel
 	{
 		int width;
@@ -57,6 +65,8 @@ public:
 	WrapMode getWrapMode() const { return _wrapMode; }
 	void setFilterMode(FilterMode filterMode){ _filterMode = filterMode; _needRefreshSampler = true; }
 	FilterMode getFilterMode() const { return _filterMode; }
+	void setSwizzleMode(SwizzleMode r, SwizzleMode g, SwizzleMode b, SwizzleMode a);
+	void getSwizzleMode(SwizzleMode &r, SwizzleMode &g, SwizzleMode &b, SwizzleMode &a);
 
 	void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE
 		, unsigned char *data = nullptr);
@@ -93,10 +103,10 @@ protected:
 
 	WrapMode        _wrapMode;
 	FilterMode      _filterMode;
+	SwizzleMode     _swizzleMode[4];
 	bool            _needRefreshTex;
 	bool            _needRefreshSampler;
 	GLuint          _texID;
-	GLuint          _samplerID;
 	GLenum          _target;
 	TextureType     _type;
 

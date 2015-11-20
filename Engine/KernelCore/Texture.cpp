@@ -21,7 +21,6 @@ veTexture::veTexture(GLenum target)
 	, _needRefreshTex(true)
 	, _needRefreshSampler(true)
 	, _texID(0)
-	, _samplerID(0)
 	, _target(target)
 	, _width(DEFAULT_WIDTH)
 	, _height(DEFAULT_HEIGHT)
@@ -36,6 +35,10 @@ veTexture::veTexture(GLenum target)
 	, _manager(nullptr)
 	, _isExchanged(false)
 {
+	_swizzleMode[0] = SWIZZLE_R;
+	_swizzleMode[1] = SWIZZLE_G;
+	_swizzleMode[2] = SWIZZLE_B;
+	_swizzleMode[3] = SWIZZLE_A;
 }
 
 unsigned int veTexture::perPixelSize()
@@ -177,25 +180,43 @@ void veTexture::bind(unsigned int textureUnit)
         glGenTextures(1, &_texID);
 		//glCreateTextures(_target, 1, &_texID);
 	}
-	if (!_samplerID) {
-		glGenSamplers(1, &_samplerID);
-	}
+	glActiveTexture(GL_TEXTURE0 + textureUnit);
+	glBindTexture(_target, _texID);
+
 	if (_needRefreshSampler) {
-		glSamplerParameteri(_samplerID, GL_TEXTURE_MIN_FILTER, _filterMode);
-		if (_filterMode == NEAREST_MIP_MAP || _filterMode == LINEAR_MIP_MAP)
-			glSamplerParameteri(_samplerID, GL_TEXTURE_MAG_FILTER, _filterMode == NEAREST_MIP_MAP ? GL_NEAREST : GL_LINEAR);
-		else
-			glSamplerParameteri(_samplerID, GL_TEXTURE_MAG_FILTER, _filterMode);
-		glSamplerParameteri(_samplerID, GL_TEXTURE_WRAP_S, _wrapMode);
-		glSamplerParameteri(_samplerID, GL_TEXTURE_WRAP_T, _wrapMode);
-		glSamplerParameteri(_samplerID, GL_TEXTURE_WRAP_R, _wrapMode);
+		glTextureParameteri(_texID, GL_TEXTURE_MIN_FILTER, _filterMode);
+		glTextureParameteri(_texID, GL_TEXTURE_MAG_FILTER, (_filterMode == NEAREST || _filterMode == NEAREST_MIP_MAP) ? GL_NEAREST : GL_LINEAR);
+
+		glTextureParameteri(_texID, GL_TEXTURE_WRAP_S, _wrapMode);
+		glTextureParameteri(_texID, GL_TEXTURE_WRAP_T, _wrapMode);
+		glTextureParameteri(_texID, GL_TEXTURE_WRAP_R, _wrapMode);
+
+		glTextureParameteri(_texID, GL_TEXTURE_SWIZZLE_R, _swizzleMode[0]);
+		glTextureParameteri(_texID, GL_TEXTURE_SWIZZLE_G, _swizzleMode[1]);
+		glTextureParameteri(_texID, GL_TEXTURE_SWIZZLE_B, _swizzleMode[2]);
+		glTextureParameteri(_texID, GL_TEXTURE_SWIZZLE_A, _swizzleMode[3]);
+
 		_needRefreshSampler = false;
 	}
 
-	glActiveTexture(GL_TEXTURE0 + textureUnit);
-	glBindTexture(_target, _texID);
-	glBindSampler(textureUnit, _samplerID);
 	_usage |= 1;
+}
+
+void veTexture::setSwizzleMode(SwizzleMode r, SwizzleMode g, SwizzleMode b, SwizzleMode a)
+{
+	_swizzleMode[0] = r;
+	_swizzleMode[1] = g;
+	_swizzleMode[2] = b;
+	_swizzleMode[3] = a;
+	_needRefreshSampler = true;
+}
+
+void veTexture::getSwizzleMode(SwizzleMode &r, SwizzleMode &g, SwizzleMode &b, SwizzleMode &a)
+{
+	r = _swizzleMode[0];
+	g = _swizzleMode[1];
+	b = _swizzleMode[2];
+	a = _swizzleMode[3];
 }
 
 void veTexture::storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat, GLenum dataType
@@ -388,6 +409,9 @@ veTextureCube::~veTextureCube()
 
 void veTextureCube::bind(unsigned int textureUnit)
 {
+	if (_needRefreshSampler) {
+		_textures[0]->getSwizzleMode(_swizzleMode[0], _swizzleMode[1], _swizzleMode[2], _swizzleMode[3]);
+	}
 	veTexture::bind(textureUnit);
 	if (_needRefreshTex) {
 		if (_manager->exchangeTextureMemory(this)) {
@@ -424,6 +448,7 @@ void veTextureCube::bind(unsigned int textureUnit)
 			}
 			if (needGenerateMipmap)
 				glGenerateMipmap(_target);
+
 			_needRefreshTex = false;
 		}
 	}

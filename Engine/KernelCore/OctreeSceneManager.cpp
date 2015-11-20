@@ -59,11 +59,11 @@ void veOctreeSceneManager::requestRender(veNode *node)
 {
 	veOctreeNode *ocNode = static_cast<veOctreeNode *>(node);
 	if (!ocNode) return;
-	{
-		std::unique_lock<std::mutex> lock(_parallelUpdateOctantMutex);
-		++_parallelUpdateOctantNum;
-	}
-	_threadPool.enqueue(nullptr, nullptr, [this, ocNode] {
+	//{
+	//	std::unique_lock<std::mutex> lock(_parallelUpdateOctantMutex);
+	//	++_parallelUpdateOctantNum;
+	//}
+	//_threadPool.enqueue(nullptr, nullptr, [this, ocNode] {
 		if (!ocNode->octant) {
 			if (ocNode->getBoundingBox().isNull() || !ocNode->isIn(this->_octree->boundingBox)) {
 				this->_octree->addNode(ocNode);
@@ -84,14 +84,14 @@ void veOctreeSceneManager::requestRender(veNode *node)
 				}
 			}
 		}
-		{
-			std::unique_lock<std::mutex> lock(_parallelUpdateOctantMutex);
-			--_parallelUpdateOctantNum;
-			if (_parallelUpdateOctantNum == 0) {
-				_parallelUpdateOctantCondition.notify_all();
-			}
-		}
-	});
+		//{
+		//	std::unique_lock<std::mutex> lock(_parallelUpdateOctantMutex);
+		//	--_parallelUpdateOctantNum;
+		//	if (_parallelUpdateOctantNum == 0) {
+		//		_parallelUpdateOctantCondition.notify_all();
+		//	}
+		//}
+	//});
 }
 
 void veOctreeSceneManager::requestRayCast(veRay *ray)
@@ -199,8 +199,8 @@ void veOctreeSceneManager::intersectByRay(veOctree *octant, veRay *ray)
 void veOctreeSceneManager::update()
 {
 	_root->update(this, veMat4::IDENTITY);
-	std::unique_lock<std::mutex> lock(_parallelUpdateOctantMutex);
-	_parallelUpdateOctantCondition.wait(lock, [this] { return _parallelUpdateOctantNum == 0; });
+	//std::unique_lock<std::mutex> lock(_parallelUpdateOctantMutex);
+	//_parallelUpdateOctantCondition.wait(lock, [this] { return _parallelUpdateOctantNum == 0; });
 	_octree->updateBoundingBox();
 }
 

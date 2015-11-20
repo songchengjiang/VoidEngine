@@ -35,7 +35,8 @@ private:
 
 	void readImage(const gli::texture &tex){
 		gli::gl GL;
-		gli::gl::format const Format = GL.translate(tex.format());
+		gli::gl::format Format = GL.translate(tex.format());
+		convertFormat(Format);
 		GLint internalFormat = Format.Internal;
 		GLenum pixelFormat = Format.External;
 		GLenum dataType = Format.Type;
@@ -69,6 +70,8 @@ private:
 		}
 
 		if (_texture) {
+			_texture->setSwizzleMode(veTexture::SwizzleMode(Format.Swizzle[0]), veTexture::SwizzleMode(Format.Swizzle[1])
+				, veTexture::SwizzleMode(Format.Swizzle[2]), veTexture::SwizzleMode(Format.Swizzle[3]));
 			_texture->storage(mipmapLevels, internalFormat, pixelFormat, dataType);
 		}
 
@@ -76,6 +79,44 @@ private:
 			for (auto &level : mipmapLevels) {
 				VE_SAFE_DELETE_ARRAY(level.data);
 			}
+		}
+	}
+
+	void convertFormat(gli::gl::format &ft) {
+		bool needSwizzled = false;
+		switch (ft.External)
+		{
+		case gli::gl::EXTERNAL_BGR: {
+			ft.External = gli::gl::EXTERNAL_RGB;
+			needSwizzled = true;
+		}
+			break;
+
+		case gli::gl::EXTERNAL_BGRA: {
+			ft.External = gli::gl::EXTERNAL_RGBA;
+			needSwizzled = true;
+		}
+			break;
+
+		case gli::gl::EXTERNAL_BGR_INTEGER: {
+			ft.External = gli::gl::EXTERNAL_RGB_INTEGER;
+			needSwizzled = true;
+		}
+			break;
+
+		case gli::gl::EXTERNAL_BGRA_INTEGER: {
+			ft.External = gli::gl::EXTERNAL_RGBA_INTEGER;
+			needSwizzled = true;
+		}
+			break;
+
+		default:
+			break;
+		}
+
+		if (needSwizzled) {
+			ft.Swizzle[0] = gli::gl::SWIZZLE_BLUE;
+			ft.Swizzle[2] = gli::gl::SWIZZLE_RED;
 		}
 	}
 
