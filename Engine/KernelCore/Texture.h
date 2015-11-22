@@ -59,6 +59,8 @@ public:
 	USE_VE_PTR;
 	USE_NAME_PROPERTY;
 
+	TextureType getType() const { return _type; }
+
 	virtual void bind(unsigned int textureUnit);
 
 	void setWrapMode(WrapMode wrapMode) { _wrapMode = wrapMode; _needRefreshSampler = true; }
@@ -68,10 +70,10 @@ public:
 	void setSwizzleMode(SwizzleMode r, SwizzleMode g, SwizzleMode b, SwizzleMode a);
 	void getSwizzleMode(SwizzleMode &r, SwizzleMode &g, SwizzleMode &b, SwizzleMode &a);
 
-	void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE
+	virtual void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE
 		, unsigned char *data = nullptr);
 
-	void storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE);
+	virtual void storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE);
 
 	int getWidth() const { return _width; }
 	int getHeight() const { return _height; }
@@ -176,12 +178,15 @@ public:
 	virtual void bind(unsigned int textureUnit) override;
 
 	void setTexture(CubeMapTexType texType, veTexture *texture);
+	veTexture* getTexture(CubeMapTexType texType);
 	virtual unsigned int getTextureTotalMemory() override;
 
 protected:
 	veTextureCube();
 
-	void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE, unsigned char *data = nullptr){}
+	virtual void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE
+		, unsigned char *data = nullptr) override {};
+	virtual void storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE) override {};
 
 protected:
 

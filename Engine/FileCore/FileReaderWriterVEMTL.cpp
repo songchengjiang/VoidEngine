@@ -223,10 +223,10 @@ private:
 						const Value &sources = texVal[SOURCE_KEY.c_str()];
 						if (sources.Size() != 6) return;
 						//texture = _sceneManager->createTexture(name, texType);
+						veTexture *subTexture = nullptr;
 						for (unsigned int i = 0; i < sources.Size(); ++i) {
 							std::string source = sources[i].GetString();
 							std::string subName = name + std::string("-") + source;
-							veTexture *subTexture = nullptr;
 							if (veFile::instance()->isSupportFile(source)) {
 								if (veFile::instance()->isFileExist(source)) {
 									subTexture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, source, subName));
@@ -242,6 +242,9 @@ private:
 							}
 							static_cast<veTextureCube *>(texture)->setTexture((veTextureCube::CubeMapTexType)i, subTexture);
 						}
+						veTexture::SwizzleMode r, g, b, a;
+						subTexture->getSwizzleMode(r, g, b, a);
+						static_cast<veTextureCube *>(texture)->setSwizzleMode(r, g, b, a);
 					}
 					else {
 						std::string source = texVal[SOURCE_KEY.c_str()].GetString();

@@ -184,17 +184,17 @@ void veTexture::bind(unsigned int textureUnit)
 	glBindTexture(_target, _texID);
 
 	if (_needRefreshSampler) {
-		glTextureParameteri(_texID, GL_TEXTURE_MIN_FILTER, _filterMode);
-		glTextureParameteri(_texID, GL_TEXTURE_MAG_FILTER, (_filterMode == NEAREST || _filterMode == NEAREST_MIP_MAP) ? GL_NEAREST : GL_LINEAR);
+		glTexParameteri(_target, GL_TEXTURE_MIN_FILTER, _filterMode);
+		glTexParameteri(_target, GL_TEXTURE_MAG_FILTER, (_filterMode == NEAREST || _filterMode == NEAREST_MIP_MAP) ? GL_NEAREST : GL_LINEAR);
 
-		glTextureParameteri(_texID, GL_TEXTURE_WRAP_S, _wrapMode);
-		glTextureParameteri(_texID, GL_TEXTURE_WRAP_T, _wrapMode);
-		glTextureParameteri(_texID, GL_TEXTURE_WRAP_R, _wrapMode);
+		glTexParameteri(_target, GL_TEXTURE_WRAP_S, _wrapMode);
+		glTexParameteri(_target, GL_TEXTURE_WRAP_T, _wrapMode);
+		glTexParameteri(_target, GL_TEXTURE_WRAP_R, _wrapMode);
 
-		glTextureParameteri(_texID, GL_TEXTURE_SWIZZLE_R, _swizzleMode[0]);
-		glTextureParameteri(_texID, GL_TEXTURE_SWIZZLE_G, _swizzleMode[1]);
-		glTextureParameteri(_texID, GL_TEXTURE_SWIZZLE_B, _swizzleMode[2]);
-		glTextureParameteri(_texID, GL_TEXTURE_SWIZZLE_A, _swizzleMode[3]);
+		glTexParameteri(_target, GL_TEXTURE_SWIZZLE_R, _swizzleMode[0]);
+		glTexParameteri(_target, GL_TEXTURE_SWIZZLE_G, _swizzleMode[1]);
+		glTexParameteri(_target, GL_TEXTURE_SWIZZLE_B, _swizzleMode[2]);
+		glTexParameteri(_target, GL_TEXTURE_SWIZZLE_A, _swizzleMode[3]);
 
 		_needRefreshSampler = false;
 	}
@@ -409,13 +409,15 @@ veTextureCube::~veTextureCube()
 
 void veTextureCube::bind(unsigned int textureUnit)
 {
-	if (_needRefreshSampler) {
-		_textures[0]->getSwizzleMode(_swizzleMode[0], _swizzleMode[1], _swizzleMode[2], _swizzleMode[3]);
-	}
 	veTexture::bind(textureUnit);
 	if (_needRefreshTex) {
 		if (_manager->exchangeTextureMemory(this)) {
-			glTexStorage2D(_target, _textures[0]->getMipmapLevels().empty()? 1: _textures[0]->getMipmapLevels().size(), _textures[0]->getInternalFormat(), _textures[0]->getWidth(), _textures[0]->getHeight());
+			_width = _textures[0]->getWidth();
+			_height = _textures[0]->getHeight();
+			_internalFormat = _textures[0]->getInternalFormat();
+			_pixelFormat = _textures[0]->getPixelFormat();
+			_dataType = _textures[0]->getDataType();
+			glTexStorage2D(_target, _textures[0]->getMipmapLevels().empty()? 1: _textures[0]->getMipmapLevels().size(), _internalFormat, _width, _height);
 			bool needGenerateMipmap = false;
 			for (unsigned int i = 0; i < 6; ++i) {
 				auto &tex = _textures[i];
@@ -456,6 +458,12 @@ void veTextureCube::bind(unsigned int textureUnit)
 
 void veTextureCube::setTexture(CubeMapTexType texType, veTexture *texture)
 {
+	veAssert(texture->getType() == veTexture::TEXTURE_2D);
 	_textures[texType] = texture;
 	_needRefreshTex = true;
+}
+
+veTexture* veTextureCube::getTexture(CubeMapTexType texType)
+{
+	return _textures[texType].get();
 }

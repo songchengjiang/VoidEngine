@@ -54,7 +54,7 @@ float CookTorrance(float NdotL, float NdotV, float HdotV, float NdotH){
 
 	float F = u_fresnelFactor + (1.0 - u_fresnelFactor) * pow(1.0 - HdotV, 5.0);
 	
-	float Db = PI * pow(NdotH * NdotH * (alpha2 - 1) + 1, 2.0);
+	float Db = PI * pow(NdotH * NdotH * (alpha2 - 1.0) + 1.0, 2.0);
 	float D = alpha2 / Db; 	
 
 	return max(0.0, (F * D * G) / (4.0f * NdotL * NdotV));
@@ -70,7 +70,7 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 		for (int i = 0; i < ve_DirectionalLightNumber; ++i){
 			vec3 lDir = -ve_DirectionalLight[i].direction;                          
 			vec3 H = normalize(vDir + lDir);
-			float NdotL = max(0, dot(normal, lDir));
+			float NdotL = max(0.0, dot(normal, lDir));
 			float HdotV = dot(H, vDir);
 			float NdotH = dot(normal, H);
 			if (0.0 < NdotL)
@@ -84,7 +84,7 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 		for (int i = 0; i < ve_PointLightNumber; ++i){
 			vec3 lDir = normalize(ve_PointLight[i].position - v_position.xyz);                          
 			vec3 H = normalize(vDir + lDir);   
-			float NdotL = max(0, dot(normal, lDir));
+			float NdotL = max(0.0, dot(normal, lDir));
 			float HdotV = dot(H, vDir);
 			float NdotH = dot(normal, H);
 			if (0.0 < NdotL)
@@ -100,7 +100,7 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 			float currentAngleCos = dot(lDir, -ve_SpotLight[i].direction);
 			float attenuation = smoothstep(ve_SpotLight[i].outerAngleCos, ve_SpotLight[i].innerAngleCos, currentAngleCos);                        
 			vec3 H = normalize(vDir + lDir);
-			float NdotL = max(0, dot(normal, lDir));
+			float NdotL = max(0.0, dot(normal, lDir));
 			float HdotV = dot(H, vDir);
 			float NdotH = dot(normal, H); 
 			if (0.0 < NdotL)

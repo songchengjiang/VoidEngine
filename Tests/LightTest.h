@@ -52,7 +52,7 @@ public:
 
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "sphere"));
-			entity->getMaterialArray()->getMaterial(0)->activateTechnique(entity->getMaterialArray()->getMaterial(0)->getTechnique(1));
+			entity->getMaterialArray()->getMaterial(0)->activateTechnique(entity->getMaterialArray()->getMaterial(0)->getTechnique("CookTorrance_OrenNayarRendering"));
 			veNode *node = _sceneManager->createNode("node3");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);

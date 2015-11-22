@@ -37,7 +37,7 @@
                     ]
                 },
                 {
-                    "name": "NormalRendering",
+                    "name": "CookTorrance_OrenNayarRendering",
                     "passes": [
                         {
                             "depthTest": true,
@@ -61,11 +61,11 @@
                                     ],
                                     "u_specular": [1.00000,1.00000,1.00000
                                     ],
-                                    "u_smoothness": 0.0,
+                                    "u_smoothness": 1.0,
                                     "u_fresnelFactor":0.0,
                                     "u_opacity": 1.0,
-                                    "u_refractivity":0.9,
-                                    "u_reflectivity": 0.1,
+                                    "u_refractivity":0.8,
+                                    "u_reflectivity": 0.0,
                                     "u_cubeMap": 0
                                 }
                             ],

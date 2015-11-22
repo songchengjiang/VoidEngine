@@ -23,7 +23,7 @@ public:
 	virtual bool makeContextCurrent() = 0;
 	virtual void swapBuffers() = 0;
 
-	virtual bool run();
+	virtual bool run() = 0;
 	virtual void stop();
 
 protected:

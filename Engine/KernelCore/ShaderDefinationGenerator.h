@@ -147,6 +147,7 @@ public:
 	{
 		std::stringstream ss;
 		if (true) {
+			ss << "const int " << className << "Max = " << lightTemplate.limit << ";" << std::endl;
 			ss << "uniform struct " << "{" << std::endl;
 			ss << "    vec3 " << POSITION_KEY << ";" << std::endl;
 			ss << "    vec3 " << DIRECTION_KEY << ";" << std::endl;

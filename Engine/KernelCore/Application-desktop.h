@@ -12,6 +12,8 @@ public:
 	virtual bool makeContextCurrent() override;
 	virtual void swapBuffers() override;
 
+	virtual bool run() override;
+
 private:
 
 	veApplicationDesktop();

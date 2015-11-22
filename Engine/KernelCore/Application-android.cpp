@@ -54,15 +54,20 @@ bool veApplicationAndroid::run()
 {
     if (!_sceneManager.valid()) return false;
     _isRunning = true;
+    clock_t frameTimeClocks = 1.0 / 60.0 * CLOCKS_PER_SEC;
+    clock_t preFrameTime = clock();
+    double invertClocksSec = 1.0 / (double)CLOCKS_PER_SEC;
     _sceneManager->startThreading();
-    veLog("startThreading!!!!!!!");
-    double preFrameTime = (double)clock() / (double)CLOCKS_PER_SEC;
     while (_isRunning && !isWindowShouldClose())
     {
-        double currentFrameTime = (double)clock() / (double)CLOCKS_PER_SEC;
-        _sceneManager->setDeltaTime(currentFrameTime - preFrameTime);
+        clock_t currentFrameTime = clock();
+        _sceneManager->setDeltaTime((currentFrameTime - preFrameTime) * invertClocksSec);
+        veLog("FRAME RATE: %f\n", 1.0 / _sceneManager->getDeltaTime());
         this->dispatchEvents();
         _sceneManager->simulation();
+        while ((clock() - currentFrameTime) < frameTimeClocks) {
+            std::this_thread::sleep_for(std::chrono::microseconds(100));
+        }
         preFrameTime = currentFrameTime;
     }
     _sceneManager->stopThreading();

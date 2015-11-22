@@ -86,6 +86,8 @@ private:
 		bool needSwizzled = false;
 		switch (ft.External)
 		{
+
+		case gli::gl::EXTERNAL_RGB:
 		case gli::gl::EXTERNAL_BGR: {
 			ft.External = gli::gl::EXTERNAL_RGB;
 			needSwizzled = true;
