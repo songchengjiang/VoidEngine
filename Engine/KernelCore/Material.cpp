@@ -114,25 +114,25 @@ void vePass::addTexture(veTexture *texture)
 	_textures.push_back(texture);
 }
 
-void vePass::setTexture(unsigned int idx, veTexture *texture)
+void vePass::setTexture(size_t idx, veTexture *texture)
 {
 	veAssert(idx < _textures.size());
 	_textures[idx] = texture;
 }
 
-veTexture* vePass::getTexture(unsigned int idx)
+veTexture* vePass::getTexture(size_t idx)
 {
 	veAssert(idx < _textures.size());
 	return _textures[idx].get();
 }
 
-const veTexture* vePass::getTexture(unsigned int idx) const
+const veTexture* vePass::getTexture(size_t idx) const
 {
 	veAssert(idx < _textures.size());
 	return _textures[idx].get();
 }
 
-veTexture* vePass::removeTexture(unsigned int idx)
+veTexture* vePass::removeTexture(size_t idx)
 {
 	veAssert(idx < _textures.size());
 	veTexture *tex = _textures[idx].get();
@@ -147,13 +147,13 @@ void vePass::addUniform(veUniform *uniform)
 	_uniforms.push_back(uniform);
 }
 
-veUniform* vePass::getUniform(unsigned int idx)
+veUniform* vePass::getUniform(size_t idx)
 {
 	veAssert(idx < _uniforms.size());
 	return _uniforms[idx].get();
 }
 
-veUniform* vePass::removeUniform(unsigned int idx)
+veUniform* vePass::removeUniform(size_t idx)
 {
 	veAssert(idx < _uniforms.size());
 	veUniform *uniform = _uniforms[idx].get();
@@ -187,7 +187,7 @@ void vePass::applyProgram(const veRenderCommand &command)
 		}
 		if (_transformFeedback.valid()) {
 			auto &varyingList = _transformFeedback->getVaryingList();
-			glTransformFeedbackVaryings(_program, varyingList.size(), &varyingList[0], GL_INTERLEAVED_ATTRIBS);
+			glTransformFeedbackVaryings(_program, GLsizei(varyingList.size()), &varyingList[0], GL_INTERLEAVED_ATTRIBS);
 		}
 		glLinkProgram(_program);
 		_needLinkProgram = false;

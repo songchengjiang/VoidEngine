@@ -11,7 +11,7 @@ public:
     virtual ~veFileAndroid();
 
     virtual veFileData* readFileToBuffer(const std::string &filePath) override;
-	virtual bool isFileExist(const std::string &filePath) override;
+	virtual bool isFileExist(const std::string &absFilePath) override;
 
 protected:
 

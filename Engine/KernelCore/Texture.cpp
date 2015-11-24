@@ -48,7 +48,9 @@ unsigned int veTexture::perPixelSize()
 	case GL_ALPHA:
 	case GL_DEPTH_COMPONENT:
 	case GL_R8:
+#if (VE_PLATFORM != VE_PLATFORM_MAC)
 	case GL_LUMINANCE:
+#endif
 		return 1;
 
 	case GL_R16F:
@@ -74,22 +76,26 @@ unsigned int veTexture::perPixelSize()
 
 	//case GL_RGBA16:
 	case GL_RGBA16F:
+#if (VE_PLATFORM != VE_PLATFORM_MAC)
 	case GL_COMPRESSED_R11_EAC:
 	case GL_COMPRESSED_SIGNED_R11_EAC:
 	case GL_COMPRESSED_RGB8_ETC2:
 	case GL_COMPRESSED_SRGB8_ETC2:
 	case GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2:
 	case GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2:
+#endif
 		return 8;
 
 	case GL_RGB32F:
 		return 12;
 
 	case GL_RGBA32F:
+#if (VE_PLATFORM != VE_PLATFORM_MAC)
 	case GL_COMPRESSED_RG11_EAC:
 	case GL_COMPRESSED_SIGNED_RG11_EAC:
 	case GL_COMPRESSED_RGBA8_ETC2_EAC:
 	case GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC:
+#endif
 		return 16;
 	}
 	return 0;
@@ -122,6 +128,7 @@ void veTexture::releaseMipmapData()
 
 bool veTexture::isCompressedTex(GLint internalformat)
 {
+#if (VE_PLATFORM != VE_PLATFORM_MAC)
 	switch (internalformat)
 	{
 	case GL_COMPRESSED_R11_EAC:
@@ -138,7 +145,7 @@ bool veTexture::isCompressedTex(GLint internalformat)
 	default:
 		return false;
 	}
-
+#endif
 	return false;
 }
 
@@ -155,9 +162,11 @@ bool veTexture::isSupportFormat(GLenum pixelFormat)
 	case GL_RGBA_INTEGER:
 	case GL_DEPTH_COMPONENT:
 	case GL_DEPTH_STENCIL:
+#if (VE_PLATFORM != VE_PLATFORM_MAC)
 	case GL_LUMINANCE_ALPHA:
 	case GL_LUMINANCE:
 	case GL_ALPHA:
+#endif            
 		return true;
 	default:
 		return false;

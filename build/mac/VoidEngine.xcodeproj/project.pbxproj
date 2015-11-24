@@ -129,6 +129,7 @@
 		BE412D031BF630E800206513 /* PostProcesserRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE412D011BF630E800206513 /* PostProcesserRenderer.cpp */; settings = {ASSET_TAGS = (); }; };
 		BE412D041BF630E800206513 /* PostProcesserRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE412D021BF630E800206513 /* PostProcesserRenderer.h */; settings = {ASSET_TAGS = (); }; };
 		BE455BF91BBFE18C00DEC208 /* BoudingBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE455BF71BBFE18C00DEC208 /* BoudingBox.cpp */; settings = {ASSET_TAGS = (); }; };
+		BE4E66941C04B7AE0078717E /* FileReaderWriterKTX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE4E66931C04B7AE0078717E /* FileReaderWriterKTX.cpp */; settings = {ASSET_TAGS = (); }; };
 		BE5BF1731BB28A1200FAE523 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE5BF1721BB28A1100FAE523 /* libjpeg.a */; };
 		BE5BF1761BB2A05B00FAE523 /* Debuger.h in Headers */ = {isa = PBXBuildFile; fileRef = BE5BF1751BB2A05B00FAE523 /* Debuger.h */; settings = {ASSET_TAGS = (); }; };
 		BE5BF1781BB2A09D00FAE523 /* Debuger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE5BF1771BB2A09D00FAE523 /* Debuger.cpp */; settings = {ASSET_TAGS = (); }; };
@@ -300,6 +301,7 @@
 		BE412D011BF630E800206513 /* PostProcesserRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PostProcesserRenderer.cpp; path = ../../Engine/KernelCore/PostProcesserRenderer.cpp; sourceTree = "<group>"; };
 		BE412D021BF630E800206513 /* PostProcesserRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostProcesserRenderer.h; path = ../../Engine/KernelCore/PostProcesserRenderer.h; sourceTree = "<group>"; };
 		BE455BF71BBFE18C00DEC208 /* BoudingBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoudingBox.cpp; path = ../../Engine/KernelCore/BoudingBox.cpp; sourceTree = "<group>"; };
+		BE4E66931C04B7AE0078717E /* FileReaderWriterKTX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileReaderWriterKTX.cpp; path = ../../Engine/FileCore/FileReaderWriterKTX.cpp; sourceTree = "<group>"; };
 		BE5BF1721BB28A1100FAE523 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../../Dependents/libjpeg/lib/libjpeg.a; sourceTree = "<group>"; };
 		BE5BF1751BB2A05B00FAE523 /* Debuger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Debuger.h; path = ../../Engine/Debuger/Debuger.h; sourceTree = "<group>"; };
 		BE5BF1771BB2A09D00FAE523 /* Debuger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Debuger.cpp; path = ../../Engine/Debuger/Debuger.cpp; sourceTree = "<group>"; };
@@ -480,6 +482,7 @@
 				BE3D41AE1BAF0B7C0063041C /* FileReaderWriterJPEG.cpp */,
 				BE3D41AF1BAF0B7C0063041C /* FileReaderWriterLIGHT.cpp */,
 				BE3D41B01BAF0B7C0063041C /* FileReaderWriterPNG.cpp */,
+				BE4E66931C04B7AE0078717E /* FileReaderWriterKTX.cpp */,
 				BE3D41B11BAF0B7C0063041C /* FileReaderWriterVEM.cpp */,
 				BE3D41B21BAF0B7C0063041C /* FileReaderWriterVEMTL.cpp */,
 				BE3D41B31BAF0B7C0063041C /* Printer.cpp */,
@@ -720,6 +723,7 @@
 				BE1B50621BB049E30039A346 /* FileReaderWriter.cpp in Sources */,
 				BE1A0B081BE24E5C00A1A20D /* MatrixPtr.cpp in Sources */,
 				BE1B50631BB049E30039A346 /* FileReaderWriterANIMATION.cpp in Sources */,
+				BE4E66941C04B7AE0078717E /* FileReaderWriterKTX.cpp in Sources */,
 				BE1A0ABA1BE24D1000A1A20D /* EntityManager.cpp in Sources */,
 				BE1A0ADE1BE24E4000A1A20D /* BillboardRenderer.cpp in Sources */,
 				BE1B50641BB049E30039A346 /* FileReaderWriterCAMERA.cpp in Sources */,
@@ -803,6 +807,8 @@
 					"\"$(SRCROOT)/../../Dependents\"",
 					"\"$(SRCROOT)/../../Engine\"",
 					"\"$(SRCROOT)/../../Dependents/freetype/include\"",
+					"\"$(SRCROOT)/../../Dependents/gli\"",
+					"\"$(SRCROOT)/../../Dependents/glm\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../../Dependents/freetype/lib\"",
@@ -860,6 +866,8 @@
 					"\"$(SRCROOT)/../../Dependents\"",
 					"\"$(SRCROOT)/../../Engine\"",
 					"\"$(SRCROOT)/../../Dependents/freetype/include\"",
+					"\"$(SRCROOT)/../../Dependents/gli\"",
+					"\"$(SRCROOT)/../../Dependents/glm\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../../Dependents/freetype/lib\"",

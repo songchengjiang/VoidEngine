@@ -148,7 +148,7 @@ private:
 			}
 			else if (member->name.GetString() == SOURCE_KEY){
 				std::string source = member->value.GetString();
-				if (veFile::instance()->isFileExist(source)) {
+                if (veFile::instance()->isFileExist(veFile::instance()->getFullFilePath(source))) {
 					shader->setSource(source);
 				}
 				else {
@@ -228,7 +228,7 @@ private:
 							std::string source = sources[i].GetString();
 							std::string subName = name + std::string("-") + source;
 							if (veFile::instance()->isSupportFile(source)) {
-								if (veFile::instance()->isFileExist(source)) {
+								if (veFile::instance()->isFileExist(veFile::instance()->getFullFilePath(source))) {
 									subTexture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, source, subName));
 								}
 								else {
@@ -251,7 +251,7 @@ private:
 						//veTexture *texture = _sceneManager->createTexture(source, texType);					
 						if (veFile::instance()->isSupportFile(source)) {
 							veTexture *tempTex = nullptr;
-							if (veFile::instance()->isFileExist(source)) {
+							if (veFile::instance()->isFileExist(veFile::instance()->getFullFilePath(source))) {
 								tempTex = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, source, _name + std::string("-temp")));
 							}
 							else {

@@ -97,13 +97,13 @@ bool veFileWin32::isAbsolutePath(const std::string &filePath)
 	return false;
 }
 
-bool veFileWin32::isFileExist(const std::string &filePath)
+bool veFileWin32::isFileExist(const std::string &absFilePath)
 {
 	if (0 == filePath.length())
 		return false;
 
-	std::string absPath = getFullFilePath(filePath);
-	DWORD attr = GetFileAttributesW(stringUtf8ToWideChar(absPath).c_str());
+	//std::string absPath = getFullFilePath(filePath);
+	DWORD attr = GetFileAttributesW(stringUtf8ToWideChar(absFilePath).c_str());
 	if (attr == INVALID_FILE_ATTRIBUTES || (attr & FILE_ATTRIBUTE_DIRECTORY))
 		return false;
 	return true;

@@ -270,6 +270,31 @@ bool veApplicationDesktop::run()
 }
 #endif
 
+#if (VE_PLATFORM == VE_PLATFORM_MAC)
+bool veApplicationDesktop::run()
+{
+    if (!_sceneManager.valid()) return false;
+    _isRunning = true;
+    clock_t frameTimeClocks = 1.0 / 60.0 * CLOCKS_PER_SEC;
+    clock_t preFrameTime = clock();
+    double invertClocksSec = 1.0 / (double)CLOCKS_PER_SEC;
+    _sceneManager->startThreading();
+    while (_isRunning && !isWindowShouldClose())
+    {
+        clock_t currentFrameTime = clock();
+        _sceneManager->setDeltaTime((currentFrameTime - preFrameTime) * invertClocksSec);
+        this->dispatchEvents();
+        _sceneManager->simulation();
+        while ((clock() - currentFrameTime) < frameTimeClocks) {
+            std::this_thread::sleep_for(std::chrono::microseconds(1));
+        }
+        preFrameTime = currentFrameTime;
+    }
+    _sceneManager->stopThreading();
+    return true;
+}
+#endif
+
 bool veApplicationDesktop::isWindowShouldClose()
 {
 	return glfwWindowShouldClose(_hwnd) != 0;

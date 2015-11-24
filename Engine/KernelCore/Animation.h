@@ -79,7 +79,7 @@ public:
 	USE_NAME_PROPERTY;
 
 	void addAnimationChannel(veAnimation *anim);
-	veAnimation* getAnimationChannel(unsigned int idx);
+	veAnimation* getAnimationChannel(size_t idx);
 	size_t getAnimationChannelNum() const { return _animations.size(); }
 
 	double getDuration() const;

@@ -44,8 +44,8 @@ bool veFileAndroid::isAbsolutePath(const std::string &filePath) {
     return false;
 }
 
-bool veFileAndroid::isFileExist(const std::string &filePath) {
-    const char* str = filePath.c_str();
+bool veFileAndroid::isFileExist(const std::string &absFilePath) {
+    const char* str = absFilePath.c_str();
     if (filePath.find(_defaultResourcesPath) == 0) str += strlen("assets/");
     if (veFileAndroid::ASSET_MANAGER) {
         AAsset* aa = AAssetManager_open(veFileAndroid::ASSET_MANAGER, str, AASSET_MODE_UNKNOWN);

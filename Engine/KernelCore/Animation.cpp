@@ -166,7 +166,7 @@ void veAnimationContainer::addAnimationChannel(veAnimation *anim)
 	_animations.push_back(anim);
 }
 
-veAnimation* veAnimationContainer::getAnimationChannel(unsigned int idx)
+veAnimation* veAnimationContainer::getAnimationChannel(size_t idx)
 {
 	veAssert(idx < _animations.size());
 	return _animations[idx].get();

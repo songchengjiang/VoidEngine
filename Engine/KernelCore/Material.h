@@ -75,15 +75,15 @@ public:
 	veShader* getShader(veShader::Type type);
 
 	void addTexture(veTexture *texture);
-	void setTexture(unsigned int idx, veTexture *texture);
-	veTexture* getTexture(unsigned int idx);
-	const veTexture* getTexture(unsigned int idx) const;
-	veTexture* removeTexture(unsigned int idx);
+	void setTexture(size_t idx, veTexture *texture);
+	veTexture* getTexture(size_t idx);
+	const veTexture* getTexture(size_t idx) const;
+	veTexture* removeTexture(size_t idx);
 	size_t getTextureNum() const { return _textures.size(); }
 
 	void addUniform(veUniform *uniform);
-	veUniform* getUniform(unsigned int idx);
-	veUniform* removeUniform(unsigned int idx);
+	veUniform* getUniform(size_t idx);
+	veUniform* removeUniform(size_t idx);
 	size_t getUniformNum() const { return _uniforms.size(); }
 
 	void setTransformFeedback(veTransformFeedback *transFeedback) { _transformFeedback = transFeedback; _needLinkProgram = true; }

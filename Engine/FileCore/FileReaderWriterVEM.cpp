@@ -50,7 +50,7 @@ private:
 
 	void loadMaterials(){
 		std::string matFile = (*_doucument)[MATERIALS_KEY.c_str()].GetString();
-		if (veFile::instance()->isFileExist(matFile)) {
+		if (veFile::instance()->isFileExist(veFile::instance()->getFullFilePath(matFile))) {
 			_materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, matFile, _name + std::string("-Materials")));
 		}
 		else {

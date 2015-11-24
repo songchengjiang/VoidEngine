@@ -44,7 +44,7 @@ unsigned int veMesh::getVertexStride()
 
 unsigned int veMesh::getVertexCount()
 {
-	return _vertices->size() * sizeof(GLfloat) / getVertexStride();
+	return static_cast<unsigned int>(_vertices->size() * sizeof(GLfloat)) / getVertexStride();
 }
 
 void veMesh::addVertexAtrribute(const VertexAtrribute &attri)

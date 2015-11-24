@@ -48,10 +48,15 @@ bool veFileMac::isAbsolutePath(const std::string &filePath)
 	return false;
 }
 
-bool veFileMac::isFileExist(const std::string &filePath)
+bool veFileMac::isFileExist(const std::string &absFilePath)
 {
-	if (0 == filePath.length())
+	if (0 == absFilePath.length())
 		return false;
+    FILE* file = fopen(absFilePath.c_str(), "rb");
+    if (!file){
+        return false;
+    }
+    fclose(file);
 	return true;
 }
 #endif
