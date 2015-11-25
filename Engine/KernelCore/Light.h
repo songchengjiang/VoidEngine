@@ -11,10 +11,23 @@ class VE_EXPORT veLight : public veNode
 	friend class vePass;
 public:
 
+	static unsigned int DEFUALT_LIGHT_MAX_NUM;
+	static const std::string DEFUALT_LIGHT_MAX_NAME;
+	static const std::string DEFUALT_LIGHT_NUM_NAME;
+	static const std::string DEFAULT_LIGHT_UNIFORM_DEFINATION;
+
 	static const veVec2 DEFAULT_SHADOW_RESOLUTION;
 	static const veVec3 DEFAULT_SHADOW_RANGE;
 	static const float  DEFAULT_SHADOW_BIAS;
 	static const float  DEFAULT_SHADOW_STRENGTH;
+
+	enum LightType
+	{
+		DIRECTIONAL,
+		POINT,
+		SPOT,
+		AREA,
+	};
 
 	~veLight();
 
@@ -22,9 +35,19 @@ public:
 	virtual void visit(veNodeVisitor &visitor) override;
 	//virtual void render(veCamera *camera) override;
 
-	const std::string& getType() const { return _type; }
-	const veParameterList& getParameters() const { return _parameters; }
-	veParameter* getParameter(const std::string &name);
+	void setLightType(LightType type) { _type = type; }
+	LightType getLightType() const { return _type; }
+	void setColor(const veVec4 &color) { _color = color; }
+	const veVec4& getColor() const { return _color; }
+	void setIntensity(float intensity) { _intensity = intensity; }
+	float getIntensity() const { return _intensity; }
+	void setAttenuationRange(float range) { _attenuationRange = range; }
+	float getAttenuationRange() const { return _attenuationRange; }
+	void setInnerAngle(float innerAng) { _innerAngle = innerAng; }
+	float getInnerAngle() { return _innerAngle; }
+	void setOuterAngle(float outerAng) { _outerAngle = outerAng; }
+	float getOuterAngle() { return _outerAngle; }
+
 
 	void shadowEnable(bool isEnabled) { _shadowEnabled = isEnabled; }
 	bool isShadowEnabled() const { return _shadowEnabled; };
@@ -46,14 +69,19 @@ public:
 	const veMat4& getLightViewMatrix() { return _lightMatrix; }
 
 protected:
-	veLight(const std::string &type, const veParameterList &params);
+	veLight(LightType type);
 
 	virtual void updateSceneManager() override;
 
 protected:
 
-	std::string _type;
-	veParameterList _parameters;
+	LightType _type;
+
+	veVec4 _color;
+	float  _intensity;
+	float  _attenuationRange;
+	float  _innerAngle;
+	float  _outerAngle;
 	veMat4 _lightMatrix;
 
 	bool _shadowEnabled;

@@ -84,11 +84,13 @@ public:
 			definations += SHADER_DEFINE_DEFERRED_PATH + std::string(" 1\n");
 		}
 		else {
-			auto lightTemplates = static_cast<veLightManager *>(_command.sceneManager->getManager(veLightManager::TYPE()))->getLightTemplateList();
-			if (!lightTemplates.empty()) {
-				definations += SHADER_DEFINE_LIGHTS + std::string(" 1\n");
-				for (auto &temp : lightTemplates) {
-					definations += getLightDefination(temp.first, temp.second);
+			if (!_command.sceneManager->getLightList().empty()) {
+				for (auto &light : _command.sceneManager->getLightList()) {
+					if (light->isInScene() && light->isVisible()) {
+						definations += SHADER_DEFINE_LIGHTS + std::string(" 1\n");
+						definations += veLight::DEFAULT_LIGHT_UNIFORM_DEFINATION;
+						break;
+					}
 				}
 			}
 		}
@@ -143,46 +145,46 @@ public:
 	}
 
 
-	std::string getLightDefination(const std::string &className, const veLightManager::LightTemplate &lightTemplate)
-	{
-		std::stringstream ss;
-		if (true) {
-			ss << "const int " << className << "Max = " << lightTemplate.limit << ";" << std::endl;
-			ss << "uniform struct " << "{" << std::endl;
-			ss << "    vec3 " << POSITION_KEY << ";" << std::endl;
-			ss << "    vec3 " << DIRECTION_KEY << ";" << std::endl;
-			for (auto &iter : lightTemplate.parameters) {
-				if (INT_KEY == iter.second) {
-					ss << "    int " << iter.first << ";" << std::endl;
-				}
-				else if (BOOL_KEY == iter.second) {
-					ss << "    bool " << iter.first << ";" << std::endl;
-				}
-				else if (FLOAT_KEY == iter.second) {
-					ss << "    float " << iter.first << ";" << std::endl;
-				}
-				else if (VEC2_KEY == iter.second) {
-					ss << "    vec2 " << iter.first << ";" << std::endl;
-				}
-				else if (VEC3_KEY == iter.second) {
-					ss << "    vec3 " << iter.first << ";" << std::endl;
-				}
-				else if (VEC4_KEY == iter.second) {
-					ss << "    vec4 " << iter.first << ";" << std::endl;
-				}
-				else if (MAT3_KEY == iter.second) {
-					ss << "    mat3 " << iter.first << ";" << std::endl;
-				}
-				else if (MAT4_KEY == iter.second) {
-					ss << "    mat4 " << iter.first << ";" << std::endl;
-				}
-			}
-			ss << "}" << className << "[" << lightTemplate.limit << "];" << std::endl;
-			//ss << "uniform " << className << "[" << lightTemplate.limit << "];" << std::endl;
-			ss << "uniform int " << className << "Number;" << std::endl;
-		}
-		return ss.str();
-	}
+	//std::string getLightDefination(const std::string &className, const veLightManager::LightTemplate &lightTemplate)
+	//{
+	//	std::stringstream ss;
+	//	if (true) {
+	//		ss << "const int " << className << "Max = " << lightTemplate.limit << ";" << std::endl;
+	//		ss << "uniform struct " << "{" << std::endl;
+	//		ss << "    vec3 " << POSITION_KEY << ";" << std::endl;
+	//		ss << "    vec3 " << DIRECTION_KEY << ";" << std::endl;
+	//		for (auto &iter : lightTemplate.parameters) {
+	//			if (INT_KEY == iter.second) {
+	//				ss << "    int " << iter.first << ";" << std::endl;
+	//			}
+	//			else if (BOOL_KEY == iter.second) {
+	//				ss << "    bool " << iter.first << ";" << std::endl;
+	//			}
+	//			else if (FLOAT_KEY == iter.second) {
+	//				ss << "    float " << iter.first << ";" << std::endl;
+	//			}
+	//			else if (VEC2_KEY == iter.second) {
+	//				ss << "    vec2 " << iter.first << ";" << std::endl;
+	//			}
+	//			else if (VEC3_KEY == iter.second) {
+	//				ss << "    vec3 " << iter.first << ";" << std::endl;
+	//			}
+	//			else if (VEC4_KEY == iter.second) {
+	//				ss << "    vec4 " << iter.first << ";" << std::endl;
+	//			}
+	//			else if (MAT3_KEY == iter.second) {
+	//				ss << "    mat3 " << iter.first << ";" << std::endl;
+	//			}
+	//			else if (MAT4_KEY == iter.second) {
+	//				ss << "    mat4 " << iter.first << ";" << std::endl;
+	//			}
+	//		}
+	//		ss << "}" << className << "[" << lightTemplate.limit << "];" << std::endl;
+	//		//ss << "uniform " << className << "[" << lightTemplate.limit << "];" << std::endl;
+	//		ss << "uniform int " << className << "Number;" << std::endl;
+	//	}
+	//	return ss.str();
+	//}
 
 	//virtual void visit(veNode &node) {
 	//	_root = &node;

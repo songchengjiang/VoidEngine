@@ -199,21 +199,17 @@ void vePass::applyLightsUniforms(const veRenderCommand &command)
 {
 	const veLightList &lightList = command.sceneManager->getLightList();
 	if (lightList.empty()) return;
-	std::unordered_map<std::string, int> currentLights;
-	for (auto &iter : static_cast<veLightManager *>(command.sceneManager->getManager(veLightManager::TYPE()))->getLightTemplateList()) {
-		currentLights[iter.first] = 0;
-	}
+
+	unsigned int enabledLightIndex = 0;
 	for (auto &iter : lightList) {
-		if (iter->isInScene()) {
-			int &count = currentLights[iter->getType()];
-			applyLightUniforms(count, iter.get(), command.camera);
-			++count;
+		if (iter->isInScene() && iter->isVisible()) {
+			applyLightUniforms(enabledLightIndex, iter.get(), command.camera);
+			++enabledLightIndex;
 		}
 	}
-	for (auto &iter : currentLights) {
-		GLint loc = glGetUniformLocation(_program, (iter.first + std::string("Number")).c_str());
-		glUniform1i(loc, iter.second);
-	}
+	GLint loc = glGetUniformLocation(_program, veLight::DEFUALT_LIGHT_NUM_NAME.c_str());
+	if (0 <= loc)
+		glUniform1i(loc, enabledLightIndex);
 }
 
 void vePass::applyUniforms(const veRenderCommand &command)

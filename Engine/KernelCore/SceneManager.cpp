@@ -118,11 +118,6 @@ void veSceneManager::requestRayCast(veRay *ray)
 	ray->_callBack();
 }
 
-void veSceneManager::loadLightConfiguration(const std::string &filePath)
-{
-	static_cast<veLightManager *>(_managerList[veLightManager::TYPE()])->loadLightTemplates(filePath);
-}
-
 veBaseManager* veSceneManager::getManager(const std::string &mgType)
 {
 	auto iter = _managerList.find(mgType);

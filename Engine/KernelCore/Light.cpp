@@ -2,14 +2,23 @@
 #include "NodeVisitor.h"
 #include "SceneManager.h"
 
+unsigned int veLight::DEFUALT_LIGHT_MAX_NUM = 8;
+
 const veVec2 veLight::DEFAULT_SHADOW_RESOLUTION = veVec2(256);
 const veVec3 veLight::DEFAULT_SHADOW_RANGE      = veVec3(512, 512, 1000);
 const float  veLight::DEFAULT_SHADOW_BIAS       = 0.05f;
 const float  veLight::DEFAULT_SHADOW_STRENGTH   = 1.0f;
+const std::string veLight::DEFUALT_LIGHT_MAX_NAME = "ve_LightMax";
+const std::string veLight::DEFUALT_LIGHT_NUM_NAME = "ve_LightNum";
+const std::string veLight::DEFAULT_LIGHT_UNIFORM_DEFINATION;
 
-veLight::veLight(const std::string &type, const veParameterList &params)
+veLight::veLight(LightType type)
 	: _type(type)
-	, _parameters(params)
+	, _color(veVec4::WHITE)
+	, _intensity(1.0f)
+	, _attenuationRange(1000.0f)
+	, _innerAngle(0.0f)
+	, _outerAngle(veMath::QUARTER_PI)
 	, _lightMatrix(veMat4::IDENTITY)
 	, _shadowEnabled(false)
 	, _shadowResolution(DEFAULT_SHADOW_RESOLUTION)
@@ -61,18 +70,3 @@ void veLight::visit(veNodeVisitor &visitor)
 //	if (_mask & camera->getMask())
 //		_camera = camera;
 //}
-
-veParameter* veLight::getParameter(const std::string &name)
-{
-	for (auto &iter : _parameters) {
-		if (iter->getName() == name)
-			return iter.get();
-	}
-
-	return nullptr;
-}
-
-void veLight::updateSceneManager()
-{
-
-}

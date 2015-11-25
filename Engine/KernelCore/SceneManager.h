@@ -63,8 +63,6 @@ public:
 	const veLightList& getLightList() const { return _lightList; }
 	const veSkyBox* getSkyBox() const { return _skyBox.get(); }
 
-	void loadLightConfiguration(const std::string &filePath);
-
 	veBaseManager* getManager(const std::string &mgType);
 
 	veNode* getRootNode() { return _root.get(); }
