@@ -1,15 +1,8 @@
 {
   "version": "1.0",
-  "type": "ve_DirectionalLight",
+  "type": "DIRECTIONAL",
   "name": "directional0",
-  "parameters": [
-    {
-      "name": "color",
-      "values": [ 1.0, 1.0, 1.0 ]
-    },
-    {
-      "name": "intensity",
-      "values": 1.0
-    }
-  ]
+  "color": [ 1.0, 1.0, 1.0, 1.0 ],
+  "intensity": 1.0,
+  "attenuation": 1000.0
 }

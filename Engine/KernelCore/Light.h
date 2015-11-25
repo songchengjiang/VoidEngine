@@ -12,9 +12,18 @@ class VE_EXPORT veLight : public veNode
 public:
 
 	static unsigned int DEFUALT_LIGHT_MAX_NUM;
-	static const std::string DEFUALT_LIGHT_MAX_NAME;
-	static const std::string DEFUALT_LIGHT_NUM_NAME;
-	static const std::string DEFAULT_LIGHT_UNIFORM_DEFINATION;
+	static const unsigned int DEFUALT_LIGHT_PARAM_NUM;
+	static const std::string DEFUALT_LIGHT_UNIFORM_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_MAX_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_NUM_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_TYPE_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_POSITION_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_COLOR_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME;
 
 	static const veVec2 DEFAULT_SHADOW_RESOLUTION;
 	static const veVec3 DEFAULT_SHADOW_RANGE;
@@ -67,6 +76,8 @@ public:
 
 	void setLightViewMatrix(const veMat4 &mat) { _lightMatrix = mat; }
 	const veMat4& getLightViewMatrix() { return _lightMatrix; }
+
+	static std::string lightUniformDefination();
 
 protected:
 	veLight(LightType type);

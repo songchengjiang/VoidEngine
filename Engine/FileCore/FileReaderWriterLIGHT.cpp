@@ -37,46 +37,52 @@ private:
 	void readLight() {
 		//std::string name = (*_doucument)[NAME_KEY.c_str()].GetString();
 		std::string type = (*_doucument)[TYPE_KEY.c_str()].GetString();
-		_light = _sceneManager->createLight(type, _name);
+		_light = _sceneManager->createLight(getLightType(type), _name);
 		if (!_light) return;
-		const Value &paramsVals = (*_doucument)[PARAMETERS_KEY.c_str()];
-		if (!paramsVals.Empty()) {
-			for (unsigned int i = 0; i < paramsVals.Size(); ++i) {
-				const Value & pm = paramsVals[i];
-				const Value & values = pm[VALUES_KEY.c_str()];
-				auto paramter = _light->getParameter(pm[NAME_KEY.c_str()].GetString());
-				if (paramter) {
-					setValues(paramter, values);
-				}
-			}
+		if (_doucument->HasMember(COLOR_KEY.c_str())) {
+			const Value &val = (*_doucument)[COLOR_KEY.c_str()];
+			veVec4 color = veVec4(val[0].GetDouble(), val[1].GetDouble(), val[2].GetDouble(), val[3].GetDouble());
+			_light->setColor(color);
+		}
+
+		if (_doucument->HasMember(INTENSITY_KEY.c_str())) {
+			const Value &val = (*_doucument)[INTENSITY_KEY.c_str()];
+			_light->setIntensity(val.GetDouble());
+		}
+
+		if (_doucument->HasMember(ATTENUATION_KEY.c_str())) {
+			const Value &val = (*_doucument)[ATTENUATION_KEY.c_str()];
+			_light->setAttenuationRange(val.GetDouble());
+		}
+
+		if (_doucument->HasMember(INNER_ANGLE_KEY.c_str())) {
+			const Value &val = (*_doucument)[INNER_ANGLE_KEY.c_str()];
+			_light->setInnerAngle(val.GetDouble());
+		}
+
+		if (_doucument->HasMember(OUTER_ANGLE_KEY.c_str())) {
+			const Value &val = (*_doucument)[OUTER_ANGLE_KEY.c_str()];
+			_light->setOuterAngle(val.GetDouble());
 		}
 	}
 
-	void setValues(veParameter *paramter, const Value & values) {
-		if (values.IsInt()) {
-			paramter->set(values.GetInt());
+	veLight::LightType getLightType(const std::string &type) {
+		if (type == DIRECTIONAL_KEY) {
+			return veLight::DIRECTIONAL;
 		}
-		else if (values.IsDouble()) {
-			paramter->set((veReal)values.GetDouble());
+		else if (type == POINT_KEY) {
+			return veLight::POINT;
 		}
-		else if (values.Size() == 2) {
-			veVec2 vec2(values[0].GetDouble(), values[1].GetDouble());
-			paramter->set(vec2);
+		else if (type == SPOT_KEY) {
+			return veLight::SPOT;
 		}
-		else if (values.Size() == 3) {
-			veVec3 vec3(values[0].GetDouble(), values[1].GetDouble(), values[2].GetDouble());
-			paramter->set(vec3);
-		}
-		else if (values.Size() == 4) {
-			veVec4 vec4(values[0].GetDouble(), values[1].GetDouble(), values[2].GetDouble(), values[3].GetDouble());
-			paramter->set(vec4);
-		}
+		else
+			return veLight::DIRECTIONAL;
 	}
 
 private:
 
 	Document *_doucument;
-	std::string _className;
 	veLight *_light;
 	veSceneManager *_sceneManager;
 	std::string _name;

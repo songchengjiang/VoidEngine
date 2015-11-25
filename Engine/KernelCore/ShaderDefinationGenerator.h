@@ -88,7 +88,7 @@ public:
 				for (auto &light : _command.sceneManager->getLightList()) {
 					if (light->isInScene() && light->isVisible()) {
 						definations += SHADER_DEFINE_LIGHTS + std::string(" 1\n");
-						definations += veLight::DEFAULT_LIGHT_UNIFORM_DEFINATION;
+						definations += veLight::lightUniformDefination();
 						break;
 					}
 				}

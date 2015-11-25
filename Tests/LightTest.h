@@ -6,7 +6,6 @@ class LightTest : public BaseTest
 {
 public:
 	LightTest() {
-		_sceneManager->loadLightConfiguration("lights/lights.velightemplates");
 
 		veRenderableObject *obj = nullptr;
 		veNode *root = _sceneManager->createNode("root");
@@ -69,8 +68,7 @@ public:
 			directional0->addComponent(lightTranser);
 			directional0->addComponent(new LightUpdater);
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
-			auto param = directional0->getParameter("intensity");
-			param->set(veMath::veRandomUnitization());
+			directional0->setIntensity(veMath::veRandomUnitization());
 
 			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "directional0-sphere"));
 			veNode *lightModel = _sceneManager->createNode("lightnode0");
@@ -86,8 +84,7 @@ public:
 			point0->addComponent(lightTranser);
 			point0->addComponent(new LightUpdater);
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
-			auto param = point0->getParameter("intensity");
-			param->set(veMath::veRandomUnitization());
+			point0->setIntensity(veMath::veRandomUnitization());
 
 			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "point0-sphere"));
 			veNode *lightModel = _sceneManager->createNode("lightnode1");
@@ -103,8 +100,7 @@ public:
 			spot0->addComponent(lightTranser);
 			spot0->addComponent(new LightUpdater);
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
-			auto param = spot0->getParameter("intensity");
-			param->set(veMath::veRandomUnitization());
+			spot0->setIntensity(veMath::veRandomUnitization());
 
 			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "spot0-sphere"));
 			veNode *lightModel = _sceneManager->createNode("lightnode2");

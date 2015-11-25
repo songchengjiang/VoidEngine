@@ -24,17 +24,16 @@ public:
 	virtual void update(veNode *node, veSceneManager *sm) override{
 		auto light = static_cast<veLight *>(node);
 		if (light) {
-			auto param = light->getParameter("color");
-			updateColor(param, sm->getDeltaTime());
+			updateColor(light, sm->getDeltaTime());
 			updateMatrix(light, sm->getDeltaTime());
 		}
 	}
 
 private:
 
-	void updateColor(veParameter *colorParam, double deltaTime) {
+	void updateColor(veLight *light, double deltaTime) {
 		veVec3 col = _oriColor * (1.0 - _lastChangeColorTime) + _desColor * _lastChangeColorTime;
-		colorParam->set(col);
+		light->setColor(veVec4(col.x(), col.y(), col.z(), 1.0f));
 
 		if (1.0 < _lastChangeColorTime) {
 			_oriColor = _desColor;

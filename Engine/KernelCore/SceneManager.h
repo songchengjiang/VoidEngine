@@ -39,7 +39,7 @@ public:
 	USE_VE_PTR;
 
 	virtual veNode* createNode(const std::string &name) = 0;
-	virtual veLight* createLight(const std::string &type, const std::string &name);
+	virtual veLight* createLight(veLight::LightType type, const std::string &name);
 	virtual veSurface* createSurface(const std::string &name);
 	virtual veImage* createImage(const std::string &name, veTexture *texture);
 	virtual veText* createText(const std::string &name, veFont *font, const std::string &content = "");

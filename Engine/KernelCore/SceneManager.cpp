@@ -33,7 +33,7 @@ veSceneManager::~veSceneManager()
 	}
 }
 
-veLight* veSceneManager::createLight(const std::string &type, const std::string &name)
+veLight* veSceneManager::createLight(veLight::LightType type, const std::string &name)
 {
 	auto light = static_cast<veLightManager *>(_managerList[veLightManager::TYPE()])->createLight(type, name);
 	_lightList.push_back(light);

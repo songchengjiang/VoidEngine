@@ -97,8 +97,15 @@ private:
 	void applyUniforms(const veRenderCommand &command);
 	void applyLightsUniforms(const veRenderCommand &command);
 	void applyLightUniforms(unsigned int idx, veLight *light, veCamera *camera);
+	void locateLightUnifroms();
 
 private:
+
+	struct LightUniformLocations
+	{
+		GLint lightNum;
+		std::vector< std::vector<GLint> > lightParams;
+	};
 
 	bool _depthTest;
 	bool _depthWirte;
@@ -112,6 +119,7 @@ private:
 	std::map<veShader::Type, VE_Ptr<veShader> >           _shaders;
 	std::vector< VE_Ptr<veTexture> >                      _textures;
 	std::vector< VE_Ptr<veUniform> >                      _uniforms;
+	LightUniformLocations                                 _lightUniformLocations;
 	VE_Ptr<veTransformFeedback>                           _transformFeedback;
 };
 
