@@ -13,7 +13,7 @@ public:
 	LightUpdater()
 		: _lastChangeColorTime(0.0) {
 		_angle = veMath::veRandomUnitization() * veMath::TWO_PI;
-		_radius = 10.0f * veMath::veRandomUnitization() + 2.0f;
+		_radius = 20.0f * veMath::veRandomUnitization() + 2.0f;
 		_height = 10.0f * (veMath::veRandomUnitization());
 		_oriColor = _desColor = veVec3(veMath::veRandomUnitization(), veMath::veRandomUnitization(), veMath::veRandomUnitization());
 	}

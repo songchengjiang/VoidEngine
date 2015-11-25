@@ -29,7 +29,7 @@
                                     "u_diffuse": [0.500000,0.500000,0.500000
                                     ],
                                     "u_shininess":5.656854,
-                                    "u_opacity":0.05,
+                                    "u_opacity":0.2,
                                     "u_reflectivity":0.000000
                                 }
                             ]
@@ -62,10 +62,10 @@
                                     "u_specular": [1.00000,1.00000,1.00000
                                     ],
                                     "u_smoothness": 1.0,
-                                    "u_fresnelFactor":0.0,
+                                    "u_fresnelFactor":1.0,
                                     "u_opacity": 1.0,
-                                    "u_refractivity":0.8,
-                                    "u_reflectivity": 0.0,
+                                    "u_refractivity":0.0,
+                                    "u_reflectivity": 1.0,
                                     "u_cubeMap": 0
                                 }
                             ],

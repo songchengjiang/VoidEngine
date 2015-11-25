@@ -99,7 +99,7 @@ bool veFileWin32::isAbsolutePath(const std::string &filePath)
 
 bool veFileWin32::isFileExist(const std::string &absFilePath)
 {
-	if (0 == filePath.length())
+	if (0 == absFilePath.length())
 		return false;
 
 	//std::string absPath = getFullFilePath(filePath);
