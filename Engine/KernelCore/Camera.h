@@ -79,8 +79,6 @@ public:
 
 	const vePlane& getFrustumPlane(FrustumPlane fp);
 
-	bool isRenderStateChanged() { return _renderStateChanged; }
-
 	void render();
 	void render(veRenderQueue::RenderCommandList &renderList);
 

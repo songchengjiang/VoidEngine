@@ -37,7 +37,7 @@ vePass::~vePass()
 
 void vePass::visit(const veRenderCommand &command)
 {
-	if (command.camera->isRenderStateChanged())
+	if (command.sceneManager->needReload())
 		_needLinkProgram = true;
 }
 

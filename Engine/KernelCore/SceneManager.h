@@ -75,6 +75,9 @@ public:
 	void setCamera(veCamera *camera) { _mainCamera = camera; }
 	veCamera* getCamera() { return _mainCamera.get(); }
 
+	void reload();
+	bool needReload() { return _needReload; }
+
 	void dispatchEvents(veEvent &event);
 	bool simulation();
 
@@ -111,6 +114,8 @@ protected:
 	std::condition_variable _renderingCondition;
 	std::thread _renderingThread;
 	bool        _stopThreading;
+
+	bool _needReload;
 
 	double _deltaTime;
 	double _simulationTime;

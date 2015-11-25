@@ -109,6 +109,7 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 					rc.userDataList->push_back(node);
 					rc.userDataList->push_back(mesh);
 					rc.camera = camera;
+					rc.sceneManager = camera->getSceneManager();
 					rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
 
 					rc.drawFunc = [mesh, vao](const veRenderCommand &command) {

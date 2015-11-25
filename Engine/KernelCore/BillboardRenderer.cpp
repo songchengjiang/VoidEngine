@@ -39,6 +39,7 @@ void veBillboardRenderer::render(veNode *node, veRenderableObject *renderableObj
 				//rc.attachedNode = node;
 				rc.renderableObj = renderableObj;
 				rc.camera = camera;
+				rc.sceneManager = camera->getSceneManager();
 				rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
 				rc.drawFunc = VE_CALLBACK_1(veBillboardRenderer::draw, this);
 				pass->visit(rc);

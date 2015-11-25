@@ -15,10 +15,11 @@ public:
 	USE_VE_PTR;
 	USE_NAME_PROPERTY;
 
-	virtual void setMaterialArray(veMaterialArray *material) { _materials = material; }
+	virtual void setMaterialArray(veMaterialArray *material) { _materials = material; _needRefresh = true; }
 	veMaterialArray* getMaterialArray() { return _materials.get(); }
 
 	void process(veFrameBufferObject *fb, veCamera *camera);
+	void needRefresh() { _needRefresh = true; }
 
 private:
 
@@ -30,6 +31,7 @@ private:
 	VE_Ptr<veSurface> _surface;
 	VE_Ptr<vePostProcesserRenderer> _render;
 	veSceneManager   *_sceneManager;
+	bool _needRefresh;
 };
 
 typedef std::vector< VE_Ptr<vePostProcesser> > vePostProcesserList;

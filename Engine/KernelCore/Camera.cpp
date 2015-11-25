@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "NodeVisitor.h"
+#include "SceneManager.h"
 
 veLoopQueue<veRenderCommand>::SortFunc PASS_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
 	return right.priority == left.priority? left.pass <= right.pass: right.priority <= left.priority;
@@ -124,7 +125,7 @@ void veCamera::setViewport(const veViewport &vp)
 void veCamera::setRenderPath(RenderPath renderPath)
 {
 	_renderPath = renderPath;
-	_renderStateChanged = true;
+	_sceneManager->reload();
 }
 
 const vePlane& veCamera::getFrustumPlane(FrustumPlane fp)
@@ -236,7 +237,6 @@ void veCamera::renderQueue(veLoopQueue< veRenderCommand > &queue)
 {
 	while (!queue.empty()) {
 		auto &cmd = queue.front();
-		cmd.sceneManager = _sceneManager;
         cmd.drawFunc(cmd);
 		queue.pop_front();
 	}

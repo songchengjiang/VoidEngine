@@ -17,6 +17,7 @@ veSceneManager::veSceneManager()
 	, _deltaTime(0.0)
 	, _simulationTime(0)
 	, _stopThreading(true)
+	, _needReload(false)
 {
 	_managerList[veLightManager::TYPE()] = new veLightManager(this);
 	_managerList[veTextureManager::TYPE()] = new veTextureManager(this);
@@ -136,8 +137,23 @@ void veSceneManager::setDeltaTime(double deltaTime)
 	_simulationTime += deltaTime;
 }
 
+void veSceneManager::reload()
+{
+	_needReload = true;
+	enqueueRequest([this] {
+		this->_needReload = false;
+	});
+}
+
 void veSceneManager::dispatchEvents(veEvent &event)
 {
+	if (event.getEventType() == veEvent::VE_WIN_RESIZE) {
+		if (!_postProcesserList.empty()) {
+			for (auto &processer : _postProcesserList) {
+				processer->needRefresh();
+			}
+		}
+	}
 	if (_root.valid())
 		_root->routeEvent(event, this);
 }

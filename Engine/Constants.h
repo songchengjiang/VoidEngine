@@ -138,6 +138,10 @@ static const std::string LIMIT_KEY = "limit";
 static const std::string LIGHT_TEMPLATES_KEY = "lightTemplates";
 static const std::string POSITION_KEY = "position";
 static const std::string DIRECTION_KEY = "direction";
+static const std::string SHADOW_MAP_KEY = "shadowMap";
+static const std::string SHADOW_BIAS_KEY = "shadowBias";
+static const std::string SHADOW_STRENGTH_KEY = "shadowStrength";
+static const std::string SHADOW_ENABLED_KEY = "shadowEnabled";
 
 static const std::string VERTEX_ATTRIB_POSITION = "VERTEX_ATTRIB_POSITION";
 static const std::string VERTEX_ATTRIB_NORMAL = "VERTEX_ATTRIB_NORMAL";

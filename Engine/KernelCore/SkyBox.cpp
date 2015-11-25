@@ -23,6 +23,7 @@ public:
 					//rc.attachedNode = node;
 					rc.renderableObj = renderableObj;
 					rc.camera = camera;
+					rc.sceneManager = camera->getSceneManager();
 					rc.drawFunc = VE_CALLBACK_1(veSkyBoxRenderer::draw, this);
 					pass->visit(rc);
 					camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_BACKGROUND, rc);

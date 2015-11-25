@@ -112,6 +112,7 @@ void veDebuger::render(veNode *node, veCamera *camera)
 	rc.worldMatrix = new veMat4Ptr(veMat4::IDENTITY);
 	rc.renderableObj = nullptr;
 	rc.camera = camera;
+	rc.sceneManager = camera->getSceneManager();
 	rc.drawFunc = VE_CALLBACK_1(veDebuger::draw, this);
 	camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
 }

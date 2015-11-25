@@ -24,6 +24,7 @@ void vePostProcesserRenderer::render(veNode *node, veRenderableObject *renderabl
 			//rc.attachedNode = node;
 			rc.renderableObj = renderableObj;
 			rc.camera = camera;
+			rc.sceneManager = camera->getSceneManager();
 			rc.drawFunc = VE_CALLBACK_1(vePostProcesserRenderer::draw, this);
 			_pass->visit(rc);
 			camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
