@@ -71,7 +71,7 @@ public:
 	void getSwizzleMode(SwizzleMode &r, SwizzleMode &g, SwizzleMode &b, SwizzleMode &a);
 
 	virtual void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE
-		, unsigned char *data = nullptr);
+		, const unsigned char *data = nullptr);
 
 	virtual void storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE);
 
@@ -81,11 +81,11 @@ public:
 	GLint getInternalFormat() const { return _internalFormat; }
 	GLenum getPixelFormat() const { return _pixelFormat; }
 	GLenum getDataType() const { return _dataType; }
-	unsigned char* getData() { return _data; }
-	unsigned int getDataSize() { return _dataSize; }
+	const unsigned char* getData() const { return _data; }
+	unsigned int getDataSize() const { return _dataSize; }
 	virtual unsigned int getTextureTotalMemory();
 	const MipmapLevels& getMipmapLevels() const { return _mipmapLevels; }
-	unsigned int getImageSize(int width, int height);
+	unsigned int getImageSize(int width, int height) const;
 
 	GLuint glTex();
 	GLenum glTarget() { return _target; }
@@ -97,7 +97,7 @@ protected:
 
 	veTexture(GLenum target);
 
-	unsigned int perPixelSize();
+	unsigned int perPixelSize() const;
 	void releaseTextureData();
 	void releaseMipmapData();
 
@@ -185,7 +185,7 @@ protected:
 	veTextureCube();
 
 	virtual void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE
-		, unsigned char *data = nullptr) override {};
+		, const unsigned char *data = nullptr) override {};
 	virtual void storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE) override {};
 
 protected:

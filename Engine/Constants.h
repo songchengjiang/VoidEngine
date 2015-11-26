@@ -130,6 +130,12 @@ static const std::string TEX_2D_KEY = "TEX_2D";
 static const std::string TEX_3D_KEY = "TEX_3D";
 static const std::string TEX_RECT_KEY = "TEX_RECT";
 static const std::string TEX_CUBE_KEY = "TEX_CUBE";
+static const std::string TEX_CUBE_POSITIVE_X_KEY = "TEX_CUBE_POSITIVE_X";
+static const std::string TEX_CUBE_NEGATIVE_X_KEY = "TEX_CUBE_NEGATIVE_X";
+static const std::string TEX_CUBE_POSITIVE_Y_KEY = "TEX_CUBE_POSITIVE_Y";
+static const std::string TEX_CUBE_NEGATIVE_Y_KEY = "TEX_CUBE_NEGATIVE_Y";
+static const std::string TEX_CUBE_POSITIVE_Z_KEY = "TEX_CUBE_POSITIVE_Z";
+static const std::string TEX_CUBE_NEGATIVE_Z_KEY = "TEX_CUBE_NEGATIVE_Z";
 
 static const std::string DIRECTIONAL_KEY = "DIRECTIONAL";
 static const std::string POINT_KEY = "POINT";

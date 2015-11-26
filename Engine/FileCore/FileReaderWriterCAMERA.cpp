@@ -171,26 +171,31 @@ private:
 			const Value &attachmentVal = fboVal[i];
 			veTexture *texture = nullptr;
 
+			veTexture::TextureType texType = veTexture::TEXTURE_2D;
+			if (attachmentVal.HasMember(TYPE_KEY.c_str())) {
+				texType = getTextureType(attachmentVal[TYPE_KEY.c_str()].GetString());
+			}
+
 			if (attachmentVal.HasMember(NAME_KEY.c_str())) {
 				std::string name = attachmentVal[NAME_KEY.c_str()].GetString();
 				texture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture(name);
 				if (!texture) {
-					texture = _sceneManager->createTexture(name);
+					texture = _sceneManager->createTexture(name, texType);
 				}
 			}
 			if (!texture) continue;
 
 			GLenum attachment = GL_COLOR_ATTACHMENT0;
+			GLenum target = GL_TEXTURE_2D;
 			int width = _camera->getViewport().width;
 			int height = _camera->getViewport().height;
 			GLuint internalFormat = GL_RGBA32F;
-			veTexture::TextureType texType = veTexture::TEXTURE_2D;
 			if (attachmentVal.HasMember(ATTACHMENT_KEY.c_str())) {
 				attachment = getFrameBufferObjectAttach(attachmentVal[ATTACHMENT_KEY.c_str()].GetString());
 			}
 
-			if (attachmentVal.HasMember(TYPE_KEY.c_str())) {
-				texType = getTextureType(attachmentVal[TYPE_KEY.c_str()].GetString());
+			if (attachmentVal.HasMember(TARGET_KEY.c_str())) {
+				target = getFrameBufferObjectAttachTarget(attachmentVal[TARGET_KEY.c_str()].GetString());
 			}
 
 			if (attachmentVal.HasMember(WIDTH_KEY.c_str())) {
@@ -218,7 +223,7 @@ private:
 			}
 
 			texture->storage(width, height, 1, internalFormat);
-			fbo->attach(attachment, texture);
+			fbo->attach(attachment, target, texture);
 		}
 		_camera->setFrameBufferObject(fbo);
 	}
@@ -227,8 +232,8 @@ private:
 		if (strcmp(TEX_2D_KEY.c_str(), str) == 0) {
 			return veTexture::TEXTURE_2D;
 		}
-		else if (strcmp(TEX_3D_KEY.c_str(), str) == 0) {
-			return veTexture::TEXTURE_3D;
+		else if (strcmp(TEX_CUBE_KEY.c_str(), str) == 0) {
+			return veTexture::TEXTURE_CUBE;
 		}
 		//else if (strcmp(TEX_RECT_KEY.c_str(), str) == 0) {
 		//	return veTexture::TEXTURE_RECT;
@@ -248,6 +253,28 @@ private:
 			return GL_STENCIL_ATTACHMENT;
 		}
 		return 0;
+	}
+
+	GLenum getFrameBufferObjectAttachTarget(const char* str) {
+		if (strcmp(TEX_CUBE_POSITIVE_X_KEY.c_str(), str) == 0) {
+			return GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+		}
+		else if (strcmp(TEX_CUBE_NEGATIVE_X_KEY.c_str(), str) == 0) {
+			return GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+		}
+		else if (strcmp(TEX_CUBE_POSITIVE_Y_KEY.c_str(), str) == 0) {
+			return GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
+		}
+		else if (strcmp(TEX_CUBE_NEGATIVE_Y_KEY.c_str(), str) == 0) {
+			return GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+		}
+		else if (strcmp(TEX_CUBE_POSITIVE_Z_KEY.c_str(), str) == 0) {
+			return GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+		}
+		else if (strcmp(TEX_CUBE_NEGATIVE_Z_KEY.c_str(), str) == 0) {
+			return GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+		}
+		return GL_TEXTURE_2D;
 	}
 
 private:

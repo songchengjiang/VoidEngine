@@ -75,10 +75,16 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 		if (ve_Light[i].type == VE_DIRECTIONAL_LIGHT){
 			lDir = -ve_Light[i].direction;                          
 		}else if (ve_Light[i].type == VE_POINT_LIGHT){
-			lDir = normalize(ve_Light[i].position - v_position.xyz); 
+			lDir = ve_Light[i].position - v_position.xyz;
+			vec3 lDirAttenuation = lDir * ve_Light[i].attenuationRangeInverse;
+			attenuation = clamp(1.0 - dot(lDirAttenuation, lDirAttenuation), 0.0, 1.0);
+			lDir = normalize(lDir);
 		}else if (ve_Light[i].type == VE_SPOT_LIGHT){
-			lDir = normalize(ve_Light[i].position - v_position.xyz);
+			lDir = ve_Light[i].position - v_position.xyz;
+			vec3 lDirAttenuation = lDir * ve_Light[i].attenuationRangeInverse;
+			lDir = normalize(lDir);
 			float currentAngleCos = dot(lDir, -ve_Light[i].direction);
+			attenuation = clamp(1.0 - dot(lDirAttenuation, lDirAttenuation), 0.0, 1.0);
 			attenuation *= smoothstep(ve_Light[i].outerAngleCos, ve_Light[i].innerAngleCos, currentAngleCos); 
 		}
 		NdotL = max(0.0, dot(normal, lDir));

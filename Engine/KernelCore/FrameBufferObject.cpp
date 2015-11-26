@@ -85,11 +85,11 @@ void veFrameBufferObject::setFrameBufferSize(const veVec2 &size)
 	_needRefreshAttachments = true;
 }
 
-void veFrameBufferObject::attach(GLenum attachment, veTexture *attachTex)
+void veFrameBufferObject::attach(GLenum attachment, GLenum target, veTexture *attachTex)
 {
-	if (_attachments[attachment] == attachTex) 
+	if (_attachments[attachment].first == target && _attachments[attachment].second == attachTex)
 		return;
-	_attachments[attachment] = attachTex;
+	_attachments[attachment] = std::make_pair(target, attachTex);
 	_needRefreshAttachments = true;
 }
 
@@ -166,13 +166,13 @@ void veFrameBufferObject::refreshAttachments()
 	if (_needRefreshAttachments) {
 		std::vector<GLenum> mrt;
 		for (auto &iter : _attachments) {
-			if (iter.second.valid()) {
+			if (iter.second.second.valid()) {
 				if (iter.first >= GL_COLOR_ATTACHMENT0 && iter.first <= GL_COLOR_ATTACHMENT15)
 					mrt.push_back(iter.first);
 				//iter.second->storage(iter.second->getWidth(), iter.second->getHeight(), 1
 				//	, iter.second->getInternalFormat(), iter.second->getPixelFormat(), iter.second->getDataType(), nullptr);
-				iter.second->bind(0);
-				glFramebufferTexture2D(GL_FRAMEBUFFER, iter.first, iter.second->glTarget(), iter.second->glTex(), 0);
+				iter.second.second->bind(0);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, iter.first, iter.second.first, iter.second.second->glTex(), 0);
 			}
 			else {
 				glFramebufferTexture2D(GL_FRAMEBUFFER, iter.first, 0, 0, 0);

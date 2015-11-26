@@ -41,7 +41,7 @@ veTexture::veTexture(GLenum target)
 	_swizzleMode[3] = SWIZZLE_A;
 }
 
-unsigned int veTexture::perPixelSize()
+unsigned int veTexture::perPixelSize() const
 {
 	switch (_internalFormat)
 	{
@@ -101,7 +101,7 @@ unsigned int veTexture::perPixelSize()
 	return 0;
 }
 
-unsigned int veTexture::getImageSize(int width, int height)
+unsigned int veTexture::getImageSize(int width, int height) const
 {
 	return ((width + 3) / 4) * ((height + 3) / 4) * perPixelSize();
 }
@@ -229,7 +229,7 @@ void veTexture::getSwizzleMode(SwizzleMode &r, SwizzleMode &g, SwizzleMode &b, S
 }
 
 void veTexture::storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat, GLenum dataType
-	, unsigned char *data)
+	, const unsigned char *data)
 {
 	if (!isSupportFormat(pixelFormat))
 		return;
@@ -429,7 +429,7 @@ void veTextureCube::bind(unsigned int textureUnit)
 			glTexStorage2D(_target, _textures[0]->getMipmapLevels().empty()? 1: _textures[0]->getMipmapLevels().size(), _internalFormat, _width, _height);
 			bool needGenerateMipmap = false;
 			for (unsigned int i = 0; i < 6; ++i) {
-				auto &tex = _textures[i];
+				const auto &tex = _textures[i];
 
 				if (_isCompressedTex) {
 					if (tex->getData()) {

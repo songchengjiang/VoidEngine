@@ -100,7 +100,7 @@ public:
 			spot0->addComponent(lightTranser);
 			spot0->addComponent(new LightUpdater);
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
-			spot0->setIntensity(veMath::veRandomUnitization());
+			spot0->setIntensity(2.0);
 
 			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "spot0-sphere"));
 			veNode *lightModel = _sceneManager->createNode("lightnode2");

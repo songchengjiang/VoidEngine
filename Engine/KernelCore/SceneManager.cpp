@@ -35,6 +35,7 @@ veSceneManager::~veSceneManager()
 
 veLight* veSceneManager::createLight(veLight::LightType type, const std::string &name)
 {
+	veAssert(_lightList.size() < veLight::DEFUALT_LIGHT_MAX_NUM);
 	auto light = static_cast<veLightManager *>(_managerList[veLightManager::TYPE()])->createLight(type, name);
 	_lightList.push_back(light);
 	return light;

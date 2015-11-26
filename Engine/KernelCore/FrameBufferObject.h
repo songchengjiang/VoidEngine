@@ -17,7 +17,7 @@ public:
 	USE_NAME_PROPERTY;
 
 	void setFrameBufferSize(const veVec2 &size);
-	void attach(GLenum attachment, veTexture *attachTex);
+	void attach(GLenum attachment, GLenum target, veTexture *attachTex);
 
 	void bind(unsigned int clearMask);
 	static void unBind();
@@ -36,7 +36,7 @@ private:
 	veVec2 _size;
 	bool _needRefreshAttachments;
 	bool _needRefreshBuffers;
-	std::map<GLenum, VE_Ptr<veTexture>> _attachments;
+	std::map<GLenum, std::pair< GLenum, VE_Ptr<veTexture> > > _attachments;
 };
 
 class VE_EXPORT veFrameBufferObjectManager

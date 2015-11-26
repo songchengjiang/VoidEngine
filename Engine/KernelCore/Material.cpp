@@ -109,15 +109,16 @@ veShader* vePass::getShader(veShader::Type type)
 
 void vePass::addTexture(veTexture *texture)
 {
-	if (_textures.empty())
-		_needLinkProgram = true;
 	_textures.push_back(texture);
+	_needLinkProgram = true;
 }
 
 void vePass::setTexture(size_t idx, veTexture *texture)
 {
 	veAssert(idx < _textures.size());
+	if (_textures[idx] == texture) return;
 	_textures[idx] = texture;
+	_needLinkProgram = true;
 }
 
 veTexture* vePass::getTexture(size_t idx)
@@ -137,8 +138,7 @@ veTexture* vePass::removeTexture(size_t idx)
 	veAssert(idx < _textures.size());
 	veTexture *tex = _textures[idx].get();
 	_textures.erase(_textures.begin() + idx);
-	if (_textures.empty())
-		_needLinkProgram = true;
+	_needLinkProgram = true;
 	return tex;
 }
 
@@ -199,7 +199,8 @@ void vePass::applyProgram(const veRenderCommand &command)
 void vePass::applyLightsUniforms(const veRenderCommand &command)
 {
 	const veLightList &lightList = command.sceneManager->getLightList();
-	if (lightList.empty()) return;
+	if (lightList.empty() || _lightUniformLocations.lightNum < 0)
+		return;
 
 	unsigned int enabledLightIndex = 0;
 	for (auto &iter : lightList) {
@@ -208,8 +209,8 @@ void vePass::applyLightsUniforms(const veRenderCommand &command)
 			++enabledLightIndex;
 		}
 	}
-	if (0 <= _lightUniformLocations.lightNum)
-		glUniform1i(_lightUniformLocations.lightNum, enabledLightIndex);
+
+	glUniform1i(_lightUniformLocations.lightNum, enabledLightIndex);
 }
 
 void vePass::applyUniforms(const veRenderCommand &command)
@@ -244,11 +245,11 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, veCamera *came
 	const auto &color = light->getColor();
 	glUniform3f(lightParamLocs[3], color.r(), color.g(), color.b());
 	glUniform1f(lightParamLocs[4], light->getIntensity());
-	glUniform1f(lightParamLocs[5], 1.0f / light->getAttenuationRange());
+	glUniform1f(lightParamLocs[5], light->getAttenuationRangeInverse());
 
 	if (light->getLightType() == veLight::SPOT) {
-		glUniform1f(lightParamLocs[6], veMath::veCos(veMath::veRadian(light->getInnerAngle())));
-		glUniform1f(lightParamLocs[7], veMath::veCos(veMath::veRadian(light->getOuterAngle())));
+		glUniform1f(lightParamLocs[6], light->getInnerAngleCos());
+		glUniform1f(lightParamLocs[7], light->getOuterAngleCos());
 	}
 }
 

@@ -50,12 +50,15 @@ public:
 	const veVec4& getColor() const { return _color; }
 	void setIntensity(float intensity) { _intensity = intensity; }
 	float getIntensity() const { return _intensity; }
-	void setAttenuationRange(float range) { _attenuationRange = range; }
+	void setAttenuationRange(float range) { _attenuationRange = range; _attenuationRangeInverse = 1.0f / _attenuationRange; }
 	float getAttenuationRange() const { return _attenuationRange; }
-	void setInnerAngle(float innerAng) { _innerAngle = innerAng; }
+	float getAttenuationRangeInverse() const { return _attenuationRangeInverse; }
+	void setInnerAngle(float innerAng) { _innerAngle = innerAng; _innerAngleCos = veMath::veCos(veMath::veRadian(_innerAngle)); }
 	float getInnerAngle() { return _innerAngle; }
-	void setOuterAngle(float outerAng) { _outerAngle = outerAng; }
+	float getInnerAngleCos() { return _innerAngleCos; }
+	void setOuterAngle(float outerAng) { _outerAngle = outerAng; _outerAngleCos = veMath::veCos(veMath::veRadian(_outerAngle)); }
 	float getOuterAngle() { return _outerAngle; }
+	float getOuterAngleCos() { return _outerAngleCos; }
 
 
 	void shadowEnable(bool isEnabled) { _shadowEnabled = isEnabled; }
@@ -91,8 +94,11 @@ protected:
 	veVec4 _color;
 	float  _intensity;
 	float  _attenuationRange;
+	float  _attenuationRangeInverse;
 	float  _innerAngle;
+	float  _innerAngleCos;
 	float  _outerAngle;
+	float  _outerAngleCos;
 	veMat4 _lightMatrix;
 
 	bool _shadowEnabled;
