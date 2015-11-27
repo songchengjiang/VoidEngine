@@ -42,7 +42,6 @@ veNode* veOctreeSceneManager::createNode(const std::string &name)
 	auto node = new veOctreeNode;
 	node->setName(name);
 	node->setSceneManager(this);
-	_nodeList.push_back(node);
 	return node;
 }
 
@@ -213,6 +212,9 @@ void veOctreeSceneManager::render()
 			if (iter->getFrameBufferObject()) {
 				veOctreeCamera *rttCam = static_cast<veOctreeCamera *>(iter.get());
 				//rttCam->walkingOctree(this->_octree);
+				if (_skyBox.valid()) {
+					_skyBox->render(rttCam);
+				}
 				rttCam->renderingOctree();
 				rttCam->render();
 			}
@@ -222,6 +224,9 @@ void veOctreeSceneManager::render()
 	if (_mainCamera.valid() && _mainCamera->isInScene() && _mainCamera->isVisible()) {
 		veOctreeCamera *mainCam = static_cast<veOctreeCamera *>(_mainCamera.get());
 		//mainCam->walkingOctree(this->_octree);
+		if (_skyBox.valid()) {
+			_skyBox->render(mainCam);
+		}
 		mainCam->renderingOctree();
 
 		if (!_postProcesserList.empty()) {

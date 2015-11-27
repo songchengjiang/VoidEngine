@@ -19,6 +19,11 @@ void veAnimationManager::update()
 	}
 }
 
+void veAnimationManager::resourceRecovery()
+{
+
+}
+
 veAnimationPlayer* veAnimationManager::findAnimationPlayer(const std::string &name)
 {
 	for (auto &iter : _animationPlayerPool) {

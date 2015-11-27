@@ -12,6 +12,8 @@ public:
 
 	~veEntityManager();
 
+	virtual void resourceRecovery() override;
+
 	veEntity* findEntity(const std::string &name);
 	veEntity* createEntity(const std::string &name);
 

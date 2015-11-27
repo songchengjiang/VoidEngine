@@ -52,7 +52,6 @@
     <ClCompile Include="..\..\Engine\KernelCore\FrameBufferObject.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Image.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Light.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\LightManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Material.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\MatrixPtr.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Mesh.cpp" />
@@ -123,7 +122,6 @@
     <ClInclude Include="..\..\Engine\KernelCore\IDGenerator.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Image.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Light.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\LightManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\LoopQueue.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Material.h" />
     <ClInclude Include="..\..\Engine\KernelCore\MatrixPtr.h" />

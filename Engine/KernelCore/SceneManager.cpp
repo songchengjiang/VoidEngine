@@ -7,19 +7,20 @@
 #include "SkyBox.h"
 #include "Animation.h"
 
-#include "LightManager.h"
 #include "TextureManager.h"
 #include "EntityManager.h"
 #include "AnimationManager.h"
+
+#define RESOURCE_RECOVERY_INTERVAL_TIME 10.0
 
 veSceneManager::veSceneManager()
 	: USE_VE_PTR_INIT
 	, _deltaTime(0.0)
 	, _simulationTime(0)
+	, _latestResourceRecoveredTime(RESOURCE_RECOVERY_INTERVAL_TIME)
 	, _stopThreading(true)
 	, _needReload(false)
 {
-	_managerList[veLightManager::TYPE()] = new veLightManager(this);
 	_managerList[veTextureManager::TYPE()] = new veTextureManager(this);
 	_managerList[veEntityManager::TYPE()] = new veEntityManager(this);
 	_managerList[veAnimationManager::TYPE()] = new veAnimationManager(this);
@@ -36,7 +37,8 @@ veSceneManager::~veSceneManager()
 veLight* veSceneManager::createLight(veLight::LightType type, const std::string &name)
 {
 	veAssert(_lightList.size() < veLight::DEFUALT_LIGHT_MAX_NUM);
-	auto light = static_cast<veLightManager *>(_managerList[veLightManager::TYPE()])->createLight(type, name);
+	auto light = new veLight(type);
+	light->setName(name);
 	_lightList.push_back(light);
 	return light;
 }
@@ -65,9 +67,7 @@ veEntity* veSceneManager::createEntity(const std::string &name)
 veSkyBox* veSceneManager::createSkyBox(const std::string &name, veReal size)
 {
 	auto skybox = new veSkyBox(size);
-	skybox->_sceneManager = this;
 	skybox->setName(name);
-	_skyBox = skybox;
 	return skybox;
 }
 
@@ -87,7 +87,6 @@ veAnimationContainer* veSceneManager::createAnimationContainer(const std::string
 veRay* veSceneManager::createRay(const veVec3 &start, const veVec3 &end)
 {
 	auto ray = new veRay(start, end);
-	_rayList.push_back(ray);
 	return ray;
 }
 
@@ -178,12 +177,11 @@ void veSceneManager::startThreading()
 	_stopThreading = false;
 	_threadPool.start();
 	_renderingThread = std::thread([this] {
-		while(!this->_stopThreading)
-		{
+		while(!this->_stopThreading){
 			std::unique_lock<std::mutex> renderLock(this->_renderingMutex);
 			this->_renderingCondition.wait(renderLock);
 			this->render();
-			this->handleRequests();
+			this->postRenderHandle();
 		}
 	});
 }
@@ -197,11 +195,44 @@ void veSceneManager::stopThreading()
 	_renderingThread.join();
 }
 
+void veSceneManager::postRenderHandle()
+{
+	std::unique_lock<std::mutex> updateLock(_updatingMutex);
+	handleRequests();
+	resourceRecovery();
+}
+
+void veSceneManager::resourceRecovery()
+{
+	if (RESOURCE_RECOVERY_INTERVAL_TIME < _latestResourceRecoveredTime) {
+		for (veCameraList::iterator iter = _cameraList.begin(); iter != _cameraList.end(); ) {
+			if ((*iter)->refCount() <= 1) {
+				iter = _cameraList.erase(iter);
+			}else {
+				++iter;
+			}
+		}
+
+		for (veLightList::iterator iter = _lightList.begin(); iter != _lightList.end(); ) {
+			if ((*iter)->refCount() <= 1) {
+				iter = _lightList.erase(iter);
+			}else {
+				++iter;
+			}
+		}
+
+		for (auto &manager : _managerList) {
+			manager.second->resourceRecovery();
+		}
+		_latestResourceRecoveredTime = 0.0f;
+	}
+	_latestResourceRecoveredTime += _deltaTime;
+}
+
 void veSceneManager::handleRequests()
 {
 	if (_requestQueue.empty())
 		return;
-	std::unique_lock<std::mutex> updateLock(_updatingMutex);
 	std::unique_lock<std::mutex> lock(_requestQueueMutex);
 	while (!_requestQueue.empty())
 	{

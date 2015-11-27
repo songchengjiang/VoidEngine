@@ -2,7 +2,6 @@
 #include <rapidjson/include/document.h>
 #include "Constants.h"
 #include "KernelCore/Light.h"
-#include "KernelCore/LightManager.h"
 #include "KernelCore/SceneManager.h"
 #include <unordered_map>
 

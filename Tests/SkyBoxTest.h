@@ -8,10 +8,8 @@ public:
 	SkyBoxTest() {
 		veNode *root = _sceneManager->createNode("root");
 		{
-			veNode *node = _sceneManager->createNode("skyboxNode");
 			auto skyBox = _sceneManager->createSkyBox("skybox");
-			node->addRenderableObject(skyBox);
-			root->addChild(node);
+			_sceneManager->setSkyBox(skyBox);
 
 			veMaterialArray *materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "skyboxs/skybox-snow.vemtl", "skybox-mats"));
 			skyBox->setMaterialArray(materials);

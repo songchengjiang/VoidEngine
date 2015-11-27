@@ -1,16 +1,26 @@
 #ifndef _VE_SKY_BOX_
 #define _VE_SKY_BOX_
 #include "Prerequisites.h"
-#include "RenderableObject.h"
+#include "Material.h"
 
-class VE_EXPORT veSkyBox : public veRenderableObject
+class veCamera;
+class VE_EXPORT veSkyBox
 {
 	friend class veSceneManager;
 public:
 	~veSkyBox();
 
+	USE_VE_PTR;
+	USE_NAME_PROPERTY;
+
 	void setSize(veReal size);
 	veReal getSize()const { return _size; }
+
+	void setMaterialArray(veMaterialArray *material) { _materials = material; }
+	veMaterialArray* getMaterialArray() { return _materials.get(); }
+	const veMaterialArray* getMaterialArray() const { return _materials.get(); }
+
+	void render(veCamera *camera);
 
 protected:
 
@@ -19,6 +29,8 @@ protected:
 protected:
 
 	veReal _size;
+	VE_Ptr<veRenderer> _renderer;
+	VE_Ptr<veMaterialArray> _materials;
 };
 
 #endif

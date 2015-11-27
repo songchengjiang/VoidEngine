@@ -7,10 +7,13 @@ class veSkyBoxRenderer : public veBoxRenderer
 {
 public:
 
+	veSkyBoxRenderer(veSkyBox *skybox)
+		: _skyBox(skybox)
+	{}
+
 	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override {
-		auto skybox = static_cast<veSkyBox *>(renderableObj);
 		updateBuffer();
-		auto materials = renderableObj->getMaterialArray();
+		auto materials = _skyBox->getMaterialArray();
 		for (unsigned int mat = 0; mat < materials->getMaterialNum(); ++mat) {
 			auto material = materials->getMaterial(mat);
 			for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {
@@ -19,8 +22,7 @@ public:
 					veRenderCommand rc;
 					rc.pass = pass;
 					rc.worldMatrix = new veMat4Ptr(veMat4::translation(veVec3(camera->getMatrix()[0][3], camera->getMatrix()[1][3], camera->getMatrix()[2][3]))
-						* veMat4::scale(veVec3(skybox->getSize() * 0.5f)));
-					//rc.attachedNode = node;
+						* veMat4::scale(veVec3(_skyBox->getSize() * 0.5f)));
 					rc.renderableObj = renderableObj;
 					rc.camera = camera;
 					rc.sceneManager = camera->getSceneManager();
@@ -31,11 +33,16 @@ public:
 			}
 		}
 	}
+
+private:
+
+	veSkyBox *_skyBox;
 };
 
 veSkyBox::veSkyBox(veReal size)
+	: USE_VE_PTR_INIT
 {
-	_renderer = new veSkyBoxRenderer;
+	_renderer = new veSkyBoxRenderer(this);
 	setSize(size);
 }
 
@@ -47,6 +54,9 @@ veSkyBox::~veSkyBox()
 void veSkyBox::setSize(veReal size)
 {
 	_size = size;
-	_boundingBox.min() = veVec3(-_size * 0.5f);
-	_boundingBox.max() = veVec3(_size * 0.5f);
+}
+
+void veSkyBox::render(veCamera *camera)
+{
+	_renderer->render(nullptr, nullptr, camera);
 }

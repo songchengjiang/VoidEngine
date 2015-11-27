@@ -36,7 +36,8 @@ typedef float veReal;
 #define USE_VE_PTR \
 protected: size_t _inUse;\
 public: void ref() { ++_inUse; }\
-public: size_t unRef() { --_inUse; return _inUse; }
+public: size_t unRef() { --_inUse; return _inUse; }\
+public: size_t refCount() { return _inUse; }
 
 #define USE_VE_PTR_INIT _inUse(0)
 

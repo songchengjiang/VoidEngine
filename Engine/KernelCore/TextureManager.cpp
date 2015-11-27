@@ -23,6 +23,17 @@ void veTextureManager::update()
 	}
 }
 
+void veTextureManager::resourceRecovery()
+{
+	for (std::vector< VE_Ptr<veTexture> >::iterator iter = _texturePool.begin(); iter != _texturePool.end(); ) {
+		if ((*iter)->refCount() <= 1) {
+			iter = _texturePool.erase(iter);
+		}else {
+			++iter;
+		}
+	}
+}
+
 veTexture* veTextureManager::findTexture(const std::string &name)
 {
 	for (auto &iter : _texturePool) {
@@ -50,15 +61,15 @@ veTexture* veTextureManager::createTexture(const std::string &name, veTexture::T
 	_texturePool.push_back(texture);
 	return texture;
 }
-
-void veTextureManager::removeTexture(veTexture *tex)
-{
-	auto iter = std::find(_texturePool.begin(), _texturePool.end(), tex);
-	if (iter != _texturePool.end()) {
-		tex->_manager = nullptr;
-		_texturePool.erase(iter);
-	}
-}
+//
+//void veTextureManager::removeTexture(veTexture *tex)
+//{
+//	auto iter = std::find(_texturePool.begin(), _texturePool.end(), tex);
+//	if (iter != _texturePool.end()) {
+//		tex->_manager = nullptr;
+//		_texturePool.erase(iter);
+//	}
+//}
 
 bool veTextureManager::exchangeTextureMemory(veTexture *texture)
 {

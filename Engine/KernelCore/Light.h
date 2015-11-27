@@ -7,8 +7,7 @@
 
 class VE_EXPORT veLight : public veNode
 {
-	friend class veLightManager;
-	friend class vePass;
+	friend class veSceneManager;
 public:
 
 	static unsigned int DEFUALT_LIGHT_MAX_NUM;

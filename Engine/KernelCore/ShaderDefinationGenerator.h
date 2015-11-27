@@ -3,7 +3,6 @@
 #include "NodeVisitor.h"
 #include "SceneManager.h"
 #include "Light.h"
-#include "LightManager.h"
 #include "RenderCommand.h"
 #include "Mesh.h"
 #include "Material.h"

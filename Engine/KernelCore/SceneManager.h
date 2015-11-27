@@ -58,9 +58,9 @@ public:
 	virtual void requestRayCast(veRay *ray) = 0;
 	virtual bool isNodeVisibleInScene(veNode *node) { return true; }
 
-	const veNodeList& getNodeList() const { return _nodeList; }
 	const veCameraList& getCameraList() const { return _cameraList; }
 	const veLightList& getLightList() const { return _lightList; }
+	void setSkyBox(veSkyBox *skybox) { _skyBox = skybox; }
 	const veSkyBox* getSkyBox() const { return _skyBox.get(); }
 
 	veBaseManager* getManager(const std::string &mgType);
@@ -86,17 +86,17 @@ protected:
 
 	virtual void update() = 0;
 	virtual void render() = 0;
+	void postRenderHandle();
+	void resourceRecovery();
 	void handleRequests();
 	void enqueueRequest(const std::function<void()> &func);
 
 protected:
 
 	VE_Ptr<veNode> _root;
-	veNodeList _nodeList;
+	VE_Ptr<veSkyBox> _skyBox;
 	veCameraList _cameraList;
 	veLightList _lightList;
-	veRayList   _rayList;
-	VE_Ptr<veSkyBox> _skyBox;
 	vePostProcesserList _postProcesserList;
 	VE_Ptr<veFrameBufferObject> _postProcesserFBO;
 
@@ -117,6 +117,7 @@ protected:
 
 	double _deltaTime;
 	double _simulationTime;
+	double _latestResourceRecoveredTime;
 };
 
 #endif

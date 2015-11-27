@@ -13,10 +13,11 @@ public:
 	~veTextureManager();
 
 	virtual void update() override;
+	virtual void resourceRecovery() override;
 
 	veTexture* findTexture(const std::string &name);
 	veTexture* createTexture(const std::string &name, veTexture::TextureType texType);
-	void removeTexture(veTexture *tex);
+	//void removeTexture(veTexture *tex);
 	bool requestTextureMemory(veTexture *texture) { return (_currentTextureMemory + texture->getTextureTotalMemory()) < _maxTextureMemory; }
 	bool exchangeTextureMemory(veTexture *texture);
 	bool assignTextureMemory(veTexture *texture);
