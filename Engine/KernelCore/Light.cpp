@@ -2,9 +2,7 @@
 #include "NodeVisitor.h"
 #include "SceneManager.h"
 #include "Constants.h"
-#include <sstream>
 
-unsigned int veLight::DEFUALT_LIGHT_MAX_NUM = 8;
 const unsigned int veLight::DEFUALT_LIGHT_PARAM_NUM = 8;
 
 const veVec2 veLight::DEFAULT_SHADOW_RESOLUTION = veVec2(256);
@@ -81,30 +79,6 @@ void veLight::visit(veNodeVisitor &visitor)
 void veLight::updateSceneManager()
 {
 
-}
-
-std::string veLight::lightUniformDefination()
-{
-	std::stringstream def;
-	def << "\
-uniform struct {\n\
-    int   " << veLight::DEFUALT_LIGHT_UNIFORM_TYPE_NAME << ";\n\
-    vec3  " << veLight::DEFUALT_LIGHT_UNIFORM_POSITION_NAME << ";\n\
-    vec3  " << veLight::DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME << ";\n\
-    vec3  " << veLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME << ";\n\
-}" << veLight::DEFUALT_LIGHT_UNIFORM_NAME<< "[" << veLight::DEFUALT_LIGHT_MAX_NUM << "];\n\
-const int " << veLight::DEFUALT_LIGHT_UNIFORM_MAX_NAME << " = " << veLight::DEFUALT_LIGHT_MAX_NUM << ";\n\
-uniform int " << veLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME << ";\n\
-#define VE_DIRECTIONAL_LIGHT " << veLight::DIRECTIONAL << "\n\
-#define VE_POINT_LIGHT       " << veLight::POINT << "\n\
-#define VE_SPOT_LIGHT        " << veLight::SPOT << "\n\
-#define VE_AREA_LIGHT        " << veLight::AREA << "\n\
-";
-	return def.str();
 }
 
 //void veLight::render(veCamera *camera)

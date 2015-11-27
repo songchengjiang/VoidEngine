@@ -37,7 +37,7 @@ vePass::~vePass()
 
 void vePass::visit(const veRenderCommand &command)
 {
-	if (command.sceneManager->needReload())
+	if (command.sceneManager->isNeedReload())
 		_needLinkProgram = true;
 }
 
@@ -190,7 +190,7 @@ void vePass::applyProgram(const veRenderCommand &command)
 			glTransformFeedbackVaryings(_program, GLsizei(varyingList.size()), &varyingList[0], GL_INTERLEAVED_ATTRIBS);
 		}
 		glLinkProgram(_program);
-		locateLightUnifroms();
+		locateLightUnifroms(command);
 		_needLinkProgram = false;
 	}
 	glUseProgram(_program);
@@ -253,11 +253,12 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, veCamera *came
 	}
 }
 
-void vePass::locateLightUnifroms()
+void vePass::locateLightUnifroms(const veRenderCommand &command)
 {
+	size_t lightMaxNum = command.sceneManager->getLightList().size();
 	_lightUniformLocations.lightNum = glGetUniformLocation(_program, veLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME.c_str());
-	_lightUniformLocations.lightParams.assign(veLight::DEFUALT_LIGHT_MAX_NUM, std::vector<GLint>());
-	for (unsigned int i = 0; i < veLight::DEFUALT_LIGHT_MAX_NUM; ++i) {
+	_lightUniformLocations.lightParams.assign(lightMaxNum, std::vector<GLint>());
+	for (unsigned int i = 0; i < lightMaxNum; ++i) {
 		char str[32];
 		sprintf(str, "%s[%d].", veLight::DEFUALT_LIGHT_UNIFORM_NAME.c_str(), i);
 		std::string lightName = str;

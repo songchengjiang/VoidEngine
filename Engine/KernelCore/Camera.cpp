@@ -125,7 +125,7 @@ void veCamera::setViewport(const veViewport &vp)
 void veCamera::setRenderPath(RenderPath renderPath)
 {
 	_renderPath = renderPath;
-	_sceneManager->reload();
+	_sceneManager->needReload();
 }
 
 const vePlane& veCamera::getFrustumPlane(FrustumPlane fp)

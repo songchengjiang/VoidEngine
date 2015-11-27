@@ -97,7 +97,7 @@ private:
 	void applyUniforms(const veRenderCommand &command);
 	void applyLightsUniforms(const veRenderCommand &command);
 	void applyLightUniforms(unsigned int idx, veLight *light, veCamera *camera);
-	void locateLightUnifroms();
+	void locateLightUnifroms(const veRenderCommand &command);
 
 private:
 

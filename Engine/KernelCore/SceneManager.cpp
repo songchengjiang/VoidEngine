@@ -36,10 +36,10 @@ veSceneManager::~veSceneManager()
 
 veLight* veSceneManager::createLight(veLight::LightType type, const std::string &name)
 {
-	veAssert(_lightList.size() < veLight::DEFUALT_LIGHT_MAX_NUM);
 	auto light = new veLight(type);
 	light->setName(name);
 	_lightList.push_back(light);
+	this->needReload();
 	return light;
 }
 
@@ -132,7 +132,7 @@ void veSceneManager::setDeltaTime(double deltaTime)
 	_simulationTime += deltaTime;
 }
 
-void veSceneManager::reload()
+void veSceneManager::needReload()
 {
 	_needReload = true;
 	enqueueRequest([this] {

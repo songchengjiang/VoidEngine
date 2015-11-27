@@ -87,7 +87,7 @@ public:
 				for (auto &light : _command.sceneManager->getLightList()) {
 					if (light->isInScene() && light->isVisible()) {
 						definations += SHADER_DEFINE_LIGHTS + std::string(" 1\n");
-						definations += veLight::lightUniformDefination();
+						definations += getLightDefination();
 						break;
 					}
 				}
@@ -144,46 +144,29 @@ public:
 	}
 
 
-	//std::string getLightDefination(const std::string &className, const veLightManager::LightTemplate &lightTemplate)
-	//{
-	//	std::stringstream ss;
-	//	if (true) {
-	//		ss << "const int " << className << "Max = " << lightTemplate.limit << ";" << std::endl;
-	//		ss << "uniform struct " << "{" << std::endl;
-	//		ss << "    vec3 " << POSITION_KEY << ";" << std::endl;
-	//		ss << "    vec3 " << DIRECTION_KEY << ";" << std::endl;
-	//		for (auto &iter : lightTemplate.parameters) {
-	//			if (INT_KEY == iter.second) {
-	//				ss << "    int " << iter.first << ";" << std::endl;
-	//			}
-	//			else if (BOOL_KEY == iter.second) {
-	//				ss << "    bool " << iter.first << ";" << std::endl;
-	//			}
-	//			else if (FLOAT_KEY == iter.second) {
-	//				ss << "    float " << iter.first << ";" << std::endl;
-	//			}
-	//			else if (VEC2_KEY == iter.second) {
-	//				ss << "    vec2 " << iter.first << ";" << std::endl;
-	//			}
-	//			else if (VEC3_KEY == iter.second) {
-	//				ss << "    vec3 " << iter.first << ";" << std::endl;
-	//			}
-	//			else if (VEC4_KEY == iter.second) {
-	//				ss << "    vec4 " << iter.first << ";" << std::endl;
-	//			}
-	//			else if (MAT3_KEY == iter.second) {
-	//				ss << "    mat3 " << iter.first << ";" << std::endl;
-	//			}
-	//			else if (MAT4_KEY == iter.second) {
-	//				ss << "    mat4 " << iter.first << ";" << std::endl;
-	//			}
-	//		}
-	//		ss << "}" << className << "[" << lightTemplate.limit << "];" << std::endl;
-	//		//ss << "uniform " << className << "[" << lightTemplate.limit << "];" << std::endl;
-	//		ss << "uniform int " << className << "Number;" << std::endl;
-	//	}
-	//	return ss.str();
-	//}
+	std::string getLightDefination()
+	{
+		std::stringstream def;
+		def << "\
+uniform struct {\n\
+    int   " << veLight::DEFUALT_LIGHT_UNIFORM_TYPE_NAME << ";\n\
+    vec3  " << veLight::DEFUALT_LIGHT_UNIFORM_POSITION_NAME << ";\n\
+    vec3  " << veLight::DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME << ";\n\
+    vec3  " << veLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME << ";\n\
+    float " << veLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME << ";\n\
+    float " << veLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME << ";\n\
+    float " << veLight::DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME << ";\n\
+    float " << veLight::DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME << ";\n\
+}" << veLight::DEFUALT_LIGHT_UNIFORM_NAME << "[" << _command.sceneManager->getLightList().size() << "];\n\
+const int " << veLight::DEFUALT_LIGHT_UNIFORM_MAX_NAME << " = " << _command.sceneManager->getLightList().size() << ";\n\
+uniform int " << veLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME << ";\n\
+#define VE_DIRECTIONAL_LIGHT " << veLight::DIRECTIONAL << "\n\
+#define VE_POINT_LIGHT       " << veLight::POINT << "\n\
+#define VE_SPOT_LIGHT        " << veLight::SPOT << "\n\
+#define VE_AREA_LIGHT        " << veLight::AREA << "\n\
+";
+		return def.str();
+	}
 
 	//virtual void visit(veNode &node) {
 	//	_root = &node;

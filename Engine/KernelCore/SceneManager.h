@@ -60,7 +60,7 @@ public:
 
 	const veCameraList& getCameraList() const { return _cameraList; }
 	const veLightList& getLightList() const { return _lightList; }
-	void setSkyBox(veSkyBox *skybox) { _skyBox = skybox; }
+	void setSkyBox(veSkyBox *skybox) { _skyBox = skybox; needReload(); }
 	const veSkyBox* getSkyBox() const { return _skyBox.get(); }
 
 	veBaseManager* getManager(const std::string &mgType);
@@ -73,8 +73,8 @@ public:
 	void setCamera(veCamera *camera) { _mainCamera = camera; }
 	veCamera* getCamera() { return _mainCamera.get(); }
 
-	void reload();
-	bool needReload() { return _needReload; }
+	void needReload();
+	bool isNeedReload() { return _needReload; }
 
 	void dispatchEvents(veEvent &event);
 	bool simulation();

@@ -10,7 +10,6 @@ class VE_EXPORT veLight : public veNode
 	friend class veSceneManager;
 public:
 
-	static unsigned int DEFUALT_LIGHT_MAX_NUM;
 	static const unsigned int DEFUALT_LIGHT_PARAM_NUM;
 	static const std::string DEFUALT_LIGHT_UNIFORM_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_MAX_NAME;
@@ -78,8 +77,6 @@ public:
 
 	void setLightViewMatrix(const veMat4 &mat) { _lightMatrix = mat; }
 	const veMat4& getLightViewMatrix() { return _lightMatrix; }
-
-	static std::string lightUniformDefination();
 
 protected:
 	veLight(LightType type);
