@@ -17,7 +17,7 @@ public:
 	virtual ~veRenderer();
 	virtual void visit(veNode *node, veRenderableObject *renderableObj, veSceneManager *sm);
 	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) = 0;
-//	virtual void draw(const veRenderCommand &command) = 0;
+	virtual void draw(const veRenderCommand &command) = 0;
 
 protected:
 

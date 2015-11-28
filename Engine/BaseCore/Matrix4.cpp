@@ -26,9 +26,7 @@ veMat4::veMat4()
 
 veMat4::veMat4(const veMat4 &copy)
 {
-	for (unsigned short i = 0; i < 16; ++i){
-		_m[i] = copy._m[i];
-	}
+	memcpy(m, copy.m, 16 * sizeof(veReal));
 }
 
 veMat4::veMat4(veReal m00, veReal m01, veReal m02, veReal m03

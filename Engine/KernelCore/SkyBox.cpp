@@ -19,14 +19,20 @@ public:
 			for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {
 				auto pass = material->activeTechnique()->getPass(i);
 				if (camera->getMask() & pass->drawMask()) {
+					veMat4 cameraWorldMat = camera->getNodeToWorldMatrix();
 					veRenderCommand rc;
 					rc.pass = pass;
-					rc.worldMatrix = new veMat4Ptr(veMat4::translation(veVec3(camera->getMatrix()[0][3], camera->getMatrix()[1][3], camera->getMatrix()[2][3]))
-						* veMat4::scale(veVec3(_skyBox->getSize() * 0.5f)));
+					veMat4 mat = veMat4::IDENTITY;
+					mat[0][3] = cameraWorldMat[0][3];
+					mat[1][3] = cameraWorldMat[1][3];
+					mat[2][3] = cameraWorldMat[2][3];
+					mat[0][0] = mat[1][1] = mat[2][2] = _skyBox->getSize() * 0.5f;
+					rc.worldMatrix = new veMat4Ptr(mat);
 					rc.renderableObj = renderableObj;
 					rc.camera = camera;
 					rc.sceneManager = camera->getSceneManager();
-					rc.drawFunc = VE_CALLBACK_1(veSkyBoxRenderer::draw, this);
+					rc.renderer = this;
+					//rc.drawFunc = VE_CALLBACK_1(veSkyBoxRenderer::draw, this);
 					pass->visit(rc);
 					camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_BACKGROUND, rc);
 				}
@@ -41,6 +47,8 @@ private:
 
 veSkyBox::veSkyBox(veReal size)
 	: USE_VE_PTR_INIT
+	, _mask(0xffffffff)
+	, _sceneManager(nullptr)
 {
 	_renderer = new veSkyBoxRenderer(this);
 	setSize(size);
@@ -54,6 +62,12 @@ veSkyBox::~veSkyBox()
 void veSkyBox::setSize(veReal size)
 {
 	_size = size;
+}
+
+void veSkyBox::setMask(unsigned int mask)
+{
+	_mask = mask;
+	_sceneManager->needReload();
 }
 
 void veSkyBox::render(veCamera *camera)

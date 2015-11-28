@@ -237,7 +237,7 @@ void veCamera::renderQueue(veLoopQueue< veRenderCommand > &queue)
 {
 	while (!queue.empty()) {
 		auto &cmd = queue.front();
-        cmd.drawFunc(cmd);
+        cmd.renderer->draw(cmd);
 		queue.pop_front();
 	}
 }

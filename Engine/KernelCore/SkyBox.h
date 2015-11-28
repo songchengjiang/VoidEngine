@@ -4,6 +4,7 @@
 #include "Material.h"
 
 class veCamera;
+class veSceneManager;
 class VE_EXPORT veSkyBox
 {
 	friend class veSceneManager;
@@ -15,6 +16,8 @@ public:
 
 	void setSize(veReal size);
 	veReal getSize()const { return _size; }
+	void setMask(unsigned int mask);
+	unsigned int getMask() const { return _mask; }
 
 	void setMaterialArray(veMaterialArray *material) { _materials = material; }
 	veMaterialArray* getMaterialArray() { return _materials.get(); }
@@ -28,9 +31,11 @@ protected:
 
 protected:
 
-	veReal _size;
-	VE_Ptr<veRenderer> _renderer;
+	veReal                  _size;
+	unsigned int            _mask;
+	VE_Ptr<veRenderer>      _renderer;
 	VE_Ptr<veMaterialArray> _materials;
+	veSceneManager         *_sceneManager;
 };
 
 #endif

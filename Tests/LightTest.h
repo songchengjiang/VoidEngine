@@ -2,6 +2,8 @@
 #define _LIGHT_TEST_
 #include "BaseTest.h"
 
+#define LIGHT_MASK 0x0000000f
+
 class LightTest : public BaseTest
 {
 public:
@@ -62,6 +64,27 @@ public:
 			root->addChild(node);
 		}
 
+
+		{
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu-0"));
+			veNode *node = _sceneManager->createNode("node4");
+			node->addRenderableObject(entity);
+			//node->addComponent(new KeyboardInputer);
+			veTransformer *transer = new veTransformer;
+			node->addComponent(transer);
+			//transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
+			transer->setScale(veVec3(0.3f));
+			transer->setRotation(veQuat(veMath::HALF_PI, veVec3::UNIT_X));
+			root->addChild(node);
+			node->setMask(~LIGHT_MASK);
+
+			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim"));
+			veAnimationPlayer* player = _sceneManager->createAnimationPlayer("player0", animationContainer);
+			player->start();
+			player->setLoopAnimation(true);
+			player->attachEntity(entity);
+		}
+
 		{
 			veLight *directional0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight", "directional0"));
 			veTransformer *lightTranser = new veTransformer;
@@ -74,7 +97,9 @@ public:
 			veNode *lightModel = _sceneManager->createNode("lightnode0");
 			lightModel->addRenderableObject(lightentity);
 			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
+			lightModel->setMask(~LIGHT_MASK);
 			directional0->addChild(lightModel);
+			directional0->setMask(LIGHT_MASK);
 			root->addChild(directional0);
 		}
 
@@ -90,7 +115,9 @@ public:
 			veNode *lightModel = _sceneManager->createNode("lightnode1");
 			lightModel->addRenderableObject(lightentity);
 			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
+			lightModel->setMask(~LIGHT_MASK);
 			point0->addChild(lightModel);
+			point0->setMask(LIGHT_MASK);
 			root->addChild(point0);
 		}
 
@@ -106,7 +133,9 @@ public:
 			veNode *lightModel = _sceneManager->createNode("lightnode2");
 			lightModel->addRenderableObject(lightentity);
 			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
+			lightModel->setMask(~LIGHT_MASK);
 			spot0->addChild(lightModel);
+			spot0->setMask(LIGHT_MASK);
 			root->addChild(spot0);
 		}
 

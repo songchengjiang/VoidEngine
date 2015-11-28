@@ -11,6 +11,71 @@
 #include "KernelCore/MatrixPtr.h"
 #include "Constants.h"
 
+class veDebugRenderer : public veRenderer
+{
+public:
+
+	veDebugRenderer(veDebuger *debuger)
+		: _debuger(debuger)
+		, drawCount(0)
+		, vao(0)
+		, vbo(0)
+	{}
+
+	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override {
+		if (!vao) {
+			glGenVertexArrays(1, &vao);
+			glGenBuffers(1, &vbo);
+		}
+
+		glBindVertexArray(vao);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		{
+			std::unique_lock<std::mutex> lock(verticesMutex);
+			if (!vertices.empty())
+				glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.buffer(), GL_STATIC_DRAW);
+			drawCount = vertices.size();
+			vertices.clear();
+		}
+
+
+		GLsizei vertexStride = sizeof(GLfloat) * (3 + 4);
+		//vertex
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexStride, 0);
+		glEnableVertexAttribArray(0);
+
+		//color
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, vertexStride, (GLvoid *)(sizeof(GLfloat) * 3));
+		glEnableVertexAttribArray(1);
+
+		veRenderCommand rc;
+		rc.priority = veRenderCommand::LOW_PRIORITY;
+		rc.pass = _debuger->getMaterialArray()->getMaterial(0)->getTechnique(0)->getPass(0);
+		rc.worldMatrix = new veMat4Ptr(veMat4::IDENTITY);
+		rc.renderableObj = nullptr;
+		rc.camera = camera;
+		rc.sceneManager = camera->getSceneManager();
+		rc.renderer = this;
+		camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
+	}
+
+	virtual void draw(const veRenderCommand &command) override {
+		command.pass->apply(command);
+		glBindVertexArray(vao);
+		glDrawArrays(GL_LINES, 0, drawCount);
+	}
+
+	std::mutex      verticesMutex;
+	veRealArray     vertices;
+	unsigned int    drawCount;
+	GLuint          vao;
+	GLuint          vbo;
+
+private:
+
+	veDebuger *_debuger;
+};
+
 class RenderableObjectFinder : public veNodeVisitor
 {
 public:
@@ -29,16 +94,12 @@ private:
 };
 
 veDebuger::veDebuger()
-	: _vao(0)
-	, _vbo(0)
-	, _isDrawMeshWireframe(false)
+	: _isDrawMeshWireframe(false)
 	, _isDrawBoundingBoxWireframe(false)
 	, _isDrawFrustumPlane(false)
-	, _lineWidth(1.0f)
-	, _vertexStride(0)
-	, _drawCount(0)
 {
 	initMaterial();
+	_renderer = new veDebugRenderer(this);
 }
 
 veDebuger::~veDebuger()
@@ -82,39 +143,7 @@ void veDebuger::render(veNode *node, veCamera *camera)
 		}
 	}
 
-	if (!_vao) {
-		glGenVertexArrays(1, &_vao);
-		glGenBuffers(1, &_vbo);
-	}
-
-	glBindVertexArray(_vao);
-	glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-	{
-		std::unique_lock<std::mutex> lock(_verticesMutex);
-		if (!_vertices.empty())
-			glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(_vertices[0]), _vertices.buffer(), GL_STATIC_DRAW);
-		_drawCount = _vertices.size();
-		_vertices.clear();
-	}
-
-
-	//vertex
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, _vertexStride, 0);
-	glEnableVertexAttribArray(0);
-
-	//color
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, _vertexStride, (GLvoid *)(sizeof(GLfloat) * 3));
-	glEnableVertexAttribArray(1);
-
-	veRenderCommand rc;
-	rc.priority = veRenderCommand::LOW_PRIORITY;
-	rc.pass = _materials->getMaterial(0)->getTechnique(0)->getPass(0);
-	rc.worldMatrix = new veMat4Ptr(veMat4::IDENTITY);
-	rc.renderableObj = nullptr;
-	rc.camera = camera;
-	rc.sceneManager = camera->getSceneManager();
-	rc.drawFunc = VE_CALLBACK_1(veDebuger::draw, this);
-	camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
+	veRenderableObject::render(node, camera);
 }
 
 void veDebuger::debugDrawLine(const veVec3 &start, const veVec3 &end, const veVec4 &color)
@@ -162,8 +191,6 @@ void veDebuger::initMaterial()
 	pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
 
 	_materials->addMaterial(material);
-
-	_vertexStride = sizeof(GLfloat) * (3 + 4);
 }
 
 void veDebuger::renderMeshWireframe(veMesh *mesh, const veMat4 &trans)
@@ -291,18 +318,10 @@ veVec3 veDebuger::getPlaneCrossPoint(const vePlane &p0, const vePlane &p1, const
 
 void veDebuger::drawLine(const veVec3 &start, const veVec3 &end, const veVec4 &color)
 {
-	std::unique_lock<std::mutex> lock(_verticesMutex);
-	_vertices.push_back(start.x()); _vertices.push_back(start.y()); _vertices.push_back(start.z());
-	_vertices.push_back(color.x()); _vertices.push_back(color.y()); _vertices.push_back(color.z()); _vertices.push_back(color.w());
-	_vertices.push_back(end.x()); _vertices.push_back(end.y()); _vertices.push_back(end.z());
-	_vertices.push_back(color.x()); _vertices.push_back(color.y()); _vertices.push_back(color.z()); _vertices.push_back(color.w());
-}
-
-void veDebuger::draw(const veRenderCommand &command)
-{
-	command.pass->apply(command);
-	glLineWidth(_lineWidth);
-
-	glBindVertexArray(_vao);
-	glDrawArrays(GL_LINES, 0, _drawCount);
+	veDebugRenderer *dr = static_cast<veDebugRenderer *>(_renderer.get());
+	std::unique_lock<std::mutex> lock(dr->verticesMutex);
+	dr->vertices.push_back(start.x()); dr->vertices.push_back(start.y()); dr->vertices.push_back(start.z());
+	dr->vertices.push_back(color.x()); dr->vertices.push_back(color.y()); dr->vertices.push_back(color.z()); dr->vertices.push_back(color.w());
+	dr->vertices.push_back(end.x()); dr->vertices.push_back(end.y()); dr->vertices.push_back(end.z());
+	dr->vertices.push_back(color.x()); dr->vertices.push_back(color.y()); dr->vertices.push_back(color.z()); dr->vertices.push_back(color.w());
 }

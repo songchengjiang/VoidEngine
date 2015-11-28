@@ -169,6 +169,13 @@ veMat4 veNode::computeWorldToNodeMatrix() const
 	return worldMat;
 }
 
+void veNode::setMask(unsigned int mask, bool isOverride /*= true*/)
+{
+	_mask = mask; 
+	_overrideMask = isOverride; 
+	_sceneManager->needReload();
+}
+
 void veNode::refresh()
 {
 	_refresh = true;

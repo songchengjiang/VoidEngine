@@ -134,6 +134,7 @@ void veBoxRenderer::render(veNode *node, veRenderableObject *renderableObj, veCa
 			if (camera->getMask() & pass->drawMask()) {
 				bool isTransparent = pass->blendFunc() != veBlendFunc::DISABLE ? true : false;
 				veRenderCommand rc;
+				rc.mask = node->getMask();
 				rc.pass = pass;
 				rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix());
 				//rc.attachedNode = node;
@@ -141,7 +142,8 @@ void veBoxRenderer::render(veNode *node, veRenderableObject *renderableObj, veCa
 				rc.camera = camera;
 				rc.sceneManager = camera->getSceneManager();
 				rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
-				rc.drawFunc = VE_CALLBACK_1(veBoxRenderer::draw, this);
+				rc.renderer = this;
+				//rc.drawFunc = VE_CALLBACK_1(veBoxRenderer::draw, this);
 				pass->visit(rc);
 				if (isTransparent)
 					camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);

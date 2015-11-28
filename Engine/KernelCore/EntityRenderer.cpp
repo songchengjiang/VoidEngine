@@ -101,40 +101,18 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 				if (camera->getMask() & pass->drawMask()) {
 					bool isTransparent = pass->blendFunc() != veBlendFunc::DISABLE ? true : false;
 					veRenderCommand rc;
+					rc.mask = node->getMask();
 					rc.pass = pass;
 					rc.worldMatrix = new veMat4Ptr(meshRootMat);
 					//rc.attachedNode = node;
 					rc.renderableObj = renderableObj;
-					rc.userDataList = new veArray<void *>;
-					rc.userDataList->push_back(node);
-					rc.userDataList->push_back(mesh);
+					rc.user1 = node;
+					rc.user2 = mesh;
+					rc.user3 = &buffers;
 					rc.camera = camera;
 					rc.sceneManager = camera->getSceneManager();
 					rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
-
-					rc.drawFunc = [mesh, vao](const veRenderCommand &command) {
-						command.pass->apply(command);
-						glBindVertexArray(vao);
-
-						auto transformFeedback = command.pass->getTransformFeedback();
-						if (transformFeedback) {
-							glEnable(GL_RASTERIZER_DISCARD);
-							transformFeedback->bind(mesh->getTransformFeedbackBuffer(), mesh->getTransformFeedbackBufferSize(), GL_POINTS);
-							glDrawArrays(GL_POINTS, 0, mesh->getVertexCount());
-							transformFeedback->unBind();
-							glDisable(GL_RASTERIZER_DISCARD);
-						}
-
-						for (unsigned int i = 0; i < mesh->getPrimitiveNum(); ++i) {
-							auto primitive = mesh->getPrimitive(i);
-							glDrawElements(primitive.primitiveType, GLsizei(primitive.indices->size()), GL_UNSIGNED_SHORT, nullptr);
-						}
-
-						int ec = glGetError();
-						if (ec != GL_NO_ERROR) {
-							veLog("GL ERROR CODE: 0x%x", ec);
-						}
-					};
+					rc.renderer = this;
 					pass->visit(rc);
 					if (isTransparent)
 						camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
@@ -143,5 +121,32 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 				}
 			}
 		}
+	}
+}
+
+void veEntityRenderer::draw(const veRenderCommand &command)
+{
+	MeshBuffers *bufs = static_cast<MeshBuffers *>(command.user3);
+	veMesh *mesh = static_cast<veMesh *>(command.user2);
+	command.pass->apply(command);
+	glBindVertexArray(bufs->vao);
+
+	auto transformFeedback = command.pass->getTransformFeedback();
+	if (transformFeedback) {
+		glEnable(GL_RASTERIZER_DISCARD);
+		transformFeedback->bind(mesh->getTransformFeedbackBuffer(), mesh->getTransformFeedbackBufferSize(), GL_POINTS);
+		glDrawArrays(GL_POINTS, 0, mesh->getVertexCount());
+		transformFeedback->unBind();
+		glDisable(GL_RASTERIZER_DISCARD);
+	}
+
+	for (unsigned int i = 0; i < mesh->getPrimitiveNum(); ++i) {
+		auto primitive = mesh->getPrimitive(i);
+		glDrawElements(primitive.primitiveType, GLsizei(primitive.indices->size()), GL_UNSIGNED_SHORT, nullptr);
+	}
+
+	int ec = glGetError();
+	if (ec != GL_NO_ERROR) {
+		veLog("GL ERROR CODE: 0x%x", ec);
 	}
 }

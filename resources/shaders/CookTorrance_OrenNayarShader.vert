@@ -85,6 +85,7 @@ void main()
 	v_normalAndepth = vec4(u_NormalMat * finalNorm, gl_Position.w);
 #endif	
 
+#ifdef VE_USE_LIGHTS
 #ifdef VE_USE_SKYBOX
 	vec3 pos = normalize(v_position.xyz);
 	vec3 norm = normalize(v_normalAndepth.xyz);
@@ -101,5 +102,6 @@ void main()
 	}else{
 		v_reflect = vec3(0);
 	}
+#endif
 #endif
 }

@@ -204,7 +204,7 @@ void vePass::applyLightsUniforms(const veRenderCommand &command)
 
 	unsigned int enabledLightIndex = 0;
 	for (auto &iter : lightList) {
-		if (iter->isInScene() && iter->isVisible()) {
+		if (iter->isInScene() && iter->isVisible() && (iter->getMask() & command.mask)) {
 			applyLightUniforms(enabledLightIndex, iter.get(), command.camera);
 			++enabledLightIndex;
 		}

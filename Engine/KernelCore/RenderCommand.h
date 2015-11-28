@@ -29,6 +29,7 @@ struct veRenderCommand
 	};
 
 	int                 priority;
+	unsigned int        mask;
 	VE_Ptr<veMat4Ptr>   worldMatrix;
 	veReal              depthInCamera;
 	vePass             *pass;
@@ -36,9 +37,11 @@ struct veRenderCommand
 	veRenderableObject *renderableObj;
 	veCamera           *camera;
 	veSceneManager     *sceneManager;
-	VE_Ptr< veArray<void*> > userDataList;
-	//veRenderer         *renderer;
-    std::function<void(const veRenderCommand &)> drawFunc;
+	void*               user1;
+	void*               user2;
+	void*               user3;
+	veRenderer         *renderer;
+    //std::function<void(const veRenderCommand &)> drawFunc;
 };
 
 #endif

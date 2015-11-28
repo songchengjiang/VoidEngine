@@ -34,6 +34,7 @@ void veBillboardRenderer::render(veNode *node, veRenderableObject *renderableObj
 				rotMat.makeRotation(cameraRot);
 				renderableObj->setBoundingBox(_originBoundingBox * rotMat);
 				veRenderCommand rc;
+				rc.mask = node->getMask();
 				rc.pass = pass;
 				rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix() * rotMat);
 				//rc.attachedNode = node;
@@ -41,7 +42,8 @@ void veBillboardRenderer::render(veNode *node, veRenderableObject *renderableObj
 				rc.camera = camera;
 				rc.sceneManager = camera->getSceneManager();
 				rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
-				rc.drawFunc = VE_CALLBACK_1(veBillboardRenderer::draw, this);
+				rc.renderer = this;
+				//rc.drawFunc = VE_CALLBACK_1(veBillboardRenderer::draw, this);
 				pass->visit(rc);
 				if (isTransparent)
 					camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);

@@ -17,6 +17,7 @@ veTextureManager::~veTextureManager()
 
 void veTextureManager::update()
 {
+	std::unique_lock<std::mutex> lock(_texturePoolMutex);
 	for (auto &tex : _allocatedTexturePool) {
 		tex->_usage = tex->_usage << 1;
 		tex->_isExchanged = false;
@@ -73,6 +74,7 @@ veTexture* veTextureManager::createTexture(const std::string &name, veTexture::T
 
 bool veTextureManager::exchangeTextureMemory(veTexture *texture)
 {
+	std::unique_lock<std::mutex> lock(_texturePoolMutex);
 	if (assignTextureMemory(texture)) 
 		return true;
 	std::map<float, std::vector<veTexture *> > pendingReplacetextureList;

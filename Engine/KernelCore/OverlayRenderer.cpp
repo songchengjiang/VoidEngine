@@ -25,13 +25,15 @@ void veOverlayRenderer::render(veNode *node, veRenderableObject *renderableObj, 
 			if (camera->getMask() & pass->drawMask()) {
 				veRenderCommand rc;
 				rc.priority = _renderOrder;
+				rc.mask = node->getMask();
 				rc.pass = pass;
 				rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix());
 				//rc.attachedNode = node;
 				rc.renderableObj = renderableObj;
 				rc.camera = camera;
 				rc.sceneManager = camera->getSceneManager();
-				rc.drawFunc = VE_CALLBACK_1(veOverlayRenderer::draw, this);
+				rc.renderer = this;
+				//rc.drawFunc = VE_CALLBACK_1(veOverlayRenderer::draw, this);
 				pass->visit(rc);
 				camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
 			}

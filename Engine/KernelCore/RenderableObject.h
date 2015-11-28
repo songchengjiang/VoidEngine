@@ -28,8 +28,6 @@ public:
 
 	void setVisible(bool isVis) { _isVisible = isVis; }
 	bool isVisible() const { return _isVisible; };
-	void setMask(unsigned int mask) { _mask = mask; }
-	unsigned int getMask() const { return _mask; }
 	void setRenderer(veRenderer *renderer) { _renderer = renderer; }
 	veRenderer* getRenderer() const { return _renderer.get(); }
 	virtual void setMaterialArray(veMaterialArray *material) { _materials = material; }
@@ -50,7 +48,6 @@ protected:
 	veBoundingBox      _boundingBox;
 	bool              _isVisible;
 	bool              _isDirtyBoundingBox;
-	unsigned int      _mask;
 	veSceneManager   *_sceneManager;
 };
 

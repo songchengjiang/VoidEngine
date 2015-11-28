@@ -85,7 +85,7 @@ public:
 		else {
 			if (!_command.sceneManager->getLightList().empty()) {
 				for (auto &light : _command.sceneManager->getLightList()) {
-					if (light->isInScene() && light->isVisible()) {
+					if (light->isInScene() && light->isVisible() && (light->getMask() & _command.mask)) {
 						definations += SHADER_DEFINE_LIGHTS + std::string(" 1\n");
 						definations += getLightDefination();
 						break;
@@ -95,8 +95,8 @@ public:
 		}
 		if (type == veShader::VERTEX_SHADER) {
 			if (_command.renderableObj) {
-				if (_command.userDataList.valid()) {
-					auto mesh = static_cast<veMesh *>(_command.userDataList->buffer()[1]);
+				if (_command.user2) {
+					auto mesh = static_cast<veMesh *>(_command.user2);
 					if (mesh) {
 						if (mesh->getBoneNum())
 							definations += SHADER_DEFINE_BONES + std::string(" 1\n");
@@ -118,12 +118,13 @@ public:
 
 		if (true) {
 			bool hasTex = false;
-			if (_command.camera->getSceneManager()->getSkyBox()) {
+			if (_command.sceneManager->getSkyBox()) {
 				if (0 < _command.pass->getTextureNum()) {
 					for (size_t i = 0; i < _command.pass->getTextureNum(); ++i) {
 						if (_command.pass->getTexture(i)->getName()
-							== _command.camera->getSceneManager()->getSkyBox()->getMaterialArray()->getMaterial(0)->getTechnique(0)->getPass(0)->getTexture(0)->getName()) {
-							definations += SHADER_DEFINE_SKYBOX + std::string(" 1\n");
+							== _command.sceneManager->getSkyBox()->getMaterialArray()->getMaterial(0)->getTechnique(0)->getPass(0)->getTexture(0)->getName()) {
+							if (_command.sceneManager->getSkyBox()->getMask() & _command.mask)
+								definations += SHADER_DEFINE_SKYBOX + std::string(" 1\n");
 						}else {
 							hasTex = true;
 						}

@@ -241,8 +241,8 @@ void veUniform::apply(const veRenderCommand &command)
 				}
 				else if (_autoBindingValue == BONE_MATRIXES) {
 					static float boneMates[60 * 16];
-					veNode *node = static_cast<veNode *>(command.userDataList->buffer()[0]);
-					veMesh *mesh = static_cast<veMesh *>(command.userDataList->buffer()[1]);
+					veNode *node = static_cast<veNode *>(command.user1);
+					veMesh *mesh = static_cast<veMesh *>(command.user2);
 					veMat4 worldToMesh = worldMat;
 					worldToMesh.inverse();
 					for (unsigned int i = 0; i < mesh->getBoneNum(); ++i) {

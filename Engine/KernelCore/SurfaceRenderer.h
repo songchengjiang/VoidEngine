@@ -10,7 +10,7 @@ public:
 	~veSurfaceRenderer();
 
 	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override;
-	void draw(const veRenderCommand &command);
+	void draw(const veRenderCommand &command) override;
 
 protected:
 

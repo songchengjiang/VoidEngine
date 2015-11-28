@@ -38,6 +38,7 @@ veLight* veSceneManager::createLight(veLight::LightType type, const std::string 
 {
 	auto light = new veLight(type);
 	light->setName(name);
+	light->setSceneManager(this);
 	_lightList.push_back(light);
 	this->needReload();
 	return light;
@@ -68,6 +69,7 @@ veSkyBox* veSceneManager::createSkyBox(const std::string &name, veReal size)
 {
 	auto skybox = new veSkyBox(size);
 	skybox->setName(name);
+	skybox->_sceneManager = this;
 	return skybox;
 }
 
@@ -157,14 +159,14 @@ bool veSceneManager::simulation()
 {
 	{
 		std::unique_lock<std::mutex> updateLock(_updatingMutex);
+		for (auto &manager : _managerList) {
+			manager.second->update();
+		}
 		update();
 	}
 
 	{
 		std::unique_lock<std::mutex> renderLock(_renderingMutex);
-		for (auto &manager : _managerList) {
-			manager.second->update();
-		}
 		_renderingCondition.notify_all();
 	}
 	//render();

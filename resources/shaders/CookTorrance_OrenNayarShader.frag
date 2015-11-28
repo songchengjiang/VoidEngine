@@ -105,14 +105,6 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
              
 void main(){
     
-	vec3 diffReflact = vec3(0.0);
-#ifdef VE_USE_SKYBOX
-	if (0.0 < u_refractivity)
-		diffReflact += texture(u_cubeMap, vec3(v_refract.x, -v_refract.yz)).xyz * u_smoothness;
-	if (0.0 < u_reflectivity)
-		diffReflact += texture(u_cubeMap, vec3(v_reflect.x, -v_reflect.yz)).xyz * u_smoothness;
-#endif
-
 #ifdef VE_USE_DEFERRED_PATH
 	#ifdef VE_USE_TEXTURES
 		fragColor = clamp(vec4(texture(u_diffuseTex, v_texcoord).xyz, u_opacity), 0.0, 1.0);
@@ -123,6 +115,13 @@ void main(){
     normAndepth = v_normalAndepth;
 #else //NOT VE_USE_DEFERRED_PATH
 #ifdef VE_USE_LIGHTS
+	vec3 diffReflact = vec3(0.0);
+#ifdef VE_USE_SKYBOX
+	if (0.0 < u_refractivity)
+		diffReflact += texture(u_cubeMap, vec3(v_refract.x, -v_refract.yz)).xyz * u_smoothness;
+	if (0.0 < u_reflectivity)
+		diffReflact += texture(u_cubeMap, vec3(v_reflect.x, -v_reflect.yz)).xyz * u_smoothness;
+#endif
     vec3 diffactor;
     vec3 specfactor;
     Lighting(diffactor, specfactor);    

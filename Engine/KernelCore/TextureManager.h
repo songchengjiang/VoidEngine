@@ -3,6 +3,7 @@
 #include "Prerequisites.h"
 #include "BaseManager.h"
 #include "Texture.h"
+#include <mutex>
 
 class VE_EXPORT veTextureManager : public veBaseManager
 {
@@ -34,6 +35,7 @@ private:
 	veTextureManager(veSceneManager *sm, unsigned int maxTextureMemory = 128 * 1024 * 1024);
 	std::vector< VE_Ptr<veTexture> > _texturePool;
 	std::vector<veTexture *> _allocatedTexturePool;
+	std::mutex               _texturePoolMutex;
 	unsigned int _maxTextureMemory;
 	unsigned int _currentTextureMemory;
 };
