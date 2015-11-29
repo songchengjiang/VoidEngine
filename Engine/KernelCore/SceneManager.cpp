@@ -10,6 +10,7 @@
 #include "TextureManager.h"
 #include "EntityManager.h"
 #include "AnimationManager.h"
+#include "MaterialManager.h"
 
 #define RESOURCE_RECOVERY_INTERVAL_TIME 10.0
 
@@ -24,6 +25,7 @@ veSceneManager::veSceneManager()
 	_managerList[veTextureManager::TYPE()] = new veTextureManager(this);
 	_managerList[veEntityManager::TYPE()] = new veEntityManager(this);
 	_managerList[veAnimationManager::TYPE()] = new veAnimationManager(this);
+	_managerList[veMaterialManager::TYPE()] = new veMaterialManager(this);
 }
 
 veSceneManager::~veSceneManager()
@@ -107,6 +109,11 @@ veTexture* veSceneManager::createTexture(const std::string &name, veTexture::Tex
 	return static_cast<veTextureManager *>(_managerList[veTextureManager::TYPE()])->createTexture(name, texType);
 }
 
+veMaterialArray* veSceneManager::createMaterialArray(const std::string &name)
+{
+	return static_cast<veMaterialManager *>(_managerList[veMaterialManager::TYPE()])->createMaterialArray(name);
+}
+
 vePostProcesser* veSceneManager::createPostProcesser(const std::string &name)
 {
 	auto postProcesser = new vePostProcesser(this);
@@ -136,6 +143,8 @@ void veSceneManager::setDeltaTime(double deltaTime)
 
 void veSceneManager::needReload()
 {
+	if (_needReload)
+		return;
 	_needReload = true;
 	enqueueRequest([this] {
 		this->_needReload = false;
@@ -149,6 +158,9 @@ void veSceneManager::dispatchEvents(veEvent &event)
 			for (auto &processer : _postProcesserList) {
 				processer->needRefresh();
 			}
+		}
+		if (_mainCamera.valid()) {
+			_mainCamera->resize(event.getWindowWidth(), event.getWindowHeight());
 		}
 	}
 	if (_root.valid())

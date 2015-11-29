@@ -28,6 +28,7 @@ class veAnimation;
 class veAnimationContainer;
 class veAnimationPlayer;
 class veBaseManager;
+class veMaterialArray;
 class veRay;
 
 class VE_EXPORT veSceneManager
@@ -52,6 +53,7 @@ public:
 	virtual veSkyBox* createSkyBox(const std::string &name, veReal size = 500.0f);
 	virtual veAnimationPlayer* createAnimationPlayer(const std::string &name, veAnimationContainer *container);
 	virtual veTexture* createTexture(const std::string &name, veTexture::TextureType texType = veTexture::TEXTURE_2D);
+	virtual veMaterialArray* createMaterialArray(const std::string &name);
 	virtual vePostProcesser* createPostProcesser(const std::string &name);
 
 	virtual void requestRender(veNode *node) = 0;

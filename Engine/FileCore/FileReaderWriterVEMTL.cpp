@@ -44,8 +44,7 @@ private:
 
 	void parseDoc(){
 		if (_doucument->HasMember(MATERIALS_KEY.c_str())){
-			_materials = new veMaterialArray;
-			_materials->setName(_name);
+			_materials = _sceneManager->createMaterialArray(_name);
 			const Value &mats = (*_doucument)[MATERIALS_KEY.c_str()];
 			for (unsigned int i = 0; i < mats.Size(); ++i){
 				readMaterial(mats[i]);

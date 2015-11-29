@@ -18,7 +18,10 @@ struct veRenderCommand
 {
 	veRenderCommand()
 		: priority(NORMAL_PRIORITY)
-		, depthInCamera(0.0f){
+		, depthInCamera(0.0f)
+		, user1(nullptr)
+		, user2(nullptr)
+		, user3(nullptr){
 	}
 
 	enum Priority

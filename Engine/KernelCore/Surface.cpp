@@ -107,7 +107,7 @@ void veSurface::setType(Type type)
 
 void veSurface::initDefaultMaterial()
 {
-	_materials = new veMaterialArray;
+	_materials = _sceneManager->createMaterialArray(_name + std::string("-matAry"));;
 	auto material = new veMaterial;
 	auto tech = new veTechnique;
 	auto pass = new vePass;

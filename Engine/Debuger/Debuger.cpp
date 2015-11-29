@@ -97,8 +97,8 @@ veDebuger::veDebuger()
 	: _isDrawMeshWireframe(false)
 	, _isDrawBoundingBoxWireframe(false)
 	, _isDrawFrustumPlane(false)
+	, _needRefresh(true)
 {
-	initMaterial();
 	_renderer = new veDebugRenderer(this);
 }
 
@@ -107,9 +107,16 @@ veDebuger::~veDebuger()
 
 }
 
+void veDebuger::update(veNode *node, veSceneManager *sm)
+{
+	if (_needRefresh) {
+		initMaterial(sm);
+		_needRefresh = false;
+	}
+}
+
 void veDebuger::render(veNode *node, veCamera *camera)
 {
-
 	//if (_isDrawBoundingBoxWireframe) {
 	//	renderBoundingBoxWireframe(_attachedNode->getBoundingBox(), nTow);
 	//}
@@ -151,7 +158,7 @@ void veDebuger::debugDrawLine(const veVec3 &start, const veVec3 &end, const veVe
 	drawLine(start, end, color);
 }
 
-void veDebuger::initMaterial()
+void veDebuger::initMaterial(veSceneManager *sm)
 {
 	const char *V_SHADER = " \
 	layout(location = 0) in vec3 position; \n \
@@ -171,7 +178,7 @@ void veDebuger::initMaterial()
 		fragColor = v_color; \n \
 	}";
 
-	_materials = new veMaterialArray;
+	_materials = sm->createMaterialArray(_name + "-matAry");
 	auto material = new veMaterial;
 	auto tech = new veTechnique;
 	auto pass = new vePass;

@@ -32,6 +32,7 @@ struct VE_EXPORT veViewport
 
 class VE_EXPORT veCamera : public veNode
 {
+	friend class veSceneManager;
 public:
 
 	enum class RenderPath
@@ -87,7 +88,6 @@ public:
 	virtual void setMatrix(const veMat4 &mat) override;
 	virtual void refresh() override;
 
-	virtual bool routeEvent(const veEvent &event, veSceneManager *sm) override;
 	virtual void visit(veNodeVisitor &visitor) override;
 	virtual bool isOutOfFrustum(const veBoundingBox &bbox);
 

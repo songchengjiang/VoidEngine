@@ -37,23 +37,6 @@ static const std::string SHADER_DEFINE_ATTRIBUTE_ARRAY[] = {
 	"#define ATTR_USER1"
 };
 
-//static const std::string SHADER_DEFINE_ATTRIBUTE_POSITION = "#define ATTR_POSITION";
-//static const std::string SHADER_DEFINE_ATTRIBUTE_NORMAL = "#define ATTR_NORMAL";
-//static const std::string SHADER_DEFINE_ATTRIBUTE_TANGENT = "#define ATTR_TANGENT";
-//static const std::string SHADER_DEFINE_ATTRIBUTE_BITANGENT = "#define ATTR_BITANGENT";
-//static const std::string SHADER_DEFINE_ATTRIBUTE_TEXTURE_COORD0 = "#define ATTR_TEXTURE_COORD0";
-//static const std::string SHADER_DEFINE_ATTRIBUTE_TEXTURE_COORD1 = "#define ATTR_TEXTURE_COORD1";
-//static const std::string SHADER_DEFINE_ATTRIBUTE_TEXTURE_COORD2 = "#define ATTR_TEXTURE_COORD2";
-//static const std::string SHADER_DEFINE_ATTRIBUTE_TEXTURE_COORD3 = "#define ATTR_TEXTURE_COORD3";
-//static const std::string SHADER_DEFINE_ATTRIBUTE_COLOR0 = "#define ATTR_COLOR0";
-//static const std::string SHADER_DEFINE_ATTRIBUTE_COLOR1 = "#define ATTR_COLOR1";
-//static const std::string SHADER_DEFINE_ATTRIBUTE_COLOR2 = "#define ATTR_COLOR2";
-//static const std::string SHADER_DEFINE_ATTRIBUTE_COLOR3 = "#define ATTR_COLOR3";
-//static const std::string SHADER_DEFINE_ATTRIBUTE_BONE_INDICES = "#define ATTR_BONE_INDICES";
-//static const std::string SHADER_DEFINE_ATTRIBUTE_BONE_WEIGHTS = "#define ATTR_BONE_WEIGHTS";
-//static const std::string SHADER_DEFINE_ATTRIBUTE_USER0 = "#define ATTR_USER0";
-//static const std::string SHADER_DEFINE_ATTRIBUTE_USER1 = "#define ATTR_USER1";
-
 class ShaderDefinatiosGenerator : public veNodeVisitor
 {
 public:

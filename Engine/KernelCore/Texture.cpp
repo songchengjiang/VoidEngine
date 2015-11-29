@@ -405,8 +405,15 @@ veTextureCube::veTextureCube()
 unsigned int veTextureCube::getTextureTotalMemory()
 {
 	unsigned int totalMemory = 0;
-	for (unsigned int i = 0; i < 6; ++i) {
-		totalMemory += _textures[i]->getTextureTotalMemory();
+	if (!_textures[0].valid() || !_textures[1].valid() || !_textures[2].valid()
+		|| !_textures[3].valid() || !_textures[4].valid() || !_textures[5].valid()) {
+		totalMemory = _dataSize * 6;
+	}
+	else {
+		for (unsigned int i = 0; i < 6; ++i) {
+			if (_textures[i].valid())
+				totalMemory += _textures[i]->getTextureTotalMemory();
+		}
 	}
 	return totalMemory;
 }
@@ -420,48 +427,57 @@ void veTextureCube::bind(unsigned int textureUnit)
 {
 	veTexture::bind(textureUnit);
 	if (_needRefreshTex) {
+		_width = _textures[0].valid() ? _textures[0]->getWidth() : _width;
+		_height = _textures[0].valid() ? _textures[0]->getHeight() : _height;
+		_internalFormat = _textures[0].valid() ? _textures[0]->getInternalFormat() : _internalFormat;
+		_pixelFormat = _textures[0].valid() ? _textures[0]->getPixelFormat() : _pixelFormat;
+		_dataType = _textures[0].valid() ? _textures[0]->getDataType() : _dataType;
+		GLsizei levels = 1;
+		if (_textures[0].valid()) {
+			levels = _textures[0]->getMipmapLevels().empty() ? 1 : _textures[0]->getMipmapLevels().size();
+		}
 		if (_manager->exchangeTextureMemory(this)) {
-			_width = _textures[0]->getWidth();
-			_height = _textures[0]->getHeight();
-			_internalFormat = _textures[0]->getInternalFormat();
-			_pixelFormat = _textures[0]->getPixelFormat();
-			_dataType = _textures[0]->getDataType();
-			glTexStorage2D(_target, _textures[0]->getMipmapLevels().empty()? 1: _textures[0]->getMipmapLevels().size(), _internalFormat, _width, _height);
+			glTexStorage2D(_target, levels, _internalFormat, _width, _height);
 			bool needGenerateMipmap = false;
-			for (unsigned int i = 0; i < 6; ++i) {
-				const auto &tex = _textures[i];
+			do 
+			{
+				if (!_textures[0].valid() || !_textures[1].valid() || !_textures[2].valid()
+					|| !_textures[3].valid() || !_textures[4].valid() || !_textures[5].valid())
+					break;
+				for (unsigned int i = 0; i < 6; ++i) {
+					const auto &tex = _textures[i];
 
-				if (_isCompressedTex) {
-					if (tex->getData()) {
-						unsigned int imageSize = tex->getImageSize(tex->getWidth(), tex->getHeight());
-						glCompressedTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, 0, 0, tex->getWidth(), tex->getHeight(), tex->getInternalFormat(), imageSize, tex->getData());
+					if (_isCompressedTex) {
+						if (tex->getData()) {
+							unsigned int imageSize = tex->getImageSize(tex->getWidth(), tex->getHeight());
+							glCompressedTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, 0, 0, tex->getWidth(), tex->getHeight(), tex->getInternalFormat(), imageSize, tex->getData());
+						}
+						else if (!tex->getMipmapLevels().empty()) {
+							const auto &mipmaps = tex->getMipmapLevels();
+							for (size_t lev = 0; lev < mipmaps.size(); ++lev) {
+								unsigned int imageSize = tex->getImageSize(mipmaps[lev].width, mipmaps[lev].height);
+								glCompressedTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, lev, 0, 0, mipmaps[lev].width, mipmaps[lev].height, tex->getInternalFormat(), imageSize, mipmaps[lev].data);
+							}
+						}
 					}
-					else if (!tex->getMipmapLevels().empty()) {
-						const auto &mipmaps = tex->getMipmapLevels();
-						for (size_t lev = 0; lev < mipmaps.size(); ++lev) {
-							unsigned int imageSize = tex->getImageSize(mipmaps[lev].width, mipmaps[lev].height);
-							glCompressedTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, lev, 0, 0, mipmaps[lev].width, mipmaps[lev].height, tex->getInternalFormat(), imageSize, mipmaps[lev].data);
+					else {
+						if (tex->getData()) {
+							glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, 0, 0, tex->getWidth(), tex->getHeight(), tex->getPixelFormat(), tex->getDataType(), tex->getData());
+							needGenerateMipmap = true;
+						}
+						else if (!tex->getMipmapLevels().empty()) {
+							const auto &mipmaps = tex->getMipmapLevels();
+							for (size_t lev = 0; lev < mipmaps.size(); ++lev) {
+								glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, lev, 0, 0, mipmaps[lev].width, mipmaps[lev].height, tex->getPixelFormat(), tex->getDataType(), mipmaps[lev].data);
+							}
 						}
 					}
 				}
-				else {
-					if (tex->getData()) {
-						glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, 0, 0, tex->getWidth(), tex->getHeight(), tex->getPixelFormat(), tex->getDataType(), tex->getData());
-						needGenerateMipmap = true;
-					}
-					else if (!tex->getMipmapLevels().empty()) {
-						const auto &mipmaps = tex->getMipmapLevels();
-						for (size_t lev = 0; lev < mipmaps.size(); ++lev) {
-							glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, lev, 0, 0, mipmaps[lev].width, mipmaps[lev].height, tex->getPixelFormat(), tex->getDataType(), mipmaps[lev].data);
-						}
-					}
-				}
-			}
+			} while (false);
 			if (needGenerateMipmap)
 				glGenerateMipmap(_target);
-
-			_needRefreshTex = false;
 		}
+		_needRefreshTex = false;
 	}
 }
 

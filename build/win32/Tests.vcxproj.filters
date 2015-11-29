@@ -31,6 +31,9 @@
     <Filter Include="PostProcesser">
       <UniqueIdentifier>{58a51951-ce3c-4209-868a-a4210ab02cdb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CubeMapTest">
+      <UniqueIdentifier>{1c55a027-7a23-43ce-8816-245255b5b730}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Tests\CameraTest.h">
@@ -64,6 +67,9 @@
     <ClInclude Include="..\..\Tests\TestCreator.h" />
     <ClInclude Include="..\..\Tests\PostProcesserTest.h">
       <Filter>PostProcesser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tests\CubeMapTest.h">
+      <Filter>CubeMapTest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -243,6 +243,9 @@
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterKTX.cpp">
       <Filter>FileCore\ReaderWriter</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\MaterialManager.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -461,6 +464,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\PostProcesserRenderer.h">
       <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\MaterialManager.h">
+      <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

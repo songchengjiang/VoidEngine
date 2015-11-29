@@ -133,11 +133,6 @@ void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
 			glGenRenderbuffers(1, &_dsbo);
 		}
 
-		int Er = glGetError();
-		if (Er != GL_NO_ERROR) {
-			veLog("GL ERROR CODE: %d", Er);
-		}
-
 		if (_dsbo) {
 			glBindRenderbuffer(GL_RENDERBUFFER, _dsbo);
 			if (hasDepthBuffer && !hasStencilBuffer)

@@ -37,8 +37,6 @@ vePass::~vePass()
 
 void vePass::visit(const veRenderCommand &command)
 {
-	if (command.sceneManager->isNeedReload())
-		_needLinkProgram = true;
 }
 
 void vePass::apply(const veRenderCommand &command)
@@ -161,6 +159,11 @@ veUniform* vePass::removeUniform(size_t idx)
 	return uniform;
 }
 
+void vePass::needLink()
+{
+	_needLinkProgram = true;
+}
+
 void vePass::restoreGLState()
 {
 	if (!CURRENT_DEPTH_WRITE) {
@@ -172,14 +175,15 @@ void vePass::restoreGLState()
 
 void vePass::applyProgram(const veRenderCommand &command)
 {
-	if (!_program)
-		_program = glCreateProgram();
 	if (_needLinkProgram) {
+		glUseProgram(0);
+		//if (_program) {
+		//	glDeleteProgram(_program);
+		//	_program = 0;
+		//}
+		if (!_program)
+			_program = glCreateProgram();
 		ShaderDefinatiosGenerator sdg(command);
-		//sdg.traversalMode() = ShaderDefinatiosGenerator::TRAVERSE_PARENT;
-		//command.attachedNode->accept(sdg);
-		//sdg.traversalMode() = ShaderDefinatiosGenerator::TRAVERSE_CHILDREN;
-		//sdg.getRoot()->accept(sdg);
 		for (auto &iter : _shaders) {
 			iter.second->setShaderHeader(iter.first, sdg.getDefinations(iter.first));
 			GLuint id = iter.second->compile();
@@ -255,6 +259,8 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, veCamera *came
 
 void vePass::locateLightUnifroms(const veRenderCommand &command)
 {
+	if (command.sceneManager->getLightList().empty())
+		return;
 	size_t lightMaxNum = command.sceneManager->getLightList().size();
 	_lightUniformLocations.lightNum = glGetUniformLocation(_program, veLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME.c_str());
 	_lightUniformLocations.lightParams.assign(lightMaxNum, std::vector<GLint>());

@@ -89,6 +89,8 @@ public:
 	void setTransformFeedback(veTransformFeedback *transFeedback) { _transformFeedback = transFeedback; _needLinkProgram = true; }
 	veTransformFeedback* getTransformFeedback() { return _transformFeedback.get(); }
 
+	void needLink();
+
 	static void restoreGLState();
 
 private:
@@ -170,9 +172,9 @@ private:
 
 class VE_EXPORT veMaterialArray
 {
+	friend class veMaterialManager;
 public:
 
-	veMaterialArray();
 	~veMaterialArray();
 
 	USE_VE_PTR;
@@ -184,6 +186,10 @@ public:
 	const veMaterial* getMaterial(const std::string &name) const;
 	veMaterial* getMaterial(const std::string &name);
 	size_t getMaterialNum() const { return _materials.size(); }
+
+private:
+
+	veMaterialArray();
 
 private:
 

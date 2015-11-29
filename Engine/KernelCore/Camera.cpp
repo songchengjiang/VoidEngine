@@ -206,14 +206,6 @@ void veCamera::refresh()
 	_needRefreshFrustumPlane = true;
 }
 
-bool veCamera::routeEvent(const veEvent &event, veSceneManager *sm)
-{
-	if (event.getEventType() == veEvent::VE_WIN_RESIZE) {
-		resize(event.getWindowWidth(), event.getWindowHeight());
-	}
-	return veNode::routeEvent(event, sm);
-}
-
 void veCamera::visit(veNodeVisitor &visitor)
 {
 	visitor.visit(*this);

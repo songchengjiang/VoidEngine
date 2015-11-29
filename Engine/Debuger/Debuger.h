@@ -14,9 +14,9 @@ class veBoundingBox;
 class VE_EXPORT veDebuger : public veRenderableObject
 {
 public:
-    veDebuger();
     virtual ~veDebuger();
     
+	virtual void update(veNode *node, veSceneManager *sm) override;
 	virtual void render(veNode *node, veCamera *camera) override;
 
 	void debugDrawMeshWireframe(bool isDraw, const veVec4 &color = veVec4::WHITE) {
@@ -34,8 +34,8 @@ public:
 	void debugDrawLine(const veVec3 &start, const veVec3 &end, const veVec4 &color = veVec4::WHITE);
 
 protected:
-
-	void initMaterial();
+	veDebuger();
+	void initMaterial(veSceneManager *sm);
 	void renderMeshWireframe(veMesh *mesh, const veMat4 &trans);
 	void renderBoundingBoxWireframe(const veBoundingBox &bbox, const veVec4 &color);
 	void renderFrustumPlanes(veCamera *camera);
@@ -55,6 +55,7 @@ protected:
 
 	bool            _isDrawFrustumPlane;
 	veVec4          _drawFrustumPlaneColor;
+	bool            _needRefresh;
 };
 
 #endif /* Debuger_h */

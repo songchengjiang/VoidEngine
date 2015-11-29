@@ -184,10 +184,6 @@ public:
 protected:
 	veTextureCube();
 
-	virtual void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE
-		, const unsigned char *data = nullptr) override {};
-	virtual void storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE) override {};
-
 protected:
 
 	VE_Ptr<veTexture> _textures[6];
