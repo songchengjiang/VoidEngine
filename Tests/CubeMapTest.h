@@ -44,7 +44,7 @@ public:
 			negx->setMask(CUBE_MAP_CAMERA);
 			posy->setMask(CUBE_MAP_CAMERA);
 			negy->setMask(CUBE_MAP_CAMERA);
-			posz->setMask(CUBE_MAP_CAMERA);
+			posz->setMask(CUBE_MAP_CAMERA); 
 			negz->setMask(CUBE_MAP_CAMERA);
 
 			cm->addChild(posx);

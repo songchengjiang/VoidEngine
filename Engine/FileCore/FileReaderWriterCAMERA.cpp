@@ -187,6 +187,7 @@ private:
 
 			GLenum attachment = GL_COLOR_ATTACHMENT0;
 			GLenum target = GL_TEXTURE_2D;
+			bool   needMipmap = false;
 			int width = _camera->getViewport().width;
 			int height = _camera->getViewport().height;
 			GLuint internalFormat = GL_RGBA32F;
@@ -196,6 +197,10 @@ private:
 
 			if (attachmentVal.HasMember(TARGET_KEY.c_str())) {
 				target = getFrameBufferObjectAttachTarget(attachmentVal[TARGET_KEY.c_str()].GetString());
+			}
+
+			if (attachmentVal.HasMember(MIPMAP_KEY.c_str())) {
+				needMipmap = attachmentVal[MIPMAP_KEY.c_str()].GetBool();
 			}
 
 			if (attachmentVal.HasMember(WIDTH_KEY.c_str())) {
@@ -223,7 +228,7 @@ private:
 			}
 
 			texture->storage(width, height, 1, internalFormat);
-			fbo->attach(attachment, target, texture);
+			fbo->attach(attachment, target, texture, needMipmap);
 		}
 		_camera->setFrameBufferObject(fbo);
 	}

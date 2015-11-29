@@ -81,6 +81,7 @@ static const std::string NEREAST_KEY = "NERAEST";
 static const std::string LINEAR_KEY = "LINEAR";
 static const std::string NEAREST_MIP_MAP_KEY = "NEAREST_MIP_MAP";
 static const std::string LINEAR_MIP_MAP_KEY = "LINEAR_MIP_MAP";
+static const std::string MIPMAP_KEY = "mipmap";
 static const std::string FLOAT_KEY = "FLOAT";
 static const std::string UINT_KEY = "UINT";
 static const std::string USHORT_KEY = "USHORT";

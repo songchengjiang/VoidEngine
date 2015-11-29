@@ -17,6 +17,7 @@
       "name": "scene.cubmap",
       "type":  "TEX_CUBE",
       "target": "TEX_CUBE_NEGATIVE_Z",
+      "mipmap": true,
       "format": "RGBA8"
     }
   ]

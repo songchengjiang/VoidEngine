@@ -22,14 +22,14 @@ public:
 		//auto test = new LightTest;
 		//auto test = new CameraTest;
 		//auto test = new RenToTex;
-		auto test = new MeshTest;
+		//auto test = new MeshTest;
 		//auto test = new ImageTest;
 		//auto test = new TextTest;
 		//auto test = new PerformanceTest;
 		//auto test = new IntersectionTest;
 		//auto test = new SkyBoxTest;
 		//auto test = new PostProcesserTest;
-		//auto test = new CubeMapTest;
+		auto test = new CubeMapTest;
 		test->init();
 	}
 

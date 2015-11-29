@@ -71,7 +71,7 @@ public:
 	void getSwizzleMode(SwizzleMode &r, SwizzleMode &g, SwizzleMode &b, SwizzleMode &a);
 
 	virtual void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE
-		, const unsigned char *data = nullptr);
+		, const unsigned char *data = nullptr, unsigned int mipMapLevels = 10);
 
 	virtual void storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE);
 
@@ -86,6 +86,8 @@ public:
 	virtual unsigned int getTextureTotalMemory();
 	const MipmapLevels& getMipmapLevels() const { return _mipmapLevels; }
 	unsigned int getImageSize(int width, int height) const;
+	unsigned int getMipMapLevelCount() const { return _mipMapLevelCount; }
+	void generateMipMaps() { _needGenerateMipMaps = true; }
 
 	GLuint glTex();
 	GLenum glTarget() { return _target; }
@@ -121,6 +123,8 @@ protected:
 	unsigned char  *_data;
 	unsigned int    _dataSize;
 	unsigned int    _usage;
+	unsigned int    _mipMapLevelCount;
+	bool            _needGenerateMipMaps;
 	bool            _isCompressedTex;
 	bool            _isExchanged;
 

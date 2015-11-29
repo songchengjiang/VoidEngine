@@ -51,7 +51,6 @@
     <ClInclude Include="..\..\Tests\RenToTex.h">
       <Filter>RenToTexTest</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Tests\BaseTest.h" />
     <ClInclude Include="..\..\Tests\TextTest.h">
       <Filter>TextTest</Filter>
     </ClInclude>
@@ -71,6 +70,7 @@
     <ClInclude Include="..\..\Tests\CubeMapTest.h">
       <Filter>CubeMapTest</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Tests\BaseTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Tests\main.cpp" />

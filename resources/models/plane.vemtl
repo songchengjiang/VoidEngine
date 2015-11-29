@@ -41,7 +41,7 @@
                                     "name":  "sphere",
                                     "source": "sphere.png",
                                     "wrap": "REPEAT",
-                                    "filter": "NERAEST"
+                                    "filter": "LINEAR_MIP_MAP"
                                 }
                             ]
                         }

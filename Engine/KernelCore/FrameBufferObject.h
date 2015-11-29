@@ -17,10 +17,10 @@ public:
 	USE_NAME_PROPERTY;
 
 	void setFrameBufferSize(const veVec2 &size);
-	void attach(GLenum attachment, GLenum target, veTexture *attachTex);
+	void attach(GLenum attachment, GLenum target, veTexture *attachTex, bool needMipmap = false);
 
 	void bind(unsigned int clearMask);
-	static void unBind();
+	void unBind();
 
 private:
 
@@ -31,12 +31,19 @@ private:
 	void refreshAttachments();
 
 private:
+
+	struct AttachmentInfo
+	{
+		GLenum target;
+		VE_Ptr<veTexture> texture;
+		bool   needMipmap;
+	};
 	GLuint _fbo;
 	GLuint _dsbo;
 	veVec2 _size;
 	bool _needRefreshAttachments;
 	bool _needRefreshBuffers;
-	std::map<GLenum, std::pair< GLenum, VE_Ptr<veTexture> > > _attachments;
+	std::map<GLenum, AttachmentInfo> _attachments;
 };
 
 class VE_EXPORT veFrameBufferObjectManager
