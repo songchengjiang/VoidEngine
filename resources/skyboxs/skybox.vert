@@ -1,6 +1,6 @@
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 normal;
-layout(location = 2) in vec2 texcoord; 
+layout(location = ATTR_POSITION) in vec3 position;
+layout(location = ATTR_NORMAL) in vec3 normal;
+layout(location = ATTR_TEXTURE_COORD0) in vec2 texcoord; 
 uniform mat4 u_ModelViewProjectMat;
 out vec3 v_texcoord;
 void main()

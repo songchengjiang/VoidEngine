@@ -7,6 +7,7 @@
 #include "RenderQueue.h"
 #include "FrameBufferObject.h"
 #include "Plane.h"
+#include "Material.h"
 
 class veVisualiser;
 class veLight;
@@ -81,6 +82,10 @@ public:
 	void setRenderPath(RenderPath renderPath);
 	RenderPath getRenderPath() const { return _renderPath; }
 
+	void setGlobalRenderPass(vePass *pass) { _globalRenderPass = pass; }
+	vePass* getGlobalRenderPass() { return _globalRenderPass.get(); }
+	const vePass* getGlobalRenderPass() const { return _globalRenderPass.get(); }
+
 	const vePlane& getFrustumPlane(FrustumPlane fp);
 
 	void render();
@@ -118,6 +123,8 @@ protected:
 
 	RenderPath _renderPath;
 	bool _renderStateChanged;
+
+	VE_Ptr<vePass> _globalRenderPass;
 
 	veRenderQueue *_renderQueue;
 };

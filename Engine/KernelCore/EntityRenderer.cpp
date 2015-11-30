@@ -97,7 +97,7 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 			auto technique = mesh->getMaterial()->activeTechnique();
 			veMat4 meshRootMat = nTow * mesh->getAttachedNode()->toMeshNodeRootMatrix();
 			for (unsigned int i = 0; i < technique->getPassNum(); ++i) {
-				auto pass = technique->getPass(i);
+				auto pass = camera->getGlobalRenderPass() ? camera->getGlobalRenderPass() : technique->getPass(i);
 				if (camera->getMask() & pass->drawMask()) {
 					bool isTransparent = pass->blendFunc() != veBlendFunc::DISABLE ? true : false;
 					veRenderCommand rc;

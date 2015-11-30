@@ -77,6 +77,7 @@ public:
 			}
 		}
 		if (type == veShader::VERTEX_SHADER) {
+			bool hasAttriDef = false;
 			if (_command.renderableObj) {
 				if (_command.user2) {
 					auto mesh = static_cast<veMesh *>(_command.user2);
@@ -90,8 +91,15 @@ public:
 							auto attr = mesh->getVertexAtrribute(i);
 							definations += SHADER_DEFINE_ATTRIBUTE_ARRAY[attr.attributeType] + std::string(str);
 						}
+						hasAttriDef = true;
 					}
 				}
+			}
+
+			if (!hasAttriDef) {
+				definations += SHADER_DEFINE_ATTRIBUTE_ARRAY[0] + std::string(" 0\n");
+				definations += SHADER_DEFINE_ATTRIBUTE_ARRAY[1] + std::string(" 1\n");
+				definations += SHADER_DEFINE_ATTRIBUTE_ARRAY[4] + std::string(" 2\n");
 			}
 
 			if (_command.pass->getTransformFeedback()) {

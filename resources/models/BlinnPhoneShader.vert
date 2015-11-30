@@ -68,12 +68,6 @@ void main()
 	v_texcoord = texcoord0;
 	v_position = u_ModelViewMat * finalPos; 
 	  
-#ifdef VE_USE_DEFERRED_PATH
-	gl_Position = u_ModelViewProjectMat * finalPos;
-	v_normalAndepth = vec4(u_NormalMat * finalNorm, gl_Position.w);
-#else
 	gl_Position = u_ModelViewProjectMat * finalPos; 
-	v_normalAndepth = vec4(u_NormalMat * finalNorm, gl_Position.w);
-#endif	
-	  
+	v_normalAndepth = vec4(u_NormalMat * finalNorm, gl_Position.w);  
 }
