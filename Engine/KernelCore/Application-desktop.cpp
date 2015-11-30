@@ -283,6 +283,7 @@ bool veApplicationDesktop::run()
     {
         clock_t currentFrameTime = clock();
         _sceneManager->setDeltaTime((currentFrameTime - preFrameTime) * invertClocksSec);
+        veLog("Frame Rate: %f\n", 1.0 / _sceneManager->getDeltaTime());
         this->dispatchEvents();
         _sceneManager->simulation();
         while ((clock() - currentFrameTime) < frameTimeClocks) {

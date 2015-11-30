@@ -15,8 +15,6 @@
 		BE1A0AB91BE24D1000A1A20D /* BaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AAF1BE24D1000A1A20D /* BaseManager.h */; settings = {ASSET_TAGS = (); }; };
 		BE1A0ABA1BE24D1000A1A20D /* EntityManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AB01BE24D1000A1A20D /* EntityManager.cpp */; settings = {ASSET_TAGS = (); }; };
 		BE1A0ABB1BE24D1000A1A20D /* EntityManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AB11BE24D1000A1A20D /* EntityManager.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0ABC1BE24D1000A1A20D /* LightManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AB21BE24D1000A1A20D /* LightManager.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0ABD1BE24D1000A1A20D /* LightManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AB31BE24D1000A1A20D /* LightManager.h */; settings = {ASSET_TAGS = (); }; };
 		BE1A0ABE1BE24D1000A1A20D /* SceneManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AB41BE24D1000A1A20D /* SceneManager.cpp */; settings = {ASSET_TAGS = (); }; };
 		BE1A0ABF1BE24D1000A1A20D /* SceneManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AB51BE24D1000A1A20D /* SceneManager.h */; settings = {ASSET_TAGS = (); }; };
 		BE1A0ACB1BE24D6400A1A20D /* Octree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AC11BE24D6400A1A20D /* Octree.cpp */; settings = {ASSET_TAGS = (); }; };
@@ -133,6 +131,8 @@
 		BE5BF1731BB28A1200FAE523 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE5BF1721BB28A1100FAE523 /* libjpeg.a */; };
 		BE5BF1761BB2A05B00FAE523 /* Debuger.h in Headers */ = {isa = PBXBuildFile; fileRef = BE5BF1751BB2A05B00FAE523 /* Debuger.h */; settings = {ASSET_TAGS = (); }; };
 		BE5BF1781BB2A09D00FAE523 /* Debuger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE5BF1771BB2A09D00FAE523 /* Debuger.cpp */; settings = {ASSET_TAGS = (); }; };
+		BEB28D591C0C761F0013E3B7 /* MaterialManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEB28D571C0C761F0013E3B7 /* MaterialManager.cpp */; settings = {ASSET_TAGS = (); }; };
+		BEB28D5A1C0C761F0013E3B7 /* MaterialManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BEB28D581C0C761F0013E3B7 /* MaterialManager.h */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -161,8 +161,6 @@
 		BE1A0AAF1BE24D1000A1A20D /* BaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseManager.h; path = ../../Engine/KernelCore/BaseManager.h; sourceTree = "<group>"; };
 		BE1A0AB01BE24D1000A1A20D /* EntityManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityManager.cpp; path = ../../Engine/KernelCore/EntityManager.cpp; sourceTree = "<group>"; };
 		BE1A0AB11BE24D1000A1A20D /* EntityManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EntityManager.h; path = ../../Engine/KernelCore/EntityManager.h; sourceTree = "<group>"; };
-		BE1A0AB21BE24D1000A1A20D /* LightManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LightManager.cpp; path = ../../Engine/KernelCore/LightManager.cpp; sourceTree = "<group>"; };
-		BE1A0AB31BE24D1000A1A20D /* LightManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightManager.h; path = ../../Engine/KernelCore/LightManager.h; sourceTree = "<group>"; };
 		BE1A0AB41BE24D1000A1A20D /* SceneManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneManager.cpp; path = ../../Engine/KernelCore/SceneManager.cpp; sourceTree = "<group>"; };
 		BE1A0AB51BE24D1000A1A20D /* SceneManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SceneManager.h; path = ../../Engine/KernelCore/SceneManager.h; sourceTree = "<group>"; };
 		BE1A0AC11BE24D6400A1A20D /* Octree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Octree.cpp; path = ../../Engine/KernelCore/Octree.cpp; sourceTree = "<group>"; };
@@ -305,6 +303,8 @@
 		BE5BF1721BB28A1100FAE523 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../../Dependents/libjpeg/lib/libjpeg.a; sourceTree = "<group>"; };
 		BE5BF1751BB2A05B00FAE523 /* Debuger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Debuger.h; path = ../../Engine/Debuger/Debuger.h; sourceTree = "<group>"; };
 		BE5BF1771BB2A09D00FAE523 /* Debuger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Debuger.cpp; path = ../../Engine/Debuger/Debuger.cpp; sourceTree = "<group>"; };
+		BEB28D571C0C761F0013E3B7 /* MaterialManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MaterialManager.cpp; path = ../../Engine/KernelCore/MaterialManager.cpp; sourceTree = "<group>"; };
+		BEB28D581C0C761F0013E3B7 /* MaterialManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MaterialManager.h; path = ../../Engine/KernelCore/MaterialManager.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -372,8 +372,6 @@
 				BE1A0AAF1BE24D1000A1A20D /* BaseManager.h */,
 				BE1A0AB01BE24D1000A1A20D /* EntityManager.cpp */,
 				BE1A0AB11BE24D1000A1A20D /* EntityManager.h */,
-				BE1A0AB21BE24D1000A1A20D /* LightManager.cpp */,
-				BE1A0AB31BE24D1000A1A20D /* LightManager.h */,
 				BE1A0AB41BE24D1000A1A20D /* SceneManager.cpp */,
 				BE1A0AB51BE24D1000A1A20D /* SceneManager.h */,
 			);
@@ -383,6 +381,8 @@
 		BE1A0AC01BE24D2600A1A20D /* Octree */ = {
 			isa = PBXGroup;
 			children = (
+				BEB28D571C0C761F0013E3B7 /* MaterialManager.cpp */,
+				BEB28D581C0C761F0013E3B7 /* MaterialManager.h */,
 				BE1A0AC11BE24D6400A1A20D /* Octree.cpp */,
 				BE1A0AC21BE24D6400A1A20D /* Octree.h */,
 				BE1A0AC31BE24D6400A1A20D /* OctreeCamera.cpp */,
@@ -610,6 +610,7 @@
 				BE1A0B111BE24E5C00A1A20D /* SkyBox.h in Headers */,
 				BE1A0AE51BE24E4000A1A20D /* SurfaceRenderer.h in Headers */,
 				BE1A0B221BE260D900A1A20D /* File-mac.h in Headers */,
+				BEB28D5A1C0C761F0013E3B7 /* MaterialManager.h in Headers */,
 				BE5BF1761BB2A05B00FAE523 /* Debuger.h in Headers */,
 				BE1A0AAA1BE24C6F00A1A20D /* OctreeDebuger.h in Headers */,
 				BE1A0B131BE24E5C00A1A20D /* Surface.h in Headers */,
@@ -621,7 +622,6 @@
 				BE412CFE1BF630CD00206513 /* Application.h in Headers */,
 				BE1A0AD01BE24D6400A1A20D /* OctreeNode.h in Headers */,
 				BE412CF41BF630A200206513 /* MathAlgorithm.h in Headers */,
-				BE1A0ABD1BE24D1000A1A20D /* LightManager.h in Headers */,
 				BE412D001BF630CD00206513 /* PostProcesser.h in Headers */,
 				BE1A0AE31BE24E4000A1A20D /* EntityRenderer.h in Headers */,
 				BE1A0B031BE24E5B00A1A20D /* Entity.h in Headers */,
@@ -687,13 +687,13 @@
 				BE1B50481BB049E30039A346 /* Animation.cpp in Sources */,
 				BE1B50491BB049E30039A346 /* Bone.cpp in Sources */,
 				BE1B504A1BB049E30039A346 /* Camera.cpp in Sources */,
-				BE1A0ABC1BE24D1000A1A20D /* LightManager.cpp in Sources */,
 				BE1A0AE21BE24E4000A1A20D /* EntityRenderer.cpp in Sources */,
 				BE1B504B1BB049E30039A346 /* Component.cpp in Sources */,
 				BE1A0ACD1BE24D6400A1A20D /* OctreeCamera.cpp in Sources */,
 				BE1B504E1BB049E30039A346 /* FrameBufferObject.cpp in Sources */,
 				BE1A0B211BE260D900A1A20D /* File-mac.cpp in Sources */,
 				BE1A0B181BE24E5C00A1A20D /* TransformFeedback.cpp in Sources */,
+				BEB28D591C0C761F0013E3B7 /* MaterialManager.cpp in Sources */,
 				BE1B504F1BB049E30039A346 /* Image.cpp in Sources */,
 				BE1A0B0E1BE24E5C00A1A20D /* Ray.cpp in Sources */,
 				BE1B50501BB049E30039A346 /* Light.cpp in Sources */,

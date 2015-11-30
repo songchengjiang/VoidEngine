@@ -57,6 +57,7 @@
 		BE412D081BF6312000206513 /* SkyBoxTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkyBoxTest.h; path = ../../Tests/SkyBoxTest.h; sourceTree = "<group>"; };
 		BE412D091BF6312000206513 /* TestCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestCreator.h; path = ../../Tests/TestCreator.h; sourceTree = "<group>"; };
 		BE412D0A1BF6312000206513 /* TextTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextTest.h; path = ../../Tests/TextTest.h; sourceTree = "<group>"; };
+		BEB28D5B1C0C76410013E3B7 /* CubeMapTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CubeMapTest.h; path = ../../Tests/CubeMapTest.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +90,7 @@
 				BE0E4E701BB0451B0001AA36 /* main.cpp */,
 				BE0E4E711BB0451B0001AA36 /* MeshTest.h */,
 				BE0E4E721BB0451B0001AA36 /* RenToTex.h */,
+				BEB28D5B1C0C76410013E3B7 /* CubeMapTest.h */,
 				BE1B50881BB04DD70039A346 /* Products */,
 			);
 			sourceTree = "<group>";
