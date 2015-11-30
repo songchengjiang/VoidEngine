@@ -345,6 +345,7 @@ void veTexture2D::bind(unsigned int textureUnit)
 					for (size_t lev = 0; lev < _mipmapLevels.size(); ++lev) {
 						glTexSubImage2D(_target, lev, 0, 0, _mipmapLevels[lev].width, _mipmapLevels[lev].height, _pixelFormat, _dataType, _mipmapLevels[lev].data);
 					}
+					generateMipMaps();
 				}
 			}
 			_needRefreshTex = false;
@@ -396,6 +397,7 @@ void veTexture3D::bind(unsigned int textureUnit)
 					for (size_t lev = 0; lev < _mipmapLevels.size(); ++lev) {
 						glTexSubImage3D(_target, lev, 0, 0, 0, _mipmapLevels[lev].width, _mipmapLevels[lev].height, _mipmapLevels[lev].depth, _pixelFormat, _dataType, _mipmapLevels[lev].data);
 					}
+					generateMipMaps();
 				}
 			}
 			_needRefreshTex = false;
@@ -479,6 +481,7 @@ void veTextureCube::bind(unsigned int textureUnit)
 							for (size_t lev = 0; lev < mipmaps.size(); ++lev) {
 								glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, lev, 0, 0, mipmaps[lev].width, mipmaps[lev].height, tex->getPixelFormat(), tex->getDataType(), mipmaps[lev].data);
 							}
+							generateMipMaps();
 						}
 					}
 				}

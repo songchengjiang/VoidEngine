@@ -15,6 +15,7 @@ veNode::veNode()
 	, _autoUpdateBoundingBox(true)
 	, _sceneManager(nullptr)
 	, _isInScene(false)
+	, _userData(nullptr)
 {
 }
 
@@ -204,6 +205,11 @@ bool veNode::routeEvent(const veEvent &event, veSceneManager *sm)
 		}
 	}
 
+	if (_eventCallback != nullptr) {
+		if (_eventCallback(event, sm, this))
+			return true;
+	}
+
 	return false;
 }
 
@@ -214,6 +220,7 @@ void veNode::update(veSceneManager *sm, const veMat4 &transform)
 		_mask = _parent->getMask();
 		_overrideMask = true;
 	}
+
 	if (!_components.empty()) {
 		for (auto &iter : _components) {
 			iter->update(this, sm);
@@ -233,6 +240,10 @@ void veNode::update(veSceneManager *sm, const veMat4 &transform)
 		for (auto &iter : _renderableObjects) {
 			iter->update(this, sm);
 		}
+	}
+
+	if (_updateCallback != nullptr) {
+		_updateCallback(sm, this);
 	}
 
 	updateBoundingBox();

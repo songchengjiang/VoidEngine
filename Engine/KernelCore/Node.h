@@ -6,6 +6,7 @@
 #include "Event.h"
 #include "Component.h"
 #include "RenderableObject.h"
+#include <functional>
 
 class veSceneManager;
 class veNodeVisitor;
@@ -16,6 +17,8 @@ public:
 	typedef std::vector< VE_Ptr<veComponent> >        Components;
 	typedef std::vector< VE_Ptr<veNode> >             Children;
 	typedef std::vector< VE_Ptr<veRenderableObject> > RenderableObjects;
+	typedef std::function<bool(const veEvent&, veSceneManager*, veNode*)> NodeEventCallback;
+	typedef std::function<void(veSceneManager*, veNode*)>                 NodeUpdateCallback;
 
 	USE_VE_PTR;
 	USE_NAME_PROPERTY;
@@ -57,14 +60,21 @@ public:
 
 	bool isInScene() const;
 
-	veMat4 getNodeToWorldMatrix() const;
-	veMat4 getWorldToNodeMatrix() const;
+	virtual veMat4 getNodeToWorldMatrix() const;
+	virtual veMat4 getWorldToNodeMatrix() const;
 
 	veMat4 computeNodeToWorldMatrix() const;
 	veMat4 computeWorldToNodeMatrix() const;
 
 	void setMask(unsigned int mask, bool isOverride = true);
 	unsigned int getMask() const { return _mask; }
+
+	void setUserData(void *ud) { _userData = ud; }
+	void* getUserData() { return _userData; }
+	const void* getUserData() const { return _userData; }
+
+	void setEventCallback(const NodeEventCallback &callback) { _eventCallback = callback; }
+	void setUpdateCallback(const NodeUpdateCallback &callback) { _updateCallback = callback; }
 
 	virtual void refresh();
 
@@ -97,6 +107,10 @@ protected:
 	bool              _autoUpdateBoundingBox;
 	bool              _isInScene;
 
+	NodeEventCallback  _eventCallback;
+	NodeUpdateCallback _updateCallback;
+
+	void             *_userData;
 	veSceneManager   *_sceneManager;
 };
 

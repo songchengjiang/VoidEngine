@@ -53,6 +53,8 @@ public:
 
 	~veCamera();
 
+	virtual void update(veSceneManager *sm, const veMat4 &transform) override;
+
 	void setProjectionMatrixAsOrtho(float left, float right, float bottom, float top, float zNear, float zFar);
 	void setProjectionMatrixAsPerspective(float fovy, float aspectRatio, float zNear, float zFar);
 	veMat4& projectionMatrix() { return _projectionMat; }
@@ -66,6 +68,7 @@ public:
 
 	void setFrameBufferObject(veFrameBufferObject *fbo);
 	veFrameBufferObject* getFrameBufferObject() { return _fbo.get(); }
+	const veFrameBufferObject* getFrameBufferObject() const { return _fbo.get(); }
 
 	void setViewport(const veViewport &vp);
 	const veViewport& getViewport() const { return _viewport; }

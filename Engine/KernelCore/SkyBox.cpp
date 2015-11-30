@@ -14,12 +14,12 @@ public:
 	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override {
 		updateBuffer();
 		auto materials = _skyBox->getMaterialArray();
+		veMat4 cameraWorldMat = camera->getNodeToWorldMatrix();
 		for (unsigned int mat = 0; mat < materials->getMaterialNum(); ++mat) {
 			auto material = materials->getMaterial(mat);
 			for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {
 				auto pass = material->activeTechnique()->getPass(i);
 				if (camera->getMask() & pass->drawMask()) {
-					veMat4 cameraWorldMat = camera->getNodeToWorldMatrix();
 					veRenderCommand rc;
 					rc.pass = pass;
 					veMat4 mat = veMat4::IDENTITY;

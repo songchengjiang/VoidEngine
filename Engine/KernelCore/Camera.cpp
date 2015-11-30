@@ -51,6 +51,15 @@ veCamera::~veCamera()
 	VE_SAFE_DELETE(_renderQueue);
 }
 
+void veCamera::update(veSceneManager *sm, const veMat4 &transform)
+{
+	bool needUpdateViewMat = _refresh? true: false;
+	veNode::update(sm, transform);
+	if (needUpdateViewMat) {
+		_viewMat = getWorldToNodeMatrix();
+	}
+}
+
 void veCamera::setProjectionMatrixAsOrtho(float left, float right, float bottom, float top, float zNear, float zFar)
 {
 	_projectionMat.set(2.0f / (right - left), 0.0f                 , 0.0f                 , -(right + left) / (right - left)
@@ -195,9 +204,9 @@ void veCamera::render()
 
 void veCamera::setMatrix(const veMat4 &mat)
 {
-	refresh();
 	_matrix = mat;
-	_viewMat = getWorldToNodeMatrix();
+	refresh();
+	//_viewMat = getWorldToNodeMatrix();
 }
 
 void veCamera::refresh()

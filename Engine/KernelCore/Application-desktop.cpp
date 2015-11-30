@@ -261,7 +261,7 @@ bool veApplicationDesktop::run()
 			preFrameTime.QuadPart = currentFrameTime.QuadPart;
 		}
 		else {
-			//std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			//std::this_thread::sleep_for(std::chrono::microseconds(1));
 		}
 	}
 	_sceneManager->stopThreading();

@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "name": "cubmapPOSX.camera",
-  "viewport": [ 0, 0, 512, 512 ],
+  "viewport": [ 0, 0, 256, 256 ],
   "projection": {
     "type": "PERSPECTIVE",
     "fov": 90.0
@@ -18,7 +18,7 @@
       "type":  "TEX_CUBE",
       "target": "TEX_CUBE_POSITIVE_X",
       "mipmap": true,
-      "format": "RGBA8"
+      "format": "RGB8"
     }
   ]
 }

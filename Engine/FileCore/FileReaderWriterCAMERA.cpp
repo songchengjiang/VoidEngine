@@ -184,7 +184,6 @@ private:
 				}
 			}
 			if (!texture) continue;
-
 			GLenum attachment = GL_COLOR_ATTACHMENT0;
 			GLenum target = GL_TEXTURE_2D;
 			bool   needMipmap = false;
@@ -227,7 +226,7 @@ private:
 				}
 			}
 
-			texture->storage(width, height, 1, internalFormat);
+			texture->storage(width, height, 1, internalFormat, GL_RGB, GL_UNSIGNED_BYTE, nullptr, log2(width) + 1);
 			fbo->attach(attachment, target, texture, needMipmap);
 		}
 		_camera->setFrameBufferObject(fbo);

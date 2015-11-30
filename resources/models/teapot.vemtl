@@ -142,40 +142,7 @@
                               ]  
                           }
                       ]
-                  },
-                  {
-                        "name": "CubeMapReflectionRendering",
-                        "passes": [
-                            {
-                                "depthTest": true,
-                                "depthWrite": true,
-                                "cullFace": true,
-                                "shaders": [
-                                    {
-                                        "type": "VERTEX_SHADER",
-                                        "source": "shaders/ReflectionShader.vert",
-                                        "u_ModelViewProjectMat": "MVP_MATRIX",
-                                        "u_ModelViewMat": "MV_MATRIX",
-                                        "u_InvViewMat": "INV_V_MATRIX",
-                                        "u_NormalMat": "NORMAL_MATRIX"
-                                    },
-                                    {
-                                        "type": "FRAGMENT_SHADER",
-                                        "source": "shaders/ReflectionAndRefractionShader.frag",
-                                        "u_cubeMap": 0
-                                    }
-                                ],
-                                "textureUnits": [
-                                    {
-                                        "name": "scene.cubmap",
-                                        "type": "TEX_CUBE",
-                                        "wrap": "CLAMP",
-                                        "filter": "LINEAR_MIP_MAP"                       
-                                    }
-                                ]  
-                            }
-                        ]
-                    }
+                  }
             ]
         }
     ]

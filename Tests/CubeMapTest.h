@@ -22,15 +22,12 @@ public:
 			veNode *cm = _sceneManager->createNode("cubemapRoot");
 			root->addChild(cm);
 
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot-0"));
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "sphere"));
 			auto material = entity->getMaterialArray()->getMaterial("mat-0");
 			material->activateTechnique(material->getTechnique("CubeMapReflectionRendering"));
 			veNode *node = _sceneManager->createNode("node0");
 			node->addRenderableObject(entity);
-			//node->addComponent(new KeyboardInputer);
-			veTransformer *transer = new veTransformer;
-			node->addComponent(transer);
-			transer->setScale(veVec3(2.0f));
+			node->setMatrix(veMat4::scale(2.0f));
 			cm->addChild(node);
 			node->setMask(~CUBE_MAP_CAMERA);
 
@@ -53,6 +50,28 @@ public:
 			cm->addChild(negy);
 			cm->addChild(posz);
 			cm->addChild(negz);
+
+			veTransformer *transer = new veTransformer;
+			cm->addComponent(transer);
+
+			cm->setUpdateCallback([=](veSceneManager *sm, veNode *node) {
+				static bool reverse = false;
+				static float maxDis = 5.0f;
+				static float currentDis = -5.0f;
+				if (reverse) {
+					currentDis -= 5.0f * sm->getDeltaTime();
+					if (currentDis < -maxDis) {
+						reverse = false;
+					}
+				}
+				else {
+					currentDis += 5.0f * sm->getDeltaTime();
+					if (maxDis < currentDis) {
+						reverse = true;
+					}
+				}
+				transer->setPosition(veVec3(0.0f, currentDis, 0.0f));
+			});
 		}
 
 		{
@@ -65,8 +84,26 @@ public:
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
 			transer->setScale(veVec3(2.0f));
-			transer->setPosition(veVec3(10.0f, 0.0f, 0.0f));
+			transer->setPosition(veVec3(5.0f, 0.0f, 0.0f));
 			root->addChild(node);
+		}
+
+		{
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu-0"));
+			veNode *node = _sceneManager->createNode("node4");
+			node->addRenderableObject(entity);
+			//node->addComponent(new KeyboardInputer);
+			veTransformer *transer = new veTransformer;
+			node->addComponent(transer);
+			transer->setPosition(veVec3(-5.0f, 0.0f, 0.0f));
+			transer->setScale(veVec3(0.3f));
+			root->addChild(node);
+
+			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim"));
+			veAnimationPlayer* player = _sceneManager->createAnimationPlayer("player0", animationContainer);
+			player->start();
+			player->setLoopAnimation(true);
+			player->attachEntity(entity);
 		}
 
 		_sceneManager->getRootNode()->addChild(root);
