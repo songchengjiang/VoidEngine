@@ -106,6 +106,14 @@ public:
 			player->attachEntity(entity);
 		}
 
+		//auto pass = new vePass;
+		//pass->setShader(new veShader(veShader::VERTEX_SHADER, std::string("shaders/AchieveDepthShader.vert")));
+		//pass->setShader(new veShader(veShader::FRAGMENT_SHADER, std::string("shaders/AchieveDepthShader.frag")));
+		//pass->addUniform(new veUniform("u_ModelViewProjectMat", std::string("MVP_MATRIX")));
+		//pass->addUniform(new veUniform("u_BoneMates", std::string("BONE_MATRIXES")));
+		//_sceneManager->getCamera()->setGlobalRenderPass(pass);
+
+
 		_sceneManager->getRootNode()->addChild(root);
 	};
 	~CubeMapTest() {};

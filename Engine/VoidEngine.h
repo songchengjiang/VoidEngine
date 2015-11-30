@@ -10,6 +10,8 @@
 #include "KernelCore/Renderer.h"
 #include "KernelCore/Node.h"
 #include "KernelCore/Entity.h"
+#include "KernelCore/Material.h"
+#include "KernelCore/Shader.h"
 #include "KernelCore/Application.h"
 #include "KernelCore/Component.h"
 #include "KernelCore/Transformer.h"

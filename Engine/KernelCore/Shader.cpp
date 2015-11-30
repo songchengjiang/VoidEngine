@@ -541,7 +541,7 @@ veShader::veShader(Type type, const std::string &filePath)
 	, _shader(0)
 	, _isCompiled(false)
 {
-	setSource(filePath.c_str());
+	setSource(filePath);
 }
 
 veShader::veShader(Type type, const char *str)
@@ -551,7 +551,7 @@ veShader::veShader(Type type, const char *str)
 	, _source(str)
 	, _isCompiled(false)
 {
-
+	setSource(str);
 }
 
 veShader::veShader()
