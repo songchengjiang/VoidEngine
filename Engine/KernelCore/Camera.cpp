@@ -150,7 +150,7 @@ void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 	if (_fbo.valid()) {
 		_fbo->bind(_clearMask);
 	}
-	glViewport(_viewport.x, _viewport.y, _viewport.width * VE_DEVICE_PIXEL_RATIO, _viewport.height * VE_DEVICE_PIXEL_RATIO);
+	glViewport(_viewport.x * VE_DEVICE_PIXEL_RATIO, _viewport.y * VE_DEVICE_PIXEL_RATIO, _viewport.width * VE_DEVICE_PIXEL_RATIO, _viewport.height * VE_DEVICE_PIXEL_RATIO);
 	glClear(_clearMask);
 	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
 	if (!renderList.empty()) {
