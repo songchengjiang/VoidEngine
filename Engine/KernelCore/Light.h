@@ -23,8 +23,13 @@ public:
 	static const std::string DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME;
 
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_RESOLUTION_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME;
+
 	static const veVec2 DEFAULT_SHADOW_RESOLUTION;
-	static const veVec3 DEFAULT_SHADOW_RANGE;
 	static const float  DEFAULT_SHADOW_BIAS;
 	static const float  DEFAULT_SHADOW_STRENGTH;
 
@@ -67,8 +72,6 @@ public:
 	float getShadowBias() const { return _shadowBias; }
 	void setShadowStrength(float strength) { _shadowStrength = strength; }
 	float getShadowStrength() const { return _shadowStrength; }
-	void setShadowRange(const veVec3 &range) { _shadowRange = range; _needRefreshShadow = true; }
-	const veVec3 getShadowRange() const { return _shadowRange; }
 
 	veCamera* getShadowRenderingCamera() { return _shadowRenderingCam.get(); }
 	const veCamera* getShadowRenderingCamera() const { return _shadowRenderingCam.get(); }
@@ -100,7 +103,6 @@ protected:
 	bool _shadowEnabled;
 	bool _perspectiveShadow;
 	veVec2 _shadowResolution;
-	veVec3 _shadowRange;
 	float _shadowBias;
 	float _shadowStrength;
 	VE_Ptr<veCamera>  _shadowRenderingCam;

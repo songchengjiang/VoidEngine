@@ -29,7 +29,7 @@ private:
 
 	VE_Ptr<veMaterialArray> _materials;
 	VE_Ptr<veSurface> _surface;
-	VE_Ptr<vePostProcesserRenderer> _render;
+	VE_Ptr<vePostProcesserRenderer> _renderer;
 	veSceneManager   *_sceneManager;
 	bool _needRefresh;
 };

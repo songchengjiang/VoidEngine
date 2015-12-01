@@ -38,6 +38,7 @@ public:
 	virtual ~veSceneManager();
 
 	USE_VE_PTR;
+	USE_NAME_PROPERTY;
 
 	virtual veNode* createNode(const std::string &name) = 0;
 	virtual veLight* createLight(veLight::LightType type, const std::string &name);

@@ -25,8 +25,24 @@ veEntityRenderer::~veEntityRenderer()
 
 void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
+	if (!isNeedRendering())
+		return;
 	if (true) {
+
 		veEntity *entity = static_cast<veEntity *>(renderableObj);
+		veMaterial *defaultMaterial = nullptr;
+		if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::PRELIGHTING) {
+			auto material = entity->getMaterialArray()->getMaterial(DEFAULT_MATERIAL_DEPTH_ACHIEVE);
+			if (material && material->activeTechnique()) {
+				if (material->activeTechnique()->getPassNum()) {
+					if (material->activeTechnique()->getPass(0)->castShadow())
+						defaultMaterial = material;
+				}
+			}
+
+			if (!defaultMaterial) return;
+		}
+
 		if (_meshBuffersList.size() < entity->getMeshCount()) {
 			_meshBuffersList.resize(entity->getMeshCount());
 		}
@@ -94,25 +110,25 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 				mesh->needRefresh() = false;
 			}
 
-			auto technique = mesh->getMaterial()->activeTechnique();
 			veMat4 meshRootMat = nTow * mesh->getAttachedNode()->toMeshNodeRootMatrix();
+			veRenderCommand rc;
+			rc.mask = node->getMask();
+			rc.worldMatrix = new veMat4Ptr(meshRootMat);
+			rc.renderableObj = renderableObj;
+			rc.user1 = node;
+			rc.user2 = mesh;
+			rc.user3 = &buffers;
+			rc.camera = camera;
+			rc.sceneManager = camera->getSceneManager();
+			rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
+			rc.renderer = this;
+
+			auto technique = defaultMaterial? defaultMaterial->activeTechnique() : mesh->getMaterial()->activeTechnique();
 			for (unsigned int i = 0; i < technique->getPassNum(); ++i) {
 				auto pass = technique->getPass(i);
 				if (camera->getMask() & pass->drawMask()) {
 					bool isTransparent = pass->blendFunc() != veBlendFunc::DISABLE ? true : false;
-					veRenderCommand rc;
-					rc.mask = node->getMask();
 					rc.pass = pass;
-					rc.worldMatrix = new veMat4Ptr(meshRootMat);
-					//rc.attachedNode = node;
-					rc.renderableObj = renderableObj;
-					rc.user1 = node;
-					rc.user2 = mesh;
-					rc.user3 = &buffers;
-					rc.camera = camera;
-					rc.sceneManager = camera->getSceneManager();
-					rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
-					rc.renderer = this;
 					pass->visit(rc);
 					if (isTransparent)
 						camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);

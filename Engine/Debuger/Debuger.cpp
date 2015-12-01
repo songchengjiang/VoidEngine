@@ -23,6 +23,8 @@ public:
 	{}
 
 	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override {
+		if (!isNeedRendering())
+			return;
 		if (!vao) {
 			glGenVertexArrays(1, &vao);
 			glGenBuffers(1, &vbo);

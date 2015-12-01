@@ -16,11 +16,29 @@ veBillboardRenderer::~veBillboardRenderer()
 
 void veBillboardRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
+	if (!isNeedRendering())
+		return;
 	if (_firstUpdate) {
 		_originBoundingBox = renderableObj->getBoundingBox();
 		_firstUpdate = false;
 	}
 	updateBuffer();
+
+	veQuat cameraRot;
+	camera->getNodeToWorldMatrix().decomposition(nullptr, nullptr, &cameraRot);
+	veMat4 rotMat;
+	rotMat.makeRotation(cameraRot);
+	renderableObj->setBoundingBox(_originBoundingBox * rotMat);
+	veRenderCommand rc;
+	rc.mask = node->getMask();
+	rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix() * rotMat);
+	//rc.attachedNode = node;
+	rc.renderableObj = renderableObj;
+	rc.camera = camera;
+	rc.sceneManager = camera->getSceneManager();
+	rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
+	rc.renderer = this;
+
 	auto materials = renderableObj->getMaterialArray();
 	for (unsigned int mat = 0; mat < materials->getMaterialNum(); ++mat) {
 		auto material = materials->getMaterial(mat);
@@ -28,21 +46,7 @@ void veBillboardRenderer::render(veNode *node, veRenderableObject *renderableObj
 			auto pass = material->activeTechnique()->getPass(i);
 			if (camera->getMask() & pass->drawMask()) {
 				bool isTransparent = pass->blendFunc() != veBlendFunc::DISABLE ? true : false;
-				veQuat cameraRot;
-				camera->getNodeToWorldMatrix().decomposition(nullptr, nullptr, &cameraRot);
-				veMat4 rotMat;
-				rotMat.makeRotation(cameraRot);
-				renderableObj->setBoundingBox(_originBoundingBox * rotMat);
-				veRenderCommand rc;
-				rc.mask = node->getMask();
 				rc.pass = pass;
-				rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix() * rotMat);
-				//rc.attachedNode = node;
-				rc.renderableObj = renderableObj;
-				rc.camera = camera;
-				rc.sceneManager = camera->getSceneManager();
-				rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
-				rc.renderer = this;
 				//rc.drawFunc = VE_CALLBACK_1(veBillboardRenderer::draw, this);
 				pass->visit(rc);
 				if (isTransparent)

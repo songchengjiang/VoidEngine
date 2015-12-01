@@ -192,4 +192,6 @@ static const std::string MODEL_EXT = ".vem";
 static const std::string MATERIAL_EXT = ".vemtl";
 static const std::string ANIMATION_EXT = ".veanim";
 
+static const std::string DEFAULT_MATERIAL_DEPTH_ACHIEVE = "DEFAULT_MATERIAL_DEPTH_ACHIEVE";
+
 #endif

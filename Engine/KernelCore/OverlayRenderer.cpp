@@ -16,24 +16,27 @@ veOverlayRenderer::~veOverlayRenderer()
 
 void veOverlayRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
+	if (!isNeedRendering())
+		return;
 	updateBuffer();
+
+	veRenderCommand rc;
+	rc.priority = _renderOrder;
+	rc.mask = node->getMask();
+	rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix());
+	//rc.attachedNode = node;
+	rc.renderableObj = renderableObj;
+	rc.camera = camera;
+	rc.sceneManager = camera->getSceneManager();
+	rc.renderer = this;
+
 	auto materials = renderableObj->getMaterialArray();
 	for (unsigned int mat = 0; mat < materials->getMaterialNum(); ++mat) {
 		auto material = materials->getMaterial(mat);
 		for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {
 			auto pass = material->activeTechnique()->getPass(i);
 			if (camera->getMask() & pass->drawMask()) {
-				veRenderCommand rc;
-				rc.priority = _renderOrder;
-				rc.mask = node->getMask();
 				rc.pass = pass;
-				rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix());
-				//rc.attachedNode = node;
-				rc.renderableObj = renderableObj;
-				rc.camera = camera;
-				rc.sceneManager = camera->getSceneManager();
-				rc.renderer = this;
-				//rc.drawFunc = VE_CALLBACK_1(veOverlayRenderer::draw, this);
 				pass->visit(rc);
 				camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
 			}

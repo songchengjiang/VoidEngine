@@ -6,7 +6,6 @@
 const unsigned int veLight::DEFUALT_LIGHT_PARAM_NUM = 8;
 
 const veVec2 veLight::DEFAULT_SHADOW_RESOLUTION = veVec2(256);
-const veVec3 veLight::DEFAULT_SHADOW_RANGE      = veVec3(512, 512, 1000);
 const float  veLight::DEFAULT_SHADOW_BIAS       = 0.05f;
 const float  veLight::DEFAULT_SHADOW_STRENGTH   = 1.0f;
 const std::string veLight::DEFUALT_LIGHT_UNIFORM_NAME = "ve_Light";
@@ -21,6 +20,12 @@ const std::string veLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME = "intensity";
 const std::string veLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME = "attenuationRangeInverse";
 const std::string veLight::DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME = "innerAngleCos";
 const std::string veLight::DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME = "outerAngleCos";
+
+const std::string veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME = "shadowEnabled";
+const std::string veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME = "shadowBias";
+const std::string veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME = "shadowStrength";
+const std::string veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_RESOLUTION_NAME = "shadowResolution";
+const std::string veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME = "shadowMap";
 
 veLight::veLight(LightType type)
 	: _type(type)
@@ -37,7 +42,6 @@ veLight::veLight(LightType type)
 	, _shadowResolution(DEFAULT_SHADOW_RESOLUTION)
 	, _shadowBias(DEFAULT_SHADOW_BIAS)
 	, _shadowStrength(DEFAULT_SHADOW_STRENGTH)
-	, _shadowRange(DEFAULT_SHADOW_RANGE)
 	, _needRefreshShadow(true)
 {
 }
@@ -59,11 +63,12 @@ void veLight::update(veSceneManager *sm, const veMat4 &transform)
 		}
 
 		if (_needRefreshShadow) {
-			_shadowRenderingCam->setProjectionMatrixAsOrtho(-_shadowRange.x() * 0.5f, _shadowRange.x() * 0.5f
-															, -_shadowRange.y() * 0.5f, _shadowRange.y() * 0.5f
-															, 1.0f, _shadowRange.z());
-			_shadowTexture->storage(int(_shadowResolution.x()), int(_shadowResolution.y()), 1, GL_DEPTH_COMPONENT);
-			_shadowRenderingCam->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowTexture.get());
+			//_shadowRenderingCam->setProjectionMatrixAsOrtho(-_shadowRange.x() * 0.5f, _shadowRange.x() * 0.5f
+			//												, -_shadowRange.y() * 0.5f, _shadowRange.y() * 0.5f
+			//												, 1.0f, _shadowRange.z());
+			_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1, GL_R8, GL_RED
+				, GL_UNSIGNED_BYTE, nullptr, log2(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO) + 1);
+			_shadowRenderingCam->getFrameBufferObject()->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _shadowTexture.get());
 			_needRefreshShadow = false;
 		}
 

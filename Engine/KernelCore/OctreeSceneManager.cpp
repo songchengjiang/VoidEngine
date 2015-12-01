@@ -7,6 +7,7 @@
 #include "Ray.h"
 #include "FileCore/File.h"
 #include "Application.h"
+#include "MaterialManager.h"
 
 veOctreeSceneManager::veOctreeSceneManager()
 	: _boundingBox(veVec3(-10000.0f), veVec3(10000.0f))
@@ -207,6 +208,20 @@ void veOctreeSceneManager::render()
 {
 	if (!veApplication::instance()->makeContextCurrent()) return;
 	culling();
+
+	if (!_lightList.empty()) {
+		veRenderer::CURRENT_RENDER_STAGE = veRenderer::PRELIGHTING;
+		for (auto &light : _lightList) {
+			if (light->isShadowEnabled() && light->isVisible() && light->isInScene()) {
+				veOctreeCamera *cam = static_cast<veOctreeCamera *>(light->getShadowRenderingCamera());
+				cam->walkingOctree(this->_octree);
+				cam->renderingOctree();
+				cam->render();
+			}
+		}
+	}
+
+	veRenderer::CURRENT_RENDER_STAGE = veRenderer::FRAMEBUFFER;
 	for (auto &iter : _cameraList) {
 		if (iter->isVisible() && iter->isInScene() && iter != _mainCamera) {
 			if (iter->getFrameBufferObject()) {
@@ -221,6 +236,7 @@ void veOctreeSceneManager::render()
 		}
 	}
 
+	veRenderer::CURRENT_RENDER_STAGE = veRenderer::RENDERING;
 	if (_mainCamera.valid() && _mainCamera->isInScene() && _mainCamera->isVisible()) {
 		veOctreeCamera *mainCam = static_cast<veOctreeCamera *>(_mainCamera.get());
 		//mainCam->walkingOctree(this->_octree);
@@ -230,6 +246,7 @@ void veOctreeSceneManager::render()
 		mainCam->renderingOctree();
 
 		if (!_postProcesserList.empty()) {
+			veRenderer::CURRENT_RENDER_STAGE = veRenderer::POSTPROCESS;
 			if (!_postProcesserFBO.valid()) {
 				_postProcesserFBO = veFrameBufferObjectManager::instance()->getOrCreateFrameBufferObject("postProcesserFBO");
 			}

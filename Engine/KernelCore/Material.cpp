@@ -258,6 +258,17 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, veCamera *came
 		glUniform1f(lightParamLocs[6], light->getInnerAngleCos());
 		glUniform1f(lightParamLocs[7], light->getOuterAngleCos());
 	}
+
+	glUniform1f(lightParamLocs[8], light->isShadowEnabled()? 1.0f : 0.0f);
+
+	if (light->isShadowEnabled()) {
+		glUniform1f(lightParamLocs[9], light->getShadowBias());
+		glUniform1f(lightParamLocs[10], light->getShadowStrength());
+		glUniform2f(lightParamLocs[11], light->getShadowResolution().x(), light->getShadowResolution().y());
+
+		glUniform1i(lightParamLocs[12], idx + _textures.size());
+		light->getShadowTexture()->bind(idx + _textures.size());
+	}
 }
 
 void vePass::locateLightUnifroms(const veRenderCommand &command)
@@ -279,6 +290,11 @@ void vePass::locateLightUnifroms(const veRenderCommand &command)
 		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME).c_str()));
 		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME).c_str()));
 		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME).c_str()));
+		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME).c_str()));
+		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME).c_str()));
+		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME).c_str()));
+		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_RESOLUTION_NAME).c_str()));
+		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME).c_str()));
 	}
 }
 

@@ -149,6 +149,11 @@ uniform struct {\n\
     float " << veLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME << ";\n\
     float " << veLight::DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME << ";\n\
     float " << veLight::DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME << ";\n\
+	float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME << ";\n\
+	float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME << ";\n\
+	float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME << ";\n\
+	vec2 " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_RESOLUTION_NAME << ";\n\
+	sampler2DShadow " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME << ";\n\
 }" << veLight::DEFUALT_LIGHT_UNIFORM_NAME << "[" << _command.sceneManager->getLightList().size() << "];\n\
 const int " << veLight::DEFUALT_LIGHT_UNIFORM_MAX_NAME << " = " << _command.sceneManager->getLightList().size() << ";\n\
 uniform int " << veLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME << ";\n\

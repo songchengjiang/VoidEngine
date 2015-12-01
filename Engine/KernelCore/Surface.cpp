@@ -101,6 +101,7 @@ void veSurface::setType(Type type)
 	else if (_type == BILLBOARD) {
 		_renderer = new veBillboardRenderer;
 	}
+	_renderer->setRenderStageMask(_renderer->getRenderStageMask() & ~veRenderer::PRELIGHTING);
 	_boundingBox.dirty();
 	_needRefreshMaterial = true;
 }
