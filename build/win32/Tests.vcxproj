@@ -99,6 +99,7 @@
     <ClInclude Include="..\..\Tests\PerformanceTest.h" />
     <ClInclude Include="..\..\Tests\PostProcesserTest.h" />
     <ClInclude Include="..\..\Tests\RenToTex.h" />
+    <ClInclude Include="..\..\Tests\ShadowTest.h" />
     <ClInclude Include="..\..\Tests\SkyBoxTest.h" />
     <ClInclude Include="..\..\Tests\TestCreator.h" />
     <ClInclude Include="..\..\Tests\TextTest.h" />

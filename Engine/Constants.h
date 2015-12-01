@@ -33,7 +33,6 @@ static const std::string DEPTHTEST_KEY = "depthTest";
 static const std::string DEPTHWRITE_KEY = "depthWrite";
 static const std::string CULLFACE_KEY = "cullFace";
 static const std::string CULLFACEMODE_KEY = "cullFaceMode";
-static const std::string CASTSHADOW_KEY = "castShadow";
 static const std::string BLENDFUNC_KEY = "blendFunc";
 static const std::string ONE_KEY = "ONE";
 static const std::string ZERO_KEY = "ZERO";

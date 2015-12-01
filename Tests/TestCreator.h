@@ -12,6 +12,7 @@
 #include "SkyBoxTest.h"
 #include "PostProcesserTest.h"
 #include "CubeMapTest.h"
+#include "ShadowTest.h"
 
 //
 class TestCreator
@@ -29,7 +30,8 @@ public:
 		//auto test = new IntersectionTest;
 		//auto test = new SkyBoxTest;
 		//auto test = new PostProcesserTest;
-		auto test = new CubeMapTest;
+		//auto test = new CubeMapTest;
+		auto test = new ShadowTest;
 		test->init();
 	}
 

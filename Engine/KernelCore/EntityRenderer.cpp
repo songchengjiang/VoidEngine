@@ -35,8 +35,7 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 			auto material = entity->getMaterialArray()->getMaterial(DEFAULT_MATERIAL_DEPTH_ACHIEVE);
 			if (material && material->activeTechnique()) {
 				if (material->activeTechnique()->getPassNum()) {
-					if (material->activeTechnique()->getPass(0)->castShadow())
-						defaultMaterial = material;
+					defaultMaterial = material;
 				}
 			}
 

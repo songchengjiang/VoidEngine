@@ -24,9 +24,9 @@
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "BlinnPhoneShader.frag",
-                                    "u_ambient": [0.2000,0.2000,0.2000
+                                    "u_ambient": [0.0000,0.0000,0.0000
                                     ],
-                                    "u_diffuse": [0.588000,0.588000,0.588000
+                                    "u_diffuse": [0.88000,0.88000,0.88000
                                     ],
                                     "u_shininess":2.000000,
                                     "u_opacity":1.000000,
@@ -69,9 +69,9 @@
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "BlinnPhoneShader.frag",
-                                    "u_ambient": [0.188000,0.188000,0.188000
+                                    "u_ambient": [0.0000,0.0000,0.0000
                                     ],
-                                    "u_diffuse": [0.588000,0.588000,0.588000
+                                    "u_diffuse": [0.88000,0.88000,0.88000
                                     ],
                                     "u_shininess":2.000000,
                                     "u_opacity":1.000000,
@@ -85,6 +85,33 @@
                                     "source": "laoshu_tex_shenti.png",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR_MIP_MAP"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "DEFAULT_MATERIAL_DEPTH_ACHIEVE",
+            "techniques": [
+                {
+                    "name": "tech-0",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": true,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "shaders/AchieveDepthShader.vert",
+                                    "u_ModelViewProjectMat": "MVP_MATRIX",
+                                    "u_BoneMates": "BONE_MATRIXES"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "shaders/AchieveDepthShader.frag"
                                 }
                             ]
                         }

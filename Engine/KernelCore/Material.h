@@ -68,9 +68,6 @@ public:
 	const unsigned int& drawMask() const { return _mask; }
 	unsigned int& drawMask() { return _mask; }
 
-	const bool& castShadow() const { return _castShadow; }
-	bool& castShadow() { return _castShadow; }
-
 	//const GLenum& polygonMode() const { return _polygonMode; }
 	//GLenum& polygonMode() { return _polygonMode; }
 
@@ -115,7 +112,6 @@ private:
 	bool _depthTest;
 	bool _depthWirte;
 	bool _cullFace;
-	bool _castShadow;
 	GLenum _cullFaceMode;
 	veBlendFunc _blendFunc;
 	unsigned int _mask;
