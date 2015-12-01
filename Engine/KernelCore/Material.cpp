@@ -22,6 +22,7 @@ vePass::vePass()
 	, _depthTest(true)
 	, _depthWirte(true)
 	, _cullFace(true)
+	, _castShadow(false)
 	, _cullFaceMode(GL_BACK)
 	, _blendFunc(veBlendFunc::DISABLE)
 	//, _polygonMode(GL_FILL)
@@ -39,12 +40,12 @@ void vePass::visit(const veRenderCommand &command)
 {
 }
 
-void vePass::apply(const veRenderCommand &command)
+bool vePass::apply(const veRenderCommand &command)
 {
 	applyProgram(command);
 	applyLightsUniforms(command);
 	applyUniforms(command);
-	if (CURRENT_PASS == this) return;
+	if (CURRENT_PASS == this) return true;
 	CURRENT_PASS = this;
 
 	for (unsigned int i = 0; i < _textures.size(); ++i) {
@@ -89,6 +90,8 @@ void vePass::apply(const veRenderCommand &command)
 		}
 		CURRENT_BLEND_FUNC = _blendFunc;
 	}
+
+	return true;
 }
 
 void vePass::setShader(veShader *shader)

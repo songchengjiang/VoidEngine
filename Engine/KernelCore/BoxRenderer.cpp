@@ -156,7 +156,8 @@ void veBoxRenderer::render(veNode *node, veRenderableObject *renderableObj, veCa
 
 void veBoxRenderer::draw(const veRenderCommand &command)
 {
-	command.pass->apply(command);
+	if (!command.pass->apply(command))
+		return;
 	glBindVertexArray(_vao);
 	glDrawElements(GL_TRIANGLES, GLsizei(_indices.size()), GL_UNSIGNED_SHORT, nullptr);
 }

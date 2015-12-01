@@ -115,6 +115,9 @@ private:
 				pass->cullFaceMode() = GL_FRONT_AND_BACK;
 			}
 		}
+		if (passVal.HasMember(CASTSHADOW_KEY.c_str()))
+			pass->castShadow() = passVal[CASTSHADOW_KEY.c_str()].GetBool();
+
 		if (passVal.HasMember(DRAWMASK_KEY.c_str()))
 			pass->drawMask() = passVal[DRAWMASK_KEY.c_str()].GetUint();
 		if (passVal.HasMember(BLENDFUNC_KEY.c_str())) {

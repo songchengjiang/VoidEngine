@@ -48,7 +48,7 @@ public:
 	USE_VE_PTR;
 
 	void visit(const veRenderCommand &command);
-	void apply(const veRenderCommand &command);
+	bool apply(const veRenderCommand &command);
 
 	const bool& depthTest() const { return _depthTest; };
 	bool& depthTest() { return _depthTest; }
@@ -67,6 +67,9 @@ public:
 
 	const unsigned int& drawMask() const { return _mask; }
 	unsigned int& drawMask() { return _mask; }
+
+	const bool& castShadow() const { return _castShadow; }
+	bool& castShadow() { return _castShadow; }
 
 	//const GLenum& polygonMode() const { return _polygonMode; }
 	//GLenum& polygonMode() { return _polygonMode; }
@@ -112,6 +115,7 @@ private:
 	bool _depthTest;
 	bool _depthWirte;
 	bool _cullFace;
+	bool _castShadow;
 	GLenum _cullFaceMode;
 	veBlendFunc _blendFunc;
 	unsigned int _mask;

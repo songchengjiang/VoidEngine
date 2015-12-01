@@ -128,7 +128,8 @@ void veEntityRenderer::draw(const veRenderCommand &command)
 {
 	MeshBuffers *bufs = static_cast<MeshBuffers *>(command.user3);
 	veMesh *mesh = static_cast<veMesh *>(command.user2);
-	command.pass->apply(command);
+	if (!command.pass->apply(command))
+		return;
 	glBindVertexArray(bufs->vao);
 
 	auto transformFeedback = command.pass->getTransformFeedback();

@@ -69,7 +69,8 @@ void veSurfaceRenderer::render(veNode *node, veRenderableObject *renderableObj, 
 
 void veSurfaceRenderer::draw(const veRenderCommand &command)
 {
-	command.pass->apply(command);
+	if (!command.pass->apply(command))
+		return;
 
 	glBindVertexArray(_vao);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
