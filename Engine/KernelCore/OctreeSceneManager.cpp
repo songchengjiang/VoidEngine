@@ -213,10 +213,18 @@ void veOctreeSceneManager::render()
 		veRenderer::CURRENT_RENDER_STAGE = veRenderer::PRELIGHTING;
 		for (auto &light : _lightList) {
 			if (light->isShadowEnabled() && light->isVisible() && light->isInScene()) {
-				veOctreeCamera *cam = static_cast<veOctreeCamera *>(light->getShadowRenderingCamera());
-				cam->walkingOctree(this->_octree);
-				cam->renderingOctree();
-				cam->render();
+				if (light->getLightType() == veLight::POINT) {
+					for (unsigned int i = 0; i < 6; ++i) {
+						veOctreeCamera *cam = static_cast<veOctreeCamera *>(light->getShadowRenderingCamera(i));
+						cam->renderingOctree();
+						cam->render();
+					}
+				}
+				else {
+					veOctreeCamera *cam = static_cast<veOctreeCamera *>(light->getShadowRenderingCamera(0));
+					cam->renderingOctree();
+					cam->render();
+				}
 			}
 		}
 	}
@@ -269,6 +277,27 @@ void veOctreeSceneManager::culling()
 			_threadPool.enqueue(nullptr, nullptr, [this, cam] {
 				cam->walkingOctree(this->_octree);
 			});
+		}
+	}
+
+	if (!_lightList.empty()) {
+		for (auto &light : _lightList) {
+			if (light->isShadowEnabled() && light->isVisible() && light->isInScene()) {
+				if (light->getLightType() == veLight::POINT) {
+					for (unsigned int i = 0; i < 6; ++i) {
+						veOctreeCamera *cam = static_cast<veOctreeCamera *>(light->getShadowRenderingCamera(i));
+						_threadPool.enqueue(nullptr, nullptr, [this, cam] {
+							cam->walkingOctree(this->_octree);
+						});
+					}
+				}
+				else {
+					veOctreeCamera *cam = static_cast<veOctreeCamera *>(light->getShadowRenderingCamera(0));
+					_threadPool.enqueue(nullptr, nullptr, [this, cam] {
+						cam->walkingOctree(this->_octree);
+					});
+				}
+			}
 		}
 	}
 }

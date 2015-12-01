@@ -6,9 +6,9 @@
 #include "Constants.h"
 
 const char* veSurface::SURFACE_BILLBOARD_V_SHADER = " \
-	layout(location = 0) in vec3 position; \n \
-	layout(location = 1) in vec3 normal; \n \
-	layout(location = 2) in vec2 texcoord; \n \
+	layout(location = ATTR_POSITION) in vec3 position; \n \
+	layout(location = ATTR_NORMAL) in vec3 normal; \n \
+	layout(location = ATTR_TEXTURE_COORD0) in vec2 texcoord; \n \
 	uniform mat4 u_ModelViewProjectMat; \n \
 	uniform mat4 u_ScaleMat; \n \
 	out vec3 v_normal; \n \
@@ -21,9 +21,9 @@ const char* veSurface::SURFACE_BILLBOARD_V_SHADER = " \
 	}";
 
 const char* veSurface::OVERLAY_V_SHADER = " \
-	layout(location = 0) in vec3 position; \n \
-	layout(location = 1) in vec3 normal; \n \
-	layout(location = 2) in vec2 texcoord; \n \
+	layout(location = ATTR_POSITION) in vec3 position; \n \
+	layout(location = ATTR_NORMAL) in vec3 normal; \n \
+	layout(location = ATTR_TEXTURE_COORD0) in vec2 texcoord; \n \
 	uniform mat4 u_ModelMat; \n \
 	uniform mat4 u_ScaleMat; \n \
 	out vec3 v_normal; \n \
