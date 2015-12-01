@@ -61,12 +61,14 @@ public:
 				if (reverse) {
 					currentDis -= 5.0f * sm->getDeltaTime();
 					if (currentDis < -maxDis) {
+						currentDis = -maxDis;
 						reverse = false;
 					}
 				}
 				else {
 					currentDis += 5.0f * sm->getDeltaTime();
 					if (maxDis < currentDis) {
+						currentDis = maxDis;
 						reverse = true;
 					}
 				}

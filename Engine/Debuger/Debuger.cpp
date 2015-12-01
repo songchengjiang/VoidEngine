@@ -56,7 +56,7 @@ public:
 		rc.camera = camera;
 		rc.sceneManager = camera->getSceneManager();
 		rc.renderer = this;
-		camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
+		camera->getRenderQueue()->pushCommand(0, veRenderQueue::RENDER_QUEUE_ENTITY, rc);
 	}
 
 	virtual void draw(const veRenderCommand &command) override {

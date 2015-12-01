@@ -29,7 +29,7 @@ void vePostProcesserRenderer::render(veNode *node, veRenderableObject *renderabl
 			rc.renderer = this;
 			//rc.drawFunc = VE_CALLBACK_1(vePostProcesserRenderer::draw, this);
 			_pass->visit(rc);
-			camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
+			camera->getRenderQueue()->pushCommand(0, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
 		}
 	}
 }

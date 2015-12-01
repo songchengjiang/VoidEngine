@@ -115,9 +115,9 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 					rc.renderer = this;
 					pass->visit(rc);
 					if (isTransparent)
-						camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
+						camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
 					else
-						camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
+						camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_ENTITY, rc);
 				}
 			}
 		}

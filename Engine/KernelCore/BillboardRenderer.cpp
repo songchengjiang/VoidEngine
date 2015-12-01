@@ -46,9 +46,9 @@ void veBillboardRenderer::render(veNode *node, veRenderableObject *renderableObj
 				//rc.drawFunc = VE_CALLBACK_1(veBillboardRenderer::draw, this);
 				pass->visit(rc);
 				if (isTransparent)
-					camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
+					camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
 				else
-					camera->getRenderQueue()->pushCommand(veRenderQueue::RENDER_QUEUE_ENTITY, rc);
+					camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_ENTITY, rc);
 			}
 		}
 	}
