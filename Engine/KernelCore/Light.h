@@ -12,7 +12,6 @@ public:
 
 	static const unsigned int DEFUALT_LIGHT_PARAM_NUM;
 	static const std::string DEFUALT_LIGHT_UNIFORM_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_MAX_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_NUM_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_TYPE_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_POSITION_NAME;
@@ -23,11 +22,14 @@ public:
 	static const std::string DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME;
 
+	static const std::string DEFUALT_LIGHT_UNIFORM_LIGHT_MVPB_MATRIX_NAME;
+
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_RESOLUTION_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_2D_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_CUBE_NAME;
 
 	static const veVec2 DEFAULT_SHADOW_AREA;
 	static const veVec2 DEFAULT_SHADOW_RESOLUTION;
@@ -83,6 +85,10 @@ public:
 	void setLightViewMatrix(const veMat4 &mat) { _lightMatrix = mat; }
 	const veMat4& getLightViewMatrix() { return _lightMatrix; }
 
+	VE_Ptr<veTexture> _shadowTexture;
+
+	veMat4 getLightVPBMatrix() const;
+
 protected:
 	veLight(LightType type);
 
@@ -110,7 +116,6 @@ protected:
 	veVec2 _shadowArea;
 	float _shadowBias;
 	float _shadowStrength;
-	VE_Ptr<veTexture> _shadowTexture;
 	VE_Ptr<veCamera>  _shadowRenderingCam[6];
 	bool _needRefreshShadow;
 };

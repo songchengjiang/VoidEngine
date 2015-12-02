@@ -140,6 +140,11 @@ public:
 	{
 		std::stringstream def;
 		def << "\
+#define VE_DIRECTIONAL_LIGHT " << veLight::DIRECTIONAL << "\n\
+#define VE_POINT_LIGHT       " << veLight::POINT << "\n\
+#define VE_SPOT_LIGHT        " << veLight::SPOT << "\n\
+#define VE_AREA_LIGHT        " << veLight::AREA << "\n\
+#define VE_LIGHT_MAX_NUM     " << _command.sceneManager->getLightList().size() << "\n\
 uniform struct {\n\
     int   " << veLight::DEFUALT_LIGHT_UNIFORM_TYPE_NAME << ";\n\
     vec3  " << veLight::DEFUALT_LIGHT_UNIFORM_POSITION_NAME << ";\n\
@@ -149,18 +154,14 @@ uniform struct {\n\
     float " << veLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME << ";\n\
     float " << veLight::DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME << ";\n\
     float " << veLight::DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME << ";\n\
-	float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME << ";\n\
-	float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME << ";\n\
-	float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME << ";\n\
-	vec2 " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_RESOLUTION_NAME << ";\n\
-	sampler2DShadow " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME << ";\n\
-}" << veLight::DEFUALT_LIGHT_UNIFORM_NAME << "[" << _command.sceneManager->getLightList().size() << "];\n\
-const int " << veLight::DEFUALT_LIGHT_UNIFORM_MAX_NAME << " = " << _command.sceneManager->getLightList().size() << ";\n\
+    float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME << ";\n\
+    float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME << ";\n\
+    float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME << ";\n\
+    sampler2DShadow " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_2D_NAME << ";\n\
+    samplerCubeShadow " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_CUBE_NAME << ";\n\
+    mat4 " << veLight::DEFUALT_LIGHT_UNIFORM_LIGHT_MVPB_MATRIX_NAME << ";\n\
+}" << veLight::DEFUALT_LIGHT_UNIFORM_NAME << "[VE_LIGHT_MAX_NUM];\n\
 uniform int " << veLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME << ";\n\
-#define VE_DIRECTIONAL_LIGHT " << veLight::DIRECTIONAL << "\n\
-#define VE_POINT_LIGHT       " << veLight::POINT << "\n\
-#define VE_SPOT_LIGHT        " << veLight::SPOT << "\n\
-#define VE_AREA_LIGHT        " << veLight::AREA << "\n\
 ";
 		return def.str();
 	}

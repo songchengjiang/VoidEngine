@@ -280,7 +280,7 @@ private:
 			else if (wrap == MIRROR_KEY) texture->setWrapMode(veTexture2D::MIRROR);
 			else if (wrap == CLAMP_KEY) texture->setWrapMode(veTexture2D::CLAMP);
 			else if (wrap == DECAL_KEY) texture->setWrapMode(veTexture2D::DECAL);
-			else texture->setWrapMode(veTexture2D::REPEAT);
+			else texture->setWrapMode(veTexture2D::CLAMP);
 		}
 
 		if (texVal.HasMember(FILTER_KEY.c_str())) {

@@ -13,7 +13,7 @@ public:
 		root->setMatrix(veMat4::rotation(veQuat(-veMath::HALF_PI, veVec3::UNIT_X)));
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot"));
-			entity->getMaterialArray()->getMaterial(0)->activateTechnique(entity->getMaterialArray()->getMaterial(0)->getTechnique("CookTorrance_OrenNayarRendering"));
+			//entity->getMaterialArray()->getMaterial(0)->activateTechnique(entity->getMaterialArray()->getMaterial(0)->getTechnique("CookTorrance_OrenNayarRendering"));
 			veNode *node = _sceneManager->createNode("node0");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
@@ -39,7 +39,7 @@ public:
 
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "sphere"));
-			entity->getMaterialArray()->getMaterial(0)->activateTechnique(entity->getMaterialArray()->getMaterial(0)->getTechnique("CookTorrance_OrenNayarRendering"));
+			//entity->getMaterialArray()->getMaterial(0)->activateTechnique(entity->getMaterialArray()->getMaterial(0)->getTechnique("CookTorrance_OrenNayarRendering"));
 			veNode *node = _sceneManager->createNode("node3");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
@@ -114,6 +114,7 @@ public:
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
 			spot0->setIntensity(2.0);
 			spot0->shadowEnable(true);
+			spot0->setShadowResolution(veVec2(1024.0f));
 
 			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "spot0-sphere"));
 			veNode *lightModel = _sceneManager->createNode("lightnode2");
@@ -123,6 +124,20 @@ public:
 			spot0->addChild(lightModel);
 			spot0->setMask(LIGHT_MASK);
 			root->addChild(spot0);
+
+			{
+				spot0->_shadowTexture = _sceneManager->createTexture(std::string("-ShadowTexture"), veTexture::TEXTURE_2D);
+				veNode *node = _sceneManager->createNode("node10");
+				veTransformer *transer = new veTransformer;
+				node->addComponent(transer);
+				transer->setPosition(veVec3(-0.5f, -0.5f, 0.0f));
+				transer->setScale(veVec3(0.5f));
+
+				auto overlay = _sceneManager->createImage("image0", spot0->getShadowTexture());
+				node->addRenderableObject(overlay);
+
+				_sceneManager->getRootNode()->addChild(node);
+			}
 		}
 
 		{

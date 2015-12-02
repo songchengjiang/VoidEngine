@@ -13,8 +13,8 @@ public:
 	LightUpdater()
 		: _lastChangeColorTime(0.0) {
 		_angle = veMath::veRandomUnitization() * veMath::TWO_PI;
-		_radius = 10.0f * veMath::veRandomUnitization() + 2.0f;
-		_height = 30.0f * (veMath::veRandomUnitization());
+		_radius = 30.0f * veMath::veRandomUnitization() + 2.0f;
+		_height = 30.0f * (veMath::veRandomUnitization()) + 10.0f;
 		_oriColor = _desColor = veVec3(veMath::veRandomUnitization(), veMath::veRandomUnitization(), veMath::veRandomUnitization());
 	}
 	virtual bool handle(veNode *node, veSceneManager *sm, const veEvent &event) override{
@@ -265,6 +265,9 @@ public:
 		_sceneManager->setCamera(_camera);
 		_defaultCameraDistance = 30.0f;
 		_defaultCameraZoomScale = 1.0f;
+
+		veVec4 pos = _camera->projectionMatrix() * _camera->viewMatrix() * veVec4(10.0, 10.0, 10.0, 1.0);
+
 	};
 	~BaseTest() {
 		VE_SAFE_DELETE(_sceneManager);

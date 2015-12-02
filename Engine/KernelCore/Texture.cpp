@@ -16,7 +16,7 @@ veTexture::~veTexture()
 
 veTexture::veTexture(GLenum target)
 	: USE_VE_PTR_INIT
-	, _wrapMode(REPEAT)
+	, _wrapMode(CLAMP)
 	, _filterMode(NEAREST_MIP_MAP_LINEAR)
 	, _needRefreshTex(true)
 	, _needRefreshSampler(true)

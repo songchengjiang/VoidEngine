@@ -48,7 +48,22 @@ out vec3 tf_normal;
 
 out vec4 v_position;          
 out vec4 v_normalAndepth;                   
-out vec2 v_texcoord;  
+out vec2 v_texcoord;
+
+#ifdef VE_USE_LIGHTS
+out vec4 v_shadowTexCoord[VE_LIGHT_MAX_NUM];
+#endif
+
+#ifdef VE_USE_LIGHTS
+void caculateShadowTextureCoord(vec4 position)
+{
+	for (int i = 0; i < ve_LightNum; ++i){
+		if (0.0 < ve_Light[i].shadowEnabled){
+			v_shadowTexCoord[i] = ve_Light[i].lightMVPB * position;
+		}
+	}	
+}
+#endif
 
 void main()                                                 
 {   
@@ -67,6 +82,10 @@ void main()
 	
 	v_texcoord = texcoord0;
 	v_position = u_ModelViewMat * finalPos; 
+
+#ifdef VE_USE_LIGHTS
+	caculateShadowTextureCoord(finalPos);
+#endif
 	  
 	gl_Position = u_ModelViewProjectMat * finalPos; 
 	v_normalAndepth = vec4(u_NormalMat * finalNorm, gl_Position.w);  
