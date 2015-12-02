@@ -70,23 +70,27 @@ public:
 			player->attachEntity(entity);
 		}
 
-		//{
-		//	veLight *directional0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight", "directional0"));
-		//	veTransformer *lightTranser = new veTransformer;
-		//	directional0->addComponent(lightTranser);
-		//	directional0->addComponent(new LightUpdater);
-		//	lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
-		//	directional0->setIntensity(veMath::veRandomUnitization());
+		{
+			veLight *directional0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight", "directional0"));
+			veTransformer *lightTranser = new veTransformer;
+			directional0->addComponent(lightTranser);
+			directional0->addComponent(new LightUpdater);
+			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
+			directional0->setIntensity(veMath::veRandomUnitization());
+			directional0->shadowEnable(true);
+			directional0->setShadowArea(veVec2(20.0f));
+			directional0->setShadowResolution(veVec2(1024.0f));
+			directional0->setShadowBias(0.0003f);
 
-		//	veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "directional0-sphere"));
-		//	veNode *lightModel = _sceneManager->createNode("lightnode0");
-		//	lightModel->addRenderableObject(lightentity);
-		//	lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
-		//	lightModel->setMask(~LIGHT_MASK);
-		//	directional0->addChild(lightModel);
-		//	directional0->setMask(LIGHT_MASK);
-		//	root->addChild(directional0);
-		//}
+			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "directional0-sphere"));
+			veNode *lightModel = _sceneManager->createNode("lightnode0");
+			lightModel->addRenderableObject(lightentity);
+			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
+			lightModel->setMask(~LIGHT_MASK);
+			directional0->addChild(lightModel);
+			directional0->setMask(LIGHT_MASK);
+			root->addChild(directional0);
+		}
 
 		//{
 		//	veLight *point0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "point0"));
@@ -112,9 +116,9 @@ public:
 			spot0->addComponent(lightTranser);
 			spot0->addComponent(new LightUpdater);
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
-			spot0->setIntensity(2.0);
 			spot0->shadowEnable(true);
-			spot0->setShadowResolution(veVec2(1024.0f));
+			spot0->setShadowResolution(veVec2(512.0f));
+			spot0->setShadowBias(0.001f);
 
 			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "spot0-sphere"));
 			veNode *lightModel = _sceneManager->createNode("lightnode2");
@@ -125,19 +129,19 @@ public:
 			spot0->setMask(LIGHT_MASK);
 			root->addChild(spot0);
 
-			{
-				spot0->_shadowTexture = _sceneManager->createTexture(std::string("-ShadowTexture"), veTexture::TEXTURE_2D);
-				veNode *node = _sceneManager->createNode("node10");
-				veTransformer *transer = new veTransformer;
-				node->addComponent(transer);
-				transer->setPosition(veVec3(-0.5f, -0.5f, 0.0f));
-				transer->setScale(veVec3(0.5f));
+			//{
+			//	spot0->_shadowTexture = _sceneManager->createTexture(std::string("-ShadowTexture"), veTexture::TEXTURE_2D);
+			//	veNode *node = _sceneManager->createNode("node10");
+			//	veTransformer *transer = new veTransformer;
+			//	node->addComponent(transer);
+			//	transer->setPosition(veVec3(-0.5f, -0.5f, 0.0f));
+			//	transer->setScale(veVec3(0.5f));
 
-				auto overlay = _sceneManager->createImage("image0", spot0->getShadowTexture());
-				node->addRenderableObject(overlay);
+			//	auto overlay = _sceneManager->createImage("image0", spot0->getShadowTexture());
+			//	node->addRenderableObject(overlay);
 
-				_sceneManager->getRootNode()->addChild(node);
-			}
+			//	_sceneManager->getRootNode()->addChild(node);
+			//}
 		}
 
 		{

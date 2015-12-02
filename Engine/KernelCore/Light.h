@@ -85,8 +85,6 @@ public:
 	void setLightViewMatrix(const veMat4 &mat) { _lightMatrix = mat; }
 	const veMat4& getLightViewMatrix() { return _lightMatrix; }
 
-	VE_Ptr<veTexture> _shadowTexture;
-
 	veMat4 getLightVPBMatrix() const;
 
 protected:
@@ -116,6 +114,7 @@ protected:
 	veVec2 _shadowArea;
 	float _shadowBias;
 	float _shadowStrength;
+	VE_Ptr<veTexture> _shadowTexture;
 	VE_Ptr<veCamera>  _shadowRenderingCam[6];
 	bool _needRefreshShadow;
 };

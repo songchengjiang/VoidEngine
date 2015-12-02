@@ -264,6 +264,10 @@ void veTexture::bind(unsigned int textureUnit)
 		glTexParameteri(_target, GL_TEXTURE_SWIZZLE_B, _swizzleMode[2]);
 		glTexParameteri(_target, GL_TEXTURE_SWIZZLE_A, _swizzleMode[3]);
 
+		for (auto &param : _texParameterList) {
+			glTexParameteri(_target, param.first, param.second);
+		}
+
 		_needRefreshSampler = false;
 	}
 
@@ -285,6 +289,14 @@ void veTexture::getSwizzleMode(SwizzleMode &r, SwizzleMode &g, SwizzleMode &b, S
 	g = _swizzleMode[1];
 	b = _swizzleMode[2];
 	a = _swizzleMode[3];
+}
+
+void veTexture::setTexParameter(GLenum pname, GLint param)
+{
+	auto &currentParam = _texParameterList[pname];
+	if (currentParam == param) return;
+	currentParam = param;
+	_needRefreshSampler = true;
 }
 
 void veTexture::storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat, GLenum dataType

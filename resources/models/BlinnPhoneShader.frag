@@ -27,8 +27,8 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 
 	vec3 lDir = vec3(0.0);
 	float attenuation = 1.0;
-	float shadowIntensity = 1.0;
 	for (int i = 0; i < ve_LightNum; ++i){
+		float shadowIntensity = 1.0;
 		if (ve_Light[i].type == VE_DIRECTIONAL_LIGHT){
 			lDir = -ve_Light[i].direction;
 		}else if (ve_Light[i].type == VE_POINT_LIGHT){
@@ -43,16 +43,16 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 			float currentAngleCos = dot(lDir, -ve_Light[i].direction);
 			attenuation = clamp(1.0 - dot(lDirAttenuation, lDirAttenuation), 0.0, 1.0);
 			attenuation *= smoothstep(ve_Light[i].outerAngleCos, ve_Light[i].innerAngleCos, currentAngleCos);
-			if (0.0 < ve_Light[i].shadowEnabled){
-				vec3 shadowCoord = v_shadowTexCoord[i].xyz / v_shadowTexCoord[i].w;
-				shadowIntensity = texture(ve_Light[i].shadowMap2D, shadowCoord) * ve_Light[i].shadowStrength;
-				//diffLightCol = vec3(shadowIntensity);
-			} 
 		}
 
+		float NdotL = max(0.0, dot(normal, lDir));
+		if (0.0 < ve_Light[i].shadowEnabled){
+			vec3 shadowCoord = vec3(v_shadowTexCoord[i].xy, v_shadowTexCoord[i].z - ve_Light[i].shadowBias) / v_shadowTexCoord[i].w;
+			shadowIntensity = texture(ve_lightShadowMap2D[i], shadowCoord) * ve_Light[i].shadowStrength;
+		} 
 		attenuation *= ve_Light[i].intensity;
 		vec3 color = ve_Light[i].color * attenuation * shadowIntensity;
-		diffLightCol += max(0.0, dot(normal, lDir)) * color;
+		diffLightCol += NdotL * color;
 		if (0.0 < u_shininess){
 			vec3 H = normalize(eye + lDir);
 			specLightColor += pow(max(0.0, dot(normal, H)), u_shininess) * color;

@@ -3,6 +3,7 @@
 #include "Prerequisites.h"
 #include "VE_Ptr.h"
 #include <functional>
+#include <unordered_map>
 
 class veTextureManager;
 class VE_EXPORT veTexture
@@ -72,6 +73,8 @@ public:
 	void setSwizzleMode(SwizzleMode r, SwizzleMode g, SwizzleMode b, SwizzleMode a);
 	void getSwizzleMode(SwizzleMode &r, SwizzleMode &g, SwizzleMode &b, SwizzleMode &a);
 
+	void setTexParameter(GLenum pname, GLint param);
+
 	virtual void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE
 		, const unsigned char *data = nullptr, unsigned int requestMipMapLevels = 10);
 
@@ -115,6 +118,7 @@ protected:
 	GLuint          _texID;
 	GLenum          _target;
 	TextureType     _type;
+	std::unordered_map<GLenum, GLint> _texParameterList;
 
 	int             _width;
 	int             _height;

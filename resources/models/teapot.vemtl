@@ -6,13 +6,12 @@
             "name": "mat-0",
             "techniques": [
                 {
-                    "name": "NoLightingRendering",
+                    "name": "NormalRendering",
                     "passes": [
                         {
                             "depthTest": true,
                             "depthWrite": true,
-                            "cullFace": true,
-                            "blendFunc": ["ONE", "ZERO"],
+                            "cullFace": false,
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
@@ -154,7 +153,7 @@
                         {
                             "depthTest": true,
                             "depthWrite": true,
-                            "cullFace": true,
+                            "cullFace": false,
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",

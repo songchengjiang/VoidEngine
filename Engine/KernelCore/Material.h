@@ -106,6 +106,8 @@ private:
 	struct LightUniformLocations
 	{
 		GLint lightNum;
+		GLint lightShadow2D;
+		GLint lightShadowCube;
 		std::vector< std::vector<GLint> > lightParams;
 	};
 

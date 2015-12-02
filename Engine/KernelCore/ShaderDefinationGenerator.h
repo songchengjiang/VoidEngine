@@ -70,7 +70,7 @@ public:
 				for (auto &light : _command.sceneManager->getLightList()) {
 					if (light->isInScene() && light->isVisible() && (light->getMask() & _command.mask)) {
 						definations += SHADER_DEFINE_LIGHTS + std::string(" 1\n");
-						definations += getLightDefination();
+						definations += getLightDefination(type);
 						break;
 					}
 				}
@@ -136,7 +136,7 @@ public:
 	}
 
 
-	std::string getLightDefination()
+	std::string getLightDefination(veShader::Type type)
 	{
 		std::stringstream def;
 		def << "\
@@ -157,12 +157,19 @@ uniform struct {\n\
     float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME << ";\n\
     float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME << ";\n\
     float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME << ";\n\
-    sampler2DShadow " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_2D_NAME << ";\n\
-    samplerCubeShadow " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_CUBE_NAME << ";\n\
     mat4 " << veLight::DEFUALT_LIGHT_UNIFORM_LIGHT_MVPB_MATRIX_NAME << ";\n\
 }" << veLight::DEFUALT_LIGHT_UNIFORM_NAME << "[VE_LIGHT_MAX_NUM];\n\
 uniform int " << veLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME << ";\n\
 ";
+
+		if (type == veShader::FRAGMENT_SHADER) {
+			def << "\
+uniform sampler2DShadow " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_2D_NAME << "[VE_LIGHT_MAX_NUM]; \n\
+uniform samplerCubeShadow " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_CUBE_NAME << "[VE_LIGHT_MAX_NUM]; \n\
+";
+		}
+
+	
 		return def.str();
 	}
 
