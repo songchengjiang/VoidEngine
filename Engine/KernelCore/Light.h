@@ -110,8 +110,8 @@ protected:
 	veVec2 _shadowArea;
 	float _shadowBias;
 	float _shadowStrength;
-	VE_Ptr<veCamera>  _shadowRenderingCam[6];
 	VE_Ptr<veTexture> _shadowTexture;
+	VE_Ptr<veCamera>  _shadowRenderingCam[6];
 	bool _needRefreshShadow;
 };
 

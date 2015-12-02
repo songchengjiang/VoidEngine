@@ -50,13 +50,12 @@ const char* veSurface::COMMON_F_SHADER = " \
 	}";
 
 veSurface::veSurface()
-	: _type(OVERLAY)
-	, _needRefreshMaterial(true)
+	: _needRefreshMaterial(true)
 {
 	_alphaThreshold = new veUniform("u_alphaThreshold", 1.0f);
 	_color = new veUniform("u_Color", veVec4::WHITE);
 	_scaleMat = new veUniform("u_ScaleMat", veMat4::IDENTITY);
-	_renderer = new veOverlayRenderer;
+	setType(OVERLAY);
 }
 
 veSurface::~veSurface()

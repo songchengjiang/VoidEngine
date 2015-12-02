@@ -92,13 +92,14 @@ void veLight::updateShadow()
 {
 	if (_needRefreshShadow) {
 		_shadowTexture = _sceneManager->createTexture(_name + std::string("-ShadowTexture"), _type == POINT ? veTexture::TEXTURE_CUBE : veTexture::TEXTURE_2D);
-		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1, GL_R8, GL_RED
-			, GL_UNSIGNED_BYTE, nullptr, log2(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO) + 1);
+		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1, GL_RGB8, GL_RGB
+			, GL_UNSIGNED_BYTE, nullptr, 1);
 
 		switch (_type)
 		{
 		case DIRECTIONAL:
 		{
+			_shadowRenderingCam[0]->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
 			_shadowRenderingCam[0]->setProjectionMatrixAsOrtho(-_shadowArea.x() * 0.5f, _shadowArea.x() * 0.5f, -_shadowArea.y() * 0.5f, _shadowArea.y() * 0.5f
 				, 1.0f, _attenuationRange);
 			_shadowRenderingCam[0]->getFrameBufferObject()->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _shadowTexture.get());
@@ -108,6 +109,7 @@ void veLight::updateShadow()
 		case POINT: 
 		{
 			for (unsigned int i = 0; i < 6; ++i) {
+				_shadowRenderingCam[i]->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
 				_shadowRenderingCam[i]->setProjectionMatrixAsPerspective(90.0f, 1.0f, 1.0f, _attenuationRange);
 				_shadowRenderingCam[i]->getFrameBufferObject()->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, _shadowTexture.get());
 			}
@@ -116,6 +118,7 @@ void veLight::updateShadow()
 
 		case SPOT:
 		{
+			_shadowRenderingCam[0]->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
 			_shadowRenderingCam[0]->setProjectionMatrixAsPerspective(_outerAngle, 1.0, 1.0, _attenuationRange);
 			_shadowRenderingCam[0]->getFrameBufferObject()->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _shadowTexture.get());
 		}
@@ -151,23 +154,23 @@ void veLight::updateShadowCamera()
 	case DIRECTIONAL:
 	case SPOT:
 	{
-		_shadowRenderingCam[0]->setMatrix(this->getNodeToWorldMatrix());
-		_shadowRenderingCam[0]->update(_sceneManager, veMat4::IDENTITY);
+		_shadowRenderingCam[0]->viewMatrix() = this->getWorldToNodeMatrix();
+		_shadowRenderingCam[0]->refresh();
 	}
 	break;
 
 	case POINT: 
 	{
-		veMat4 ltow = this->getNodeToWorldMatrix();
-		_shadowRenderingCam[0]->setMatrix(ltow * veMat4::lookAt(veVec3::ZERO, veVec3::NEGATIVE_UNIT_X, veVec3::UNIT_Y));
-		_shadowRenderingCam[1]->setMatrix(ltow * veMat4::lookAt(veVec3::ZERO, veVec3::UNIT_X, veVec3::UNIT_Y));
-		_shadowRenderingCam[2]->setMatrix(ltow * veMat4::lookAt(veVec3::ZERO, veVec3::UNIT_Y, veVec3::UNIT_Z));
-		_shadowRenderingCam[3]->setMatrix(ltow * veMat4::lookAt(veVec3::ZERO, veVec3::NEGATIVE_UNIT_Y, veVec3::NEGATIVE_UNIT_Z));
-		_shadowRenderingCam[4]->setMatrix(ltow * veMat4::lookAt(veVec3::ZERO, veVec3::UNIT_Z, veVec3::UNIT_Y));
-		_shadowRenderingCam[5]->setMatrix(ltow * veMat4::lookAt(veVec3::ZERO, veVec3::NEGATIVE_UNIT_Z, veVec3::UNIT_Y));
+		veMat4 wton = this->getWorldToNodeMatrix();
+		_shadowRenderingCam[0]->viewMatrix() = veMat4::lookAt(veVec3::ZERO, veVec3::NEGATIVE_UNIT_X, veVec3::UNIT_Y) * wton;
+		_shadowRenderingCam[1]->viewMatrix() = veMat4::lookAt(veVec3::ZERO, veVec3::UNIT_X, veVec3::UNIT_Y) * wton;
+		_shadowRenderingCam[2]->viewMatrix() = veMat4::lookAt(veVec3::ZERO, veVec3::UNIT_Y, veVec3::UNIT_Z) * wton;
+		_shadowRenderingCam[3]->viewMatrix() = veMat4::lookAt(veVec3::ZERO, veVec3::NEGATIVE_UNIT_Y, veVec3::NEGATIVE_UNIT_Z) * wton;
+		_shadowRenderingCam[4]->viewMatrix() = veMat4::lookAt(veVec3::ZERO, veVec3::UNIT_Z, veVec3::UNIT_Y) * wton;
+		_shadowRenderingCam[5]->viewMatrix() = veMat4::lookAt(veVec3::ZERO, veVec3::NEGATIVE_UNIT_Z, veVec3::UNIT_Y) * wton;
 
 		for (unsigned int i = 0; i < 6; ++i)
-			_shadowRenderingCam[i]->update(_sceneManager, veMat4::IDENTITY);
+			_shadowRenderingCam[i]->refresh();
 	}
 	break;
 
