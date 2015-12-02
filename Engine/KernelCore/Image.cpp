@@ -2,7 +2,7 @@
 
 veImage::veImage(veTexture *texture)
 {
-	_texture = texture;
+	setTexture(texture);
 }
 
 veImage::~veImage()

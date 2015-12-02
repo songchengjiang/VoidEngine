@@ -226,7 +226,7 @@ private:
 				}
 			}
 
-			texture->storage(width * VE_DEVICE_PIXEL_RATIO, height * VE_DEVICE_PIXEL_RATIO, 1, internalFormat, GL_RGB, GL_UNSIGNED_BYTE, nullptr, log2(width * VE_DEVICE_PIXEL_RATIO) + 1);
+			texture->storage(width * VE_DEVICE_PIXEL_RATIO, height * VE_DEVICE_PIXEL_RATIO, 1, internalFormat, GL_RGB, GL_UNSIGNED_BYTE, nullptr, (unsigned int)log2(width * VE_DEVICE_PIXEL_RATIO) + 1);
 			fbo->attach(attachment, target, texture, needMipmap);
 		}
 		_camera->setFrameBufferObject(fbo);

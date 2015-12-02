@@ -32,8 +32,10 @@ public:
 	enum FilterMode{
 		NEAREST = GL_NEAREST,
 		LINEAR = GL_LINEAR,
-		NEAREST_MIP_MAP = GL_NEAREST_MIPMAP_NEAREST,
-		LINEAR_MIP_MAP = GL_LINEAR_MIPMAP_LINEAR,
+		NEAREST_MIP_MAP_NEAREST = GL_NEAREST_MIPMAP_NEAREST,
+		NEAREST_MIP_MAP_LINEAR = GL_NEAREST_MIPMAP_LINEAR,
+		LINEAR_MIP_MAP_NEAREST = GL_LINEAR_MIPMAP_NEAREST,
+		LINEAR_MIP_MAP_LINEAR = GL_LINEAR_MIPMAP_LINEAR,
 	};
 
 	enum SwizzleMode
@@ -71,7 +73,7 @@ public:
 	void getSwizzleMode(SwizzleMode &r, SwizzleMode &g, SwizzleMode &b, SwizzleMode &a);
 
 	virtual void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE
-		, const unsigned char *data = nullptr, unsigned int mipMapLevels = 10);
+		, const unsigned char *data = nullptr, unsigned int requestMipMapLevels = 10);
 
 	virtual void storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE);
 
@@ -93,7 +95,7 @@ public:
 	GLenum glTarget() { return _target; }
 
 	static bool isCompressedTex(GLint internalformat);
-	static bool isSupportFormat(GLenum pixelFormat);
+	static bool isSupportFormat(GLenum internalformat);
 
 protected:
 

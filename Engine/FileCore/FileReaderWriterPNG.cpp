@@ -104,7 +104,7 @@ private:
 
 		if (buffer){
 			_texture = _sceneManager->createTexture(_name);
-			_texture->storage(width, height, 1, internalFormat, pixelFormat, dataType, buffer);
+			_texture->storage(width, height, 1, internalFormat, pixelFormat, dataType, buffer, (unsigned int)log2(width) + 1);
 			delete[] buffer;
 		}
 	}

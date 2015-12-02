@@ -109,7 +109,7 @@ private:
 			}
 		}
 		_texture = _sceneManager->createTexture(_name);
-		_texture->storage(int(pixels.width()), int(pixels.height()), 1, internalFormat, pixelFormat, dataType, (unsigned char *)buffer);
+		_texture->storage(int(pixels.width()), int(pixels.height()), 1, internalFormat, pixelFormat, dataType, (unsigned char *)buffer, (unsigned int)log2(pixels.width()) + 1);
 	}
 
 private:

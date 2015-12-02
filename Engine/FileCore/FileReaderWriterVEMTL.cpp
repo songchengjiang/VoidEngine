@@ -287,9 +287,11 @@ private:
 			std::string filter = texVal[FILTER_KEY.c_str()].GetString();
 			if (filter == NEREAST_KEY) texture->setFilterMode(veTexture2D::NEAREST);
 			else if (filter == LINEAR_KEY) texture->setFilterMode(veTexture2D::LINEAR);
-			else if (filter == NEAREST_MIP_MAP_KEY) texture->setFilterMode(veTexture2D::NEAREST_MIP_MAP);
-			else if (filter == LINEAR_MIP_MAP_KEY) texture->setFilterMode(veTexture2D::LINEAR_MIP_MAP);
-			else texture->setFilterMode(veTexture2D::NEAREST);
+			else if (filter == NEAREST_MIP_MAP_NERAEST_KEY) texture->setFilterMode(veTexture2D::NEAREST_MIP_MAP_NEAREST);
+			else if (filter == NEAREST_MIP_MAP_LINEAR_KEY) texture->setFilterMode(veTexture2D::NEAREST_MIP_MAP_LINEAR);
+			else if (filter == LINEAR_MIP_MAP_NEAREST_KEY) texture->setFilterMode(veTexture2D::LINEAR_MIP_MAP_NEAREST);
+			else if (filter == LINEAR_MIP_MAP_LINEAR_KEY) texture->setFilterMode(veTexture2D::LINEAR_MIP_MAP_LINEAR);
+			else texture->setFilterMode(veTexture2D::NEAREST_MIP_MAP_LINEAR);
 		}
 
 		pass->addTexture(texture);

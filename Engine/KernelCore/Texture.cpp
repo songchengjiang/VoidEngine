@@ -17,7 +17,7 @@ veTexture::~veTexture()
 veTexture::veTexture(GLenum target)
 	: USE_VE_PTR_INIT
 	, _wrapMode(REPEAT)
-	, _filterMode(NEAREST)
+	, _filterMode(NEAREST_MIP_MAP_LINEAR)
 	, _needRefreshTex(true)
 	, _needRefreshSampler(true)
 	, _texID(0)
@@ -151,23 +151,80 @@ bool veTexture::isCompressedTex(GLint internalformat)
 	return false;
 }
 
-bool veTexture::isSupportFormat(GLenum pixelFormat)
+bool veTexture::isSupportFormat(GLenum internalformat)
 {
-	switch (pixelFormat)
+	switch (internalformat)
 	{
-	case GL_RED:
-	case GL_RED_INTEGER:
-	case GL_RG:
+	case GL_R8:
+	case GL_R8_SNORM:
+	case GL_R16F:
+	case GL_R32F:
+	case GL_R8UI:
+	case GL_R8I:
+	case GL_R16UI:
+	case GL_R16I:
+	case GL_R32UI:
+	case GL_R32I:
+	case GL_RG8:
+	case GL_RG8_SNORM:
+	case GL_RG16F:
+	case GL_RG32F:
+	case GL_RG8UI:
+	case GL_RG8I:
+	case GL_RG16UI:
+	case GL_RG16I:
+	case GL_RG32UI:
+	case GL_RG32I:
+	case GL_RGB8:
+	case GL_SRGB8:
 	case GL_RGB:
-	case GL_RGB_INTEGER:
+	case GL_RGB565:
+	case GL_RGB8_SNORM:
+	case GL_R11F_G11F_B10F:
+	case GL_RGB9_E5:
+	case GL_RGB16F:
+	case GL_RGB32F:
+	case GL_RGB8UI:
+	case GL_RGB8I:
+	case GL_RGB16UI:
+	case GL_RGB16I:
+	case GL_RGB32UI:
+	case GL_RGB32I:
 	case GL_RGBA:
-	case GL_RGBA_INTEGER:
-	case GL_DEPTH_COMPONENT:
-	case GL_DEPTH_STENCIL:
+	case GL_RGBA8:
+	case GL_SRGB8_ALPHA8:
+	case GL_RGBA8_SNORM:
+	case GL_RGB5_A1:
+	case GL_RGBA4:
+	case GL_RGB10_A2:
+	case GL_RGBA16F:
+	case GL_RGBA32F:
+	case GL_RGBA8UI:
+	case GL_RGBA8I:
+	case GL_RGB10_A2UI:
+	case GL_RGBA16UI:
+	case GL_RGBA16I:
+	case GL_RGBA32I:
+	case GL_RGBA32UI:
+	case GL_DEPTH_COMPONENT16:
+	case GL_DEPTH_COMPONENT24:
+	case GL_DEPTH_COMPONENT32F:
+	case GL_DEPTH24_STENCIL8:
+	case GL_DEPTH32F_STENCIL8:
 #if (VE_PLATFORM != VE_PLATFORM_MAC)
 	case GL_LUMINANCE_ALPHA:
 	case GL_LUMINANCE:
 	case GL_ALPHA:
+	case GL_COMPRESSED_R11_EAC:
+	case GL_COMPRESSED_SIGNED_R11_EAC:
+	case GL_COMPRESSED_RGB8_ETC2:
+	case GL_COMPRESSED_SRGB8_ETC2:
+	case GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2:
+	case GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2:
+	case GL_COMPRESSED_RG11_EAC:
+	case GL_COMPRESSED_SIGNED_RG11_EAC:
+	case GL_COMPRESSED_RGBA8_ETC2_EAC:
+	case GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC:
 #endif            
 		return true;
 	default:
@@ -196,7 +253,7 @@ void veTexture::bind(unsigned int textureUnit)
 
 	if (_needRefreshSampler) {
 		glTexParameteri(_target, GL_TEXTURE_MIN_FILTER, _filterMode);
-		glTexParameteri(_target, GL_TEXTURE_MAG_FILTER, (_filterMode == NEAREST || _filterMode == NEAREST_MIP_MAP) ? GL_NEAREST : GL_LINEAR);
+		glTexParameteri(_target, GL_TEXTURE_MAG_FILTER, (_filterMode == NEAREST || _filterMode == NEAREST_MIP_MAP_NEAREST) ? GL_NEAREST : GL_LINEAR);
 
 		glTexParameteri(_target, GL_TEXTURE_WRAP_S, _wrapMode);
 		glTexParameteri(_target, GL_TEXTURE_WRAP_T, _wrapMode);
@@ -231,13 +288,15 @@ void veTexture::getSwizzleMode(SwizzleMode &r, SwizzleMode &g, SwizzleMode &b, S
 }
 
 void veTexture::storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat, GLenum dataType
-	, const unsigned char *data, unsigned int mipMapLevels)
+	, const unsigned char *data, unsigned int requestMipMapLevels)
 {
-	if (!isSupportFormat(pixelFormat))
+	if (!isSupportFormat(internalFormat))
 		return;
+
 	if (_width == width && _height == height && _depth == depth
 		&& _internalFormat == internalFormat && _pixelFormat == pixelFormat && _dataType == dataType
-		&& _data == data)
+		&& _data == data
+		&& _mipMapLevelCount == requestMipMapLevels)
 		return;
 
 	_width = width;
@@ -247,7 +306,10 @@ void veTexture::storage(int width, int height, int depth, GLint internalFormat, 
 	_pixelFormat = pixelFormat;
 	_dataType = dataType;
 	_isCompressedTex = isCompressedTex(internalFormat);
-	_mipMapLevelCount = _isCompressedTex? 1: mipMapLevels;
+
+	float wLog2 = log2(width);
+	float hLog2 = log2(width);
+	_mipMapLevelCount = (wLog2 != float(int(wLog2)) || hLog2 != float(int(hLog2)) || _isCompressedTex) ? 1: requestMipMapLevels;
 
 	unsigned int pixelSize = perPixelSize();
 	_dataSize = _width * _height * _depth * pixelSize;
@@ -267,7 +329,7 @@ void veTexture::storage(int width, int height, int depth, GLint internalFormat, 
 
 void veTexture::storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenum pixelFormat, GLenum dataType)
 {
-	if (!isSupportFormat(pixelFormat))
+	if (!isSupportFormat(internalFormat))
 		return;
 
 	if (mipmaps.empty()) 

@@ -39,7 +39,7 @@
                                     "name": "laoshu_tex_tou.png",
                                     "source": "laoshu_tex_tou.png",
                                     "wrap": "CLAMP",
-                                    "filter": "LINEAR_MIP_MAP"
+                                    "filter": "NEAREST_MIP_MAP_LINEAR"
                                 }
                             ]
                         }
@@ -84,7 +84,7 @@
                                     "name": "laoshu_tex_shenti.png",
                                     "source": "laoshu_tex_shenti.png",
                                     "wrap": "CLAMP",
-                                    "filter": "LINEAR_MIP_MAP"
+                                    "filter": "NEAREST_MIP_MAP_LINEAR"
                                 }
                             ]
                         }
