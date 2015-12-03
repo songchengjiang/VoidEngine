@@ -50,7 +50,7 @@ public:
 	virtual void visit(veNodeVisitor &visitor) override;
 	//virtual void render(veCamera *camera) override;
 
-	virtual void setMask(unsigned int mask, bool isOverride = true) override;
+	virtual void setMask(unsigned int mask, bool isOverride = false) override;
 
 	void setLightType(LightType type);
 	LightType getLightType() const { return _type; }
