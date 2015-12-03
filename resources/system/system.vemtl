@@ -3,7 +3,7 @@
     "name": "_SYSTEM_",
     "materials": [
         {
-            "name": "SYSTEM_MATERIAL_DEPTH_ACHIEVE_ANIM_ENTITY",
+            "name": "SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY",
             "techniques": [
                 {
                     "name": "TECHNIQUE",
@@ -15,13 +15,13 @@
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "AchieveDepthShader.vert",
+                                    "source": "DirectionalShaderMap.vert",
                                     "u_ModelViewProjectMat": "MVP_MATRIX",
                                     "u_BoneMates": "BONE_MATRIXES"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "AchieveDepthShader.frag"
+                                    "source": "DirectionalShaderMap.frag"
                                 }
                             ]
                         }
@@ -30,7 +30,7 @@
             ]
         },
         {
-            "name": "SYSTEM_MATERIAL_DEPTH_ACHIEVE_ENTITY",
+            "name": "SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ENTITY",
             "techniques": [
                 {
                     "name": "TECHNIQUE",
@@ -42,12 +42,66 @@
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "AchieveDepthShader.vert",
+                                    "source": "DirectionalShaderMap.vert",
                                     "u_ModelViewProjectMat": "MVP_MATRIX"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "AchieveDepthShader.frag"
+                                    "source": "DirectionalShaderMap.frag"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY",
+            "techniques": [
+                {
+                    "name": "TECHNIQUE",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": false,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "OmnidirectionalShaderMap.vert",
+                                    "u_ModelViewMat": "MV_MATRIX",
+                                    "u_ModelViewProjectMat": "MVP_MATRIX"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "OmnidirectionalShaderMap.frag"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ENTITY",
+            "techniques": [
+                {
+                    "name": "TECHNIQUE",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": false,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "OmnidirectionalShaderMap.vert",
+                                    "u_ModelViewMat": "MV_MATRIX",
+                                    "u_ModelViewProjectMat": "MVP_MATRIX"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "OmnidirectionalShaderMap.frag"
                                 }
                             ]
                         }

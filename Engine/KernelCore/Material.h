@@ -151,8 +151,10 @@ class VE_EXPORT veMaterial
 {
 public:
 
-	static const std::string SYSTEM_MATERIAL_DEPTH_ACHIEVE_ANIM_ENTITY;
-	static const std::string SYSTEM_MATERIAL_DEPTH_ACHIEVE_ENTITY;
+	static const std::string SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY;
+	static const std::string SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ENTITY;
+	static const std::string SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY;
+	static const std::string SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ENTITY;
 
 	veMaterial();
 	~veMaterial();

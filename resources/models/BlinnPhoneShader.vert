@@ -59,11 +59,7 @@ void caculateShadowTextureCoord(vec4 position)
 {
 	for (int i = 0; i < ve_LightNum; ++i){
 		if (0.0 < ve_Light[i].shadowEnabled){
-			if (ve_Light[i].type == VE_DIRECTIONAL_LIGHT || ve_Light[i].type == VE_SPOT_LIGHT){
-				v_shadowTexCoord[i] = ve_Light[i].lightMat * position;
-			}else if (ve_Light[i].type == VE_POINT_LIGHT){
-				
-			}
+			v_shadowTexCoord[i] = ve_Light[i].lightMat * position;
 		}
 	}	
 }

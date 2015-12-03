@@ -36,6 +36,8 @@ public:
 	static const float  DEFAULT_SHADOW_BIAS;
 	static const float  DEFAULT_SHADOW_STRENGTH;
 
+	static veLight* CURRENT_LIGHT;
+
 	enum LightType
 	{
 		DIRECTIONAL,

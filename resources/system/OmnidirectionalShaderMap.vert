@@ -6,7 +6,9 @@ layout (location = ATTR_BONE_INDICES) in vec4 boneIndices;
 layout (location = ATTR_BONE_WEIGHTS) in vec4 boneWeights; 
 #endif 
                  
-uniform mat4 u_ModelViewProjectMat;              
+uniform mat4 u_ModelViewMat;
+uniform mat4 u_ModelViewProjectMat;
+
 #ifdef VE_USE_BONES
 uniform mat4 u_BoneMates[60];
 void updateBonePosition(out vec4 pos)
@@ -21,7 +23,7 @@ void updateBonePosition(out vec4 pos)
 }
 #endif
 
-//out float v_depthInView;
+out vec3 v_posInLightView;
 
 void main()                                                 
 {   
@@ -32,6 +34,6 @@ void main()
 	finalPos = vec4(position, 1.0);
 #endif
 	  
+	v_posInLightView = (u_ModelViewMat * finalPos).xyz;
 	gl_Position = u_ModelViewProjectMat * finalPos;
-	//v_depthInView = gl_Position.w;
 }

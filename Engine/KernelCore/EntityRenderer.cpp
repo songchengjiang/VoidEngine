@@ -114,11 +114,17 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 			rc.renderer = this;
 
 			veMaterial *defaultMaterial = nullptr;
-			if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::PRELIGHTING) {
+			if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::PRELIGHTING && veLight::CURRENT_LIGHT != nullptr) {
 				auto matAry = static_cast<veMaterialManager *>(camera->getSceneManager()->getManager(veMaterialManager::TYPE()))->findMaterialArray("_SYSTEM_");
 				if (matAry) {
-					defaultMaterial = matAry->getMaterial(0 < mesh->getBoneNum() ? veMaterial::SYSTEM_MATERIAL_DEPTH_ACHIEVE_ANIM_ENTITY
-						: veMaterial::SYSTEM_MATERIAL_DEPTH_ACHIEVE_ENTITY);
+					if (veLight::CURRENT_LIGHT->getLightType() == veLight::DIRECTIONAL || veLight::CURRENT_LIGHT->getLightType() == veLight::SPOT) {
+						defaultMaterial = matAry->getMaterial(0 < mesh->getBoneNum() ? veMaterial::SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY
+							: veMaterial::SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ENTITY);
+					}
+					else if (veLight::CURRENT_LIGHT->getLightType() == veLight::POINT) {
+						defaultMaterial = matAry->getMaterial(0 < mesh->getBoneNum() ? veMaterial::SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY
+							: veMaterial::SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ENTITY);
+					}
 				}
 
 				if (!defaultMaterial) return;

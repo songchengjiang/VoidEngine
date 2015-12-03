@@ -108,7 +108,6 @@ public:
 			directional0->addComponent(lightTranser);
 			directional0->addComponent(new LightUpdater(10.0f, 10.0f));
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
-			//directional0->setIntensity(veMath::veRandomUnitization());
 
 			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "directional0-sphere"));
 			veNode *lightModel = _sceneManager->createNode("lightnode0");
@@ -120,23 +119,22 @@ public:
 			root->addChild(directional0);
 		}
 
-		//{
-		//	veLight *point0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "point0"));
-		//	veTransformer *lightTranser = new veTransformer;
-		//	point0->addComponent(lightTranser);
-		//	point0->addComponent(new LightUpdater);
-		//	lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
-		//	point0->setIntensity(veMath::veRandomUnitization());
+		{
+			veLight *point0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "point0"));
+			veTransformer *lightTranser = new veTransformer;
+			point0->addComponent(lightTranser);
+			//point0->addComponent(new LightUpdater);
+			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
 
-		//	veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "point0-sphere"));
-		//	veNode *lightModel = _sceneManager->createNode("lightnode1");
-		//	lightModel->addRenderableObject(lightentity);
-		//	lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
-		//	lightModel->setMask(~LIGHT_MASK);
-		//	point0->addChild(lightModel);
-		//	point0->setMask(LIGHT_MASK);
-		//	root->addChild(point0);
-		//}
+			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "point0-sphere"));
+			veNode *lightModel = _sceneManager->createNode("lightnode1");
+			lightModel->addRenderableObject(lightentity);
+			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
+			lightModel->setMask(~LIGHT_MASK);
+			point0->addChild(lightModel);
+			point0->setMask(LIGHT_MASK);
+			root->addChild(point0);
+		}
 
 		{
 			auto skyBox = _sceneManager->createSkyBox("skybox");

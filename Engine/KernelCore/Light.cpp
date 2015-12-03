@@ -9,6 +9,8 @@ const veVec2 veLight::DEFAULT_SHADOW_RESOLUTION = veVec2(256);
 const veVec2 veLight::DEFAULT_SHADOW_AREA = veVec2(100.0f);
 const float  veLight::DEFAULT_SHADOW_BIAS       = 0.0f;
 const float  veLight::DEFAULT_SHADOW_STRENGTH   = 1.0f;
+
+veLight* veLight::CURRENT_LIGHT = nullptr;
 const std::string veLight::DEFUALT_LIGHT_UNIFORM_NAME = "ve_Light";
 const std::string veLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME = "ve_LightNum";
 
@@ -105,6 +107,11 @@ veMat4 veLight::getLightMatrix() const
 	case veLight::SPOT:
 	{
 		return LIGHT_BIAS_MAT * _shadowRenderingCam[0]->projectionMatrix() * _shadowRenderingCam[0]->viewMatrix();
+	}
+		break;
+	case veLight::POINT:
+	{
+		_shadowRenderingCam[4]->viewMatrix();
 	}
 		break;
 	case veLight::AREA:
@@ -247,6 +254,7 @@ void veLight::shadowCameraCulling()
 
 void veLight::shadowCameraRendering()
 {
+	CURRENT_LIGHT = this;
 	switch (_type)
 	{
 	case DIRECTIONAL:
@@ -272,6 +280,7 @@ void veLight::shadowCameraRendering()
 	default:
 		break;
 	}
+	CURRENT_LIGHT = nullptr;
 }
 
 //void veLight::render(veCamera *camera)
