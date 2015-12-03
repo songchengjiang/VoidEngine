@@ -5,6 +5,8 @@
 #include "Entity.h"
 #include "Node.h"
 #include "Material.h"
+#include "MaterialManager.h"
+#include "SceneManager.h"
 #include "Constants.h"
 #include "TransformFeedback.h"
 #include "MatrixPtr.h"
@@ -30,17 +32,6 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 	if (true) {
 
 		veEntity *entity = static_cast<veEntity *>(renderableObj);
-		veMaterial *defaultMaterial = nullptr;
-		if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::PRELIGHTING) {
-			auto material = entity->getMaterialArray()->getMaterial(DEFAULT_MATERIAL_DEPTH_ACHIEVE);
-			if (material && material->activeTechnique()) {
-				if (material->activeTechnique()->getPassNum()) {
-					defaultMaterial = material;
-				}
-			}
-
-			if (!defaultMaterial) return;
-		}
 
 		if (_meshBuffersList.size() < entity->getMeshCount()) {
 			_meshBuffersList.resize(entity->getMeshCount());
@@ -122,6 +113,16 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 			rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
 			rc.renderer = this;
 
+			veMaterial *defaultMaterial = nullptr;
+			if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::PRELIGHTING) {
+				auto matAry = static_cast<veMaterialManager *>(camera->getSceneManager()->getManager(veMaterialManager::TYPE()))->findMaterialArray("_SYSTEM_");
+				if (matAry) {
+					defaultMaterial = matAry->getMaterial(0 < mesh->getBoneNum() ? veMaterial::SYSTEM_MATERIAL_DEPTH_ACHIEVE_ANIM_ENTITY
+						: veMaterial::SYSTEM_MATERIAL_DEPTH_ACHIEVE_ENTITY);
+				}
+
+				if (!defaultMaterial) return;
+			}
 			auto technique = defaultMaterial? defaultMaterial->activeTechnique() : mesh->getMaterial()->activeTechnique();
 			for (unsigned int i = 0; i < technique->getPassNum(); ++i) {
 				auto pass = technique->getPass(i);

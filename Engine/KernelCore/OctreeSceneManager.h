@@ -37,6 +37,7 @@ protected:
 	void addOctreeNode(veOctreeNode *node, veOctree *octant, unsigned int depth = 0);
 	void intersectByRay(veOctree *octant, veRay *ray);
 	void init();
+	void loadSystemMaterials();
 
 protected:
 
@@ -44,6 +45,7 @@ protected:
 	unsigned int _octreeMaxDeep;
 	veOctree *_octree;
 	OctreeNodeList _octreeNodeList;
+	VE_Ptr<veMaterialArray> _systemMaterials;
 
 	unsigned int _parallelUpdateOctantNum;
 	std::mutex   _parallelUpdateOctantMutex;

@@ -77,9 +77,6 @@ public:
 			spot0->addComponent(lightTranser);
 			spot0->addComponent(new LightUpdater(5.0f, 5.0f));
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
-			spot0->shadowEnable(true);
-			spot0->setShadowResolution(veVec2(512.0f));
-			spot0->setShadowBias(0.01f);
 
 			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "spot0-sphere"));
 			veNode *lightModel = _sceneManager->createNode("lightnode2");
@@ -112,10 +109,6 @@ public:
 			directional0->addComponent(new LightUpdater(10.0f, 10.0f));
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
 			//directional0->setIntensity(veMath::veRandomUnitization());
-			directional0->shadowEnable(true);
-			directional0->setShadowArea(veVec2(20.0f));
-			directional0->setShadowResolution(veVec2(512.0f));
-			directional0->setShadowBias(0.0003f);
 
 			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "directional0-sphere"));
 			veNode *lightModel = _sceneManager->createNode("lightnode0");

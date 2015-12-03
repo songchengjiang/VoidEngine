@@ -12,10 +12,12 @@ public:
 	veOctreeCamera(const veViewport &vp);
 	~veOctreeCamera();
 
-	void renderingOctree();
-	void walkingOctree(veOctree *octree);
+	virtual void cull() override;
+	virtual void fillRenderQueue() override;
 
 	bool isNodeVisibleInCamera(veOctreeNode *node);
+
+	void setOctree(veOctree *octree) { _octree = octree; }
 
 protected:
 
@@ -25,6 +27,7 @@ protected:
 
 	std::vector<veOctreeNode *> _visibleOctreeNodeList;
 	std::mutex _visitMutex;
+	veOctree *_octree;
 };
 
 #endif

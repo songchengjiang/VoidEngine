@@ -218,6 +218,62 @@ void veLight::updateShadowCamera()
 	}
 }
 
+void veLight::shadowCameraCulling()
+{
+	switch (_type)
+	{
+	case DIRECTIONAL:
+	case SPOT:
+	{
+		_shadowRenderingCam[0]->cull();
+	}
+	break;
+
+	case POINT:
+	{
+		for (unsigned int i = 0; i < 6; ++i) {
+			_shadowRenderingCam[i]->cull();
+		}
+	}
+	break;
+
+	case AREA:
+
+		break;
+	default:
+		break;
+	}
+}
+
+void veLight::shadowCameraRendering()
+{
+	switch (_type)
+	{
+	case DIRECTIONAL:
+	case SPOT:
+	{
+		_shadowRenderingCam[0]->fillRenderQueue();
+		_shadowRenderingCam[0]->render();
+	}
+	break;
+
+	case POINT:
+	{
+		for (unsigned int i = 0; i < 6; ++i) {
+			_shadowRenderingCam[i]->fillRenderQueue();
+			_shadowRenderingCam[i]->render();
+		}
+	}
+	break;
+
+	case AREA:
+
+		break;
+	default:
+		break;
+	}
+}
+
 //void veLight::render(veCamera *camera)
 //{
 //	veNode::render(camera);

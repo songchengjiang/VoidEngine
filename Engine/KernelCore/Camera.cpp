@@ -7,7 +7,7 @@ veLoopQueue<veRenderCommand>::SortFunc PASS_SORT = [](const veRenderCommand &lef
 };
 
 veLoopQueue<veRenderCommand>::SortFunc ENTITY_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
-	return right.priority == left.priority ? right.depthInCamera <= left.depthInCamera : right.priority <= left.priority;
+	return right.priority == left.priority ? left.pass <= right.pass : right.priority <= left.priority;
 };
 
 veLoopQueue<veRenderCommand>::SortFunc TRANSPARENT_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {

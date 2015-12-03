@@ -63,6 +63,33 @@ private:
 			const Value &val = (*_doucument)[OUTER_ANGLE_KEY.c_str()];
 			_light->setOuterAngle(val.GetDouble());
 		}
+
+		if (_doucument->HasMember(SHADOW_ENABLED_KEY.c_str())) {
+			const Value &val = (*_doucument)[SHADOW_ENABLED_KEY.c_str()];
+			_light->shadowEnable(val.GetBool());
+		}
+
+		if (_doucument->HasMember(SHADOW_BIAS_KEY.c_str())) {
+			const Value &val = (*_doucument)[SHADOW_BIAS_KEY.c_str()];
+			_light->setShadowBias(val.GetDouble());
+		}
+
+		if (_doucument->HasMember(SHADOW_STRENGTH_KEY.c_str())) {
+			const Value &val = (*_doucument)[SHADOW_STRENGTH_KEY.c_str()];
+			_light->setShadowStrength(val.GetDouble());
+		}
+
+		if (_doucument->HasMember(SHADOW_RESOLUTION_KEY.c_str())) {
+			const Value &val = (*_doucument)[SHADOW_RESOLUTION_KEY.c_str()];
+			if (val.Size() == 2)
+				_light->setShadowResolution(veVec2(val[0].GetDouble(), val[1].GetDouble()));
+		}
+
+		if (_doucument->HasMember(SHADOW_AREA_KEY.c_str())) {
+			const Value &val = (*_doucument)[SHADOW_AREA_KEY.c_str()];
+			if (val.Size() == 2)
+				_light->setShadowArea(veVec2(val[0].GetDouble(), val[1].GetDouble()));
+		}
 	}
 
 	veLight::LightType getLightType(const std::string &type) {

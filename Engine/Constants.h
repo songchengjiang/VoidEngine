@@ -150,10 +150,12 @@ static const std::string INTENSITY_KEY = "intensity";
 static const std::string ATTENUATION_KEY = "attenuation";
 static const std::string INNER_ANGLE_KEY = "innerAngle";
 static const std::string OUTER_ANGLE_KEY = "outerAngle";
+static const std::string SHADOW_ENABLED_KEY = "shadowEnabled";
 static const std::string SHADOW_MAP_KEY = "shadowMap";
 static const std::string SHADOW_BIAS_KEY = "shadowBias";
 static const std::string SHADOW_STRENGTH_KEY = "shadowStrength";
-static const std::string SHADOW_ENABLED_KEY = "shadowEnabled";
+static const std::string SHADOW_RESOLUTION_KEY = "shadowResolution";
+static const std::string SHADOW_AREA_KEY = "shadowArea";
 
 static const std::string VERTEX_ATTRIB_POSITION = "VERTEX_ATTRIB_POSITION";
 static const std::string VERTEX_ATTRIB_NORMAL = "VERTEX_ATTRIB_NORMAL";
@@ -192,7 +194,5 @@ static const std::string SIM_SIN_TIME = "SIM_SIN_TIME";
 static const std::string MODEL_EXT = ".vem";
 static const std::string MATERIAL_EXT = ".vemtl";
 static const std::string ANIMATION_EXT = ".veanim";
-
-static const std::string DEFAULT_MATERIAL_DEPTH_ACHIEVE = "DEFAULT_MATERIAL_DEPTH_ACHIEVE";
 
 #endif

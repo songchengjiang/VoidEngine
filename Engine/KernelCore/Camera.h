@@ -84,6 +84,9 @@ public:
 
 	const vePlane& getFrustumPlane(FrustumPlane fp);
 
+	virtual void cull() = 0;
+	virtual void fillRenderQueue() = 0;
+
 	void render();
 	void render(veRenderQueue::RenderCommandList &renderList);
 

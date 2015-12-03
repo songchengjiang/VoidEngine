@@ -6,5 +6,8 @@
   "intensity": 1.0,
   "attenuation": 1000.0,
   "innerAngle": 0.0,
-  "outerAngle": 45.0
+  "outerAngle": 45.0,
+  "shadowEnabled": true,
+  "shadowBias": 0.005,
+  "shadowResolution": [ 512.0, 512.0 ]
 }

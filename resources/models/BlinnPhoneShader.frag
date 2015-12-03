@@ -46,13 +46,14 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 		}
 
 		float NdotL = max(0.0, dot(normal, lDir));
-		float shadowIntensity = 1.0;
 		if (0.0 < ve_Light[i].shadowEnabled){
 			//vec3 shadowCoord = vec3(v_shadowTexCoord[i].xy / v_shadowTexCoord[i].w, (v_shadowTexCoord[i].w - ve_Light[i].shadowBias) / (v_shadowTexCoord[i].w + 1.0));
 			vec3 shadowCoord = vec3(v_shadowTexCoord[i].xy, v_shadowTexCoord[i].z - ve_Light[i].shadowBias) / v_shadowTexCoord[i].w;
-			shadowIntensity = texture(ve_lightShadowMap2D[i], shadowCoord) * ve_Light[i].shadowStrength;	
+			float shadow = texture(ve_lightShadowMap2D[i], shadowCoord);
+			if (shadow < 1.0)
+				attenuation *=  mix(1.0, shadow, ve_Light[i].shadowStrength);	
 		}
-		vec3 color = ve_Light[i].color * attenuation * shadowIntensity;
+		vec3 color = ve_Light[i].color * attenuation;
 		diffLightCol += NdotL * color;
 		if (0.0 < u_shininess){
 			vec3 H = normalize(eye + lDir);

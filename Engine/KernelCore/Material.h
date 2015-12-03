@@ -150,6 +150,10 @@ private:
 class VE_EXPORT veMaterial
 {
 public:
+
+	static const std::string SYSTEM_MATERIAL_DEPTH_ACHIEVE_ANIM_ENTITY;
+	static const std::string SYSTEM_MATERIAL_DEPTH_ACHIEVE_ENTITY;
+
 	veMaterial();
 	~veMaterial();
 

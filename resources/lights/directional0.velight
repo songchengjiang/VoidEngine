@@ -4,5 +4,10 @@
   "name": "directional0",
   "color": [ 1.0, 1.0, 1.0, 1.0 ],
   "intensity": 1.0,
-  "attenuation": 1000.0
+  "attenuation": 1000.0,
+  "shadowEnabled": true,
+  "shadowBias": 0.0001,
+  "shadowStrength": 0.5,
+  "shadowResolution": [ 1024.0, 1024.0 ],
+  "shadowArea": [ 20.0, 20.0 ]
 }

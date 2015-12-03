@@ -80,33 +80,6 @@
                     ]
                 }
             ]
-        },
-        {
-            "name": "DEFAULT_MATERIAL_DEPTH_ACHIEVE",
-            "techniques": [
-                {
-                    "name": "tech-0",
-                    "passes": [
-                        {
-                            "depthTest": true,
-                            "depthWrite": true,
-                            "cullFace": true,
-                            "shaders": [
-                                {
-                                    "type": "VERTEX_SHADER",
-                                    "source": "shaders/AchieveDepthShader.vert",
-                                    "u_ModelViewProjectMat": "MVP_MATRIX",
-                                    "u_BoneMates": "BONE_MATRIXES"
-                                },
-                                {
-                                    "type": "FRAGMENT_SHADER",
-                                    "source": "shaders/AchieveDepthShader.frag"
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
         }
     ]
 }

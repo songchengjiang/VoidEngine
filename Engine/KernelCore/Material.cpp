@@ -8,6 +8,9 @@ veBlendFunc veBlendFunc::DISABLE = { GL_ONE, GL_ZERO };
 veBlendFunc veBlendFunc::ADDITIVE = { GL_SRC_ALPHA, GL_ONE };
 veBlendFunc veBlendFunc::ALPHA = { GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA };
 
+const std::string veMaterial::SYSTEM_MATERIAL_DEPTH_ACHIEVE_ANIM_ENTITY = "SYSTEM_MATERIAL_DEPTH_ACHIEVE_ANIM_ENTITY";
+const std::string veMaterial::SYSTEM_MATERIAL_DEPTH_ACHIEVE_ENTITY = "SYSTEM_MATERIAL_DEPTH_ACHIEVE_ENTITY";
+
 vePass* vePass::CURRENT_PASS = nullptr;
 bool vePass::CURRENT_DEPTH_TEST = false;
 bool vePass::CURRENT_DEPTH_WRITE = true;
@@ -45,7 +48,8 @@ bool vePass::apply(const veRenderCommand &command)
 	applyLightsUniforms(command);
 	applyUniforms(command);
 
-	if (CURRENT_PASS == this) return true;
+	if (CURRENT_PASS == this) 
+		return true;
 	CURRENT_PASS = this;
 
 	for (unsigned int i = 0; i < _textures.size(); ++i) {

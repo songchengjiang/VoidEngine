@@ -5,12 +5,14 @@
 #include <algorithm>
 
 veOctreeCamera::veOctreeCamera()
+	: _octree(nullptr)
 {
 	_renderQueue = new veOctreeRenderQueue;
 }
 
 veOctreeCamera::veOctreeCamera(const veViewport &vp)
 	: veCamera(vp)
+	, _octree(nullptr)
 {
 	_renderQueue = new veOctreeRenderQueue;
 }
@@ -20,7 +22,15 @@ veOctreeCamera::~veOctreeCamera()
 
 }
 
-void veOctreeCamera::renderingOctree()
+void veOctreeCamera::cull()
+{
+	std::unique_lock<std::mutex> lock(_visitMutex);
+	if (!_visibleOctreeNodeList.empty())
+		_visibleOctreeNodeList.clear();
+	traverseOctree(_octree);
+}
+
+void veOctreeCamera::fillRenderQueue()
 {
 	std::unique_lock<std::mutex> lock(_visitMutex);
 	if (!_visibleOctreeNodeList.empty()) {
@@ -33,14 +43,6 @@ void veOctreeCamera::renderingOctree()
 			}
 		}
 	}
-}
-
-void veOctreeCamera::walkingOctree(veOctree *octree)
-{
-	std::unique_lock<std::mutex> lock(_visitMutex);
-	if (!_visibleOctreeNodeList.empty())
-		_visibleOctreeNodeList.clear();
-	traverseOctree(octree);
 }
 
 bool veOctreeCamera::isNodeVisibleInCamera(veOctreeNode *node)

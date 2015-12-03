@@ -1,0 +1,59 @@
+{
+    "version": "1.0",
+    "name": "_SYSTEM_",
+    "materials": [
+        {
+            "name": "SYSTEM_MATERIAL_DEPTH_ACHIEVE_ANIM_ENTITY",
+            "techniques": [
+                {
+                    "name": "TECHNIQUE",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": false,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "AchieveDepthShader.vert",
+                                    "u_ModelViewProjectMat": "MVP_MATRIX",
+                                    "u_BoneMates": "BONE_MATRIXES"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "AchieveDepthShader.frag"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "SYSTEM_MATERIAL_DEPTH_ACHIEVE_ENTITY",
+            "techniques": [
+                {
+                    "name": "TECHNIQUE",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": false,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "AchieveDepthShader.vert",
+                                    "u_ModelViewProjectMat": "MVP_MATRIX"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "AchieveDepthShader.frag"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

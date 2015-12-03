@@ -89,6 +89,9 @@ public:
 
 	veMat4 getLightMatrix() const;
 
+	void shadowCameraCulling();
+	void shadowCameraRendering();
+
 protected:
 	veLight(LightType type);
 
