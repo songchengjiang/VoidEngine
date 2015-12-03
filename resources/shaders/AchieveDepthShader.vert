@@ -21,6 +21,8 @@ void updateBonePosition(out vec4 pos)
 }
 #endif
 
+//out float v_depthInView;
+
 void main()                                                 
 {   
 	vec4 finalPos;
@@ -31,4 +33,5 @@ void main()
 #endif
 	  
 	gl_Position = u_ModelViewProjectMat * finalPos;
+	//v_depthInView = gl_Position.w;
 }

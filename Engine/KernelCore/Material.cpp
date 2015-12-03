@@ -179,11 +179,11 @@ void vePass::restoreGLState()
 void vePass::applyProgram(const veRenderCommand &command)
 {
 	if (_needLinkProgram) {
-		glUseProgram(0);
-		//if (_program) {
-		//	glDeleteProgram(_program);
-		//	_program = 0;
-		//}
+		//glUseProgram(0);
+		if (_program) {
+			glDeleteProgram(_program);
+			_program = 0;
+		}
 		if (!_program)
 			_program = glCreateProgram();
 		ShaderDefinatiosGenerator sdg(command);
@@ -231,14 +231,14 @@ void vePass::applyUniforms(const veRenderCommand &command)
 void vePass::applyLightUniforms(unsigned int idx, veLight *light, const veRenderCommand &command)
 {
 	if (light->getMask() & command.camera->getMask()) {
-		light->setLightViewMatrix(command.camera->viewMatrix() * light->getNodeToWorldMatrix());
+		light->setLightInCameraMatrix(command.camera->viewMatrix() * light->getNodeToWorldMatrix());
 	}
 
 	const auto &lightParamLocs = _lightUniformLocations.lightParams[idx];
 
 	glUniform1i(lightParamLocs[0], GLint(light->getLightType()));
 
-	veMat4 lightInView = light->getLightViewMatrix();
+	veMat4 lightInView = light->getLightInCameraMatrix();
 	if (light->getLightType() == veLight::POINT || light->getLightType() == veLight::SPOT) {
 		glUniform3f(lightParamLocs[1], lightInView[0][3], lightInView[1][3], lightInView[2][3]);
 	}
@@ -267,12 +267,12 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, const veRender
 		glUniform1f(lightParamLocs[10], light->getShadowStrength());
 
 		if (0 <= lightParamLocs[11]) {
-			veMat4 lightMVPB = light->getLightVPBMatrix() * command.worldMatrix->value();
+			veMat4 lightMat = light->getLightMatrix() * command.worldMatrix->value();
 			float m[16];
-			m[0] = lightMVPB[0][0]; m[4] = lightMVPB[0][1]; m[8] = lightMVPB[0][2]; m[12] = lightMVPB[0][3];
-			m[1] = lightMVPB[1][0]; m[5] = lightMVPB[1][1]; m[9] = lightMVPB[1][2]; m[13] = lightMVPB[1][3];
-			m[2] = lightMVPB[2][0]; m[6] = lightMVPB[2][1]; m[10] = lightMVPB[2][2]; m[14] = lightMVPB[2][3];
-			m[3] = lightMVPB[3][0]; m[7] = lightMVPB[3][1]; m[11] = lightMVPB[3][2]; m[15] = lightMVPB[3][3];
+			m[0] = lightMat[0][0]; m[4] = lightMat[0][1]; m[8] = lightMat[0][2]; m[12] = lightMat[0][3];
+			m[1] = lightMat[1][0]; m[5] = lightMat[1][1]; m[9] = lightMat[1][2]; m[13] = lightMat[1][3];
+			m[2] = lightMat[2][0]; m[6] = lightMat[2][1]; m[10] = lightMat[2][2]; m[14] = lightMat[2][3];
+			m[3] = lightMat[3][0]; m[7] = lightMat[3][1]; m[11] = lightMat[3][2]; m[15] = lightMat[3][3];
 			glUniformMatrix4fv(lightParamLocs[11], 1, GL_FALSE, m);
 		}
 
@@ -313,7 +313,7 @@ void vePass::locateLightUnifroms(const veRenderCommand &command)
 		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME).c_str()));
 		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME).c_str()));
 		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME).c_str()));
-		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_LIGHT_MVPB_MATRIX_NAME).c_str()));
+		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_LIGHT_MATRIX_NAME).c_str()));
 	}
 }
 

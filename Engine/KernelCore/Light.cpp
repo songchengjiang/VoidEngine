@@ -21,7 +21,7 @@ const std::string veLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME 
 const std::string veLight::DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME = "innerAngleCos";
 const std::string veLight::DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME = "outerAngleCos";
 
-const std::string veLight::DEFUALT_LIGHT_UNIFORM_LIGHT_MVPB_MATRIX_NAME = "lightMVPB";
+const std::string veLight::DEFUALT_LIGHT_UNIFORM_LIGHT_MATRIX_NAME = "lightMat";
 
 const std::string veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME = "shadowEnabled";
 const std::string veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME = "shadowBias";
@@ -46,12 +46,13 @@ veLight::veLight(LightType type)
 	, _outerAngle(45.0f)
 	, _outerAngleCos(veMath::veCos(veMath::veRadian(_outerAngle)))
 	, _shadowArea(DEFAULT_SHADOW_AREA)
-	, _lightMatrix(veMat4::IDENTITY)
+	, _lightInCamMatrix(veMat4::IDENTITY)
 	, _shadowEnabled(false)
 	, _shadowResolution(DEFAULT_SHADOW_RESOLUTION)
 	, _shadowBias(DEFAULT_SHADOW_BIAS)
 	, _shadowStrength(DEFAULT_SHADOW_STRENGTH)
 	, _needRefreshShadow(true)
+	, _needRefreshShadowCamera(true)
 {
 }
 
@@ -64,14 +65,20 @@ void veLight::update(veSceneManager *sm, const veMat4 &transform)
 {
 	veNode::update(sm, transform);
 	if (_shadowEnabled) {
-		updateShadowCamera();
 		updateShadow();
+		updateShadowCamera();
 	}
 }
 
 void veLight::visit(veNodeVisitor &visitor)
 {
 	visitor.visit(*this);
+}
+
+void veLight::setMask(unsigned int mask, bool isOverride /*= true*/)
+{
+	veNode::setMask(mask, isOverride);
+	_needRefreshShadowCamera = true;
 }
 
 void veLight::setLightType(LightType type)
@@ -90,7 +97,7 @@ void veLight::setShadowResolution(const veVec2 &resolution)
 	_needRefreshShadow = true;
 }
 
-veMat4 veLight::getLightVPBMatrix() const
+veMat4 veLight::getLightMatrix() const
 {
 	switch (_type)
 	{
@@ -98,11 +105,6 @@ veMat4 veLight::getLightVPBMatrix() const
 	case veLight::SPOT:
 	{
 		return LIGHT_BIAS_MAT * _shadowRenderingCam[0]->projectionMatrix() * _shadowRenderingCam[0]->viewMatrix();
-	}
-		break;
-	case veLight::POINT:
-	{
-		return LIGHT_BIAS_MAT * _shadowRenderingCam[4]->projectionMatrix() * _shadowRenderingCam[4]->viewMatrix();
 	}
 		break;
 	case veLight::AREA:
@@ -127,42 +129,6 @@ void veLight::updateShadow()
 			, GL_UNSIGNED_BYTE, nullptr, 1);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_FUNC, GL_LESS);
-		switch (_type)
-		{
-		case DIRECTIONAL:
-		{
-			_shadowRenderingCam[0]->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
-			_shadowRenderingCam[0]->setProjectionMatrixAsOrtho(-_shadowArea.x() * 0.5f, _shadowArea.x() * 0.5f, -_shadowArea.y() * 0.5f, _shadowArea.y() * 0.5f
-				, 0.1f, _attenuationRange);
-			_shadowRenderingCam[0]->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowTexture.get());
-		}
-		break;
-
-		case POINT: 
-		{
-			for (unsigned int i = 0; i < 6; ++i) {
-				_shadowRenderingCam[i]->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
-				_shadowRenderingCam[i]->setProjectionMatrixAsPerspective(90.0f, 1.0f, 0.1f, _attenuationRange);
-				_shadowRenderingCam[i]->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, _shadowTexture.get());
-			}
-		}
-		break;
-
-		case SPOT:
-		{
-			_shadowRenderingCam[0]->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
-			_shadowRenderingCam[0]->setProjectionMatrixAsPerspective(2.0f * _outerAngle, 1.0f, 0.1f, _attenuationRange);
-			_shadowRenderingCam[0]->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowTexture.get());
-		}
-			break;
-
-		case AREA:
-
-			break;
-		default:
-			break;
-		}
-
 		_needRefreshShadow = false;
 	}
 }
@@ -179,6 +145,48 @@ void veLight::updateShadowCamera()
 				_shadowRenderingCam[i]->setFrameBufferObject(fbo);
 			}
 		}
+	}
+
+	if (_needRefreshShadowCamera) {
+		switch (_type)
+		{
+		case DIRECTIONAL:
+		{
+			_shadowRenderingCam[0]->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
+			_shadowRenderingCam[0]->setProjectionMatrixAsOrtho(-_shadowArea.x() * 0.5f, _shadowArea.x() * 0.5f, -_shadowArea.y() * 0.5f, _shadowArea.y() * 0.5f
+				, 0.1f, _attenuationRange);
+			_shadowRenderingCam[0]->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowTexture.get());
+			_shadowRenderingCam[0]->setMask(_mask);
+		}
+		break;
+
+		case POINT:
+		{
+			for (unsigned int i = 0; i < 6; ++i) {
+				_shadowRenderingCam[i]->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
+				_shadowRenderingCam[i]->setProjectionMatrixAsPerspective(90.0f, 1.0f, 0.1f, _attenuationRange);
+				_shadowRenderingCam[i]->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, _shadowTexture.get());
+				_shadowRenderingCam[i]->setMask(_mask);
+			}
+		}
+		break;
+
+		case SPOT:
+		{
+			_shadowRenderingCam[0]->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
+			_shadowRenderingCam[0]->setProjectionMatrixAsPerspective(2.0f * _outerAngle, 1.0f, 0.1f, _attenuationRange);
+			_shadowRenderingCam[0]->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowTexture.get());
+			_shadowRenderingCam[0]->setMask(_mask);
+		}
+		break;
+
+		case AREA:
+
+			break;
+		default:
+			break;
+		}
+		_needRefreshShadowCamera = false;
 	}
 
 	switch (_type)

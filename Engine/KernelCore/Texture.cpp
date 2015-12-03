@@ -61,15 +61,15 @@ unsigned int veTexture::perPixelSize() const
 		//case GL_LUMINANCE16:
 		return 2;
 
-	case GL_DEPTH_COMPONENT32F:
-		return 4;
-
 	case GL_RGB:
 	case GL_RGB8:
+	case GL_DEPTH_COMPONENT24:
 		return 3;
 
 	case GL_RGBA:
 	case GL_RGBA8:
+	case GL_DEPTH_COMPONENT32F:
+	case GL_DEPTH24_STENCIL8:
 		return 4;
 
 	//case GL_RGB16:
@@ -210,7 +210,6 @@ bool veTexture::isSupportFormat(GLenum internalformat)
 	case GL_DEPTH_COMPONENT24:
 	case GL_DEPTH_COMPONENT32F:
 	case GL_DEPTH24_STENCIL8:
-	case GL_DEPTH32F_STENCIL8:
 #if (VE_PLATFORM != VE_PLATFORM_MAC)
 	case GL_LUMINANCE_ALPHA:
 	case GL_LUMINANCE:

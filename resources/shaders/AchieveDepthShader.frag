@@ -1,4 +1,4 @@
-layout(location=0) out vec4 fragColor;           
+//in float v_depthInView;  
 void main(){
-	fragColor = vec4(1.0);
+	//gl_FragDepth = v_depthInView / (v_depthInView + 1.0);
 }

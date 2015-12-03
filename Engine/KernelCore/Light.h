@@ -22,7 +22,7 @@ public:
 	static const std::string DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME;
 
-	static const std::string DEFUALT_LIGHT_UNIFORM_LIGHT_MVPB_MATRIX_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_LIGHT_MATRIX_NAME;
 
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME;
@@ -49,6 +49,8 @@ public:
 	virtual void update(veSceneManager *sm, const veMat4 &transform) override;
 	virtual void visit(veNodeVisitor &visitor) override;
 	//virtual void render(veCamera *camera) override;
+
+	virtual void setMask(unsigned int mask, bool isOverride = true) override;
 
 	void setLightType(LightType type);
 	LightType getLightType() const { return _type; }
@@ -82,10 +84,10 @@ public:
 	veTexture* getShadowTexture() { return _shadowTexture.get(); }
 	const veTexture* getShadowTexture() const { return _shadowTexture.get(); }
 
-	void setLightViewMatrix(const veMat4 &mat) { _lightMatrix = mat; }
-	const veMat4& getLightViewMatrix() { return _lightMatrix; }
+	void setLightInCameraMatrix(const veMat4 &mat) { _lightInCamMatrix = mat; }
+	const veMat4& getLightInCameraMatrix() { return _lightInCamMatrix; }
 
-	veMat4 getLightVPBMatrix() const;
+	veMat4 getLightMatrix() const;
 
 protected:
 	veLight(LightType type);
@@ -106,7 +108,7 @@ protected:
 	float  _innerAngleCos;
 	float  _outerAngle;
 	float  _outerAngleCos;
-	veMat4 _lightMatrix;
+	veMat4 _lightInCamMatrix;
 
 	bool _shadowEnabled;
 	bool _perspectiveShadow;
@@ -117,6 +119,7 @@ protected:
 	VE_Ptr<veTexture> _shadowTexture;
 	VE_Ptr<veCamera>  _shadowRenderingCam[6];
 	bool _needRefreshShadow;
+	bool _needRefreshShadowCamera;
 };
 
 typedef std::vector< VE_Ptr<veLight> > veLightList;

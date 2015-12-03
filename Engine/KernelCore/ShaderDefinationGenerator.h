@@ -157,7 +157,7 @@ uniform struct {\n\
     float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME << ";\n\
     float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME << ";\n\
     float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME << ";\n\
-    mat4 " << veLight::DEFUALT_LIGHT_UNIFORM_LIGHT_MVPB_MATRIX_NAME << ";\n\
+    mat4 " << veLight::DEFUALT_LIGHT_UNIFORM_LIGHT_MATRIX_NAME << ";\n\
 }" << veLight::DEFUALT_LIGHT_UNIFORM_NAME << "[VE_LIGHT_MAX_NUM];\n\
 uniform int " << veLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME << ";\n\
 ";

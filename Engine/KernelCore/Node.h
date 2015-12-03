@@ -66,7 +66,7 @@ public:
 	veMat4 computeNodeToWorldMatrix() const;
 	veMat4 computeWorldToNodeMatrix() const;
 
-	void setMask(unsigned int mask, bool isOverride = true);
+	virtual void setMask(unsigned int mask, bool isOverride = true);
 	unsigned int getMask() const { return _mask; }
 
 	void setUserData(void *ud) { _userData = ud; }

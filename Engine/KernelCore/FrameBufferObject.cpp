@@ -98,6 +98,7 @@ void veFrameBufferObject::attach(GLenum attachment, GLenum target, veTexture *at
 void veFrameBufferObject::bind(unsigned int clearMask)
 {
 	if (CURRENT_FBO == this) return;
+	glDrawBuffer(GL_NONE);
 	refreshBuffers(clearMask);
 	refreshAttachments();
 	CURRENT_FBO = this;
@@ -108,7 +109,7 @@ void veFrameBufferObject::unBind()
 	if (CURRENT_FBO == nullptr) return;
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//glDrawBuffer(GL_BACK);
+	glDrawBuffer(GL_BACK);
 	CURRENT_FBO = nullptr;
 	for (auto &iter : _attachments) {
 		if (iter.second.needMipmap) {

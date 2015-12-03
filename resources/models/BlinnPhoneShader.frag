@@ -28,7 +28,6 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 	vec3 lDir = vec3(0.0);
 	float attenuation = 1.0;
 	for (int i = 0; i < ve_LightNum; ++i){
-		float shadowIntensity = 1.0;
 		if (ve_Light[i].type == VE_DIRECTIONAL_LIGHT){
 			lDir = -ve_Light[i].direction;
 		}else if (ve_Light[i].type == VE_POINT_LIGHT){
@@ -46,10 +45,12 @@ void Lighting(out vec3 diffLightCol, out vec3 specLightColor)
 		}
 
 		float NdotL = max(0.0, dot(normal, lDir));
+		float shadowIntensity = 1.0;
 		if (0.0 < ve_Light[i].shadowEnabled){
+			//vec3 shadowCoord = vec3(v_shadowTexCoord[i].xy / v_shadowTexCoord[i].w, (v_shadowTexCoord[i].w - ve_Light[i].shadowBias) / (v_shadowTexCoord[i].w + 1.0));
 			vec3 shadowCoord = vec3(v_shadowTexCoord[i].xy, v_shadowTexCoord[i].z - ve_Light[i].shadowBias) / v_shadowTexCoord[i].w;
-			shadowIntensity = texture(ve_lightShadowMap2D[i], shadowCoord) * ve_Light[i].shadowStrength;
-		} 
+			shadowIntensity = texture(ve_lightShadowMap2D[i], shadowCoord) * ve_Light[i].shadowStrength;	
+		}
 		attenuation *= ve_Light[i].intensity;
 		vec3 color = ve_Light[i].color * attenuation * shadowIntensity;
 		diffLightCol += NdotL * color;

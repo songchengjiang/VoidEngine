@@ -10,11 +10,11 @@ class LightUpdater : public veComponent
 {
 public:
 
-	LightUpdater()
+	LightUpdater(float radius, float height)
 		: _lastChangeColorTime(0.0) {
 		_angle = veMath::veRandomUnitization() * veMath::TWO_PI;
-		_radius = 10.0f * veMath::veRandomUnitization() + 2.0f;
-		_height = 30.0f * (veMath::veRandomUnitization());
+		_radius = radius;
+		_height = height;
 		_oriColor = _desColor = veVec3(veMath::veRandomUnitization(), veMath::veRandomUnitization(), veMath::veRandomUnitization());
 	}
 	virtual bool handle(veNode *node, veSceneManager *sm, const veEvent &event) override{
@@ -48,6 +48,7 @@ private:
 		veReal y = _radius * veMath::veSin(_angle);
 		light->setMatrix(veMat4::lookAt(veVec3(x, y, _height), veVec3::ZERO, veVec3::UNIT_Z));
 		_angle += veMath::QUARTER_PI * deltaTime;
+		_angle = fmod(_angle, veMath::TWO_PI);
 	}
 
 private:

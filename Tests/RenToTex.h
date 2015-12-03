@@ -99,7 +99,7 @@ public:
 			veLight *directional0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight", "directional1"));
 			veTransformer *lightTranser = new veTransformer;
 			directional0->addComponent(lightTranser);
-			directional0->addComponent(new LightUpdater);
+			directional0->addComponent(new LightUpdater(10.0f, 10.0f));
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
 			directional0->setIntensity(veMath::veRandomUnitization());
 
@@ -115,7 +115,7 @@ public:
 			veLight *point0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "point0"));
 			veTransformer *lightTranser = new veTransformer;
 			point0->addComponent(lightTranser);
-			point0->addComponent(new LightUpdater);
+			point0->addComponent(new LightUpdater(5.0f, 5.0f));
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
 			point0->setIntensity(veMath::veRandomUnitization());
 
@@ -131,7 +131,7 @@ public:
 			veLight *spot0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/spot0.velight", "spot0"));
 			veTransformer *lightTranser = new veTransformer;
 			spot0->addComponent(lightTranser);
-			spot0->addComponent(new LightUpdater);
+			spot0->addComponent(new LightUpdater(10.0f, 10.0f));
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
 			spot0->setIntensity(veMath::veRandomUnitization());
 
