@@ -220,7 +220,9 @@ void veOctreeSceneManager::render()
 		veRenderer::CURRENT_RENDER_STAGE = veRenderer::PRELIGHTING;
 		for (auto &light : _lightList) {
 			if (light->isShadowEnabled() && light->isVisible() && light->isInScene()) {
+				veLight::CURRENT_LIGHT = light.get();
 				light->shadowCameraRendering();
+				veLight::CURRENT_LIGHT = nullptr;
 			}
 		}
 	}

@@ -38,7 +38,16 @@ veSceneManager::~veSceneManager()
 
 veLight* veSceneManager::createLight(veLight::LightType type, const std::string &name)
 {
-	auto light = new veLight(type);
+	veLight *light = nullptr;
+	if (type == veLight::DIRECTIONAL) {
+		light = new veDirectionalLight;
+	}
+	else if (type == veLight::POINT){
+		light = new vePointLight;
+	}
+	else if (type == veLight::SPOT) {
+		light = new veSpotLight;
+	}
 	light->setName(name);
 	light->setSceneManager(this);
 	_lightList.push_back(light);

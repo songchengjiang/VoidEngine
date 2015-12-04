@@ -1,4 +1,5 @@
 in vec3 v_posInLightView; 
 void main(){
-	gl_FragDepth = length(v_posInLightView);
+	float pTolDis2 = dot(v_posInLightView, v_posInLightView);
+	gl_FragDepth = pTolDis2 / (pTolDis2 + 1.0);
 }

@@ -213,18 +213,44 @@ void vePass::applyProgram(const veRenderCommand &command)
 void vePass::applyLightsUniforms(const veRenderCommand &command)
 {
 	const veLightList &lightList = command.sceneManager->getLightList();
-	if (lightList.empty() || _lightUniformLocations.lightNum < 0)
+	if (lightList.empty() || (_lightUniformLocations.dirlightNum < 0 && _lightUniformLocations.pointlightNum < 0 && _lightUniformLocations.spotlightNum < 0))
 		return;
 
-	unsigned int enabledLightIndex = 0;
+	unsigned int dirLightNum = 0;
+	unsigned int pointLightNum = 0;
+	unsigned int spotLightNum = 0;
+	unsigned int totalNum = 0;
 	for (auto &iter : lightList) {
 		if (iter->isInScene() && iter->isVisible() && (iter->getMask() & command.mask)) {
-			applyLightUniforms(enabledLightIndex, iter.get(), command);
-			++enabledLightIndex;
+			unsigned int lightIdx = 0;
+			if (iter->getLightType() == veLight::DIRECTIONAL) {
+				lightIdx = dirLightNum;
+				++dirLightNum;
+			}
+			else if (iter->getLightType() == veLight::POINT) {
+				lightIdx = pointLightNum;
+				++pointLightNum;
+			}
+			else if (iter->getLightType() == veLight::SPOT) {
+				lightIdx = spotLightNum;
+				++spotLightNum;
+			}
+			applyLightUniforms(totalNum, lightIdx, iter.get(), command);
+			++totalNum;
 		}
 	}
 
-	glUniform1i(_lightUniformLocations.lightNum, enabledLightIndex);
+	if (0 < _lightUniformLocations.dirlightNum) {
+		glUniform1i(_lightUniformLocations.dirlightNum, GLint(dirLightNum));
+	}
+
+	if (0 < _lightUniformLocations.pointlightNum) {
+		glUniform1i(_lightUniformLocations.pointlightNum, GLint(pointLightNum));
+	}
+
+	if (0 < _lightUniformLocations.spotlightNum) {
+		glUniform1i(_lightUniformLocations.spotlightNum, GLint(spotLightNum));
+	}
 }
 
 void vePass::applyUniforms(const veRenderCommand &command)
@@ -234,92 +260,229 @@ void vePass::applyUniforms(const veRenderCommand &command)
 	}
 }
 
-void vePass::applyLightUniforms(unsigned int idx, veLight *light, const veRenderCommand &command)
+void vePass::applyLightUniforms(unsigned int total, unsigned int idx, veLight *light, const veRenderCommand &command)
 {
 	if (light->getMask() & command.camera->getMask()) {
 		light->setLightInCameraMatrix(command.camera->viewMatrix() * light->getNodeToWorldMatrix());
 	}
 
-	const auto &lightParamLocs = _lightUniformLocations.lightParams[idx];
-
-	glUniform1i(lightParamLocs[0], GLint(light->getLightType()));
+	GLint positionLoc           = -1;
+	GLint directionLoc          = -1;
+	GLint colorLoc              = -1;
+	GLint intensityLoc          = -1;
+	GLint attenuationInverseLoc = -1;
+	GLint shadowEnabledLoc      = -1;
+	GLint shadowBiasLoc         = -1;
+	GLint shadowStrengthLoc     = -1;
+	GLint lightMatrixLoc        = -1;
+	GLint shadowMapLoc          = -1;
+	GLint innerAngleCosLoc      = -1;
+	GLint outerAngleCosLoc      = -1;
+	if (light->getLightType() == veLight::DIRECTIONAL) {
+		auto &lightParamLocs  = _lightUniformLocations.dirlightParams[idx];
+		directionLoc          = lightParamLocs[0];
+		colorLoc              = lightParamLocs[1];
+		intensityLoc          = lightParamLocs[2];
+		attenuationInverseLoc = lightParamLocs[3];
+		shadowEnabledLoc      = lightParamLocs[4];
+		shadowBiasLoc         = lightParamLocs[5];
+		shadowStrengthLoc     = lightParamLocs[6];
+		lightMatrixLoc        = lightParamLocs[7];
+		shadowMapLoc          = lightParamLocs[8];
+	}
+	else if (light->getLightType() == veLight::POINT) {
+		auto &lightParamLocs  = _lightUniformLocations.pointlightParams[idx];
+		positionLoc           = lightParamLocs[0];
+		colorLoc              = lightParamLocs[1];
+		intensityLoc          = lightParamLocs[2];
+		attenuationInverseLoc = lightParamLocs[3];
+		shadowEnabledLoc      = lightParamLocs[4];
+		shadowBiasLoc         = lightParamLocs[5];
+		shadowStrengthLoc     = lightParamLocs[6];
+		lightMatrixLoc        = lightParamLocs[7];
+		shadowMapLoc          = lightParamLocs[8];
+	}
+	else if (light->getLightType() == veLight::SPOT) {
+		auto &lightParamLocs  = _lightUniformLocations.spotlightParams[idx];
+		directionLoc          = lightParamLocs[0];
+		positionLoc           = lightParamLocs[1];
+		colorLoc              = lightParamLocs[2];
+		intensityLoc          = lightParamLocs[3];
+		attenuationInverseLoc = lightParamLocs[4];
+		shadowEnabledLoc      = lightParamLocs[5];
+		shadowBiasLoc         = lightParamLocs[6];
+		shadowStrengthLoc     = lightParamLocs[7];
+		lightMatrixLoc        = lightParamLocs[8];
+		shadowMapLoc          = lightParamLocs[9];
+		innerAngleCosLoc      = lightParamLocs[10];
+		outerAngleCosLoc      = lightParamLocs[11];
+	}
 
 	veMat4 lightInView = light->getLightInCameraMatrix();
-	if (light->getLightType() == veLight::POINT || light->getLightType() == veLight::SPOT) {
-		glUniform3f(lightParamLocs[1], lightInView[0][3], lightInView[1][3], lightInView[2][3]);
+
+	if (0 < positionLoc) {
+		glUniform3f(positionLoc, lightInView[0][3], lightInView[1][3], lightInView[2][3]);
 	}
 
-	if (light->getLightType() == veLight::DIRECTIONAL || light->getLightType() == veLight::SPOT) {
+	if (0 < directionLoc) {
 		lightInView[0][3] = lightInView[1][3] = lightInView[2][3] = 0.0f;
-		veVec3 dir = lightInView * -veVec3::UNIT_Z;
-		dir.normalize();
-		glUniform3f(lightParamLocs[2], dir.x(), dir.y(), dir.z());
+		veVec3 direction = lightInView * -veVec3::UNIT_Z;
+		direction.normalize();
+		glUniform3f(directionLoc, direction.x(), direction.y(), direction.z());
+	}
+	if (0 < colorLoc) {
+		const auto &color = light->getColor();
+		glUniform3f(colorLoc, color.r(), color.g(), color.b());
+	}
+	if (0 < intensityLoc) {
+		glUniform1f(intensityLoc, light->getIntensity());
+	}
+	if (0 < shadowEnabledLoc) {
+		glUniform1f(shadowEnabledLoc, light->isShadowEnabled() ? 1.0f : 0.0f);
+	}
+	if (0 < shadowBiasLoc) {
+		glUniform1f(shadowBiasLoc, light->getShadowBias());
+	}
+	if (0 < shadowStrengthLoc) {
+		glUniform1f(shadowStrengthLoc, light->getShadowStrength());
+	}
+	if (0 < lightMatrixLoc) {
+		veMat4 lightMat = light->getLightMatrix() * command.worldMatrix->value();
+		float m[16];
+		m[0] = lightMat[0][0]; m[4] = lightMat[0][1]; m[8]  = lightMat[0][2]; m[12] = lightMat[0][3];
+		m[1] = lightMat[1][0]; m[5] = lightMat[1][1]; m[9]  = lightMat[1][2]; m[13] = lightMat[1][3];
+		m[2] = lightMat[2][0]; m[6] = lightMat[2][1]; m[10] = lightMat[2][2]; m[14] = lightMat[2][3];
+		m[3] = lightMat[3][0]; m[7] = lightMat[3][1]; m[11] = lightMat[3][2]; m[15] = lightMat[3][3];
+		glUniformMatrix4fv(lightMatrixLoc, 1, GL_FALSE, m);
+	}
+	if (0 < shadowMapLoc) {
+		glUniform1i(shadowMapLoc, total + _textures.size());
+		light->getShadowTexture()->bind(total + _textures.size());
+	}
+	if (0 < innerAngleCosLoc) {
+		glUniform1f(innerAngleCosLoc, static_cast<veSpotLight *>(light)->getInnerAngleCos());
+	}
+	if (0 < outerAngleCosLoc) {
+		glUniform1f(outerAngleCosLoc, static_cast<veSpotLight *>(light)->getOuterAngleCos());
 	}
 
-	const auto &color = light->getColor();
-	glUniform3f(lightParamLocs[3], color.r(), color.g(), color.b());
-	glUniform1f(lightParamLocs[4], light->getIntensity());
-	glUniform1f(lightParamLocs[5], light->getAttenuationRangeInverse());
 
-	if (light->getLightType() == veLight::SPOT) {
-		glUniform1f(lightParamLocs[6], light->getInnerAngleCos());
-		glUniform1f(lightParamLocs[7], light->getOuterAngleCos());
-	}
+	//glUniform1i(lightParamLocs[0], GLint(light->getLightType()));
 
-	glUniform1f(lightParamLocs[8], light->isShadowEnabled()? 1.0f : 0.0f);
+	//if (light->getLightType() == veLight::POINT || light->getLightType() == veLight::SPOT) {
+	//	glUniform3f(lightParamLocs[1], lightInView[0][3], lightInView[1][3], lightInView[2][3]);
+	//}
 
-	if (light->isShadowEnabled()) {
-		glUniform1f(lightParamLocs[9], light->getShadowBias());
-		glUniform1f(lightParamLocs[10], light->getShadowStrength());
+	//if (light->getLightType() == veLight::DIRECTIONAL || light->getLightType() == veLight::SPOT) {
+	//	lightInView[0][3] = lightInView[1][3] = lightInView[2][3] = 0.0f;
+	//	veVec3 dir = lightInView * -veVec3::UNIT_Z;
+	//	dir.normalize();
+	//	glUniform3f(lightParamLocs[2], dir.x(), dir.y(), dir.z());
+	//}
 
-		if (0 <= lightParamLocs[11]) {
-			veMat4 lightMat = light->getLightMatrix() * command.worldMatrix->value();
-			float m[16];
-			m[0] = lightMat[0][0]; m[4] = lightMat[0][1]; m[8] = lightMat[0][2]; m[12] = lightMat[0][3];
-			m[1] = lightMat[1][0]; m[5] = lightMat[1][1]; m[9] = lightMat[1][2]; m[13] = lightMat[1][3];
-			m[2] = lightMat[2][0]; m[6] = lightMat[2][1]; m[10] = lightMat[2][2]; m[14] = lightMat[2][3];
-			m[3] = lightMat[3][0]; m[7] = lightMat[3][1]; m[11] = lightMat[3][2]; m[15] = lightMat[3][3];
-			glUniformMatrix4fv(lightParamLocs[11], 1, GL_FALSE, m);
-		}
+	//const auto &color = light->getColor();
+	//glUniform3f(lightParamLocs[3], color.r(), color.g(), color.b());
+	//glUniform1f(lightParamLocs[4], light->getIntensity());
+	//glUniform1f(lightParamLocs[5], light->getAttenuationRangeInverse());
 
-		if (0 <= _lightUniformLocations.lightShadow2D || 0 <= _lightUniformLocations.lightShadowCube) {
-			if (light->getLightType() == veLight::POINT) {
-				glUniform1i(_lightUniformLocations.lightShadowCube + idx, idx + _textures.size());
-			}
-			else {
-				glUniform1i(_lightUniformLocations.lightShadow2D + idx, idx + _textures.size());
-			}			
-			light->getShadowTexture()->bind(idx + _textures.size());
-		}
-	}
+	//if (light->getLightType() == veLight::SPOT) {
+	//	glUniform1f(lightParamLocs[6], light->getInnerAngleCos());
+	//	glUniform1f(lightParamLocs[7], light->getOuterAngleCos());
+	//}
+
+	//glUniform1f(lightParamLocs[8], light->isShadowEnabled()? 1.0f : 0.0f);
+
+	//if (light->isShadowEnabled()) {
+	//	glUniform1f(lightParamLocs[9], light->getShadowBias());
+	//	glUniform1f(lightParamLocs[10], light->getShadowStrength());
+
+	//	if (0 <= _lightUniformLocations.lightMatrix) {
+	//		veMat4 lightMat = light->getLightMatrix() * command.worldMatrix->value();
+	//		float m[16];
+	//		m[0] = lightMat[0][0]; m[4] = lightMat[0][1]; m[8] = lightMat[0][2]; m[12] = lightMat[0][3];
+	//		m[1] = lightMat[1][0]; m[5] = lightMat[1][1]; m[9] = lightMat[1][2]; m[13] = lightMat[1][3];
+	//		m[2] = lightMat[2][0]; m[6] = lightMat[2][1]; m[10] = lightMat[2][2]; m[14] = lightMat[2][3];
+	//		m[3] = lightMat[3][0]; m[7] = lightMat[3][1]; m[11] = lightMat[3][2]; m[15] = lightMat[3][3];
+	//		glUniformMatrix4fv(_lightUniformLocations.lightMatrix + idx, 1, GL_FALSE, m);
+	//	}
+
+	//	if (0 <= _lightUniformLocations.lightShadow2D || 0 <= _lightUniformLocations.lightShadowCube) {
+	//		if (light->getLightType() == veLight::POINT) {
+	//			glUniform1i(_lightUniformLocations.lightShadowCube + idx, idx + _textures.size());
+	//		}
+	//		else {
+	//			glUniform1i(_lightUniformLocations.lightShadow2D + idx, idx + _textures.size());
+	//		}			
+	//		light->getShadowTexture()->bind(idx + _textures.size());
+	//	}
+	//}
 }
 
 void vePass::locateLightUnifroms(const veRenderCommand &command)
 {
 	if (command.sceneManager->getLightList().empty())
 		return;
-	size_t lightMaxNum = command.sceneManager->getLightList().size();
-	_lightUniformLocations.lightNum = glGetUniformLocation(_program, veLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME.c_str());
-	_lightUniformLocations.lightShadow2D = glGetUniformLocation(_program, veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_2D_NAME.c_str());
-	_lightUniformLocations.lightShadowCube = glGetUniformLocation(_program, veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_CUBE_NAME.c_str());
 
-	_lightUniformLocations.lightParams.assign(lightMaxNum, std::vector<GLint>());
-	for (unsigned int i = 0; i < lightMaxNum; ++i) {
-		char str[32];
-		sprintf(str, "%s[%d].", veLight::DEFUALT_LIGHT_UNIFORM_NAME.c_str(), i);
-		std::string lightName = str;
-		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_TYPE_NAME).c_str()));
-		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_POSITION_NAME).c_str()));
-		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME).c_str()));
-		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME).c_str()));
-		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME).c_str()));
-		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME).c_str()));
-		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME).c_str()));
-		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME).c_str()));
-		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME).c_str()));
-		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME).c_str()));
-		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME).c_str()));
-		_lightUniformLocations.lightParams[i].push_back(glGetUniformLocation(_program, (lightName + veLight::DEFUALT_LIGHT_UNIFORM_LIGHT_MATRIX_NAME).c_str()));
+
+	_lightUniformLocations.dirlightNum = glGetUniformLocation(_program, (veDirectionalLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME).c_str());
+	_lightUniformLocations.pointlightNum = glGetUniformLocation(_program, (vePointLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME).c_str());
+	_lightUniformLocations.spotlightNum = glGetUniformLocation(_program, (veSpotLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME).c_str());
+
+	unsigned int dirLightIdx = 0;
+	unsigned int pointLightIdx = 0;
+	unsigned int spotLightIdx = 0;
+	char lightName[32];
+	_lightUniformLocations.dirlightParams.clear();
+	_lightUniformLocations.pointlightParams.clear();
+	_lightUniformLocations.spotlightParams.clear();
+	for (auto &light : command.sceneManager->getLightList()) {
+		if (light->isInScene()) {
+			if (light->getLightType() == veLight::DIRECTIONAL) {
+				sprintf(lightName, "%s[%d].", veDirectionalLight::DEFUALT_LIGHT_UNIFORM_NAME.c_str(), dirLightIdx);
+				_lightUniformLocations.dirlightParams.resize(dirLightIdx + 1);
+				_lightUniformLocations.dirlightParams[dirLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME).c_str()));
+				_lightUniformLocations.dirlightParams[dirLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME).c_str()));
+				_lightUniformLocations.dirlightParams[dirLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME).c_str()));
+				_lightUniformLocations.dirlightParams[dirLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME).c_str()));
+				_lightUniformLocations.dirlightParams[dirLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME).c_str()));
+				_lightUniformLocations.dirlightParams[dirLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME).c_str()));
+				_lightUniformLocations.dirlightParams[dirLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME).c_str()));
+				_lightUniformLocations.dirlightParams[dirLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_LIGHT_MATRIX_NAME).c_str()));
+				_lightUniformLocations.dirlightParams[dirLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_2D_NAME).c_str()));
+				++dirLightIdx;
+			}
+			else if (light->getLightType() == veLight::POINT) {
+				sprintf(lightName, "%s[%d].", vePointLight::DEFUALT_LIGHT_UNIFORM_NAME.c_str(), pointLightIdx);
+				_lightUniformLocations.pointlightParams.resize(pointLightIdx + 1);
+				_lightUniformLocations.pointlightParams[pointLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_POSITION_NAME).c_str()));
+				_lightUniformLocations.pointlightParams[pointLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME).c_str()));
+				_lightUniformLocations.pointlightParams[pointLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME).c_str()));
+				_lightUniformLocations.pointlightParams[pointLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME).c_str()));
+				_lightUniformLocations.pointlightParams[pointLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME).c_str()));
+				_lightUniformLocations.pointlightParams[pointLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME).c_str()));
+				_lightUniformLocations.pointlightParams[pointLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME).c_str()));
+				_lightUniformLocations.pointlightParams[pointLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_LIGHT_MATRIX_NAME).c_str()));
+				_lightUniformLocations.pointlightParams[pointLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_CUBE_NAME).c_str()));
+				++pointLightIdx;
+			}
+			else if (light->getLightType() == veLight::SPOT) {
+				sprintf(lightName, "%s[%d].", veSpotLight::DEFUALT_LIGHT_UNIFORM_NAME.c_str(), spotLightIdx);
+				_lightUniformLocations.spotlightParams.resize(spotLightIdx + 1);
+				_lightUniformLocations.spotlightParams[spotLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME).c_str()));
+				_lightUniformLocations.spotlightParams[spotLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_POSITION_NAME).c_str()));
+				_lightUniformLocations.spotlightParams[spotLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME).c_str()));
+				_lightUniformLocations.spotlightParams[spotLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME).c_str()));
+				_lightUniformLocations.spotlightParams[spotLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME).c_str()));
+				_lightUniformLocations.spotlightParams[spotLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME).c_str()));
+				_lightUniformLocations.spotlightParams[spotLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME).c_str()));
+				_lightUniformLocations.spotlightParams[spotLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME).c_str()));
+				_lightUniformLocations.spotlightParams[spotLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veLight::DEFUALT_LIGHT_UNIFORM_LIGHT_MATRIX_NAME).c_str()));
+				_lightUniformLocations.spotlightParams[spotLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_2D_NAME).c_str()));
+				_lightUniformLocations.spotlightParams[spotLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veSpotLight::DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME).c_str()));
+				_lightUniformLocations.spotlightParams[spotLightIdx].push_back(glGetUniformLocation(_program, (std::string(lightName) + veSpotLight::DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME).c_str()));
+				++spotLightIdx;
+			}
+		}
 	}
 }
 

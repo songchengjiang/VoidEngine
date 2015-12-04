@@ -10,17 +10,11 @@ class VE_EXPORT veLight : public veNode
 	friend class veSceneManager;
 public:
 
-	static const unsigned int DEFUALT_LIGHT_PARAM_NUM;
-	static const std::string DEFUALT_LIGHT_UNIFORM_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_NUM_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_TYPE_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_POSITION_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_COLOR_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME;
 
 	static const std::string DEFUALT_LIGHT_UNIFORM_LIGHT_MATRIX_NAME;
 
@@ -28,8 +22,6 @@ public:
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_RESOLUTION_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_2D_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_CUBE_NAME;
 
 	static const veVec2 DEFAULT_SHADOW_AREA;
 	static const veVec2 DEFAULT_SHADOW_RESOLUTION;
@@ -54,7 +46,6 @@ public:
 
 	virtual void setMask(unsigned int mask, bool isOverride = false) override;
 
-	void setLightType(LightType type);
 	LightType getLightType() const { return _type; }
 	void setColor(const veVec4 &color) { _color = color; }
 	const veVec4& getColor() const { return _color; }
@@ -63,12 +54,6 @@ public:
 	void setAttenuationRange(float range) { _attenuationRange = range; _attenuationRangeInverse = 1.0f / _attenuationRange; }
 	float getAttenuationRange() const { return _attenuationRange; }
 	float getAttenuationRangeInverse() const { return _attenuationRangeInverse; }
-	void setInnerAngle(float innerAng) { _innerAngle = innerAng; _innerAngleCos = veMath::veCos(veMath::veRadian(_innerAngle)); }
-	float getInnerAngle() { return _innerAngle; }
-	float getInnerAngleCos() { return _innerAngleCos; }
-	void setOuterAngle(float outerAng) { _outerAngle = outerAng; _outerAngleCos = veMath::veCos(veMath::veRadian(_outerAngle)); }
-	float getOuterAngle() { return _outerAngle; }
-	float getOuterAngleCos() { return _outerAngleCos; }
 
 	void shadowEnable(bool isEnabled) { _shadowEnabled = isEnabled; }
 	bool isShadowEnabled() const { return _shadowEnabled; };
@@ -81,25 +66,23 @@ public:
 	void setShadowArea(const veVec2 &area) { _shadowArea = area; _needRefreshShadow = true; }
 	const veVec2& getShadowArea() const { return _shadowArea; }
 
-	veCamera* getShadowRenderingCamera(unsigned int idx) { return _shadowRenderingCam[idx].get(); }
-	const veCamera* getShadowRenderingCamera(unsigned int idx) const { return _shadowRenderingCam[idx].get(); }
-	veTexture* getShadowTexture() { return _shadowTexture.get(); }
-	const veTexture* getShadowTexture() const { return _shadowTexture.get(); }
-
 	void setLightInCameraMatrix(const veMat4 &mat) { _lightInCamMatrix = mat; }
 	const veMat4& getLightInCameraMatrix() { return _lightInCamMatrix; }
 
-	veMat4 getLightMatrix() const;
+	veTexture* getShadowTexture() { return _shadowTexture.get(); }
+	const veTexture* getShadowTexture() const { return _shadowTexture.get(); }
 
-	void shadowCameraCulling();
-	void shadowCameraRendering();
+	virtual veMat4 getLightMatrix() const = 0;
+
+	virtual void shadowCameraCulling() = 0;
+	virtual void shadowCameraRendering() = 0;
 
 protected:
 	veLight(LightType type);
 
 	virtual void updateSceneManager() override;
-	void updateShadow();
-	void updateShadowCamera();
+	virtual void updateShadowTexture() = 0;
+	virtual void updateShadowCamera() = 0;
 
 protected:
 
@@ -109,10 +92,6 @@ protected:
 	float  _intensity;
 	float  _attenuationRange;
 	float  _attenuationRangeInverse;
-	float  _innerAngle;
-	float  _innerAngleCos;
-	float  _outerAngle;
-	float  _outerAngleCos;
 	veMat4 _lightInCamMatrix;
 
 	bool _shadowEnabled;
@@ -122,9 +101,101 @@ protected:
 	float _shadowBias;
 	float _shadowStrength;
 	VE_Ptr<veTexture> _shadowTexture;
-	VE_Ptr<veCamera>  _shadowRenderingCam[6];
 	bool _needRefreshShadow;
 	bool _needRefreshShadowCamera;
+};
+
+class VE_EXPORT veDirectionalLight : public veLight
+{
+public:
+
+	static const std::string DEFUALT_LIGHT_UNIFORM_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_NUM_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_2D_NAME;
+
+	veDirectionalLight();
+	~veDirectionalLight();
+
+	virtual veMat4 getLightMatrix() const override;
+
+	virtual void shadowCameraCulling() override;
+	virtual void shadowCameraRendering() override;
+
+protected:
+
+	virtual void updateShadowTexture() override;
+	virtual void updateShadowCamera() override;
+
+protected:
+
+	VE_Ptr<veCamera>  _shadowRenderingCam;
+};
+
+class VE_EXPORT vePointLight : public veLight
+{
+public:
+
+	static const std::string DEFUALT_LIGHT_UNIFORM_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_NUM_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_CUBE_NAME;
+
+	vePointLight();
+	~vePointLight();
+
+	virtual veMat4 getLightMatrix() const override;
+
+	virtual void shadowCameraCulling() override;
+	virtual void shadowCameraRendering() override;
+
+protected:
+
+	virtual void updateShadowTexture() override;
+	virtual void updateShadowCamera() override;
+
+protected:
+
+	VE_Ptr<veCamera>  _shadowRenderingCam[6];
+};
+
+class VE_EXPORT veSpotLight : public veLight
+{
+public:
+
+	static const std::string DEFUALT_LIGHT_UNIFORM_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_NUM_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_2D_NAME;
+
+	veSpotLight();
+	~veSpotLight();
+
+	virtual veMat4 getLightMatrix() const override;
+
+
+	void setInnerAngle(float innerAng) { _innerAngle = innerAng; _innerAngleCos = veMath::veCos(veMath::veRadian(_innerAngle)); }
+	float getInnerAngle() { return _innerAngle; }
+	float getInnerAngleCos() { return _innerAngleCos; }
+	void setOuterAngle(float outerAng) { _outerAngle = outerAng; _outerAngleCos = veMath::veCos(veMath::veRadian(_outerAngle)); }
+	float getOuterAngle() { return _outerAngle; }
+	float getOuterAngleCos() { return _outerAngleCos; }
+
+	virtual void shadowCameraCulling() override;
+	virtual void shadowCameraRendering() override;
+
+protected:
+
+	virtual void updateShadowTexture() override;
+	virtual void updateShadowCamera() override;
+
+protected:
+
+	float  _innerAngle;
+	float  _innerAngleCos;
+	float  _outerAngle;
+	float  _outerAngleCos;
+
+	VE_Ptr<veCamera>  _shadowRenderingCam;
 };
 
 typedef std::vector< VE_Ptr<veLight> > veLightList;

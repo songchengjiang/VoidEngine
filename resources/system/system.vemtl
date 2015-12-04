@@ -70,7 +70,8 @@
                                     "type": "VERTEX_SHADER",
                                     "source": "OmnidirectionalShaderMap.vert",
                                     "u_ModelViewMat": "MV_MATRIX",
-                                    "u_ModelViewProjectMat": "MVP_MATRIX"
+                                    "u_ModelViewProjectMat": "MVP_MATRIX",
+                                    "u_BoneMates": "BONE_MATRIXES"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",

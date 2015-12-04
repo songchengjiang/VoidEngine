@@ -54,16 +54,6 @@ private:
 			_light->setAttenuationRange(val.GetDouble());
 		}
 
-		if (_doucument->HasMember(INNER_ANGLE_KEY.c_str())) {
-			const Value &val = (*_doucument)[INNER_ANGLE_KEY.c_str()];
-			_light->setInnerAngle(val.GetDouble());
-		}
-
-		if (_doucument->HasMember(OUTER_ANGLE_KEY.c_str())) {
-			const Value &val = (*_doucument)[OUTER_ANGLE_KEY.c_str()];
-			_light->setOuterAngle(val.GetDouble());
-		}
-
 		if (_doucument->HasMember(SHADOW_ENABLED_KEY.c_str())) {
 			const Value &val = (*_doucument)[SHADOW_ENABLED_KEY.c_str()];
 			_light->shadowEnable(val.GetBool());
@@ -89,6 +79,18 @@ private:
 			const Value &val = (*_doucument)[SHADOW_AREA_KEY.c_str()];
 			if (val.Size() == 2)
 				_light->setShadowArea(veVec2(val[0].GetDouble(), val[1].GetDouble()));
+		}
+
+		if (_light->getLightType() == veLight::SPOT) {
+			if (_doucument->HasMember(INNER_ANGLE_KEY.c_str())) {
+				const Value &val = (*_doucument)[INNER_ANGLE_KEY.c_str()];
+				static_cast<veSpotLight *>(_light)->setInnerAngle(val.GetDouble());
+			}
+
+			if (_doucument->HasMember(OUTER_ANGLE_KEY.c_str())) {
+				const Value &val = (*_doucument)[OUTER_ANGLE_KEY.c_str()];
+				static_cast<veSpotLight *>(_light)->setOuterAngle(val.GetDouble());
+			}
 		}
 	}
 

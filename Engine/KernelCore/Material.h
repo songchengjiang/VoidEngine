@@ -98,17 +98,23 @@ private:
 	void applyProgram(const veRenderCommand &command);
 	void applyUniforms(const veRenderCommand &command);
 	void applyLightsUniforms(const veRenderCommand &command);
-	void applyLightUniforms(unsigned int idx, veLight *light, const veRenderCommand &command);
+	void applyLightUniforms(unsigned int total, unsigned int idx, veLight *light, const veRenderCommand &command);
 	void locateLightUnifroms(const veRenderCommand &command);
 
 private:
 
 	struct LightUniformLocations
 	{
-		GLint lightNum;
-		GLint lightShadow2D;
-		GLint lightShadowCube;
-		std::vector< std::vector<GLint> > lightParams;
+		GLint dirlightNum;
+		GLint pointlightNum;
+		GLint spotlightNum;
+		std::vector< std::vector<GLint> > dirlightParams;
+		std::vector< std::vector<GLint> > pointlightParams;
+		std::vector< std::vector<GLint> > spotlightParams;
+		//GLint lightMatrix;
+		//GLint lightShadow2D;
+		//GLint lightShadowCube;
+		//std::vector< std::vector<GLint> > lightParams;
 	};
 
 	bool _depthTest;

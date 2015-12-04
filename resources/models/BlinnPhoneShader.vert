@@ -51,17 +51,48 @@ out vec4 v_normalAndepth;
 out vec2 v_texcoord;
 
 #ifdef VE_USE_LIGHTS
-out vec4 v_shadowTexCoord[VE_LIGHT_MAX_NUM];
+
+#ifdef VE_DIRECTIONAL_LIGHT_MAX_NUM
+out vec4 v_directionalLightST[VE_DIRECTIONAL_LIGHT_MAX_NUM];
+#endif
+
+#ifdef VE_POINT_LIGHT_MAX_NUM
+out vec3 v_pointLightST[VE_POINT_LIGHT_MAX_NUM];
+#endif
+
+#ifdef VE_SPOT_LIGHT_MAX_NUM
+out vec4 v_spotLightST[VE_SPOT_LIGHT_MAX_NUM];
+#endif
+
 #endif
 
 #ifdef VE_USE_LIGHTS
-void caculateShadowTextureCoord(vec4 position)
+void caculateShadowTextureCoord(in vec4 position)
 {
-	for (int i = 0; i < ve_LightNum; ++i){
-		if (0.0 < ve_Light[i].shadowEnabled){
-			v_shadowTexCoord[i] = ve_Light[i].lightMat * position;
+#ifdef VE_DIRECTIONAL_LIGHT_MAX_NUM
+	for (int i = 0; i < ve_directionalLightNum; ++i){
+		if (0.0 < ve_directionalLight[i].shadowEnabled){
+			v_directionalLightST[i] = ve_directionalLight[i].lightMat * position;
 		}
-	}	
+	}
+#endif
+
+#ifdef VE_POINT_LIGHT_MAX_NUM
+	for (int i = 0; i < ve_pointLightNum; ++i){
+		if (0.0 < ve_pointLight[i].shadowEnabled){
+			v_pointLightST[i] = (ve_pointLight[i].lightMat * position).xyz;
+		}
+	}
+#endif
+
+#ifdef VE_SPOT_LIGHT_MAX_NUM
+	for (int i = 0; i < ve_spotLightNum; ++i){
+		if (0.0 < ve_spotLight[i].shadowEnabled){
+			v_spotLightST[i] = ve_spotLight[i].lightMat * position;
+		}
+	}
+#endif
+
 }
 #endif
 
