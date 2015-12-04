@@ -10,7 +10,6 @@ public:
 	ShadowTest() {
 
 		veNode *root = _sceneManager->createNode("root");
-		root->setMatrix(veMat4::rotation(veQuat(-veMath::HALF_PI, veVec3::UNIT_X)));
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot"));
 			//entity->getMaterialArray()->getMaterial(0)->activateTechnique(entity->getMaterialArray()->getMaterial(0)->getTechnique("CookTorrance_OrenNayarRendering"));
@@ -21,12 +20,25 @@ public:
 			node->addComponent(transer);
 			transer->setScale(veVec3(2.0f));
 			transer->setPosition(veVec3(-5.0f, 0.0f, 0.0f));
-			transer->setRotation(veQuat(veMath::HALF_PI, veVec3::UNIT_X));
+			transer->setRotation(veQuat(veMath::veRadian(40.0), veVec3(1.0f, 1.0f, 1.0f)));
 			root->addChild(node);
 		}
 
 		{
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/plane.vem", "plane"));
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot"));
+			//entity->getMaterialArray()->getMaterial(0)->activateTechnique(entity->getMaterialArray()->getMaterial(0)->getTechnique("CookTorrance_OrenNayarRendering"));
+			veNode *node = _sceneManager->createNode("node11");
+			node->addRenderableObject(entity);
+			//node->addComponent(new KeyboardInputer);
+			veTransformer *transer = new veTransformer;
+			node->addComponent(transer);
+			transer->setScale(veVec3(2.0f));
+			transer->setPosition(veVec3(0.0f, -10.0f, 0.0f));
+			root->addChild(node);
+		}
+
+		{
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/box.vem", "box"));
 			veNode *node = _sceneManager->createNode("node1");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
@@ -45,11 +57,12 @@ public:
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
-			transer->setScale(veVec3(2.0f));
-			transer->setPosition(veVec3(5.0f, 0.0f, 2.0f));
+			transer->setPosition(veVec3(5.0f, 2.0f, 2.0f));
 			root->addChild(node);
 			node->setMask(~LIGHT_MASK);
 		}
+
+
 
 
 		{
@@ -61,7 +74,6 @@ public:
 			node->addComponent(transer);
 			//transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
 			transer->setScale(veVec3(0.3f));
-			transer->setRotation(veQuat(veMath::HALF_PI, veVec3::UNIT_X));
 			root->addChild(node);
 
 			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim"));
@@ -76,6 +88,7 @@ public:
 			veTransformer *lightTranser = new veTransformer;
 			spot0->addComponent(lightTranser);
 			spot0->addComponent(new LightUpdater(5.0f, 5.0f));
+			spot0->setIntensity(1.0f);
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
 
 			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "spot0-sphere"));
@@ -86,20 +99,6 @@ public:
 			spot0->addChild(lightModel);
 			spot0->setMask(LIGHT_MASK);
 			root->addChild(spot0);
-
-			//{
-			//	spot0->_shadowTexture = _sceneManager->createTexture(std::string("-ShadowTexture"), veTexture::TEXTURE_2D);
-			//	veNode *node = _sceneManager->createNode("node10");
-			//	veTransformer *transer = new veTransformer;
-			//	node->addComponent(transer);
-			//	transer->setPosition(veVec3(-0.5f, -0.5f, 0.0f));
-			//	transer->setScale(veVec3(0.5f));
-
-			//	auto overlay = _sceneManager->createImage("image0", spot0->getShadowTexture());
-			//	node->addRenderableObject(overlay);
-
-			//	_sceneManager->getRootNode()->addChild(node);
-			//}
 		}
 
 		{
@@ -108,6 +107,7 @@ public:
 			directional0->addComponent(lightTranser);
 			directional0->addComponent(new LightUpdater(10.0f, 10.0f));
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
+			directional0->setIntensity(0.1f);
 
 			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "directional0-sphere"));
 			veNode *lightModel = _sceneManager->createNode("lightnode0");
@@ -124,7 +124,8 @@ public:
 			veTransformer *lightTranser = new veTransformer;
 			point0->addComponent(lightTranser);
 			//point0->addComponent(new LightUpdater);
-			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
+			lightTranser->setPosition(veVec3(0.0f, -3.0f, 0.0f));
+			point0->setIntensity(0.6f);
 
 			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "point0-sphere"));
 			veNode *lightModel = _sceneManager->createNode("lightnode1");

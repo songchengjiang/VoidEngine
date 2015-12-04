@@ -604,7 +604,7 @@ void ModelConverter::writeTexture(const aiMaterial *mat, aiTextureType texType)
 		else _matWriter.String(CLAMP_KEY.c_str(), CLAMP_KEY.size());
 
 		_matWriter.String(FILTER_KEY.c_str(), FILTER_KEY.size());
-		_matWriter.String(NEAREST_MIP_MAP_KEY.c_str(), NEAREST_MIP_MAP_KEY.size());
+		_matWriter.String(NEAREST_MIP_MAP_LINEAR_KEY.c_str(), NEAREST_MIP_MAP_LINEAR_KEY.size());
 		_matWriter.EndObject();
 	}
 }
