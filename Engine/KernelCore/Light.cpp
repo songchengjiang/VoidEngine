@@ -10,32 +10,47 @@ const float  veLight::DEFAULT_SHADOW_STRENGTH   = 1.0f;
 
 veLight* veLight::CURRENT_LIGHT = nullptr;
 
-const std::string veLight::DEFUALT_LIGHT_UNIFORM_POSITION_NAME = "position";
-const std::string veLight::DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME = "direction";
-const std::string veLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME = "color";
-const std::string veLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME = "intensity";
-const std::string veLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME = "attenuationRangeInverse";
+unsigned int veDirectionalLight::TOTAL_LIGHT_NUM = 0;
+unsigned int vePointLight::TOTAL_LIGHT_NUM       = 0;
+unsigned int veSpotLight::TOTAL_LIGHT_NUM        = 0;
 
-const std::string veLight::DEFUALT_LIGHT_UNIFORM_LIGHT_MATRIX_NAME = "lightMat";
+const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_NAME                     = "ve_dirLight";
+const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME                 = "ve_dirLightNum";
+const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME           = "ve_dirLightDirection";
+const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME               = "ve_dirLightColor";
+const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME           = "ve_dirLightIntensity";
+const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME      = "ve_dirLightShadowEnabled";
+const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME         = "ve_dirLightShadowBias";
+const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME     = "ve_dirLightShadowStrength";
+const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME       = "ve_dirLightShadowMat";
+const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME          = "ve_dirLightShadowMap";
 
-const std::string veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME = "shadowEnabled";
-const std::string veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME = "shadowBias";
-const std::string veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME = "shadowStrength";
-const std::string veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_RESOLUTION_NAME = "shadowResolution";
-
-const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_NAME = "ve_directionalLight";
-const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME = "ve_directionalLightNum";
-const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_2D_NAME = "shadowMap2D";
-
-const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_NAME = "ve_pointLight";
-const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME = "ve_pointLightNum";
-const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_CUBE_NAME = "shadowMapCube";
+const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_NAME                           = "ve_pointLight";
+const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME                       = "ve_pointLightNum";
+const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_POSITION_NAME                  = "ve_pointLightPosition";
+const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME                     = "ve_pointLightColor";
+const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME                 = "ve_pointLightIntensity";
+const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME = "ve_pointLightARI";
+const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME            = "ve_pointLightShadowEnabled";
+const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME               = "ve_pointLightShadowBias";
+const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME           = "ve_pointLightShadowStrength";
+const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME             = "ve_pointLightShadowMat";
+const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME                = "ve_pointLightShadowMap";
 
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_NAME = "ve_spotLight";
-const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME = "ve_spotLightNum";
-const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME = "innerAngleCos";
-const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME = "outerAngleCos";
-const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_2D_NAME = "shadowMap2D";
+const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME                        = "ve_spotLightNum";
+const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_POSITION_NAME                   = "ve_spotLightPosition";
+const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME                  = "ve_spotLightDirection";
+const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME                      = "ve_spotLightColor";
+const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME                  = "ve_spotLightIntensity";
+const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME  = "ve_spotLightARI";
+const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME            = "ve_spotLightInnerAngleCos";
+const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME            = "ve_spotLightOuterAngleCos";
+const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME             = "ve_spotLightShadowEnabled";
+const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME                = "ve_spotLightShadowBias";
+const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME            = "ve_spotLightShadowStrength";
+const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME              = "ve_spotLightShadowMat";
+const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME                 = "ve_spotLightShadowMap";
 
 static const veMat4 LIGHT_BIAS_MAT = veMat4(0.5f, 0.0f, 0.0f, 0.5f
 										  , 0.0f, 0.5f, 0.0f, 0.5f
@@ -101,12 +116,12 @@ void veLight::updateSceneManager()
 veDirectionalLight::veDirectionalLight()
 	: veLight(DIRECTIONAL)
 {
-
+	++veDirectionalLight::TOTAL_LIGHT_NUM;
 }
 
 veDirectionalLight::~veDirectionalLight()
 {
-
+	--veDirectionalLight::TOTAL_LIGHT_NUM;
 }
 
 veMat4 veDirectionalLight::getLightMatrix() const
@@ -130,8 +145,8 @@ void veDirectionalLight::updateShadowTexture()
 	if (_needRefreshShadow) {
 		if (!_shadowTexture.valid())
 			_shadowTexture = _sceneManager->createTexture(_name + std::string("-ShadowTexture"), veTexture::TEXTURE_2D);
-		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1, GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT
-			, GL_UNSIGNED_BYTE, nullptr, 1);
+		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1
+			, GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 		_needRefreshShadow = false;
@@ -162,12 +177,12 @@ void veDirectionalLight::updateShadowCamera()
 vePointLight::vePointLight()
 	: veLight(POINT)
 {
-
+	++vePointLight::TOTAL_LIGHT_NUM;
 }
 
 vePointLight::~vePointLight()
 {
-
+	--vePointLight::TOTAL_LIGHT_NUM;
 }
 
 veMat4 vePointLight::getLightMatrix() const
@@ -195,8 +210,8 @@ void vePointLight::updateShadowTexture()
 	if (_needRefreshShadow) {
 		if (!_shadowTexture.valid())
 			_shadowTexture = _sceneManager->createTexture(_name + std::string("-ShadowTexture"), veTexture::TEXTURE_CUBE);
-		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1, GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT
-			, GL_UNSIGNED_BYTE, nullptr, 1);
+		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1
+			, GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 		_needRefreshShadow = false;
@@ -238,12 +253,12 @@ veSpotLight::veSpotLight()
 	, _outerAngle(45.0f)
 	, _outerAngleCos(veMath::veCos(veMath::veRadian(_outerAngle)))
 {
-
+	++veSpotLight::TOTAL_LIGHT_NUM;
 }
 
 veSpotLight::~veSpotLight()
 {
-
+	--veSpotLight::TOTAL_LIGHT_NUM;
 }
 
 veMat4 veSpotLight::getLightMatrix() const
@@ -267,8 +282,8 @@ void veSpotLight::updateShadowTexture()
 	if (_needRefreshShadow) {
 		if (!_shadowTexture.valid())
 			_shadowTexture = _sceneManager->createTexture(_name + std::string("-ShadowTexture"), veTexture::TEXTURE_2D);
-		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1, GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT
-			, GL_UNSIGNED_BYTE, nullptr, 1);
+		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1
+			, GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 		_needRefreshShadow = false;

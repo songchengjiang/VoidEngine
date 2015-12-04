@@ -51,18 +51,18 @@ void Lighting(out vec3 diffLightColor, out vec3 specLightColor)
 	float attenuation;
 
 #ifdef VE_DIRECTIONAL_LIGHT_MAX_NUM
-	for (int i = 0; i < ve_directionalLightNum; ++i){
-		lDir = -ve_directionalLight[i].direction;
-		attenuation = ve_directionalLight[i].intensity;
-		if (0.0 < ve_directionalLight[i].shadowEnabled){
-			vec3 shadowCoord = vec3(v_directionalLightST[i].xy, v_directionalLightST[i].z - ve_directionalLight[i].shadowBias) / v_directionalLightST[i].w;
-			float shadow = texture(ve_directionalLight[i].shadowMap2D, shadowCoord);
+	for (int i = 0; i < ve_dirLightNum; ++i){
+		lDir = -ve_dirLightDirection[i];
+		attenuation = ve_dirLightIntensity[i];
+		if (0.0 < ve_dirLightShadowEnabled[i]){
+			vec3 shadowCoord = vec3(v_directionalLightST[i].xy, v_directionalLightST[i].z - ve_dirLightShadowBias[i]) / v_directionalLightST[i].w;
+			float shadow = texture(ve_dirLightShadowMap[i], shadowCoord);
 			if (shadow < 1.0)
-				attenuation *=  mix(1.0, shadow, ve_directionalLight[i].shadowStrength);	
+				attenuation *=  mix(1.0, shadow, ve_dirLightShadowStrength[i]);	
 		}
 
 		vec2 factor = caculateLightFactor(normal, lDir, eye, u_shininess);
-		vec3 lightIntensity = ve_directionalLight[i].color * attenuation;
+		vec3 lightIntensity = ve_dirLightColor[i] * attenuation;
 		diffLightColor += lightIntensity * factor.x;
 		specLightColor += lightIntensity * factor.y;
 	}
@@ -70,21 +70,21 @@ void Lighting(out vec3 diffLightColor, out vec3 specLightColor)
 
 #ifdef VE_POINT_LIGHT_MAX_NUM
 	for (int i = 0; i < ve_pointLightNum; ++i){
-		lDir = ve_pointLight[i].position - v_position.xyz;
-		vec3 lDirAttenuation = lDir * ve_pointLight[i].attenuationRangeInverse;
-		attenuation = clamp(1.0 - dot(lDirAttenuation, lDirAttenuation), 0.0, 1.0) * ve_pointLight[i].intensity;
+		lDir = ve_pointLightPosition[i] - v_position.xyz;
+		vec3 lDirAttenuation = lDir * ve_pointLightARI[i];
+		attenuation = clamp(1.0 - dot(lDirAttenuation, lDirAttenuation), 0.0, 1.0) * ve_pointLightIntensity[i];
 		lDir = normalize(lDir);
-		if (0.0 < ve_pointLight[i].shadowEnabled){
+		if (0.0 < ve_pointLightShadowEnabled[i]){
 			float pTolDis2 = dot(v_pointLightST[i], v_pointLightST[i]);
 			pTolDis2 = pTolDis2 / (pTolDis2 + 1.0);
-			vec4 shadowCoord = vec4(v_pointLightST[i], pTolDis2 - ve_pointLight[i].shadowBias);
-			float shadow = texture(ve_pointLight[i].shadowMapCube, shadowCoord);
+			vec4 shadowCoord = vec4(v_pointLightST[i], pTolDis2 - ve_pointLightShadowBias[i]);
+			float shadow = texture(ve_pointLightShadowMap[i], shadowCoord);
 			if (shadow < 1.0)
-				attenuation *=  mix(1.0, shadow, ve_pointLight[i].shadowStrength);	
+				attenuation *=  mix(1.0, shadow, ve_pointLightShadowStrength[i]);	
 		}
 
 		vec2 factor = caculateLightFactor(normal, lDir, eye, u_shininess);
-		vec3 lightIntensity = ve_pointLight[i].color * attenuation;
+		vec3 lightIntensity = ve_pointLightColor[i] * attenuation;
 		diffLightColor += lightIntensity * factor.x;
 		specLightColor += lightIntensity * factor.y;
 	}
@@ -92,21 +92,21 @@ void Lighting(out vec3 diffLightColor, out vec3 specLightColor)
 
 #ifdef VE_SPOT_LIGHT_MAX_NUM
 	for (int i = 0; i < ve_spotLightNum; ++i){
-		lDir = ve_spotLight[i].position - v_position.xyz;
-		vec3 lDirAttenuation = lDir * ve_spotLight[i].attenuationRangeInverse;
+		lDir = ve_spotLightPosition[i] - v_position.xyz;
+		vec3 lDirAttenuation = lDir * ve_spotLightARI[i];
 		lDir = normalize(lDir);
-		float currentAngleCos = dot(lDir, -ve_spotLight[i].direction);
-		attenuation = clamp(1.0 - dot(lDirAttenuation, lDirAttenuation), 0.0, 1.0) * ve_spotLight[i].intensity;
-		attenuation *= smoothstep(ve_spotLight[i].outerAngleCos, ve_spotLight[i].innerAngleCos, currentAngleCos);
-		if (0.0 < ve_spotLight[i].shadowEnabled){
-			vec3 shadowCoord = vec3(v_spotLightST[i].xy, v_spotLightST[i].z - ve_spotLight[i].shadowBias) / v_spotLightST[i].w;
-			float shadow = texture(ve_spotLight[i].shadowMap2D, shadowCoord);
+		float currentAngleCos = dot(lDir, -ve_spotLightDirection[i]);
+		attenuation = clamp(1.0 - dot(lDirAttenuation, lDirAttenuation), 0.0, 1.0) * ve_spotLightIntensity[i];
+		attenuation *= smoothstep(ve_spotLightOuterAngleCos[i], ve_spotLightInnerAngleCos[i], currentAngleCos);
+		if (0.0 < ve_spotLightShadowEnabled[i]){
+			vec3 shadowCoord = vec3(v_spotLightST[i].xy, v_spotLightST[i].z - ve_spotLightShadowBias[i]) / v_spotLightST[i].w;
+			float shadow = texture(ve_spotLightShadowMap[i], shadowCoord);
 			if (shadow < 1.0)
-				attenuation *=  mix(1.0, shadow, ve_spotLight[i].shadowStrength);	
+				attenuation *=  mix(1.0, shadow, ve_spotLightShadowStrength[i]);	
 		}
 
 		vec2 factor = caculateLightFactor(normal, lDir, eye, u_shininess);
-		vec3 lightIntensity = ve_spotLight[i].color * attenuation;
+		vec3 lightIntensity = ve_spotLightColor[i] * attenuation;
 		diffLightColor += lightIntensity * factor.x;
 		specLightColor += lightIntensity * factor.y;
 	}

@@ -108,13 +108,9 @@ private:
 		GLint dirlightNum;
 		GLint pointlightNum;
 		GLint spotlightNum;
-		std::vector< std::vector<GLint> > dirlightParams;
-		std::vector< std::vector<GLint> > pointlightParams;
-		std::vector< std::vector<GLint> > spotlightParams;
-		//GLint lightMatrix;
-		//GLint lightShadow2D;
-		//GLint lightShadowCube;
-		//std::vector< std::vector<GLint> > lightParams;
+		std::vector<GLint> dirlightParams;
+		std::vector<GLint> pointlightParams;
+		std::vector<GLint> spotlightParams;
 	};
 
 	bool _depthTest;

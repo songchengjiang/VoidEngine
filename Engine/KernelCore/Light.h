@@ -10,19 +10,6 @@ class VE_EXPORT veLight : public veNode
 	friend class veSceneManager;
 public:
 
-	static const std::string DEFUALT_LIGHT_UNIFORM_POSITION_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_COLOR_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME;
-
-	static const std::string DEFUALT_LIGHT_UNIFORM_LIGHT_MATRIX_NAME;
-
-	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_RESOLUTION_NAME;
-
 	static const veVec2 DEFAULT_SHADOW_AREA;
 	static const veVec2 DEFAULT_SHADOW_RESOLUTION;
 	static const float  DEFAULT_SHADOW_BIAS;
@@ -107,13 +94,21 @@ protected:
 
 class VE_EXPORT veDirectionalLight : public veLight
 {
+	friend class veSceneManager;
 public:
+	static unsigned int TOTAL_LIGHT_NUM;
 
 	static const std::string DEFUALT_LIGHT_UNIFORM_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_NUM_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_2D_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_COLOR_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME;
 
-	veDirectionalLight();
 	~veDirectionalLight();
 
 	virtual veMat4 getLightMatrix() const override;
@@ -123,6 +118,7 @@ public:
 
 protected:
 
+	veDirectionalLight();
 	virtual void updateShadowTexture() override;
 	virtual void updateShadowCamera() override;
 
@@ -133,13 +129,22 @@ protected:
 
 class VE_EXPORT vePointLight : public veLight
 {
+	friend class veSceneManager;
 public:
+	static unsigned int TOTAL_LIGHT_NUM;
 
 	static const std::string DEFUALT_LIGHT_UNIFORM_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_NUM_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_CUBE_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_POSITION_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_COLOR_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME;
 
-	vePointLight();
 	~vePointLight();
 
 	virtual veMat4 getLightMatrix() const override;
@@ -149,6 +154,7 @@ public:
 
 protected:
 
+	vePointLight();
 	virtual void updateShadowTexture() override;
 	virtual void updateShadowCamera() override;
 
@@ -159,15 +165,26 @@ protected:
 
 class VE_EXPORT veSpotLight : public veLight
 {
+	friend class veSceneManager;
 public:
+
+	static unsigned int TOTAL_LIGHT_NUM;
 
 	static const std::string DEFUALT_LIGHT_UNIFORM_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_NUM_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_POSITION_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_COLOR_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME;
-	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_2D_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME;
 
-	veSpotLight();
 	~veSpotLight();
 
 	virtual veMat4 getLightMatrix() const override;
@@ -185,6 +202,7 @@ public:
 
 protected:
 
+	veSpotLight();
 	virtual void updateShadowTexture() override;
 	virtual void updateShadowCamera() override;
 

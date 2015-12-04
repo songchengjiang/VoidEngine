@@ -141,98 +141,68 @@ public:
 	{
 		std::stringstream def;
 
-		unsigned int dirLightNum = 0;
-		unsigned int pointLightNum = 0;
-		unsigned int spotLightNum = 0;
-		for (auto &light : _command.sceneManager->getLightList()) {
-			if (light->isInScene()) {
-				if (light->getLightType() == veLight::DIRECTIONAL) {
-					++dirLightNum;
-				}
-				else if (light->getLightType() == veLight::POINT) {
-					++pointLightNum;
-				}
-				else if (light->getLightType() == veLight::SPOT) {
-					++spotLightNum;
-				}
+		if (0 < veDirectionalLight::TOTAL_LIGHT_NUM) {
+			def << "#define VE_DIRECTIONAL_LIGHT_MAX_NUM " << veDirectionalLight::TOTAL_LIGHT_NUM << std::endl;
+			def << "uniform vec3  " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];"<<std::endl;
+			def << "uniform vec3  " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
+			if (type == veShader::VERTEX_SHADER) {
+				def << "uniform mat4 " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
 			}
+			if (type == veShader::FRAGMENT_SHADER) {
+				def << "uniform sampler2DShadow " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
+			}
+			def << "uniform int " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME << ";" << std::endl;
 		}
 
-		if (0 < dirLightNum) {
-			def << "\
-#define VE_DIRECTIONAL_LIGHT_MAX_NUM " << dirLightNum << "\n\
-uniform struct {\n\
-    vec3  " << veLight::DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME << ";\n\
-    vec3  " << veLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME << ";\n\
-    mat4 "  << veLight::DEFUALT_LIGHT_UNIFORM_LIGHT_MATRIX_NAME << "; \n\
-    sampler2DShadow " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_2D_NAME << "; \n\
-}" << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];\n\
-uniform int " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME << ";\n\
-";
+		if (0 < vePointLight::TOTAL_LIGHT_NUM) {
+			def << "#define VE_POINT_LIGHT_MAX_NUM " << vePointLight::TOTAL_LIGHT_NUM << std::endl;
+			def << "uniform vec3  " << vePointLight::DEFUALT_LIGHT_UNIFORM_POSITION_NAME << "[VE_POINT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform vec3  " << vePointLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME << "[VE_POINT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << vePointLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME << "[VE_POINT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << vePointLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME << "[VE_POINT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME << "[VE_POINT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME << "[VE_POINT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME << "[VE_POINT_LIGHT_MAX_NUM];" << std::endl;
+			if (type == veShader::VERTEX_SHADER) {
+				def << "uniform mat4 " << vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME << "[VE_POINT_LIGHT_MAX_NUM]; " << std::endl;
+			}
+			if (type == veShader::FRAGMENT_SHADER) {
+				def << "uniform samplerCubeShadow " << vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME << "[VE_POINT_LIGHT_MAX_NUM]; " << std::endl;
+			}
+			def << "uniform int " << vePointLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME << ";" << std::endl;
 		}
 
-		if (0 < pointLightNum) {
-			def << "\
-#define VE_POINT_LIGHT_MAX_NUM " << pointLightNum << "\n\
-uniform struct {\n\
-    vec3  " << veLight::DEFUALT_LIGHT_UNIFORM_POSITION_NAME << ";\n\
-    vec3  " << veLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME << ";\n\
-    mat4 " << veLight::DEFUALT_LIGHT_UNIFORM_LIGHT_MATRIX_NAME << "; \n\
-    samplerCubeShadow " << vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_CUBE_NAME << "; \n\
-}" << vePointLight::DEFUALT_LIGHT_UNIFORM_NAME << "[VE_POINT_LIGHT_MAX_NUM];\n\
-uniform int " << vePointLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME << ";\n\
-";
-		}
-
-		if (0 < spotLightNum) {
-			def << "\
-#define VE_SPOT_LIGHT_MAX_NUM " << spotLightNum << "\n\
-uniform struct {\n\
-    vec3  " << veLight::DEFUALT_LIGHT_UNIFORM_POSITION_NAME << ";\n\
-    vec3  " << veLight::DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME << ";\n\
-    vec3  " << veLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME << ";\n\
-    float " << veLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME << ";\n\
-    float " << veSpotLight::DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME << ";\n\
-    float " << veSpotLight::DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME << ";\n\
-    mat4 " << veLight::DEFUALT_LIGHT_UNIFORM_LIGHT_MATRIX_NAME << "; \n\
-    sampler2DShadow " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_2D_NAME << "; \n\
-}" << veSpotLight::DEFUALT_LIGHT_UNIFORM_NAME << "[VE_SPOT_LIGHT_MAX_NUM];\n\
-uniform int " << veSpotLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME << ";\n\
-";
+		if (0 < veSpotLight::TOTAL_LIGHT_NUM) {
+			def << "#define VE_SPOT_LIGHT_MAX_NUM " << veSpotLight::TOTAL_LIGHT_NUM << std::endl;
+			def << "uniform vec3  " << veSpotLight::DEFUALT_LIGHT_UNIFORM_POSITION_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform vec3  " << veSpotLight::DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform vec3  " << veSpotLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << veSpotLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << veSpotLight::DEFUALT_LIGHT_UNIFORM_ATTENUATION_RANGE_INVERSE_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << veSpotLight::DEFUALT_LIGHT_UNIFORM_INNER_ANGLE_COS_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << veSpotLight::DEFUALT_LIGHT_UNIFORM_OUTER_ANGLE_COS_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
+			if (type == veShader::VERTEX_SHADER) {
+				def << "uniform mat4 " << veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME << "[VE_SPOT_LIGHT_MAX_NUM]; " << std::endl;
+			}
+			if (type == veShader::FRAGMENT_SHADER) {
+				def << "uniform sampler2DShadow " << veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME << "[VE_SPOT_LIGHT_MAX_NUM]; " << std::endl;
+			}
+			def << "uniform int " << veSpotLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME << ";" << std::endl;
 		}
 
 		return def.str();
 	}
 
-	//virtual void visit(veNode &node) {
-	//	_root = &node;
-	//}
-
-	//virtual void visit(veLight &light) {
-	//	if (_traversalMode == veNodeVisitor::TRAVERSE_CHILDREN)
-	//		_lightList[light.getType()].push_back(&light);
-	//}
-
-	//veNode *getRoot() { return _root; }
-
 private:
 
 	const veRenderCommand &_command;
-	//std::map<std::string, std::vector<veLight *> > _lightList;
 	veNode                *_root;
 };
 
