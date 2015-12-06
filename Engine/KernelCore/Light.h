@@ -96,10 +96,10 @@ class VE_EXPORT veDirectionalLight : public veLight
 {
 	friend class veSceneManager;
 public:
-	static unsigned int TOTAL_LIGHT_NUM;
 
 	static const std::string DEFUALT_LIGHT_UNIFORM_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_NUM_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_VISIBLE_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_COLOR_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME;
@@ -116,6 +116,8 @@ public:
 	virtual void shadowCameraCulling() override;
 	virtual void shadowCameraRendering() override;
 
+	static unsigned int totalLightNum() { return _totalDirLightNum; }
+
 protected:
 
 	veDirectionalLight();
@@ -125,16 +127,18 @@ protected:
 protected:
 
 	VE_Ptr<veCamera>  _shadowRenderingCam;
+
+	static unsigned int _totalDirLightNum;
 };
 
 class VE_EXPORT vePointLight : public veLight
 {
 	friend class veSceneManager;
 public:
-	static unsigned int TOTAL_LIGHT_NUM;
 
 	static const std::string DEFUALT_LIGHT_UNIFORM_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_NUM_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_VISIBLE_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_POSITION_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_COLOR_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME;
@@ -152,6 +156,8 @@ public:
 	virtual void shadowCameraCulling() override;
 	virtual void shadowCameraRendering() override;
 
+	static unsigned int totalLightNum() { return _totalPointLightNum; }
+
 protected:
 
 	vePointLight();
@@ -161,6 +167,8 @@ protected:
 protected:
 
 	VE_Ptr<veCamera>  _shadowRenderingCam[6];
+
+	static unsigned int _totalPointLightNum;
 };
 
 class VE_EXPORT veSpotLight : public veLight
@@ -168,10 +176,9 @@ class VE_EXPORT veSpotLight : public veLight
 	friend class veSceneManager;
 public:
 
-	static unsigned int TOTAL_LIGHT_NUM;
-
 	static const std::string DEFUALT_LIGHT_UNIFORM_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_NUM_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_VISIBLE_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_POSITION_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_COLOR_NAME;
@@ -200,6 +207,8 @@ public:
 	virtual void shadowCameraCulling() override;
 	virtual void shadowCameraRendering() override;
 
+	static unsigned int totalLightNum() { return _totalSpotLightNum; }
+
 protected:
 
 	veSpotLight();
@@ -214,6 +223,8 @@ protected:
 	float  _outerAngleCos;
 
 	VE_Ptr<veCamera>  _shadowRenderingCam;
+
+	static unsigned int _totalSpotLightNum;
 };
 
 typedef std::vector< VE_Ptr<veLight> > veLightList;

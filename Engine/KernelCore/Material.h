@@ -106,9 +106,12 @@ private:
 
 	struct LightUniformLocations
 	{
-		GLint dirlightNum;
-		GLint pointlightNum;
-		GLint spotlightNum;
+		GLint dirLightVisible;
+		GLint pointLightVisible;
+		GLint spotLightVisible;
+		GLint dirLightShadowMap;
+		GLint pointLightShadowMap;
+		GLint spotLightShadowMap;
 		std::vector<GLint> dirlightParams;
 		std::vector<GLint> pointlightParams;
 		std::vector<GLint> spotlightParams;

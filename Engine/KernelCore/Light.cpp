@@ -10,12 +10,10 @@ const float  veLight::DEFAULT_SHADOW_STRENGTH   = 1.0f;
 
 veLight* veLight::CURRENT_LIGHT = nullptr;
 
-unsigned int veDirectionalLight::TOTAL_LIGHT_NUM = 0;
-unsigned int vePointLight::TOTAL_LIGHT_NUM       = 0;
-unsigned int veSpotLight::TOTAL_LIGHT_NUM        = 0;
-
 const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_NAME                     = "ve_dirLight";
 const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME                 = "ve_dirLightNum";
+
+const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_VISIBLE_NAME             = "ve_dirLightVisible";
 const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME           = "ve_dirLightDirection";
 const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME               = "ve_dirLightColor";
 const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME           = "ve_dirLightIntensity";
@@ -27,6 +25,8 @@ const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME     
 
 const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_NAME                           = "ve_pointLight";
 const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME                       = "ve_pointLightNum";
+
+const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_VISIBLE_NAME                   = "ve_pointLightVisible";
 const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_POSITION_NAME                  = "ve_pointLightPosition";
 const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME                     = "ve_pointLightColor";
 const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_INTENSITY_NAME                 = "ve_pointLightIntensity";
@@ -39,6 +39,8 @@ const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME           
 
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_NAME                            = "ve_spotLight";
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME                        = "ve_spotLightNum";
+
+const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_VISIBLE_NAME                    = "ve_spotLightVisible";
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_POSITION_NAME                   = "ve_spotLightPosition";
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME                  = "ve_spotLightDirection";
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME                      = "ve_spotLightColor";
@@ -51,6 +53,11 @@ const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME           
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME            = "ve_spotLightShadowStrength";
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME              = "ve_spotLightShadowMat";
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME                 = "ve_spotLightShadowMap";
+
+unsigned int veDirectionalLight::_totalDirLightNum = 0;
+unsigned int vePointLight::_totalPointLightNum     = 0;
+unsigned int veSpotLight::_totalSpotLightNum       = 0;
+
 
 static const veMat4 LIGHT_BIAS_MAT = veMat4(0.5f, 0.0f, 0.0f, 0.5f
 										  , 0.0f, 0.5f, 0.0f, 0.5f
@@ -116,12 +123,12 @@ void veLight::updateSceneManager()
 veDirectionalLight::veDirectionalLight()
 	: veLight(DIRECTIONAL)
 {
-	++veDirectionalLight::TOTAL_LIGHT_NUM;
+	++_totalDirLightNum;
 }
 
 veDirectionalLight::~veDirectionalLight()
 {
-	--veDirectionalLight::TOTAL_LIGHT_NUM;
+	--_totalDirLightNum;
 }
 
 veMat4 veDirectionalLight::getLightMatrix() const
@@ -177,12 +184,12 @@ void veDirectionalLight::updateShadowCamera()
 vePointLight::vePointLight()
 	: veLight(POINT)
 {
-	++vePointLight::TOTAL_LIGHT_NUM;
+	++_totalPointLightNum;
 }
 
 vePointLight::~vePointLight()
 {
-	--vePointLight::TOTAL_LIGHT_NUM;
+	--_totalPointLightNum;
 }
 
 veMat4 vePointLight::getLightMatrix() const
@@ -253,12 +260,12 @@ veSpotLight::veSpotLight()
 	, _outerAngle(45.0f)
 	, _outerAngleCos(veMath::veCos(veMath::veRadian(_outerAngle)))
 {
-	++veSpotLight::TOTAL_LIGHT_NUM;
+	++_totalSpotLightNum;
 }
 
 veSpotLight::~veSpotLight()
 {
-	--veSpotLight::TOTAL_LIGHT_NUM;
+	--_totalSpotLightNum;
 }
 
 veMat4 veSpotLight::getLightMatrix() const
