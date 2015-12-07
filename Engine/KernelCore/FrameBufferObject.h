@@ -17,7 +17,7 @@ public:
 	USE_NAME_PROPERTY;
 
 	void setFrameBufferSize(const veVec2 &size);
-	void attach(GLenum attachment, GLenum target, veTexture *attachTex, bool needMipmap = false);
+	void attach(GLenum attachment, GLenum target, veTexture *attachTex, GLint layer = -1, bool needMipmap = false);
 
 	void bind(unsigned int clearMask);
 	void unBind();
@@ -35,6 +35,7 @@ private:
 	struct AttachmentInfo
 	{
 		GLenum target;
+		GLint layer;
 		VE_Ptr<veTexture> texture;
 		bool   needMipmap;
 	};
@@ -53,7 +54,8 @@ public:
 	~veFrameBufferObjectManager();
 	static veFrameBufferObjectManager* instance();
 
-	veFrameBufferObject* getOrCreateFrameBufferObject(const std::string &name);
+	veFrameBufferObject* findFrameBufferObject(const std::string &name);
+	veFrameBufferObject* createFrameBufferObject(const std::string &name);
 	veFrameBufferObject* getFrameBufferObject(unsigned int idx);
 	size_t getFrameBufferObjectNum() const { return _fbos.size(); }
 
@@ -61,7 +63,6 @@ public:
 private:
 
 	veFrameBufferObjectManager();
-	veFrameBufferObject* findfbo(const std::string &name);
 
 private:
 

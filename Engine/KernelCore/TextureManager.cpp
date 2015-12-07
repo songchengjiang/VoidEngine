@@ -51,12 +51,20 @@ veTexture* veTextureManager::createTexture(const std::string &name, veTexture::T
 	if (texType == veTexture::TEXTURE_2D) {
 		texture = new veTexture2D;
 	}
+	else if (texType == veTexture::TEXTURE_2D_ARRAY) {
+		texture = new veTexture2DArray;
+	}
 	else if (texType == veTexture::TEXTURE_3D) {
 		texture = new veTexture3D;
 	}
 	else if (texType == veTexture::TEXTURE_CUBE) {
 		texture = new veTextureCube;
 	}
+#if VE_PLATFORM != VE_PLATFORM_ANDROID
+	else if (texType == veTexture::TEXTURE_CUBE_ARRAY) {
+		texture = new veTextureCubeArray;
+	}
+#endif
 	texture->setName(name);
 	texture->_manager = this;
 	_texturePool.push_back(texture);

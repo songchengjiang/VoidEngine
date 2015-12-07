@@ -54,9 +54,18 @@ const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME       
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME              = "ve_spotLightShadowMat";
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME                 = "ve_spotLightShadowMap";
 
+VE_Ptr<veTexture> veDirectionalLight::_shadowTexture;
+VE_Ptr<veTexture> veSpotLight::_shadowTexture;
+VE_Ptr<veTexture> vePointLight::_shadowTexture;
+
+
 unsigned int veDirectionalLight::_totalDirLightNum = 0;
-unsigned int vePointLight::_totalPointLightNum     = 0;
-unsigned int veSpotLight::_totalSpotLightNum       = 0;
+unsigned int vePointLight::_totalPointLightNum = 0;
+unsigned int veSpotLight::_totalSpotLightNum = 0;
+
+static const std::string DEFAULT_DIRECTIONAL_LIGHT_SHADOW_MAP_TEXTURE_NAME = "DEFAULT_DIRECTIONAL_LIGHT_SHADOW_MAP_TEXTURE_NAME";
+static const std::string DEFAULT_POINT_LIGHT_SHADOW_MAP_TEXTURE_NAME = "DEFAULT_POINT_LIGHT_SHADOW_MAP_TEXTURE_NAME";
+static const std::string DEFAULT_SPOT_LIGHT_SHADOW_MAP_TEXTURE_NAME = "DEFAULT_SPOT_LIGHT_SHADOW_MAP_TEXTURE_NAME";
 
 
 static const veMat4 LIGHT_BIAS_MAT = veMat4(0.5f, 0.0f, 0.0f, 0.5f
@@ -106,6 +115,17 @@ void veLight::setMask(unsigned int mask, bool isOverride /*= true*/)
 	_needRefreshShadowCamera = true;
 }
 
+void veLight::shadowEnable(bool isEnabled)
+{
+#if VE_PLATFORM == VE_PLATFORM_ANDROID
+	if (_type == POINT) {
+		veLog("Unfortunately, point light shadow not support on android!(The GLSL not support samplerCubeArray or samplerCubeArrayShadow)");
+		return;
+	}
+#endif
+	_shadowEnabled = isEnabled;
+}
+
 void veLight::setShadowResolution(const veVec2 &resolution)
 {
 	if (_shadowResolution == resolution)
@@ -123,6 +143,7 @@ void veLight::updateSceneManager()
 veDirectionalLight::veDirectionalLight()
 	: veLight(DIRECTIONAL)
 {
+	_currentLightIndex = _totalDirLightNum;
 	++_totalDirLightNum;
 }
 
@@ -151,9 +172,9 @@ void veDirectionalLight::updateShadowTexture()
 {
 	if (_needRefreshShadow) {
 		if (!_shadowTexture.valid())
-			_shadowTexture = _sceneManager->createTexture(_name + std::string("-ShadowTexture"), veTexture::TEXTURE_2D);
-		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1
-			, GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
+			_shadowTexture = _sceneManager->createTexture(DEFAULT_DIRECTIONAL_LIGHT_SHADOW_MAP_TEXTURE_NAME, veTexture::TEXTURE_2D_ARRAY);
+		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, _totalDirLightNum
+			, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 		_needRefreshShadow = false;
@@ -165,14 +186,14 @@ void veDirectionalLight::updateShadowCamera()
 	if (_needRefreshShadowCamera) {
 		if (!_shadowRenderingCam.valid()) {
 			_shadowRenderingCam = _sceneManager->createCamera(_name + std::string("-ShadowCamera"));
-			auto fbo = veFrameBufferObjectManager::instance()->getOrCreateFrameBufferObject(_name + std::string("-ShadowFBO"));
+			auto fbo = veFrameBufferObjectManager::instance()->createFrameBufferObject(_name + std::string("-ShadowFBO"));
 			_shadowRenderingCam->setFrameBufferObject(fbo);
 		}
 
 		_shadowRenderingCam->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
 		_shadowRenderingCam->setProjectionMatrixAsOrtho(-_shadowArea.x() * 0.5f, _shadowArea.x() * 0.5f, -_shadowArea.y() * 0.5f, _shadowArea.y() * 0.5f
 			, 0.1f, _attenuationRange);
-		_shadowRenderingCam->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowTexture.get());
+		_shadowRenderingCam->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowTexture.get(), _currentLightIndex);
 		_shadowRenderingCam->setMask(_mask);
 
 		_needRefreshShadowCamera = false;
@@ -184,6 +205,7 @@ void veDirectionalLight::updateShadowCamera()
 vePointLight::vePointLight()
 	: veLight(POINT)
 {
+	_currentLightIndex = _totalPointLightNum;
 	++_totalPointLightNum;
 }
 
@@ -216,9 +238,9 @@ void vePointLight::updateShadowTexture()
 {
 	if (_needRefreshShadow) {
 		if (!_shadowTexture.valid())
-			_shadowTexture = _sceneManager->createTexture(_name + std::string("-ShadowTexture"), veTexture::TEXTURE_CUBE);
-		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1
-			, GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
+			_shadowTexture = _sceneManager->createTexture(DEFAULT_POINT_LIGHT_SHADOW_MAP_TEXTURE_NAME, veTexture::TEXTURE_CUBE_ARRAY);
+		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, _totalPointLightNum * 6
+			, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 		_needRefreshShadow = false;
@@ -229,16 +251,17 @@ void vePointLight::updateShadowCamera()
 {
 	if (_needRefreshShadowCamera) {
 		char str[4];
+		unsigned int layerBase = _currentLightIndex * 6;
 		for (unsigned int i = 0; i < 6; ++i) {
 			if (!_shadowRenderingCam[i].valid()) {
 				sprintf(str, "%d", i);
 				_shadowRenderingCam[i] = _sceneManager->createCamera(_name + std::string("-ShadowCamera") + std::string(str));
-				auto fbo = veFrameBufferObjectManager::instance()->getOrCreateFrameBufferObject(_name + std::string("-ShadowFBO") + std::string(str));
+				auto fbo = veFrameBufferObjectManager::instance()->createFrameBufferObject(_name + std::string("-ShadowFBO") + std::string(str));
 				_shadowRenderingCam[i]->setFrameBufferObject(fbo);
 			}
 			_shadowRenderingCam[i]->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
 			_shadowRenderingCam[i]->setProjectionMatrixAsPerspective(90.0f, 1.0f, 0.1f, _attenuationRange);
-			_shadowRenderingCam[i]->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, _shadowTexture.get());
+			_shadowRenderingCam[i]->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, _shadowTexture.get(), layerBase + i);
 			_shadowRenderingCam[i]->setMask(_mask);
 		}
 		_needRefreshShadowCamera = false;
@@ -260,6 +283,7 @@ veSpotLight::veSpotLight()
 	, _outerAngle(45.0f)
 	, _outerAngleCos(veMath::veCos(veMath::veRadian(_outerAngle)))
 {
+	_currentLightIndex = _totalSpotLightNum;
 	++_totalSpotLightNum;
 }
 
@@ -288,9 +312,9 @@ void veSpotLight::updateShadowTexture()
 {
 	if (_needRefreshShadow) {
 		if (!_shadowTexture.valid())
-			_shadowTexture = _sceneManager->createTexture(_name + std::string("-ShadowTexture"), veTexture::TEXTURE_2D);
-		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1
-			, GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
+			_shadowTexture = _sceneManager->createTexture(DEFAULT_SPOT_LIGHT_SHADOW_MAP_TEXTURE_NAME, veTexture::TEXTURE_2D_ARRAY);
+		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, _totalSpotLightNum
+			, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 		_needRefreshShadow = false;
@@ -302,13 +326,13 @@ void veSpotLight::updateShadowCamera()
 	if (_needRefreshShadowCamera) {
 		if (!_shadowRenderingCam.valid()) {
 			_shadowRenderingCam = _sceneManager->createCamera(_name + std::string("-ShadowCamera"));
-			auto fbo = veFrameBufferObjectManager::instance()->getOrCreateFrameBufferObject(_name + std::string("-ShadowFBO"));
+			auto fbo = veFrameBufferObjectManager::instance()->createFrameBufferObject(_name + std::string("-ShadowFBO"));
 			_shadowRenderingCam->setFrameBufferObject(fbo);
 		}
 
 		_shadowRenderingCam->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
 		_shadowRenderingCam->setProjectionMatrixAsPerspective(2.0f * _outerAngle, 1.0f, 0.1f, _attenuationRange);
-		_shadowRenderingCam->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowTexture.get());
+		_shadowRenderingCam->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowTexture.get(), _currentLightIndex);
 		_shadowRenderingCam->setMask(_mask);
 
 		_needRefreshShadowCamera = false;

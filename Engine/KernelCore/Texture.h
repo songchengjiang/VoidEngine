@@ -18,9 +18,11 @@ public:
 	enum TextureType
 	{
 		TEXTURE_2D,
+		TEXTURE_2D_ARRAY,
 		TEXTURE_3D,
 		//TEXTURE_RECT,
 		TEXTURE_CUBE,
+		TEXTURE_CUBE_ARRAY,
 	};
 
 	enum WrapMode{
@@ -75,14 +77,14 @@ public:
 
 	void setTexParameter(GLenum pname, GLint param);
 
-	virtual void storage(int width, int height, int depth, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE
+	virtual void storage(int width, int height, int depthOrLayer, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE
 		, const unsigned char *data = nullptr, unsigned int requestMipMapLevels = 10);
 
 	virtual void storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE);
 
 	int getWidth() const { return _width; }
 	int getHeight() const { return _height; }
-	int getDepth() const { return _depth; }
+	int getDepth() const { return _depthOrLayer; }
 	GLint getInternalFormat() const { return _internalFormat; }
 	GLenum getPixelFormat() const { return _pixelFormat; }
 	GLenum getDataType() const { return _dataType; }
@@ -122,7 +124,7 @@ protected:
 
 	int             _width;
 	int             _height;
-	int             _depth;
+	int             _depthOrLayer;
 	GLint           _internalFormat;
 	GLenum          _pixelFormat;
 	GLenum          _dataType;
@@ -198,5 +200,54 @@ protected:
 
 	VE_Ptr<veTexture> _textures[6];
 };
+
+class VE_EXPORT veTexture2DArray : public veTexture
+{
+	friend class veTextureManager;
+public:
+
+	~veTexture2DArray();
+
+	virtual void bind(unsigned int textureUnit) override;
+
+protected:
+	veTexture2DArray();
+
+};
+
+#if VE_PLATFORM != VE_PLATFORM_ANDROID
+class VE_EXPORT veTextureCubeArray : public veTexture
+{
+	friend class veTextureManager;
+public:
+
+	enum CubeMapTexType
+	{
+		CUBE_MAP_POSITIVE_X = 0,
+		CUBE_MAP_NEGATIVE_X = 1,
+		CUBE_MAP_POSITIVE_Y = 2,
+		CUBE_MAP_NEGATIVE_Y = 3,
+		CUBE_MAP_POSITIVE_Z = 4,
+		CUBE_MAP_NEGATIVE_Z = 5,
+	};
+
+
+	void setTexture(CubeMapTexType texType, unsigned int layer, veTexture *texture);
+	veTexture* getTexture(CubeMapTexType texType, unsigned int layer);
+	virtual unsigned int getTextureTotalMemory() override;
+
+	~veTextureCubeArray();
+
+	virtual void bind(unsigned int textureUnit) override;
+
+protected:
+	veTextureCubeArray();
+
+	struct CubeMapTextures{
+		VE_Ptr<veTexture> faces[6];
+	};
+	std::vector<CubeMapTextures> _textures;
+};
+#endif
 
 #endif

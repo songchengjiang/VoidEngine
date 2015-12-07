@@ -42,7 +42,7 @@ public:
 	float getAttenuationRange() const { return _attenuationRange; }
 	float getAttenuationRangeInverse() const { return _attenuationRangeInverse; }
 
-	void shadowEnable(bool isEnabled) { _shadowEnabled = isEnabled; }
+	void shadowEnable(bool isEnabled);
 	bool isShadowEnabled() const { return _shadowEnabled; };
 	void setShadowResolution(const veVec2 &resolution);
 	const veVec2& getShadowResolution() const { return _shadowResolution; }
@@ -55,9 +55,6 @@ public:
 
 	void setLightInCameraMatrix(const veMat4 &mat) { _lightInCamMatrix = mat; }
 	const veMat4& getLightInCameraMatrix() { return _lightInCamMatrix; }
-
-	veTexture* getShadowTexture() { return _shadowTexture.get(); }
-	const veTexture* getShadowTexture() const { return _shadowTexture.get(); }
 
 	virtual veMat4 getLightMatrix() const = 0;
 
@@ -80,6 +77,7 @@ protected:
 	float  _attenuationRange;
 	float  _attenuationRangeInverse;
 	veMat4 _lightInCamMatrix;
+	unsigned int _currentLightIndex;
 
 	bool _shadowEnabled;
 	bool _perspectiveShadow;
@@ -87,7 +85,6 @@ protected:
 	veVec2 _shadowArea;
 	float _shadowBias;
 	float _shadowStrength;
-	VE_Ptr<veTexture> _shadowTexture;
 	bool _needRefreshShadow;
 	bool _needRefreshShadowCamera;
 };
@@ -116,6 +113,7 @@ public:
 	virtual void shadowCameraCulling() override;
 	virtual void shadowCameraRendering() override;
 
+	static veTexture* getShadowTexture() { return _shadowTexture.get(); }
 	static unsigned int totalLightNum() { return _totalDirLightNum; }
 
 protected:
@@ -127,7 +125,7 @@ protected:
 protected:
 
 	VE_Ptr<veCamera>  _shadowRenderingCam;
-
+	static VE_Ptr<veTexture> _shadowTexture;
 	static unsigned int _totalDirLightNum;
 };
 
@@ -156,6 +154,7 @@ public:
 	virtual void shadowCameraCulling() override;
 	virtual void shadowCameraRendering() override;
 
+	static veTexture* getShadowTexture() { return _shadowTexture.get(); }
 	static unsigned int totalLightNum() { return _totalPointLightNum; }
 
 protected:
@@ -168,6 +167,7 @@ protected:
 
 	VE_Ptr<veCamera>  _shadowRenderingCam[6];
 
+	static VE_Ptr<veTexture> _shadowTexture;
 	static unsigned int _totalPointLightNum;
 };
 
@@ -207,6 +207,7 @@ public:
 	virtual void shadowCameraCulling() override;
 	virtual void shadowCameraRendering() override;
 
+	static veTexture* getShadowTexture() { return _shadowTexture.get(); }
 	static unsigned int totalLightNum() { return _totalSpotLightNum; }
 
 protected:
@@ -224,6 +225,7 @@ protected:
 
 	VE_Ptr<veCamera>  _shadowRenderingCam;
 
+	static VE_Ptr<veTexture> _shadowTexture;
 	static unsigned int _totalSpotLightNum;
 };
 

@@ -166,7 +166,7 @@ private:
 	}
 
 	void readfbo(const Value &fboVal) {
-		auto fbo = veFrameBufferObjectManager::instance()->getOrCreateFrameBufferObject(_camera->getName());
+		auto fbo = veFrameBufferObjectManager::instance()->createFrameBufferObject(_camera->getName());
 		for (unsigned int i = 0; i < fboVal.Size(); ++i) {
 			const Value &attachmentVal = fboVal[i];
 			veTexture *texture = nullptr;
@@ -227,7 +227,7 @@ private:
 			}
 
 			texture->storage(width * VE_DEVICE_PIXEL_RATIO, height * VE_DEVICE_PIXEL_RATIO, 1, internalFormat, GL_RGB, GL_UNSIGNED_BYTE, nullptr, (unsigned int)log2(width * VE_DEVICE_PIXEL_RATIO) + 1);
-			fbo->attach(attachment, target, texture, needMipmap);
+			fbo->attach(attachment, target, texture, -1, needMipmap);
 		}
 		_camera->setFrameBufferObject(fbo);
 	}

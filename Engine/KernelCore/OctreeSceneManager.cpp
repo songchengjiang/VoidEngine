@@ -9,6 +9,8 @@
 #include "Application.h"
 #include "MaterialManager.h"
 
+static const std::string POST_PROCESSER_FRAMEBUFFER_OBJECT = "POST_PROCESSER_FRAMEBUFFER_OBJECT";
+
 veOctreeSceneManager::veOctreeSceneManager()
 	: _boundingBox(veVec3(-10000.0f), veVec3(10000.0f))
 	, _octreeMaxDeep(8)
@@ -253,7 +255,7 @@ void veOctreeSceneManager::render()
 		if (!_postProcesserList.empty()) {
 			veRenderer::CURRENT_RENDER_STAGE = veRenderer::POSTPROCESS;
 			if (!_postProcesserFBO.valid()) {
-				_postProcesserFBO = veFrameBufferObjectManager::instance()->getOrCreateFrameBufferObject("postProcesserFBO");
+				_postProcesserFBO = veFrameBufferObjectManager::instance()->createFrameBufferObject(POST_PROCESSER_FRAMEBUFFER_OBJECT);
 			}
 			mainCam->setFrameBufferObject(_postProcesserFBO.get());
 			for (size_t i = 0; i < _postProcesserList.size(); ++i) {

@@ -56,8 +56,10 @@ out vec2 v_texcoord;
 out vec4 v_directionalLightST[VE_DIRECTIONAL_LIGHT_MAX_NUM];
 #endif
 
+#if VE_PLATFORM != VE_PLATFORM_ANDROID
 #ifdef VE_POINT_LIGHT_MAX_NUM
 out vec3 v_pointLightST[VE_POINT_LIGHT_MAX_NUM];
+#endif
 #endif
 
 #ifdef VE_SPOT_LIGHT_MAX_NUM
@@ -71,23 +73,25 @@ void caculateShadowTextureCoord(in vec4 position)
 {
 #ifdef VE_DIRECTIONAL_LIGHT_MAX_NUM
 	for (int i = 0; i < VE_DIRECTIONAL_LIGHT_MAX_NUM; ++i){
-		if (0 < ve_dirLightVisible[i] && 0.0 < ve_dirLightShadowEnabled[i]){
+		if (0 < ve_dirLightVisible[i] && 0 < ve_dirLightShadowEnabled[i]){
 			v_directionalLightST[i] = ve_dirLightShadowMat[i] * position;
 		}
 	}
 #endif
 
+#if VE_PLATFORM != VE_PLATFORM_ANDROID
 #ifdef VE_POINT_LIGHT_MAX_NUM
 	for (int i = 0; i < VE_POINT_LIGHT_MAX_NUM; ++i){
-		if (0 < ve_pointLightVisible[i] && 0.0 < ve_pointLightShadowEnabled[i]){
+		if (0 < ve_pointLightVisible[i] && 0 < ve_pointLightShadowEnabled[i]){
 			v_pointLightST[i] = (ve_pointLightShadowMat[i] * position).xyz;
 		}
 	}
 #endif
+#endif
 
 #ifdef VE_SPOT_LIGHT_MAX_NUM
 	for (int i = 0; i < VE_SPOT_LIGHT_MAX_NUM; ++i){
-		if (0 < ve_spotLightVisible[i] && 0.0 < ve_spotLightShadowEnabled[i]){
+		if (0 < ve_spotLightVisible[i] && 0 < ve_spotLightShadowEnabled[i]){
 			v_spotLightST[i] = ve_spotLightShadowMat[i] * position;
 		}
 	}

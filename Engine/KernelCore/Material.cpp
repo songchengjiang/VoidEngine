@@ -340,7 +340,7 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, const veRender
 		}
 
 		if (0 < shadowEnabledLoc) {
-			glUniform1f(shadowEnabledLoc, light->isShadowEnabled() ? 1.0f : 0.0f);
+			glUniform1i(shadowEnabledLoc, light->isShadowEnabled() ? 1 : 0);
 		}
 
 		if (light->isShadowEnabled()) {
@@ -366,30 +366,26 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, const veRender
 void vePass::applyLightTextures(unsigned int beginTexUnit, const veRenderCommand &command)
 {
 	const veLightList &lightList = command.sceneManager->getLightList();
-	if (lightList.empty() || (_lightUniformLocations.dirLightVisible < 0 && _lightUniformLocations.pointLightVisible < 0 && _lightUniformLocations.spotLightVisible < 0))
+	if (lightList.empty())
 		return;
 
 	unsigned int texUnit = beginTexUnit;
-
-#define APPLY_LIGHT_TEXTURE(TYPE, SHADOW_LOC) \
-	if (0 < SHADOW_LOC)      \
-	{       \
-		unsigned int lightIdx = 0;     \
-		for (auto &light : lightList) {  \
-			if (light->getLightType() == TYPE) {   \
-				glUniform1i(SHADOW_LOC + lightIdx, texUnit); \
-				if (light->isInScene() && light->isVisible() && light->isShadowEnabled() && (light->getMask() & command.mask)) {  \
-					light.get()->getShadowTexture()->bind(texUnit);  \
-				}  \
-				++lightIdx;  \
-				++texUnit;  \
-			}  \
-		}  \
+	if (veDirectionalLight::getShadowTexture()) {
+		glUniform1i(_lightUniformLocations.dirLightShadowMap, texUnit);
+		veDirectionalLight::getShadowTexture()->bind(texUnit);
 	}
 
-	APPLY_LIGHT_TEXTURE(veLight::DIRECTIONAL, _lightUniformLocations.dirLightShadowMap);
-	APPLY_LIGHT_TEXTURE(veLight::POINT, _lightUniformLocations.pointLightShadowMap);
-	APPLY_LIGHT_TEXTURE(veLight::SPOT, _lightUniformLocations.spotLightShadowMap);
+	++texUnit;
+	if (vePointLight::getShadowTexture()) {
+		glUniform1i(_lightUniformLocations.pointLightShadowMap, texUnit);
+		vePointLight::getShadowTexture()->bind(texUnit);
+	}
+
+	++texUnit;
+	if (veSpotLight::getShadowTexture()) {
+		glUniform1i(_lightUniformLocations.spotLightShadowMap, texUnit);
+		veSpotLight::getShadowTexture()->bind(texUnit);
+	}
 }
 
 void vePass::locateLightUnifroms(const veRenderCommand &command)

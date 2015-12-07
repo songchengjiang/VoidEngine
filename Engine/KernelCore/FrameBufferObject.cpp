@@ -5,16 +5,6 @@ veFrameBufferObjectManager::veFrameBufferObjectManager()
 
 }
 
-veFrameBufferObject* veFrameBufferObjectManager::findfbo(const std::string &name)
-{
-	for (auto &iter : _fbos) {
-		if (iter->getName() == name)
-			return iter;
-	}
-
-	return nullptr;
-}
-
 veFrameBufferObjectManager::~veFrameBufferObjectManager()
 {
 	for (auto &iter : _fbos) {
@@ -28,14 +18,21 @@ veFrameBufferObjectManager* veFrameBufferObjectManager::instance()
 	return &fboManager;
 }
 
-veFrameBufferObject* veFrameBufferObjectManager::getOrCreateFrameBufferObject(const std::string &name)
+veFrameBufferObject* veFrameBufferObjectManager::findFrameBufferObject(const std::string &name)
 {
-	auto fbo = findfbo(name);
-	if (!fbo) {
-		fbo = new veFrameBufferObject;
-		fbo->setName(name);
-		_fbos.push_back(fbo);
+	for (auto &iter : _fbos) {
+		if (iter->getName() == name)
+			return iter;
 	}
+
+	return nullptr;
+}
+
+veFrameBufferObject* veFrameBufferObjectManager::createFrameBufferObject(const std::string &name)
+{
+	auto fbo = new veFrameBufferObject;
+	fbo->setName(name);
+	_fbos.push_back(fbo);
 	return fbo;
 }
 
@@ -85,20 +82,21 @@ void veFrameBufferObject::setFrameBufferSize(const veVec2 &size)
 	_needRefreshAttachments = true;
 }
 
-void veFrameBufferObject::attach(GLenum attachment, GLenum target, veTexture *attachTex, bool needMipmap)
+void veFrameBufferObject::attach(GLenum attachment, GLenum target, veTexture *attachTex, GLint layer, bool needMipmap)
 {
 	if (_attachments[attachment].target == target
 	 && _attachments[attachment].texture == attachTex
 	 && _attachments[attachment].needMipmap == needMipmap)
 		return;
-	_attachments[attachment] = AttachmentInfo{target, attachTex, needMipmap};
+	_attachments[attachment] = AttachmentInfo{target, layer, attachTex, needMipmap};
 	_needRefreshAttachments = true;
 }
 
 void veFrameBufferObject::bind(unsigned int clearMask)
 {
 	if (CURRENT_FBO == this) return;
-	glDrawBuffer(GL_NONE);
+	GLenum bufs = {GL_NONE};
+	glDrawBuffers(1, &bufs);
 	refreshBuffers(clearMask);
 	refreshAttachments();
 	CURRENT_FBO = this;
@@ -109,7 +107,8 @@ void veFrameBufferObject::unBind()
 	if (CURRENT_FBO == nullptr) return;
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glDrawBuffer(GL_BACK);
+	GLenum bufs = {GL_BACK};
+	glDrawBuffers(1, &bufs);
 	CURRENT_FBO = nullptr;
 	for (auto &iter : _attachments) {
 		if (iter.second.needMipmap) {
@@ -175,25 +174,35 @@ void veFrameBufferObject::refreshAttachments()
 				//iter.second->storage(iter.second->getWidth(), iter.second->getHeight(), 1
 				//	, iter.second->getInternalFormat(), iter.second->getPixelFormat(), iter.second->getDataType(), nullptr);
 				iter.second.texture->bind(0);
-				glFramebufferTexture2D(GL_FRAMEBUFFER, iter.first, iter.second.target, iter.second.texture->glTex(), 0);
+				if (iter.second.layer < 0)
+					glFramebufferTexture2D(GL_FRAMEBUFFER, iter.first, iter.second.target, iter.second.texture->glTex(), 0);
+				else
+					glFramebufferTextureLayer(GL_FRAMEBUFFER, iter.first, iter.second.texture->glTex(), 0, iter.second.layer);		
 			}
 			else {
-				glFramebufferTexture2D(GL_FRAMEBUFFER, iter.first, 0, 0, 0);
+				if (iter.second.layer < 0)
+					glFramebufferTexture2D(GL_FRAMEBUFFER, iter.first, 0, 0, 0);
+				else
+					glFramebufferTextureLayer(GL_FRAMEBUFFER, iter.first, 0, 0, 0);
 			}
 		}
 		if (!mrt.empty())
 			glDrawBuffers(GLsizei(mrt.size()), &mrt[0]);
 
 		//GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-		//if ( status == GL_FRAMEBUFFER_COMPLETE ) {
+		//if (status == GL_FRAMEBUFFER_COMPLETE) {
 		//	veLog("GL_FRAMEBUFFER_COMPLETE");
-		//}else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT){
+		//}
+		//else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
 		//	veLog("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
-		//}else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT){
+		//}
+		//else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
 		//	veLog("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
-		//}else if (status == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT){
+		//}
+		//else if (status == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
 		//	veLog("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
-		//}else if (status == GL_FRAMEBUFFER_UNSUPPORTED){
+		//}
+		//else if (status == GL_FRAMEBUFFER_UNSUPPORTED) {
 		//	veLog("GL_FRAMEBUFFER_UNSUPPORTED");
 		//}
 
