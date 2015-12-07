@@ -234,10 +234,12 @@ void veQuat::fromAngleAxis(const veReal angle, const veVec3 &axes)
 {
 	veReal fHalfAngle(0.5f*angle);
 	veReal fSin = veMath::veSin(fHalfAngle);
+	veVec3 normal(axes);
+	normal.normalize();
 	_w = veMath::veCos(fHalfAngle);
-	_x = fSin * axes.x();
-	_y = fSin * axes.y();
-	_z = fSin * axes.z();
+	_x = fSin * normal.x();
+	_y = fSin * normal.y();
+	_z = fSin * normal.z();
 }
 
 void veQuat::fromMat3(const veMat3 &mat)
