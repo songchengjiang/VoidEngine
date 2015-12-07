@@ -35,7 +35,7 @@ layout(location=2) out vec4 normAndepth;
 #ifdef VE_USE_LIGHTS
 
 vec2 caculateLightFactor(vec3 normal, vec3 lightDir, vec3 eyeDir, float shininess){
-	vec2 factor;
+	vec2 factor = vec2(0.0);
 	factor.x = max(0.0, dot(normal, lightDir));
 	if (0.0 < shininess){
 		vec3 H = normalize(eyeDir + lightDir);
@@ -44,7 +44,7 @@ vec2 caculateLightFactor(vec3 normal, vec3 lightDir, vec3 eyeDir, float shinines
 	return factor;
 }
 
-void Lighting(out vec3 diffLightColor, out vec3 specLightColor)
+void Lighting(inout vec3 diffLightColor, inout vec3 specLightColor)
 {
 	vec3 normal = normalize(v_normalAndepth.xyz);                   
 	vec3 eye = normalize(-v_position.xyz);
@@ -134,8 +134,8 @@ void main(){
     normAndepth = v_normalAndepth;
 #else //NOT VE_USE_DEFERRED_PATH
 #ifdef VE_USE_LIGHTS
-    vec3 diffactor;
-    vec3 specfactor;
+    vec3 diffactor = vec3(0.0);
+    vec3 specfactor = vec3(0.0);
     Lighting(diffactor, specfactor);
 #ifdef VE_USE_TEXTURES
     fragColor = clamp(vec4(diffactor * u_diffuse * texture(u_diffuseTex, v_texcoord).xyz + specfactor * u_specular + u_ambient, u_opacity), 0.0, 1.0);
