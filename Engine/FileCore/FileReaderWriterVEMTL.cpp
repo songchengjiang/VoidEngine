@@ -258,11 +258,13 @@ private:
 								tempTex = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, _name + std::string("-temp")));
 							}
 
-							if (tempTex->getMipmapLevels().empty()) {
-								texture->storage(tempTex->getWidth(), tempTex->getHeight(), tempTex->getDepth(), tempTex->getInternalFormat(), tempTex->getPixelFormat(), tempTex->getDataType(), tempTex->getData());
-							}
-							else {
-								texture->storage(tempTex->getMipmapLevels(), tempTex->getInternalFormat(), tempTex->getPixelFormat(), tempTex->getDataType());
+							if (tempTex) {
+								if (tempTex->getMipmapLevels().empty()) {
+									texture->storage(tempTex->getWidth(), tempTex->getHeight(), tempTex->getDepth(), tempTex->getInternalFormat(), tempTex->getPixelFormat(), tempTex->getDataType(), tempTex->getData());
+								}
+								else {
+									texture->storage(tempTex->getMipmapLevels(), tempTex->getInternalFormat(), tempTex->getPixelFormat(), tempTex->getDataType());
+								}
 							}
 							//static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->removeTexture(tempTex);
 						}
