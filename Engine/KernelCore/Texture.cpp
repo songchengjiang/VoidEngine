@@ -6,6 +6,7 @@ const int veTexture::DEFAULT_WIDTH = 0;
 const int veTexture::DEFAULT_HEIGHT = 0;
 const int veTexture::DEFAULT_DEPTH = 0;
 const int veTexture::DEFAULT_INTERNAL_FORMAT = GL_RGBA32F;
+const std::string veTexture::SYSTEM_MATERIAL_TEXTURE_CIRCLE_SAMPLES_NAME = "SYSTEM_MATERIAL_TEXTURE_CIRCLE_SAMPLES";
 
 veTexture::~veTexture()
 {

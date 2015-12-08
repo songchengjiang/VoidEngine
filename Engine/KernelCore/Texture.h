@@ -14,6 +14,7 @@ public:
 	static const int DEFAULT_HEIGHT;
 	static const int DEFAULT_DEPTH;
 	static const int DEFAULT_INTERNAL_FORMAT;
+	static const std::string SYSTEM_MATERIAL_TEXTURE_CIRCLE_SAMPLES_NAME;
 
 	enum TextureType
 	{

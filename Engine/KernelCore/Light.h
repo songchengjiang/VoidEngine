@@ -14,6 +14,7 @@ public:
 	static const veVec2 DEFAULT_SHADOW_RESOLUTION;
 	static const float  DEFAULT_SHADOW_BIAS;
 	static const float  DEFAULT_SHADOW_STRENGTH;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SAMPLES_NAME;
 
 	static veLight* CURRENT_LIGHT;
 
@@ -54,6 +55,8 @@ public:
 	const veVec2& getShadowArea() const { return _shadowArea; }
 	void setUseSoftShadow(bool use) { _isUseSoftShadow = use; }
 	bool isUseSoftShadow() const { return _isUseSoftShadow; }
+	void setShadowSoftness(float softness) { _shadowSoftness = softness; }
+	float getShadowSoftness() const { return _shadowSoftness; }
 
 	void setLightInCameraMatrix(const veMat4 &mat) { _lightInCamMatrix = mat; }
 	const veMat4& getLightInCameraMatrix() { return _lightInCamMatrix; }
@@ -86,6 +89,7 @@ protected:
 	veVec2 _shadowArea;
 	float _shadowBias;
 	float _shadowStrength;
+	float _shadowSoftness;
 	bool  _isUseSoftShadow;
 	bool _needRefreshShadow;
 	bool _needRefreshShadowCamera;
@@ -106,6 +110,7 @@ public:
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTSHADOW_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTNESS_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME;
 
@@ -148,6 +153,7 @@ public:
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTSHADOW_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTNESS_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME;
 
@@ -194,6 +200,7 @@ public:
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTSHADOW_NAME;
+	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTNESS_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME;
 	static const std::string DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME;
 

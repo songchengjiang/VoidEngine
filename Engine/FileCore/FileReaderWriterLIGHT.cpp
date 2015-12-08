@@ -86,6 +86,11 @@ private:
 			_light->setUseSoftShadow(val.GetBool());
 		}
 
+		if (_doucument->HasMember(SHADOW_SOFTNESS_KEY.c_str())) {
+			const Value &val = (*_doucument)[SHADOW_SOFTNESS_KEY.c_str()];
+			_light->setShadowSoftness(val.GetDouble());
+		}
+
 		if (_light->getLightType() == veLight::SPOT) {
 			if (_doucument->HasMember(INNER_ANGLE_KEY.c_str())) {
 				const Value &val = (*_doucument)[INNER_ANGLE_KEY.c_str()];

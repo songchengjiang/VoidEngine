@@ -10,6 +10,8 @@ const float  veLight::DEFAULT_SHADOW_STRENGTH   = 1.0f;
 
 veLight* veLight::CURRENT_LIGHT = nullptr;
 
+const std::string veLight::DEFUALT_LIGHT_UNIFORM_SAMPLES_NAME                        = "ve_lightSamples";
+
 const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_NAME                     = "ve_dirLight";
 const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME                 = "ve_dirLightNum";
 
@@ -21,6 +23,7 @@ const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME 
 const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME         = "ve_dirLightShadowBias";
 const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME     = "ve_dirLightShadowStrength";
 const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTSHADOW_NAME   = "ve_dirLightShadowSoft";
+const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTNESS_NAME     = "ve_dirLightShadowSoftness";
 const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME       = "ve_dirLightShadowMat";
 const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME          = "ve_dirLightShadowMap";
 
@@ -36,6 +39,7 @@ const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME       
 const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME               = "ve_pointLightShadowBias";
 const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME           = "ve_pointLightShadowStrength";
 const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTSHADOW_NAME         = "ve_pointLightShadowSoft";
+const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTNESS_NAME           = "ve_pointLightShadowSoftness";
 const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME             = "ve_pointLightShadowMat";
 const std::string vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME                = "ve_pointLightShadowMap";
 
@@ -54,6 +58,7 @@ const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME        
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME                = "ve_spotLightShadowBias";
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME            = "ve_spotLightShadowStrength";
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTSHADOW_NAME          = "ve_spotLightShadowSoft";
+const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTNESS_NAME            = "ve_spotLightShadowSoftness";
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME              = "ve_spotLightShadowMat";
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME                 = "ve_spotLightShadowMap";
 
@@ -88,6 +93,7 @@ veLight::veLight(LightType type)
 	, _shadowResolution(DEFAULT_SHADOW_RESOLUTION)
 	, _shadowBias(DEFAULT_SHADOW_BIAS)
 	, _shadowStrength(DEFAULT_SHADOW_STRENGTH)
+	, _shadowSoftness(0.02f)
 	, _isUseSoftShadow(false)
 	, _needRefreshShadow(true)
 	, _needRefreshShadowCamera(true)

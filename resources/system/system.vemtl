@@ -109,6 +109,27 @@
                     ]
                 }
             ]
+        },
+        {
+            "name": "SYSTEM_MATERIAL_TEXTURES",
+            "techniques": [
+                {
+                    "name": "TECHNIQUE",
+                    "passes": [
+                        {
+                            "textureUnits": [
+                                {
+                                    "name": "SYSTEM_MATERIAL_TEXTURE_CIRCLE_SAMPLES",
+                                    "source": "circleSamples.ktx",
+                                    "type": "TEX_3D",
+                                    "wrap": "REPEAT",
+                                    "filter": "LINEAR"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }

@@ -106,6 +106,7 @@ private:
 
 	struct LightUniformLocations
 	{
+		GLint lightSamples;
 		GLint dirLightVisible;
 		GLint pointLightVisible;
 		GLint spotLightVisible;
@@ -161,6 +162,7 @@ public:
 	static const std::string SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ENTITY;
 	static const std::string SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY;
 	static const std::string SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ENTITY;
+	static const std::string SYSTEM_MATERIAL_TEXTURES;
 
 	veMaterial();
 	~veMaterial();

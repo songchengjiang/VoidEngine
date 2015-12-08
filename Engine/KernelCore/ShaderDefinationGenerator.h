@@ -13,6 +13,7 @@
 static const std::string SHADER_VERSION = "#version";
 static const std::string PRECISION_DEFINE_FLOAT = "precision mediump float;";
 static const std::string PRECISION_DEFINE_SAMPLER2DARRAYSHADOW = "precision highp sampler2DArrayShadow;";
+static const std::string PRECISION_DEFINE_SAMPLER3D = "precision highp sampler3D;";
 
 static const std::string SHADER_DEFINE_PLATFORM_IOS     = "#define VE_PLATFORM_IOS 1\n";
 static const std::string SHADER_DEFINE_PLATFORM_ANDROID = "#define VE_PLATFORM_ANDROID 2\n";
@@ -71,6 +72,7 @@ public:
 		if (type == veShader::FRAGMENT_SHADER) {
 			definations += PRECISION_DEFINE_FLOAT + std::string("\n");
 			definations += PRECISION_DEFINE_SAMPLER2DARRAYSHADOW + std::string("\n");
+			definations += PRECISION_DEFINE_SAMPLER3D + std::string("\n");
 		}
 #endif
 
@@ -170,6 +172,8 @@ public:
 	{
 		std::stringstream def;
 
+		def << "uniform sampler3D " << veLight::DEFUALT_LIGHT_UNIFORM_SAMPLES_NAME << ";" << std::endl;
+
 		if (0 < veDirectionalLight::totalLightNum()) {
 			def << "#define VE_DIRECTIONAL_LIGHT_MAX_NUM " << veDirectionalLight::totalLightNum() << std::endl;
 			def << "uniform float   " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_VISIBLE_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
@@ -180,6 +184,7 @@ public:
 			def << "uniform float " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
 			def << "uniform float " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
 			def << "uniform float " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTSHADOW_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTNESS_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
 			if (type == veShader::VERTEX_SHADER) {
 				def << "uniform mat4 " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
 			}
@@ -200,6 +205,7 @@ public:
 			def << "uniform float " << vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME << "[VE_POINT_LIGHT_MAX_NUM];" << std::endl;
 			def << "uniform float " << vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME << "[VE_POINT_LIGHT_MAX_NUM];" << std::endl;
 			def << "uniform float " << vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTSHADOW_NAME << "[VE_POINT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTNESS_NAME << "[VE_POINT_LIGHT_MAX_NUM];" << std::endl;
 			if (type == veShader::VERTEX_SHADER) {
 				def << "uniform mat4 " << vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME << "[VE_POINT_LIGHT_MAX_NUM];" << std::endl;
 			}
@@ -224,6 +230,7 @@ public:
 			def << "uniform float " << veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
 			def << "uniform float " << veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
 			def << "uniform float " << veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTSHADOW_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTNESS_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
 			if (type == veShader::VERTEX_SHADER) {
 				def << "uniform mat4 " << veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
 			}
