@@ -53,10 +53,10 @@ void Lighting(inout vec3 diffLightColor, inout vec3 specLightColor)
 
 #ifdef VE_DIRECTIONAL_LIGHT_MAX_NUM
 	for (int i = 0; i < VE_DIRECTIONAL_LIGHT_MAX_NUM; ++i){
-		if (0 < ve_dirLightVisible[i]){
+		if (0.0 < ve_dirLightVisible[i]){
 			lDir = -ve_dirLightDirection[i];
 			attenuation = ve_dirLightIntensity[i];
-			if (0 < ve_dirLightShadowEnabled[i]){
+			if (0.0 < ve_dirLightShadowEnabled[i]){
 				vec4 shadowCoord = vec4(v_directionalLightST[i].xy / v_directionalLightST[i].w, float(i), (v_directionalLightST[i].z - ve_dirLightShadowBias[i]) / v_directionalLightST[i].w);
 				float shadow = texture(ve_dirLightShadowMap, shadowCoord);
 				if (shadow < 1.0)
@@ -72,14 +72,14 @@ void Lighting(inout vec3 diffLightColor, inout vec3 specLightColor)
 
 #ifdef VE_POINT_LIGHT_MAX_NUM
 	for (int i = 0; i < VE_POINT_LIGHT_MAX_NUM; ++i){
-		if (0 < ve_pointLightVisible[i]){
+		if (0.0 < ve_pointLightVisible[i]){
 			lDir = ve_pointLightPosition[i] - v_position.xyz;
 			vec3 lDirAttenuation = lDir * ve_pointLightARI[i];
 			attenuation = clamp(1.0 - dot(lDirAttenuation, lDirAttenuation), 0.0, 1.0) * ve_pointLightIntensity[i];
 			lDir = normalize(lDir);
 
 #if VE_PLATFORM != VE_PLATFORM_ANDROID
-			if (0 < ve_pointLightShadowEnabled[i]){
+			if (0.0 < ve_pointLightShadowEnabled[i]){
 				float pTolDis2 = dot(v_pointLightST[i], v_pointLightST[i]);
 				pTolDis2 = pTolDis2 / (pTolDis2 + 1.0);
 				vec4 shadowCoord = vec4(v_pointLightST[i], float(i));
@@ -98,20 +98,19 @@ void Lighting(inout vec3 diffLightColor, inout vec3 specLightColor)
 
 #ifdef VE_SPOT_LIGHT_MAX_NUM
 	for (int i = 0; i < VE_SPOT_LIGHT_MAX_NUM; ++i){
-		if (0 < ve_spotLightVisible[i]){
+		if (0.0 < ve_spotLightVisible[i]){
 			lDir = ve_spotLightPosition[i] - v_position.xyz;
 			vec3 lDirAttenuation = lDir * ve_spotLightARI[i];
 			lDir = normalize(lDir);
 			float currentAngleCos = dot(lDir, -ve_spotLightDirection[i]);
 			attenuation = clamp(1.0 - dot(lDirAttenuation, lDirAttenuation), 0.0, 1.0) * ve_spotLightIntensity[i];
 			attenuation *= smoothstep(ve_spotLightOuterAngleCos[i], ve_spotLightInnerAngleCos[i], currentAngleCos);
-			if (0 < ve_spotLightShadowEnabled[i]){
+			if (0.0 < ve_spotLightShadowEnabled[i]){
 				vec4 shadowCoord = vec4(v_spotLightST[i].xy / v_spotLightST[i].w, float(i), (v_spotLightST[i].z - ve_spotLightShadowBias[i]) / v_spotLightST[i].w);
 				float shadow = texture(ve_spotLightShadowMap, shadowCoord);
 				if (shadow < 1.0)
 					attenuation *=  mix(1.0, shadow, ve_spotLightShadowStrength[i]);
 			}
-
 			vec2 factor = caculateLightFactor(normal, lDir, eye, u_shininess);
 			vec3 lightIntensity = ve_spotLightColor[i] * attenuation;
 			diffLightColor += lightIntensity * factor.x;

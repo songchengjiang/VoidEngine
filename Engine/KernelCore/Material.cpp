@@ -245,17 +245,17 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, const veRender
 	bool isLightVisible = light->isInScene() && light->isVisible() && (light->getMask() & command.mask);
 	if (light->getLightType() == veLight::DIRECTIONAL) {
 		if (0 < _lightUniformLocations.dirLightVisible) {
-			glUniform1i(_lightUniformLocations.dirLightVisible + idx, isLightVisible ? 1 : 0);
+			glUniform1f(_lightUniformLocations.dirLightVisible + idx, isLightVisible ? 1.0f : 0.0f);
 		}
 	}
 	else if (light->getLightType() == veLight::POINT) {
 		if (0 < _lightUniformLocations.pointLightVisible) {
-			glUniform1i(_lightUniformLocations.pointLightVisible + idx, isLightVisible ? 1 : 0);
+			glUniform1f(_lightUniformLocations.pointLightVisible + idx, isLightVisible ? 1.0f : 0.0f);
 		}
 	}
 	else if (light->getLightType() == veLight::SPOT) {
 		if (0 < _lightUniformLocations.spotLightVisible) {
-			glUniform1i(_lightUniformLocations.spotLightVisible + idx, isLightVisible ? 1 : 0);
+			glUniform1f(_lightUniformLocations.spotLightVisible + idx, isLightVisible ? 1.0f : 0.0f);
 		}
 	}
 
@@ -339,7 +339,7 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, const veRender
 		}
 
 		if (0 < shadowEnabledLoc) {
-			glUniform1i(shadowEnabledLoc, light->isShadowEnabled() ? 1 : 0);
+			glUniform1f(shadowEnabledLoc, light->isShadowEnabled() ? 1.0f : 0.0f);
 		}
 
 		if (light->isShadowEnabled()) {
@@ -371,19 +371,22 @@ void vePass::applyLightTextures(unsigned int beginTexUnit, const veRenderCommand
 	unsigned int texUnit = beginTexUnit;
 	if (0 < _lightUniformLocations.dirLightShadowMap) {
 		glUniform1i(_lightUniformLocations.dirLightShadowMap, texUnit);
-		veDirectionalLight::getShadowTexture()->bind(texUnit);
+		if (veDirectionalLight::getShadowTexture())
+			veDirectionalLight::getShadowTexture()->bind(texUnit);
 	}
 
 	++texUnit;
 	if (0 < _lightUniformLocations.pointLightShadowMap) {
 		glUniform1i(_lightUniformLocations.pointLightShadowMap, texUnit);
-		vePointLight::getShadowTexture()->bind(texUnit);
+		if (vePointLight::getShadowTexture())
+			vePointLight::getShadowTexture()->bind(texUnit);
 	}
 
 	++texUnit;
 	if (0 < _lightUniformLocations.spotLightShadowMap) {
 		glUniform1i(_lightUniformLocations.spotLightShadowMap, texUnit);
-		veSpotLight::getShadowTexture()->bind(texUnit);
+		if (veSpotLight::getShadowTexture())
+			veSpotLight::getShadowTexture()->bind(texUnit);
 	}
 }
 

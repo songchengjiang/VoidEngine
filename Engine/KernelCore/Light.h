@@ -80,7 +80,6 @@ protected:
 	unsigned int _currentLightIndex;
 
 	bool _shadowEnabled;
-	bool _perspectiveShadow;
 	veVec2 _shadowResolution;
 	veVec2 _shadowArea;
 	float _shadowBias;
