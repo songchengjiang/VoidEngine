@@ -94,6 +94,7 @@ public:
 			lightModel->setMask(~LIGHT_MASK);
 			spot->addChild(lightModel);
 			spot->setMask(LIGHT_MASK);
+			spot->setUseSoftShadow(true);
 			root->addChild(spot);
 		}
 
@@ -132,6 +133,7 @@ public:
 			lightModel->setMask(~LIGHT_MASK);
 			directional->addChild(lightModel);
 			directional->setMask(LIGHT_MASK);
+			directional->setUseSoftShadow(true);
 			root->addChild(directional);
 		}
 
@@ -167,8 +169,8 @@ public:
 			lightModel->setMask(~LIGHT_MASK);
 			point->addChild(lightModel);
 			point->setMask(LIGHT_MASK);
+			point->setUseSoftShadow(true);
 			root->addChild(point);
-			//point0->setVisible(true);
 		}
 
 		//{

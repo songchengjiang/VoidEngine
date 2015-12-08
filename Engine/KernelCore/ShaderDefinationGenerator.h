@@ -179,6 +179,7 @@ public:
 			def << "uniform float " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
 			def << "uniform float " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
 			def << "uniform float " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTSHADOW_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
 			if (type == veShader::VERTEX_SHADER) {
 				def << "uniform mat4 " << veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME << "[VE_DIRECTIONAL_LIGHT_MAX_NUM];" << std::endl;
 			}
@@ -198,6 +199,7 @@ public:
 			def << "uniform float " << vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME << "[VE_POINT_LIGHT_MAX_NUM];" << std::endl;
 			def << "uniform float " << vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME << "[VE_POINT_LIGHT_MAX_NUM];" << std::endl;
 			def << "uniform float " << vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME << "[VE_POINT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTSHADOW_NAME << "[VE_POINT_LIGHT_MAX_NUM];" << std::endl;
 			if (type == veShader::VERTEX_SHADER) {
 				def << "uniform mat4 " << vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME << "[VE_POINT_LIGHT_MAX_NUM];" << std::endl;
 			}
@@ -221,6 +223,7 @@ public:
 			def << "uniform float " << veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
 			def << "uniform float " << veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
 			def << "uniform float " << veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
+			def << "uniform float " << veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTSHADOW_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
 			if (type == veShader::VERTEX_SHADER) {
 				def << "uniform mat4 " << veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME << "[VE_SPOT_LIGHT_MAX_NUM];" << std::endl;
 			}

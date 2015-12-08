@@ -272,6 +272,7 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, const veRender
 		GLint shadowEnabledLoc = -1;
 		GLint shadowBiasLoc = -1;
 		GLint shadowStrengthLoc = -1;
+		GLint shadowSoftLoc = -1;
 		GLint lightMatrixLoc = -1;
 		GLint innerAngleCosLoc = -1;
 		GLint outerAngleCosLoc = -1;
@@ -283,7 +284,8 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, const veRender
 			shadowEnabledLoc = lightParamLocs[3] + idx;
 			shadowBiasLoc = lightParamLocs[4] + idx;
 			shadowStrengthLoc = lightParamLocs[5] + idx;
-			lightMatrixLoc = lightParamLocs[6] + idx;
+			shadowSoftLoc = lightParamLocs[6] + idx;
+			lightMatrixLoc = lightParamLocs[7] + idx;
 		}
 		else if (light->getLightType() == veLight::POINT) {
 			auto &lightParamLocs = _lightUniformLocations.pointlightParams;
@@ -294,7 +296,8 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, const veRender
 			shadowEnabledLoc = lightParamLocs[4] + idx;
 			shadowBiasLoc = lightParamLocs[5] + idx;
 			shadowStrengthLoc = lightParamLocs[6] + idx;
-			lightMatrixLoc = lightParamLocs[7] + idx;
+			shadowSoftLoc = lightParamLocs[7] + idx;
+			lightMatrixLoc = lightParamLocs[8] + idx;
 		}
 		else if (light->getLightType() == veLight::SPOT) {
 			auto &lightParamLocs = _lightUniformLocations.spotlightParams;
@@ -308,7 +311,8 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, const veRender
 			shadowEnabledLoc = lightParamLocs[7] + idx;
 			shadowBiasLoc = lightParamLocs[8] + idx;
 			shadowStrengthLoc = lightParamLocs[9] + idx;
-			lightMatrixLoc = lightParamLocs[10] + idx;
+			shadowSoftLoc = lightParamLocs[10] + idx;
+			lightMatrixLoc = lightParamLocs[11] + idx;
 		}
 
 		veMat4 lightInView = light->getLightInCameraMatrix();
@@ -349,6 +353,11 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, const veRender
 			if (0 <= shadowStrengthLoc) {
 				glUniform1f(shadowStrengthLoc, light->getShadowStrength());
 			}
+
+			if (0 <= shadowSoftLoc) {
+				glUniform1f(shadowSoftLoc, light->isUseSoftShadow() ? 1.0f : 0.0f);
+			}
+
 			if (0 <= lightMatrixLoc) {
 				veMat4 lightMat = light->getLightMatrix() * command.worldMatrix->value();
 				float m[16];
@@ -408,9 +417,9 @@ void vePass::locateLightUnifroms(const veRenderCommand &command)
 	_lightUniformLocations.pointLightShadowMap = UNIFORM_LOC(vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME);
 	_lightUniformLocations.spotLightShadowMap  = UNIFORM_LOC(veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME);
 
-	_lightUniformLocations.dirlightParams.assign(7, -1);
-	_lightUniformLocations.pointlightParams.assign(8, -1);
-	_lightUniformLocations.spotlightParams.assign(11, -1);
+	_lightUniformLocations.dirlightParams.assign(8, -1);
+	_lightUniformLocations.pointlightParams.assign(9, -1);
+	_lightUniformLocations.spotlightParams.assign(12, -1);
 
 	_lightUniformLocations.dirlightParams[0] = UNIFORM_LOC(veDirectionalLight::DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME);
 	_lightUniformLocations.dirlightParams[1] = UNIFORM_LOC(veDirectionalLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME);
@@ -418,7 +427,8 @@ void vePass::locateLightUnifroms(const veRenderCommand &command)
 	_lightUniformLocations.dirlightParams[3] = UNIFORM_LOC(veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME);
 	_lightUniformLocations.dirlightParams[4] = UNIFORM_LOC(veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME);
 	_lightUniformLocations.dirlightParams[5] = UNIFORM_LOC(veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME);
-	_lightUniformLocations.dirlightParams[6] = UNIFORM_LOC(veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME);
+	_lightUniformLocations.dirlightParams[6] = UNIFORM_LOC(veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTSHADOW_NAME);
+	_lightUniformLocations.dirlightParams[7] = UNIFORM_LOC(veDirectionalLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME);
 
 	_lightUniformLocations.pointlightParams[0] = UNIFORM_LOC(vePointLight::DEFUALT_LIGHT_UNIFORM_POSITION_NAME);
 	_lightUniformLocations.pointlightParams[1] = UNIFORM_LOC(vePointLight::DEFUALT_LIGHT_UNIFORM_COLOR_NAME);
@@ -427,7 +437,8 @@ void vePass::locateLightUnifroms(const veRenderCommand &command)
 	_lightUniformLocations.pointlightParams[4] = UNIFORM_LOC(vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME);
 	_lightUniformLocations.pointlightParams[5] = UNIFORM_LOC(vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME);
 	_lightUniformLocations.pointlightParams[6] = UNIFORM_LOC(vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME);
-	_lightUniformLocations.pointlightParams[7] = UNIFORM_LOC(vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME);
+	_lightUniformLocations.pointlightParams[7] = UNIFORM_LOC(vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTSHADOW_NAME);
+	_lightUniformLocations.pointlightParams[8] = UNIFORM_LOC(vePointLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME);
 
 	_lightUniformLocations.spotlightParams[0] = UNIFORM_LOC(veSpotLight::DEFUALT_LIGHT_UNIFORM_DIRECTION_NAME);
 	_lightUniformLocations.spotlightParams[1] = UNIFORM_LOC(veSpotLight::DEFUALT_LIGHT_UNIFORM_POSITION_NAME);
@@ -439,7 +450,8 @@ void vePass::locateLightUnifroms(const veRenderCommand &command)
 	_lightUniformLocations.spotlightParams[7] = UNIFORM_LOC(veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_ENABLED_NAME);
 	_lightUniformLocations.spotlightParams[8] = UNIFORM_LOC(veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_BIAS_NAME);
 	_lightUniformLocations.spotlightParams[9] = UNIFORM_LOC(veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_STRENGTH_NAME);
-	_lightUniformLocations.spotlightParams[10] = UNIFORM_LOC(veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME);
+	_lightUniformLocations.spotlightParams[10] = UNIFORM_LOC(veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTSHADOW_NAME);
+	_lightUniformLocations.spotlightParams[11] = UNIFORM_LOC(veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME);
 }
 
 veTechnique::veTechnique()

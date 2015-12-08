@@ -151,6 +151,7 @@ static const std::string ATTENUATION_KEY = "attenuation";
 static const std::string INNER_ANGLE_KEY = "innerAngle";
 static const std::string OUTER_ANGLE_KEY = "outerAngle";
 static const std::string SHADOW_ENABLED_KEY = "shadowEnabled";
+static const std::string SHADOW_SOFT_KEY = "shadowSoft";
 static const std::string SHADOW_MAP_KEY = "shadowMap";
 static const std::string SHADOW_BIAS_KEY = "shadowBias";
 static const std::string SHADOW_STRENGTH_KEY = "shadowStrength";

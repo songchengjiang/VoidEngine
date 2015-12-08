@@ -7,5 +7,5 @@
   "attenuation": 1000.0,
   "shadowEnabled": true,
   "shadowBias": 0.001,
-  "shadowResolution": [ 256.0, 256.0 ]
+  "shadowResolution": [ 512.0, 512.0 ]
 }

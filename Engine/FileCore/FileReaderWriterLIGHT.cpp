@@ -81,6 +81,11 @@ private:
 				_light->setShadowArea(veVec2(val[0].GetDouble(), val[1].GetDouble()));
 		}
 
+		if (_doucument->HasMember(SHADOW_SOFT_KEY.c_str())) {
+			const Value &val = (*_doucument)[SHADOW_SOFT_KEY.c_str()];
+			_light->setUseSoftShadow(val.GetBool());
+		}
+
 		if (_light->getLightType() == veLight::SPOT) {
 			if (_doucument->HasMember(INNER_ANGLE_KEY.c_str())) {
 				const Value &val = (*_doucument)[INNER_ANGLE_KEY.c_str()];

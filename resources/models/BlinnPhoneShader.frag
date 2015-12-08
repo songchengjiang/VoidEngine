@@ -44,6 +44,48 @@ vec2 caculateLightFactor(in vec3 normal, in vec3 lightDir, in vec3 eyeDir, in fl
 	return factor;
 }
 
+float caculateShadowFactor2D(in sampler2DArrayShadow shadowMap, in vec4 shadowCoord, in float isUseSoftShadow){
+	float factor = 0.0;
+	if (0.0 < isUseSoftShadow){
+		ivec3 texSize = textureSize(shadowMap, 0);
+		float xOffset = 1.0 / float(texSize.x);
+		float yOffset = 1.0 / float(texSize.y);
+		for (int y = -1; y <= 1; ++y){
+			for (int x = -1; x <= 1; ++x){
+				vec2 offset = vec2(x * xOffset, y * yOffset);
+				factor += texture(shadowMap, vec4(shadowCoord.xy + offset, shadowCoord.zw));
+			}
+		}
+		factor /= 9.0;
+	}else{
+		factor = texture(shadowMap, shadowCoord);
+	}
+	return factor;
+}
+
+float caculateShadowFactorCube(in samplerCubeArrayShadow shadowMap, in vec4 shadowCoord, in float compare, in float isUseSoftShadow){
+	float factor = 0.0;
+	if (0.0 < isUseSoftShadow){
+		ivec3 texSize = textureSize(shadowMap, 0);
+		float theta = atan(shadowCoord.z, shadowCoord.x);
+		float xzLen = sqrt(shadowCoord.x * shadowCoord.x + shadowCoord.z * shadowCoord.z);
+		float phi = atan(shadowCoord.y, xzLen);
+		float thetaOffset = 4.0 / float(texSize.x);
+		float phiOffset = 3.0 / float(texSize.y);
+		for (int p = -1; p <= 1; ++p){
+			for (int t = -1; t <= 1; ++t){
+				float cosPhi = cos(p * phiOffset + phi);
+				vec3 offset = vec3(cos(t * thetaOffset + theta) * cosPhi, sin(p * phiOffset + phi), sin(t * thetaOffset + theta) * cosPhi);
+				factor += texture(shadowMap, vec4(offset, shadowCoord.w), compare);
+			}
+		}
+		factor /= 9.0;	
+	}else{
+		factor = texture(shadowMap, shadowCoord, compare);
+	}
+	return factor;	
+}
+
 void Lighting(inout vec3 diffLightColor, inout vec3 specLightColor)
 {
 	vec3 normal = normalize(v_normalAndepth.xyz);                   
@@ -58,7 +100,7 @@ void Lighting(inout vec3 diffLightColor, inout vec3 specLightColor)
 			attenuation = ve_dirLightIntensity[i];
 			if (0.0 < ve_dirLightShadowEnabled[i]){
 				vec4 shadowCoord = vec4(v_directionalLightST[i].xy / v_directionalLightST[i].w, float(i), (v_directionalLightST[i].z - ve_dirLightShadowBias[i]) / v_directionalLightST[i].w);
-				float shadow = texture(ve_dirLightShadowMap, shadowCoord);
+				float shadow = caculateShadowFactor2D(ve_dirLightShadowMap, shadowCoord, ve_dirLightShadowSoft[i]);
 				if (shadow < 1.0)
 					attenuation *=  mix(1.0, shadow, ve_dirLightShadowStrength[i]);
 			}
@@ -83,7 +125,7 @@ void Lighting(inout vec3 diffLightColor, inout vec3 specLightColor)
 				float pTolDis2 = dot(v_pointLightST[i], v_pointLightST[i]);
 				pTolDis2 = pTolDis2 / (pTolDis2 + 1.0);
 				vec4 shadowCoord = vec4(v_pointLightST[i], float(i));
-				float shadow = texture(ve_pointLightShadowMap, shadowCoord, pTolDis2 - ve_pointLightShadowBias[i]);
+				float shadow = caculateShadowFactorCube(ve_pointLightShadowMap, shadowCoord, pTolDis2 - ve_pointLightShadowBias[i], ve_pointLightShadowSoft[i]);
 				if (shadow < 1.0)
 					attenuation *=  mix(1.0, shadow, ve_pointLightShadowStrength[i]);
 			}
@@ -107,7 +149,7 @@ void Lighting(inout vec3 diffLightColor, inout vec3 specLightColor)
 			attenuation *= smoothstep(ve_spotLightOuterAngleCos[i], ve_spotLightInnerAngleCos[i], currentAngleCos);
 			if (0.0 < ve_spotLightShadowEnabled[i]){
 				vec4 shadowCoord = vec4(v_spotLightST[i].xy / v_spotLightST[i].w, float(i), (v_spotLightST[i].z - ve_spotLightShadowBias[i]) / v_spotLightST[i].w);
-				float shadow = texture(ve_spotLightShadowMap, shadowCoord);
+				float shadow = caculateShadowFactor2D(ve_spotLightShadowMap, shadowCoord, ve_spotLightShadowSoft[i]);
 				if (shadow < 1.0)
 					attenuation *=  mix(1.0, shadow, ve_spotLightShadowStrength[i]);
 			}
