@@ -12,9 +12,7 @@
 //shader definations
 static const std::string SHADER_VERSION = "#version";
 static const std::string PRECISION_DEFINE_FLOAT = "precision mediump float;";
-static const std::string PRECISION_DEFINE_SAMPLER2DSHADOW = "precision highp sampler2DShadow;";
 static const std::string PRECISION_DEFINE_SAMPLER2DARRAYSHADOW = "precision highp sampler2DArrayShadow;";
-static const std::string PRECISION_DEFINE_SAMPLER3D = "precision highp sampler3D;";
 
 static const std::string SHADER_DEFINE_PLATFORM_IOS     = "#define VE_PLATFORM_IOS 1\n";
 static const std::string SHADER_DEFINE_PLATFORM_ANDROID = "#define VE_PLATFORM_ANDROID 2\n";
@@ -72,9 +70,7 @@ public:
 #if VE_PLATFORM == VE_PLATFORM_ANDROID
 		if (type == veShader::FRAGMENT_SHADER) {
 			definations += PRECISION_DEFINE_FLOAT + std::string("\n");
-			definations += PRECISION_DEFINE_SAMPLER2DSHADOW + std::string("\n");
 			definations += PRECISION_DEFINE_SAMPLER2DARRAYSHADOW + std::string("\n");
-			definations += PRECISION_DEFINE_SAMPLER3D + std::string("\n");
 		}
 #endif
 

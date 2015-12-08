@@ -50,7 +50,7 @@ bool vePass::apply(const veRenderCommand &command)
 	applyLightsUniforms(command);
 	applyUniforms(command);
 
-	if (CURRENT_PASS == this) 
+	if (CURRENT_PASS == this)
 		return true;
 	CURRENT_PASS = this;
 
@@ -244,17 +244,17 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, const veRender
 {
 	bool isLightVisible = light->isInScene() && light->isVisible() && (light->getMask() & command.mask);
 	if (light->getLightType() == veLight::DIRECTIONAL) {
-		if (0 < _lightUniformLocations.dirLightVisible) {
+		if (0 <= _lightUniformLocations.dirLightVisible) {
 			glUniform1f(_lightUniformLocations.dirLightVisible + idx, isLightVisible ? 1.0f : 0.0f);
 		}
 	}
 	else if (light->getLightType() == veLight::POINT) {
-		if (0 < _lightUniformLocations.pointLightVisible) {
+		if (0 <= _lightUniformLocations.pointLightVisible) {
 			glUniform1f(_lightUniformLocations.pointLightVisible + idx, isLightVisible ? 1.0f : 0.0f);
 		}
 	}
 	else if (light->getLightType() == veLight::SPOT) {
-		if (0 < _lightUniformLocations.spotLightVisible) {
+		if (0 <= _lightUniformLocations.spotLightVisible) {
 			glUniform1f(_lightUniformLocations.spotLightVisible + idx, isLightVisible ? 1.0f : 0.0f);
 		}
 	}
@@ -313,43 +313,43 @@ void vePass::applyLightUniforms(unsigned int idx, veLight *light, const veRender
 
 		veMat4 lightInView = light->getLightInCameraMatrix();
 
-		if (0 < positionLoc) {
+		if (0 <= positionLoc) {
 			glUniform3f(positionLoc, lightInView[0][3], lightInView[1][3], lightInView[2][3]);
 		}
 
-		if (0 < directionLoc) {
+		if (0 <= directionLoc) {
 			lightInView[0][3] = lightInView[1][3] = lightInView[2][3] = 0.0f;
 			veVec3 direction = lightInView * -veVec3::UNIT_Z;
 			direction.normalize();
 			glUniform3f(directionLoc, direction.x(), direction.y(), direction.z());
 		}
-		if (0 < colorLoc) {
+		if (0 <= colorLoc) {
 			const auto &color = light->getColor();
 			glUniform3f(colorLoc, color.r(), color.g(), color.b());
 		}
-		if (0 < intensityLoc) {
+		if (0 <= intensityLoc) {
 			glUniform1f(intensityLoc, light->getIntensity());
 		}
 
-		if (0 < innerAngleCosLoc) {
+		if (0 <= innerAngleCosLoc) {
 			glUniform1f(innerAngleCosLoc, static_cast<veSpotLight *>(light)->getInnerAngleCos());
 		}
-		if (0 < outerAngleCosLoc) {
+		if (0 <= outerAngleCosLoc) {
 			glUniform1f(outerAngleCosLoc, static_cast<veSpotLight *>(light)->getOuterAngleCos());
 		}
 
-		if (0 < shadowEnabledLoc) {
+		if (0 <= shadowEnabledLoc) {
 			glUniform1f(shadowEnabledLoc, light->isShadowEnabled() ? 1.0f : 0.0f);
 		}
 
 		if (light->isShadowEnabled()) {
-			if (0 < shadowBiasLoc) {
+			if (0 <= shadowBiasLoc) {
 				glUniform1f(shadowBiasLoc, light->getShadowBias());
 			}
-			if (0 < shadowStrengthLoc) {
+			if (0 <= shadowStrengthLoc) {
 				glUniform1f(shadowStrengthLoc, light->getShadowStrength());
 			}
-			if (0 < lightMatrixLoc) {
+			if (0 <= lightMatrixLoc) {
 				veMat4 lightMat = light->getLightMatrix() * command.worldMatrix->value();
 				float m[16];
 				m[0] = lightMat[0][0]; m[4] = lightMat[0][1]; m[8] = lightMat[0][2]; m[12] = lightMat[0][3];
@@ -369,24 +369,27 @@ void vePass::applyLightTextures(unsigned int beginTexUnit, const veRenderCommand
 		return;
 
 	unsigned int texUnit = beginTexUnit;
-	if (0 < _lightUniformLocations.dirLightShadowMap) {
+
+	if (0 <= _lightUniformLocations.dirLightShadowMap) {
 		glUniform1i(_lightUniformLocations.dirLightShadowMap, texUnit);
-		if (veDirectionalLight::getShadowTexture())
+		if (veDirectionalLight::getShadowTexture()) {
 			veDirectionalLight::getShadowTexture()->bind(texUnit);
+		}
+		++texUnit;
 	}
 
-	++texUnit;
-	if (0 < _lightUniformLocations.pointLightShadowMap) {
+	if (0 <= _lightUniformLocations.pointLightShadowMap) {
 		glUniform1i(_lightUniformLocations.pointLightShadowMap, texUnit);
 		if (vePointLight::getShadowTexture())
 			vePointLight::getShadowTexture()->bind(texUnit);
+		++texUnit;
 	}
 
-	++texUnit;
-	if (0 < _lightUniformLocations.spotLightShadowMap) {
+	if (0 <= _lightUniformLocations.spotLightShadowMap) {
 		glUniform1i(_lightUniformLocations.spotLightShadowMap, texUnit);
-		if (veSpotLight::getShadowTexture())
+		if (veSpotLight::getShadowTexture()) {
 			veSpotLight::getShadowTexture()->bind(texUnit);
+		}
 	}
 }
 

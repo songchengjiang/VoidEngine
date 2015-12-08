@@ -108,7 +108,7 @@ protected:
 
 	unsigned int perPixelSize() const;
 	void releaseTextureData();
-	void releaseMipmapData();
+	void releaseMemoryData();
 
 protected:
 

@@ -12,7 +12,9 @@ veTextureManager::veTextureManager(veSceneManager *sm, unsigned int maxTextureMe
 
 veTextureManager::~veTextureManager()
 {
-
+	for (auto &tex : _texturePool) {
+		releaseTextureMemory(tex.get());
+	}
 }
 
 void veTextureManager::update()
@@ -95,7 +97,7 @@ bool veTextureManager::exchangeTextureMemory(veTexture *texture)
 		for (auto &tex : iter.second) {
 			if (_currentTextureMemory < tex->getTextureTotalMemory())
 				return false;
-			tex->releaseTextureData();
+			releaseTextureMemory(tex);
 			if (assignTextureMemory(texture))
 				return true;
 		}
@@ -121,6 +123,7 @@ bool veTextureManager::releaseTextureMemory(veTexture *texture)
 	if (_currentTextureMemory < texture->getTextureTotalMemory()) return false;
 	_currentTextureMemory -= texture->getTextureTotalMemory();
 	texture->_isExchanged = false;
+	texture->releaseTextureData();
 	_allocatedTexturePool.erase(iter);
 	return true;
 }

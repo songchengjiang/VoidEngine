@@ -34,7 +34,7 @@ layout(location=2) out vec4 normAndepth;
 
 #ifdef VE_USE_LIGHTS
 
-vec2 caculateLightFactor(vec3 normal, vec3 lightDir, vec3 eyeDir, float shininess){
+vec2 caculateLightFactor(in vec3 normal, in vec3 lightDir, in vec3 eyeDir, in float shininess){
 	vec2 factor = vec2(0.0);
 	factor.x = max(0.0, dot(normal, lightDir));
 	if (0.0 < shininess){

@@ -9,9 +9,8 @@ const int veTexture::DEFAULT_INTERNAL_FORMAT = GL_RGBA32F;
 
 veTexture::~veTexture()
 {
-	VE_SAFE_DELETE_ARRAY(_data);
 	releaseTextureData();
-	releaseMipmapData();
+	releaseMemoryData();
 }
 
 veTexture::veTexture(GLenum target)
@@ -112,20 +111,20 @@ void veTexture::releaseTextureData()
 {
 	if (_texID) {
 		glDeleteTextures(1, &_texID);
-		_manager->releaseTextureMemory(this);
 		_texID = 0;
 		_needRefreshTex = true;
 	}
 }
 
-void veTexture::releaseMipmapData()
+void veTexture::releaseMemoryData()
 {
-	if (_mipmapLevels.empty())
-		return;
-	for (auto &level : _mipmapLevels) {
-		VE_SAFE_DELETE_ARRAY(level.data);
+	VE_SAFE_DELETE_ARRAY(_data);
+	if (!_mipmapLevels.empty()) {
+		for (auto &level : _mipmapLevels) {
+			VE_SAFE_DELETE_ARRAY(level.data);
+		}
+		_mipmapLevels.clear();
 	}
-	_mipmapLevels.clear();
 }
 
 bool veTexture::isCompressedTex(GLint internalformat)
@@ -324,8 +323,7 @@ void veTexture::storage(int width, int height, int depth, GLint internalFormat, 
 
 	unsigned int pixelSize = perPixelSize();
 	_dataSize = _width * _height * _depthOrLayer * pixelSize;
-	VE_SAFE_DELETE_ARRAY(_data);
-	releaseMipmapData();
+	releaseMemoryData();
 	if (data) {
 		_data = new unsigned char[_dataSize];
 		memcpy(_data, data, _dataSize);
@@ -358,8 +356,7 @@ void veTexture::storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenu
 	_mipMapLevelCount = mipmaps.size();
 	_isCompressedTex = isCompressedTex(internalFormat);
 
-	VE_SAFE_DELETE_ARRAY(_data);
-	releaseMipmapData();
+	releaseMemoryData();
 	_dataSize = 0;
 	for (auto &level : mipmaps) {
 		MipmapLevel mipmap;
