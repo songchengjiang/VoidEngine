@@ -34,6 +34,13 @@ layout(location=2) out vec4 normAndepth;
 
 #ifdef VE_USE_LIGHTS
 
+ivec3 SAMPLE_MAP_SIZE;
+ivec2 OFFSET_COORD;
+
+vec4 fetchSampleMap(in ivec3 coords){
+	return texelFetch(ve_lightSamples, coords, 0);
+}
+
 vec2 caculateLightFactor(in vec3 normal, in vec3 lightDir, in vec3 eyeDir, in float shininess){
 	vec2 factor = vec2(0.0);
 	factor.x = max(0.0, dot(normal, lightDir));
@@ -47,15 +54,14 @@ vec2 caculateLightFactor(in vec3 normal, in vec3 lightDir, in vec3 eyeDir, in fl
 float caculateShadowFactor2D(in sampler2DArrayShadow shadowMap, in vec4 shadowCoord, in float isUseSoftShadow, float softness){
 	float factor = 0.0;
 	if (0.0 < isUseSoftShadow){
-		ivec3 offTexSize = textureSize(ve_lightSamples, 0);
 		ivec3 offsetCoord;                                                             
-		offsetCoord.xy = ivec2(mod(gl_FragCoord.xy, offTexSize.xy));   
-		int samplesDiv2 = int(offTexSize.z);
+		offsetCoord.xy = OFFSET_COORD;   
+		int samplesDiv2 = int(SAMPLE_MAP_SIZE.z);
 		float sum = 0.0;
 		for (int i = 0; i < 4; ++i)                                                    
 		{                                                                              
 			offsetCoord.z = i;                                                           
-			vec4 offsets = texelFetch(ve_lightSamples, offsetCoord, 0) * softness;                                      
+			vec4 offsets = fetchSampleMap(offsetCoord) * softness;                                      
 			sum += texture(shadowMap, vec4(shadowCoord.xy + offsets.xy, shadowCoord.zw));                                                                           
 			sum += texture(shadowMap, vec4(shadowCoord.xy + offsets.zw, shadowCoord.zw));                                        
 		}                                                                              
@@ -66,7 +72,7 @@ float caculateShadowFactor2D(in sampler2DArrayShadow shadowMap, in vec4 shadowCo
 			for (int i = 4; i < samplesDiv2; ++i)                                        
 			{                                                                            
 				offsetCoord.z = i;                                                         
-				vec4 offsets = texelFetch(ve_lightSamples, offsetCoord, 0) * softness;   
+				vec4 offsets = fetchSampleMap(offsetCoord) * softness;   
 				sum += texture(shadowMap, vec4(shadowCoord.xy + offsets.xy, shadowCoord.zw));                                                                           
 				sum += texture(shadowMap, vec4(shadowCoord.xy + offsets.zw, shadowCoord.zw));                                       
 			}                                                                            
@@ -81,21 +87,20 @@ float caculateShadowFactor2D(in sampler2DArrayShadow shadowMap, in vec4 shadowCo
 float caculateShadowFactorCube(in samplerCubeArrayShadow shadowMap, in vec4 shadowCoord, in float compare, in float isUseSoftShadow, float softness){
 	float factor = 0.0;
 	if (0.0 < isUseSoftShadow){
-		ivec3 offTexSize = textureSize(ve_lightSamples, 0);
 		float theta = atan(shadowCoord.z, shadowCoord.x);
 		float xzLen = sqrt(shadowCoord.x * shadowCoord.x + shadowCoord.z * shadowCoord.z);
 		float phi = atan(shadowCoord.y, xzLen);
 
 		ivec3 offsetCoord;                                                             
-		offsetCoord.xy = ivec2(mod(gl_FragCoord.xy, offTexSize.xy));   
-		int samplesDiv2 = int(offTexSize.z);
+		offsetCoord.xy = OFFSET_COORD;   
+		int samplesDiv2 = int(SAMPLE_MAP_SIZE.z);
 		float sum = 0.0;
 		vec3 shadowCoordOffset;
 		float cosPhi;
 		for (int i = 0; i < 4; ++i)                                                    
 		{                                                                              
 			offsetCoord.z = i;                                                           
-			vec4 offsets = texelFetch(ve_lightSamples, offsetCoord, 0) * softness;
+			vec4 offsets = fetchSampleMap(offsetCoord) * softness;
 			cosPhi = cos(offsets.y + phi);
 			shadowCoordOffset = vec3(cos(offsets.x + theta) * cosPhi, sin(offsets.y + phi), sin(offsets.x + theta) * cosPhi);                         
 			sum += texture(shadowMap, vec4(shadowCoordOffset, shadowCoord.w), compare);
@@ -111,7 +116,7 @@ float caculateShadowFactorCube(in samplerCubeArrayShadow shadowMap, in vec4 shad
 			for (int i = 4; i < samplesDiv2; ++i)                                        
 			{                                                                            
 				offsetCoord.z = i;                                                           
-				vec4 offsets = texelFetch(ve_lightSamples, offsetCoord, 0) * softness;
+				vec4 offsets = fetchSampleMap(offsetCoord) * softness;
 				cosPhi = cos(offsets.y + phi);
 				shadowCoordOffset = vec3(cos(offsets.x + theta) * cosPhi, sin(offsets.y + phi), sin(offsets.x + theta) * cosPhi);                         
 				sum += texture(shadowMap, vec4(shadowCoordOffset, shadowCoord.w), compare);
@@ -135,6 +140,8 @@ void Lighting(inout vec3 diffLightColor, inout vec3 specLightColor)
 	vec3 eye = normalize(-v_position.xyz);
 	vec3 lDir = vec3(0.0);
 	float attenuation;
+	SAMPLE_MAP_SIZE = textureSize(ve_lightSamples, 0);
+	OFFSET_COORD = ivec2(mod(gl_FragCoord.xy, SAMPLE_MAP_SIZE.xy));
 
 #ifdef VE_DIRECTIONAL_LIGHT_MAX_NUM
 	for (int i = 0; i < VE_DIRECTIONAL_LIGHT_MAX_NUM; ++i){
