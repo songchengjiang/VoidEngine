@@ -409,15 +409,6 @@ void vePass::applyLightTextures(unsigned int beginTexUnit, const veRenderCommand
 		if (veSpotLight::getShadowTexture()) {
 			veSpotLight::getShadowTexture()->bind(texUnit);
 		}
-		++texUnit;
-	}
-
-	if (0 <= _lightUniformLocations.lightSamples && texUnit != beginTexUnit){
-		glUniform1i(_lightUniformLocations.lightSamples, texUnit);
-		auto samplesTex = static_cast<veTextureManager *>(command.sceneManager->getManager(veTextureManager::TYPE()))->findTexture(veTexture::SYSTEM_MATERIAL_TEXTURE_CIRCLE_SAMPLES_NAME);
-		if (samplesTex) {
-			samplesTex->bind(texUnit);
-		}
 	}
 }
 
@@ -427,8 +418,6 @@ void vePass::locateLightUnifroms(const veRenderCommand &command)
 		return;
 
 #define UNIFORM_LOC(NAME) glGetUniformLocation(_program, NAME.c_str())
-
-	_lightUniformLocations.lightSamples = UNIFORM_LOC(veLight::DEFUALT_LIGHT_UNIFORM_SAMPLES_NAME);
 
 	_lightUniformLocations.dirLightVisible   = UNIFORM_LOC(veDirectionalLight::DEFUALT_LIGHT_UNIFORM_VISIBLE_NAME);
 	_lightUniformLocations.pointLightVisible = UNIFORM_LOC(vePointLight::DEFUALT_LIGHT_UNIFORM_VISIBLE_NAME);

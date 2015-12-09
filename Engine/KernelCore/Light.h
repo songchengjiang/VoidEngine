@@ -14,7 +14,6 @@ public:
 	static const veVec2 DEFAULT_SHADOW_RESOLUTION;
 	static const float  DEFAULT_SHADOW_BIAS;
 	static const float  DEFAULT_SHADOW_STRENGTH;
-	static const std::string DEFUALT_LIGHT_UNIFORM_SAMPLES_NAME;
 
 	static veLight* CURRENT_LIGHT;
 

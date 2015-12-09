@@ -106,7 +106,6 @@ private:
 
 	struct LightUniformLocations
 	{
-		GLint lightSamples;
 		GLint dirLightVisible;
 		GLint pointLightVisible;
 		GLint spotLightVisible;

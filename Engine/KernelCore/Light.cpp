@@ -10,8 +10,6 @@ const float  veLight::DEFAULT_SHADOW_STRENGTH   = 1.0f;
 
 veLight* veLight::CURRENT_LIGHT = nullptr;
 
-const std::string veLight::DEFUALT_LIGHT_UNIFORM_SAMPLES_NAME                        = "ve_lightSamples";
-
 const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_NAME                     = "ve_dirLight";
 const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME                 = "ve_dirLightNum";
 
@@ -93,7 +91,7 @@ veLight::veLight(LightType type)
 	, _shadowResolution(DEFAULT_SHADOW_RESOLUTION)
 	, _shadowBias(DEFAULT_SHADOW_BIAS)
 	, _shadowStrength(DEFAULT_SHADOW_STRENGTH)
-	, _shadowSoftness(0.02f)
+	, _shadowSoftness(0.1f)
 	, _isUseSoftShadow(false)
 	, _needRefreshShadow(true)
 	, _needRefreshShadowCamera(true)

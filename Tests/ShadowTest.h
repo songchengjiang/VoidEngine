@@ -95,6 +95,8 @@ public:
 			spot->addChild(lightModel);
 			spot->setMask(LIGHT_MASK);
 			spot->setUseSoftShadow(true);
+			spot->setShadowSoftness(0.005f);
+			spot->setShadowBias(0.0015f);
 			root->addChild(spot);
 		}
 
@@ -134,6 +136,7 @@ public:
 			directional->addChild(lightModel);
 			directional->setMask(LIGHT_MASK);
 			directional->setUseSoftShadow(true);
+			directional->setShadowSoftness(0.005f);
 			root->addChild(directional);
 		}
 
@@ -154,13 +157,32 @@ public:
 		//	root->addChild(directional);
 		//}
 
+		{
+			veLight *point = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "point0"));
+			veTransformer *lightTranser = new veTransformer;
+			point->addComponent(lightTranser);
+			point->addComponent(new LightUpdater(5.0f, -3.0f));
+			point->setIntensity(0.6f);
+			lightTranser->setPosition(veVec3(0.0f, 0.0f, 10.0f));
+
+			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "point0-sphere"));
+			veNode *lightModel = _sceneManager->createNode("lightnode1");
+			lightModel->addRenderableObject(lightentity);
+			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
+			lightModel->setMask(~LIGHT_MASK);
+			point->addChild(lightModel);
+			point->setMask(LIGHT_MASK);
+			point->setUseSoftShadow(true);
+			point->setShadowBias(0.0015f);
+			root->addChild(point);
+		}
+
 		//{
-		//	veLight *point = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "point0"));
+		//	veLight *point = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "point1"));
 		//	veTransformer *lightTranser = new veTransformer;
 		//	point->addComponent(lightTranser);
-		//	point->addComponent(new LightUpdater(5.0f, -3.0f));
+		//	point->addComponent(new LightUpdater(5.0f, -5.0f));
 		//	point->setIntensity(0.6f);
-		//	lightTranser->setPosition(veVec3(0.0f, 0.0f, 10.0f));
 
 		//	veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "point0-sphere"));
 		//	veNode *lightModel = _sceneManager->createNode("lightnode1");
@@ -172,24 +194,6 @@ public:
 		//	point->setUseSoftShadow(true);
 		//	root->addChild(point);
 		//}
-
-		{
-			veLight *point = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "point1"));
-			veTransformer *lightTranser = new veTransformer;
-			point->addComponent(lightTranser);
-			point->addComponent(new LightUpdater(5.0f, -5.0f));
-			point->setIntensity(0.6f);
-
-			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "point0-sphere"));
-			veNode *lightModel = _sceneManager->createNode("lightnode1");
-			lightModel->addRenderableObject(lightentity);
-			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
-			lightModel->setMask(~LIGHT_MASK);
-			point->addChild(lightModel);
-			point->setMask(LIGHT_MASK);
-			point->setUseSoftShadow(true);
-			root->addChild(point);
-		}
 
 		{
 			auto skyBox = _sceneManager->createSkyBox("skybox");
