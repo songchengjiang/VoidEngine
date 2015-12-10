@@ -46,7 +46,7 @@
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "GaussBlurY.frag",
-                                    "weights": [0.114012979, 0.113568485, 0.112245373, 0.110074356, 0.107105292],
+                                    "weights": [0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216],
                                     "height":  "SCREEN_HEIGHT",
                                     "u_Texture": 0
                                 }
@@ -72,7 +72,7 @@
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "GaussBlurX.frag",
-                                    "weights": [0.114012979, 0.113568485, 0.112245373, 0.110074356, 0.107105292],
+                                    "weights": [0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216],
                                     "width":  "SCREEN_WIDTH",
                                     "u_Texture": 0
                                 }
@@ -98,8 +98,9 @@
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "bloom.frag",
-                                    "u_extractlightTex": 0,
-                                    "u_colorTex": 1
+                                    "u_exposure": 2.0,
+                                    "u_bloomBlur": 0,
+                                    "u_sceneTex": 1
                                 }
                             ],
                             "textureUnits": [

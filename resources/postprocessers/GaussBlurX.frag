@@ -12,5 +12,5 @@ void main()
 		sum += texture(u_Texture, v_texcoord + vec2(float(i) * dx, 0.0)) * weights[i];  
 		sum += texture(u_Texture, v_texcoord - vec2(float(i) * dx, 0.0)) * weights[i];  
 	}
-	fragColor = sum;
+	fragColor = vec4(sum.xyz, 1.0);
 }
