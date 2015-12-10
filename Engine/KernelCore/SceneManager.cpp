@@ -131,6 +131,16 @@ vePostProcesser* veSceneManager::createPostProcesser(const std::string &name)
 	return postProcesser;
 }
 
+void veSceneManager::removePostProcesser(const std::string &name)
+{
+	for (vePostProcesserList::iterator iter = _postProcesserList.begin(); iter != _postProcesserList.end(); ++iter) {
+		if ((*iter)->getName() == name) {
+			_postProcesserList.erase(iter);
+			break;
+		}
+	}
+}
+
 void veSceneManager::requestRayCast(veRay *ray)
 {
 	ray->_callBack();

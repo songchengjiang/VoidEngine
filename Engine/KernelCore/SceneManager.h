@@ -56,6 +56,7 @@ public:
 	virtual veTexture* createTexture(const std::string &name, veTexture::TextureType texType = veTexture::TEXTURE_2D);
 	virtual veMaterialArray* createMaterialArray(const std::string &name);
 	virtual vePostProcesser* createPostProcesser(const std::string &name);
+	virtual void removePostProcesser(const std::string &name);
 
 	virtual void requestRender(veNode *node) = 0;
 	virtual void requestRayCast(veRay *ray) = 0;
