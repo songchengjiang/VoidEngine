@@ -9,6 +9,9 @@ veBlendFunc veBlendFunc::DISABLE = { GL_ONE, GL_ZERO };
 veBlendFunc veBlendFunc::ADDITIVE = { GL_SRC_ALPHA, GL_ONE };
 veBlendFunc veBlendFunc::ALPHA = { GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA };
 
+veStencilFunc veStencilFunc::ALWAYS = { GL_ALWAYS, GL_ALWAYS, 0, 0};
+veStencilOp veStencilOp::KEEP = { GL_KEEP, GL_KEEP, GL_KEEP, GL_KEEP, GL_KEEP, GL_KEEP };
+
 const std::string veMaterial::SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY = "SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY";
 const std::string veMaterial::SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ENTITY = "SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ENTITY";
 const std::string veMaterial::SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY = "SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY";
@@ -18,20 +21,26 @@ const std::string veMaterial::SYSTEM_MATERIAL_TEXTURES = "SYSTEM_MATERIAL_TEXTUR
 vePass* vePass::CURRENT_PASS = nullptr;
 bool vePass::CURRENT_DEPTH_TEST = false;
 bool vePass::CURRENT_DEPTH_WRITE = true;
+bool vePass::CURRENT_STENCIL_TEST = false;
+
 bool vePass::CURRENT_CULL_FACE = false;
 GLenum vePass::CURRENT_CULL_FACE_MODE = GL_BACK;
 
 veBlendFunc vePass::CURRENT_BLEND_FUNC = veBlendFunc::DISABLE;
-//GLenum vePass::CURRENT_POLYGON_MODE = GL_FILL;
+
+veStencilFunc vePass::CURRENT_STENCIL_FUNC = veStencilFunc::ALWAYS;
+veStencilOp vePass::CURRENT_STENCIL_OP = veStencilOp::KEEP;
 
 vePass::vePass()
 	: USE_VE_PTR_INIT
 	, _depthTest(true)
 	, _depthWirte(true)
 	, _cullFace(true)
+	, _stencilTest(false)
 	, _cullFaceMode(GL_BACK)
 	, _blendFunc(veBlendFunc::DISABLE)
-	//, _polygonMode(GL_FILL)
+	, _stencilFunc(veStencilFunc::ALWAYS)
+	, _stencilOp(veStencilOp::KEEP)
 	, _program(0)
 	, _needLinkProgram(true)
 	, _mask(0xffffffff)
@@ -71,6 +80,11 @@ bool vePass::apply(const veRenderCommand &command)
 		_depthWirte ? glDepthMask(GL_TRUE) : glDepthMask(GL_FALSE);
 		CURRENT_DEPTH_WRITE = _depthWirte;
 	}
+
+	if (_stencilTest != CURRENT_STENCIL_TEST) {
+		_stencilTest ? glEnable(GL_STENCIL_TEST) : glDisable(GL_STENCIL_TEST);
+		CURRENT_STENCIL_TEST = _stencilTest;
+	}
 	
 	if (_cullFace != CURRENT_CULL_FACE) {
 		_cullFace ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
@@ -83,11 +97,6 @@ bool vePass::apply(const veRenderCommand &command)
 			CURRENT_CULL_FACE_MODE = _cullFaceMode;
 		}
 	}
-	
-	//if (_polygonMode != CURRENT_POLYGON_MODE) {
-	//	glPolygonMode(GL_FRONT_AND_BACK, _polygonMode);
-	//	CURRENT_POLYGON_MODE = _polygonMode;
-	//}
 
 	if (_blendFunc != CURRENT_BLEND_FUNC) {
 		if (_blendFunc != veBlendFunc::DISABLE) {
@@ -98,6 +107,19 @@ bool vePass::apply(const veRenderCommand &command)
 			glDisable(GL_BLEND);
 		}
 		CURRENT_BLEND_FUNC = _blendFunc;
+	}
+
+	if (CURRENT_STENCIL_TEST) {
+		if (_stencilFunc != CURRENT_STENCIL_FUNC) {
+			glStencilFuncSeparate(_stencilFunc.frontfunc, _stencilFunc.backfunc, _stencilFunc.ref, _stencilFunc.mask);
+			CURRENT_STENCIL_FUNC = _stencilFunc;
+		}
+
+		if (_stencilOp != CURRENT_STENCIL_OP) {
+			glStencilOpSeparate(GL_FRONT, _stencilOp.frontsfail, _stencilOp.frontdpfail, _stencilOp.frontdppass);
+			glStencilOpSeparate(GL_BACK, _stencilOp.backsfail, _stencilOp.backdpfail, _stencilOp.backdppass);
+			CURRENT_STENCIL_OP = _stencilOp;
+		}
 	}
 
 	return true;

@@ -30,6 +30,47 @@ struct VE_EXPORT veBlendFunc
 	}
 };
 
+struct VE_EXPORT veStencilFunc
+{
+	static veStencilFunc ALWAYS;
+
+	GLenum frontfunc;
+	GLenum backfunc;
+	GLint ref;
+	GLuint mask;
+
+	inline bool operator == (const veStencilFunc& rkbf) const {
+		return (frontfunc == rkbf.frontfunc && backfunc == rkbf.backfunc && ref == rkbf.ref && mask == rkbf.mask);
+	}
+
+	inline bool operator != (const veStencilFunc& rkbf) const {
+		return (frontfunc != rkbf.frontfunc || backfunc != rkbf.backfunc || ref != rkbf.ref || mask != rkbf.mask);
+	}
+};
+
+struct VE_EXPORT veStencilOp
+{
+	static veStencilOp KEEP;
+
+	GLenum frontsfail;
+	GLenum frontdpfail;
+	GLenum frontdppass;
+
+	GLenum backsfail;
+	GLenum backdpfail;
+	GLenum backdppass;
+
+	inline bool operator == (const veStencilOp& rkbf) const {
+		return (frontsfail == rkbf.frontsfail && frontdpfail == rkbf.frontdpfail && frontdppass == rkbf.frontdppass
+			&& backsfail == rkbf.backsfail && backdpfail == rkbf.backdpfail && backdppass == rkbf.backdppass);
+	}
+
+	inline bool operator != (const veStencilOp& rkbf) const {
+		return (frontsfail != rkbf.frontsfail || frontdpfail != rkbf.frontdpfail || frontdppass != rkbf.frontdppass
+			|| backsfail != rkbf.backsfail || backdpfail != rkbf.backdpfail || backdppass != rkbf.backdppass);
+	}
+};
+
 class VE_EXPORT vePass
 {
 	friend class veUniform;
@@ -37,10 +78,12 @@ public:
 	static vePass* CURRENT_PASS;
 	static bool CURRENT_DEPTH_TEST;
 	static bool CURRENT_DEPTH_WRITE;
+	static bool CURRENT_STENCIL_TEST;
 	static bool CURRENT_CULL_FACE;
 	static GLenum CURRENT_CULL_FACE_MODE;
 	static veBlendFunc CURRENT_BLEND_FUNC;
-	//static GLenum CURRENT_POLYGON_MODE;
+	static veStencilFunc CURRENT_STENCIL_FUNC;
+	static veStencilOp CURRENT_STENCIL_OP;
 
 	vePass();
 	~vePass();
@@ -56,6 +99,9 @@ public:
 	const bool& depthWrite() const { return _depthWirte; }
 	bool& depthWrite(){ return _depthWirte; }
 
+	const bool& stencilTest() const { return _stencilTest; };
+	bool& stencilTest() { return _stencilTest; }
+
 	const bool& cullFace() const{ return _cullFace; }
 	bool& cullFace(){ return _cullFace; }
 
@@ -65,11 +111,14 @@ public:
 	const veBlendFunc& blendFunc() const { return _blendFunc; }
 	veBlendFunc& blendFunc() { return _blendFunc; }
 
+	const veStencilFunc& stencilFunc() const { return _stencilFunc; }
+	veStencilFunc& stencilFunc() { return _stencilFunc; }
+
+	const veStencilOp& stencilOp() const { return _stencilOp; }
+	veStencilOp& stencilOp() { return _stencilOp; }
+
 	const unsigned int& drawMask() const { return _mask; }
 	unsigned int& drawMask() { return _mask; }
-
-	//const GLenum& polygonMode() const { return _polygonMode; }
-	//GLenum& polygonMode() { return _polygonMode; }
 
 	void setShader(veShader *shader);
 	veShader* getShader(veShader::Type type);
@@ -119,9 +168,12 @@ private:
 
 	bool _depthTest;
 	bool _depthWirte;
+	bool _stencilTest;
 	bool _cullFace;
 	GLenum _cullFaceMode;
 	veBlendFunc _blendFunc;
+	veStencilFunc _stencilFunc;
+	veStencilOp   _stencilOp;
 	unsigned int _mask;
 	//GLenum _polygonMode;
 	GLuint _program;

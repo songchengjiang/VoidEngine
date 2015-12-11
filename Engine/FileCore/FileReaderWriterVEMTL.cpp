@@ -101,6 +101,8 @@ private:
 			pass->depthTest() = passVal[DEPTHTEST_KEY.c_str()].GetBool();
 		if (passVal.HasMember(DEPTHWRITE_KEY.c_str()))
 			pass->depthWrite() = passVal[DEPTHWRITE_KEY.c_str()].GetBool();
+		if (passVal.HasMember(STENCIALTEST_KEY.c_str()))
+			pass->stencilTest() = passVal[STENCIALTEST_KEY.c_str()].GetBool();
 		if (passVal.HasMember(CULLFACE_KEY.c_str()))
 			pass->cullFace() = passVal[CULLFACE_KEY.c_str()].GetBool();
 		if (passVal.HasMember(CULLFACEMODE_KEY.c_str())) {
@@ -123,6 +125,28 @@ private:
 			if (bfVal.Size() == 2) {
 				pass->blendFunc().src = getBlendFuncParam(bfVal[0].GetString());
 				pass->blendFunc().dst = getBlendFuncParam(bfVal[1].GetString());
+			}
+		}
+
+		if (passVal.HasMember(STENCIALFUNC_KEY.c_str())) {
+			const Value &sfVal = passVal[STENCIALFUNC_KEY.c_str()];
+			if (sfVal.Size() == 4) {
+				pass->stencilFunc().frontfunc = getStencilFuncParam(sfVal[0].GetString());
+				pass->stencilFunc().backfunc  = getStencilFuncParam(sfVal[1].GetString());
+				pass->stencilFunc().ref       = sfVal[2].GetInt();
+				pass->stencilFunc().mask      = sfVal[3].GetUint();
+			}
+		}
+
+		if (passVal.HasMember(STENCIALOP_KEY.c_str())) {
+			const Value &soVal = passVal[STENCIALFUNC_KEY.c_str()];
+			if (soVal.Size() == 6) {
+				pass->stencilOp().frontsfail  = getStencilOpParam(soVal[0].GetString());
+				pass->stencilOp().frontdpfail = getStencilOpParam(soVal[1].GetString());
+				pass->stencilOp().frontdppass = getStencilOpParam(soVal[2].GetString());
+				pass->stencilOp().backsfail   = getStencilOpParam(soVal[3].GetString());
+				pass->stencilOp().backdpfail  = getStencilOpParam(soVal[4].GetString());
+				pass->stencilOp().backdppass  = getStencilOpParam(soVal[5].GetString());
 			}
 		}
 	}
@@ -383,7 +407,65 @@ private:
 		else if (strncmp(ONE_MINUS_DST_COLOR_KEY.c_str(), str, ONE_MINUS_DST_COLOR_KEY.size()) == 0) {
 			return GL_ONE_MINUS_DST_COLOR;
 		}
-		return 0;
+		return GL_ZERO;
+	}
+
+	GLenum getStencilFuncParam(const char* str) {
+		if (strncmp(NEVER_KEY.c_str(), str, NEVER_KEY.size()) == 0) {
+			return GL_NEVER;
+		}
+		else if (strncmp(LESS_KEY.c_str(), str, LESS_KEY.size()) == 0) {
+			return GL_LESS;
+		}
+		else if (strncmp(LEQUAL_KEY.c_str(), str, LEQUAL_KEY.size()) == 0) {
+			return GL_LEQUAL;
+		}
+		else if (strncmp(GREATER_KEY.c_str(), str, GREATER_KEY.size()) == 0) {
+			return GL_GREATER;
+		}
+		else if (strncmp(GEQUAL_KEY.c_str(), str, GEQUAL_KEY.size()) == 0) {
+			return GL_GEQUAL;
+		}
+		else if (strncmp(EQUAL_KEY.c_str(), str, EQUAL_KEY.size()) == 0) {
+			return GL_EQUAL;
+		}
+		else if (strncmp(NOTEQUAL_KEY.c_str(), str, NOTEQUAL_KEY.size()) == 0) {
+			return GL_NOTEQUAL;
+		}
+		else if (strncmp(ALWAYS_KEY.c_str(), str, ALWAYS_KEY.size()) == 0) {
+			return GL_ALWAYS;
+		}
+
+		return GL_ALWAYS;
+	}
+
+	GLenum getStencilOpParam(const char* str) {
+		if (strncmp(KEEP_KEY.c_str(), str, KEEP_KEY.size()) == 0) {
+			return GL_KEEP;
+		}
+		else if (strncmp(ZERO_KEY.c_str(), str, ZERO_KEY.size()) == 0) {
+			return GL_ZERO;
+		}
+		else if (strncmp(REPLACE_KEY.c_str(), str, REPLACE_KEY.size()) == 0) {
+			return GL_REPLACE;
+		}
+		else if (strncmp(INCR_KEY.c_str(), str, INCR_KEY.size()) == 0) {
+			return GL_INCR;
+		}
+		else if (strncmp(INCR_WRAP_KEY.c_str(), str, INCR_WRAP_KEY.size()) == 0) {
+			return GL_INCR_WRAP;
+		}
+		else if (strncmp(DECR_KEY.c_str(), str, DECR_KEY.size()) == 0) {
+			return GL_DECR;
+		}
+		else if (strncmp(DECR_WRAP_KEY.c_str(), str, DECR_WRAP_KEY.size()) == 0) {
+			return GL_DECR_WRAP;
+		}
+		else if (strncmp(INVERT_KEY.c_str(), str, INVERT_KEY.size()) == 0) {
+			return GL_INVERT;
+		}
+
+		return GL_KEEP;
 	}
 
 	veTexture::TextureType getTextureType(const char *str) {
