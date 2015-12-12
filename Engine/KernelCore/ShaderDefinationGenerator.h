@@ -25,7 +25,19 @@ static const std::string SHADER_DEFINE_LIGHTS = "#define VE_USE_LIGHTS";
 static const std::string SHADER_DEFINE_TEXTURES = "#define VE_USE_TEXTURES";
 static const std::string SHADER_DEFINE_TRANSFORMFEEDBACK = "#define VE_USE_TRANSFORMFEEDBACK";
 static const std::string SHADER_DEFINE_DEFERRED_PATH = "#define VE_USE_DEFERRED_PATH";
-static const std::string SHADER_DEFINE_SKYBOX = "#define VE_USE_SKYBOX";
+
+static const std::string SHADER_DEFINE_AMBIENT_TEXTURE = "#define VE_USE_AMBIENT_TEXTURE";
+static const std::string SHADER_DEFINE_DIFFUSE_TEXTURE = "#define VE_USE_DIFFUSE_TEXTURE";
+static const std::string SHADER_DEFINE_SPECULAR_TEXTURE = "#define VE_USE_SPECULAR_TEXTURE";
+static const std::string SHADER_DEFINE_EMISSIVE_TEXTURE = "#define VE_USE_EMISSIVE_TEXTURE";
+static const std::string SHADER_DEFINE_NORMAL_TEXTURE = "#define VE_USE_NORMAL_TEXTURE";
+static const std::string SHADER_DEFINE_HEIGHT_TEXTURE = "#define VE_USE_HEIGHT_TEXTURE";
+static const std::string SHADER_DEFINE_SHININESS_TEXTURE = "#define VE_USE_SHININESS_TEXTURE";
+static const std::string SHADER_DEFINE_OPACITYT_TEXTURE = "#define VE_USE_OPACITYT_TEXTURE";
+static const std::string SHADER_DEFINE_DISPLACEMENT_TEXTURE = "#define VE_USE_DISPLACEMENT_TEXTURE";
+static const std::string SHADER_DEFINE_LIGHTMAP_TEXTURE = "#define VE_USE_LIGHTMAP_TEXTURE";
+static const std::string SHADER_DEFINE_REFLECTION_TEXTURE = "#define VE_USE_REFLECTION_TEXTURE";
+
 static const std::string SHADER_DEFINE_ATTRIBUTE_ARRAY[] = {
 	"#define ATTR_POSITION",
 	"#define ATTR_NORMAL",
@@ -137,28 +149,62 @@ public:
 			}
 		}
 
-		if (true) {
-			bool hasTex = false;
-			if (_command.sceneManager->getSkyBox()) {
-				if (0 < _command.pass->getTextureNum()) {
-					for (size_t i = 0; i < _command.pass->getTextureNum(); ++i) {
-						if (_command.pass->getTexture(i)->getName()
-							== _command.sceneManager->getSkyBox()->getMaterialArray()->getMaterial(0)->getTechnique(0)->getPass(0)->getTexture(0)->getName()) {
-							if (_command.sceneManager->getSkyBox()->getMask() & _command.mask)
-								definations += SHADER_DEFINE_SKYBOX + std::string(" 1\n");
-						}else {
-							hasTex = true;
-						}
-					}
-				}
+		if (0 < _command.pass->getTextureNum()) {
+			definations += SHADER_DEFINE_TEXTURES + std::string(" 1\n");
+
+			auto tex = _command.pass->getTexture(vePass::AMBIENT_TEXTURE);
+			if (tex) {
+				definations += SHADER_DEFINE_AMBIENT_TEXTURE + std::string(" 1\n");
 			}
-			else {
-				if (0 < _command.pass->getTextureNum()) {
-					hasTex = true;
-				}
+
+			tex = _command.pass->getTexture(vePass::DIFFUSE_TEXTURE);
+			if (tex) {
+				definations += SHADER_DEFINE_DIFFUSE_TEXTURE + std::string(" 1\n");
 			}
-			if (hasTex) {
-				definations += SHADER_DEFINE_TEXTURES + std::string(" 1\n");
+
+			tex = _command.pass->getTexture(vePass::SPECULAR_TEXTURE);
+			if (tex) {
+				definations += SHADER_DEFINE_SPECULAR_TEXTURE + std::string(" 1\n");
+			}
+
+			tex = _command.pass->getTexture(vePass::EMISSIVE_TEXTURE);
+			if (tex) {
+				definations += SHADER_DEFINE_EMISSIVE_TEXTURE + std::string(" 1\n");
+			}
+
+			tex = _command.pass->getTexture(vePass::NORMAL_TEXTURE);
+			if (tex) {
+				definations += SHADER_DEFINE_NORMAL_TEXTURE + std::string(" 1\n");
+			}
+
+			tex = _command.pass->getTexture(vePass::HEIGHT_TEXTURE);
+			if (tex) {
+				definations += SHADER_DEFINE_HEIGHT_TEXTURE + std::string(" 1\n");
+			}
+
+			tex = _command.pass->getTexture(vePass::SHININESS_TEXTURE);
+			if (tex) {
+				definations += SHADER_DEFINE_SHININESS_TEXTURE + std::string(" 1\n");
+			}
+
+			tex = _command.pass->getTexture(vePass::OPACITYT_TEXTURE);
+			if (tex) {
+				definations += SHADER_DEFINE_OPACITYT_TEXTURE + std::string(" 1\n");
+			}
+
+			tex = _command.pass->getTexture(vePass::DISPLACEMENT_TEXTURE);
+			if (tex) {
+				definations += SHADER_DEFINE_DISPLACEMENT_TEXTURE + std::string(" 1\n");
+			}
+
+			tex = _command.pass->getTexture(vePass::LIGHTMAP_TEXTURE);
+			if (tex) {
+				definations += SHADER_DEFINE_LIGHTMAP_TEXTURE + std::string(" 1\n");
+			}
+
+			tex = _command.pass->getTexture(vePass::REFLECTION_TEXTURE);
+			if (tex) {
+				definations += SHADER_DEFINE_REFLECTION_TEXTURE + std::string(" 1\n");
 			}
 		}
 

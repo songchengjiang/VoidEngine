@@ -64,6 +64,10 @@ private:
 
 private:
 
+	std::string getTextureTypeName(aiTextureType texType);
+
+private:
+
 	rapidjson::StringBuffer _modelbuffer;
 	PrettyWriterExt<rapidjson::StringBuffer> _modelWriter;
 

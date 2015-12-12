@@ -221,8 +221,7 @@ private:
 	}
 
 	void readTexture(const Value &texVal, vePass *pass){
-
-		veTexture::TextureType texType = veTexture::TEXTURE_2D;
+		veTexture::TextureType type = veTexture::TEXTURE_2D;
 		veTexture *texture = nullptr;
 		std::string name;
 		if (texVal.HasMember(NAME_KEY.c_str())) {
@@ -231,7 +230,7 @@ private:
 		if (name.empty())
 			return;
 		if (texVal.HasMember(TYPE_KEY.c_str())) {
-			texType = getTextureType(texVal[TYPE_KEY.c_str()].GetString());
+			type = getTextureType(texVal[TYPE_KEY.c_str()].GetString());
 		}
 
 		do 
@@ -239,11 +238,11 @@ private:
 			if (true) {
 				texture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture(name);
 				if (!texture && !name.empty()) {
-					texture = _sceneManager->createTexture(name, texType);
+					texture = _sceneManager->createTexture(name, type);
 				}
 
 				if (texVal.HasMember(SOURCE_KEY.c_str())) {
-					if (texType == veTexture::TEXTURE_CUBE) {
+					if (type == veTexture::TEXTURE_CUBE) {
 						const Value &sources = texVal[SOURCE_KEY.c_str()];
 						if (sources.Size() != 6) return;
 						//texture = _sceneManager->createTexture(name, texType);
@@ -320,7 +319,12 @@ private:
 			else texture->setFilterMode(veTexture2D::NEAREST_MIP_MAP_LINEAR);
 		}
 
-		pass->addTexture(texture);
+		vePass::TextureType texType = vePass::DIFFUSE_TEXTURE;
+		if (texVal.HasMember(TEXTYPE_KEY.c_str())) {
+			texType = getPassTextureType(texVal[TEXTYPE_KEY.c_str()].GetString());
+		}
+
+		pass->setTexture(texType, texture);
 		//else if (texVal.HasMember(TARGET_KEY.c_str())) {
 		//	std::string target = texVal[TARGET_KEY.c_str()].GetString();
 		//	if (target.find_last_of(":") != std::string::npos) {
@@ -482,6 +486,44 @@ private:
 			return veTexture::TEXTURE_CUBE;
 		}
 		return veTexture::TEXTURE_2D;
+	}
+
+	vePass::TextureType getPassTextureType(const char *str) {
+		if (strcmp(AMBIENT_TEXTURE_KEY.c_str(), str) == 0) {
+			return vePass::AMBIENT_TEXTURE;
+		}
+		else if (strcmp(DIFFUSE_TEXTURE_KEY.c_str(), str) == 0) {
+			return vePass::DIFFUSE_TEXTURE;
+		}
+		else if (strcmp(SPECULAR_TEXTURE_KEY.c_str(), str) == 0) {
+			return vePass::SPECULAR_TEXTURE;
+		}
+		else if (strcmp(EMISSIVE_TEXTURE_KEY.c_str(), str) == 0) {
+			return vePass::EMISSIVE_TEXTURE;
+		}
+		else if (strcmp(NORMAL_TEXTURE_KEY.c_str(), str) == 0) {
+			return vePass::NORMAL_TEXTURE;
+		}
+		else if (strcmp(HEIGHT_TEXTURE_KEY.c_str(), str) == 0) {
+			return vePass::HEIGHT_TEXTURE;
+		}
+		else if (strcmp(SHININESS_TEXTURE_KEY.c_str(), str) == 0) {
+			return vePass::SHININESS_TEXTURE;
+		}
+		else if (strcmp(OPACITYT_TEXTURE_KEY.c_str(), str) == 0) {
+			return vePass::OPACITYT_TEXTURE;
+		}
+		else if (strcmp(DISPLACEMENT_TEXTURE_KEY.c_str(), str) == 0) {
+			return vePass::DISPLACEMENT_TEXTURE;
+		}
+		else if (strcmp(LIGHTMAP_TEXTURE_KEY.c_str(), str) == 0) {
+			return vePass::LIGHTMAP_TEXTURE;
+		}
+		else if (strcmp(REFLECTION_TEXTURE_KEY.c_str(), str) == 0) {
+			return vePass::REFLECTION_TEXTURE;
+		}
+
+		return vePass::DIFFUSE_TEXTURE;
 	}
 
 private:

@@ -3,7 +3,10 @@ uniform vec3 u_diffuse;
 uniform vec3 u_specular;
 uniform float u_shininess; 
 uniform float u_opacity;         
+#ifdef VE_USE_DIFFUSE_TEXTURE
 uniform sampler2D u_diffuseTex;
+#endif
+
 in vec4 v_position;
 in vec4 v_normalAndepth;                   
 in vec2 v_texcoord;
@@ -175,9 +178,9 @@ void Lighting(inout vec3 diffLightColor, inout vec3 specLightColor)
 void main(){
     
 #ifdef VE_USE_DEFERRED_PATH
-#ifdef VE_USE_TEXTURES
+#ifdef VE_USE_DIFFUSE_TEXTURE
     fragColor = clamp(vec4(texture(u_diffuseTex, v_texcoord).xyz, u_opacity), 0.0, 1.0);
-#else //NOT VE_USE_TEXTURES
+#else //NOT VE_USE_DIFFUSE_TEXTURE
     fragColor = clamp(vec4(u_diffuse + u_specular + u_ambient, u_opacity), 0.0, 1.0);
 #endif
     position = vec4(v_position.xyz, u_shininess);
@@ -187,17 +190,17 @@ void main(){
     vec3 diffactor = vec3(0.0);
     vec3 specfactor = vec3(0.0);
     Lighting(diffactor, specfactor);
-#ifdef VE_USE_TEXTURES
+#ifdef VE_USE_DIFFUSE_TEXTURE
     fragColor = clamp(vec4(diffactor * u_diffuse * texture(u_diffuseTex, v_texcoord).xyz + specfactor * u_specular + u_ambient, u_opacity), 0.0, 1.0);
-#else //NOT VE_USE_TEXTURES
+#else //NOT VE_USE_DIFFUSE_TEXTURE
     fragColor = clamp(vec4(diffactor * u_diffuse + specfactor * u_specular + u_ambient, u_opacity), 0.0, 1.0);
-#endif //VE_USE_TEXTURES
+#endif //VE_USE_DIFFUSE_TEXTURE
 #else //NOT VE_USE_LIGHTS
-#ifdef VE_USE_TEXTURES
+#ifdef VE_USE_DIFFUSE_TEXTURE
     fragColor = clamp(vec4(texture(u_diffuseTex, v_texcoord).xyz, u_opacity), 0.0, 1.0);
-#else //NOT VE_USE_TEXTURES
+#else //NOT VE_USE_DIFFUSE_TEXTURE
     fragColor = clamp(vec4(u_diffuse + u_specular + u_ambient, u_opacity), 0.0, 1.0);
-#endif //VE_USE_TEXTURES
+#endif //VE_USE_DIFFUSE_TEXTURE
 #endif //END VE_USE_LIGHTS
 #endif //END VE_USE_DEFERRED_PATH
 }

@@ -203,6 +203,16 @@ void veUniform::apply(const veRenderCommand &command)
 					m[3] = p[3][0]; m[7] = p[3][1]; m[11] = p[3][2]; m[15] = p[3][3];
 					glUniformMatrix4fv(_location, 1, GL_FALSE, m);
 				}
+				else if (_autoBindingValue == INV_P_MATRIX) {
+					veMat4 invP = command.camera->projectionMatrix();
+					invP.inverse();
+					float m[16];
+					m[0] = invP[0][0]; m[4] = invP[0][1]; m[8] = invP[0][2]; m[12] = invP[0][3];
+					m[1] = invP[1][0]; m[5] = invP[1][1]; m[9] = invP[1][2]; m[13] = invP[1][3];
+					m[2] = invP[2][0]; m[6] = invP[2][1]; m[10] = invP[2][2]; m[14] = invP[2][3];
+					m[3] = invP[3][0]; m[7] = invP[3][1]; m[11] = invP[3][2]; m[15] = invP[3][3];
+					glUniformMatrix4fv(_location, 1, GL_FALSE, m);
+				}
 				else if (_autoBindingValue == NORMAL_MATRIX) {
 					veMat3 normMat(modelViewMat[0][0], modelViewMat[0][1], modelViewMat[0][2]
 						, modelViewMat[1][0], modelViewMat[1][1], modelViewMat[1][2]

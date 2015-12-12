@@ -148,7 +148,7 @@ void veSurface::appendMaterial(veMaterial *material)
 {
 	auto pass = material->getTechnique(0)->getPass(0);
 	if (_texture.valid())
-		pass->addTexture(_texture.get());
+		pass->setTexture(vePass::DIFFUSE_TEXTURE, _texture.get());
 	if (_type == SURFACE || _type == BILLBOARD) {
 		pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
 	}

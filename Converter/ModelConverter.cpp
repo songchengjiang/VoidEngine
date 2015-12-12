@@ -530,7 +530,7 @@ void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shade
 	}
 
 	if (hasTexture(mat, aiTextureType_NORMALS)){
-		_matWriter.String(NORMALSTEX_KEY.c_str(), NORMALSTEX_KEY.size());
+		_matWriter.String(NORMALTEX_KEY.c_str(), NORMALTEX_KEY.size());
 		_matWriter.Uint(texUnit++);
 	}
 
@@ -595,6 +595,8 @@ void ModelConverter::writeTexture(const aiMaterial *mat, aiTextureType texType)
 		_matWriter.String(texturePath.C_Str(), texturePath.length);
 		_matWriter.String(SOURCE_KEY.c_str(), SOURCE_KEY.size()); 
 		_matWriter.String(texturePath.C_Str(), texturePath.length);
+		_matWriter.String(TEXTYPE_KEY.c_str(), TEXTYPE_KEY.size());
+		_matWriter.String(getTextureTypeName(texType).c_str());
 
 		_matWriter.String(WRAP_KEY.c_str(), WRAP_KEY.size());
 		if (mapMode == aiTextureMapMode_Wrap) _matWriter.String(REPEAT_KEY.c_str(), REPEAT_KEY.size());
@@ -735,6 +737,47 @@ void ModelConverter::collectBoneIndiecsAndBoneWeights(const aiMesh *mesh, std::v
 			++indices[weight.mVertexId];
 		}
 	}
+}
+
+std::string ModelConverter::getTextureTypeName(aiTextureType texType)
+{
+	switch (texType)
+	{
+	case aiTextureType_AMBIENT:
+		return AMBIENT_TEXTURE_KEY;
+
+	case aiTextureType_DIFFUSE:
+		return DIFFUSE_TEXTURE_KEY;
+
+	case aiTextureType_SPECULAR:
+		return SPECULAR_TEXTURE_KEY;
+
+	case aiTextureType_EMISSIVE:
+		return EMISSIVE_TEXTURE_KEY;
+
+	case aiTextureType_NORMALS:
+		return NORMAL_TEXTURE_KEY;
+
+	case aiTextureType_HEIGHT:
+		return HEIGHT_TEXTURE_KEY;
+
+	case aiTextureType_SHININESS:
+		return SHININESS_TEXTURE_KEY;
+
+	case aiTextureType_OPACITY:
+		return OPACITYT_TEXTURE_KEY;
+
+	case aiTextureType_DISPLACEMENT:
+		return DISPLACEMENT_TEXTURE_KEY;
+
+	case aiTextureType_LIGHTMAP:
+		return LIGHTMAP_TEXTURE_KEY;
+
+	case aiTextureType_REFLECTION:
+		return REFLECTION_TEXTURE_KEY;
+	}
+
+	return DIFFUSE_TEXTURE_KEY;
 }
 
 void ModelConverter::generateMeshNames(const aiScene *scene)

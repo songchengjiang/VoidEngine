@@ -25,7 +25,7 @@ void vePostProcesser::process(veFrameBufferObject *fb, veCamera *camera)
 			auto material = _materials->getMaterial(i);
 			for (unsigned int p = 0; p < material->activeTechnique()->getPassNum(); ++p) {
 				auto pass = material->activeTechnique()->getPass(p);
-				pass->getTexture(0)->storage((camera->getViewport().width - camera->getViewport().x) * VE_DEVICE_PIXEL_RATIO, (camera->getViewport().height - camera->getViewport().y) * VE_DEVICE_PIXEL_RATIO, 1, GL_RGBA8);
+				pass->getTexture(vePass::DIFFUSE_TEXTURE)->storage((camera->getViewport().width - camera->getViewport().x) * VE_DEVICE_PIXEL_RATIO, (camera->getViewport().height - camera->getViewport().y) * VE_DEVICE_PIXEL_RATIO, 1, GL_RGBA8);
 			}
 		}
 		_surface->setMaterialArray(_materials.get());
@@ -36,7 +36,7 @@ void vePostProcesser::process(veFrameBufferObject *fb, veCamera *camera)
 		auto material = _materials->getMaterial(i);
 		for (unsigned int p = 0; p < material->activeTechnique()->getPassNum(); ++p) {
 			auto pass = material->activeTechnique()->getPass(p);
-			fb->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pass->getTexture(0));
+			fb->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pass->getTexture(vePass::DIFFUSE_TEXTURE));
 			camera->render();
 			_renderer->setPostProcessingPass(pass);
 			_surface->render(_sceneManager->getRootNode(), camera);

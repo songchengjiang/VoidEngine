@@ -65,11 +65,12 @@ bool vePass::apply(const veRenderCommand &command)
 		return true;
 	CURRENT_PASS = this;
 
-	for (unsigned int i = 0; i < _textures.size(); ++i) {
-		auto &tex = _textures[i];
-		tex->bind(i);
+	unsigned int texUnit = 0;
+	for (auto &tex : _textures) {
+		tex.second->bind(texUnit);
+		++texUnit;
 	}
-	applyLightTextures(_textures.size(), command);
+	applyLightTextures(texUnit, command);
 
 	if (_depthTest != CURRENT_DEPTH_TEST) {
 		_depthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
@@ -139,40 +140,66 @@ veShader* vePass::getShader(veShader::Type type)
 	return _shaders[type].get();
 }
 
-void vePass::addTexture(veTexture *texture)
+//void vePass::addTexture(veTexture *texture)
+//{
+//	_textures.push_back(texture);
+//	_needLinkProgram = true;
+//}
+
+//void vePass::setTexture(size_t idx, veTexture *texture)
+//{
+//	veAssert(idx < _textures.size());
+//	if (_textures[idx] == texture) return;
+//	_textures[idx] = texture;
+//	_needLinkProgram = true;
+//}
+
+void vePass::setTexture(TextureType type, veTexture *texture)
 {
-	_textures.push_back(texture);
-	_needLinkProgram = true;
+	auto iter = _textures.find(type);
+	if (iter != _textures.end()) {
+		_textures.erase(iter);
+	}
+	if (texture)
+		_textures[type] = texture;
 }
 
-void vePass::setTexture(size_t idx, veTexture *texture)
+//veTexture* vePass::getTexture(size_t idx)
+//{
+//	veAssert(idx < _textures.size());
+//	return _textures[idx].get();
+//}
+
+//const veTexture* vePass::getTexture(size_t idx) const
+//{
+//	veAssert(idx < _textures.size());
+//	return _textures[idx].get();
+//}
+
+veTexture* vePass::getTexture(TextureType type)
 {
-	veAssert(idx < _textures.size());
-	if (_textures[idx] == texture) return;
-	_textures[idx] = texture;
-	_needLinkProgram = true;
+	auto iter = _textures.find(type);
+	if (iter == _textures.end()) 
+		return nullptr;
+	return iter->second.get();
 }
 
-veTexture* vePass::getTexture(size_t idx)
+const veTexture* vePass::getTexture(TextureType type) const
 {
-	veAssert(idx < _textures.size());
-	return _textures[idx].get();
+	auto iter = _textures.find(type);
+	if (iter == _textures.end())
+		return nullptr;
+	return iter->second.get();
 }
 
-const veTexture* vePass::getTexture(size_t idx) const
-{
-	veAssert(idx < _textures.size());
-	return _textures[idx].get();
-}
-
-veTexture* vePass::removeTexture(size_t idx)
-{
-	veAssert(idx < _textures.size());
-	veTexture *tex = _textures[idx].get();
-	_textures.erase(_textures.begin() + idx);
-	_needLinkProgram = true;
-	return tex;
-}
+//veTexture* vePass::removeTexture(size_t idx)
+//{
+//	veAssert(idx < _textures.size());
+//	veTexture *tex = _textures[idx].get();
+//	_textures.erase(_textures.begin() + idx);
+//	_needLinkProgram = true;
+//	return tex;
+//}
 
 void vePass::addUniform(veUniform *uniform)
 {

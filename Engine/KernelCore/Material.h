@@ -85,6 +85,20 @@ public:
 	static veStencilFunc CURRENT_STENCIL_FUNC;
 	static veStencilOp CURRENT_STENCIL_OP;
 
+	enum TextureType
+	{
+		AMBIENT_TEXTURE,
+		DIFFUSE_TEXTURE,
+		SPECULAR_TEXTURE,
+		EMISSIVE_TEXTURE,
+		NORMAL_TEXTURE,
+		HEIGHT_TEXTURE,
+		SHININESS_TEXTURE,
+		OPACITYT_TEXTURE,
+		DISPLACEMENT_TEXTURE,
+		LIGHTMAP_TEXTURE,
+		REFLECTION_TEXTURE,
+	};
 	vePass();
 	~vePass();
 
@@ -123,11 +137,14 @@ public:
 	void setShader(veShader *shader);
 	veShader* getShader(veShader::Type type);
 
-	void addTexture(veTexture *texture);
-	void setTexture(size_t idx, veTexture *texture);
-	veTexture* getTexture(size_t idx);
-	const veTexture* getTexture(size_t idx) const;
-	veTexture* removeTexture(size_t idx);
+	//void addTexture(veTexture *texture);
+	//void setTexture(size_t idx, veTexture *texture);
+	void setTexture(TextureType type, veTexture *texture);
+	//veTexture* getTexture(size_t idx);
+	veTexture* getTexture(TextureType type);
+	const veTexture* getTexture(TextureType type) const;
+	//const veTexture* getTexture(size_t idx) const;
+	//veTexture* removeTexture(size_t idx);
 	size_t getTextureNum() const { return _textures.size(); }
 
 	void addUniform(veUniform *uniform);
@@ -179,7 +196,7 @@ private:
 	GLuint _program;
 	bool    _needLinkProgram;
 	std::map<veShader::Type, VE_Ptr<veShader> >           _shaders;
-	std::vector< VE_Ptr<veTexture> >                      _textures;
+	std::map< TextureType, VE_Ptr<veTexture> >  _textures;
 	std::vector< VE_Ptr<veUniform> >                      _uniforms;
 	LightUniformLocations                                 _lightUniformLocations;
 	VE_Ptr<veTransformFeedback>                           _transformFeedback;
