@@ -15,10 +15,12 @@ public:
 
 	enum RenderStage
 	{
-		PRELIGHTING = 1,
-		FRAMEBUFFER = 1 << 1,
-		RENDERING   = 1 << 2,
-		POSTPROCESS = 1 << 3,
+		DEPTH       = 1,
+		LIGHTINGING = 1 << 1,
+		SHADOWING   = 1 << 2,
+		FRAMEBUFFER = 1 << 3,
+		RENDERING   = 1 << 4,
+		POSTPROCESS = 1 << 5,
 	};
 
 	static unsigned short CURRENT_RENDER_STAGE;

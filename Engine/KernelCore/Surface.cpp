@@ -49,8 +49,9 @@ const char* veSurface::COMMON_F_SHADER = " \
 		fragColor = u_Color * texColor; \n \
 	}";
 
-veSurface::veSurface()
-	: _needRefreshMaterial(true)
+veSurface::veSurface(veSceneManager *sm)
+	: veRenderableObject(sm)
+	, _needRefreshMaterial(true)
 {
 	_alphaThreshold = new veUniform("u_alphaThreshold", 1.0f);
 	_color = new veUniform("u_Color", veVec4::WHITE);
@@ -100,7 +101,7 @@ void veSurface::setType(Type type)
 	else if (_type == BILLBOARD) {
 		_renderer = new veBillboardRenderer;
 	}
-	_renderer->setRenderStageMask(_renderer->getRenderStageMask() & ~veRenderer::PRELIGHTING);
+	_renderer->setRenderStageMask(_renderer->getRenderStageMask() & ~veRenderer::SHADOWING & ~veRenderer::LIGHTINGING & ~veRenderer::DEPTH);
 	_boundingBox.dirty();
 	_needRefreshMaterial = true;
 }

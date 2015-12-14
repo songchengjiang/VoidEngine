@@ -109,6 +109,88 @@
                     ]
                 }
             ]
+        },
+        {
+            "name": "SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ENTITY",
+            "techniques": [
+                {
+                    "name": "TECHNIQUE",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": false,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "OmnidirectionalShaderMap.vert",
+                                    "u_ModelViewMat": "MV_MATRIX",
+                                    "u_ModelViewProjectMat": "MVP_MATRIX"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "OmnidirectionalShaderMap.frag"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ANIM_ENTITY",
+            "techniques": [
+                {
+                    "name": "TECHNIQUE",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": true,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "LightingPass.vert",
+                                    "u_ModelViewProjectMat": "MVP_MATRIX",
+                                    "u_NormalMat": "NORMAL_MATRIX",
+                                    "u_BoneMates": "BONE_MATRIXES"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "LightingPass.frag"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ENTITY",
+            "techniques": [
+                {
+                    "name": "TECHNIQUE",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": true,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "LightingPass.vert",
+                                    "u_ModelViewProjectMat": "MVP_MATRIX",
+                                    "u_NormalMat": "NORMAL_MATRIX"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "LightingPass.frag"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }

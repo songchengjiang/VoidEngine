@@ -95,13 +95,15 @@ private:
 	std::vector<veNode *> &_renderableNodes;
 };
 
-veDebuger::veDebuger()
-	: _isDrawMeshWireframe(false)
+veDebuger::veDebuger(veSceneManager *sm)
+	: veRenderableObject(sm)
+	, _isDrawMeshWireframe(false)
 	, _isDrawBoundingBoxWireframe(false)
 	, _isDrawFrustumPlane(false)
 	, _needRefresh(true)
 {
 	_renderer = new veDebugRenderer(this);
+	_renderer->setRenderStageMask(_renderer->getRenderStageMask() & ~veRenderer::SHADOWING & ~veRenderer::LIGHTINGING & ~veRenderer::DEPTH);
 }
 
 veDebuger::~veDebuger()

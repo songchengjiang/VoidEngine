@@ -68,6 +68,7 @@ public:
 	const veSkyBox* getSkyBox() const { return _skyBox.get(); }
 
 	veBaseManager* getManager(const std::string &mgType);
+	veMaterialArray* getSystemMaterial() { return _systemMaterials.get(); }
 
 	veNode* getRootNode() { return _root.get(); }
 	void setDeltaTime(double deltaTime);
@@ -110,6 +111,8 @@ protected:
 	veThreadPool _threadPool;
 	std::mutex                           _requestQueueMutex;
 	veLoopQueue< std::function<void()> > _requestQueue;
+
+	VE_Ptr<veMaterialArray> _systemMaterials;
 
 	std::mutex  _updatingMutex;
 	std::mutex  _renderingMutex;

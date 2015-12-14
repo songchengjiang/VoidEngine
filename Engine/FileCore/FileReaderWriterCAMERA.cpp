@@ -247,13 +247,13 @@ private:
 
 
 	GLenum getFrameBufferObjectAttach(const char* str) {
-		if (strncmp(COLOR_KEY.c_str(), str, COLOR_KEY.size()) == 0) {
-			return GL_COLOR_ATTACHMENT0 + atoi(&str[COLOR_KEY.size()]);
+		if (strncmp(COLOR_ATTACHMENT_KEY.c_str(), str, COLOR_ATTACHMENT_KEY.size()) == 0) {
+			return GL_COLOR_ATTACHMENT0 + atoi(&str[COLOR_ATTACHMENT_KEY.size()]);
 		}
-		else if (strcmp(DEPTH_KEY.c_str(), str) == 0) {
+		else if (strcmp(DEPTH_ATTACHMENT_KEY.c_str(), str) == 0) {
 			return GL_DEPTH_ATTACHMENT;
 		}
-		else if (strcmp(STENCIAL_KEY.c_str(), str) == 0) {
+		else if (strcmp(STENCIAL_ATTACHMENT_KEY.c_str(), str) == 0) {
 			return GL_STENCIL_ATTACHMENT;
 		}
 		return 0;

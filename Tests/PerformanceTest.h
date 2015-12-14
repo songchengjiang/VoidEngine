@@ -80,7 +80,7 @@ public:
 		_defaultCameraZoomScale = 10.0f;
 		_sceneManager->getRootNode()->addComponent(pu);
 
-		auto debuger = new veOctreeDebuger;
+		auto debuger = new veOctreeDebuger(_sceneManager);
 		debuger->debugDrawBoundingBoxWireframe(true, veVec4(1.0f, 0.0f, 0.0f, 1.0));
 		debuger->debugDrawOctree(true);
 		_sceneManager->getRootNode()->addRenderableObject(debuger);

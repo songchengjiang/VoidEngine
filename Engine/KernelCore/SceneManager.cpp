@@ -40,16 +40,15 @@ veLight* veSceneManager::createLight(veLight::LightType type, const std::string 
 {
 	veLight *light = nullptr;
 	if (type == veLight::DIRECTIONAL) {
-		light = new veDirectionalLight;
+		light = new veDirectionalLight(this);
 	}
 	else if (type == veLight::POINT){
-		light = new vePointLight;
+		light = new vePointLight(this);
 	}
 	else if (type == veLight::SPOT) {
-		light = new veSpotLight;
+		light = new veSpotLight(this);
 	}
 	light->setName(name);
-	light->setSceneManager(this);
 	_lightList.push_back(light);
 	this->needReload();
 	return light;
@@ -57,7 +56,7 @@ veLight* veSceneManager::createLight(veLight::LightType type, const std::string 
 
 veSurface* veSceneManager::createSurface(const std::string &name)
 {
-	auto surface = new veSurface;
+	auto surface = new veSurface(this);
 	surface->_sceneManager = this;
 	surface->setName(name);
 	return surface;
@@ -65,7 +64,7 @@ veSurface* veSceneManager::createSurface(const std::string &name)
 
 veImage* veSceneManager::createImage(const std::string &name, veTexture *texture)
 {
-	auto image = new veImage(texture);
+	auto image = new veImage(this, texture);
 	image->_sceneManager = this;
 	image->setName(name);
 	return image;
@@ -86,7 +85,7 @@ veSkyBox* veSceneManager::createSkyBox(const std::string &name, veReal size)
 
 veText* veSceneManager::createText(const std::string &name, veFont *font, const std::string &content)
 {
-	auto text = new veText(font, content);
+	auto text = new veText(this, font, content);
 	text->setName(name);
 	text->_sceneManager = this;
 	return text;

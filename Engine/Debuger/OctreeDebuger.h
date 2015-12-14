@@ -6,7 +6,7 @@ class veOctree;
 class VE_EXPORT veOctreeDebuger : public veDebuger
 {
 public:
-	veOctreeDebuger();
+	veOctreeDebuger(veSceneManager *sm);
 	~veOctreeDebuger();
 
 	virtual void render(veNode *node, veCamera *camera) override;

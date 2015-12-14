@@ -29,7 +29,7 @@ public:
 
 protected:
 
-	veSurface();
+	veSurface(veSceneManager *sm);
 
 	void initDefaultMaterial();
 	virtual void appendMaterial(veMaterial *material);

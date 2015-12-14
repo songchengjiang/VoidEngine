@@ -56,10 +56,9 @@ veNode* veOctreeSceneManager::createNode(const std::string &name)
 
 veCamera* veOctreeSceneManager::createCamera(const std::string &name, const veViewport &vp)
 {
-	auto camera = new veOctreeCamera(vp);
+	auto camera = new veOctreeCamera(this, vp);
 	camera->setName(name);
 	camera->setOctree(_octree);
-	camera->setSceneManager(this);
 	_cameraList.push_back(camera);
 	return camera;
 }
@@ -218,26 +217,23 @@ void veOctreeSceneManager::render()
 	if (!veApplication::instance()->makeContextCurrent()) return;
 	culling();
 
-	if (!_lightList.empty()) {
-		veRenderer::CURRENT_RENDER_STAGE = veRenderer::PRELIGHTING;
-		for (auto &light : _lightList) {
-			if (light->isShadowEnabled() && light->isVisible() && light->isInScene()) {
-				veLight::CURRENT_LIGHT = light.get();
-				light->shadowCameraRendering();
-				veLight::CURRENT_LIGHT = nullptr;
-			}
-		}
-	}
+	//if (!_lightList.empty()) {
+	//	veRenderer::CURRENT_RENDER_STAGE = veRenderer::SHADOWING;
+	//	for (auto &light : _lightList) {
+	//		if (light->isShadowEnabled() && light->isVisible() && light->isInScene()) {
+	//			veLight::CURRENT_LIGHT = light.get();
+	//			light->shadowCameraRendering();
+	//			veLight::CURRENT_LIGHT = nullptr;
+	//		}
+	//	}
+	//}
 
 	veRenderer::CURRENT_RENDER_STAGE = veRenderer::FRAMEBUFFER;
 	for (auto &iter : _cameraList) {
 		if (iter->isVisible() && iter->isInScene() && iter != _mainCamera) {
 			if (iter->getFrameBufferObject()) {
 				veOctreeCamera *rttCam = static_cast<veOctreeCamera *>(iter.get());
-				if (_skyBox.valid()) {
-					_skyBox->render(rttCam);
-				}
-				rttCam->fillRenderQueue();
+				rttCam->setSkybox(_skyBox.get());
 				rttCam->render();
 			}
 		}
@@ -246,13 +242,11 @@ void veOctreeSceneManager::render()
 	veRenderer::CURRENT_RENDER_STAGE = veRenderer::RENDERING;
 	if (_mainCamera.valid() && _mainCamera->isInScene() && _mainCamera->isVisible()) {
 		veOctreeCamera *mainCam = static_cast<veOctreeCamera *>(_mainCamera.get());
+		mainCam->setSkybox(_skyBox.get());
 		//mainCam->walkingOctree(this->_octree);
-		if (_skyBox.valid()) {
-			_skyBox->render(mainCam);
-		}
-		mainCam->fillRenderQueue();
 
 		if (!_postProcesserList.empty()) {
+			mainCam->separateRender();
 			veRenderer::CURRENT_RENDER_STAGE = veRenderer::POSTPROCESS;
 			if (!_postProcesserFBO.valid()) {
 				_postProcesserFBO = veFrameBufferObjectManager::instance()->createFrameBufferObject(POST_PROCESSER_FRAMEBUFFER_OBJECT);
@@ -262,8 +256,11 @@ void veOctreeSceneManager::render()
 				_postProcesserList[i]->process(_postProcesserFBO.get(), mainCam);
 			}
 			mainCam->setFrameBufferObject(nullptr);
+			mainCam->separateDraw();
 		}
-		mainCam->render();
+		else {
+			mainCam->render();
+		}
 	}
 	veApplication::instance()->swapBuffers();
 }
@@ -279,14 +276,14 @@ void veOctreeSceneManager::culling()
 		}
 	}
 
-	if (!_lightList.empty()) {
-		for (auto &iter : _lightList) {
-			if (iter->isShadowEnabled() && iter->isVisible() && iter->isInScene()) {
-				veLight *light = iter.get();
-				_threadPool.enqueue(nullptr, nullptr, [light] {
-					light->shadowCameraCulling();
-				});
-			}
-		}
-	}
+	//if (!_lightList.empty()) {
+	//	for (auto &iter : _lightList) {
+	//		if (iter->isShadowEnabled() && iter->isVisible() && iter->isInScene()) {
+	//			veLight *light = iter.get();
+	//			_threadPool.enqueue(nullptr, nullptr, [light] {
+	//				light->shadowCameraCulling();
+	//			});
+	//		}
+	//	}
+	//}
 }

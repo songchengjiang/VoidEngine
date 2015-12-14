@@ -1,6 +1,7 @@
 #include "Image.h"
 
-veImage::veImage(veTexture *texture)
+veImage::veImage(veSceneManager *sm, veTexture *texture)
+	: veSurface(sm)
 {
 	setTexture(texture);
 }

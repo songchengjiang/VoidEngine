@@ -120,6 +120,7 @@ private:
 
 		if (passVal.HasMember(DRAWMASK_KEY.c_str()))
 			pass->drawMask() = passVal[DRAWMASK_KEY.c_str()].GetUint();
+
 		if (passVal.HasMember(BLENDFUNC_KEY.c_str())) {
 			const Value &bfVal = passVal[BLENDFUNC_KEY.c_str()];
 			if (bfVal.Size() == 2) {
@@ -128,18 +129,25 @@ private:
 			}
 		}
 
+		if (passVal.HasMember(BLENDEQUATION_KEY.c_str())) {
+			const Value &beVal = passVal[BLENDEQUATION_KEY.c_str()];
+			pass->blendEquation() = getBlendEquationParam(beVal.GetString());
+		}
+
 		if (passVal.HasMember(STENCIALFUNC_KEY.c_str())) {
 			const Value &sfVal = passVal[STENCIALFUNC_KEY.c_str()];
-			if (sfVal.Size() == 4) {
+			if (sfVal.Size() == 6) {
 				pass->stencilFunc().frontfunc = getStencilFuncParam(sfVal[0].GetString());
-				pass->stencilFunc().backfunc  = getStencilFuncParam(sfVal[1].GetString());
-				pass->stencilFunc().ref       = sfVal[2].GetInt();
-				pass->stencilFunc().mask      = sfVal[3].GetUint();
+				pass->stencilFunc().frontref  = sfVal[1].GetInt();
+				pass->stencilFunc().frontmask = sfVal[2].GetInt();
+				pass->stencilFunc().backfunc  = getStencilFuncParam(sfVal[3].GetString());
+				pass->stencilFunc().backref   = sfVal[4].GetInt();
+				pass->stencilFunc().backmask  = sfVal[5].GetInt();
 			}
 		}
 
 		if (passVal.HasMember(STENCIALOP_KEY.c_str())) {
-			const Value &soVal = passVal[STENCIALFUNC_KEY.c_str()];
+			const Value &soVal = passVal[STENCIALOP_KEY.c_str()];
 			if (soVal.Size() == 6) {
 				pass->stencilOp().frontsfail  = getStencilOpParam(soVal[0].GetString());
 				pass->stencilOp().frontdpfail = getStencilOpParam(soVal[1].GetString());
@@ -368,13 +376,13 @@ private:
 	}
 
 	GLenum getFrameBufferObjectAttach(const char* str) {
-		if (strncmp(COLOR_KEY.c_str(), str, COLOR_KEY.size()) == 0) {
-			return GL_COLOR_ATTACHMENT0 + atoi(&str[COLOR_KEY.size()]);
+		if (strncmp(COLOR_ATTACHMENT_KEY.c_str(), str, COLOR_ATTACHMENT_KEY.size()) == 0) {
+			return GL_COLOR_ATTACHMENT0 + atoi(&str[COLOR_ATTACHMENT_KEY.size()]);
 		}
-		else if (strcmp(DEPTH_KEY.c_str(), str) == 0) {
+		else if (strcmp(DEPTH_ATTACHMENT_KEY.c_str(), str) == 0) {
 			return GL_DEPTH_ATTACHMENT;
 		}
-		else if (strcmp(STENCIAL_KEY.c_str(), str) == 0) {
+		else if (strcmp(STENCIAL_ATTACHMENT_KEY.c_str(), str) == 0) {
 			return GL_STENCIL_ATTACHMENT;
 		}
 		return 0;
@@ -410,6 +418,25 @@ private:
 		}
 		else if (strncmp(ONE_MINUS_DST_COLOR_KEY.c_str(), str, ONE_MINUS_DST_COLOR_KEY.size()) == 0) {
 			return GL_ONE_MINUS_DST_COLOR;
+		}
+		return GL_ZERO;
+	}
+
+	GLenum getBlendEquationParam(const char* str) {
+		if (strncmp(FUNC_ADD_KEY.c_str(), str, FUNC_ADD_KEY.size()) == 0) {
+			return GL_FUNC_ADD;
+		}
+		else if (strncmp(FUNC_SUBTRACT_KEY.c_str(), str, FUNC_SUBTRACT_KEY.size()) == 0) {
+			return GL_FUNC_SUBTRACT;
+		}
+		else if (strncmp(FUNC_REVERSE_SUBTRACT_KEY.c_str(), str, FUNC_REVERSE_SUBTRACT_KEY.size()) == 0) {
+			return GL_FUNC_REVERSE_SUBTRACT;
+		}
+		else if (strncmp(MIN_KEY.c_str(), str, MIN_KEY.size()) == 0) {
+			return GL_MIN;
+		}
+		else if (strncmp(MAX_KEY.c_str(), str, MAX_KEY.size()) == 0) {
+			return GL_MAX;
 		}
 		return GL_ZERO;
 	}

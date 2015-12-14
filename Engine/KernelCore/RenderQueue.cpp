@@ -15,14 +15,6 @@ veRenderQueue::~veRenderQueue()
 
 void veRenderQueue::pushCommand(unsigned int renderPassIndex, unsigned int renderQueueType, const veRenderCommand &cmd)
 {
-	auto &passRenderQueue = _renderQueue[renderPassIndex];
+	auto &passRenderQueue = renderCommandList[renderPassIndex];
 	passRenderQueue[renderQueueType].push_back(cmd);
-}
-
-void veRenderQueue::execute(veCamera *camera)
-{
-	for (auto &renderPass : _renderQueue) {
-		camera->render(renderPass.second);
-	}
-	_renderQueue.clear();
 }

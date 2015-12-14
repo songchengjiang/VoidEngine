@@ -5,6 +5,7 @@
 #include "Texture.h"
 #include "VE_Ptr.h"
 #include "RenderCommand.h"
+#include "RenderState.h"
 #include "TransformFeedback.h"
 #include <unordered_map>
 
@@ -12,78 +13,12 @@ struct veRenderCommand;
 class veRenderer;
 class veFrameBufferObject;
 class veLight;
-struct VE_EXPORT veBlendFunc
-{
-	static veBlendFunc DISABLE;
-	static veBlendFunc ADDITIVE;
-	static veBlendFunc ALPHA;
-
-	GLenum src;
-	GLenum dst;
-
-	inline bool operator == (const veBlendFunc& rkbf) const {
-		return (src == rkbf.src && dst == rkbf.dst);
-	}
-
-	inline bool operator != (const veBlendFunc& rkbf) const {
-		return (src != rkbf.src || dst != rkbf.dst);
-	}
-};
-
-struct VE_EXPORT veStencilFunc
-{
-	static veStencilFunc ALWAYS;
-
-	GLenum frontfunc;
-	GLenum backfunc;
-	GLint ref;
-	GLuint mask;
-
-	inline bool operator == (const veStencilFunc& rkbf) const {
-		return (frontfunc == rkbf.frontfunc && backfunc == rkbf.backfunc && ref == rkbf.ref && mask == rkbf.mask);
-	}
-
-	inline bool operator != (const veStencilFunc& rkbf) const {
-		return (frontfunc != rkbf.frontfunc || backfunc != rkbf.backfunc || ref != rkbf.ref || mask != rkbf.mask);
-	}
-};
-
-struct VE_EXPORT veStencilOp
-{
-	static veStencilOp KEEP;
-
-	GLenum frontsfail;
-	GLenum frontdpfail;
-	GLenum frontdppass;
-
-	GLenum backsfail;
-	GLenum backdpfail;
-	GLenum backdppass;
-
-	inline bool operator == (const veStencilOp& rkbf) const {
-		return (frontsfail == rkbf.frontsfail && frontdpfail == rkbf.frontdpfail && frontdppass == rkbf.frontdppass
-			&& backsfail == rkbf.backsfail && backdpfail == rkbf.backdpfail && backdppass == rkbf.backdppass);
-	}
-
-	inline bool operator != (const veStencilOp& rkbf) const {
-		return (frontsfail != rkbf.frontsfail || frontdpfail != rkbf.frontdpfail || frontdppass != rkbf.frontdppass
-			|| backsfail != rkbf.backsfail || backdpfail != rkbf.backdpfail || backdppass != rkbf.backdppass);
-	}
-};
 
 class VE_EXPORT vePass
 {
 	friend class veUniform;
 public:
 	static vePass* CURRENT_PASS;
-	static bool CURRENT_DEPTH_TEST;
-	static bool CURRENT_DEPTH_WRITE;
-	static bool CURRENT_STENCIL_TEST;
-	static bool CURRENT_CULL_FACE;
-	static GLenum CURRENT_CULL_FACE_MODE;
-	static veBlendFunc CURRENT_BLEND_FUNC;
-	static veStencilFunc CURRENT_STENCIL_FUNC;
-	static veStencilOp CURRENT_STENCIL_OP;
 
 	enum TextureType
 	{
@@ -111,19 +46,22 @@ public:
 	bool& depthTest() { return _depthTest; }
 
 	const bool& depthWrite() const { return _depthWirte; }
-	bool& depthWrite(){ return _depthWirte; }
+	bool& depthWrite() { return _depthWirte; }
 
 	const bool& stencilTest() const { return _stencilTest; };
 	bool& stencilTest() { return _stencilTest; }
 
-	const bool& cullFace() const{ return _cullFace; }
-	bool& cullFace(){ return _cullFace; }
+	const bool& cullFace() const { return _cullFace; }
+	bool& cullFace() { return _cullFace; }
 
 	const GLenum& cullFaceMode() const { return _cullFaceMode; }
 	GLenum& cullFaceMode() { return _cullFaceMode; }
 
 	const veBlendFunc& blendFunc() const { return _blendFunc; }
 	veBlendFunc& blendFunc() { return _blendFunc; }
+
+	const GLenum& blendEquation() const { return _blendEquation; }
+	GLenum& blendEquation() { return _blendEquation; }
 
 	const veStencilFunc& stencilFunc() const { return _stencilFunc; }
 	veStencilFunc& stencilFunc() { return _stencilFunc; }
@@ -149,6 +87,7 @@ public:
 
 	void addUniform(veUniform *uniform);
 	veUniform* getUniform(size_t idx);
+	veUniform* getUniform(const std::string &name);
 	veUniform* removeUniform(size_t idx);
 	size_t getUniformNum() const { return _uniforms.size(); }
 
@@ -156,8 +95,6 @@ public:
 	veTransformFeedback* getTransformFeedback() { return _transformFeedback.get(); }
 
 	void needLink();
-
-	static void restoreGLState();
 
 private:
 
@@ -172,6 +109,7 @@ private:
 
 	struct LightUniformLocations
 	{
+		GLint lightTexture;
 		GLint dirLightVisible;
 		GLint pointLightVisible;
 		GLint spotLightVisible;
@@ -189,6 +127,7 @@ private:
 	bool _cullFace;
 	GLenum _cullFaceMode;
 	veBlendFunc _blendFunc;
+	GLenum _blendEquation;
 	veStencilFunc _stencilFunc;
 	veStencilOp   _stencilOp;
 	unsigned int _mask;
@@ -230,7 +169,8 @@ public:
 	static const std::string SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ENTITY;
 	static const std::string SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY;
 	static const std::string SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ENTITY;
-	static const std::string SYSTEM_MATERIAL_TEXTURES;
+	static const std::string SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ANIM_ENTITY;
+	static const std::string SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ENTITY;
 
 	veMaterial();
 	~veMaterial();

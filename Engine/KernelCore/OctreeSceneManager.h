@@ -45,7 +45,6 @@ protected:
 	unsigned int _octreeMaxDeep;
 	veOctree *_octree;
 	OctreeNodeList _octreeNodeList;
-	VE_Ptr<veMaterialArray> _systemMaterials;
 
 	unsigned int _parallelUpdateOctantNum;
 	std::mutex   _parallelUpdateOctantMutex;

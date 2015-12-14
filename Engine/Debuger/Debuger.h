@@ -34,7 +34,7 @@ public:
 	void debugDrawLine(const veVec3 &start, const veVec3 &end, const veVec4 &color = veVec4::WHITE);
 
 protected:
-	veDebuger();
+	veDebuger(veSceneManager *sm);
 	void initMaterial(veSceneManager *sm);
 	void renderMeshWireframe(veMesh *mesh, const veMat4 &trans);
 	void renderBoundingBoxWireframe(const veBoundingBox &bbox, const veVec4 &color);

@@ -3,6 +3,7 @@
 #include "Constants.h"
 #include "KernelCore/Light.h"
 #include "KernelCore/SceneManager.h"
+#include "KernelCore/MaterialManager.h"
 #include <unordered_map>
 
 using namespace rapidjson;
@@ -16,10 +17,12 @@ public:
 	~veFileReaderWriterLIGHT(){};
 
 	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
+		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
 		_sceneManager = sm;
 		_name = name;
+		_fileFolder = fullPath.substr(0, fullPath.find_last_of("/\\") + 1);
 		_doucument = new Document;
-		auto fileData = veFile::instance()->readFileToBuffer(filePath);
+		auto fileData = veFile::instance()->readFileToBuffer(fullPath);
 		_doucument->Parse(fileData->buffer);
 		if (_doucument->HasParseError()) return nullptr;
 		readLight();
@@ -38,9 +41,23 @@ private:
 		std::string type = (*_doucument)[TYPE_KEY.c_str()].GetString();
 		_light = _sceneManager->createLight(getLightType(type), _name);
 		if (!_light) return;
+
+		if (_doucument->HasMember(MATERIALS_KEY.c_str())) {
+			std::string matFile = (*_doucument)[MATERIALS_KEY.c_str()].GetString();
+			veMaterialArray *materials = nullptr;
+			if (veFile::instance()->isFileExist(veFile::instance()->getFullFilePath(matFile))) {
+				materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, matFile, _name + std::string("-Materials")));
+			}
+			else {
+				materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, _fileFolder + matFile, _name + std::string("-Materials")));
+			}
+			_light->setMaterialArray(materials);
+		}
+
+
 		if (_doucument->HasMember(COLOR_KEY.c_str())) {
 			const Value &val = (*_doucument)[COLOR_KEY.c_str()];
-			veVec4 color = veVec4(val[0].GetDouble(), val[1].GetDouble(), val[2].GetDouble(), val[3].GetDouble());
+			veVec3 color = veVec3(val[0].GetDouble(), val[1].GetDouble(), val[2].GetDouble());
 			_light->setColor(color);
 		}
 
@@ -49,9 +66,16 @@ private:
 			_light->setIntensity(val.GetDouble());
 		}
 
-		if (_doucument->HasMember(ATTENUATION_KEY.c_str())) {
-			const Value &val = (*_doucument)[ATTENUATION_KEY.c_str()];
-			_light->setAttenuationRange(val.GetDouble());
+		if (_light->getLightType() == veLight::POINT || _light->getLightType() == veLight::SPOT) {
+			if (_doucument->HasMember(ATTENUATION_KEY.c_str())) {
+				const Value &val = (*_doucument)[ATTENUATION_KEY.c_str()];
+				if (_light->getLightType() == veLight::POINT) {
+					static_cast<vePointLight *>(_light)->setAttenuationRange(val.GetDouble());
+				}
+				if (_light->getLightType() == veLight::SPOT) {
+					static_cast<veSpotLight *>(_light)->setAttenuationRange(val.GetDouble());
+				}
+			}
 		}
 
 		if (_doucument->HasMember(SHADOW_ENABLED_KEY.c_str())) {
@@ -124,6 +148,7 @@ private:
 	veLight *_light;
 	veSceneManager *_sceneManager;
 	std::string _name;
+	std::string _fileFolder;
 };
 
 VE_READERWRITER_REG("velight", veFileReaderWriterLIGHT);

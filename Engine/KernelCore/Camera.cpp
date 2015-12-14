@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "NodeVisitor.h"
 #include "SceneManager.h"
+#include "TextureManager.h"
 
 veLoopQueue<veRenderCommand>::SortFunc PASS_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
 	return right.priority == left.priority? left.pass <= right.pass: right.priority <= left.priority;
@@ -18,8 +19,8 @@ veLoopQueue<veRenderCommand>::SortFunc OVERLAY_SORT = [](const veRenderCommand &
 	return left.priority <= right.priority;
 };
 
-veCamera::veCamera()
-	:_viewMat(veMat4::IDENTITY)
+veCamera::veCamera(veSceneManager *sm)
+	: _viewMat(veMat4::IDENTITY)
 	, _projectionMat(veMat4::IDENTITY)
 	, _clearColor(0.0f)
 	, _clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -30,9 +31,11 @@ veCamera::veCamera()
 	, _needRefreshFrustumPlane(true)
 	, _renderQueue(nullptr)
 {
+	_sceneManager = sm;
+	initDeferredLighting();
 }
 
-veCamera::veCamera(const veViewport &vp)
+veCamera::veCamera(veSceneManager *sm, const veViewport &vp)
 	: _viewMat(veMat4::IDENTITY)
 	, _projectionMat(veMat4::IDENTITY)
 	, _clearColor(0.0f)
@@ -44,6 +47,8 @@ veCamera::veCamera(const veViewport &vp)
 	, _needRefreshFrustumPlane(true)
 	, _renderQueue(nullptr)
 {
+	_sceneManager = sm;
+	initDeferredLighting();
 }
 
 veCamera::~veCamera()
@@ -129,6 +134,7 @@ void veCamera::setViewport(const veViewport &vp)
 	_viewport = vp;
 	if (_fbo.valid())
 		_fbo->setFrameBufferSize(veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y));
+	refreshDeferredLighting();
 }
 
 void veCamera::setRenderPath(RenderPath renderPath)
@@ -137,22 +143,44 @@ void veCamera::setRenderPath(RenderPath renderPath)
 	_sceneManager->needReload();
 }
 
+void veCamera::setSkybox(veSkyBox *skybox)
+{
+	if (_skybox == skybox)
+		return;
+	_skybox = skybox;
+}
+
 const vePlane& veCamera::getFrustumPlane(FrustumPlane fp)
 {
 	updateFrustumPlane();
 	return _frustumPlane[fp];
 }
 
-void veCamera::render(veRenderQueue::RenderCommandList &renderList)
+void veCamera::separateDraw()
 {
-	if (_viewport.isNull()) 
-		return;
 	if (_fbo.valid()) {
 		_fbo->bind(_clearMask);
 	}
 	glViewport(_viewport.x * VE_DEVICE_PIXEL_RATIO, _viewport.y * VE_DEVICE_PIXEL_RATIO, _viewport.width * VE_DEVICE_PIXEL_RATIO, _viewport.height * VE_DEVICE_PIXEL_RATIO);
 	glClear(_clearMask);
 	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
+	glClearDepth(1.0f);
+	glClearStencil(0);
+
+	if (_skybox.valid())
+		_skybox->render(this);
+	for (auto &renderPass : _renderQueue->renderCommandList) {
+		this->render(renderPass.second);
+	}
+	_renderQueue->renderCommandList.clear();
+
+	if (_fbo.valid()) {
+		_fbo->unBind();
+	}
+}
+
+void veCamera::render(veRenderQueue::RenderCommandList &renderList)
+{
 	if (!renderList.empty()) {
 		auto bgQueue = renderList.find(veRenderQueue::RENDER_QUEUE_BACKGROUND);
 		if (bgQueue != renderList.end()) {
@@ -186,20 +214,15 @@ void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 			}
 		}
 	}
-
-	if (_fbo.valid()) {
-		_fbo->unBind();
-	}
-
-	vePass::restoreGLState();
 	_renderStateChanged = false;
 }
 
 void veCamera::render()
 {
-	if (_renderQueue) {
-		_renderQueue->execute(this);
-	}
+	if (_viewport.isNull())
+		return;
+	deferredLighting();
+	forwardRendering();
 }
 
 void veCamera::setMatrix(const veMat4 &mat)
@@ -300,5 +323,65 @@ void veCamera::updateFrustumPlane()
 
 void veCamera::updateSceneManager()
 {
+}
 
+void veCamera::initDeferredLighting()
+{
+	_deferredLightingParams.lightfbo = veFrameBufferObjectManager::instance()->createFrameBufferObject(_name + std::string("-lightfbo"));
+	_deferredLightingParams.normalTexture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture("LIGHTING_PASS_NORMAL_TEXTURE");
+	if (!_deferredLightingParams.normalTexture.valid()) {
+		_deferredLightingParams.normalTexture = _sceneManager->createTexture("LIGHTING_PASS_NORMAL_TEXTURE", veTexture::TEXTURE_2D);
+	}
+	_deferredLightingParams.depthTexture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture("LIGHTING_PASS_DEPTH_TEXTURE");
+	if (!_deferredLightingParams.depthTexture.valid()) {
+		_deferredLightingParams.depthTexture = _sceneManager->createTexture("LIGHTING_PASS_DEPTH_TEXTURE", veTexture::TEXTURE_2D);
+	}
+	_deferredLightingParams.lightTexture = _sceneManager->createTexture(_name + std::string("-lightTex"));
+	_deferredLightingParams.lightfbo->attach(GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, _deferredLightingParams.depthTexture.get());
+	_deferredLightingParams.lightfbo->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _deferredLightingParams.normalTexture.get());
+	_deferredLightingParams.lightfbo->attach(GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, _deferredLightingParams.lightTexture.get());
+	refreshDeferredLighting();
+}
+
+void veCamera::refreshDeferredLighting()
+{
+	veVec2 size = veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y);
+	_deferredLightingParams.lightfbo->setFrameBufferSize(size);
+	_deferredLightingParams.normalTexture->storage(size.x(), size.y(), 1, GL_RGBA32F, GL_RGBA, GL_FLOAT, nullptr, 1);
+	_deferredLightingParams.depthTexture->storage(size.x(), size.y(), 1, GL_DEPTH24_STENCIL8, GL_RGBA, GL_FLOAT, nullptr, 1);
+	_deferredLightingParams.lightTexture->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
+}
+
+void veCamera::deferredLighting()
+{
+	auto renderStage = veRenderer::CURRENT_RENDER_STAGE;
+	_deferredLightingParams.lightfbo->bind(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glViewport(_viewport.x * VE_DEVICE_PIXEL_RATIO, _viewport.y * VE_DEVICE_PIXEL_RATIO, _viewport.width * VE_DEVICE_PIXEL_RATIO, _viewport.height * VE_DEVICE_PIXEL_RATIO);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+	veRenderer::CURRENT_RENDER_STAGE = veRenderer::DEPTH;
+	separateRender();
+	for (auto &renderPass : _renderQueue->renderCommandList) {
+		this->render(renderPass.second);
+	}
+	_renderQueue->renderCommandList.clear();
+
+	glDrawBuffer(GL_COLOR_ATTACHMENT1);
+	veRenderer::CURRENT_RENDER_STAGE = veRenderer::LIGHTINGING;
+	separateRender();
+	for (auto &renderPass : _renderQueue->renderCommandList) {
+		this->render(renderPass.second);
+	}
+	_renderQueue->renderCommandList.clear();
+
+	_deferredLightingParams.lightfbo->unBind();
+	veRenderer::CURRENT_RENDER_STAGE = renderStage;
+	veRenderState::instance()->resetState();
+}
+
+void veCamera::forwardRendering()
+{
+	separateRender();
+	separateDraw();
+	veRenderState::instance()->resetState();
 }

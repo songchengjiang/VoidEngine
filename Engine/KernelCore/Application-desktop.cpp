@@ -255,7 +255,7 @@ bool veApplicationDesktop::run()
 		QueryPerformanceCounter(&currentFrameTime);
 		if (frameTimeLimit.QuadPart <= (currentFrameTime.QuadPart - preFrameTime.QuadPart)) {
 			_sceneManager->setDeltaTime((currentFrameTime.QuadPart - preFrameTime.QuadPart) * frequencyPreSec);
-			veLog("Frame Rate: %f\n", 1.0 / _sceneManager->getDeltaTime());
+			//veLog("Frame Rate: %f\n", 1.0 / _sceneManager->getDeltaTime());
 			this->dispatchEvents();
 			_sceneManager->simulation();
 			preFrameTime.QuadPart = currentFrameTime.QuadPart;

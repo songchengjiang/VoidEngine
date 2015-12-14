@@ -8,7 +8,7 @@ vePostProcesser::vePostProcesser(veSceneManager *sm)
 	, _needRefresh(true)
 {
 	_renderer = new vePostProcesserRenderer;
-	_renderer->setRenderStageMask(_renderer->getRenderStageMask() & ~veRenderer::PRELIGHTING);
+	_renderer->setRenderStageMask(_renderer->getRenderStageMask() & ~veRenderer::SHADOWING);
 	_surface = _sceneManager->createSurface(_name + std::string("-surface"));
 	_surface->setRenderer(_renderer.get());
 }
@@ -37,7 +37,7 @@ void vePostProcesser::process(veFrameBufferObject *fb, veCamera *camera)
 		for (unsigned int p = 0; p < material->activeTechnique()->getPassNum(); ++p) {
 			auto pass = material->activeTechnique()->getPass(p);
 			fb->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pass->getTexture(vePass::DIFFUSE_TEXTURE));
-			camera->render();
+			camera->separateDraw();
 			_renderer->setPostProcessingPass(pass);
 			_surface->render(_sceneManager->getRootNode(), camera);
 		}

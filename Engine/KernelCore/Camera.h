@@ -8,6 +8,7 @@
 #include "FrameBufferObject.h"
 #include "Plane.h"
 #include "Material.h"
+#include "SkyBox.h"
 
 class veVisualiser;
 class veLight;
@@ -82,11 +83,15 @@ public:
 	void setRenderPath(RenderPath renderPath);
 	RenderPath getRenderPath() const { return _renderPath; }
 
+	void setSkybox(veSkyBox *skybox);
+
+	veTexture* getDeferredLightingTexture() { return _deferredLightingParams.lightTexture.get(); }
+
 	const vePlane& getFrustumPlane(FrustumPlane fp);
 
 	virtual void cull() = 0;
-	virtual void fillRenderQueue() = 0;
-
+	virtual void separateRender() = 0;
+	virtual void separateDraw() = 0;
 	void render();
 	void render(veRenderQueue::RenderCommandList &renderList);
 
@@ -101,14 +106,26 @@ public:
 
 protected:
 
-	veCamera();
-	veCamera(const veViewport &vp);
+	veCamera(veSceneManager *sm);
+	veCamera(veSceneManager *sm, const veViewport &vp);
 	void renderQueue(veLoopQueue< veRenderCommand > &queue);
 	void resize(int width, int height);
 	void updateFrustumPlane();
 	virtual void updateSceneManager() override;
+	void forwardRendering();
+	void deferredLighting();
+	void initDeferredLighting();
+	void refreshDeferredLighting();
 
 protected:
+
+
+	struct DeferredLightingParams {
+		VE_Ptr<veFrameBufferObject> lightfbo;
+		VE_Ptr<veTexture> normalTexture;
+		VE_Ptr<veTexture> depthTexture;
+		VE_Ptr<veTexture> lightTexture;
+	};
 
 	veMat4 _projectionMat;
 	veMat4 _viewMat;
@@ -116,6 +133,7 @@ protected:
 	veVec4       _clearColor;
 	unsigned int _clearMask;
 	VE_Ptr<veFrameBufferObject> _fbo;
+	DeferredLightingParams _deferredLightingParams;
 
 	vePlane _frustumPlane[6];
 	bool    _needRefreshFrustumPlane;
@@ -123,6 +141,7 @@ protected:
 	RenderPath _renderPath;
 	bool _renderStateChanged;
 
+	VE_Ptr<veSkyBox> _skybox;
 	veRenderQueue *_renderQueue;
 };
 

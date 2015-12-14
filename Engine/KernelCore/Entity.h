@@ -35,7 +35,7 @@ public:
 
 protected:
 
-	veEntity();
+	veEntity(veSceneManager *sm);
 	void refreshMeshes();
 
 protected:

@@ -8,12 +8,13 @@ class veOctree;
 class VE_EXPORT veOctreeCamera : public veCamera
 {
 public:
-	veOctreeCamera();
-	veOctreeCamera(const veViewport &vp);
+	veOctreeCamera(veSceneManager *sm);
+	veOctreeCamera(veSceneManager *sm, const veViewport &vp);
 	~veOctreeCamera();
 
 	virtual void cull() override;
-	virtual void fillRenderQueue() override;
+	virtual void separateRender() override;
+	virtual void separateDraw() override;
 
 	bool isNodeVisibleInCamera(veOctreeNode *node);
 

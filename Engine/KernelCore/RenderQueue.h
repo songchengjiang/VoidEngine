@@ -24,11 +24,9 @@ public:
 	virtual ~veRenderQueue();
 
 	virtual void pushCommand(unsigned int renderPassIndex, unsigned int renderQueueType, const veRenderCommand &cmd);
-	virtual void execute(veCamera *camera);
 
-protected:
-
-	std::map<unsigned int, RenderCommandList> _renderQueue;
+	std::map<unsigned int, RenderCommandList> renderCommandList;
+	
 };
 
 #endif

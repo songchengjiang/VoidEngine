@@ -1,11 +1,11 @@
 #ifndef _VE_LIGHT_
 #define _VE_LIGHT_
 #include "Prerequisites.h"
-#include "Node.h"
+#include "RenderableObject.h"
 #include "Parameter.h"
 #include "Camera.h"
 
-class VE_EXPORT veLight : public veNode
+class VE_EXPORT veLight : public veRenderableObject
 {
 	friend class veSceneManager;
 public:
@@ -14,6 +14,7 @@ public:
 	static const veVec2 DEFAULT_SHADOW_RESOLUTION;
 	static const float  DEFAULT_SHADOW_BIAS;
 	static const float  DEFAULT_SHADOW_STRENGTH;
+	static const std::string DEFUALT_LIGHT_TEXTURE_UNIFORM_NAME;
 
 	static veLight* CURRENT_LIGHT;
 
@@ -27,69 +28,56 @@ public:
 
 	~veLight();
 
-	virtual void update(veSceneManager *sm, const veMat4 &transform) override;
-	virtual void visit(veNodeVisitor &visitor) override;
+	virtual void update(veNode *node, veSceneManager *sm) override;
 	//virtual void render(veCamera *camera) override;
-
-	virtual void setMask(unsigned int mask, bool isOverride = false) override;
+	virtual void setMaterialArray(veMaterialArray *material);
 
 	LightType getLightType() const { return _type; }
-	void setColor(const veVec4 &color) { _color = color; }
-	const veVec4& getColor() const { return _color; }
-	void setIntensity(float intensity) { _intensity = intensity; }
-	float getIntensity() const { return _intensity; }
-	void setAttenuationRange(float range) { _attenuationRange = range; _attenuationRangeInverse = 1.0f / _attenuationRange; }
-	float getAttenuationRange() const { return _attenuationRange; }
-	float getAttenuationRangeInverse() const { return _attenuationRangeInverse; }
+	void setColor(const veVec3 &color) { _color->setValue(color); }
+	veVec3 getColor() const;
+	void setIntensity(float intensity) { _intensity->setValue(intensity); }
+	float getIntensity() const;
 
 	void shadowEnable(bool isEnabled);
-	bool isShadowEnabled() const { return _shadowEnabled; };
+	bool isShadowEnabled() const;
 	void setShadowResolution(const veVec2 &resolution);
 	const veVec2& getShadowResolution() const { return _shadowResolution; }
-	void setShadowBias(float bias) { _shadowBias = bias; }
-	float getShadowBias() const { return _shadowBias; }
-	void setShadowStrength(float strength) { _shadowStrength = strength; }
-	float getShadowStrength() const { return _shadowStrength; }
+	void setShadowBias(float bias) { _shadowBias->setValue(bias); }
+	float getShadowBias() const;
+	void setShadowStrength(float strength) { _shadowStrength->setValue(strength); }
+	float getShadowStrength() const;
 	void setShadowArea(const veVec2 &area) { _shadowArea = area; _needRefreshShadow = true; }
 	const veVec2& getShadowArea() const { return _shadowArea; }
-	void setUseSoftShadow(bool use) { _isUseSoftShadow = use; }
-	bool isUseSoftShadow() const { return _isUseSoftShadow; }
-	void setShadowSoftness(float softness) { _shadowSoftness = softness; }
-	float getShadowSoftness() const { return _shadowSoftness; }
-
-	void setLightInCameraMatrix(const veMat4 &mat) { _lightInCamMatrix = mat; }
-	const veMat4& getLightInCameraMatrix() { return _lightInCamMatrix; }
-
-	virtual veMat4 getLightMatrix() const = 0;
+	void setUseSoftShadow(bool use) { _isUseSoftShadow->setValue(use ? 1.0f: 0.0f); }
+	bool isUseSoftShadow() const;
+	void setShadowSoftness(float softness) { _shadowSoftness->setValue(softness); }
+	float getShadowSoftness() const;
 
 	virtual void shadowCameraCulling() = 0;
 	virtual void shadowCameraRendering() = 0;
 
 protected:
-	veLight(LightType type);
+	veLight(LightType type, veSceneManager *sm);
 
-	virtual void updateSceneManager() override;
 	virtual void updateShadowTexture() = 0;
-	virtual void updateShadowCamera() = 0;
+	virtual void updateShadowCamera(veNode *node) = 0;
+	virtual void fetechLightParams() = 0;
 
 protected:
 
 	LightType _type;
 
-	veVec4 _color;
-	float  _intensity;
-	float  _attenuationRange;
-	float  _attenuationRangeInverse;
-	veMat4 _lightInCamMatrix;
-	unsigned int _currentLightIndex;
+	VE_Ptr<veUniform> _color;
+	VE_Ptr<veUniform> _intensity;
+	VE_Ptr<veUniform> _lightMatrix;
+	VE_Ptr<veUniform> _shadowEnabled;
+	VE_Ptr<veUniform> _shadowBias;
+	VE_Ptr<veUniform> _shadowStrength;
+	VE_Ptr<veUniform> _isUseSoftShadow;
+	VE_Ptr<veUniform> _shadowSoftness;
 
-	bool _shadowEnabled;
 	veVec2 _shadowResolution;
 	veVec2 _shadowArea;
-	float _shadowBias;
-	float _shadowStrength;
-	float _shadowSoftness;
-	bool  _isUseSoftShadow;
 	bool _needRefreshShadow;
 	bool _needRefreshShadowCamera;
 };
@@ -115,25 +103,27 @@ public:
 
 	~veDirectionalLight();
 
-	virtual veMat4 getLightMatrix() const override;
+	virtual void render(veNode *node, veCamera *camera) override;
 
+	void setLightArea(const veVec3 &area);
 	virtual void shadowCameraCulling() override;
 	virtual void shadowCameraRendering() override;
 
-	static veTexture* getShadowTexture() { return _shadowTexture.get(); }
-	static unsigned int totalLightNum() { return _totalDirLightNum; }
+	veTexture* getShadowTexture() { return _shadowTexture.get(); }
 
 protected:
 
-	veDirectionalLight();
+	veDirectionalLight(veSceneManager *sm);
 	virtual void updateShadowTexture() override;
-	virtual void updateShadowCamera() override;
+	virtual void updateShadowCamera(veNode *node) override;
+	virtual void fetechLightParams() override;
 
 protected:
 
+	VE_Ptr<veUniform> _direction;
 	VE_Ptr<veCamera>  _shadowRenderingCam;
-	static VE_Ptr<veTexture> _shadowTexture;
-	static unsigned int _totalDirLightNum;
+	VE_Ptr<veTexture> _shadowTexture;
+	veVec3            _lightArea;
 };
 
 class VE_EXPORT vePointLight : public veLight
@@ -158,26 +148,29 @@ public:
 
 	~vePointLight();
 
-	virtual veMat4 getLightMatrix() const override;
+	virtual void render(veNode *node, veCamera *camera) override;
+
+	void setAttenuationRange(float range);
+	float getAttenuationRange() const;
 
 	virtual void shadowCameraCulling() override;
 	virtual void shadowCameraRendering() override;
 
-	static veTexture* getShadowTexture() { return _shadowTexture.get(); }
-	static unsigned int totalLightNum() { return _totalPointLightNum; }
+	veTexture* getShadowTexture() { return _shadowTexture.get(); }
 
 protected:
 
-	vePointLight();
+	vePointLight(veSceneManager *sm);
 	virtual void updateShadowTexture() override;
-	virtual void updateShadowCamera() override;
+	virtual void updateShadowCamera(veNode *node) override;
+	virtual void fetechLightParams() override;
 
 protected:
 
+	VE_Ptr<veUniform> _position;
+	VE_Ptr<veUniform> _attenuationRangeInverse;
 	VE_Ptr<veCamera>  _shadowRenderingCam[6];
-
-	static VE_Ptr<veTexture> _shadowTexture;
-	static unsigned int _totalPointLightNum;
+	VE_Ptr<veTexture> _shadowTexture;
 };
 
 class VE_EXPORT veSpotLight : public veLight
@@ -205,39 +198,38 @@ public:
 
 	~veSpotLight();
 
-	virtual veMat4 getLightMatrix() const override;
+	virtual void render(veNode *node, veCamera *camera) override;
 
+	void setAttenuationRange(float range) { _attenuationRangeInverse->setValue(1.0f / range); }
+	float getAttenuationRange() const;
 
-	void setInnerAngle(float innerAng) { _innerAngle = innerAng; _innerAngleCos = veMath::veCos(veMath::veRadian(_innerAngle)); }
-	float getInnerAngle() { return _innerAngle; }
-	float getInnerAngleCos() { return _innerAngleCos; }
-	void setOuterAngle(float outerAng) { _outerAngle = outerAng; _outerAngleCos = veMath::veCos(veMath::veRadian(_outerAngle)); }
-	float getOuterAngle() { return _outerAngle; }
-	float getOuterAngleCos() { return _outerAngleCos; }
+	void setInnerAngle(float innerAng) {_innerAngleCos->setValue(veMath::veCos(veMath::veRadian(innerAng))); }
+	float getInnerAngle();
+	void setOuterAngle(float outerAng) { _outerAngleCos->setValue(veMath::veCos(veMath::veRadian(outerAng)));}
+	float getOuterAngle();
 
 	virtual void shadowCameraCulling() override;
 	virtual void shadowCameraRendering() override;
 
-	static veTexture* getShadowTexture() { return _shadowTexture.get(); }
-	static unsigned int totalLightNum() { return _totalSpotLightNum; }
+	veTexture* getShadowTexture() { return _shadowTexture.get(); }
 
 protected:
 
-	veSpotLight();
+	veSpotLight(veSceneManager *sm);
 	virtual void updateShadowTexture() override;
-	virtual void updateShadowCamera() override;
+	virtual void updateShadowCamera(veNode *node) override;
+	virtual void fetechLightParams() override;
 
 protected:
 
-	float  _innerAngle;
-	float  _innerAngleCos;
-	float  _outerAngle;
-	float  _outerAngleCos;
+	VE_Ptr<veUniform> _direction;
+	VE_Ptr<veUniform> _position;
+	VE_Ptr<veUniform> _attenuationRangeInverse;
+	VE_Ptr<veUniform> _innerAngleCos;
+	VE_Ptr<veUniform> _outerAngleCos;
 
 	VE_Ptr<veCamera>  _shadowRenderingCam;
-
-	static VE_Ptr<veTexture> _shadowTexture;
-	static unsigned int _totalSpotLightNum;
+	VE_Ptr<veTexture> _shadowTexture;
 };
 
 typedef std::vector< VE_Ptr<veLight> > veLightList;

@@ -44,6 +44,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\BoxRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Camera.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Component.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\ConeRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Entity.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\EntityManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\EntityRenderer.cpp" />
@@ -52,6 +53,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\FrameBufferObject.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Image.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Light.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\LightRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Material.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\MaterialManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\MatrixPtr.cpp" />
@@ -73,9 +75,11 @@
     <ClCompile Include="..\..\Engine\KernelCore\RenderableObject.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Renderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\RenderQueue.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\RenderState.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\SceneManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Shader.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\SkyBox.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\SphereRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Surface.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\SurfaceRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Text.cpp" />
@@ -113,6 +117,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\BoxRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Camera.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Component.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\ConeRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Entity.h" />
     <ClInclude Include="..\..\Engine\KernelCore\EntityManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\EntityRenderer.h" />
@@ -123,6 +128,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\IDGenerator.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Image.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Light.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\LightRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\LoopQueue.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Material.h" />
     <ClInclude Include="..\..\Engine\KernelCore\MaterialManager.h" />
@@ -147,10 +153,12 @@
     <ClInclude Include="..\..\Engine\KernelCore\RenderCommand.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Renderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\RenderQueue.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\RenderState.h" />
     <ClInclude Include="..\..\Engine\KernelCore\SceneManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Shader.h" />
     <ClInclude Include="..\..\Engine\KernelCore\ShaderDefinationGenerator.h" />
     <ClInclude Include="..\..\Engine\KernelCore\SkyBox.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\SphereRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Surface.h" />
     <ClInclude Include="..\..\Engine\KernelCore\SurfaceRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Text.h" />

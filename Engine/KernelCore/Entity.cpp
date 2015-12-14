@@ -4,10 +4,12 @@
 #include "Ray.h"
 #include <algorithm>
 
-veEntity::veEntity()
-	: _needRefresh(true)
+veEntity::veEntity(veSceneManager *sm)
+	: veRenderableObject(sm)
+	, _needRefresh(true)
 {
 	_renderer = new veEntityRenderer;
+	_renderer->setRenderStageMask(_renderer->getRenderStageMask() & ~veRenderer::LIGHTINGING);
 }
 
 veEntity::~veEntity()

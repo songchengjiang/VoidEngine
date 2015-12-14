@@ -4,14 +4,15 @@
 #include "Octree.h"
 #include <algorithm>
 
-veOctreeCamera::veOctreeCamera()
-	: _octree(nullptr)
+veOctreeCamera::veOctreeCamera(veSceneManager *sm)
+	: veCamera(sm)
+	, _octree(nullptr)
 {
 	_renderQueue = new veOctreeRenderQueue;
 }
 
-veOctreeCamera::veOctreeCamera(const veViewport &vp)
-	: veCamera(vp)
+veOctreeCamera::veOctreeCamera(veSceneManager *sm, const veViewport &vp)
+	: veCamera(sm, vp)
 	, _octree(nullptr)
 {
 	_renderQueue = new veOctreeRenderQueue;
@@ -30,7 +31,7 @@ void veOctreeCamera::cull()
 	traverseOctree(_octree);
 }
 
-void veOctreeCamera::fillRenderQueue()
+void veOctreeCamera::separateRender()
 {
 	std::unique_lock<std::mutex> lock(_visitMutex);
 	if (!_visibleOctreeNodeList.empty()) {
@@ -43,6 +44,11 @@ void veOctreeCamera::fillRenderQueue()
 			}
 		}
 	}
+}
+
+void veOctreeCamera::separateDraw()
+{
+	veCamera::separateDraw();
 }
 
 bool veOctreeCamera::isNodeVisibleInCamera(veOctreeNode *node)

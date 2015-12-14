@@ -1,0 +1,61 @@
+{
+    "version": "1.0",
+    "name": "directionalLightingPass",
+    "materials": [
+        {
+            "name": "PASS",
+            "techniques": [
+                {
+                    "name": "TECHNIQUE",
+                    "passes": [
+                        {
+                            "depthTest": false,
+                            "depthWrite": false,
+                            "stencialTest": false,
+                            "cullFace": true,
+                            "cullFaceMode": "BACK",
+                            "blendFunc": [ "ONE", "ONE" ],
+                            "blendEquation": "FUNC_ADD",
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "directionalLightingPass.vert"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "directionalLightingPass.frag",
+                                    "u_InvProjectMat": "INV_P_MATRIX",
+                                    "u_screenWidth": "SCREEN_WIDTH",
+                                    "u_screenHeight": "SCREEN_HEIGHT",
+                                    "u_lightDirection": [ 0.0, 0.0, 0.0 ],
+                                    "u_lightColor": [ 0.0, 0.0, 0.0 ],
+                                    "u_lightIntensity": 0.0,
+                                    "u_lightMatrix": [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1.000000 ],
+                                    "u_lightShadowEnabled": 0.0,
+                                    "u_lightShadowBias": 0.0,
+                                    "u_lightShadowStrength": 0.0,
+                                    "u_lightShadowSoft": 0.0,
+                                    "u_lightShadowSoftness": 0.0,
+                                    "u_depthTex": 0,
+                                    "u_normalTex": 1
+                                }
+                            ],
+                            "textureUnits": [
+                                {
+                                    "name": "LIGHTING_PASS_DEPTH_TEXTURE",
+                                    "texType": "DIFFUSE_TEXTURE", 
+                                    "wrap": "CLAMP"
+                                },
+                                {
+                                    "name": "LIGHTING_PASS_NORMAL_TEXTURE",
+                                    "texType": "NORMAL_TEXTURE", 
+                                    "wrap": "CLAMP"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

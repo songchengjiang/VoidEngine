@@ -131,11 +131,6 @@ veRenderableObject* veNode::getRenderableObject(size_t objIndex)
 	return _renderableObjects[objIndex].get();
 }
 
-bool veNode::isInScene() const
-{
-	return _isInScene;
-}
-
 veMat4 veNode::getNodeToWorldMatrix() const
 {
 	if (_refresh) {

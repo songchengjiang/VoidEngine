@@ -2,8 +2,9 @@
 #include "KernelCore/Octree.h"
 #include "KernelCore/OctreeSceneManager.h"
 
-veOctreeDebuger::veOctreeDebuger()
-	: _isDrawOctree(false)
+veOctreeDebuger::veOctreeDebuger(veSceneManager *sm)
+	: veDebuger(sm)
+	, _isDrawOctree(false)
 {
 
 }

@@ -34,7 +34,7 @@ veEntity* veEntityManager::findEntity(const std::string &name)
 
 veEntity* veEntityManager::createEntity(const std::string &name)
 {
-	veEntity *entity = new veEntity;
+	veEntity *entity = new veEntity(_sceneManager);
 	entity->setName(name);
 	_entityPool.push_back(entity);
 	return entity;

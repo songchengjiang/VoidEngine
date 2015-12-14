@@ -6,8 +6,9 @@
 #include "Application.h"
 #include "FileCore/File.h"
 
-veText::veText(veFont *font, const std::string &content)
-	: _font(font)
+veText::veText(veSceneManager *sm, veFont *font, const std::string &content)
+	: veSurface(sm)
+	, _font(font)
 	, _content(content)
 	, _charSpace(0)
 	, _width(0)

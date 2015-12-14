@@ -1,7 +1,7 @@
 #include "Light.h"
 #include "NodeVisitor.h"
 #include "SceneManager.h"
-#include "Constants.h"
+#include "LightRenderer.h"
 
 const veVec2 veLight::DEFAULT_SHADOW_RESOLUTION = veVec2(256);
 const veVec2 veLight::DEFAULT_SHADOW_AREA = veVec2(100.0f);
@@ -10,6 +10,7 @@ const float  veLight::DEFAULT_SHADOW_STRENGTH   = 1.0f;
 
 veLight* veLight::CURRENT_LIGHT = nullptr;
 
+const std::string veLight::DEFUALT_LIGHT_TEXTURE_UNIFORM_NAME                        = "ve_lightTex";
 const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_NAME                     = "ve_dirLight";
 const std::string veDirectionalLight::DEFUALT_LIGHT_UNIFORM_NUM_NAME                 = "ve_dirLightNum";
 
@@ -60,14 +61,6 @@ const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTNESS_NAME       
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME              = "ve_spotLightShadowMat";
 const std::string veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MAP_NAME                 = "ve_spotLightShadowMap";
 
-VE_Ptr<veTexture> veDirectionalLight::_shadowTexture;
-VE_Ptr<veTexture> veSpotLight::_shadowTexture;
-VE_Ptr<veTexture> vePointLight::_shadowTexture;
-
-
-unsigned int veDirectionalLight::_totalDirLightNum = 0;
-unsigned int vePointLight::_totalPointLightNum = 0;
-unsigned int veSpotLight::_totalSpotLightNum = 0;
 
 static const std::string DEFAULT_DIRECTIONAL_LIGHT_SHADOW_MAP_TEXTURE_NAME = "DEFAULT_DIRECTIONAL_LIGHT_SHADOW_MAP_TEXTURE_NAME";
 static const std::string DEFAULT_POINT_LIGHT_SHADOW_MAP_TEXTURE_NAME = "DEFAULT_POINT_LIGHT_SHADOW_MAP_TEXTURE_NAME";
@@ -79,23 +72,27 @@ static const veMat4 LIGHT_BIAS_MAT = veMat4(0.5f, 0.0f, 0.0f, 0.5f
 										  , 0.0f, 0.0f, 0.5f, 0.5f
 										  , 0.0f, 0.0f, 0.0f, 1.0f);
 
-veLight::veLight(LightType type)
-	: _type(type)
-	, _color(veVec4::WHITE)
-	, _intensity(1.0f)
-	, _attenuationRange(1000.0f)
-	, _attenuationRangeInverse(1.0f / _attenuationRange)
+veLight::veLight(LightType type, veSceneManager *sm)
+	: veRenderableObject(sm)
+	, _type(type)
 	, _shadowArea(DEFAULT_SHADOW_AREA)
-	, _lightInCamMatrix(veMat4::IDENTITY)
-	, _shadowEnabled(false)
 	, _shadowResolution(DEFAULT_SHADOW_RESOLUTION)
-	, _shadowBias(DEFAULT_SHADOW_BIAS)
-	, _shadowStrength(DEFAULT_SHADOW_STRENGTH)
-	, _shadowSoftness(0.1f)
-	, _isUseSoftShadow(false)
 	, _needRefreshShadow(true)
 	, _needRefreshShadowCamera(true)
 {
+}
+
+void veLight::fetechLightParams()
+{
+	auto pass = _materials->getMaterial(0)->getTechnique(0)->getPass(0);
+	_color           = pass->getUniform("u_lightColor");
+	_intensity       = pass->getUniform("u_lightIntensity");
+	_lightMatrix     = pass->getUniform("u_lightMatrix");
+	_shadowEnabled   = pass->getUniform("u_lightShadowEnabled");
+	_shadowBias      = pass->getUniform("u_lightShadowBias");
+	_shadowStrength  = pass->getUniform("u_lightShadowStrength");
+	_isUseSoftShadow = pass->getUniform("u_lightShadowSoft");
+	_shadowSoftness  = pass->getUniform("u_lightShadowSoftness");
 }
 
 veLight::~veLight()
@@ -103,24 +100,33 @@ veLight::~veLight()
 
 }
 
-void veLight::update(veSceneManager *sm, const veMat4 &transform)
+void veLight::update(veNode *node, veSceneManager *sm)
 {
-	veNode::update(sm, transform);
-	if (_shadowEnabled) {
-		updateShadowTexture();
-		updateShadowCamera();
-	}
+	//if (_shadowEnabled) {
+	//	updateShadowTexture();
+	//	updateShadowCamera(node);
+	//}
+	veRenderableObject::update(node, sm);
 }
 
-void veLight::visit(veNodeVisitor &visitor)
+void veLight::setMaterialArray(veMaterialArray *material)
 {
-	visitor.visit(*this);
+	_materials = material;
+	fetechLightParams();
 }
 
-void veLight::setMask(unsigned int mask, bool isOverride /*= true*/)
+veVec3 veLight::getColor() const
 {
-	veNode::setMask(mask, isOverride);
-	_needRefreshShadowCamera = true;
+	veVec3 val;
+	_color->getValue(val);
+	return val;
+}
+
+float veLight::getIntensity() const
+{
+	bool val;
+	_intensity->getValue(val);
+	return val;
 }
 
 void veLight::shadowEnable(bool isEnabled)
@@ -131,7 +137,14 @@ void veLight::shadowEnable(bool isEnabled)
 		return;
 	}
 #endif
-	_shadowEnabled = isEnabled;
+	_shadowEnabled->setValue(isEnabled? 1.0f: 0.0f);
+}
+
+bool veLight::isShadowEnabled() const
+{
+	float val;
+	_shadowEnabled->getValue(val);
+	return val == 1.0f? true: false;
 }
 
 void veLight::setShadowResolution(const veVec2 &resolution)
@@ -142,27 +155,67 @@ void veLight::setShadowResolution(const veVec2 &resolution)
 	_needRefreshShadow = true;
 }
 
-void veLight::updateSceneManager()
+float veLight::getShadowBias() const
 {
-
+	float val;
+	_shadowBias->getValue(val);
+	return val;
 }
 
-veDirectionalLight::veDirectionalLight()
-	: veLight(DIRECTIONAL)
+float veLight::getShadowStrength() const
 {
-	_currentLightIndex = _totalDirLightNum;
-	++_totalDirLightNum;
+	float val;
+	_shadowStrength->getValue(val);
+	return val;
+}
+
+bool veLight::isUseSoftShadow() const
+{
+	float val;
+	_isUseSoftShadow->getValue(val);
+	return val == 1.0f? true: false;
+}
+
+float veLight::getShadowSoftness() const
+{
+	float val;
+	_shadowSoftness->getValue(val);
+	return val;
+}
+
+veDirectionalLight::veDirectionalLight(veSceneManager *sm)
+	: veLight(DIRECTIONAL, sm)
+{
+	_renderer = new veDirectionalLightRenderer;
+	_renderer->setRenderStageMask(veRenderer::LIGHTINGING);
+	setLightArea(veVec3(100.0f));
 }
 
 veDirectionalLight::~veDirectionalLight()
 {
-	--_totalDirLightNum;
 }
 
-veMat4 veDirectionalLight::getLightMatrix() const
+void veDirectionalLight::render(veNode *node, veCamera *camera)
 {
-	return LIGHT_BIAS_MAT * _shadowRenderingCam->projectionMatrix() * _shadowRenderingCam->viewMatrix();
+	veMat4 lightInView = camera->viewMatrix() * node->getNodeToWorldMatrix();
+	lightInView[0][3] = lightInView[1][3] = lightInView[2][3] = 0.0f;
+	veVec3 direction = lightInView * -veVec3::UNIT_Z;
+	direction.normalize();
+	_direction->setValue(direction);
+	veRenderableObject::render(node, camera);
 }
+
+void veDirectionalLight::setLightArea(const veVec3 &area)
+{
+	_lightArea = area;
+	_boundingBox.min() = -veVec3(_lightArea) * 0.5f;
+	_boundingBox.max() = veVec3(_lightArea) * 0.5f;
+}
+
+//veMat4 veDirectionalLight::getLightMatrix() const
+//{
+//	return LIGHT_BIAS_MAT * _shadowRenderingCam->projectionMatrix() * _shadowRenderingCam->viewMatrix();
+//}
 
 void veDirectionalLight::shadowCameraCulling()
 {
@@ -171,7 +224,6 @@ void veDirectionalLight::shadowCameraCulling()
 
 void veDirectionalLight::shadowCameraRendering()
 {
-	_shadowRenderingCam->fillRenderQueue();
 	_shadowRenderingCam->render();
 }
 
@@ -179,8 +231,8 @@ void veDirectionalLight::updateShadowTexture()
 {
 	if (_needRefreshShadow) {
 		if (!_shadowTexture.valid())
-			_shadowTexture = _sceneManager->createTexture(DEFAULT_DIRECTIONAL_LIGHT_SHADOW_MAP_TEXTURE_NAME, veTexture::TEXTURE_2D_ARRAY);
-		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, _totalDirLightNum
+			_shadowTexture = _sceneManager->createTexture(DEFAULT_DIRECTIONAL_LIGHT_SHADOW_MAP_TEXTURE_NAME, veTexture::TEXTURE_2D);
+		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1
 			, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_FUNC, GL_LESS);
@@ -188,7 +240,7 @@ void veDirectionalLight::updateShadowTexture()
 	}
 }
 
-void veDirectionalLight::updateShadowCamera()
+void veDirectionalLight::updateShadowCamera(veNode *node)
 {
 	if (_needRefreshShadowCamera) {
 		if (!_shadowRenderingCam.valid()) {
@@ -199,32 +251,58 @@ void veDirectionalLight::updateShadowCamera()
 
 		_shadowRenderingCam->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
 		_shadowRenderingCam->setProjectionMatrixAsOrtho(-_shadowArea.x() * 0.5f, _shadowArea.x() * 0.5f, -_shadowArea.y() * 0.5f, _shadowArea.y() * 0.5f
-			, 0.1f, _attenuationRange);
-		_shadowRenderingCam->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowTexture.get(), _currentLightIndex);
-		_shadowRenderingCam->setMask(_mask);
+			, 0.1f, 1000.0f);
+		_shadowRenderingCam->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowTexture.get());
+		_shadowRenderingCam->setMask(node->getMask());
 
 		_needRefreshShadowCamera = false;
 	}
 
-	_shadowRenderingCam->setMatrix(this->getNodeToWorldMatrix());
+	_shadowRenderingCam->setMatrix(node->getNodeToWorldMatrix());
 }
 
-vePointLight::vePointLight()
-	: veLight(POINT)
+void veDirectionalLight::fetechLightParams()
 {
-	_currentLightIndex = _totalPointLightNum;
-	++_totalPointLightNum;
+	veLight::fetechLightParams();
+	auto pass = _materials->getMaterial(0)->getTechnique(0)->getPass(0);
+	_direction = pass->getUniform("u_lightDirection");
+}
+
+vePointLight::vePointLight(veSceneManager *sm)
+	: veLight(POINT, sm)
+{
+	_renderer = new vePointLightRenderer;
+	_renderer->setRenderStageMask(veRenderer::LIGHTINGING);
 }
 
 vePointLight::~vePointLight()
 {
-	--_totalPointLightNum;
 }
 
-veMat4 vePointLight::getLightMatrix() const
+void vePointLight::render(veNode *node, veCamera *camera)
 {
-	return this->getWorldToNodeMatrix();
+	veMat4 lightInView = camera->viewMatrix() * node->getNodeToWorldMatrix();
+	_position->setValue(veVec3(lightInView[0][3], lightInView[1][3], lightInView[2][3]));
+	veRenderableObject::render(node, camera);
 }
+
+void vePointLight::setAttenuationRange(float range)
+{
+	_attenuationRangeInverse->setValue(1.0f / range);
+	static_cast<vePointLightRenderer *>(_renderer.get())->setLightVolumeScale(veMat4::scale(veVec3(range)));
+}
+
+float vePointLight::getAttenuationRange() const
+{
+	float val;
+	_attenuationRangeInverse->getValue(val);
+	return 1.0f / val;
+}
+
+//veMat4 vePointLight::getLightMatrix() const
+//{
+//	return this->getWorldToNodeMatrix();
+//}
 
 void vePointLight::shadowCameraCulling()
 {
@@ -236,7 +314,6 @@ void vePointLight::shadowCameraCulling()
 void vePointLight::shadowCameraRendering()
 {
 	for (unsigned int i = 0; i < 6; ++i) {
-		_shadowRenderingCam[i]->fillRenderQueue();
 		_shadowRenderingCam[i]->render();
 	}
 }
@@ -245,8 +322,8 @@ void vePointLight::updateShadowTexture()
 {
 	if (_needRefreshShadow) {
 		if (!_shadowTexture.valid())
-			_shadowTexture = _sceneManager->createTexture(DEFAULT_POINT_LIGHT_SHADOW_MAP_TEXTURE_NAME, veTexture::TEXTURE_CUBE_ARRAY);
-		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, _totalPointLightNum * 6
+			_shadowTexture = _sceneManager->createTexture(DEFAULT_POINT_LIGHT_SHADOW_MAP_TEXTURE_NAME, veTexture::TEXTURE_CUBE);
+		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1
 			, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_FUNC, GL_LESS);
@@ -254,11 +331,10 @@ void vePointLight::updateShadowTexture()
 	}
 }
 
-void vePointLight::updateShadowCamera()
+void vePointLight::updateShadowCamera(veNode *node)
 {
 	if (_needRefreshShadowCamera) {
 		char str[4];
-		unsigned int layerBase = _currentLightIndex * 6;
 		for (unsigned int i = 0; i < 6; ++i) {
 			if (!_shadowRenderingCam[i].valid()) {
 				sprintf(str, "%d", i);
@@ -267,14 +343,14 @@ void vePointLight::updateShadowCamera()
 				_shadowRenderingCam[i]->setFrameBufferObject(fbo);
 			}
 			_shadowRenderingCam[i]->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
-			_shadowRenderingCam[i]->setProjectionMatrixAsPerspective(90.0f, 1.0f, 0.1f, _attenuationRange);
-			_shadowRenderingCam[i]->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, _shadowTexture.get(), layerBase + i);
-			_shadowRenderingCam[i]->setMask(_mask);
+			_shadowRenderingCam[i]->setProjectionMatrixAsPerspective(90.0f, 1.0f, 0.1f, getAttenuationRange());
+			_shadowRenderingCam[i]->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, _shadowTexture.get());
+			_shadowRenderingCam[i]->setMask(node->getMask());
 		}
 		_needRefreshShadowCamera = false;
 	}
 
-	veMat4 ltow = this->getNodeToWorldMatrix();
+	veMat4 ltow = node->getNodeToWorldMatrix();
 	_shadowRenderingCam[0]->setMatrix(ltow * veMat4::lookAt(veVec3::ZERO, veVec3::UNIT_X, veVec3::NEGATIVE_UNIT_Y));
 	_shadowRenderingCam[1]->setMatrix(ltow * veMat4::lookAt(veVec3::ZERO, veVec3::NEGATIVE_UNIT_X, veVec3::NEGATIVE_UNIT_Y));
 	_shadowRenderingCam[2]->setMatrix(ltow * veMat4::lookAt(veVec3::ZERO, veVec3::UNIT_Y, veVec3::UNIT_Z));
@@ -283,26 +359,62 @@ void vePointLight::updateShadowCamera()
 	_shadowRenderingCam[5]->setMatrix(ltow * veMat4::lookAt(veVec3::ZERO, veVec3::NEGATIVE_UNIT_Z, veVec3::NEGATIVE_UNIT_Y));
 }
 
-veSpotLight::veSpotLight()
-	: veLight(SPOT)
-	, _innerAngle(0.0f)
-	, _innerAngleCos(veMath::veCos(veMath::veRadian(_innerAngle)))
-	, _outerAngle(45.0f)
-	, _outerAngleCos(veMath::veCos(veMath::veRadian(_outerAngle)))
+void vePointLight::fetechLightParams()
 {
-	_currentLightIndex = _totalSpotLightNum;
-	++_totalSpotLightNum;
+	veLight::fetechLightParams();
+	auto pass = _materials->getMaterial(0)->getTechnique(0)->getPass(0);
+	_position = pass->getUniform("u_lightPosition");
+	_attenuationRangeInverse = pass->getUniform("u_lightARI");
+}
+
+veSpotLight::veSpotLight(veSceneManager *sm)
+	: veLight(SPOT, sm)
+{
+	_renderer = new veSpotLightRenderer;
+	_renderer->setRenderStageMask(veRenderer::LIGHTINGING);
 }
 
 veSpotLight::~veSpotLight()
 {
-	--_totalSpotLightNum;
 }
 
-veMat4 veSpotLight::getLightMatrix() const
+void veSpotLight::render(veNode *node, veCamera *camera)
 {
-	return LIGHT_BIAS_MAT * _shadowRenderingCam->projectionMatrix() * _shadowRenderingCam->viewMatrix();
+	veMat4 lightInView = camera->viewMatrix() * node->getNodeToWorldMatrix();
+	_position->setValue(veVec3(lightInView[0][3], lightInView[1][3], lightInView[2][3]));
+
+	lightInView[0][3] = lightInView[1][3] = lightInView[2][3] = 0.0f;
+	veVec3 direction = lightInView * -veVec3::UNIT_Z;
+	direction.normalize();
+	_direction->setValue(direction);
+	veRenderableObject::render(node, camera);
 }
+
+float veSpotLight::getAttenuationRange() const
+{
+	float val;
+	_attenuationRangeInverse->getValue(val);
+	return 1.0f / val;
+}
+
+float veSpotLight::getInnerAngle()
+{
+	float val;
+	_innerAngleCos->getValue(val);
+	return veMath::veDegree(veMath::veAcos(val));
+}
+
+float veSpotLight::getOuterAngle()
+{
+	float val;
+	_outerAngleCos->getValue(val);
+	return veMath::veDegree(veMath::veAcos(val));
+}
+
+//veMat4 veSpotLight::getLightMatrix() const
+//{
+//	return LIGHT_BIAS_MAT * _shadowRenderingCam->projectionMatrix() * _shadowRenderingCam->viewMatrix();
+//}
 
 void veSpotLight::shadowCameraCulling()
 {
@@ -311,7 +423,6 @@ void veSpotLight::shadowCameraCulling()
 
 void veSpotLight::shadowCameraRendering()
 {
-	_shadowRenderingCam->fillRenderQueue();
 	_shadowRenderingCam->render();
 }
 
@@ -319,8 +430,8 @@ void veSpotLight::updateShadowTexture()
 {
 	if (_needRefreshShadow) {
 		if (!_shadowTexture.valid())
-			_shadowTexture = _sceneManager->createTexture(DEFAULT_SPOT_LIGHT_SHADOW_MAP_TEXTURE_NAME, veTexture::TEXTURE_2D_ARRAY);
-		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, _totalSpotLightNum
+			_shadowTexture = _sceneManager->createTexture(DEFAULT_SPOT_LIGHT_SHADOW_MAP_TEXTURE_NAME, veTexture::TEXTURE_2D);
+		_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1
 			, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 		_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_FUNC, GL_LESS);
@@ -328,7 +439,7 @@ void veSpotLight::updateShadowTexture()
 	}
 }
 
-void veSpotLight::updateShadowCamera()
+void veSpotLight::updateShadowCamera(veNode *node)
 {
 	if (_needRefreshShadowCamera) {
 		if (!_shadowRenderingCam.valid()) {
@@ -338,12 +449,23 @@ void veSpotLight::updateShadowCamera()
 		}
 
 		_shadowRenderingCam->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
-		_shadowRenderingCam->setProjectionMatrixAsPerspective(2.0f * _outerAngle, 1.0f, 0.1f, _attenuationRange);
-		_shadowRenderingCam->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowTexture.get(), _currentLightIndex);
-		_shadowRenderingCam->setMask(_mask);
+		_shadowRenderingCam->setProjectionMatrixAsPerspective(2.0f * getOuterAngle(), 1.0f, 0.1f, getAttenuationRange());
+		_shadowRenderingCam->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowTexture.get());
+		_shadowRenderingCam->setMask(node->getMask());
 
 		_needRefreshShadowCamera = false;
 	}
 
-	_shadowRenderingCam->setMatrix(this->getNodeToWorldMatrix());
+	_shadowRenderingCam->setMatrix(node->getNodeToWorldMatrix());
+}
+
+void veSpotLight::fetechLightParams()
+{
+	veLight::fetechLightParams();
+	auto pass = _materials->getMaterial(0)->getTechnique(0)->getPass(0);
+	_direction = pass->getUniform("u_lightDirection");
+	_position = pass->getUniform("u_lightPosition");
+	_attenuationRangeInverse = pass->getUniform("u_lightARI");
+	_innerAngleCos = pass->getUniform("u_lightInnerAngleCos");
+	_outerAngleCos = pass->getUniform("u_lightOuterAngleCos");
 }

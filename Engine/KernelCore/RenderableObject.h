@@ -15,7 +15,7 @@ class VE_EXPORT veRenderableObject
 	friend class veSceneManager;
 public:
 
-	veRenderableObject();
+	veRenderableObject(veSceneManager *sm);
 	virtual ~veRenderableObject();
 
 	USE_VE_PTR;
@@ -25,6 +25,8 @@ public:
 	virtual void update(veNode *node, veSceneManager *sm);
 	virtual void render(veNode *node, veCamera *camera);
 	virtual bool intersectWith(veRay *ray, veNode *node) { return false; };
+
+	bool isInScene() const { return _isInScene; }
 
 	void setVisible(bool isVis) { _isVisible = isVis; }
 	bool isVisible() const { return _isVisible; };
@@ -48,6 +50,7 @@ protected:
 	veBoundingBox      _boundingBox;
 	bool              _isVisible;
 	bool              _isDirtyBoundingBox;
+	bool              _isInScene;
 	veSceneManager   *_sceneManager;
 };
 

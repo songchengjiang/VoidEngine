@@ -16,7 +16,7 @@ public:
 	veTexture* getTexture() { return _texture.get(); }
 
 protected:
-	veImage(veTexture *texture);
+	veImage(veSceneManager *sm, veTexture *texture);
 };
 
 #endif

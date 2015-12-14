@@ -163,7 +163,7 @@ public:
 			player->attachEntity(entity);
 		}
 
-		auto debuger = new veOctreeDebuger;
+		auto debuger = new veOctreeDebuger(_sceneManager);
 		debuger->debugDrawBoundingBoxWireframe(true, veVec4(1.0f, 0.0f, 0.0f, 0.1f));
 		debuger->debugDrawOctree(true, veVec4(1.0f, 1.0f, 1.0f, 0.1f));
 		//debuger->setLineWidth(2.0f);

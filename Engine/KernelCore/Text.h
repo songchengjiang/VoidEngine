@@ -25,7 +25,7 @@ public:
 
 protected:
 
-	veText(veFont *font, const std::string &content = "");
+	veText(veSceneManager *sm, veFont *font, const std::string &content = "");
 
 	virtual void appendMaterial(veMaterial *material) override;
 	virtual veShader* getFragmentShader() override;

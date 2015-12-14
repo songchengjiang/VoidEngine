@@ -86,7 +86,7 @@ public:
 			player->attachEntity(entity);
 		}
 
-		auto debuger = new veOctreeDebuger;
+		auto debuger = new veOctreeDebuger(_sceneManager);
 		debuger->debugDrawBoundingBoxWireframe(true);
 		debuger->debugDrawOctree(false);
 		_sceneManager->getRootNode()->addRenderableObject(debuger);

@@ -24,6 +24,8 @@
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "BlinnPhoneShader.frag",
+                                    "u_screenWidth": "SCREEN_WIDTH",
+                                    "u_screenHeight": "SCREEN_HEIGHT",  
                                     "u_ambient": [0.0000,0.0000,0.0000
                                     ],
                                     "u_diffuse": [0.88000,0.88000,0.88000
@@ -69,6 +71,8 @@
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "BlinnPhoneShader.frag",
+                                    "u_screenWidth": "SCREEN_WIDTH",
+                                    "u_screenHeight": "SCREEN_HEIGHT",                                      
                                     "u_ambient": [0.0000,0.0000,0.0000
                                     ],
                                     "u_diffuse": [0.88000,0.88000,0.88000
