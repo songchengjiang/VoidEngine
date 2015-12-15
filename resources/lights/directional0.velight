@@ -2,7 +2,6 @@
   "version": "1.0",
   "type": "DIRECTIONAL",
   "name": "directional0",
-  "materials": "directionalLighting.vemtl",
   "color": [ 1.0, 1.0, 1.0],
   "intensity": 1.0,
   "shadowEnabled": true,

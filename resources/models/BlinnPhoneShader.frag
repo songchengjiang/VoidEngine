@@ -34,8 +34,7 @@ void main(){
 	vec2 lightTexCoords = gl_FragCoord.xy / vec2(u_screenWidth, u_screenHeight);
 	vec4 lightVal = texture(ve_lightTex, lightTexCoords);
     vec3 diffactor = lightVal.rgb;
-    //vec3 specfactor = lightVal.rgb * pow(lightVal.a, u_shininess);
-	vec3 specfactor = vec3(0.0);
+    vec3 specfactor = lightVal.rgb * pow(lightVal.a, u_shininess);
 #ifdef VE_USE_DIFFUSE_TEXTURE
     fragColor = clamp(vec4(diffactor * u_diffuse * texture(u_diffuseTex, v_texcoord).xyz + specfactor * u_specular + u_ambient, u_opacity), 0.0, 1.0);
 #else //NOT VE_USE_DIFFUSE_TEXTURE

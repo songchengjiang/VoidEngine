@@ -30,7 +30,6 @@ public:
 
 	virtual void update(veNode *node, veSceneManager *sm) override;
 	//virtual void render(veCamera *camera) override;
-	virtual void setMaterialArray(veMaterialArray *material);
 
 	LightType getLightType() const { return _type; }
 	void setColor(const veVec3 &color) { _color->setValue(color); }
@@ -61,7 +60,7 @@ protected:
 
 	virtual void updateShadowTexture() = 0;
 	virtual void updateShadowCamera(veNode *node) = 0;
-	virtual void fetechLightParams() = 0;
+	virtual void initMaterials() = 0;
 
 protected:
 
@@ -116,7 +115,7 @@ protected:
 	veDirectionalLight(veSceneManager *sm);
 	virtual void updateShadowTexture() override;
 	virtual void updateShadowCamera(veNode *node) override;
-	virtual void fetechLightParams() override;
+	virtual void initMaterials() override;
 
 protected:
 
@@ -163,7 +162,7 @@ protected:
 	vePointLight(veSceneManager *sm);
 	virtual void updateShadowTexture() override;
 	virtual void updateShadowCamera(veNode *node) override;
-	virtual void fetechLightParams() override;
+	virtual void initMaterials() override;
 
 protected:
 
@@ -218,7 +217,7 @@ protected:
 	veSpotLight(veSceneManager *sm);
 	virtual void updateShadowTexture() override;
 	virtual void updateShadowCamera(veNode *node) override;
-	virtual void fetechLightParams() override;
+	virtual void initMaterials() override;
 
 protected:
 

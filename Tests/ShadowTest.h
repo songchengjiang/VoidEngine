@@ -122,68 +122,68 @@ public:
 		//}
 
 
-		{
-			veNode *node = _sceneManager->createNode("directional0node");
-			veLight *directional = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight", "directional0"));
-			node->addRenderableObject(directional);
-			veTransformer *lightTranser = new veTransformer;
-			node->addComponent(lightTranser);
-			lightTranser->setPosition(veVec3(10.0f, 0.0f, 0.0f));
-			lightTranser->setRotation(veQuat(veMath::HALF_PI, veVec3(0.0f, 1.0f, 0.0f)));
-			directional->setIntensity(0.3f);
-
-			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "directional0-sphere"));
-			veNode *lightModel = _sceneManager->createNode("lightnode0");
-			lightModel->addRenderableObject(lightentity);
-			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
-			lightModel->setMask(~LIGHT_MASK);
-			node->addChild(lightModel);
-			node->setMask(LIGHT_MASK);
-			directional->setUseSoftShadow(true);
-			directional->setShadowSoftness(0.005f);
-			root->addChild(node);
-		}
-
-		{
-			veNode *node = _sceneManager->createNode("directional1node");
-			veLight *directional = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight", "directional1"));
-			node->addRenderableObject(directional);
-			veTransformer *lightTranser = new veTransformer;
-			node->addComponent(lightTranser);
-			lightTranser->setPosition(veVec3(0.0f, 0.0f, 10.0f));
-			directional->setIntensity(0.3f);
-
-			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "directional0-sphere"));
-			veNode *lightModel = _sceneManager->createNode("lightnode0");
-			lightModel->addRenderableObject(lightentity);
-			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
-			lightModel->setMask(~LIGHT_MASK);
-			node->addChild(lightModel);
-			node->setMask(LIGHT_MASK);
-			root->addChild(node);
-		}
-
 		//{
-		//	veNode *node = _sceneManager->createNode("point0node");
-		//	veLight *point = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "point0"));
-		//	node->addRenderableObject(point);
+		//	veNode *node = _sceneManager->createNode("directional0node");
+		//	veLight *directional = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight", "directional0"));
+		//	node->addRenderableObject(directional);
 		//	veTransformer *lightTranser = new veTransformer;
 		//	node->addComponent(lightTranser);
-		//	node->addComponent(new LightUpdater(5.0f, -3.0f));
-		//	point->setIntensity(0.6f);
-		//	lightTranser->setPosition(veVec3(0.0f, 0.0f, 10.0f));
+		//	lightTranser->setPosition(veVec3(10.0f, 0.0f, 0.0f));
+		//	lightTranser->setRotation(veQuat(veMath::HALF_PI, veVec3(0.0f, 1.0f, 0.0f)));
+		//	directional->setIntensity(0.3f);
 
-		//	veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "point0-sphere"));
-		//	veNode *lightModel = _sceneManager->createNode("lightnode1");
+		//	veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "directional0-sphere"));
+		//	veNode *lightModel = _sceneManager->createNode("lightnode0");
 		//	lightModel->addRenderableObject(lightentity);
 		//	lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
 		//	lightModel->setMask(~LIGHT_MASK);
 		//	node->addChild(lightModel);
 		//	node->setMask(LIGHT_MASK);
-		//	point->setUseSoftShadow(true);
-		//	point->setShadowBias(0.0015f);
+		//	directional->setUseSoftShadow(true);
+		//	directional->setShadowSoftness(0.005f);
 		//	root->addChild(node);
 		//}
+
+		//{
+		//	veNode *node = _sceneManager->createNode("directional1node");
+		//	veLight *directional = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight", "directional1"));
+		//	node->addRenderableObject(directional);
+		//	veTransformer *lightTranser = new veTransformer;
+		//	node->addComponent(lightTranser);
+		//	lightTranser->setPosition(veVec3(0.0f, 0.0f, 10.0f));
+		//	directional->setIntensity(0.3f);
+
+		//	veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "directional0-sphere"));
+		//	veNode *lightModel = _sceneManager->createNode("lightnode0");
+		//	lightModel->addRenderableObject(lightentity);
+		//	lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
+		//	lightModel->setMask(~LIGHT_MASK);
+		//	node->addChild(lightModel);
+		//	node->setMask(LIGHT_MASK);
+		//	root->addChild(node);
+		//}
+
+		{
+			veNode *node = _sceneManager->createNode("point0node");
+			veLight *point = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "point0"));
+			node->addRenderableObject(point);
+			veTransformer *lightTranser = new veTransformer;
+			node->addComponent(lightTranser);
+			//node->addComponent(new LightUpdater(5.0f, -3.0f));
+			point->setIntensity(1.0f);
+			lightTranser->setPosition(veVec3(0.0f, 0.0f, 10.0f));
+
+			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "point0-sphere"));
+			veNode *lightModel = _sceneManager->createNode("lightnode1");
+			lightModel->addRenderableObject(lightentity);
+			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
+			lightModel->setMask(~LIGHT_MASK);
+			node->addChild(lightModel);
+			node->setMask(LIGHT_MASK);
+			point->setUseSoftShadow(true);
+			point->setShadowBias(0.0015f);
+			root->addChild(node);
+		}
 
 		//{
 		//	veLight *point = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "point1"));

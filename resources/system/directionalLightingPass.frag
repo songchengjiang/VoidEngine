@@ -15,6 +15,7 @@ void main(){
 	vec3 normal = normalize(texture(u_normalTex, texCoords).xyz);
 	float depth = texture(u_depthTex, texCoords).r;
 	vec4 posInView = u_InvProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);
+	posInView.xyz /= posInView.w;
 	vec3 eyeDir = normalize(-posInView.xyz);
 	float NdotL = max(0.0, dot(normal, -u_lightDirection));
 	vec3 H = normalize(eyeDir - u_lightDirection);

@@ -2,6 +2,9 @@
 #include "NodeVisitor.h"
 #include "SceneManager.h"
 #include "LightRenderer.h"
+#include "FileCore/File.h"
+#include "Constants.h"
+#include "TextureManager.h"
 
 const veVec2 veLight::DEFAULT_SHADOW_RESOLUTION = veVec2(256);
 const veVec2 veLight::DEFAULT_SHADOW_AREA = veVec2(100.0f);
@@ -82,19 +85,6 @@ veLight::veLight(LightType type, veSceneManager *sm)
 {
 }
 
-void veLight::fetechLightParams()
-{
-	auto pass = _materials->getMaterial(0)->getTechnique(0)->getPass(0);
-	_color           = pass->getUniform("u_lightColor");
-	_intensity       = pass->getUniform("u_lightIntensity");
-	_lightMatrix     = pass->getUniform("u_lightMatrix");
-	_shadowEnabled   = pass->getUniform("u_lightShadowEnabled");
-	_shadowBias      = pass->getUniform("u_lightShadowBias");
-	_shadowStrength  = pass->getUniform("u_lightShadowStrength");
-	_isUseSoftShadow = pass->getUniform("u_lightShadowSoft");
-	_shadowSoftness  = pass->getUniform("u_lightShadowSoftness");
-}
-
 veLight::~veLight()
 {
 
@@ -107,12 +97,6 @@ void veLight::update(veNode *node, veSceneManager *sm)
 	//	updateShadowCamera(node);
 	//}
 	veRenderableObject::update(node, sm);
-}
-
-void veLight::setMaterialArray(veMaterialArray *material)
-{
-	_materials = material;
-	fetechLightParams();
 }
 
 veVec3 veLight::getColor() const
@@ -186,6 +170,7 @@ float veLight::getShadowSoftness() const
 veDirectionalLight::veDirectionalLight(veSceneManager *sm)
 	: veLight(DIRECTIONAL, sm)
 {
+	initMaterials();
 	_renderer = new veDirectionalLightRenderer;
 	_renderer->setRenderStageMask(veRenderer::LIGHTINGING);
 	setLightArea(veVec3(100.0f));
@@ -193,6 +178,54 @@ veDirectionalLight::veDirectionalLight(veSceneManager *sm)
 
 veDirectionalLight::~veDirectionalLight()
 {
+}
+
+void veDirectionalLight::initMaterials()
+{
+	_materials = _sceneManager->createMaterialArray(_name + std::string("-MaterialArray"));
+	auto material = new veMaterial;
+	_materials->addMaterial(material);
+	auto technique = new veTechnique;
+	material->addTechnique(technique);
+	auto pass = new vePass;
+	technique->addPass(pass);
+	pass->depthTest() = false;
+	pass->depthWrite() = false;
+	pass->stencilTest() = false;
+	pass->cullFace() = true;
+	pass->cullFaceMode() = GL_BACK;
+	pass->blendFunc().src = GL_ONE; pass->blendFunc().dst = GL_ONE;
+	pass->blendEquation() = GL_FUNC_ADD;
+	pass->setShader(new veShader(veShader::VERTEX_SHADER, std::string("system/directionalLightingPass.vert")));
+	pass->setShader(new veShader(veShader::FRAGMENT_SHADER, std::string("system/directionalLightingPass.frag")));
+	pass->addUniform(new veUniform("u_InvProjectMat", INV_P_MATRIX));
+	pass->addUniform(new veUniform("u_screenWidth", SCREEN_WIDTH));
+	pass->addUniform(new veUniform("u_screenHeight", SCREEN_HEIGHT));
+	pass->addUniform(new veUniform("u_depthTex", 0));
+	pass->addUniform(new veUniform("u_normalTex", 1));
+
+	_color = new veUniform("u_lightColor", veVec3(1.0f)); pass->addUniform(_color.get());
+	_intensity = new veUniform("u_lightIntensity", 1.0f); pass->addUniform(_intensity.get());
+	_lightMatrix = new veUniform("u_lightMatrix", veMat4::IDENTITY); pass->addUniform(_lightMatrix.get());
+	_shadowEnabled = new veUniform("u_lightShadowEnabled", 0.0f); pass->addUniform(_shadowEnabled.get());
+	_shadowBias = new veUniform("u_lightShadowBias", 0.02f); pass->addUniform(_shadowBias.get());
+	_shadowStrength = new veUniform("u_lightShadowStrength", 0.5f); pass->addUniform(_shadowStrength.get());
+	_isUseSoftShadow = new veUniform("u_lightShadowSoft", 0.0f); pass->addUniform(_isUseSoftShadow.get());
+	_shadowSoftness = new veUniform("u_lightShadowSoftness", 0.0f); pass->addUniform(_shadowSoftness.get());
+
+	_direction = new veUniform("u_lightDirection", veVec3(0.0f, 0.0f, -1.0f)); pass->addUniform(_direction.get());
+
+	auto depthTex = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture("LIGHTING_PASS_DEPTH_TEXTURE");
+	if (!depthTex) {
+		depthTex = _sceneManager->createTexture("LIGHTING_PASS_DEPTH_TEXTURE", veTexture::TEXTURE_2D);
+	}
+	pass->setTexture(vePass::DIFFUSE_TEXTURE, depthTex);
+
+	auto normalTex = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture("LIGHTING_PASS_NORMAL_TEXTURE");
+	if (!normalTex) {
+		normalTex = _sceneManager->createTexture("LIGHTING_PASS_NORMAL_TEXTURE", veTexture::TEXTURE_2D);
+	}
+	pass->setTexture(vePass::NORMAL_TEXTURE, normalTex);
 }
 
 void veDirectionalLight::render(veNode *node, veCamera *camera)
@@ -261,16 +294,10 @@ void veDirectionalLight::updateShadowCamera(veNode *node)
 	_shadowRenderingCam->setMatrix(node->getNodeToWorldMatrix());
 }
 
-void veDirectionalLight::fetechLightParams()
-{
-	veLight::fetechLightParams();
-	auto pass = _materials->getMaterial(0)->getTechnique(0)->getPass(0);
-	_direction = pass->getUniform("u_lightDirection");
-}
-
 vePointLight::vePointLight(veSceneManager *sm)
 	: veLight(POINT, sm)
 {
+	initMaterials();
 	_renderer = new vePointLightRenderer;
 	_renderer->setRenderStageMask(veRenderer::LIGHTINGING);
 }
@@ -290,6 +317,8 @@ void vePointLight::setAttenuationRange(float range)
 {
 	_attenuationRangeInverse->setValue(1.0f / range);
 	static_cast<vePointLightRenderer *>(_renderer.get())->setLightVolumeScale(veMat4::scale(veVec3(range)));
+	_boundingBox.min() = veVec3(-range);
+	_boundingBox.max() = veVec3(range);
 }
 
 float vePointLight::getAttenuationRange() const
@@ -359,12 +388,74 @@ void vePointLight::updateShadowCamera(veNode *node)
 	_shadowRenderingCam[5]->setMatrix(ltow * veMat4::lookAt(veVec3::ZERO, veVec3::NEGATIVE_UNIT_Z, veVec3::NEGATIVE_UNIT_Y));
 }
 
-void vePointLight::fetechLightParams()
+void vePointLight::initMaterials()
 {
-	veLight::fetechLightParams();
-	auto pass = _materials->getMaterial(0)->getTechnique(0)->getPass(0);
-	_position = pass->getUniform("u_lightPosition");
-	_attenuationRangeInverse = pass->getUniform("u_lightARI");
+	_materials = _sceneManager->createMaterialArray(_name + std::string("-MaterialArray"));
+	auto material = new veMaterial;
+	_materials->addMaterial(material);
+	auto technique = new veTechnique;
+	material->addTechnique(technique);
+
+	//occlusion pass 
+	{
+		auto pass = new vePass;
+		technique->addPass(pass);
+		pass->depthTest() = true;
+		pass->depthWrite() = false;
+		pass->stencilTest() = true;
+		pass->cullFace() = false;
+		pass->stencilFunc() = { GL_ALWAYS, 0, 0, GL_ALWAYS, 0, 0 };
+		pass->stencilOp() = { GL_KEEP, GL_DECR_WRAP, GL_KEEP, GL_KEEP, GL_INCR_WRAP, GL_KEEP };
+		pass->blendFunc() = veBlendFunc::DISABLE;
+		pass->setShader(new veShader(veShader::VERTEX_SHADER, std::string("system/pointLightingPass.vert")));
+		pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
+	}
+
+	//rendering pass
+	{
+		auto pass = new vePass;
+		technique->addPass(pass);
+		pass->depthTest() = false;
+		pass->depthWrite() = false;
+		pass->stencilTest() = true;
+		pass->cullFace() = true;
+		pass->cullFaceMode() = GL_FRONT;
+		pass->blendFunc().src = GL_ONE; pass->blendFunc().dst = GL_ONE;
+		pass->blendEquation() = GL_FUNC_ADD;
+		pass->stencilFunc() = { GL_NOTEQUAL, 0, 0xFF, GL_NOTEQUAL, 0, 0xFF };
+		pass->setShader(new veShader(veShader::VERTEX_SHADER, std::string("system/PointLightingPass.vert")));
+		pass->setShader(new veShader(veShader::FRAGMENT_SHADER, std::string("system/PointLightingPass.frag")));
+		pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
+		pass->addUniform(new veUniform("u_InvProjectMat", INV_P_MATRIX));
+		pass->addUniform(new veUniform("u_screenWidth", SCREEN_WIDTH));
+		pass->addUniform(new veUniform("u_screenHeight", SCREEN_HEIGHT));
+		pass->addUniform(new veUniform("u_depthTex", 0));
+		pass->addUniform(new veUniform("u_normalTex", 1));
+
+		_color = new veUniform("u_lightColor", veVec3(1.0f)); pass->addUniform(_color.get());
+		_intensity = new veUniform("u_lightIntensity", 1.0f); pass->addUniform(_intensity.get());
+		_lightMatrix = new veUniform("u_lightMatrix", veMat4::IDENTITY); pass->addUniform(_lightMatrix.get());
+		_shadowEnabled = new veUniform("u_lightShadowEnabled", 0.0f); pass->addUniform(_shadowEnabled.get());
+		_shadowBias = new veUniform("u_lightShadowBias", 0.02f); pass->addUniform(_shadowBias.get());
+		_shadowStrength = new veUniform("u_lightShadowStrength", 0.5f); pass->addUniform(_shadowStrength.get());
+		_isUseSoftShadow = new veUniform("u_lightShadowSoft", 0.0f); pass->addUniform(_isUseSoftShadow.get());
+		_shadowSoftness = new veUniform("u_lightShadowSoftness", 0.0f); pass->addUniform(_shadowSoftness.get());
+
+		_position = new veUniform("u_lightPosition", veVec3(0.0f)); pass->addUniform(_position.get());
+		_attenuationRangeInverse = new veUniform("u_lightARI", 0.0f); pass->addUniform(_attenuationRangeInverse.get());
+
+		auto depthTex = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture("LIGHTING_PASS_DEPTH_TEXTURE");
+		if (!depthTex) {
+			depthTex = _sceneManager->createTexture("LIGHTING_PASS_DEPTH_TEXTURE", veTexture::TEXTURE_2D);
+		}
+		pass->setTexture(vePass::DIFFUSE_TEXTURE, depthTex);
+
+		auto normalTex = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture("LIGHTING_PASS_NORMAL_TEXTURE");
+		if (!normalTex) {
+			normalTex = _sceneManager->createTexture("LIGHTING_PASS_NORMAL_TEXTURE", veTexture::TEXTURE_2D);
+		}
+		pass->setTexture(vePass::NORMAL_TEXTURE, normalTex);
+	}
 }
 
 veSpotLight::veSpotLight(veSceneManager *sm)
@@ -459,13 +550,7 @@ void veSpotLight::updateShadowCamera(veNode *node)
 	_shadowRenderingCam->setMatrix(node->getNodeToWorldMatrix());
 }
 
-void veSpotLight::fetechLightParams()
+void veSpotLight::initMaterials()
 {
-	veLight::fetechLightParams();
-	auto pass = _materials->getMaterial(0)->getTechnique(0)->getPass(0);
-	_direction = pass->getUniform("u_lightDirection");
-	_position = pass->getUniform("u_lightPosition");
-	_attenuationRangeInverse = pass->getUniform("u_lightARI");
-	_innerAngleCos = pass->getUniform("u_lightInnerAngleCos");
-	_outerAngleCos = pass->getUniform("u_lightOuterAngleCos");
+
 }

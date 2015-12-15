@@ -2,7 +2,6 @@
   "version": "1.0",
   "type": "SPOT",
   "name": "spot0",
-  "materials": "spotLighting.vemtl",
   "color": [ 1.0, 1.0, 1.0],
   "intensity": 1.0,
   "attenuation": 1000.0,

@@ -282,7 +282,8 @@ void veUniform::setValue(int val)
 	_type = Type::INT;
 	_values.resize(1);
 	_values[0] = val;
-	_preLocation = _location;
+	if (0 <= _location)
+		_preLocation = _location;
 	if (_maxReLocation < 255)
 		_location = -1;
 }
@@ -292,7 +293,8 @@ void veUniform::setValue(bool val)
 	_type = Type::BOOL;
 	_values.resize(1);
 	_values[0] = val;
-	_preLocation = _location;
+	if (0 <= _location)
+		_preLocation = _location;
 	if (_maxReLocation < 255)
 		_location = -1;
 }
@@ -302,7 +304,8 @@ void veUniform::setValue(veReal val)
 	_type = Type::REAL;
 	_values.resize(1);
 	_values[0] = val;
-	_preLocation = _location;
+	if (0 <= _location)
+		_preLocation = _location;
 	if (_maxReLocation < 255)
 		_location = -1;
 }
@@ -311,7 +314,8 @@ void veUniform::setValue(const std::string &val)
 {
 	_type = Type::AUTO;
 	_autoBindingValue = val;
-	_preLocation = _location;
+	if (0 <= _location)
+		_preLocation = _location;
 	if (_maxReLocation < 255)
 		_location = -1;
 }
@@ -322,7 +326,8 @@ void veUniform::setValue(const veVec2& val)
 	_values.resize(2);
 	_values[0] = val.x();
 	_values[1] = val.y();
-	_preLocation = _location;
+	if (0 <= _location)
+		_preLocation = _location;
 	if (_maxReLocation < 255)
 		_location = -1;
 }
@@ -334,7 +339,8 @@ void veUniform::setValue(const veVec3& val)
 	_values[0] = val.x();
 	_values[1] = val.y();
 	_values[2] = val.z();
-	_preLocation = _location;
+	if (0 <= _location)
+		_preLocation = _location;
 	if (_maxReLocation < 255)
 		_location = -1;
 }
@@ -347,7 +353,8 @@ void veUniform::setValue(const veVec4& val)
 	_values[1] = val.y();
 	_values[2] = val.z();
 	_values[3] = val.w();
-	_preLocation = _location;
+	if (0 <= _location)
+		_preLocation = _location;
 	if (_maxReLocation < 255)
 		_location = -1;
 }
@@ -359,7 +366,8 @@ void veUniform::setValue(const veMat3& val)
 	_values[0] = val[0][0]; _values[3] = val[0][1]; _values[6] = val[0][2];
 	_values[1] = val[1][0]; _values[4] = val[1][1]; _values[7] = val[1][2];
 	_values[2] = val[2][0]; _values[5] = val[2][1]; _values[8] = val[2][2];
-	_preLocation = _location;
+	if (0 <= _location)
+		_preLocation = _location;
 	if (_maxReLocation < 255)
 		_location = -1;
 }
@@ -372,7 +380,8 @@ void veUniform::setValue(const veMat4& val)
 	_values[1] = val[1][0]; _values[5] = val[1][1]; _values[9]  = val[1][2]; _values[13] = val[1][3];
 	_values[2] = val[2][0]; _values[6] = val[2][1]; _values[10] = val[2][2]; _values[14] = val[2][3];
 	_values[3] = val[3][0]; _values[7] = val[3][1]; _values[11] = val[3][2]; _values[15] = val[3][3];
-	_preLocation = _location;
+	if (0 <= _location)
+		_preLocation = _location;
 	if (_maxReLocation < 255)
 		_location = -1;
 }
@@ -381,7 +390,8 @@ void veUniform::setValue(const veRealArray &val)
 {
 	_type = Type::REAL_ARRAY;
 	_values = val;
-	_preLocation = _location;
+	if (0 <= _location)
+		_preLocation = _location;
 	if (_maxReLocation < 255)
 		_location = -1;
 }
@@ -394,7 +404,8 @@ void veUniform::setValue(const veVec2 *val, unsigned int n)
 		_values[2 * i]     = val[i].x();
 		_values[2 * i + 1] = val[i].y();
 	}
-	_preLocation = _location;
+	if (0 <= _location)
+		_preLocation = _location;
 	if (_maxReLocation < 255)
 		_location = -1;
 }
@@ -408,7 +419,8 @@ void veUniform::setValue(const veVec3 *val, unsigned int n)
 		_values[3 * i + 1] = val[i].y();
 		_values[3 * i + 2] = val[i].z();
 	}
-	_preLocation = _location;
+	if (0 <= _location)
+		_preLocation = _location;
 	if (_maxReLocation < 255)
 		_location = -1;
 }
@@ -423,7 +435,8 @@ void veUniform::setValue(const veVec4 *val, unsigned int n)
 		_values[4 * i + 2] = val[i].z();
 		_values[4 * i + 3] = val[i].w();
 	}
-	_preLocation = _location;
+	if (0 <= _location)
+		_preLocation = _location;
 	if (_maxReLocation < 255)
 		_location = -1;
 }
@@ -437,7 +450,8 @@ void veUniform::setValue(const veMat3 *val, unsigned int n)
 		_values[9 * i + 1] = val[i][1][0]; _values[9 * i + 4] = val[i][1][1]; _values[9 * i + 7] = val[i][1][2];
 		_values[9 * i + 2] = val[i][2][0]; _values[9 * i + 5] = val[i][2][1]; _values[9 * i + 8] = val[i][2][2];
 	}
-	_preLocation = _location;
+	if (0 <= _location)
+		_preLocation = _location;
 	if (_maxReLocation < 255)
 		_location = -1;
 }
@@ -452,7 +466,8 @@ void veUniform::setValue(const veMat4 *val, unsigned int n)
 		_values[16 * i + 2] = val[i][2][0]; _values[16 * i + 6] = val[i][2][1]; _values[16 * i + 10] = val[i][2][2]; _values[16 * i + 14] = val[i][2][3];
 		_values[16 * i + 3] = val[i][3][0]; _values[16 * i + 7] = val[i][3][1]; _values[16 * i + 11] = val[i][3][2]; _values[16 * i + 15] = val[i][3][3];
 	}
-	_preLocation = _location;
+	if (0 <= _location)
+		_preLocation = _location;
 	if (_maxReLocation < 255)
 		_location = -1;
 }
