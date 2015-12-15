@@ -114,6 +114,8 @@ veUniform::~veUniform()
 
 void veUniform::apply(const veRenderCommand &command)
 {
+	if (_location < 0 && _maxReLocation == 255)
+		return;
 	if (_location < 0) {
 		_location = glGetUniformLocation(command.pass->_program, _name.c_str());
 		_location == _preLocation ? ++_maxReLocation : _maxReLocation = 0;
