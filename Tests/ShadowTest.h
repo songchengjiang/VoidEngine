@@ -130,7 +130,7 @@ public:
 		//	node->addComponent(lightTranser);
 		//	lightTranser->setPosition(veVec3(10.0f, 0.0f, 0.0f));
 		//	lightTranser->setRotation(veQuat(veMath::HALF_PI, veVec3(0.0f, 1.0f, 0.0f)));
-		//	directional->setIntensity(0.3f);
+		//	directional->setIntensity(1.0f);
 
 		//	veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "directional0-sphere"));
 		//	veNode *lightModel = _sceneManager->createNode("lightnode0");
@@ -151,7 +151,7 @@ public:
 		//	veTransformer *lightTranser = new veTransformer;
 		//	node->addComponent(lightTranser);
 		//	lightTranser->setPosition(veVec3(0.0f, 0.0f, 10.0f));
-		//	directional->setIntensity(0.3f);
+		//	directional->setIntensity(0.5f);
 
 		//	veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "directional0-sphere"));
 		//	veNode *lightModel = _sceneManager->createNode("lightnode0");

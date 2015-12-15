@@ -9,7 +9,7 @@ uniform vec3  u_lightColor;
 uniform float u_lightIntensity;
 uniform float u_lightARI;
 
-layout(location=1) out vec4 fragColor;
+layout(location=0) out vec4 fragColor;
 
 void main(){
 	vec2 texCoords = gl_FragCoord.xy / vec2(u_screenWidth, u_screenHeight);

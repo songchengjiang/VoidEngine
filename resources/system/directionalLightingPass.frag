@@ -8,7 +8,7 @@ uniform vec3  u_lightDirection;
 uniform vec3  u_lightColor;
 uniform float u_lightIntensity;
 
-layout(location=1) out vec4 fragColor;
+layout(location=0) out vec4 fragColor;
 
 void main(){
 	vec2 texCoords = gl_FragCoord.xy / vec2(u_screenWidth, u_screenHeight);
@@ -20,5 +20,5 @@ void main(){
 	float NdotL = max(0.0, dot(normal, -u_lightDirection));
 	vec3 H = normalize(eyeDir - u_lightDirection);
 	float NdotH = max(0.0, dot(normal, H));
-	fragColor = vec4(NdotL * u_lightColor.r, NdotL * u_lightColor.g, NdotL * u_lightColor.b, NdotL * NdotH) * u_lightIntensity;
+	fragColor = vec4(NdotL * u_lightColor.r, NdotL * u_lightColor.g, NdotL * u_lightColor.b, NdotH) * u_lightIntensity;
 }

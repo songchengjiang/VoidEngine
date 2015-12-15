@@ -338,8 +338,8 @@ void veCamera::initDeferredLighting()
 	}
 	_deferredLightingParams.lightTexture = _sceneManager->createTexture(_name + std::string("-lightTex"));
 	_deferredLightingParams.lightfbo->attach(GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, _deferredLightingParams.depthTexture.get());
-	_deferredLightingParams.lightfbo->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _deferredLightingParams.normalTexture.get());
-	_deferredLightingParams.lightfbo->attach(GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, _deferredLightingParams.lightTexture.get());
+	//_deferredLightingParams.lightfbo->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _deferredLightingParams.normalTexture.get());
+	//_deferredLightingParams.lightfbo->attach(GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, _deferredLightingParams.lightTexture.get());
 	refreshDeferredLighting();
 }
 
@@ -355,10 +355,11 @@ void veCamera::refreshDeferredLighting()
 void veCamera::deferredLighting()
 {
 	auto renderStage = veRenderer::CURRENT_RENDER_STAGE;
+	_deferredLightingParams.lightfbo->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _deferredLightingParams.normalTexture.get());
 	_deferredLightingParams.lightfbo->bind(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	glViewport(_viewport.x * VE_DEVICE_PIXEL_RATIO, _viewport.y * VE_DEVICE_PIXEL_RATIO, _viewport.width * VE_DEVICE_PIXEL_RATIO, _viewport.height * VE_DEVICE_PIXEL_RATIO);
+	//glViewport(_viewport.x * VE_DEVICE_PIXEL_RATIO, _viewport.y * VE_DEVICE_PIXEL_RATIO, _viewport.width * VE_DEVICE_PIXEL_RATIO, _viewport.height * VE_DEVICE_PIXEL_RATIO);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+	//glDrawBuffer(GL_COLOR_ATTACHMENT0);
 	veRenderer::CURRENT_RENDER_STAGE = veRenderer::DEPTH;
 	separateRender();
 	for (auto &renderPass : _renderQueue->renderCommandList) {
@@ -366,7 +367,11 @@ void veCamera::deferredLighting()
 	}
 	_renderQueue->renderCommandList.clear();
 
-	glDrawBuffer(GL_COLOR_ATTACHMENT1);
+
+	_deferredLightingParams.lightfbo->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _deferredLightingParams.lightTexture.get());
+	_deferredLightingParams.lightfbo->bind(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
+	//glDrawBuffer(GL_COLOR_ATTACHMENT1);
 	veRenderer::CURRENT_RENDER_STAGE = veRenderer::LIGHTINGING;
 	separateRender();
 	for (auto &renderPass : _renderQueue->renderCommandList) {
