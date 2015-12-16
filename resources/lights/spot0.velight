@@ -4,7 +4,7 @@
   "name": "spot0",
   "color": [ 1.0, 1.0, 1.0],
   "intensity": 1.0,
-  "attenuation": 1000.0,
+  "attenuation": 50.0,
   "innerAngle": 0.0,
   "outerAngle": 45.0,
   "shadowEnabled": true,

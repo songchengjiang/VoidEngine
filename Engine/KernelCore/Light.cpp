@@ -462,6 +462,7 @@ void vePointLight::initMaterials()
 veSpotLight::veSpotLight(veSceneManager *sm)
 	: veLight(SPOT, sm)
 {
+	initMaterials();
 	_renderer = new veSpotLightRenderer;
 	_renderer->setRenderStageMask(veRenderer::LIGHTINGING);
 }
@@ -482,6 +483,16 @@ void veSpotLight::render(veNode *node, veCamera *camera)
 	veRenderableObject::render(node, camera);
 }
 
+void veSpotLight::setAttenuationRange(float range)
+{
+	_attenuationRange = range;
+	_attenuationRangeInverse->setValue(1.0f / range);
+	float rangeScale = _attenuationRange * (_outerAngle / 45.0f);
+	static_cast<veSpotLightRenderer *>(_renderer.get())->setLightVolumeScale(veMat4::scale(veVec3(rangeScale, rangeScale, _attenuationRange)));
+	_boundingBox.min() = veVec3(-rangeScale);
+	_boundingBox.max() = veVec3(rangeScale);
+}
+
 float veSpotLight::getAttenuationRange() const
 {
 	float val;
@@ -491,16 +502,22 @@ float veSpotLight::getAttenuationRange() const
 
 float veSpotLight::getInnerAngle()
 {
-	float val;
-	_innerAngleCos->getValue(val);
-	return veMath::veDegree(veMath::veAcos(val));
+	return _innerAngle;
+}
+
+void veSpotLight::setOuterAngle(float outerAng)
+{
+	_outerAngle = outerAng;
+	_outerAngleCos->setValue(veMath::veCos(veMath::veRadian(outerAng)));
+	float rangeScale = _attenuationRange * (_outerAngle / 45.0f);
+	static_cast<veSpotLightRenderer *>(_renderer.get())->setLightVolumeScale(veMat4::scale(veVec3(rangeScale, rangeScale, _attenuationRange)));
+	_boundingBox.min() = veVec3(-rangeScale);
+	_boundingBox.max() = veVec3(rangeScale);
 }
 
 float veSpotLight::getOuterAngle()
 {
-	float val;
-	_outerAngleCos->getValue(val);
-	return veMath::veDegree(veMath::veAcos(val));
+	return _outerAngle;
 }
 
 //veMat4 veSpotLight::getLightMatrix() const
@@ -553,5 +570,77 @@ void veSpotLight::updateShadowCamera(veNode *node)
 
 void veSpotLight::initMaterials()
 {
+	_materials = _sceneManager->createMaterialArray(_name + std::string("-MaterialArray"));
+	auto material = new veMaterial;
+	_materials->addMaterial(material);
+	auto technique = new veTechnique;
+	material->addTechnique(technique);
 
+	//occlusion pass 
+	{
+		auto pass = new vePass;
+		technique->addPass(pass);
+		pass->depthTest() = true;
+		pass->depthWrite() = false;
+		pass->stencilTest() = true;
+		pass->cullFace() = false;
+		pass->stencilFunc() = { GL_ALWAYS, 0, 0, GL_ALWAYS, 0, 0 };
+		pass->stencilOp() = { GL_KEEP, GL_DECR_WRAP, GL_KEEP, GL_KEEP, GL_INCR_WRAP, GL_KEEP };
+		pass->blendFunc() = veBlendFunc::DISABLE;
+		pass->setShader(new veShader(veShader::VERTEX_SHADER, std::string("system/spotLightingPass.vert")));
+		pass->setShader(new veShader(veShader::FRAGMENT_SHADER, "void main(){}"));
+		pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
+	}
+
+	//rendering pass
+	{
+		auto pass = new vePass;
+		technique->addPass(pass);
+		pass->depthTest() = false;
+		pass->depthWrite() = false;
+		pass->stencilTest() = true;
+		pass->cullFace() = true;
+		pass->cullFaceMode() = GL_FRONT;
+		pass->blendFunc().src = GL_ONE; pass->blendFunc().dst = GL_ONE;
+		pass->blendEquation() = GL_FUNC_ADD;
+		pass->stencilFunc() = { GL_NOTEQUAL, 0, 0xFF, GL_NOTEQUAL, 0, 0xFF };
+		pass->setShader(new veShader(veShader::VERTEX_SHADER, std::string("system/spotLightingPass.vert")));
+		pass->setShader(new veShader(veShader::FRAGMENT_SHADER, std::string("system/spotLightingPass.frag")));
+		pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
+		pass->addUniform(new veUniform("u_InvProjectMat", INV_P_MATRIX));
+		pass->addUniform(new veUniform("u_screenWidth", SCREEN_WIDTH));
+		pass->addUniform(new veUniform("u_screenHeight", SCREEN_HEIGHT));
+		pass->addUniform(new veUniform("u_depthTex", 0));
+		pass->addUniform(new veUniform("u_normalTex", 1));
+
+		_color = new veUniform("u_lightColor", veVec3(1.0f)); pass->addUniform(_color.get());
+		_intensity = new veUniform("u_lightIntensity", 1.0f); pass->addUniform(_intensity.get());
+		_lightMatrix = new veUniform("u_lightMatrix", veMat4::IDENTITY); pass->addUniform(_lightMatrix.get());
+		_shadowEnabled = new veUniform("u_lightShadowEnabled", 0.0f); pass->addUniform(_shadowEnabled.get());
+		_shadowBias = new veUniform("u_lightShadowBias", 0.02f); pass->addUniform(_shadowBias.get());
+		_shadowStrength = new veUniform("u_lightShadowStrength", 0.5f); pass->addUniform(_shadowStrength.get());
+		_isUseSoftShadow = new veUniform("u_lightShadowSoft", 0.0f); pass->addUniform(_isUseSoftShadow.get());
+		_shadowSoftness = new veUniform("u_lightShadowSoftness", 0.0f); pass->addUniform(_shadowSoftness.get());
+
+		_direction = new veUniform("u_lightDirection", veVec3(0.0f)); pass->addUniform(_direction.get());
+		_position = new veUniform("u_lightPosition", veVec3(0.0f)); pass->addUniform(_position.get());
+		_attenuationRangeInverse = new veUniform("u_lightARI", 0.0f); pass->addUniform(_attenuationRangeInverse.get());
+		_innerAngleCos = new veUniform("u_lightInnerAngleCos", 0.0f); pass->addUniform(_innerAngleCos.get());
+		_outerAngleCos = new veUniform("u_lightOuterAngleCos", 0.707f); pass->addUniform(_outerAngleCos.get());
+		_attenuationRange = 0.0f;
+		_innerAngle = 0.0f;
+		_outerAngle = 45.0f;
+
+		auto depthTex = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture("LIGHTING_PASS_DEPTH_TEXTURE");
+		if (!depthTex) {
+			depthTex = _sceneManager->createTexture("LIGHTING_PASS_DEPTH_TEXTURE", veTexture::TEXTURE_2D);
+		}
+		pass->setTexture(vePass::DIFFUSE_TEXTURE, depthTex);
+
+		auto normalTex = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture("LIGHTING_PASS_NORMAL_TEXTURE");
+		if (!normalTex) {
+			normalTex = _sceneManager->createTexture("LIGHTING_PASS_NORMAL_TEXTURE", veTexture::TEXTURE_2D);
+		}
+		pass->setTexture(vePass::NORMAL_TEXTURE, normalTex);
+	}
 }

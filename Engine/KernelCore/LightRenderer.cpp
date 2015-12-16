@@ -81,7 +81,7 @@ void veSpotLightRenderer::render(veNode *node, veRenderableObject *renderableObj
 
 	veRenderCommand rc;
 	rc.mask = 0xffffffff;
-	rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix());
+	rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix() * _lightVolumeScale);
 	rc.renderableObj = renderableObj;
 	rc.camera = camera;
 	rc.sceneManager = camera->getSceneManager();

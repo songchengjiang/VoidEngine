@@ -199,12 +199,12 @@ public:
 
 	virtual void render(veNode *node, veCamera *camera) override;
 
-	void setAttenuationRange(float range) { _attenuationRangeInverse->setValue(1.0f / range); }
+	void setAttenuationRange(float range);
 	float getAttenuationRange() const;
 
-	void setInnerAngle(float innerAng) {_innerAngleCos->setValue(veMath::veCos(veMath::veRadian(innerAng))); }
+	void setInnerAngle(float innerAng) { _innerAngle = innerAng; _innerAngleCos->setValue(veMath::veCos(veMath::veRadian(innerAng))); }
 	float getInnerAngle();
-	void setOuterAngle(float outerAng) { _outerAngleCos->setValue(veMath::veCos(veMath::veRadian(outerAng)));}
+	void setOuterAngle(float outerAng);
 	float getOuterAngle();
 
 	virtual void shadowCameraCulling() override;
@@ -226,6 +226,9 @@ protected:
 	VE_Ptr<veUniform> _attenuationRangeInverse;
 	VE_Ptr<veUniform> _innerAngleCos;
 	VE_Ptr<veUniform> _outerAngleCos;
+	float             _attenuationRange;
+	float             _innerAngle;
+	float             _outerAngle;
 
 	VE_Ptr<veCamera>  _shadowRenderingCam;
 	VE_Ptr<veTexture> _shadowTexture;

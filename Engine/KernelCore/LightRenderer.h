@@ -36,6 +36,10 @@ public:
 	~veSpotLightRenderer();
 
 	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override;
+	void setLightVolumeScale(const veMat4 &scale) { _lightVolumeScale = scale; }
+
+private:
+	veMat4 _lightVolumeScale;
 };
 
 
