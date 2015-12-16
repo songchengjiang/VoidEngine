@@ -2,6 +2,9 @@
 #include "Node.h"
 #include "Camera.h"
 
+#define OCCLUSION_PASS 0
+#define RENDERING_PASS 1
+
 veDirectionalLightRenderer::veDirectionalLightRenderer()
 {
 }
@@ -18,26 +21,16 @@ void veDirectionalLightRenderer::render(veNode *node, veRenderableObject *render
 	updateBuffer();
 
 	veRenderCommand rc;
-	rc.mask = node->getMask();
-	rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix());
-	//rc.attachedNode = node;
+	rc.mask = 0xffffffff;
+	rc.worldMatrix = new veMat4Ptr(veMat4::IDENTITY);
 	rc.renderableObj = renderableObj;
 	rc.camera = camera;
 	rc.sceneManager = camera->getSceneManager();
 	rc.renderer = this;
 
-	auto materials = renderableObj->getMaterialArray();
-	for (unsigned int mat = 0; mat < materials->getMaterialNum(); ++mat) {
-		auto material = materials->getMaterial(mat);
-		for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {
-			auto pass = material->activeTechnique()->getPass(i);
-			if (camera->getMask() & pass->drawMask()) {
-				rc.pass = pass;
-				pass->visit(rc);
-				camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
-			}
-		}
-	}
+	auto material = renderableObj->getMaterialArray()->getMaterial(0);
+	rc.pass = material->activeTechnique()->getPass(0);
+	camera->getRenderQueue()->pushCommand(RENDERING_PASS, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
 }
 
 vePointLightRenderer::vePointLightRenderer()
@@ -57,25 +50,18 @@ void vePointLightRenderer::render(veNode *node, veRenderableObject *renderableOb
 	updateBuffer();
 
 	veRenderCommand rc;
-	rc.mask = node->getMask();
+	rc.mask = 0xffffffff;
 	rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix() * _lightVolumeScale);
-	//rc.attachedNode = node;
 	rc.renderableObj = renderableObj;
 	rc.camera = camera;
 	rc.sceneManager = camera->getSceneManager();
 	rc.renderer = this;
 
-	auto materials = renderableObj->getMaterialArray();
-	for (unsigned int mat = 0; mat < materials->getMaterialNum(); ++mat) {
-		auto material = materials->getMaterial(mat);
-		for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {
-			auto pass = material->activeTechnique()->getPass(i);
-			if (camera->getMask() & pass->drawMask()) {
-				rc.pass = pass;
-				camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
-			}
-		}
-	}
+	auto material = renderableObj->getMaterialArray()->getMaterial(0);
+	rc.pass = material->activeTechnique()->getPass(0);
+	camera->getRenderQueue()->pushCommand(OCCLUSION_PASS, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
+	rc.pass = material->activeTechnique()->getPass(1);
+	camera->getRenderQueue()->pushCommand(RENDERING_PASS, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
 }
 
 veSpotLightRenderer::veSpotLightRenderer()
@@ -94,24 +80,16 @@ void veSpotLightRenderer::render(veNode *node, veRenderableObject *renderableObj
 	updateBuffer();
 
 	veRenderCommand rc;
-	rc.mask = node->getMask();
+	rc.mask = 0xffffffff;
 	rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix());
-	//rc.attachedNode = node;
 	rc.renderableObj = renderableObj;
 	rc.camera = camera;
 	rc.sceneManager = camera->getSceneManager();
 	rc.renderer = this;
 
-	auto materials = renderableObj->getMaterialArray();
-	for (unsigned int mat = 0; mat < materials->getMaterialNum(); ++mat) {
-		auto material = materials->getMaterial(mat);
-		for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {
-			auto pass = material->activeTechnique()->getPass(i);
-			if (camera->getMask() & pass->drawMask()) {
-				rc.pass = pass;
-				pass->visit(rc);
-				camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
-			}
-		}
-	}
+	auto material = renderableObj->getMaterialArray()->getMaterial(0);
+	rc.pass = material->activeTechnique()->getPass(0);
+	camera->getRenderQueue()->pushCommand(OCCLUSION_PASS, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
+	rc.pass = material->activeTechnique()->getPass(1);
+	camera->getRenderQueue()->pushCommand(RENDERING_PASS, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
 }

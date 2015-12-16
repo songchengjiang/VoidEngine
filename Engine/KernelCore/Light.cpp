@@ -408,6 +408,7 @@ void vePointLight::initMaterials()
 		pass->stencilOp() = { GL_KEEP, GL_DECR_WRAP, GL_KEEP, GL_KEEP, GL_INCR_WRAP, GL_KEEP };
 		pass->blendFunc() = veBlendFunc::DISABLE;
 		pass->setShader(new veShader(veShader::VERTEX_SHADER, std::string("system/pointLightingPass.vert")));
+		pass->setShader(new veShader(veShader::FRAGMENT_SHADER, "void main(){}"));
 		pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
 	}
 
