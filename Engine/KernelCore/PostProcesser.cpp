@@ -37,9 +37,10 @@ void vePostProcesser::process(veFrameBufferObject *fb, veCamera *camera)
 		for (unsigned int p = 0; p < material->activeTechnique()->getPassNum(); ++p) {
 			auto pass = material->activeTechnique()->getPass(p);
 			fb->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pass->getTexture(vePass::DIFFUSE_TEXTURE));
-			camera->separateDraw();
+			camera->render();
 			_renderer->setPostProcessingPass(pass);
 			_surface->render(_sceneManager->getRootNode(), camera);
+			camera->discardRenderScene(true);
 		}
 	}
 }

@@ -91,10 +91,13 @@ public:
 	const vePlane& getFrustumPlane(FrustumPlane fp);
 
 	virtual void cull() = 0;
-	virtual void separateRender() = 0;
-	virtual void separateDraw() = 0;
+	virtual void fillRenderQueue() = 0;
+	void clearRenderQueue() { _renderQueue->renderCommandList.clear(); }
 	void render();
+	void renderDeferredLight();
+	void renderScene();
 	void render(veRenderQueue::RenderCommandList &renderList);
+	void discardRenderScene(bool isDiscard) { _isDiscardRenderScene = isDiscard; }
 
 	veRenderQueue* getRenderQueue() { return _renderQueue; }
 
@@ -113,8 +116,6 @@ protected:
 	void resize(int width, int height);
 	void updateFrustumPlane();
 	virtual void updateSceneManager() override;
-	void forwardRendering();
-	void deferredLighting();
 
 protected:
 
@@ -130,7 +131,7 @@ protected:
 	bool    _needRefreshFrustumPlane;
 
 	RenderPath _renderPath;
-	bool _renderStateChanged;
+	bool _isDiscardRenderScene;
 
 	VE_Ptr<veSkyBox> _skybox;
 	veRenderQueue *_renderQueue;

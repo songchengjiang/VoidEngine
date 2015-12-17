@@ -228,7 +228,6 @@ void veOctreeSceneManager::render()
 	//	}
 	//}
 
-	veRenderer::CURRENT_RENDER_STAGE = veRenderer::FRAMEBUFFER;
 	for (auto &iter : _cameraList) {
 		if (iter->isVisible() && iter->isInScene() && iter != _mainCamera) {
 			if (iter->getFrameBufferObject()) {
@@ -239,28 +238,22 @@ void veOctreeSceneManager::render()
 		}
 	}
 
-	veRenderer::CURRENT_RENDER_STAGE = veRenderer::RENDERING;
 	if (_mainCamera.valid() && _mainCamera->isInScene() && _mainCamera->isVisible()) {
 		veOctreeCamera *mainCam = static_cast<veOctreeCamera *>(_mainCamera.get());
 		mainCam->setSkybox(_skyBox.get());
-		//mainCam->walkingOctree(this->_octree);
-
 		if (!_postProcesserList.empty()) {
-			mainCam->separateRender();
-			veRenderer::CURRENT_RENDER_STAGE = veRenderer::POSTPROCESS;
 			if (!_postProcesserFBO.valid()) {
 				_postProcesserFBO = veFrameBufferObjectManager::instance()->createFrameBufferObject(POST_PROCESSER_FRAMEBUFFER_OBJECT);
 			}
+			auto fbo = mainCam->getFrameBufferObject();
 			mainCam->setFrameBufferObject(_postProcesserFBO.get());
 			for (size_t i = 0; i < _postProcesserList.size(); ++i) {
 				_postProcesserList[i]->process(_postProcesserFBO.get(), mainCam);
 			}
-			mainCam->setFrameBufferObject(nullptr);
-			mainCam->separateDraw();
+			mainCam->setFrameBufferObject(fbo);
 		}
-		else {
-			mainCam->render();
-		}
+		mainCam->render();
+		mainCam->discardRenderScene(false);
 	}
 	veApplication::instance()->swapBuffers();
 }

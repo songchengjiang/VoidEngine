@@ -26,7 +26,7 @@ veCamera::veCamera(veSceneManager *sm)
 	, _clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 	, _fbo(nullptr)
 	, _renderPath(RenderPath::FORWARD_PATH)
-	, _renderStateChanged(true)
+	, _isDiscardRenderScene(false)
 	, _needRefreshFrustumPlane(true)
 	, _renderQueue(nullptr)
 {
@@ -42,7 +42,7 @@ veCamera::veCamera(veSceneManager *sm, const veViewport &vp)
 	, _clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 	, _fbo(nullptr)
 	, _renderPath(RenderPath::FORWARD_PATH)
-	, _renderStateChanged(true)
+	, _isDiscardRenderScene(false)
 	, _needRefreshFrustumPlane(true)
 	, _renderQueue(nullptr)
 {
@@ -156,12 +156,49 @@ const vePlane& veCamera::getFrustumPlane(FrustumPlane fp)
 	return _frustumPlane[fp];
 }
 
-void veCamera::separateDraw()
+void veCamera::renderDeferredLight()
 {
-	for (auto &renderPass : _renderQueue->renderCommandList) {
-		this->render(renderPass.second);
+	if (_viewport.isNull())
+		return;
+	if (_isDiscardRenderScene)
+		return;
+	veRenderer::CURRENT_RENDER_STAGE = veRenderer::LIGHTINGING;
+	fillRenderQueue();
+	if (!_renderQueue->renderCommandList.empty()) {
+		_deferredLightSceneIlluminator->illuminate();
 	}
-	_renderQueue->renderCommandList.clear();
+	clearRenderQueue();
+	veRenderState::instance()->resetState();
+}
+
+void veCamera::renderScene()
+{
+	if (_viewport.isNull())
+		return;
+	veRenderer::CURRENT_RENDER_STAGE = veRenderer::RENDERING;
+	if (_fbo.valid()) {
+		_fbo->bind(_clearMask);
+	}
+	glViewport(_viewport.x * VE_DEVICE_PIXEL_RATIO, _viewport.y * VE_DEVICE_PIXEL_RATIO, _viewport.width * VE_DEVICE_PIXEL_RATIO, _viewport.height * VE_DEVICE_PIXEL_RATIO);
+	glClear(_clearMask);
+	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
+
+	if (!_isDiscardRenderScene) {
+		fillRenderQueue();
+		if (_skybox.valid())
+			_skybox->render(this);
+	}
+	if (!_renderQueue->renderCommandList.empty()) {
+		for (auto &renderPass : _renderQueue->renderCommandList) {
+			this->render(renderPass.second);
+		}
+	}
+	clearRenderQueue();
+
+	if (_fbo.valid()) {
+		_fbo->unBind();
+	}
+	veRenderState::instance()->resetState();
 }
 
 void veCamera::render(veRenderQueue::RenderCommandList &renderList)
@@ -199,15 +236,12 @@ void veCamera::render(veRenderQueue::RenderCommandList &renderList)
 			}
 		}
 	}
-	_renderStateChanged = false;
 }
 
 void veCamera::render()
 {
-	if (_viewport.isNull())
-		return;
-	deferredLighting();
-	forwardRendering();
+	renderDeferredLight();
+	renderScene();
 }
 
 void veCamera::setMatrix(const veMat4 &mat)
@@ -308,35 +342,4 @@ void veCamera::updateFrustumPlane()
 
 void veCamera::updateSceneManager()
 {
-}
-
-void veCamera::deferredLighting()
-{
-	auto renderStage = veRenderer::CURRENT_RENDER_STAGE;
-	veRenderer::CURRENT_RENDER_STAGE = veRenderer::LIGHTINGING;
-	_deferredLightSceneIlluminator->illuminate();
-	veRenderer::CURRENT_RENDER_STAGE = renderStage;
-	veRenderState::instance()->resetState();
-}
-
-void veCamera::forwardRendering()
-{
-	if (_fbo.valid()) {
-		_fbo->bind(_clearMask);
-	}
-	glViewport(_viewport.x * VE_DEVICE_PIXEL_RATIO, _viewport.y * VE_DEVICE_PIXEL_RATIO, _viewport.width * VE_DEVICE_PIXEL_RATIO, _viewport.height * VE_DEVICE_PIXEL_RATIO);
-	glClear(_clearMask);
-	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
-	glClearDepth(1.0f);
-	glClearStencil(0);
-
-	separateRender();
-	if (_skybox.valid())
-		_skybox->render(this);
-	separateDraw();
-
-	if (_fbo.valid()) {
-		_fbo->unBind();
-	}
-	veRenderState::instance()->resetState();
 }

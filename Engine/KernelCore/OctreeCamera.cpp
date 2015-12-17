@@ -31,7 +31,7 @@ void veOctreeCamera::cull()
 	traverseOctree(_octree);
 }
 
-void veOctreeCamera::separateRender()
+void veOctreeCamera::fillRenderQueue()
 {
 	std::unique_lock<std::mutex> lock(_visitMutex);
 	if (!_visibleOctreeNodeList.empty()) {
@@ -44,11 +44,6 @@ void veOctreeCamera::separateRender()
 			}
 		}
 	}
-}
-
-void veOctreeCamera::separateDraw()
-{
-	veCamera::separateDraw();
 }
 
 bool veOctreeCamera::isNodeVisibleInCamera(veOctreeNode *node)

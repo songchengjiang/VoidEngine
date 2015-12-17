@@ -13,8 +13,7 @@ public:
 	~veOctreeCamera();
 
 	virtual void cull() override;
-	virtual void separateRender() override;
-	virtual void separateDraw() override;
+	virtual void fillRenderQueue() override;
 
 	bool isNodeVisibleInCamera(veOctreeNode *node);
 

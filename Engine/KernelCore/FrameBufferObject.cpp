@@ -94,7 +94,7 @@ void veFrameBufferObject::attach(GLenum attachment, GLenum target, veTexture *at
 
 void veFrameBufferObject::bind(unsigned int clearMask)
 {
-	//if (CURRENT_FBO == this) return;
+	if (CURRENT_FBO == this) return;
 	GLenum bufs = {GL_NONE};
 	glDrawBuffers(1, &bufs);
 	refreshBuffers(clearMask);
@@ -104,7 +104,7 @@ void veFrameBufferObject::bind(unsigned int clearMask)
 
 void veFrameBufferObject::unBind()
 {
-	//if (CURRENT_FBO == nullptr) return;
+	if (CURRENT_FBO == nullptr) return;
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	GLenum bufs = {GL_BACK};
