@@ -103,7 +103,7 @@ veDebuger::veDebuger(veSceneManager *sm)
 	, _needRefresh(true)
 {
 	_renderer = new veDebugRenderer(this);
-	_renderer->setRenderStageMask(_renderer->getRenderStageMask() & ~veRenderer::SHADOWING & ~veRenderer::LIGHTINGING & ~veRenderer::DEPTH);
+	_renderer->setRenderStageMask(_renderer->getRenderStageMask() & ~veRenderer::LIGHTINGING);
 }
 
 veDebuger::~veDebuger()

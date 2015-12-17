@@ -24,7 +24,6 @@ veCamera::veCamera(veSceneManager *sm)
 	, _projectionMat(veMat4::IDENTITY)
 	, _clearColor(0.0f)
 	, _clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-	, _viewport({0, 0, 0, 0})
 	, _fbo(nullptr)
 	, _renderPath(RenderPath::FORWARD_PATH)
 	, _renderStateChanged(true)
@@ -32,7 +31,8 @@ veCamera::veCamera(veSceneManager *sm)
 	, _renderQueue(nullptr)
 {
 	_sceneManager = sm;
-	initDeferredLighting();
+	_deferredLightSceneIlluminator = new veDeferredLightSceneIlluminator(this);
+	setViewport({ 0, 0, 0, 0 });
 }
 
 veCamera::veCamera(veSceneManager *sm, const veViewport &vp)
@@ -40,7 +40,6 @@ veCamera::veCamera(veSceneManager *sm, const veViewport &vp)
 	, _projectionMat(veMat4::IDENTITY)
 	, _clearColor(0.0f)
 	, _clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-	, _viewport(vp)
 	, _fbo(nullptr)
 	, _renderPath(RenderPath::FORWARD_PATH)
 	, _renderStateChanged(true)
@@ -48,7 +47,8 @@ veCamera::veCamera(veSceneManager *sm, const veViewport &vp)
 	, _renderQueue(nullptr)
 {
 	_sceneManager = sm;
-	initDeferredLighting();
+	_deferredLightSceneIlluminator = new veDeferredLightSceneIlluminator(this);
+	setViewport(vp);
 }
 
 veCamera::~veCamera()
@@ -132,9 +132,9 @@ void veCamera::setViewport(const veViewport &vp)
 {
 	if (_viewport == vp) return;
 	_viewport = vp;
+	_deferredLightSceneIlluminator->resize(veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y));
 	if (_fbo.valid())
 		_fbo->setFrameBufferSize(veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y));
-	refreshDeferredLighting();
 }
 
 void veCamera::setRenderPath(RenderPath renderPath)
@@ -158,25 +158,10 @@ const vePlane& veCamera::getFrustumPlane(FrustumPlane fp)
 
 void veCamera::separateDraw()
 {
-	if (_fbo.valid()) {
-		_fbo->bind(_clearMask);
-	}
-	glViewport(_viewport.x * VE_DEVICE_PIXEL_RATIO, _viewport.y * VE_DEVICE_PIXEL_RATIO, _viewport.width * VE_DEVICE_PIXEL_RATIO, _viewport.height * VE_DEVICE_PIXEL_RATIO);
-	glClear(_clearMask);
-	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
-	glClearDepth(1.0f);
-	glClearStencil(0);
-
-	if (_skybox.valid())
-		_skybox->render(this);
 	for (auto &renderPass : _renderQueue->renderCommandList) {
 		this->render(renderPass.second);
 	}
 	_renderQueue->renderCommandList.clear();
-
-	if (_fbo.valid()) {
-		_fbo->unBind();
-	}
 }
 
 void veCamera::render(veRenderQueue::RenderCommandList &renderList)
@@ -325,64 +310,33 @@ void veCamera::updateSceneManager()
 {
 }
 
-void veCamera::initDeferredLighting()
-{
-	_deferredLightingParams.lightfbo = veFrameBufferObjectManager::instance()->createFrameBufferObject(_name + std::string("-lightfbo"));
-	_deferredLightingParams.normalTexture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture("LIGHTING_PASS_NORMAL_TEXTURE");
-	if (!_deferredLightingParams.normalTexture.valid()) {
-		_deferredLightingParams.normalTexture = _sceneManager->createTexture("LIGHTING_PASS_NORMAL_TEXTURE", veTexture::TEXTURE_2D);
-	}
-	_deferredLightingParams.depthTexture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture("LIGHTING_PASS_DEPTH_TEXTURE");
-	if (!_deferredLightingParams.depthTexture.valid()) {
-		_deferredLightingParams.depthTexture = _sceneManager->createTexture("LIGHTING_PASS_DEPTH_TEXTURE", veTexture::TEXTURE_2D);
-	}
-	_deferredLightingParams.lightTexture = _sceneManager->createTexture(_name + std::string("-lightTex"));
-	_deferredLightingParams.lightfbo->attach(GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, _deferredLightingParams.depthTexture.get());
-	_deferredLightingParams.lightfbo->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _deferredLightingParams.normalTexture.get());
-	_deferredLightingParams.lightfbo->attach(GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, _deferredLightingParams.lightTexture.get());
-	refreshDeferredLighting();
-}
-
-void veCamera::refreshDeferredLighting()
-{
-	veVec2 size = veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y);
-	_deferredLightingParams.lightfbo->setFrameBufferSize(size);
-	_deferredLightingParams.normalTexture->storage(size.x(), size.y(), 1, GL_RGBA32F, GL_RGBA, GL_FLOAT, nullptr, 1);
-	_deferredLightingParams.depthTexture->storage(size.x(), size.y(), 1, GL_DEPTH24_STENCIL8, GL_RGBA, GL_FLOAT, nullptr, 1);
-	_deferredLightingParams.lightTexture->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
-}
-
 void veCamera::deferredLighting()
 {
 	auto renderStage = veRenderer::CURRENT_RENDER_STAGE;
-	_deferredLightingParams.lightfbo->bind(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	//glViewport(_viewport.x * VE_DEVICE_PIXEL_RATIO, _viewport.y * VE_DEVICE_PIXEL_RATIO, _viewport.width * VE_DEVICE_PIXEL_RATIO, _viewport.height * VE_DEVICE_PIXEL_RATIO);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	veRenderer::CURRENT_RENDER_STAGE = veRenderer::DEPTH;
-	separateRender();
-	for (auto &renderPass : _renderQueue->renderCommandList) {
-		this->render(renderPass.second);
-	}
-	_renderQueue->renderCommandList.clear();
-
-	glDrawBuffer(GL_COLOR_ATTACHMENT1);
-	glClear(GL_COLOR_BUFFER_BIT);
 	veRenderer::CURRENT_RENDER_STAGE = veRenderer::LIGHTINGING;
-	separateRender();
-	for (auto &renderPass : _renderQueue->renderCommandList) {
-		this->render(renderPass.second);
-	}
-	_renderQueue->renderCommandList.clear();
-
-	_deferredLightingParams.lightfbo->unBind();
+	_deferredLightSceneIlluminator->illuminate();
 	veRenderer::CURRENT_RENDER_STAGE = renderStage;
 	veRenderState::instance()->resetState();
 }
 
 void veCamera::forwardRendering()
 {
+	if (_fbo.valid()) {
+		_fbo->bind(_clearMask);
+	}
+	glViewport(_viewport.x * VE_DEVICE_PIXEL_RATIO, _viewport.y * VE_DEVICE_PIXEL_RATIO, _viewport.width * VE_DEVICE_PIXEL_RATIO, _viewport.height * VE_DEVICE_PIXEL_RATIO);
+	glClear(_clearMask);
+	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
+	glClearDepth(1.0f);
+	glClearStencil(0);
+
 	separateRender();
+	if (_skybox.valid())
+		_skybox->render(this);
 	separateDraw();
+
+	if (_fbo.valid()) {
+		_fbo->unBind();
+	}
 	veRenderState::instance()->resetState();
 }

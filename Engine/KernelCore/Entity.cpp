@@ -9,7 +9,6 @@ veEntity::veEntity(veSceneManager *sm)
 	, _needRefresh(true)
 {
 	_renderer = new veEntityRenderer;
-	_renderer->setRenderStageMask(_renderer->getRenderStageMask() & ~veRenderer::LIGHTINGING);
 }
 
 veEntity::~veEntity()

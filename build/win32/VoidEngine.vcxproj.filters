@@ -258,6 +258,9 @@
     <ClCompile Include="..\..\Engine\KernelCore\ConeRenderer.cpp">
       <Filter>KernelCore\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\DeferredLightIlluminator.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -491,6 +494,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\ConeRenderer.h">
       <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\DeferredLightIlluminator.h">
+      <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

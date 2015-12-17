@@ -54,7 +54,7 @@ veSkyBox::veSkyBox(veReal size)
 	, _sceneManager(nullptr)
 {
 	_renderer = new veSkyBoxRenderer(this);
-	_renderer->setRenderStageMask(_renderer->getRenderStageMask() & ~veRenderer::SHADOWING & ~veRenderer::LIGHTINGING & ~veRenderer::DEPTH);
+	_renderer->setRenderStageMask(_renderer->getRenderStageMask() & ~veRenderer::LIGHTINGING);
 	setSize(size);
 }
 

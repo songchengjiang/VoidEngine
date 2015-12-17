@@ -42,19 +42,6 @@ private:
 		_light = _sceneManager->createLight(getLightType(type), _name);
 		if (!_light) return;
 
-		if (_doucument->HasMember(MATERIALS_KEY.c_str())) {
-			std::string matFile = (*_doucument)[MATERIALS_KEY.c_str()].GetString();
-			veMaterialArray *materials = nullptr;
-			if (veFile::instance()->isFileExist(veFile::instance()->getFullFilePath(matFile))) {
-				materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, matFile, _name + std::string("-Materials")));
-			}
-			else {
-				materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, _fileFolder + matFile, _name + std::string("-Materials")));
-			}
-			_light->setMaterialArray(materials);
-		}
-
-
 		if (_doucument->HasMember(COLOR_KEY.c_str())) {
 			const Value &val = (*_doucument)[COLOR_KEY.c_str()];
 			veVec3 color = veVec3(val[0].GetDouble(), val[1].GetDouble(), val[2].GetDouble());

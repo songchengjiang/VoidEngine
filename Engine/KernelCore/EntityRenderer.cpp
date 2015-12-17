@@ -114,29 +114,24 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 			rc.renderer = this;
 
 			veMaterial *defaultMaterial = nullptr;
-			if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::SHADOWING && veLight::CURRENT_LIGHT != nullptr) {
-				auto matAry = static_cast<veMaterialManager *>(camera->getSceneManager()->getManager(veMaterialManager::TYPE()))->findMaterialArray("_SYSTEM_");
-				if (veLight::CURRENT_LIGHT->getLightType() == veLight::DIRECTIONAL || veLight::CURRENT_LIGHT->getLightType() == veLight::SPOT) {
-					defaultMaterial = matAry->getMaterial(0 < mesh->getBoneNum() ? veMaterial::SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY
-						: veMaterial::SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ENTITY);
-				}
-				else if (veLight::CURRENT_LIGHT->getLightType() == veLight::POINT) {
-					defaultMaterial = matAry->getMaterial(0 < mesh->getBoneNum() ? veMaterial::SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY
-						: veMaterial::SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ENTITY);
-				}
-			}
-			else if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::DEPTH) {
+			if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::LIGHTINGING) {
 				auto matAry = static_cast<veMaterialManager *>(camera->getSceneManager()->getManager(veMaterialManager::TYPE()))->findMaterialArray("_SYSTEM_");
 				defaultMaterial = matAry->getMaterial(0 < mesh->getBoneNum() ? veMaterial::SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ANIM_ENTITY
 					: veMaterial::SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ENTITY);
 			}
 
-			auto technique = defaultMaterial? defaultMaterial->activeTechnique() : mesh->getMaterial()->activeTechnique();
+			vePass *defaultPass = nullptr;
+			if (defaultMaterial) {
+				defaultPass = defaultMaterial->activeTechnique()->getPass(0);
+			}
+			auto technique = mesh->getMaterial()->activeTechnique();
 			for (unsigned int i = 0; i < technique->getPassNum(); ++i) {
 				auto pass = technique->getPass(i);
 				if (camera->getMask() & pass->drawMask()) {
 					bool isTransparent = pass->blendFunc() != veBlendFunc::DISABLE ? true : false;
-					rc.pass = pass;
+					if (defaultPass && isTransparent)
+						continue;
+					rc.pass = defaultPass? defaultPass: pass;
 					pass->visit(rc);
 					if (isTransparent)
 						camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);

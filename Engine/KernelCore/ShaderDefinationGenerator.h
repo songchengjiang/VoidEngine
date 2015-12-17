@@ -104,20 +104,6 @@ public:
 		definations += std::string("#define VE_PLATFORM VE_PLATFORM_MAC\n");
 #endif
 
-		if (_command.camera->getRenderPath() == veCamera::RenderPath::DEFERRED_PATH) {
-			definations += SHADER_DEFINE_DEFERRED_PATH + std::string(" 1\n");
-		}
-		else {
-			if (!_command.sceneManager->getLightList().empty()) {
-				for (auto &light : _command.sceneManager->getLightList()) {
-					if (light->isInScene()) {
-						definations += SHADER_DEFINE_LIGHTS + std::string(" 1\n");
-						definations += getLightDefination(type);
-						break;
-					}
-				}
-			}
-		}
 		if (type == veShader::VERTEX_SHADER) {
 			bool hasAttriDef = false;
 			if (_command.renderableObj) {
@@ -208,6 +194,25 @@ public:
 			}
 		}
 
+
+		if (!_command.sceneManager->getLightListMap().empty()) {
+			bool needLighting = false;
+			for (auto &lightList : _command.sceneManager->getLightListMap()) {
+				for (auto &light : lightList.second) {
+					if (light->isInScene()) {
+						needLighting = true;
+						break;
+					}
+				}
+				if (needLighting)
+					break;
+			}
+
+			if (needLighting) {
+				definations += SHADER_DEFINE_LIGHTS + std::string(" 1\n");
+				definations += getLightDefination(type);
+			}
+		}
 		return definations;
 	}
 

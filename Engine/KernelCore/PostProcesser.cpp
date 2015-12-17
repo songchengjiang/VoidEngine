@@ -8,7 +8,7 @@ vePostProcesser::vePostProcesser(veSceneManager *sm)
 	, _needRefresh(true)
 {
 	_renderer = new vePostProcesserRenderer;
-	_renderer->setRenderStageMask(_renderer->getRenderStageMask() & ~veRenderer::SHADOWING);
+	_renderer->setRenderStageMask(_renderer->getRenderStageMask() & ~veRenderer::LIGHTINGING);
 	_surface = _sceneManager->createSurface(_name + std::string("-surface"));
 	_surface->setRenderer(_renderer.get());
 }

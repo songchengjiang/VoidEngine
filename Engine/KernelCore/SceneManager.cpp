@@ -40,16 +40,17 @@ veLight* veSceneManager::createLight(veLight::LightType type, const std::string 
 {
 	veLight *light = nullptr;
 	if (type == veLight::DIRECTIONAL) {
-		light = new veDirectionalLight(this);
+		light = new veDirectionalLight();
 	}
 	else if (type == veLight::POINT){
-		light = new vePointLight(this);
+		light = new vePointLight();
 	}
 	else if (type == veLight::SPOT) {
-		light = new veSpotLight(this);
+		light = new veSpotLight();
 	}
 	light->setName(name);
-	_lightList.push_back(light);
+	light->setSceneManager(this);
+	_lightListMap[type].push_back(light);
 	this->needReload();
 	return light;
 }
@@ -237,22 +238,6 @@ void veSceneManager::postRenderHandle()
 void veSceneManager::resourceRecovery()
 {
 	if (RESOURCE_RECOVERY_INTERVAL_TIME < _latestResourceRecoveredTime) {
-		for (veCameraList::iterator iter = _cameraList.begin(); iter != _cameraList.end(); ) {
-			if ((*iter)->refCount() <= 1) {
-				iter = _cameraList.erase(iter);
-			}else {
-				++iter;
-			}
-		}
-
-		for (veLightList::iterator iter = _lightList.begin(); iter != _lightList.end(); ) {
-			if ((*iter)->refCount() <= 1) {
-				iter = _lightList.erase(iter);
-			}else {
-				++iter;
-			}
-		}
-
 		for (auto &manager : _managerList) {
 			manager.second->resourceRecovery();
 		}

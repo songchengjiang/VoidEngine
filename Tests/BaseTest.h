@@ -22,10 +22,10 @@ public:
 	}
 
 	virtual void update(veNode *node, veSceneManager *sm) override{
-		auto light = static_cast<veLight *>(node->getRenderableObject(0));
+		auto light = static_cast<veLight *>(node);
 		if (light) {
 			updateColor(light, sm->getDeltaTime());
-			updateMatrix(node, sm->getDeltaTime());
+			updateMatrix(light, sm->getDeltaTime());
 		}
 	}
 
@@ -43,10 +43,10 @@ private:
 		_lastChangeColorTime += deltaTime;
 	}
 
-	void updateMatrix(veNode *node, double deltaTime) {
+	void updateMatrix(veLight *light, double deltaTime) {
 		veReal x = _radius * veMath::veCos(_angle);
 		veReal y = _radius * veMath::veSin(_angle);
-		node->setMatrix(veMat4::lookAt(veVec3(x, _height, y), veVec3::ZERO, veVec3::UNIT_Y));
+		light->setMatrix(veMat4::lookAt(veVec3(x, _height, y), veVec3::ZERO, veVec3::UNIT_Y));
 		_angle += veMath::QUARTER_PI * deltaTime;
 		_angle = fmod(_angle, veMath::TWO_PI);
 	}

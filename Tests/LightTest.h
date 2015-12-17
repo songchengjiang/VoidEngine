@@ -86,12 +86,10 @@ public:
 		}
 
 		{
-			veNode *node = _sceneManager->createNode("directional0Node");
 			veLight *directional0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight", "directional0"));
-			node->addRenderableObject(directional0);
 			veTransformer *lightTranser = new veTransformer;
-			node->addComponent(lightTranser);
-			node->addComponent(new LightUpdater(10.0f, 10.0f));
+			directional0->addComponent(lightTranser);
+			directional0->addComponent(new LightUpdater(10.0f, 10.0f));
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
 			directional0->setIntensity(veMath::veRandomUnitization());
 
@@ -100,18 +98,16 @@ public:
 			lightModel->addRenderableObject(lightentity);
 			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
 			lightModel->setMask(~LIGHT_MASK);
-			node->addChild(lightModel);
-			node->setMask(LIGHT_MASK);
-			root->addChild(node);
+			directional0->addChild(lightModel);
+			directional0->setMask(LIGHT_MASK);
+			root->addChild(directional0);
 		}
 
 		{
-			veNode *node = _sceneManager->createNode("point0Node");
 			veLight *point0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "point0"));
-			node->addRenderableObject(point0);
 			veTransformer *lightTranser = new veTransformer;
-			node->addComponent(lightTranser);
-			node->addComponent(new LightUpdater(5.0f, 5.0f));
+			point0->addComponent(lightTranser);
+			point0->addComponent(new LightUpdater(5.0f, 5.0f));
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
 			point0->setIntensity(veMath::veRandomUnitization());
 
@@ -120,18 +116,16 @@ public:
 			lightModel->addRenderableObject(lightentity);
 			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
 			lightModel->setMask(~LIGHT_MASK);
-			node->addChild(lightModel);
-			node->setMask(LIGHT_MASK);
-			root->addChild(node);
+			point0->addChild(lightModel);
+			point0->setMask(LIGHT_MASK);
+			root->addChild(point0);
 		}
 
 		{
-			veNode *node = _sceneManager->createNode("spot0Node");
 			veLight *spot0 = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/spot0.velight", "spot0"));
-			node->addRenderableObject(spot0);
 			veTransformer *lightTranser = new veTransformer;
-			node->addComponent(lightTranser);
-			node->addComponent(new LightUpdater(10.0f, 10.0f));
+			spot0->addComponent(lightTranser);
+			spot0->addComponent(new LightUpdater(10.0f, 10.0f));
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
 			spot0->setIntensity(2.0);
 
@@ -140,9 +134,9 @@ public:
 			lightModel->addRenderableObject(lightentity);
 			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
 			lightModel->setMask(~LIGHT_MASK);
-			node->addChild(lightModel);
-			node->setMask(LIGHT_MASK);
-			root->addChild(node);
+			spot0->addChild(lightModel);
+			spot0->setMask(LIGHT_MASK);
+			root->addChild(spot0);
 		}
 
 		{

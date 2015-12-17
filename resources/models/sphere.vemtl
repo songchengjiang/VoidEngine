@@ -10,7 +10,7 @@
                     "passes": [
                         {
                             "depthTest": true,
-                            "depthWrite": true,
+                            "depthWrite": false,
                             "cullFace": true,
                             "blendFunc": ["SRC_ALPHA", "ONE_MINUS_SRC_ALPHA"],
                             "shaders": [

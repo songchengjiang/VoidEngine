@@ -86,9 +86,8 @@ public:
 	size_t getTextureNum() const { return _textures.size(); }
 
 	void addUniform(veUniform *uniform);
-	veUniform* getUniform(size_t idx);
 	veUniform* getUniform(const std::string &name);
-	veUniform* removeUniform(size_t idx);
+	veUniform* removeUniform(const std::string &name);
 	size_t getUniformNum() const { return _uniforms.size(); }
 
 	void setTransformFeedback(veTransformFeedback *transFeedback) { _transformFeedback = transFeedback; _needLinkProgram = true; }
@@ -100,8 +99,6 @@ private:
 
 	void applyProgram(const veRenderCommand &command);
 	void applyUniforms(const veRenderCommand &command);
-	void applyLightsUniforms(const veRenderCommand &command);
-	void applyLightUniforms(unsigned int idx, veLight *light, const veRenderCommand &command);
 	void applyLightTextures(unsigned int beginTexUnit, const veRenderCommand &command);
 	void locateLightUnifroms(const veRenderCommand &command);
 
@@ -135,8 +132,8 @@ private:
 	GLuint _program;
 	bool    _needLinkProgram;
 	std::map<veShader::Type, VE_Ptr<veShader> >           _shaders;
-	std::map< TextureType, VE_Ptr<veTexture> >  _textures;
-	std::vector< VE_Ptr<veUniform> >                      _uniforms;
+	std::map< TextureType, VE_Ptr<veTexture> >            _textures;
+	std::map< std::string, VE_Ptr<veUniform> >            _uniforms;
 	LightUniformLocations                                 _lightUniformLocations;
 	VE_Ptr<veTransformFeedback>                           _transformFeedback;
 };

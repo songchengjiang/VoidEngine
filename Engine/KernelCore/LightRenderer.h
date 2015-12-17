@@ -12,7 +12,7 @@ public:
 	veDirectionalLightRenderer();
 	~veDirectionalLightRenderer();
 
-	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override;
+	void immediatelyRender(veNode *node, vePass *pass, veCamera *camera);
 };
 
 
@@ -22,7 +22,7 @@ public:
 	vePointLightRenderer();
 	~vePointLightRenderer();
 
-	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override;
+	void immediatelyRender(veNode *node, vePass *pass, veCamera *camera);
 	void setLightVolumeScale(const veMat4 &scale) { _lightVolumeScale = scale; }
 
 private:
@@ -35,12 +35,11 @@ public:
 	veSpotLightRenderer();
 	~veSpotLightRenderer();
 
-	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override;
+	void immediatelyRender(veNode *node, vePass *pass, veCamera *camera);
 	void setLightVolumeScale(const veMat4 &scale) { _lightVolumeScale = scale; }
 
 private:
 	veMat4 _lightVolumeScale;
 };
-
 
 #endif

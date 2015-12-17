@@ -43,7 +43,6 @@ void vePass::visit(const veRenderCommand &command)
 bool vePass::apply(const veRenderCommand &command)
 {
 	applyProgram(command);
-	applyLightsUniforms(command);
 	applyUniforms(command);
 
 	if (CURRENT_PASS == this)
@@ -149,29 +148,25 @@ const veTexture* vePass::getTexture(TextureType type) const
 
 void vePass::addUniform(veUniform *uniform)
 {
-	_uniforms.push_back(uniform);
-}
-
-veUniform* vePass::getUniform(size_t idx)
-{
-	veAssert(idx < _uniforms.size());
-	return _uniforms[idx].get();
+	_uniforms[uniform->getName()] = uniform;
 }
 
 veUniform* vePass::getUniform(const std::string &name)
 {
-	for (auto &u : _uniforms) {
-		if (u->getName() == name)
-			return u.get();
+	auto iter = _uniforms.find(name);
+	if (iter != _uniforms.end()) {
+		return iter->second.get();
 	}
 	return nullptr;
 }
 
-veUniform* vePass::removeUniform(size_t idx)
+veUniform* vePass::removeUniform(const std::string &name)
 {
-	veAssert(idx < _uniforms.size());
-	veUniform *uniform = _uniforms[idx].get();
-	_uniforms.erase(_uniforms.begin() + idx);
+	auto iter = _uniforms.find(name);
+	if (iter == _uniforms.end()) 
+		return nullptr;
+	veUniform *uniform = iter->second.get();
+	_uniforms.erase(iter);
 	return uniform;
 }
 
@@ -208,177 +203,16 @@ void vePass::applyProgram(const veRenderCommand &command)
 	glUseProgram(_program);
 }
 
-void vePass::applyLightsUniforms(const veRenderCommand &command)
-{
-	const veLightList &lightList = command.sceneManager->getLightList();
-	if (lightList.empty() || (_lightUniformLocations.dirLightVisible < 0 && _lightUniformLocations.pointLightVisible < 0 && _lightUniformLocations.spotLightVisible < 0))
-		return;
-
-#define APPLY_LIGHT_UNIFORM(TYPE) \
-	{\
-		unsigned int lightIdx = 0;  \
-		for (auto &iter : lightList) { \
-			if (iter->getLightType() == TYPE) {      \
-				applyLightUniforms(lightIdx, iter.get(), command);    \
-				++lightIdx;   \
-			}  \
-		}   \
-	}
-
-	APPLY_LIGHT_UNIFORM(veLight::DIRECTIONAL);
-	APPLY_LIGHT_UNIFORM(veLight::POINT);
-	APPLY_LIGHT_UNIFORM(veLight::SPOT);
-}
-
 void vePass::applyUniforms(const veRenderCommand &command)
 {
 	for (auto &iter : _uniforms) {
-		iter->apply(command);
+		iter.second->apply(command);
 	}
-}
-
-void vePass::applyLightUniforms(unsigned int idx, veLight *light, const veRenderCommand &command)
-{
-	//bool isLightVisible = light->isInScene() && light->isVisible() && (light->getMask() & command.mask);
-	//if (light->getLightType() == veLight::DIRECTIONAL) {
-	//	if (0 <= _lightUniformLocations.dirLightVisible) {
-	//		glUniform1f(_lightUniformLocations.dirLightVisible + idx, isLightVisible ? 1.0f : 0.0f);
-	//	}
-	//}
-	//else if (light->getLightType() == veLight::POINT) {
-	//	if (0 <= _lightUniformLocations.pointLightVisible) {
-	//		glUniform1f(_lightUniformLocations.pointLightVisible + idx, isLightVisible ? 1.0f : 0.0f);
-	//	}
-	//}
-	//else if (light->getLightType() == veLight::SPOT) {
-	//	if (0 <= _lightUniformLocations.spotLightVisible) {
-	//		glUniform1f(_lightUniformLocations.spotLightVisible + idx, isLightVisible ? 1.0f : 0.0f);
-	//	}
-	//}
-
-	//if (isLightVisible) {
-	//	if (light->getMask() & command.camera->getMask()) {
-	//		light->setLightInCameraMatrix(command.camera->viewMatrix() * light->getNodeToWorldMatrix());
-	//	}
-
-	//	GLint positionLoc = -1;
-	//	GLint directionLoc = -1;
-	//	GLint colorLoc = -1;
-	//	GLint intensityLoc = -1;
-	//	GLint attenuationInverseLoc = -1;
-	//	GLint shadowEnabledLoc = -1;
-	//	GLint shadowBiasLoc = -1;
-	//	GLint shadowStrengthLoc = -1;
-	//	GLint shadowSoftLoc = -1;
-	//	GLint shadowSoftnessLoc = -1;
-	//	GLint lightMatrixLoc = -1;
-	//	GLint innerAngleCosLoc = -1;
-	//	GLint outerAngleCosLoc = -1;
-	//	if (light->getLightType() == veLight::DIRECTIONAL) {
-	//		auto &lightParamLocs = _lightUniformLocations.dirlightParams;
-	//		directionLoc = lightParamLocs[0] + idx;
-	//		colorLoc = lightParamLocs[1] + idx;
-	//		intensityLoc = lightParamLocs[2] + idx;
-	//		shadowEnabledLoc = lightParamLocs[3] + idx;
-	//		shadowBiasLoc = lightParamLocs[4] + idx;
-	//		shadowStrengthLoc = lightParamLocs[5] + idx;
-	//		shadowSoftLoc = lightParamLocs[6] + idx;
-	//		shadowSoftnessLoc = lightParamLocs[7] + idx;
-	//		lightMatrixLoc = lightParamLocs[8] + idx;
-	//	}
-	//	else if (light->getLightType() == veLight::POINT) {
-	//		auto &lightParamLocs = _lightUniformLocations.pointlightParams;
-	//		positionLoc = lightParamLocs[0] + idx;
-	//		colorLoc = lightParamLocs[1] + idx;
-	//		intensityLoc = lightParamLocs[2] + idx;
-	//		attenuationInverseLoc = lightParamLocs[3] + idx;
-	//		shadowEnabledLoc = lightParamLocs[4] + idx;
-	//		shadowBiasLoc = lightParamLocs[5] + idx;
-	//		shadowStrengthLoc = lightParamLocs[6] + idx;
-	//		shadowSoftLoc = lightParamLocs[7] + idx;
-	//		shadowSoftnessLoc = lightParamLocs[8] + idx;
-	//		lightMatrixLoc = lightParamLocs[9] + idx;
-	//	}
-	//	else if (light->getLightType() == veLight::SPOT) {
-	//		auto &lightParamLocs = _lightUniformLocations.spotlightParams;
-	//		directionLoc = lightParamLocs[0] + idx;
-	//		positionLoc = lightParamLocs[1] + idx;
-	//		colorLoc = lightParamLocs[2] + idx;
-	//		intensityLoc = lightParamLocs[3] + idx;
-	//		attenuationInverseLoc = lightParamLocs[4] + idx;
-	//		innerAngleCosLoc = lightParamLocs[5] + idx;
-	//		outerAngleCosLoc = lightParamLocs[6] + idx;
-	//		shadowEnabledLoc = lightParamLocs[7] + idx;
-	//		shadowBiasLoc = lightParamLocs[8] + idx;
-	//		shadowStrengthLoc = lightParamLocs[9] + idx;
-	//		shadowSoftLoc = lightParamLocs[10] + idx;
-	//		shadowSoftnessLoc = lightParamLocs[11] + idx;
-	//		lightMatrixLoc = lightParamLocs[12] + idx;
-	//	}
-
-	//	veMat4 lightInView = light->getLightInCameraMatrix();
-
-	//	if (0 <= positionLoc) {
-	//		glUniform3f(positionLoc, lightInView[0][3], lightInView[1][3], lightInView[2][3]);
-	//	}
-
-	//	if (0 <= directionLoc) {
-	//		lightInView[0][3] = lightInView[1][3] = lightInView[2][3] = 0.0f;
-	//		veVec3 direction = lightInView * -veVec3::UNIT_Z;
-	//		direction.normalize();
-	//		glUniform3f(directionLoc, direction.x(), direction.y(), direction.z());
-	//	}
-	//	if (0 <= colorLoc) {
-	//		const auto &color = light->getColor();
-	//		glUniform3f(colorLoc, color.r(), color.g(), color.b());
-	//	}
-	//	if (0 <= intensityLoc) {
-	//		glUniform1f(intensityLoc, light->getIntensity());
-	//	}
-
-	//	if (0 <= innerAngleCosLoc) {
-	//		glUniform1f(innerAngleCosLoc, static_cast<veSpotLight *>(light)->getInnerAngleCos());
-	//	}
-	//	if (0 <= outerAngleCosLoc) {
-	//		glUniform1f(outerAngleCosLoc, static_cast<veSpotLight *>(light)->getOuterAngleCos());
-	//	}
-
-	//	if (0 <= shadowEnabledLoc) {
-	//		glUniform1f(shadowEnabledLoc, light->isShadowEnabled() ? 1.0f : 0.0f);
-	//	}
-
-	//	if (light->isShadowEnabled()) {
-	//		if (0 <= shadowBiasLoc) {
-	//			glUniform1f(shadowBiasLoc, light->getShadowBias());
-	//		}
-	//		if (0 <= shadowStrengthLoc) {
-	//			glUniform1f(shadowStrengthLoc, light->getShadowStrength());
-	//		}
-
-	//		if (0 <= shadowSoftLoc) {
-	//			glUniform1f(shadowSoftLoc, light->isUseSoftShadow() ? 1.0f : 0.0f);
-	//		}
-
-	//		if (0 <= shadowSoftnessLoc) {
-	//			glUniform1f(shadowSoftnessLoc, light->getShadowSoftness());
-	//		}
-
-	//		if (0 <= lightMatrixLoc) {
-	//			veMat4 lightMat = light->getLightMatrix() * command.worldMatrix->value();
-	//			float m[16];
-	//			m[0] = lightMat[0][0]; m[4] = lightMat[0][1]; m[8] = lightMat[0][2]; m[12] = lightMat[0][3];
-	//			m[1] = lightMat[1][0]; m[5] = lightMat[1][1]; m[9] = lightMat[1][2]; m[13] = lightMat[1][3];
-	//			m[2] = lightMat[2][0]; m[6] = lightMat[2][1]; m[10] = lightMat[2][2]; m[14] = lightMat[2][3];
-	//			m[3] = lightMat[3][0]; m[7] = lightMat[3][1]; m[11] = lightMat[3][2]; m[15] = lightMat[3][3];
-	//			glUniformMatrix4fv(lightMatrixLoc, 1, GL_FALSE, m);
-	//		}
-	//	}
-	//}
 }
 
 void vePass::applyLightTextures(unsigned int beginTexUnit, const veRenderCommand &command)
 {
-	const veLightList &lightList = command.sceneManager->getLightList();
+	const veLightListMap &lightList = command.sceneManager->getLightListMap();
 	if (lightList.empty())
 		return;
 
@@ -415,7 +249,7 @@ void vePass::applyLightTextures(unsigned int beginTexUnit, const veRenderCommand
 
 void vePass::locateLightUnifroms(const veRenderCommand &command)
 {
-	if (command.sceneManager->getLightList().empty())
+	if (command.sceneManager->getLightListMap().empty())
 		return;
 
 #define UNIFORM_LOC(NAME) glGetUniformLocation(_program, NAME.c_str())

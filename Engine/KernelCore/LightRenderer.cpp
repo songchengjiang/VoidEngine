@@ -14,23 +14,16 @@ veDirectionalLightRenderer::~veDirectionalLightRenderer()
 
 }
 
-void veDirectionalLightRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
-{
-	if (!isNeedRendering())
-		return;
+void veDirectionalLightRenderer::immediatelyRender(veNode *node, vePass *pass, veCamera *camera) {
 	updateBuffer();
-
 	veRenderCommand rc;
 	rc.mask = 0xffffffff;
 	rc.worldMatrix = new veMat4Ptr(veMat4::IDENTITY);
-	rc.renderableObj = renderableObj;
 	rc.camera = camera;
 	rc.sceneManager = camera->getSceneManager();
 	rc.renderer = this;
-
-	auto material = renderableObj->getMaterialArray()->getMaterial(0);
-	rc.pass = material->activeTechnique()->getPass(0);
-	camera->getRenderQueue()->pushCommand(RENDERING_PASS, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
+	rc.pass = pass;
+	draw(rc);
 }
 
 vePointLightRenderer::vePointLightRenderer()
@@ -43,28 +36,20 @@ vePointLightRenderer::~vePointLightRenderer()
 
 }
 
-void vePointLightRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
-{
-	if (!isNeedRendering())
-		return;
+void vePointLightRenderer::immediatelyRender(veNode *node, vePass *pass, veCamera *camera) {
 	updateBuffer();
-
 	veRenderCommand rc;
 	rc.mask = 0xffffffff;
 	rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix() * _lightVolumeScale);
-	rc.renderableObj = renderableObj;
 	rc.camera = camera;
 	rc.sceneManager = camera->getSceneManager();
 	rc.renderer = this;
-
-	auto material = renderableObj->getMaterialArray()->getMaterial(0);
-	rc.pass = material->activeTechnique()->getPass(0);
-	camera->getRenderQueue()->pushCommand(OCCLUSION_PASS, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
-	rc.pass = material->activeTechnique()->getPass(1);
-	camera->getRenderQueue()->pushCommand(RENDERING_PASS, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
+	rc.pass = pass;
+	draw(rc);
 }
 
 veSpotLightRenderer::veSpotLightRenderer()
+	: _lightVolumeScale(veMat4::IDENTITY)
 {
 }
 
@@ -73,23 +58,14 @@ veSpotLightRenderer::~veSpotLightRenderer()
 
 }
 
-void veSpotLightRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
-{
-	if (!isNeedRendering())
-		return;
+void veSpotLightRenderer::immediatelyRender(veNode *node, vePass *pass, veCamera *camera) {
 	updateBuffer();
-
 	veRenderCommand rc;
 	rc.mask = 0xffffffff;
 	rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix() * _lightVolumeScale);
-	rc.renderableObj = renderableObj;
 	rc.camera = camera;
 	rc.sceneManager = camera->getSceneManager();
 	rc.renderer = this;
-
-	auto material = renderableObj->getMaterialArray()->getMaterial(0);
-	rc.pass = material->activeTechnique()->getPass(0);
-	camera->getRenderQueue()->pushCommand(OCCLUSION_PASS, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
-	rc.pass = material->activeTechnique()->getPass(1);
-	camera->getRenderQueue()->pushCommand(RENDERING_PASS, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
+	rc.pass = pass;
+	draw(rc);
 }

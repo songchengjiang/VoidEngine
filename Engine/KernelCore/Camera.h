@@ -9,6 +9,7 @@
 #include "Plane.h"
 #include "Material.h"
 #include "SkyBox.h"
+#include "DeferredLightIlluminator.h"
 
 class veVisualiser;
 class veLight;
@@ -85,7 +86,7 @@ public:
 
 	void setSkybox(veSkyBox *skybox);
 
-	veTexture* getDeferredLightingTexture() { return _deferredLightingParams.lightTexture.get(); }
+	veTexture* getDeferredLightingTexture() { return _deferredLightSceneIlluminator->getIlluminationTexture(); }
 
 	const vePlane& getFrustumPlane(FrustumPlane fp);
 
@@ -114,18 +115,8 @@ protected:
 	virtual void updateSceneManager() override;
 	void forwardRendering();
 	void deferredLighting();
-	void initDeferredLighting();
-	void refreshDeferredLighting();
 
 protected:
-
-
-	struct DeferredLightingParams {
-		VE_Ptr<veFrameBufferObject> lightfbo;
-		VE_Ptr<veTexture> normalTexture;
-		VE_Ptr<veTexture> depthTexture;
-		VE_Ptr<veTexture> lightTexture;
-	};
 
 	veMat4 _projectionMat;
 	veMat4 _viewMat;
@@ -133,7 +124,7 @@ protected:
 	veVec4       _clearColor;
 	unsigned int _clearMask;
 	VE_Ptr<veFrameBufferObject> _fbo;
-	DeferredLightingParams _deferredLightingParams;
+	VE_Ptr<veDeferredLightSceneIlluminator> _deferredLightSceneIlluminator;
 
 	vePlane _frustumPlane[6];
 	bool    _needRefreshFrustumPlane;

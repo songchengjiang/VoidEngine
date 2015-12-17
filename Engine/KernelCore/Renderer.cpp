@@ -9,7 +9,7 @@ unsigned short veRenderer::CURRENT_RENDER_STAGE = RENDERING;
 
 veRenderer::veRenderer()
 	: USE_VE_PTR_INIT
-	, _renderStageMask(DEPTH | LIGHTINGING | SHADOWING | FRAMEBUFFER | RENDERING | POSTPROCESS)
+	, _renderStageMask(LIGHTINGING | FRAMEBUFFER | RENDERING | POSTPROCESS)
 {
 }
 

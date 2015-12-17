@@ -63,7 +63,7 @@ public:
 	virtual bool isNodeVisibleInScene(veNode *node) { return true; }
 
 	const veCameraList& getCameraList() const { return _cameraList; }
-	const veLightList& getLightList() const { return _lightList; }
+	const veLightListMap& getLightListMap() const { return _lightListMap; }
 	void setSkyBox(veSkyBox *skybox) { _skyBox = skybox; needReload(); }
 	const veSkyBox* getSkyBox() const { return _skyBox.get(); }
 
@@ -101,7 +101,7 @@ protected:
 	VE_Ptr<veNode> _root;
 	VE_Ptr<veSkyBox> _skyBox;
 	veCameraList _cameraList;
-	veLightList _lightList;
+	veLightListMap _lightListMap;
 	vePostProcesserList _postProcesserList;
 	VE_Ptr<veFrameBufferObject> _postProcesserFBO;
 
