@@ -94,12 +94,11 @@ void veFrameBufferObject::attach(GLenum attachment, GLenum target, veTexture *at
 
 void veFrameBufferObject::bind(unsigned int clearMask)
 {
-	if (CURRENT_FBO == this) return;
-	GLenum bufs = {GL_NONE};
-	glDrawBuffers(1, &bufs);
-	refreshBuffers(clearMask);
+	if (CURRENT_FBO != this) {
+		refreshBuffers(clearMask);
+		CURRENT_FBO = this;
+	}
 	refreshAttachments();
-	CURRENT_FBO = this;
 }
 
 void veFrameBufferObject::unBind()
@@ -188,6 +187,10 @@ void veFrameBufferObject::refreshAttachments()
 		}
 		if (!mrt.empty())
 			glDrawBuffers(GLsizei(mrt.size()), &mrt[0]);
+		else {
+			GLenum bufs = { GL_NONE };
+			glDrawBuffers(1, &bufs);
+		}
 
 		//GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		//if (status == GL_FRAMEBUFFER_COMPLETE) {

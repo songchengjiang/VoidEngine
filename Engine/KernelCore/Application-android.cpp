@@ -62,7 +62,7 @@ bool veApplicationAndroid::run()
     {
         clock_t currentFrameTime = clock();
         _sceneManager->setDeltaTime((currentFrameTime - preFrameTime) * invertClocksSec);
-        veLog("FRAME RATE: %f\n", 1.0 / _sceneManager->getDeltaTime());
+        //veLog("FRAME RATE: %f\n", 1.0 / _sceneManager->getDeltaTime());
         this->dispatchEvents();
         _sceneManager->simulation();
         while ((clock() - currentFrameTime) < frameTimeClocks) {
@@ -98,7 +98,7 @@ void veApplicationAndroid::initGLContext() {
                 EGL_BLUE_SIZE,      8,
                 EGL_ALPHA_SIZE,     8,
                 EGL_DEPTH_SIZE,     24,
-                // EGL_STENCIL_SIZE,   0,
+                EGL_STENCIL_SIZE,   8,
                 //EGL_SAMPLE_BUFFERS, 0,
                 //EGL_LEVEL,            0,
                 EGL_SURFACE_TYPE,    EGL_WINDOW_BIT,

@@ -86,7 +86,7 @@ void veDeferredLightSceneIlluminator::initLightMaterials()
 			pass->stencilOp() = { GL_KEEP, GL_DECR_WRAP, GL_KEEP, GL_KEEP, GL_INCR_WRAP, GL_KEEP };
 			pass->blendFunc() = veBlendFunc::DISABLE;
 			pass->setShader(new veShader(veShader::VERTEX_SHADER, std::string("system/pointLightingPass.vert")));
-			pass->setShader(new veShader(veShader::FRAGMENT_SHADER, "void main(){}"));
+			pass->setShader(new veShader(veShader::FRAGMENT_SHADER, "layout(location=0) out vec4 fragColor;void main(){}"));
 			pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
 		}
 
@@ -102,8 +102,8 @@ void veDeferredLightSceneIlluminator::initLightMaterials()
 			pass->blendFunc().src = GL_ONE; pass->blendFunc().dst = GL_ONE;
 			pass->blendEquation() = GL_FUNC_ADD;
 			pass->stencilFunc() = { GL_NOTEQUAL, 0, 0xFF, GL_NOTEQUAL, 0, 0xFF };
-			pass->setShader(new veShader(veShader::VERTEX_SHADER, std::string("system/PointLightingPass.vert")));
-			pass->setShader(new veShader(veShader::FRAGMENT_SHADER, std::string("system/PointLightingPass.frag")));
+			pass->setShader(new veShader(veShader::VERTEX_SHADER, std::string("system/pointLightingPass.vert")));
+			pass->setShader(new veShader(veShader::FRAGMENT_SHADER, std::string("system/pointLightingPass.frag")));
 			pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
 			pass->addUniform(new veUniform("u_lightPosition", veVec3(0.0f)));
 			pass->addUniform(new veUniform("u_lightARI", 0.0f));
@@ -130,7 +130,7 @@ void veDeferredLightSceneIlluminator::initLightMaterials()
 			pass->stencilOp() = { GL_KEEP, GL_DECR_WRAP, GL_KEEP, GL_KEEP, GL_INCR_WRAP, GL_KEEP };
 			pass->blendFunc() = veBlendFunc::DISABLE;
 			pass->setShader(new veShader(veShader::VERTEX_SHADER, std::string("system/spotLightingPass.vert")));
-			pass->setShader(new veShader(veShader::FRAGMENT_SHADER, "void main(){}"));
+			pass->setShader(new veShader(veShader::FRAGMENT_SHADER, "layout(location=0) out vec4 fragColor;void main(){}"));
 			pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
 		}
 
@@ -167,8 +167,8 @@ void veDeferredLightSceneIlluminator::initIlluminationParams()
 	_sceneNormalTexture = _camera->getSceneManager()->createTexture(DEFAULT_DEFERRED_LIGHT_SCENE_NORMAL_TEXTURE, veTexture::TEXTURE_2D);
 	_illuminationTexture = _camera->getSceneManager()->createTexture(DEFAULT_DEFERRED_LIGHT_ILLUMINATION_TEXTURE, veTexture::TEXTURE_2D);
 	_illuminationFBO->attach(GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, _sceneDepthTexture.get());
-	_illuminationFBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _sceneNormalTexture.get());
-	_illuminationFBO->attach(GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, _illuminationTexture.get());
+	//_illuminationFBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _sceneNormalTexture.get());
+	//_illuminationFBO->attach(GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, _illuminationTexture.get());
 	_directionalLightRenderer = new veDirectionalLightRenderer;
 	_pointLightRenderer = new vePointLightRenderer;
 	_spotLightRenderer = new veSpotLightRenderer;
@@ -179,15 +179,16 @@ void veDeferredLightSceneIlluminator::illuminate()
 	const veLightListMap &lightListMap = _camera->getSceneManager()->getLightListMap();
 	if (lightListMap.empty())
 		return;
+	_illuminationFBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _sceneNormalTexture.get());
 	_illuminationFBO->bind(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	auto renderQueue = _camera->getRenderQueue();
 	for (auto &renderPass : renderQueue->renderCommandList) {
 		_camera->render(renderPass.second);
 	}
 
-	glDrawBuffer(GL_NONE);
+	_illuminationFBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, nullptr);
+	_illuminationFBO->bind(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	{
 		auto iter = lightListMap.find(veLight::POINT);
 		if (iter != lightListMap.end()) {
@@ -208,7 +209,8 @@ void veDeferredLightSceneIlluminator::illuminate()
 		}
 	}
 
-	glDrawBuffer(GL_COLOR_ATTACHMENT1);
+	_illuminationFBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _illuminationTexture.get());
+	_illuminationFBO->bind(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glClear(GL_COLOR_BUFFER_BIT);
 	{
 		auto iter = lightListMap.find(veLight::DIRECTIONAL);
@@ -247,11 +249,11 @@ void veDeferredLightSceneIlluminator::resize(const veVec2 &size)
 {
 	_illuminationFBO->setFrameBufferSize(size);
 	_sceneDepthTexture->storage(size.x(), size.y(), 1, GL_DEPTH24_STENCIL8, GL_RGBA, GL_FLOAT, nullptr, 1);
-#if VE_PLATFORM == VE_PLATFORM_WIN32 || VE_PLATFORM == VE_PLATFORM_MAC
+#if (VE_PLATFORM == VE_PLATFORM_WIN32 || VE_PLATFORM == VE_PLATFORM_MAC)
 	_sceneNormalTexture->storage(size.x(), size.y(), 1, GL_RGBA32F, GL_RGBA, GL_FLOAT, nullptr, 1);
-	_illuminationTexture->storage(size.x(), size.y(), 1, GL_RGBA32F, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
+	_illuminationTexture->storage(size.x(), size.y(), 1, GL_RGBA32F, GL_RGBA, GL_FLOAT, nullptr, 1);
 #elif (VE_PLATFORM == VE_PLATFORM_ANDROID || VE_PLATFORM == VE_PLATFORM_IOS)
-	_sceneNormalTexture->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_FLOAT, nullptr, 1);
+	_sceneNormalTexture->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	_illuminationTexture->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 #endif
 }
@@ -297,8 +299,8 @@ void veDeferredLightSceneIlluminator::pointLightIlluminate(veLight *light)
 	veMat4 lightInView = _camera->viewMatrix() * pointLight->getNodeToWorldMatrix();
 	pass->getUniform("u_lightPosition")->setValue(veVec3(lightInView[0][3], lightInView[1][3], lightInView[2][3]));
 	pass->getUniform("u_lightARI")->setValue(pointLight->getAttenuationRangeInverse());
-	_pointLightRenderer->setLightVolumeScale(veMat4::scale(veVec3(light->getAttenuationRange())));
-	_pointLightRenderer->immediatelyRender(light, pass, _camera);
+	_pointLightRenderer->setLightVolumeScale(veMat4::scale(veVec3(pointLight->getAttenuationRange())));
+	_pointLightRenderer->immediatelyRender(pointLight, pass, _camera);
 }
 
 void veDeferredLightSceneIlluminator::spotLightCulling(veLight *light)
