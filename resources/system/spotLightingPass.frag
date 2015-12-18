@@ -34,5 +34,5 @@ void main(){
 	vec3 H = normalize(eyeDir + lightDir);
 	float NdotH = max(0.0, dot(normal, H));
 
-	fragColor = vec4(NdotL * u_lightColor.r, NdotL * u_lightColor.g, NdotL * u_lightColor.b, NdotH) * u_lightIntensity * attenuation;
+	fragColor = vec4(NdotL * u_lightColor.r, NdotL * u_lightColor.g, NdotL * u_lightColor.b, NdotL * NdotH) * u_lightIntensity * attenuation;
 }

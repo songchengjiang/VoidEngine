@@ -42,21 +42,6 @@ void vePass::visit(const veRenderCommand &command)
 
 bool vePass::apply(const veRenderCommand &command)
 {
-	applyProgram(command);
-	applyUniforms(command);
-
-	if (CURRENT_PASS == this)
-		return true;
-	CURRENT_PASS = this;
-
-	unsigned int texUnit = 0;
-	for (auto &tex : _textures) {
-		tex.second->bind(texUnit);
-		++texUnit;
-	}
-	applyLightTextures(texUnit, command);
-
-
 	veRenderState::instance()->setDepthTest(_depthTest);
 	veRenderState::instance()->setDepthWrite(_depthWirte);
 	veRenderState::instance()->setCullface(_cullFace);
@@ -67,6 +52,19 @@ bool vePass::apply(const veRenderCommand &command)
 	veRenderState::instance()->setStencilFunc(_stencilFunc);
 	veRenderState::instance()->setStencilOp(_stencilOp);
 	veRenderState::instance()->applyState();
+
+	applyProgram(command);
+	applyUniforms(command);
+	if (CURRENT_PASS == this)
+		return true;
+	CURRENT_PASS = this;
+
+	unsigned int texUnit = 0;
+	for (auto &tex : _textures) {
+		tex.second->bind(texUnit);
+		++texUnit;
+	}
+	applyLightTextures(texUnit, command);
 
 	return true;
 }
