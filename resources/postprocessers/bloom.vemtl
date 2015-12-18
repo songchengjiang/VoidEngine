@@ -28,6 +28,7 @@
                               "textureUnits": [
                                 {
                                     "name": "bloom-sceneTexture",
+                                    "texType": "AMBIENT_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "NERAEST"
                                 }
@@ -54,6 +55,7 @@
                             "textureUnits": [
                                 {
                                     "name": "bloom-extractlightTex",
+                                    "texType": "AMBIENT_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "NERAEST"
                                 }
@@ -80,6 +82,7 @@
                             "textureUnits": [
                                 {
                                     "name": "bloom-GaussBlurYTex",
+                                    "texType": "AMBIENT_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "NERAEST"
                                 }
@@ -106,11 +109,13 @@
                             "textureUnits": [
                                 {
                                     "name": "bloom-GaussBlurXTex",
+                                    "texType": "AMBIENT_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "NERAEST"
                                 },
                                 {
                                     "name": "bloom-sceneTexture",
+                                    "texType": "DIFFUSE_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "NERAEST"
                                 }

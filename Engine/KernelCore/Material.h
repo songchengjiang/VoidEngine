@@ -77,7 +77,7 @@ public:
 
 	//void addTexture(veTexture *texture);
 	//void setTexture(size_t idx, veTexture *texture);
-	void setTexture(TextureType type, veTexture *texture);
+	void addTexture(TextureType type, veTexture *texture);
 	//veTexture* getTexture(size_t idx);
 	veTexture* getTexture(TextureType type);
 	const veTexture* getTexture(TextureType type) const;
@@ -101,6 +101,7 @@ private:
 	void applyUniforms(const veRenderCommand &command);
 	void applyLightTextures(unsigned int beginTexUnit, const veRenderCommand &command);
 	void locateLightUnifroms(const veRenderCommand &command);
+	int findTextureID(TextureType type) const;
 
 private:
 
@@ -132,7 +133,7 @@ private:
 	GLuint _program;
 	bool    _needLinkProgram;
 	std::map<veShader::Type, VE_Ptr<veShader> >           _shaders;
-	std::map< TextureType, VE_Ptr<veTexture> >            _textures;
+	std::vector< std::pair<TextureType, VE_Ptr<veTexture> > >            _textures;
 	std::map< std::string, VE_Ptr<veUniform> >            _uniforms;
 	LightUniformLocations                                 _lightUniformLocations;
 	VE_Ptr<veTransformFeedback>                           _transformFeedback;

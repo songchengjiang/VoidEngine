@@ -39,12 +39,14 @@
                                 {
                                     "name": "scenetexture",
                                     "wrap": "CLAMP",
+                                    "texType": "AMBIENT_TEXTURE",
                                     "filter": "NERAEST"
                                 },
                                 {
                                     "name": "randomTex",
                                     "source": "textures/random3D.ktx",
                                     "type": "TEX_3D",
+                                    "texType": "DIFFUSE_TEXTURE",
                                     "wrap": "REPEAT",
                                     "filter": "LINEAR"
                                 },                            
@@ -52,6 +54,7 @@
                                     "name": "noiseTex",
                                     "source": "textures/noiseVolume.ktx",
                                     "type": "TEX_3D",
+                                    "texType": "SPECULAR_TEXTURE",
                                     "wrap": "REPEAT",
                                     "filter": "LINEAR"
                                 }                            

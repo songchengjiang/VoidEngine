@@ -99,14 +99,14 @@ veShader* vePass::getShader(veShader::Type type)
 //	_needLinkProgram = true;
 //}
 
-void vePass::setTexture(TextureType type, veTexture *texture)
+void vePass::addTexture(TextureType type, veTexture *texture)
 {
-	auto iter = _textures.find(type);
-	if (iter != _textures.end()) {
-		_textures.erase(iter);
+	int id = findTextureID(type);
+	if (id < 0) {
+		_textures.push_back(std::make_pair(type, texture));
+	}else {
+		_textures[id].second = texture;
 	}
-	if (texture)
-		_textures[type] = texture;
 }
 
 //veTexture* vePass::getTexture(size_t idx)
@@ -123,18 +123,18 @@ void vePass::setTexture(TextureType type, veTexture *texture)
 
 veTexture* vePass::getTexture(TextureType type)
 {
-	auto iter = _textures.find(type);
-	if (iter == _textures.end())
+	int id = findTextureID(type);
+	if (id < 0)
 		return nullptr;
-	return iter->second.get();
+	return _textures[id].second.get();
 }
 
 const veTexture* vePass::getTexture(TextureType type) const
 {
-	auto iter = _textures.find(type);
-	if (iter == _textures.end())
+	int id = findTextureID(type);
+	if (id < 0)
 		return nullptr;
-	return iter->second.get();
+	return _textures[id].second.get();
 }
 
 //veTexture* vePass::removeTexture(size_t idx)
@@ -302,6 +302,15 @@ void vePass::locateLightUnifroms(const veRenderCommand &command)
 //	_lightUniformLocations.spotlightParams[10] = UNIFORM_LOC(veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTSHADOW_NAME);
 //	_lightUniformLocations.spotlightParams[11] = UNIFORM_LOC(veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_SOFTNESS_NAME);
 //	_lightUniformLocations.spotlightParams[12] = UNIFORM_LOC(veSpotLight::DEFUALT_LIGHT_UNIFORM_SHADOW_MATRIX_NAME);
+}
+
+int vePass::findTextureID(TextureType type) const
+{
+	for (int i = 0; i < int(_textures.size()); ++i) {
+		if (_textures[i].first == type)
+			return i;
+	}
+	return -1;
 }
 
 veTechnique::veTechnique()

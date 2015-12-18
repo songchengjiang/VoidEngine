@@ -29,6 +29,7 @@
                             "textureUnits": [
                                 {
                                     "name": "tilingtexture",
+                                    "texType": "AMBIENT_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "NERAEST"
                                 }

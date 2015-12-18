@@ -35,6 +35,7 @@
                             "textureUnits": [
                                 {
                                     "name": "scenetexture",
+                                    "texType": "AMBIENT_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "NERAEST"
                                 },
@@ -42,6 +43,7 @@
                                     "name": "ASCIITex",
                                     "source": "textures/ASCII.ktx",
                                     "type": "TEX_3D",
+                                    "texType": "DIFFUSE_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }                          
