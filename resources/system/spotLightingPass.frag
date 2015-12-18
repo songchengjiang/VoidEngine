@@ -14,11 +14,27 @@ uniform float u_lightOuterAngleCos;
 
 layout(location=0) out vec4 fragColor;
 
+#if VE_PLATFORM == VE_PLATFORM_ANDROID
+vec3 decode(vec2 encoded)
+{
+    vec2 fenc = encoded * 4.0 - 2.0;
+    float f = dot(fenc,fenc);
+    float g = sqrt(1.0 - f / 4.0);
+    vec3 normal;
+    normal.xy = fenc*g;
+    normal.z = 1.0 - f / 2.0;
+    return normal;
+}
+#endif
+
+
 void main(){
 	vec2 texCoords = gl_FragCoord.xy / vec2(u_screenWidth, u_screenHeight);
-	vec4 normAndshininess = texture(u_normalTex, texCoords);
-	vec3 normal = normAndshininess.xyz;
-	float shininess = normAndshininess.w;
+#if VE_PLATFORM == VE_PLATFORM_ANDROID
+	vec3 normal = decode(texture(u_normalTex, texCoords).xy);
+#else
+	vec3 normal = texture(u_normalTex, texCoords).xyz;
+#endif
 	float depth = texture(u_depthTex, texCoords).r;
 	vec4 posInView = u_InvProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);
 	posInView.xyz /= posInView.w;

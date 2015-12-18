@@ -621,7 +621,6 @@ GLuint veShader::compile()
 	char *buffer = new char[source.size() + 1];
 	strcpy(buffer, source.c_str());
 	glShaderSource(_shader, 1, &buffer, nullptr);
-
 	GLint state = GL_FALSE;
 	glCompileShader(_shader);
 	glGetShaderiv(_shader, GL_COMPILE_STATUS, &state);
@@ -659,29 +658,4 @@ std::string veShader::typeToString()
         default:
             return "undefine";
     }
-}
-
-veShaderManager::~veShaderManager()
-{
-
-}
-
-veShaderManager* veShaderManager::instance()
-{
-	static veShaderManager manager;
-	return &manager;
-}
-
-veShader* veShaderManager::getOrCreateShader(const std::string &name)
-{
-	auto iter = _shaders.find(name);
-	if (iter != _shaders.end()) return iter->second.get();
-	auto shader = new veShader();
-	_shaders[name] = shader;
-	return shader;
-}
-
-veShaderManager::veShaderManager()
-{
-
 }

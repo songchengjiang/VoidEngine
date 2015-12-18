@@ -139,21 +139,4 @@ private:
 	std::map<Type, std::string> _shaderHeaders;
 	bool _isCompiled;
 };
-
-class VE_EXPORT veShaderManager
-{
-public:
-	~veShaderManager();
-
-	static veShaderManager* instance();
-	veShader* getOrCreateShader(const std::string &name);
-
-private:
-	veShaderManager();
-
-private:
-
-	std::map<std::string, VE_Ptr<veShader> > _shaders;
-};
-
 #endif
