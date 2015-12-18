@@ -91,11 +91,7 @@ public:
 	const vePlane& getFrustumPlane(FrustumPlane fp);
 
 	virtual void cull() = 0;
-	virtual void fillRenderQueue() = 0;
-	void clearRenderQueue() { _renderQueue->renderCommandList.clear(); }
 	void render();
-	void renderDeferredLight();
-	void renderScene();
 	void render(veRenderQueue::RenderCommandList &renderList);
 	void discardRenderScene(bool isDiscard) { _isDiscardRenderScene = isDiscard; }
 
@@ -112,6 +108,10 @@ protected:
 
 	veCamera(veSceneManager *sm);
 	veCamera(veSceneManager *sm, const veViewport &vp);
+	virtual void fillRenderQueue() = 0;
+	void clearRenderQueue() { _renderQueue->renderCommandList.clear(); }
+	void renderDeferredLight();
+	void renderScene();
 	void renderQueue(veLoopQueue< veRenderCommand > &queue);
 	void resize(int width, int height);
 	void updateFrustumPlane();
