@@ -95,8 +95,6 @@ bool veTextureManager::exchangeTextureMemory(veTexture *texture)
 
 	for (auto &iter : pendingReplacetextureList) {
 		for (auto &tex : iter.second) {
-			if (_currentTextureMemory < tex->getTextureTotalMemory())
-				return false;
 			releaseTextureMemory(tex);
 			if (assignTextureMemory(texture))
 				return true;

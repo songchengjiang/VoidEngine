@@ -240,7 +240,7 @@ unsigned int veTexture::getTextureTotalMemory()
 void veTexture::bind(unsigned int textureUnit)
 {
 	if (_needRefreshTex) {
-		releaseTextureData();
+		_manager->releaseTextureMemory(this);
 	}
 	if (!_texID) {
         glGenTextures(1, &_texID);

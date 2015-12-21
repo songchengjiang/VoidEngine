@@ -158,7 +158,7 @@ const vePlane& veCamera::getFrustumPlane(FrustumPlane fp)
 
 void veCamera::renderDeferredLight()
 {
-	if (_viewport.isNull())
+	if (_viewport.isNull() || _sceneManager->getLightListMap().empty())
 		return;
 	if (_isDiscardRenderScene)
 		return;

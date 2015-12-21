@@ -38,8 +38,8 @@ void veDeferredLightSceneIlluminator::initPassCommanParams(vePass *pass)
 	pass->addUniform(new veUniform("u_lightShadowStrength", 0.0f));
 	pass->addUniform(new veUniform("u_lightShadowSoft", 0.0f));
 	pass->addUniform(new veUniform("u_lightShadowSoftness", 0.0f));
-	pass->addTexture(vePass::DIFFUSE_TEXTURE, _sceneDepthTexture.get());
-	pass->addTexture(vePass::NORMAL_TEXTURE, _sceneNormalTexture.get());
+	pass->addTexture(vePass::AMBIENT_TEXTURE, _sceneDepthTexture.get());
+	pass->addTexture(vePass::DIFFUSE_TEXTURE, _sceneNormalTexture.get());
 }
 
 void veDeferredLightSceneIlluminator::initLightMaterials()
@@ -177,8 +177,6 @@ void veDeferredLightSceneIlluminator::initIlluminationParams()
 void veDeferredLightSceneIlluminator::illuminate()
 {
 	const veLightListMap &lightListMap = _camera->getSceneManager()->getLightListMap();
-	if (lightListMap.empty())
-		return;
 	_illuminationFBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _sceneNormalTexture.get());
 	_illuminationFBO->bind(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
