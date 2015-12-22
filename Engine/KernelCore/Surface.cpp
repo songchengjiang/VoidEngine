@@ -52,6 +52,7 @@ const char* veSurface::COMMON_F_SHADER = " \
 veSurface::veSurface(veSceneManager *sm)
 	: veRenderableObject(sm)
 	, _needRefreshMaterial(true)
+	, _type(SURFACE)
 {
 	_alphaThreshold = new veUniform("u_alphaThreshold", 1.0f);
 	_color = new veUniform("u_Color", veVec4::WHITE);
