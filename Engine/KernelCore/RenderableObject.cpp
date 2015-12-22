@@ -8,7 +8,6 @@ veRenderableObject::veRenderableObject(veSceneManager *sm)
 	, _sceneManager(sm)
 	, _renderer(nullptr)
 	, _isVisible(true)
-	, _isInScene(false)
 	, _isDirtyBoundingBox(true)
 {
 }
@@ -20,7 +19,6 @@ veRenderableObject::~veRenderableObject()
 
 void veRenderableObject::update(veNode *node, veSceneManager *sm)
 {
-	_isInScene = true;
 	if (!_isVisible) return;
 	if (_renderer.valid())
 		_renderer->visit(node, this, sm);
