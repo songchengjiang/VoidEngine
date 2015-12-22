@@ -254,6 +254,9 @@ void veDeferredLightSceneIlluminator::resize(const veVec2 &size)
 	_sceneNormalTexture->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	_illuminationTexture->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 #endif
+	_sceneDepthTexture->setFilterMode(veTexture::NEAREST);
+	_sceneNormalTexture->setFilterMode(veTexture::NEAREST);
+	_illuminationTexture->setFilterMode(veTexture::NEAREST);
 }
 
 void veDeferredLightSceneIlluminator::fillCommonLightParamsToPass(veLight *light, vePass *pass)
