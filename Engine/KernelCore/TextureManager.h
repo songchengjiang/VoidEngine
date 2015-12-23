@@ -34,7 +34,7 @@ private:
 
 	veTextureManager(veSceneManager *sm, unsigned int maxTextureMemory = 128 * 1024 * 1024);
 	std::vector< VE_Ptr<veTexture> > _texturePool;
-	std::vector<veTexture *> _allocatedTexturePool;
+	std::vector< std::pair<veTexture *, unsigned int> > _allocatedTexturePool;
 	std::mutex               _texturePoolMutex;
 	unsigned int _maxTextureMemory;
 	unsigned int _currentTextureMemory;

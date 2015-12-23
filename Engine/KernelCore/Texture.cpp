@@ -239,7 +239,7 @@ unsigned int veTexture::getTextureTotalMemory()
 
 void veTexture::bind(unsigned int textureUnit)
 {
-	if (_needRefreshTex) {
+	if (_needRefreshTex && _texID) {
 		_manager->releaseTextureMemory(this);
 	}
 	if (!_texID) {

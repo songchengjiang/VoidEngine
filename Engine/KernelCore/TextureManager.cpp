@@ -21,8 +21,8 @@ void veTextureManager::update()
 {
 	std::unique_lock<std::mutex> lock(_texturePoolMutex);
 	for (auto &tex : _allocatedTexturePool) {
-		tex->_usage = tex->_usage << 1;
-		tex->_isExchanged = false;
+		tex.first->_usage = tex.first->_usage << 1;
+		tex.first->_isExchanged = false;
 	}
 }
 
@@ -90,8 +90,8 @@ bool veTextureManager::exchangeTextureMemory(veTexture *texture)
 	{
 		std::unique_lock<std::mutex> lock(_texturePoolMutex);
 		for (auto &iter : _allocatedTexturePool) {
-			if (iter != texture && !iter->_isExchanged)
-				pendingReplacetextureList[getTextureUsageRate(iter) * iter->getTextureTotalMemory()].push_back(iter);
+			if (iter.first != texture && !iter.first->_isExchanged)
+				pendingReplacetextureList[getTextureUsageRate(iter.first) * iter.second].push_back(iter.first);
 		}
 	}
 
@@ -111,7 +111,7 @@ bool veTextureManager::assignTextureMemory(veTexture *texture)
 		std::unique_lock<std::mutex> lock(_texturePoolMutex);
 		_currentTextureMemory += texture->getTextureTotalMemory();
 		texture->_isExchanged = true;
-		_allocatedTexturePool.push_back(texture);
+		_allocatedTexturePool.push_back(std::make_pair(texture, texture->getTextureTotalMemory()));
 		return true;
 	}
 	return false;
@@ -120,10 +120,13 @@ bool veTextureManager::assignTextureMemory(veTexture *texture)
 bool veTextureManager::releaseTextureMemory(veTexture *texture)
 {
 	std::unique_lock<std::mutex> lock(_texturePoolMutex);
-	auto iter = std::find(_allocatedTexturePool.begin(), _allocatedTexturePool.end(), texture);
+	auto iter = std::find_if(_allocatedTexturePool.begin(), _allocatedTexturePool.end(),
+		[texture](const std::pair<veTexture *, unsigned int> &val) -> bool {
+			return texture == val.first;
+	});
 	if (iter == _allocatedTexturePool.end()) return false;
-	if (_currentTextureMemory < texture->getTextureTotalMemory()) return false;
-	_currentTextureMemory -= texture->getTextureTotalMemory();
+	if (_currentTextureMemory < iter->second) return false;
+	_currentTextureMemory -= iter->second;
 	texture->_isExchanged = false;
 	texture->releaseTextureData();
 	_allocatedTexturePool.erase(iter);
