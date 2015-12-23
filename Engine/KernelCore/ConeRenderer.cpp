@@ -123,7 +123,7 @@ void veConeRenderer::render(veNode *node, veRenderableObject *renderableObj, veC
 	}
 }
 
-void veConeRenderer::draw(const veRenderCommand &command)
+void veConeRenderer::draw(veRenderCommand &command)
 {
 	if (!command.pass->apply(command))
 		return;

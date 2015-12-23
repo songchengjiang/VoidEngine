@@ -27,7 +27,7 @@ public:
 	virtual ~veRenderer();
 	virtual void visit(veNode *node, veRenderableObject *renderableObj, veSceneManager *sm);
 	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) = 0;
-	virtual void draw(const veRenderCommand &command) = 0;
+	virtual void draw(veRenderCommand &command) = 0;
 
 	void setRenderStageMask(unsigned short mask) { _renderStageMask = mask; }
 	unsigned short getRenderStageMask() const { return _renderStageMask; }

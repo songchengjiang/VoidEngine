@@ -157,7 +157,7 @@ void veBoxRenderer::render(veNode *node, veRenderableObject *renderableObj, veCa
 	}
 }
 
-void veBoxRenderer::draw(const veRenderCommand &command)
+void veBoxRenderer::draw(veRenderCommand &command)
 {
 	if (!command.pass->apply(command))
 		return;

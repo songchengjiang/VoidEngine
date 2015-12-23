@@ -156,18 +156,62 @@ const vePlane& veCamera::getFrustumPlane(FrustumPlane fp)
 	return _frustumPlane[fp];
 }
 
+void veCamera::sortRenderQueue()
+{
+	if (!_renderQueue->renderCommandList.empty()) {
+		for (auto &renderPass : _renderQueue->renderCommandList) {
+			auto &renderList = renderPass.second;
+			auto bgQueue = renderList.find(veRenderQueue::RENDER_QUEUE_BACKGROUND);
+			if (bgQueue != renderList.end()) {
+				if (!bgQueue->second.empty()) {
+					bgQueue->second.quickSort(PASS_SORT);
+				}
+			}
+
+			auto entityQueue = renderList.find(veRenderQueue::RENDER_QUEUE_ENTITY);
+			if (entityQueue != renderList.end()) {
+				if (!entityQueue->second.empty()) {
+					entityQueue->second.quickSort(ENTITY_SORT);
+				}
+			}
+
+			auto tpQueue = renderList.find(veRenderQueue::RENDER_QUEUE_TRANSPARENT);
+			if (tpQueue != renderList.end()) {
+				if (!tpQueue->second.empty()) {
+					tpQueue->second.quickSort(TRANSPARENT_SORT);
+				}
+			}
+
+			auto olQueue = renderList.find(veRenderQueue::RENDER_QUEUE_OVERLAY);
+			if (olQueue != renderList.end()) {
+				if (!olQueue->second.empty()) {
+					olQueue->second.quickSort(OVERLAY_SORT);
+				}
+			}
+		}
+	}
+}
+
+void veCamera::renderRenderQueue()
+{
+	if (!_renderQueue->renderCommandList.empty()) {
+		for (auto &renderPass : _renderQueue->renderCommandList) {
+			auto &renderList = renderPass.second;
+			for (auto &rq : renderList) {
+				visitQueue(rq.second);
+			}
+		}
+	}
+}
+
 void veCamera::renderDeferredLight()
 {
 	if (_viewport.isNull() || _sceneManager->getLightListMap().empty())
 		return;
-	if (_isDiscardRenderScene)
-		return;
 	veRenderer::CURRENT_RENDER_STAGE = veRenderer::LIGHTINGING;
-	fillRenderQueue();
 	if (!_renderQueue->renderCommandList.empty()) {
 		_deferredLightSceneIlluminator->illuminate();
 	}
-	clearRenderQueue();
 	veRenderState::instance()->resetState();
 }
 
@@ -184,16 +228,10 @@ void veCamera::renderScene()
 	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
 
 	if (!_isDiscardRenderScene) {
-		fillRenderQueue();
 		if (_skybox.valid())
 			_skybox->render(this);
 	}
-	if (!_renderQueue->renderCommandList.empty()) {
-		for (auto &renderPass : _renderQueue->renderCommandList) {
-			this->render(renderPass.second);
-		}
-	}
-	clearRenderQueue();
+	renderRenderQueue();
 
 	if (_fbo.valid()) {
 		_fbo->unBind();
@@ -201,47 +239,18 @@ void veCamera::renderScene()
 	veRenderState::instance()->resetState();
 }
 
-void veCamera::render(veRenderQueue::RenderCommandList &renderList)
-{
-	if (!renderList.empty()) {
-		auto bgQueue = renderList.find(veRenderQueue::RENDER_QUEUE_BACKGROUND);
-		if (bgQueue != renderList.end()) {
-			if (!bgQueue->second.empty()) {
-				bgQueue->second.quickSort(PASS_SORT);
-				renderQueue(bgQueue->second);
-			}
-		}
-
-		auto entityQueue = renderList.find(veRenderQueue::RENDER_QUEUE_ENTITY);
-		if (entityQueue != renderList.end()) {
-			if (!entityQueue->second.empty()) {
-				entityQueue->second.quickSort(ENTITY_SORT);
-				renderQueue(entityQueue->second);
-			}
-		}
-
-		auto tpQueue = renderList.find(veRenderQueue::RENDER_QUEUE_TRANSPARENT);
-		if (tpQueue != renderList.end()) {
-			if (!tpQueue->second.empty()) {
-				tpQueue->second.quickSort(TRANSPARENT_SORT);
-				renderQueue(tpQueue->second);
-			}
-		}
-
-		auto olQueue = renderList.find(veRenderQueue::RENDER_QUEUE_OVERLAY);
-		if (olQueue != renderList.end()) {
-			if (!olQueue->second.empty()) {
-				olQueue->second.quickSort(OVERLAY_SORT);
-				renderQueue(olQueue->second);
-			}
-		}
-	}
-}
-
 void veCamera::render()
 {
-	renderDeferredLight();
-	renderScene();
+	if (!_isDiscardRenderScene) {
+		fillRenderQueue();
+		sortRenderQueue();
+		renderDeferredLight();
+		renderScene();
+		clearRenderQueue();
+	}
+	else {
+		renderScene();
+	}
 }
 
 void veCamera::setMatrix(const veMat4 &mat)
@@ -276,12 +285,12 @@ bool veCamera::isOutOfFrustum(const veBoundingBox &bbox)
 	return false;
 }
 
-void veCamera::renderQueue(veLoopQueue< veRenderCommand > &queue)
+void veCamera::visitQueue(veLoopQueue< veRenderCommand > &queue)
 {
-	while (!queue.empty()) {
-		auto &cmd = queue.front();
-        cmd.renderer->draw(cmd);
-		queue.pop_front();
+	size_t sz = queue.size();
+	for (size_t i = 0; i < sz; ++i) {
+		auto &cmd = queue[i];
+		cmd.renderer->draw(cmd);
 	}
 }
 

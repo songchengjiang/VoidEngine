@@ -77,6 +77,14 @@ public:
 		quickSort(_front, dec(_end), cmpFunc);
 	}
 
+	inline T& operator [] (size_t idx) {
+		return _queue[(_front + idx) % CAPACITY];
+	}
+
+	inline const T& operator [] (size_t idx) const {
+		return _queue[(_front + idx) % CAPACITY];
+	}
+
 private:
 
 	size_t inc(size_t iter) {

@@ -113,25 +113,12 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 			rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
 			rc.renderer = this;
 
-			veMaterial *defaultMaterial = nullptr;
-			if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::LIGHTINGING) {
-				auto matAry = static_cast<veMaterialManager *>(camera->getSceneManager()->getManager(veMaterialManager::TYPE()))->findMaterialArray("_SYSTEM_");
-				defaultMaterial = matAry->getMaterial(0 < mesh->getBoneNum() ? veMaterial::SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ANIM_ENTITY
-					: veMaterial::SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ENTITY);
-			}
-
-			vePass *defaultPass = nullptr;
-			if (defaultMaterial) {
-				defaultPass = defaultMaterial->activeTechnique()->getPass(0);
-			}
 			auto technique = mesh->getMaterial()->activeTechnique();
 			for (unsigned int i = 0; i < technique->getPassNum(); ++i) {
 				auto pass = technique->getPass(i);
 				if (camera->getMask() & pass->drawMask()) {
 					bool isTransparent = pass->blendFunc() != veBlendFunc::DISABLE ? true : false;
-					if (defaultPass && isTransparent)
-						continue;
-					rc.pass = defaultPass? defaultPass: pass;
+					rc.pass = pass;
 					pass->visit(rc);
 					if (isTransparent)
 						camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
@@ -143,10 +130,19 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 	}
 }
 
-void veEntityRenderer::draw(const veRenderCommand &command)
+void veEntityRenderer::draw(veRenderCommand &command)
 {
 	MeshBuffers *bufs = static_cast<MeshBuffers *>(command.user3);
 	veMesh *mesh = static_cast<veMesh *>(command.user2);
+
+	vePass *renderPass = nullptr;
+	if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::LIGHTINGING) {
+		if (command.pass->blendFunc() != veBlendFunc::DISABLE) return;
+		renderPass = command.pass;
+		auto matAry = static_cast<veMaterialManager *>(command.sceneManager->getManager(veMaterialManager::TYPE()))->findMaterialArray("_SYSTEM_");
+		command.pass = matAry->getMaterial(0 < mesh->getBoneNum() ? veMaterial::SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ANIM_ENTITY
+			: veMaterial::SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ENTITY)->activeTechnique()->getPass(0);
+	}
 	if (!command.pass->apply(command))
 		return;
 	glBindVertexArray(bufs->vao);
@@ -165,6 +161,9 @@ void veEntityRenderer::draw(const veRenderCommand &command)
 		glDrawElements(primitive.primitiveType, GLsizei(primitive.indices->size()), GL_UNSIGNED_SHORT, nullptr);
 	}
 
+	if (renderPass) {
+		command.pass = renderPass;
+	}
 	int ec = glGetError();
 	if (ec != GL_NO_ERROR) {
 		veLog("GL ERROR CODE: 0x%x", ec);

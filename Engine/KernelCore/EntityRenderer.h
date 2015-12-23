@@ -13,7 +13,7 @@ public:
 	~veEntityRenderer();
 
 	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override;
-	virtual void draw(const veRenderCommand &command) override;
+	virtual void draw(veRenderCommand &command) override;
 
 protected:
 

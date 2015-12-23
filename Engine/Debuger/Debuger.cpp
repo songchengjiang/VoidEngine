@@ -61,7 +61,7 @@ public:
 		camera->getRenderQueue()->pushCommand(0, veRenderQueue::RENDER_QUEUE_ENTITY, rc);
 	}
 
-	virtual void draw(const veRenderCommand &command) override {
+	virtual void draw(veRenderCommand &command) override {
 		command.pass->apply(command);
 		glBindVertexArray(vao);
 		glDrawArrays(GL_LINES, 0, drawCount);

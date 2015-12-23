@@ -133,7 +133,7 @@ void veSphereRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 	}
 }
 
-void veSphereRenderer::draw(const veRenderCommand &command)
+void veSphereRenderer::draw(veRenderCommand &command)
 {
 	if (!command.pass->apply(command))
 		return;

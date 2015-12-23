@@ -184,10 +184,7 @@ void veDeferredLightSceneIlluminator::illuminate()
 	_illuminationFBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _sceneNormalTexture.get());
 	_illuminationFBO->bind(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	auto renderQueue = _camera->getRenderQueue();
-	for (auto &renderPass : renderQueue->renderCommandList) {
-		_camera->render(renderPass.second);
-	}
+	_camera->renderRenderQueue();
 
 	_illuminationFBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, nullptr);
 	_illuminationFBO->bind(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

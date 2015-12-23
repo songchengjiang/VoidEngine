@@ -69,7 +69,7 @@ void veSurfaceRenderer::render(veNode *node, veRenderableObject *renderableObj, 
 
 }
 
-void veSurfaceRenderer::draw(const veRenderCommand &command)
+void veSurfaceRenderer::draw(veRenderCommand &command)
 {
 	if (!command.pass->apply(command))
 		return;
