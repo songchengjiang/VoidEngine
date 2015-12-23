@@ -334,6 +334,7 @@ void veTexture::storage(int width, int height, int depth, GLint internalFormat, 
 		//}
 	}
 	_needRefreshTex = true;
+	_needRefreshSampler = true;
 }
 
 void veTexture::storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenum pixelFormat, GLenum dataType)
@@ -371,6 +372,7 @@ void veTexture::storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenu
 	}
 
 	_needRefreshTex = true;
+	_needRefreshSampler = true;
 }
 
 GLuint veTexture::glTex()

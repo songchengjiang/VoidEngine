@@ -84,13 +84,15 @@ veTexture* veTextureManager::createTexture(const std::string &name, veTexture::T
 
 bool veTextureManager::exchangeTextureMemory(veTexture *texture)
 {
-	std::unique_lock<std::mutex> lock(_texturePoolMutex);
 	if (assignTextureMemory(texture)) 
 		return true;
 	std::map<float, std::vector<veTexture *> > pendingReplacetextureList;
-	for (auto &iter : _allocatedTexturePool) {
-		if (iter != texture && !iter->_isExchanged)
-			pendingReplacetextureList[getTextureUsageRate(iter) * iter->getTextureTotalMemory()].push_back(iter);
+	{
+		std::unique_lock<std::mutex> lock(_texturePoolMutex);
+		for (auto &iter : _allocatedTexturePool) {
+			if (iter != texture && !iter->_isExchanged)
+				pendingReplacetextureList[getTextureUsageRate(iter) * iter->getTextureTotalMemory()].push_back(iter);
+		}
 	}
 
 	for (auto &iter : pendingReplacetextureList) {
@@ -106,6 +108,7 @@ bool veTextureManager::exchangeTextureMemory(veTexture *texture)
 bool veTextureManager::assignTextureMemory(veTexture *texture)
 {
 	if (requestTextureMemory(texture)) {
+		std::unique_lock<std::mutex> lock(_texturePoolMutex);
 		_currentTextureMemory += texture->getTextureTotalMemory();
 		texture->_isExchanged = true;
 		_allocatedTexturePool.push_back(texture);
@@ -116,6 +119,7 @@ bool veTextureManager::assignTextureMemory(veTexture *texture)
 
 bool veTextureManager::releaseTextureMemory(veTexture *texture)
 {
+	std::unique_lock<std::mutex> lock(_texturePoolMutex);
 	auto iter = std::find(_allocatedTexturePool.begin(), _allocatedTexturePool.end(), texture);
 	if (iter == _allocatedTexturePool.end()) return false;
 	if (_currentTextureMemory < texture->getTextureTotalMemory()) return false;

@@ -169,6 +169,10 @@ void veDeferredLightSceneIlluminator::initIlluminationParams()
 	_illuminationFBO->attach(GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, _sceneDepthTexture.get());
 	//_illuminationFBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _sceneNormalTexture.get());
 	//_illuminationFBO->attach(GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, _illuminationTexture.get());
+	_sceneDepthTexture->setFilterMode(veTexture::NEAREST);
+	_sceneNormalTexture->setFilterMode(veTexture::NEAREST);
+	_illuminationTexture->setFilterMode(veTexture::NEAREST);
+
 	_directionalLightRenderer = new veDirectionalLightRenderer;
 	_pointLightRenderer = new vePointLightRenderer;
 	_spotLightRenderer = new veSpotLightRenderer;
@@ -254,9 +258,6 @@ void veDeferredLightSceneIlluminator::resize(const veVec2 &size)
 	_sceneNormalTexture->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	_illuminationTexture->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 #endif
-	_sceneDepthTexture->setFilterMode(veTexture::NEAREST);
-	_sceneNormalTexture->setFilterMode(veTexture::NEAREST);
-	_illuminationTexture->setFilterMode(veTexture::NEAREST);
 }
 
 void veDeferredLightSceneIlluminator::fillCommonLightParamsToPass(veLight *light, vePass *pass)
