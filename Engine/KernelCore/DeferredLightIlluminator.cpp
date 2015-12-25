@@ -25,11 +25,13 @@ veDeferredLightSceneIlluminator::~veDeferredLightSceneIlluminator()
 
 void veDeferredLightSceneIlluminator::initPassCommanParams(vePass *pass)
 {
-	pass->addUniform(new veUniform("u_InvProjectMat", INV_P_MATRIX));
+	pass->addUniform(new veUniform("u_InvViewProjectMat", INV_VP_MATRIX));
 	pass->addUniform(new veUniform("u_screenWidth", SCREEN_WIDTH));
 	pass->addUniform(new veUniform("u_screenHeight", SCREEN_HEIGHT));
 	pass->addUniform(new veUniform("u_depthTex", 0));
 	pass->addUniform(new veUniform("u_normalTex", 1));
+	pass->addUniform(new veUniform("u_shadowTex", 2));
+	pass->addUniform(new veUniform("u_cameraPosInWorld", veVec3(0.0f)));
 	pass->addUniform(new veUniform("u_lightColor", veVec3(0.0f)));
 	pass->addUniform(new veUniform("u_lightIntensity", 0.0f));
 	pass->addUniform(new veUniform("u_lightMatrix", veMat4::IDENTITY));
@@ -183,6 +185,7 @@ void veDeferredLightSceneIlluminator::illuminate()
 	const veLightListMap &lightListMap = _camera->getSceneManager()->getLightListMap();
 	_illuminationFBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _sceneNormalTexture.get());
 	_illuminationFBO->bind(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glViewport(0, 0, GLsizei(_size.x()) * VE_DEVICE_PIXEL_RATIO, GLsizei(_size.y()) * VE_DEVICE_PIXEL_RATIO);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	_camera->renderRenderQueue();
 
@@ -246,6 +249,8 @@ void veDeferredLightSceneIlluminator::illuminate()
 
 void veDeferredLightSceneIlluminator::resize(const veVec2 &size)
 {
+	if (_size == size) return;
+	_size = size;
 	_illuminationFBO->setFrameBufferSize(size);
 	_sceneDepthTexture->storage(size.x(), size.y(), 1, GL_DEPTH24_STENCIL8, GL_RGBA, GL_FLOAT, nullptr, 1);
 #if (VE_PLATFORM == VE_PLATFORM_WIN32 || VE_PLATFORM == VE_PLATFORM_MAC)
@@ -259,14 +264,17 @@ void veDeferredLightSceneIlluminator::resize(const veVec2 &size)
 
 void veDeferredLightSceneIlluminator::fillCommonLightParamsToPass(veLight *light, vePass *pass)
 {
+	veMat4 cameraWorldMat = _camera->getNodeToWorldMatrix();
+	pass->getUniform("u_cameraPosInWorld")->setValue(veVec3(cameraWorldMat[0][3], cameraWorldMat[1][3], cameraWorldMat[2][3]));
 	pass->getUniform("u_lightColor")->setValue(light->getColor());
 	pass->getUniform("u_lightIntensity")->setValue(light->getIntensity());
-	//pass->getUniform("u_lightMatrix")->setValue();
+	pass->getUniform("u_lightMatrix")->setValue(light->getLightMatrix());
 	pass->getUniform("u_lightShadowEnabled")->setValue(light->isShadowEnabled()? 1.0f: 0.0f);
 	pass->getUniform("u_lightShadowBias")->setValue(light->getShadowBias());
 	pass->getUniform("u_lightShadowStrength")->setValue(light->getShadowStrength());
 	pass->getUniform("u_lightShadowSoft")->setValue(light->isUseSoftShadow() ? 1.0f: 0.0f);
 	pass->getUniform("u_lightShadowSoftness")->setValue(light->getShadowSoftness());
+	pass->addTexture(vePass::OPACITYT_TEXTURE, light->getShadowTexture());
 }
 
 void veDeferredLightSceneIlluminator::directionalLightIlluminate(veLight *light)
@@ -274,9 +282,9 @@ void veDeferredLightSceneIlluminator::directionalLightIlluminate(veLight *light)
 	vePass *pass = _lightMatrials->getMaterial(0)->getTechnique(0)->getPass(0);
 	fillCommonLightParamsToPass(light, pass);
 
-	veMat4 lightInView = _camera->viewMatrix() * light->getNodeToWorldMatrix();
-	lightInView[0][3] = lightInView[1][3] = lightInView[2][3] = 0.0f;
-	veVec3 direction = lightInView * -veVec3::UNIT_Z;
+	veMat4 lightInWorld = light->getNodeToWorldMatrix();
+	lightInWorld[0][3] = lightInWorld[1][3] = lightInWorld[2][3] = 0.0f;
+	veVec3 direction = lightInWorld * -veVec3::UNIT_Z;
 	direction.normalize();
 	pass->getUniform("u_lightDirection")->setValue(direction);
 	_directionalLightRenderer->immediatelyRender(light, pass, _camera);
@@ -295,8 +303,8 @@ void veDeferredLightSceneIlluminator::pointLightIlluminate(veLight *light)
 	fillCommonLightParamsToPass(light, pass);
 
 	vePointLight *pointLight = static_cast<vePointLight *>(light);
-	veMat4 lightInView = _camera->viewMatrix() * pointLight->getNodeToWorldMatrix();
-	pass->getUniform("u_lightPosition")->setValue(veVec3(lightInView[0][3], lightInView[1][3], lightInView[2][3]));
+	veMat4 lightInWorld = pointLight->getNodeToWorldMatrix();
+	pass->getUniform("u_lightPosition")->setValue(veVec3(lightInWorld[0][3], lightInWorld[1][3], lightInWorld[2][3]));
 	pass->getUniform("u_lightARI")->setValue(pointLight->getAttenuationRangeInverse());
 	_pointLightRenderer->setLightVolumeScale(veMat4::scale(veVec3(pointLight->getAttenuationRange())));
 	_pointLightRenderer->immediatelyRender(pointLight, pass, _camera);
@@ -317,10 +325,10 @@ void veDeferredLightSceneIlluminator::spotLightIlluminate(veLight *light)
 	fillCommonLightParamsToPass(light, pass);
 
 	veSpotLight *spotLight = static_cast<veSpotLight *>(light);
-	veMat4 lightInView = _camera->viewMatrix() * spotLight->getNodeToWorldMatrix();
-	pass->getUniform("u_lightPosition")->setValue(veVec3(lightInView[0][3], lightInView[1][3], lightInView[2][3]));
-	lightInView[0][3] = lightInView[1][3] = lightInView[2][3] = 0.0f;
-	veVec3 direction = lightInView * -veVec3::UNIT_Z;
+	veMat4 lightInWorld = spotLight->getNodeToWorldMatrix();
+	pass->getUniform("u_lightPosition")->setValue(veVec3(lightInWorld[0][3], lightInWorld[1][3], lightInWorld[2][3]));
+	lightInWorld[0][3] = lightInWorld[1][3] = lightInWorld[2][3] = 0.0f;
+	veVec3 direction = lightInWorld * -veVec3::UNIT_Z;
 	direction.normalize();
 	pass->getUniform("u_lightDirection")->setValue(direction);
 

@@ -85,8 +85,8 @@ void veFrameBufferObject::setFrameBufferSize(const veVec2 &size)
 void veFrameBufferObject::attach(GLenum attachment, GLenum target, veTexture *attachTex, GLint layer, bool needMipmap)
 {
 	if (_attachments[attachment].target == target
-	 && _attachments[attachment].texture == attachTex
-	 && _attachments[attachment].needMipmap == needMipmap)
+		&& _attachments[attachment].texture == attachTex
+		&& _attachments[attachment].needMipmap == needMipmap)
 		return;
 	_attachments[attachment] = AttachmentInfo{target, layer, attachTex, needMipmap};
 	_needRefreshAttachments = true;
@@ -167,7 +167,7 @@ void veFrameBufferObject::refreshAttachments()
 					mrt.push_back(iter.first);
 				//iter.second->storage(iter.second->getWidth(), iter.second->getHeight(), 1
 				//	, iter.second->getInternalFormat(), iter.second->getPixelFormat(), iter.second->getDataType(), nullptr);
-				iter.second.texture->bind(0);
+				iter.second.texture->bind();
 				if (iter.second.layer < 0)
 					glFramebufferTexture2D(GL_FRAMEBUFFER, iter.first, iter.second.target, iter.second.texture->glTex(), 0);
 				else

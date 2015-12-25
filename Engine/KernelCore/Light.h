@@ -28,6 +28,7 @@ public:
 	~veLight();
 
 	virtual void visit(veNodeVisitor &visitor) override;
+	virtual void update(veSceneManager *sm, const veMat4 &transform) override;
 	//virtual void render(veCamera *camera) override;
 
 	LightType getLightType() const { return _type; }
@@ -49,12 +50,14 @@ public:
 	float getShadowStrength() const { return _shadowStrength; }
 	void setShadowArea(const veVec2 &area) { _shadowArea = area; }
 	const veVec2& getShadowArea() const { return _shadowArea; }
-	void setUseSoftShadow(bool use) { _isUseSoftShadow = use; }
+	void setUseSoftShadow(bool use) { _isUseSoftShadow = use; _needRefreshShadowTexture = true; }
 	bool isUseSoftShadow() const { return _isUseSoftShadow; }
 	void setShadowSoftness(float softness) { _shadowSoftness = softness; }
 	float getShadowSoftness() const { return _shadowSoftness; }
+	veTexture* getShadowTexture() { return _shadowTexture.get(); }
 
-
+	void setLightMatrix(const veMat4 &mat) { _lightMatrix = mat; }
+	const veMat4& getLightMatrix() const { return _lightMatrix; }
 
 protected:
 	veLight(LightType type);
@@ -79,7 +82,9 @@ protected:
 	float _shadowSoftness;
 	bool  _isUseSoftShadow;
 
-	VE_Ptr<veMaterial> _illuminateMaterial;
+	VE_Ptr<veTexture>  _shadowTexture;
+	veMat4             _lightMatrix;
+	bool               _needRefreshShadowTexture;
 };
 
 class VE_EXPORT veDirectionalLight : public veLight
@@ -114,7 +119,6 @@ class VE_EXPORT veSpotLight : public veLight
 public:
 
 	~veSpotLight();
-
 
 	void setInnerAngle(float innerAng) { _innerAngle = innerAng; _innerAngleCos = veMath::veCos(veMath::veRadian(_innerAngle)); }
 	float getInnerAngle() { return _innerAngle; }

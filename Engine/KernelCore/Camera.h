@@ -92,6 +92,8 @@ public:
 
 	virtual void cull() = 0;
 	void render();
+	void renderDeferredLight();
+	void renderScene();
 	void discardRenderScene(bool isDiscard) { _isDiscardRenderScene = isDiscard; }
 
 	virtual void fillRenderQueue() = 0;
@@ -106,13 +108,12 @@ public:
 	virtual void visit(veNodeVisitor &visitor) override;
 	virtual bool isOutOfFrustum(const veBoundingBox &bbox);
 
+	virtual bool hasDynamicNodeVisibleInCamera() = 0;
 
 protected:
 
 	veCamera(veSceneManager *sm);
 	veCamera(veSceneManager *sm, const veViewport &vp);
-	void renderDeferredLight();
-	void renderScene();
 	void visitQueue(veLoopQueue< veRenderCommand > &queue);
 	void resize(int width, int height);
 	void updateFrustumPlane();

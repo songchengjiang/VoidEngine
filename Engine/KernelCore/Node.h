@@ -27,6 +27,11 @@ public:
 
 	void setVisible(bool isVis) { _isVisible = isVis; }
 	bool isVisible() const { return _isVisible; };
+	void setDynamicNode(bool isStatic) { _isDynamic = isStatic; }
+	bool isDynamicNode() { return _isDynamic; }
+
+	void setMask(unsigned int mask, bool isOverride = false);
+	unsigned int getMask() const { return _mask; }
 
 	int addChild(veNode *child);
 	bool removeChild(veNode *child);
@@ -66,9 +71,6 @@ public:
 	veMat4 computeNodeToWorldMatrix() const;
 	veMat4 computeWorldToNodeMatrix() const;
 
-	virtual void setMask(unsigned int mask, bool isOverride = false);
-	unsigned int getMask() const { return _mask; }
-
 	void setUserData(void *ud) { _userData = ud; }
 	void* getUserData() { return _userData; }
 	const void* getUserData() const { return _userData; }
@@ -106,6 +108,7 @@ protected:
 	bool              _overrideMask;
 	bool              _autoUpdateBoundingBox;
 	bool              _isInScene;
+	bool              _isDynamic;
 
 	NodeEventCallback  _eventCallback;
 	NodeUpdateCallback _updateCallback;

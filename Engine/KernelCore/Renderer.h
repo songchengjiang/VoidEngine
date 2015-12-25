@@ -15,8 +15,10 @@ public:
 
 	enum RenderStage
 	{
-		LIGHTINGING = 1,
-		RENDERING   = 1 << 2,
+		DIRECTIONAL_SHADOW     = 1,
+		OMNIDIRECTIONAL_SHADOW = 1 << 1,
+		LIGHTINGING            = 1 << 2,
+		RENDERING              = 1 << 3,
 	};
 
 	static unsigned short CURRENT_RENDER_STAGE;

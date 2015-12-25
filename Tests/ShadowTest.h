@@ -94,6 +94,7 @@ public:
 			lightModel->setMask(~LIGHT_MASK);
 			spot->addChild(lightModel);
 			spot->setMask(LIGHT_MASK);
+			spot->shadowEnable(true);
 			spot->setUseSoftShadow(true);
 			spot->setShadowSoftness(0.005f);
 			spot->setShadowBias(0.0015f);
@@ -135,6 +136,7 @@ public:
 			lightModel->setMask(~LIGHT_MASK);
 			directional->addChild(lightModel);
 			directional->setMask(LIGHT_MASK);
+			directional->shadowEnable(true);
 			directional->setUseSoftShadow(true);
 			directional->setShadowSoftness(0.005f);
 			root->addChild(directional);

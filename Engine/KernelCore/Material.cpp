@@ -50,7 +50,8 @@ bool vePass::apply(const veRenderCommand &command)
 
 	unsigned int texUnit = 0;
 	for (auto &tex : _textures) {
-		tex.second->bind(texUnit);
+		glActiveTexture(GL_TEXTURE0 + texUnit);
+		tex.second->bind();
 		++texUnit;
 	}
 	applyLightTextures(texUnit, command);
@@ -99,6 +100,7 @@ veShader* vePass::getShader(veShader::Type type)
 
 void vePass::addTexture(TextureType type, veTexture *texture)
 {
+	if (!texture) return;
 	int id = findTextureID(type);
 	if (id < 0) {
 		_textures.push_back(std::make_pair(type, texture));
@@ -218,7 +220,8 @@ void vePass::applyLightTextures(unsigned int beginTexUnit, const veRenderCommand
 
 	if (0 <= _lightUniformLocations.lightTexture) {
 		glUniform1i(_lightUniformLocations.lightTexture, texUnit);
-		command.camera->getDeferredLightingTexture()->bind(texUnit);
+		glActiveTexture(GL_TEXTURE0 + texUnit);
+		command.camera->getDeferredLightingTexture()->bind();
 		++texUnit;
 	}
 

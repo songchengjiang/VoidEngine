@@ -12,6 +12,7 @@
 #include "Ray.h"
 #include "SkyBox.h"
 #include "PostProcesser.h"
+#include "ShadowGenerator.h"
 
 #include <unordered_map>
 
@@ -113,6 +114,8 @@ protected:
 	veLoopQueue< std::function<void()> > _requestQueue;
 
 	VE_Ptr<veMaterialArray> _systemMaterials;
+
+	VE_Ptr<veShadowGenerator> _shadowGenerator;
 
 	std::mutex  _updatingMutex;
 	std::mutex  _renderingMutex;

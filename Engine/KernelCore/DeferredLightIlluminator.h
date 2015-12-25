@@ -39,6 +39,7 @@ private:
 	VE_Ptr<veTexture>    _sceneDepthTexture;
 	VE_Ptr<veTexture>    _sceneNormalTexture;
 	VE_Ptr<veTexture>    _illuminationTexture;
+	veVec2               _size;
 
 	VE_Ptr<veDirectionalLightRenderer> _directionalLightRenderer;
 	VE_Ptr<vePointLightRenderer>       _pointLightRenderer;

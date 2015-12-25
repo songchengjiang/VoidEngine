@@ -1,4 +1,4 @@
-in vec3 v_normInView;
+in vec3 v_normInWorld;
 
 layout(location=0) out vec4 normal;
 
@@ -12,8 +12,8 @@ vec3 encode (vec3 normal)
 
 void main(){
 #if VE_PLATFORM == VE_PLATFORM_ANDROID
-	normal = vec4(encode(normalize(v_normInView)), 1.0);
+	normal = vec4(encode(normalize(v_normInWorld)), 1.0);
 #else
-	normal = vec4(normalize(v_normInView), 1.0);
+	normal = vec4(normalize(v_normInWorld), 1.0);
 #endif
 }

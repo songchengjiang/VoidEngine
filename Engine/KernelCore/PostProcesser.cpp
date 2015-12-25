@@ -25,7 +25,9 @@ void vePostProcesser::process(veFrameBufferObject *fb, veCamera *camera)
 			auto material = _materials->getMaterial(i);
 			for (unsigned int p = 0; p < material->activeTechnique()->getPassNum(); ++p) {
 				auto pass = material->activeTechnique()->getPass(p);
-				pass->getTexture(vePass::AMBIENT_TEXTURE)->storage((camera->getViewport().width - camera->getViewport().x) * VE_DEVICE_PIXEL_RATIO, (camera->getViewport().height - camera->getViewport().y) * VE_DEVICE_PIXEL_RATIO, 1, GL_RGBA8);
+				pass->getTexture(vePass::AMBIENT_TEXTURE)->storage((camera->getViewport().width - camera->getViewport().x) * VE_DEVICE_PIXEL_RATIO
+					, (camera->getViewport().height - camera->getViewport().y) * VE_DEVICE_PIXEL_RATIO, 1
+					, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 			}
 		}
 		_surface->setMaterialArray(_materials.get());

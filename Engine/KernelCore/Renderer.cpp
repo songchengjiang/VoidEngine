@@ -9,7 +9,7 @@ unsigned short veRenderer::CURRENT_RENDER_STAGE = RENDERING;
 
 veRenderer::veRenderer()
 	: USE_VE_PTR_INIT
-	, _renderStageMask(LIGHTINGING | RENDERING)
+	, _renderStageMask(DIRECTIONAL_SHADOW | OMNIDIRECTIONAL_SHADOW | LIGHTINGING | RENDERING)
 {
 }
 

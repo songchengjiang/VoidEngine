@@ -5,7 +5,7 @@
   "color": [ 1.0, 1.0, 1.0],
   "intensity": 0.2,
   "attenuation": 50.0,
-  "shadowEnabled": true,
+  "shadowEnabled": false,
   "shadowBias": 0.001,
   "shadowResolution": [ 512.0, 512.0 ]
 }

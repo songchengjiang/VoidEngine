@@ -136,13 +136,26 @@ void veEntityRenderer::draw(veRenderCommand &command)
 	veMesh *mesh = static_cast<veMesh *>(command.user2);
 
 	vePass *renderPass = nullptr;
-	if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::LIGHTINGING) {
+	if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::DIRECTIONAL_SHADOW) {
+		renderPass = command.pass;
+		auto matAry = static_cast<veMaterialManager *>(command.sceneManager->getManager(veMaterialManager::TYPE()))->findMaterialArray("_SYSTEM_");
+		command.pass = matAry->getMaterial(0 < mesh->getBoneNum() ? veMaterial::SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY
+			: veMaterial::SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ENTITY)->activeTechnique()->getPass(0);
+	}
+	else if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::OMNIDIRECTIONAL_SHADOW){
+		renderPass = command.pass;
+		auto matAry = static_cast<veMaterialManager *>(command.sceneManager->getManager(veMaterialManager::TYPE()))->findMaterialArray("_SYSTEM_");
+		command.pass = matAry->getMaterial(0 < mesh->getBoneNum() ? veMaterial::SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY
+			: veMaterial::SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ENTITY)->activeTechnique()->getPass(0);
+	}
+	else if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::LIGHTINGING) {
 		if (command.pass->blendFunc() != veBlendFunc::DISABLE) return;
 		renderPass = command.pass;
 		auto matAry = static_cast<veMaterialManager *>(command.sceneManager->getManager(veMaterialManager::TYPE()))->findMaterialArray("_SYSTEM_");
 		command.pass = matAry->getMaterial(0 < mesh->getBoneNum() ? veMaterial::SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ANIM_ENTITY
 			: veMaterial::SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ENTITY)->activeTechnique()->getPass(0);
 	}
+
 	if (!command.pass->apply(command))
 		return;
 	glBindVertexArray(bufs->vao);

@@ -8,7 +8,7 @@ layout (location = ATTR_BONE_WEIGHTS) in vec4 boneWeights;
 #endif 
                  
 uniform mat4 u_ModelViewProjectMat;
-uniform mat3 u_NormalMat;            
+uniform mat3 u_NormalWorldMat;            
 #ifdef VE_USE_BONES
 uniform mat4 u_BoneMates[60];
 void updateBonePositionAndNormal(out vec4 pos, out vec3 norm)
@@ -24,7 +24,7 @@ void updateBonePositionAndNormal(out vec4 pos, out vec3 norm)
 }
 #endif
 
-out vec3 v_normInView;
+out vec3 v_normInWorld;
 
 void main()                                                 
 {   
@@ -38,5 +38,5 @@ void main()
 #endif
 	  
 	gl_Position = u_ModelViewProjectMat * finalPos;
-	v_normInView = u_NormalMat * finalNorm;  
+	v_normInWorld = u_NormalWorldMat * finalNorm;  
 }

@@ -7,7 +7,7 @@
   "attenuation": 200.0,
   "innerAngle": 0.0,
   "outerAngle": 20.0,
-  "shadowEnabled": true,
+  "shadowEnabled": false,
   "shadowBias": 0.0005,
   "shadowResolution": [ 512.0, 512.0 ]
 }

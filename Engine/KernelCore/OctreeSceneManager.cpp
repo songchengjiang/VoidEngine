@@ -38,6 +38,7 @@ void veOctreeSceneManager::init()
 	_root = new veOctreeNode;
 	_root->setSceneManager(this);
 	_octree->originBoundingBox = _octree->boundingBox = _boundingBox;
+	_shadowGenerator = new veShadowGenerator(this);
 	loadSystemMaterials();
 }
 
@@ -217,16 +218,7 @@ void veOctreeSceneManager::render()
 	if (!veApplication::instance()->makeContextCurrent()) return;
 	culling();
 
-	//if (!_lightList.empty()) {
-	//	veRenderer::CURRENT_RENDER_STAGE = veRenderer::SHADOWING;
-	//	for (auto &light : _lightList) {
-	//		if (light->isShadowEnabled() && light->isVisible() && light->isInScene()) {
-	//			veLight::CURRENT_LIGHT = light.get();
-	//			light->shadowCameraRendering();
-	//			veLight::CURRENT_LIGHT = nullptr;
-	//		}
-	//	}
-	//}
+	_shadowGenerator->shadowing();
 
 	for (auto &iter : _cameraList) {
 		if (iter->isVisible() && iter->isInScene() && iter != _mainCamera) {
@@ -268,15 +260,4 @@ void veOctreeSceneManager::culling()
 			});
 		}
 	}
-
-	//if (!_lightList.empty()) {
-	//	for (auto &iter : _lightList) {
-	//		if (iter->isShadowEnabled() && iter->isVisible() && iter->isInScene()) {
-	//			veLight *light = iter.get();
-	//			_threadPool.enqueue(nullptr, nullptr, [light] {
-	//				light->shadowCameraCulling();
-	//			});
-	//		}
-	//	}
-	//}
 }

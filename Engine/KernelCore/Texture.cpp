@@ -237,7 +237,7 @@ unsigned int veTexture::getTextureTotalMemory()
 	return _dataSize;
 }
 
-void veTexture::bind(unsigned int textureUnit)
+void veTexture::bind()
 {
 	if (_needRefreshTex && _texID) {
 		_manager->releaseTextureMemory(this);
@@ -246,7 +246,6 @@ void veTexture::bind(unsigned int textureUnit)
         glGenTextures(1, &_texID);
 		//glCreateTextures(_target, 1, &_texID);
 	}
-	glActiveTexture(GL_TEXTURE0 + textureUnit);
 	glBindTexture(_target, _texID);
 
 	if (_needRefreshSampler) {
@@ -305,8 +304,7 @@ void veTexture::storage(int width, int height, int depth, GLint internalFormat, 
 
 	if (_width == width && _height == height && _depthOrLayer == depth
 		&& _internalFormat == internalFormat && _pixelFormat == pixelFormat && _dataType == dataType
-		&& _data == data
-		&& _mipMapLevelCount == requestMipMapLevels)
+		&& _data == data)
 		return;
 
 	_width = width;
@@ -390,12 +388,13 @@ veTexture2D::~veTexture2D()
 {
 }
 
-void veTexture2D::bind(unsigned int textureUnit)
+void veTexture2D::bind()
 {
-	veTexture::bind(textureUnit);
+	veTexture::bind();
 	if (_needRefreshTex) {
 		if (_manager->exchangeTextureMemory(this)) {
-			glTexStorage2D(_target, _mipMapLevelCount, _internalFormat, _width, _height);
+			if (_width != 0 && _height != 0)
+				glTexStorage2D(_target, _mipMapLevelCount, _internalFormat, _width, _height);
 			if (_isCompressedTex) {
 				if (_data) {
 					unsigned int imageSize = getImageSize(_width, _height);
@@ -441,12 +440,13 @@ veTexture3D::~veTexture3D()
 
 }
 
-void veTexture3D::bind(unsigned int textureUnit)
+void veTexture3D::bind()
 {
-	veTexture::bind(textureUnit);
+	veTexture::bind();
 	if (_needRefreshTex) {
 		if (_manager->exchangeTextureMemory(this)) {
-			glTexStorage3D(_target, _mipMapLevelCount, _internalFormat, _width, _height, _depthOrLayer);
+			if (_width != 0 && _height != 0 && _depthOrLayer != 0)
+				glTexStorage3D(_target, _mipMapLevelCount, _internalFormat, _width, _height, _depthOrLayer);
 
 			if (_isCompressedTex) {
 				if (_data) {
@@ -510,9 +510,9 @@ veTextureCube::~veTextureCube()
 
 }
 
-void veTextureCube::bind(unsigned int textureUnit)
+void veTextureCube::bind()
 {
-	veTexture::bind(textureUnit);
+	veTexture::bind();
 	if (_needRefreshTex) {
 		if (_manager->exchangeTextureMemory(this)) {
 			_width = _textures[0].valid() ? _textures[0]->getWidth() : _width;
@@ -521,7 +521,8 @@ void veTextureCube::bind(unsigned int textureUnit)
 			_pixelFormat = _textures[0].valid() ? _textures[0]->getPixelFormat() : _pixelFormat;
 			_dataType = _textures[0].valid() ? _textures[0]->getDataType() : _dataType;
 			_mipMapLevelCount = _textures[0].valid() ? _textures[0]->getMipMapLevelCount() : _mipMapLevelCount;
-			glTexStorage2D(_target, _mipMapLevelCount, _internalFormat, _width, _height);
+			if (_width != 0 && _height != 0)
+				glTexStorage2D(_target, _mipMapLevelCount, _internalFormat, _width, _height);
 			do 
 			{
 				if (!_textures[0].valid() || !_textures[1].valid() || !_textures[2].valid()
@@ -591,12 +592,13 @@ veTexture2DArray::veTexture2DArray()
 	_type = veTexture::TEXTURE_2D_ARRAY;
 }
 
-void veTexture2DArray::bind(unsigned int textureUnit)
+void veTexture2DArray::bind()
 {
-	veTexture::bind(textureUnit);
+	veTexture::bind();
 	if (_needRefreshTex) {
 		if (_manager->exchangeTextureMemory(this)) {
-			glTexStorage3D(_target, _mipMapLevelCount, _internalFormat, _width, _height, _depthOrLayer);
+			if (_width != 0 && _height != 0 && _depthOrLayer != 0)
+				glTexStorage3D(_target, _mipMapLevelCount, _internalFormat, _width, _height, _depthOrLayer);
 
 			if (_isCompressedTex) {
 				if (_data) {
@@ -644,9 +646,9 @@ veTextureCubeArray::~veTextureCubeArray()
 
 }
 
-void veTextureCubeArray::bind(unsigned int textureUnit)
+void veTextureCubeArray::bind()
 {
-	veTexture::bind(textureUnit);
+	veTexture::bind();
 	if (_needRefreshTex) {
 		if (_manager->exchangeTextureMemory(this)) {
 			_width = !_textures.empty() ? _textures[0].faces[0]->getWidth() : _width;
@@ -656,7 +658,8 @@ void veTextureCubeArray::bind(unsigned int textureUnit)
 			_pixelFormat = !_textures.empty() ? _textures[0].faces[0]->getPixelFormat() : _pixelFormat;
 			_dataType = !_textures.empty() ? _textures[0].faces[0]->getDataType() : _dataType;
 			_mipMapLevelCount = !_textures.empty() ? _textures[0].faces[0]->getMipMapLevelCount() : _mipMapLevelCount;
-			glTexStorage3D(_target, _mipMapLevelCount, _internalFormat, _width, _height, _depthOrLayer);
+			if (_width != 0 && _height != 0 && _depthOrLayer != 0)
+				glTexStorage3D(_target, _mipMapLevelCount, _internalFormat, _width, _height, _depthOrLayer);
 
 			if (!_textures.empty()) {
 				for (unsigned int ly = 0; ly < _textures.size(); ++ly) {

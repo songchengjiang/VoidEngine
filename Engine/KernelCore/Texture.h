@@ -66,7 +66,7 @@ public:
 
 	TextureType getType() const { return _type; }
 
-	virtual void bind(unsigned int textureUnit);
+	virtual void bind();
 
 	void setWrapMode(WrapMode wrapMode) { _wrapMode = wrapMode; _needRefreshSampler = true; }
 	WrapMode getWrapMode() const { return _wrapMode; }
@@ -148,7 +148,7 @@ public:
 
 	~veTexture2D();
 
-	virtual void bind(unsigned int textureUnit) override;
+	virtual void bind() override;
 
 protected:
 	veTexture2D();
@@ -162,7 +162,7 @@ public:
 
 	~veTexture3D();
 
-	virtual void bind(unsigned int textureUnit) override;
+	virtual void bind() override;
 
 protected:
 	veTexture3D();
@@ -187,7 +187,7 @@ public:
 
 	~veTextureCube();
 
-	virtual void bind(unsigned int textureUnit) override;
+	virtual void bind() override;
 
 	void setTexture(CubeMapTexType texType, veTexture *texture);
 	veTexture* getTexture(CubeMapTexType texType);
@@ -208,7 +208,7 @@ public:
 
 	~veTexture2DArray();
 
-	virtual void bind(unsigned int textureUnit) override;
+	virtual void bind() override;
 
 protected:
 	veTexture2DArray();
@@ -238,7 +238,7 @@ public:
 
 	~veTextureCubeArray();
 
-	virtual void bind(unsigned int textureUnit) override;
+	virtual void bind() override;
 
 protected:
 	veTextureCubeArray();

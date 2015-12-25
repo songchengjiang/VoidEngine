@@ -152,7 +152,7 @@
                                     "type": "VERTEX_SHADER",
                                     "source": "LightingPass.vert",
                                     "u_ModelViewProjectMat": "MVP_MATRIX",
-                                    "u_NormalMat": "NORMAL_MATRIX",
+                                    "u_NormalWorldMat": "NORMAL_WORLD_MATRIX",
                                     "u_BoneMates": "BONE_MATRIXES"
                                 },
                                 {
@@ -180,7 +180,7 @@
                                     "type": "VERTEX_SHADER",
                                     "source": "LightingPass.vert",
                                     "u_ModelViewProjectMat": "MVP_MATRIX",
-                                    "u_NormalMat": "NORMAL_MATRIX"
+                                    "u_NormalWorldMat": "NORMAL_WORLD_MATRIX"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",

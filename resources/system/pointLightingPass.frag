@@ -1,8 +1,10 @@
 uniform sampler2D u_normalTex;
 uniform sampler2D u_depthTex;
+uniform sampler2D u_shadowTex;
 uniform float u_screenWidth;
 uniform float u_screenHeight;
-uniform mat4 u_InvProjectMat;
+uniform mat4 u_InvViewProjectMat;
+uniform vec3 u_cameraPosInWorld;
 
 uniform vec3  u_lightPosition;
 uniform vec3  u_lightColor;
@@ -32,10 +34,10 @@ void main(){
 	vec3 normal = texture(u_normalTex, texCoords).xyz;
 #endif
 	float depth = texture(u_depthTex, texCoords).r;
-	vec4 posInView = u_InvProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);
-	posInView.xyz /= posInView.w;
-	vec3 eyeDir = normalize(-posInView.xyz);
-	vec3 lightDir = u_lightPosition - posInView.xyz;
+	vec4 posInWorld= u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);
+	posInWorld.xyz /= posInWorld.w;
+	vec3 eyeDir = normalize(u_cameraPosInWorld - posInWorld.xyz);
+	vec3 lightDir = u_lightPosition - posInWorld.xyz;
 	vec3 attDis = lightDir * u_lightARI;
 	float attenuation = clamp(1.0 - dot(attDis, attDis), 0.0, 1.0);
 	lightDir = normalize(lightDir);

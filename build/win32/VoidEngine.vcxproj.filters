@@ -261,6 +261,9 @@
     <ClCompile Include="..\..\Engine\KernelCore\DeferredLightIlluminator.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\ShadowGenerator.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -496,6 +499,9 @@
       <Filter>KernelCore\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\DeferredLightIlluminator.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\ShadowGenerator.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>

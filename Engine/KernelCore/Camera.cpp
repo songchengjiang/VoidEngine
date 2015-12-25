@@ -31,7 +31,6 @@ veCamera::veCamera(veSceneManager *sm)
 	, _renderQueue(nullptr)
 {
 	_sceneManager = sm;
-	_deferredLightSceneIlluminator = new veDeferredLightSceneIlluminator(this);
 	setViewport({ 0, 0, 0, 0 });
 }
 
@@ -47,7 +46,6 @@ veCamera::veCamera(veSceneManager *sm, const veViewport &vp)
 	, _renderQueue(nullptr)
 {
 	_sceneManager = sm;
-	_deferredLightSceneIlluminator = new veDeferredLightSceneIlluminator(this);
 	setViewport(vp);
 }
 
@@ -132,7 +130,6 @@ void veCamera::setViewport(const veViewport &vp)
 {
 	if (_viewport == vp) return;
 	_viewport = vp;
-	_deferredLightSceneIlluminator->resize(veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y));
 	if (_fbo.valid())
 		_fbo->setFrameBufferSize(veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y));
 }
@@ -208,8 +205,10 @@ void veCamera::renderDeferredLight()
 {
 	if (_viewport.isNull() || _sceneManager->getLightListMap().empty())
 		return;
-	veRenderer::CURRENT_RENDER_STAGE = veRenderer::LIGHTINGING;
 	if (!_renderQueue->renderCommandList.empty()) {
+		if (!_deferredLightSceneIlluminator.valid())
+			_deferredLightSceneIlluminator = new veDeferredLightSceneIlluminator(this);
+		_deferredLightSceneIlluminator->resize(veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y));
 		_deferredLightSceneIlluminator->illuminate();
 	}
 	veRenderState::instance()->resetState();
@@ -219,7 +218,6 @@ void veCamera::renderScene()
 {
 	if (_viewport.isNull())
 		return;
-	veRenderer::CURRENT_RENDER_STAGE = veRenderer::RENDERING;
 	if (_fbo.valid()) {
 		_fbo->bind(_clearMask);
 	}
@@ -244,11 +242,14 @@ void veCamera::render()
 	if (!_isDiscardRenderScene) {
 		fillRenderQueue();
 		sortRenderQueue();
+		veRenderer::CURRENT_RENDER_STAGE = veRenderer::LIGHTINGING;
 		renderDeferredLight();
+		veRenderer::CURRENT_RENDER_STAGE = veRenderer::RENDERING;
 		renderScene();
 		clearRenderQueue();
 	}
 	else {
+		veRenderer::CURRENT_RENDER_STAGE = veRenderer::RENDERING;
 		renderScene();
 	}
 }

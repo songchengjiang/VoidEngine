@@ -14,6 +14,7 @@ public:
 
 	virtual void cull() override;
 	virtual void fillRenderQueue() override;
+	virtual bool hasDynamicNodeVisibleInCamera() override;
 
 	bool isNodeVisibleInCamera(veOctreeNode *node);
 

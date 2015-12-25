@@ -46,6 +46,20 @@ void veOctreeCamera::fillRenderQueue()
 	}
 }
 
+bool veOctreeCamera::hasDynamicNodeVisibleInCamera()
+{
+	std::unique_lock<std::mutex> lock(_visitMutex);
+	if (!_visibleOctreeNodeList.empty()) {
+		{
+			for (auto &iter : _visibleOctreeNodeList) {
+				if (iter->isDynamicNode())
+					return true;
+			}
+		}
+	}
+	return false;
+}
+
 bool veOctreeCamera::isNodeVisibleInCamera(veOctreeNode *node)
 {
 	std::unique_lock<std::mutex> lock(_visitMutex);
