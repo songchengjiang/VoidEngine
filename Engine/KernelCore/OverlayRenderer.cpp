@@ -16,10 +16,7 @@ veOverlayRenderer::~veOverlayRenderer()
 
 void veOverlayRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
-	if (!isNeedRendering())
-		return;
 	updateBuffer();
-
 	veRenderCommand rc;
 	rc.priority = _renderOrder;
 	rc.mask = node->getMask();

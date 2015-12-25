@@ -48,7 +48,7 @@ float shadowing(vec3 vertex){
 	if (0.0 < u_lightShadowSoft){
 		float sum = 0.0;
 		for (int i = 0; i < SAMPLE_SIZE; ++i){                                                                                                                                                                 
-			sum += texture(u_shadowTex, vec3(shadowCoord.xy + SAMPLE_OFFSETS[i].xy * u_lightShadowSoftness, shadowCoord.z));                                                                                                              
+			sum += texture(u_shadowTex, vec3(shadowCoord.xy + SAMPLE_OFFSETS[i] * u_lightShadowSoftness, shadowCoord.z));                                                                                                              
 		}                                                                              
 		factor = sum / float(SAMPLE_SIZE);
 	}else{

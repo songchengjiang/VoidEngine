@@ -174,6 +174,7 @@ public:
 			lightModel->setMask(~LIGHT_MASK);
 			point->addChild(lightModel);
 			point->setMask(LIGHT_MASK);
+			point->shadowEnable(true);
 			point->setUseSoftShadow(true);
 			point->setShadowBias(0.0015f);
 			root->addChild(point);

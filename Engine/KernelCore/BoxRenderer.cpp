@@ -125,8 +125,6 @@ veBoxRenderer::~veBoxRenderer()
 
 void veBoxRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
-	if (!isNeedRendering())
-		return;
 	updateBuffer();
 
 	veRenderCommand rc;
@@ -159,6 +157,8 @@ void veBoxRenderer::render(veNode *node, veRenderableObject *renderableObj, veCa
 
 void veBoxRenderer::draw(veRenderCommand &command)
 {
+	if (!isNeedRendering())
+		return;
 	if (!command.pass->apply(command))
 		return;
 	glBindVertexArray(_vao);

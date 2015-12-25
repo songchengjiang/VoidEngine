@@ -60,6 +60,7 @@ void veShadowGenerator::shadowing()
 void veShadowGenerator::directionalLightShadowing(veLight *light)
 {
 	if (!light->isShadowEnabled()) return;
+	_shadowCamera->setMask(light->getMask());
 	_shadowCamera->setMatrix(light->getNodeToWorldMatrix());
 	_shadowCamera->setViewport({ 0, 0, int(light->getShadowResolution().x()), int(light->getShadowResolution().y()) });
 	auto halfShadowArea = light->getShadowArea() * 0.5f;
@@ -78,6 +79,7 @@ void veShadowGenerator::directionalLightShadowing(veLight *light)
 void veShadowGenerator::pointLightShadowing(veLight *light)
 {
 	if (!light->isShadowEnabled()) return;
+	_shadowCamera->setMask(light->getMask());
 	veMat4 lightWorldMat = light->getNodeToWorldMatrix();
 	veMat4 faceMats[6];
 	faceMats[0] = lightWorldMat * veMat4::lookAt(veVec3::ZERO, veVec3::UNIT_X, veVec3::NEGATIVE_UNIT_Y);
@@ -99,12 +101,13 @@ void veShadowGenerator::pointLightShadowing(veLight *light)
 			_shadowCamera->clearRenderQueue();
 		}
 	}
-
+	light->setLightMatrix(light->getWorldToNodeMatrix());
 }
 
 void veShadowGenerator::spotLightShadowing(veLight *light)
 {
 	if (!light->isShadowEnabled()) return;
+	_shadowCamera->setMask(light->getMask());
 	_shadowCamera->setMatrix(light->getNodeToWorldMatrix());
 	_shadowCamera->setViewport({ 0, 0, int(light->getShadowResolution().x()), int(light->getShadowResolution().y()) });
 	_shadowCamera->setProjectionMatrixAsPerspective(2.0f * static_cast<veSpotLight *>(light)->getOuterAngle(), 1.0f, 0.1f, light->getAttenuationRange());

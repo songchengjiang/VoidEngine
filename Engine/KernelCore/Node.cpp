@@ -170,7 +170,7 @@ void veNode::setMask(unsigned int mask, bool isOverride /*= true*/)
 {
 	_mask = mask; 
 	_overrideMask = isOverride; 
-	_sceneManager->needReload();
+	//_sceneManager->needReload();
 }
 
 void veNode::refresh()

@@ -91,8 +91,6 @@ veConeRenderer::~veConeRenderer()
 
 void veConeRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
-	if (!isNeedRendering())
-		return;
 	updateBuffer();
 
 	veRenderCommand rc;
@@ -125,6 +123,8 @@ void veConeRenderer::render(veNode *node, veRenderableObject *renderableObj, veC
 
 void veConeRenderer::draw(veRenderCommand &command)
 {
+	if (!isNeedRendering())
+		return;
 	if (!command.pass->apply(command))
 		return;
 	glBindVertexArray(_vao);

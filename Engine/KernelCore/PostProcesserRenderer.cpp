@@ -15,8 +15,6 @@ vePostProcesserRenderer::~vePostProcesserRenderer()
 
 void vePostProcesserRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
-	if (!isNeedRendering())
-		return;
 	updateBuffer();
 	if (_pass.valid()) {
 		if (camera->getMask() & _pass->drawMask()) {

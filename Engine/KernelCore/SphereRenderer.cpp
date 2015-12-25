@@ -101,8 +101,6 @@ veSphereRenderer::~veSphereRenderer()
 
 void veSphereRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
-	if (!isNeedRendering())
-		return;
 	updateBuffer();
 
 	veRenderCommand rc;
@@ -135,6 +133,8 @@ void veSphereRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 
 void veSphereRenderer::draw(veRenderCommand &command)
 {
+	if (!isNeedRendering())
+		return;
 	if (!command.pass->apply(command))
 		return;
 	glBindVertexArray(_vao);

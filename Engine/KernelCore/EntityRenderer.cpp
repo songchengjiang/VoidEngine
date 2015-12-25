@@ -27,8 +27,6 @@ veEntityRenderer::~veEntityRenderer()
 
 void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
-	if (!isNeedRendering())
-		return;
 	if (true) {
 
 		veEntity *entity = static_cast<veEntity *>(renderableObj);
@@ -132,6 +130,8 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 
 void veEntityRenderer::draw(veRenderCommand &command)
 {
+	if (!isNeedRendering())
+		return;
 	MeshBuffers *bufs = static_cast<MeshBuffers *>(command.user3);
 	veMesh *mesh = static_cast<veMesh *>(command.user2);
 

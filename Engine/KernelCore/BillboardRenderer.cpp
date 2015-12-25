@@ -16,8 +16,6 @@ veBillboardRenderer::~veBillboardRenderer()
 
 void veBillboardRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
-	if (!isNeedRendering())
-		return;
 	if (_firstUpdate) {
 		_originBoundingBox = renderableObj->getBoundingBox();
 		_firstUpdate = false;

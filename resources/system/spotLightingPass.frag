@@ -53,7 +53,7 @@ float shadowing(vec3 vertex){
 	if (0.0 < u_lightShadowSoft){
 		float sum = 0.0;
 		for (int i = 0; i < SAMPLE_SIZE; ++i){                                                                                                                                                                 
-			sum += texture(u_shadowTex, vec3(shadowCoord.xy + SAMPLE_OFFSETS[i].xy * u_lightShadowSoftness, shadowCoord.z));                                                                                                              
+			sum += texture(u_shadowTex, vec3(shadowCoord.xy + SAMPLE_OFFSETS[i] * u_lightShadowSoftness, shadowCoord.z));                                                                                                              
 		}                                                                              
 		factor = sum / float(SAMPLE_SIZE);
 	}else{
@@ -88,5 +88,5 @@ void main(){
 	vec3 H = normalize(eyeDir + lightDir);
 	float NdotH = max(0.0, dot(normal, H));
 
-	fragColor = vec4(NdotL * u_lightColor.r, NdotL * u_lightColor.g, NdotL * u_lightColor.b, NdotL * NdotH) * u_lightIntensity * attenuation * shadowing(posInWorld.xyz);
+	fragColor = clamp(vec4(NdotL * u_lightColor.r, NdotL * u_lightColor.g, NdotL * u_lightColor.b, NdotL * NdotH) * u_lightIntensity * attenuation * shadowing(posInWorld.xyz), 0.0, 1.0);
 }
