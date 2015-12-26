@@ -7,6 +7,8 @@ class veCamera;
 class VE_EXPORT veLight : public veNode
 {
 	friend class veSceneManager;
+	friend class veShadowGenerator;
+	friend class veDeferredLightSceneIlluminator;
 public:
 
 	static const veVec2 DEFAULT_SHADOW_AREA;
@@ -40,7 +42,7 @@ public:
 	float getAttenuationRange() const { return _attenuationRange; }
 	float getAttenuationRangeInverse() const { return _attenuationRangeInverse; }
 
-	void shadowEnable(bool isEnabled) { _shadowEnabled = isEnabled; };
+	void shadowEnable(bool isEnabled) { _shadowEnabled = isEnabled; _needRefreshShadowTexture = true; _needUpdateShadowMap = true;};
 	bool isShadowEnabled() const { return _shadowEnabled; };
 	void setShadowResolution(const veVec2 &resolution);
 	const veVec2& getShadowResolution() const { return _shadowResolution; }
@@ -50,19 +52,19 @@ public:
 	float getShadowStrength() const { return _shadowStrength; }
 	void setShadowArea(const veVec2 &area) { _shadowArea = area; }
 	const veVec2& getShadowArea() const { return _shadowArea; }
-	void setUseSoftShadow(bool use) { _isUseSoftShadow = use; _needRefreshShadowTexture = true; }
+	void setUseSoftShadow(bool use) { _isUseSoftShadow = use; }
 	bool isUseSoftShadow() const { return _isUseSoftShadow; }
 	void setShadowSoftness(float softness) { _shadowSoftness = softness; }
 	float getShadowSoftness() const { return _shadowSoftness; }
-	veTexture* getShadowTexture() { return _shadowTexture.get(); }
-
-	void setLightMatrix(const veMat4 &mat) { _lightMatrix = mat; }
-	const veMat4& getLightMatrix() const { return _lightMatrix; }
 
 protected:
 	veLight(LightType type);
 
+	virtual void refreshUpdate(veSceneManager *sm, const veMat4 &transform) override;
 	virtual void updateSceneManager() override;
+	veTexture* getShadowTexture() { return _shadowTexture.get(); }
+	void setLightMatrix(const veMat4 &mat) { _lightMatrix = mat; }
+	const veMat4& getLightMatrix() const { return _lightMatrix; }
 
 protected:
 
@@ -85,6 +87,7 @@ protected:
 	VE_Ptr<veTexture>  _shadowTexture;
 	veMat4             _lightMatrix;
 	bool               _needRefreshShadowTexture;
+	bool               _needUpdateShadowMap;
 };
 
 class VE_EXPORT veDirectionalLight : public veLight

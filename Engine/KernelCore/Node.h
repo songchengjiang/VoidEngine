@@ -90,6 +90,7 @@ protected:
 
 	veNode();
 	void updateBoundingBox();
+	virtual void refreshUpdate(veSceneManager *sm, const veMat4 &transform);
 	virtual void updateSceneManager();
 
 protected:

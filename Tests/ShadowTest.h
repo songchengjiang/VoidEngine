@@ -44,6 +44,7 @@ public:
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
+			node->setMask(~LIGHT_MASK);
 			transer->setScale(veVec3(20.0f));
 			root->addChild(node);
 		}
@@ -58,34 +59,41 @@ public:
 			node->addComponent(transer);
 			transer->setPosition(veVec3(5.0f, 2.0f, 2.0f));
 			root->addChild(node);
-			node->setMask(~LIGHT_MASK);
 		}
 
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu-0"));
-			veNode *node = _sceneManager->createNode("node4");
+			veNode *node = _sceneManager->createNode("laoshuNode");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
-			veTransformer *transer = new veTransformer;
-			node->addComponent(transer);
+			//veTransformer *transer = new veTransformer;
+			//node->addComponent(transer);
 			//transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
-			transer->setScale(veVec3(0.3f));
+			//transer->setScale(veVec3(0.3f));
 			root->addChild(node);
 
 			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim"));
 			veAnimationPlayer* player = _sceneManager->createAnimationPlayer("player0", animationContainer);
-			player->start();
+			player->start(122, 141);
 			player->setLoopAnimation(true);
 			player->attachEntity(entity);
+
+			float radius = 7.0f;
+			node->setUpdateCallback([=](veSceneManager *sm, veNode *node) {
+				static float angle = 0.0f;
+				node->setMatrix(veMat4::rotation(veQuat(angle, veVec3::UNIT_Y)) * veMat4::translation(veVec3(0.0f, -10.0f, -radius)) * veMat4::rotation(veQuat(veMath::HALF_PI, veVec3::NEGATIVE_UNIT_Y)) * veMat4::scale(0.3f));
+				angle += sm->getDeltaTime();
+			});
 		}
 
 		{
 			veLight *spot = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/spot0.velight", "spot0"));
 			veTransformer *lightTranser = new veTransformer;
 			spot->addComponent(lightTranser);
-			spot->addComponent(new LightUpdater(5.0f, 5.0f));
 			spot->setIntensity(1.0f);
-			lightTranser->setPosition(veVec3(0.0f, 0.0f, 5.0f));
+			spot->setColor(veVec3(1.0f, 0.0f, 0.0f));
+			lightTranser->setPosition(veVec3(0.0f, 10.0f, 10.0f));
+			lightTranser->setRotation(veQuat(veMath::QUARTER_PI, veVec3::NEGATIVE_UNIT_X));
 
 			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "spot0-sphere"));
 			veNode *lightModel = _sceneManager->createNode("lightnode2");
@@ -176,7 +184,7 @@ public:
 			point->setMask(LIGHT_MASK);
 			point->shadowEnable(true);
 			point->setUseSoftShadow(true);
-			point->setShadowBias(0.0015f);
+			point->setShadowBias(0.0005f);
 			root->addChild(point);
 		}
 

@@ -26,6 +26,7 @@ veLight::veLight(LightType type)
 	, _shadowSoftness(0.1f)
 	, _isUseSoftShadow(false)
 	, _needRefreshShadowTexture(false)
+	, _needUpdateShadowMap(true)
 	, _lightMatrix(veMat4::IDENTITY)
 {
 }
@@ -61,6 +62,12 @@ void veLight::update(veSceneManager *sm, const veMat4 &transform)
 		}
 	}
 	veNode::update(sm, transform);
+}
+
+void veLight::refreshUpdate(veSceneManager *sm, const veMat4 &transform)
+{
+	_needUpdateShadowMap = true;
+	veNode::refreshUpdate(sm, transform);
 }
 
 void veLight::setShadowResolution(const veVec2 &resolution)

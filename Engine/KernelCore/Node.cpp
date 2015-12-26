@@ -181,6 +181,12 @@ void veNode::refresh()
 bool veNode::routeEvent(const veEvent &event, veSceneManager *sm)
 {
 	if (!_isVisible) return false;
+
+	if (_eventCallback != nullptr) {
+		if (_eventCallback(event, sm, this))
+			return true;
+	}
+
 	if (!_components.empty()){
 		for (auto &com : _components){
 			if (event.getEventType() & com->getEventFilter()){
@@ -201,11 +207,6 @@ bool veNode::routeEvent(const veEvent &event, veSceneManager *sm)
 		}
 	}
 
-	if (_eventCallback != nullptr) {
-		if (_eventCallback(event, sm, this))
-			return true;
-	}
-
 	return false;
 }
 
@@ -217,6 +218,10 @@ void veNode::update(veSceneManager *sm, const veMat4 &transform)
 		_overrideMask = true;
 	}
 
+	if (_updateCallback != nullptr) {
+		_updateCallback(sm, this);
+	}
+
 	if (!_components.empty()) {
 		for (auto &iter : _components) {
 			iter->update(this, sm);
@@ -224,7 +229,7 @@ void veNode::update(veSceneManager *sm, const veMat4 &transform)
 	}
 
 	if (_refresh)
-		_worldMatrix = transform * _matrix;
+		refreshUpdate(sm, transform);
 	if (!_children.empty()) {
 		for (auto &child : _children) {
 			if (_refresh) child->refresh();
@@ -236,10 +241,6 @@ void veNode::update(veSceneManager *sm, const veMat4 &transform)
 		for (auto &iter : _renderableObjects) {
 			iter->update(this, sm);
 		}
-	}
-
-	if (_updateCallback != nullptr) {
-		_updateCallback(sm, this);
 	}
 
 	updateBoundingBox();
@@ -286,6 +287,11 @@ void veNode::updateBoundingBox()
 			}
 		}
 	}
+}
+
+void veNode::refreshUpdate(veSceneManager *sm, const veMat4 &transform)
+{
+	_worldMatrix = transform * _matrix;
 }
 
 void veNode::updateSceneManager()

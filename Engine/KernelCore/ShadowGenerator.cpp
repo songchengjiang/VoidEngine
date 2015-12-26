@@ -60,64 +60,70 @@ void veShadowGenerator::shadowing()
 void veShadowGenerator::directionalLightShadowing(veLight *light)
 {
 	if (!light->isShadowEnabled()) return;
-	_shadowCamera->setMask(light->getMask());
-	_shadowCamera->setMatrix(light->getNodeToWorldMatrix());
-	_shadowCamera->setViewport({ 0, 0, int(light->getShadowResolution().x()), int(light->getShadowResolution().y()) });
-	auto halfShadowArea = light->getShadowArea() * 0.5f;
-	_shadowCamera->setProjectionMatrixAsOrtho(-halfShadowArea.x(), halfShadowArea.x(), -halfShadowArea.y(), halfShadowArea.y(), 0.1f, light->getAttenuationRange());
-	_shadowCamera->cull();
-	if (_shadowCamera->hasDynamicNodeVisibleInCamera()) {
+	if (light->_needUpdateShadowMap || light->isDynamicNode()) {
+		_shadowCamera->setMask(light->getMask());
+		_shadowCamera->setMatrix(light->getNodeToWorldMatrix());
+		_shadowCamera->setViewport({ 0, 0, int(light->getShadowResolution().x()), int(light->getShadowResolution().y()) });
+		auto halfShadowArea = light->getShadowArea() * 0.5f;
+		_shadowCamera->setProjectionMatrixAsOrtho(-halfShadowArea.x(), halfShadowArea.x(), -halfShadowArea.y(), halfShadowArea.y(), 0.1f, light->getAttenuationRange());
+		_shadowCamera->cull();
 		_shadowCamera->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, light->getShadowTexture());
 		_shadowCamera->fillRenderQueue();
 		_shadowCamera->sortRenderQueue();
 		_shadowCamera->renderScene();
 		_shadowCamera->clearRenderQueue();
+		light->setLightMatrix(LIGHT_BIAS_MAT * _shadowCamera->projectionMatrix() * _shadowCamera->viewMatrix());
+		if (light->_needUpdateShadowMap) light->_needUpdateShadowMap = false;
 	}
-	light->setLightMatrix(LIGHT_BIAS_MAT * _shadowCamera->projectionMatrix() * _shadowCamera->viewMatrix());
 }
 
 void veShadowGenerator::pointLightShadowing(veLight *light)
 {
 	if (!light->isShadowEnabled()) return;
-	_shadowCamera->setMask(light->getMask());
-	veMat4 lightWorldMat = light->getNodeToWorldMatrix();
-	veMat4 faceMats[6];
-	faceMats[0] = lightWorldMat * veMat4::lookAt(veVec3::ZERO, veVec3::UNIT_X, veVec3::NEGATIVE_UNIT_Y);
-	faceMats[1] = lightWorldMat * veMat4::lookAt(veVec3::ZERO, veVec3::NEGATIVE_UNIT_X, veVec3::NEGATIVE_UNIT_Y);
-	faceMats[2] = lightWorldMat * veMat4::lookAt(veVec3::ZERO, veVec3::UNIT_Y, veVec3::UNIT_Z);
-	faceMats[3] = lightWorldMat * veMat4::lookAt(veVec3::ZERO, veVec3::NEGATIVE_UNIT_Y, veVec3::NEGATIVE_UNIT_Z);
-	faceMats[4] = lightWorldMat * veMat4::lookAt(veVec3::ZERO, veVec3::UNIT_Z, veVec3::NEGATIVE_UNIT_Y);
-	faceMats[5] = lightWorldMat * veMat4::lookAt(veVec3::ZERO, veVec3::NEGATIVE_UNIT_Z, veVec3::NEGATIVE_UNIT_Y);
-	_shadowCamera->setViewport({ 0, 0, int(light->getShadowResolution().x()), int(light->getShadowResolution().y()) });
-	_shadowCamera->setProjectionMatrixAsPerspective(90.0f, 1.0f, 0.1f, light->getAttenuationRange());
-	for (unsigned short i = 0; i < 6; ++i) {
-		_shadowCamera->setMatrix(faceMats[i]);
-		_shadowCamera->cull();
-		if (_shadowCamera->hasDynamicNodeVisibleInCamera()) {
+	if (light->_needUpdateShadowMap || light->isDynamicNode()) {
+		_shadowCamera->setMask(light->getMask());
+		veMat4 lightWorldMat = light->getNodeToWorldMatrix();
+		veVec3 lightWorldPos = veVec3(lightWorldMat[0][3], lightWorldMat[1][3], lightWorldMat[2][3]);
+		veMat4 faceMats[6];
+		faceMats[0] = veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_X, veVec3::NEGATIVE_UNIT_Y);
+		faceMats[1] = veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_X, veVec3::NEGATIVE_UNIT_Y);
+		faceMats[2] = veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_Y, veVec3::UNIT_Z);
+		faceMats[3] = veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_Y, veVec3::NEGATIVE_UNIT_Z);
+		faceMats[4] = veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_Z, veVec3::NEGATIVE_UNIT_Y);
+		faceMats[5] = veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_Z, veVec3::NEGATIVE_UNIT_Y);
+		_shadowCamera->setViewport({ 0, 0, int(light->getShadowResolution().x()), int(light->getShadowResolution().y()) });
+		_shadowCamera->setProjectionMatrixAsPerspective(90.0f, 1.0f, 0.1f, light->getAttenuationRange());
+		for (unsigned short i = 0; i < 6; ++i) {
+			_shadowCamera->setMatrix(faceMats[i]);
+			_shadowCamera->cull();
 			_shadowCamera->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, light->getShadowTexture());
 			_shadowCamera->fillRenderQueue();
 			_shadowCamera->sortRenderQueue();
 			_shadowCamera->renderScene();
 			_shadowCamera->clearRenderQueue();
 		}
+		light->setLightMatrix(veMat4::translation(-lightWorldPos));
+		if (light->_needUpdateShadowMap) light->_needUpdateShadowMap = false;
 	}
-	light->setLightMatrix(light->getWorldToNodeMatrix());
 }
 
 void veShadowGenerator::spotLightShadowing(veLight *light)
 {
 	if (!light->isShadowEnabled()) return;
-	_shadowCamera->setMask(light->getMask());
-	_shadowCamera->setMatrix(light->getNodeToWorldMatrix());
-	_shadowCamera->setViewport({ 0, 0, int(light->getShadowResolution().x()), int(light->getShadowResolution().y()) });
-	_shadowCamera->setProjectionMatrixAsPerspective(2.0f * static_cast<veSpotLight *>(light)->getOuterAngle(), 1.0f, 0.1f, light->getAttenuationRange());
-	_shadowCamera->cull();
-	if (_shadowCamera->hasDynamicNodeVisibleInCamera()) {
-		_shadowCamera->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, light->getShadowTexture());
-		_shadowCamera->fillRenderQueue();
-		_shadowCamera->sortRenderQueue();
-		_shadowCamera->renderScene();
-		_shadowCamera->clearRenderQueue();
+	if (light->_needUpdateShadowMap || light->isDynamicNode()) {
+		_shadowCamera->setMask(light->getMask());
+		_shadowCamera->setMatrix(light->getNodeToWorldMatrix());
+		_shadowCamera->setViewport({ 0, 0, int(light->getShadowResolution().x()), int(light->getShadowResolution().y()) });
+		_shadowCamera->setProjectionMatrixAsPerspective(2.0f * static_cast<veSpotLight *>(light)->getOuterAngle(), 1.0f, 0.1f, light->getAttenuationRange());
+		_shadowCamera->cull();
+		if (light->_needUpdateShadowMap || _shadowCamera->hasDynamicNodeVisibleInCamera()) {
+			_shadowCamera->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, light->getShadowTexture());
+			_shadowCamera->fillRenderQueue();
+			_shadowCamera->sortRenderQueue();
+			_shadowCamera->renderScene();
+			_shadowCamera->clearRenderQueue();
+		}
+		light->setLightMatrix(LIGHT_BIAS_MAT * _shadowCamera->projectionMatrix() * _shadowCamera->viewMatrix());
+		if (light->_needUpdateShadowMap) light->_needUpdateShadowMap = false;
 	}
-	light->setLightMatrix(LIGHT_BIAS_MAT * _shadowCamera->projectionMatrix() * _shadowCamera->viewMatrix());
 }
