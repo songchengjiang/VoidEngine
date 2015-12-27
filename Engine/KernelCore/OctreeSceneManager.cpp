@@ -115,7 +115,7 @@ bool veOctreeSceneManager::isNodeVisibleInScene(veNode *node)
 {
 	veOctreeNode *ocNode = static_cast<veOctreeNode *>(node);
 	for (auto &cam : _cameraList) {
-		if (cam->isInScene()) {
+		if (true/*cam->isInScene()*/) {
 			veOctreeCamera *octreeCam = static_cast<veOctreeCamera *>(cam.get());
 			if (octreeCam->isNodeVisibleInCamera(ocNode))
 				return true;

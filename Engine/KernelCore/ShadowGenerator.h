@@ -17,6 +17,20 @@ public:
 
 private:
 
+	struct DirectionalShadow
+	{
+		VE_Ptr<veTexture> texture;
+		VE_Ptr<veCamera> camera;
+	};
+
+	struct OmnidirectionalShadow
+	{
+		VE_Ptr<veTexture> texture;
+		VE_Ptr<veCamera> cameras[6];
+	};
+
+private:
+
 	void directionalLightShadowing(veLight *light);
 	void pointLightShadowing(veLight *light);
 	void spotLightShadowing(veLight *light);
@@ -24,7 +38,8 @@ private:
 private:
 
 	veSceneManager *_sceneManager;
-	VE_Ptr<veCamera> _shadowCamera;
+	std::map<veLight*, DirectionalShadow>     _directionalShadowMapList;
+	std::map<veLight*, OmnidirectionalShadow> _omnidirectionalShadowMapList;
 };
 
 #endif

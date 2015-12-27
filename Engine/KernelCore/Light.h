@@ -30,7 +30,6 @@ public:
 	~veLight();
 
 	virtual void visit(veNodeVisitor &visitor) override;
-	virtual void update(veSceneManager *sm, const veMat4 &transform) override;
 	//virtual void render(veCamera *camera) override;
 
 	LightType getLightType() const { return _type; }
@@ -42,7 +41,7 @@ public:
 	float getAttenuationRange() const { return _attenuationRange; }
 	float getAttenuationRangeInverse() const { return _attenuationRangeInverse; }
 
-	void shadowEnable(bool isEnabled) { _shadowEnabled = isEnabled; _needRefreshShadowTexture = true; _needUpdateShadowMap = true;};
+	void shadowEnable(bool isEnabled) { _shadowEnabled = isEnabled; _needUpdateShadowMap = true;};
 	bool isShadowEnabled() const { return _shadowEnabled; };
 	void setShadowResolution(const veVec2 &resolution);
 	const veVec2& getShadowResolution() const { return _shadowResolution; }
@@ -63,6 +62,7 @@ protected:
 	virtual void refreshUpdate(veSceneManager *sm, const veMat4 &transform) override;
 	virtual void updateSceneManager() override;
 	veTexture* getShadowTexture() { return _shadowTexture.get(); }
+	void setShadowTexture(veTexture *texture) { _shadowTexture = texture; }
 	void setLightMatrix(const veMat4 &mat) { _lightMatrix = mat; }
 	const veMat4& getLightMatrix() const { return _lightMatrix; }
 
@@ -86,7 +86,6 @@ protected:
 
 	VE_Ptr<veTexture>  _shadowTexture;
 	veMat4             _lightMatrix;
-	bool               _needRefreshShadowTexture;
 	bool               _needUpdateShadowMap;
 };
 

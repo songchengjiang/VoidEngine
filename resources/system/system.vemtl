@@ -15,13 +15,13 @@
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "DirectionalShaderMap.vert",
+                                    "source": "DirectionalShadowMap.vert",
                                     "u_ModelViewProjectMat": "MVP_MATRIX",
                                     "u_BoneMates": "BONE_MATRIXES"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "DirectionalShaderMap.frag"
+                                    "source": "DirectionalShadowMap.frag"
                                 }
                             ]
                         }
@@ -42,12 +42,12 @@
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "DirectionalShaderMap.vert",
+                                    "source": "DirectionalShadowMap.vert",
                                     "u_ModelViewProjectMat": "MVP_MATRIX"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "DirectionalShaderMap.frag"
+                                    "source": "DirectionalShadowMap.frag"
                                 }
                             ]
                         }
@@ -68,14 +68,14 @@
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "OmnidirectionalShaderMap.vert",
+                                    "source": "OmnidirectionalShadowMap.vert",
                                     "u_ModelViewMat": "MV_MATRIX",
                                     "u_ModelViewProjectMat": "MVP_MATRIX",
                                     "u_BoneMates": "BONE_MATRIXES"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "OmnidirectionalShaderMap.frag"
+                                    "source": "OmnidirectionalShadowMap.frag"
                                 }
                             ]
                         }
@@ -96,40 +96,13 @@
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "OmnidirectionalShaderMap.vert",
+                                    "source": "OmnidirectionalShadowMap.vert",
                                     "u_ModelViewMat": "MV_MATRIX",
                                     "u_ModelViewProjectMat": "MVP_MATRIX"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "OmnidirectionalShaderMap.frag"
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ENTITY",
-            "techniques": [
-                {
-                    "name": "TECHNIQUE",
-                    "passes": [
-                        {
-                            "depthTest": true,
-                            "depthWrite": true,
-                            "cullFace": false,
-                            "shaders": [
-                                {
-                                    "type": "VERTEX_SHADER",
-                                    "source": "OmnidirectionalShaderMap.vert",
-                                    "u_ModelViewMat": "MV_MATRIX",
-                                    "u_ModelViewProjectMat": "MVP_MATRIX"
-                                },
-                                {
-                                    "type": "FRAGMENT_SHADER",
-                                    "source": "OmnidirectionalShaderMap.frag"
+                                    "source": "OmnidirectionalShadowMap.frag"
                                 }
                             ]
                         }
