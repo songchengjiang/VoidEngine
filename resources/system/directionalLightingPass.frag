@@ -74,5 +74,5 @@ void main(){
 	float NdotL = max(0.0, dot(normal, -u_lightDirection));
 	vec3 H = normalize(eyeDir - u_lightDirection);
 	float NdotH = max(0.0, dot(normal, H));
-	fragColor = clamp(vec4(NdotL * u_lightColor.r, NdotL * u_lightColor.g, NdotL * u_lightColor.b, NdotL * NdotH) * u_lightIntensity * shadowing(posInWorld.xyz), 0.0, 1.0);
+	fragColor = clamp(vec4(u_lightColor.r, u_lightColor.g, u_lightColor.b, NdotH) * NdotL * u_lightIntensity * shadowing(posInWorld.xyz), 0.0, 1.0);
 }

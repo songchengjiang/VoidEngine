@@ -104,7 +104,7 @@ public:
 			spot->setMask(LIGHT_MASK);
 			spot->shadowEnable(true);
 			spot->setUseSoftShadow(true);
-			spot->setShadowSoftness(0.005f);
+			spot->setShadowSoftness(0.002f);
 			spot->setShadowBias(0.0015f);
 			root->addChild(spot);
 		}
@@ -146,7 +146,7 @@ public:
 			directional->setMask(LIGHT_MASK);
 			directional->shadowEnable(true);
 			directional->setUseSoftShadow(true);
-			directional->setShadowSoftness(0.005f);
+			directional->setShadowSoftness(0.002f);
 			root->addChild(directional);
 		}
 
@@ -184,7 +184,8 @@ public:
 			point->setMask(LIGHT_MASK);
 			point->shadowEnable(true);
 			point->setUseSoftShadow(true);
-			point->setShadowBias(0.0005f);
+			point->setShadowSoftness(0.05f);
+			point->setShadowBias(0.001f);
 			root->addChild(point);
 		}
 
