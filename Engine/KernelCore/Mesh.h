@@ -98,7 +98,7 @@ public:
 	void setAttachedNode(veMeshNode *meshNode) { _meshNode = meshNode; }
 	veMeshNode* getAttachedNode() { return _meshNode; }
 
-	virtual void setMaterial(veMaterial *material) { _material = material; }
+	void setMaterial(veMaterial *material) { _material = material; }
 	veMaterial* getMaterial() { return _material.get(); }
 
 	void caculateBoundingBox();

@@ -37,6 +37,9 @@
     <Filter Include="ShadowTest">
       <UniqueIdentifier>{3f39c563-5625-405e-84e9-9211beba572f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="IBLTest">
+      <UniqueIdentifier>{20347224-8cca-4af8-8e7c-b88b42ba473a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Tests\CameraTest.h">
@@ -76,6 +79,9 @@
     <ClInclude Include="..\..\Tests\BaseTest.h" />
     <ClInclude Include="..\..\Tests\ShadowTest.h">
       <Filter>ShadowTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tests\IBLTest.h">
+      <Filter>IBLTest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,43 @@
+{
+    "version": "1.0",
+    "name": "IBL.vemtl",
+    "materials": [
+        {
+            "name": "IBL_MAT",
+            "techniques": [
+                {
+                      "name": "IBL_TECH",
+                      "passes": [
+                          {
+                              "depthTest": true,
+                              "depthWrite": true,
+                              "cullFace": true,
+                              "shaders": [
+                                  {
+                                      "type": "VERTEX_SHADER",
+                                      "source": "IBL.vert",
+                                      "u_ModelViewProjectMat": "MVP_MATRIX",
+                                      "u_ModelMat": "M_MATRIX",
+                                      "u_NormalWorldMat": "NORMAL_WORLD_MATRIX"
+                                  },
+                                  {
+                                      "type": "FRAGMENT_SHADER",
+                                      "source": "IBL.frag",
+                                      "u_IBLMap": 0
+                                  }
+                              ],
+                              "textureUnits": [
+                                  {
+                                      "name": "IBL_Florence",
+                                      "source": "textures/IBL_Florence.exr",
+                                      "type": "TEX_2D",
+                                      "wrap": "CLAMP"                    
+                                  }
+                              ]  
+                          }
+                      ]
+                  }        
+            ]
+        }
+    ]
+}
