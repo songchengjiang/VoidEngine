@@ -18,5 +18,5 @@ void main(){
 	vec3 r = normalize(reflect(normalize(-v_viewDir), normal));
 	vec2 specCoords = caculateIBLUV(r);
 
-	fragColor = texture(u_IBLEnvMap, coords) * 0.4 + texture(u_IBLDiffMap, coords) * 0.6 + texture(u_IBLSpecMap, specCoords) * 0.4;
+	fragColor = texture(u_IBLEnvMap, coords) * 0.2 + texture(u_IBLDiffMap, coords) * 0.6 + texture(u_IBLSpecMap, specCoords) * 0.2;
 }
