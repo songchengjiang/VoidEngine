@@ -290,6 +290,10 @@ void veUniform::apply(const veRenderCommand &command)
 					}
 					glUniformMatrix4fv(_location, 60, GL_FALSE, boneMates);
 				}
+				else if (_autoBindingValue == CAMERA_WORLD_POS) {
+					veMat4 cameraInWorld = command.camera->getNodeToWorldMatrix();
+					glUniform3f(_location, cameraInWorld[0][3], cameraInWorld[1][3], cameraInWorld[2][3]);
+				}
 			}
 			//uniform->setValue(values);
 		}

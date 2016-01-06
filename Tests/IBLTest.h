@@ -9,7 +9,7 @@ public:
 		auto IBLMats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "materials/IBL.vemtl", "IBL"));
 		veNode *root = _sceneManager->createNode("root");
 		{
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "sphere-0"));
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "sphere-0"));
 			veNode *node = _sceneManager->createNode("node");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);

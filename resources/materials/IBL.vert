@@ -17,12 +17,17 @@ layout (location = ATTR_BITANGENT) in vec3 bitangent;
 #endif
                   
 uniform mat4 u_ModelViewProjectMat;   
-uniform mat4 u_ModelMat;   
-uniform mat3 u_NormalWorldMat;     
+uniform mat4 u_ModelMat;
+uniform mat3 u_NormalWorldMat;
+uniform vec3 u_cameraPos; 
+
+out vec3 v_viewDir;
 out vec3 v_worldNormal;
                     
 void main()                                                 
-{                             
+{   
+	vec4 worldVertex = u_ModelMat * vec4(position, 1.0);
+	v_viewDir = u_cameraPos - worldVertex.xyz;
 	v_worldNormal = u_NormalWorldMat * normal;
 	gl_Position = u_ModelViewProjectMat * vec4(position, 1.0);
 }

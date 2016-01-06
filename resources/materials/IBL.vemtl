@@ -18,21 +18,39 @@
                                       "source": "IBL.vert",
                                       "u_ModelViewProjectMat": "MVP_MATRIX",
                                       "u_ModelMat": "M_MATRIX",
-                                      "u_NormalWorldMat": "NORMAL_WORLD_MATRIX"
+                                      "u_NormalWorldMat": "NORMAL_WORLD_MATRIX",
+                                      "u_cameraPos" : "CAMERA_WORLD_POS"
                                   },
                                   {
                                       "type": "FRAGMENT_SHADER",
                                       "source": "IBL.frag",
-                                      "u_IBLMap": 0
+                                      "u_IBLEnvMap" : 0,
+                                      "u_IBLDiffMap": 1,
+                                      "u_IBLSpecMap": 2
                                   }
                               ],
                               "textureUnits": [
                                   {
-                                      "name": "IBL_Florence",
-                                      "source": "textures/IBL_Florence.exr",
+                                      "name": "IBL_Florence_env",
+                                      "source": "textures/IBL_Florence_env.exr",
+                                      "texType": "AMBIENT_TEXTURE",
                                       "type": "TEX_2D",
                                       "wrap": "CLAMP"                    
-                                  }
+                                  },
+                                  {
+                                      "name": "IBL_Florence_diff",
+                                      "source": "textures/IBL_Florence_diff.exr",
+                                      "texType": "DIFFUSE_TEXTURE",
+                                      "type": "TEX_2D",
+                                      "wrap": "CLAMP"                    
+                                  },
+                                  {
+                                      "name": "IBL_Florence_spec",
+                                      "source": "textures/IBL_Florence_spec.exr",
+                                      "texType": "SPECULAR_TEXTURE",
+                                      "type": "TEX_2D",
+                                      "wrap": "CLAMP"                    
+                                  }                                  
                               ]  
                           }
                       ]

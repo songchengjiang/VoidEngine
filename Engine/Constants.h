@@ -234,6 +234,7 @@ static const std::string SCREEN_WIDTH  = "SCREEN_WIDTH";
 static const std::string SCREEN_HEIGHT = "SCREEN_HEIGHT";
 static const std::string SIM_TIME      = "SIM_TIME";
 static const std::string SIM_SIN_TIME  = "SIM_SIN_TIME";
+static const std::string CAMERA_WORLD_POS  = "CAMERA_WORLD_POS";
 
 static const std::string MODEL_EXT = ".vem";
 static const std::string MATERIAL_EXT = ".vemtl";
