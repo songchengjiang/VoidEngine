@@ -124,7 +124,7 @@ public:
 	void setSource(const std::string &filePath);
 	void setSource(const char *str);
 
-	void setShaderHeader(Type type, const std::string &sHeader);
+	void setShaderHeader(const std::string &sHeader);
 
 private:
 
@@ -136,7 +136,7 @@ private:
 	Type _type;
 	GLuint _shader;
 	std::string _source;
-	std::map<Type, std::string> _shaderHeaders;
+	std::string _shaderHeaders;
 	bool _isCompiled;
 };
 #endif

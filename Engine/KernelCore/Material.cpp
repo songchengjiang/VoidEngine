@@ -1,6 +1,5 @@
 #include "Material.h"
 #include "FrameBufferObject.h"
-#include "ShaderDefinationGenerator.h"
 #include "Light.h"
 #include "SceneManager.h"
 #include "TextureManager.h"
@@ -185,9 +184,7 @@ void vePass::applyProgram(const veRenderCommand &command)
 		}
 		if (!_program)
 			_program = glCreateProgram();
-		ShaderDefinatiosGenerator sdg(command);
 		for (auto &iter : _shaders) {
-			iter.second->setShaderHeader(iter.first, sdg.getDefinations(iter.first));
 			GLuint id = iter.second->compile();
 			glAttachShader(_program, id);
 		}

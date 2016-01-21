@@ -39,10 +39,8 @@ void updateBonePositionAndNormal(out vec4 pos, out vec3 norm)
 	norm = (boneMat * vec4(normal, 0.0)).xyz;
 }
 
-#ifdef VE_USE_TRANSFORMFEEDBACK
 out vec3 tf_position;
 out vec3 tf_normal;
-#endif
 
 #endif
 
@@ -56,10 +54,8 @@ void main()
 	vec3 finalNorm;
 #ifdef VE_USE_BONES
 	updateBonePositionAndNormal(finalPos, finalNorm);
-#ifdef VE_USE_TRANSFORMFEEDBACK
 	tf_position = finalPos.xyz;
 	tf_normal = finalNorm;
-#endif
 #else	  
 	finalPos = vec4(position, 1.0);
 	finalNorm = normal;

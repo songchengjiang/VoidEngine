@@ -588,6 +588,8 @@ void veUniform::setName(const std::string &name)
 	_maxReLocation = 0;
 }
 
+//////////////////////////////////////////////////////////////////////////
+
 veShader::veShader(Type type, const std::string &filePath)
 	: USE_VE_PTR_INIT
 	, _type(type)
@@ -633,17 +635,52 @@ void veShader::setSource(const char *str)
 	_isCompiled = false;
 }
 
-void veShader::setShaderHeader(Type type, const std::string &sHeader)
+void veShader::setShaderHeader(const std::string &sHeader)
 {
-	_shaderHeaders[type] = sHeader;
+	_shaderHeaders = sHeader;
 }
 
 GLuint veShader::compile()
 {
+	std::string preDefination;
+	char str[16];
+#if (VE_PLATFORM == VE_PLATFORM_WIN32) || (VE_PLATFORM == VE_PLATFORM_MAC)
+	sprintf(str, " %d%d0\n", VE_GL_VERSION_MAJOR, VE_GL_VERSION_MINOR);
+#else
+	sprintf(str, " %d%d0 es\n", VE_GLSL_ES_VERSION_MAJOR, VE_GLSL_ES_VERSION_MINOR);
+#endif
+	preDefination += SHADER_VERSION + std::string(str);
+
+#if VE_PLATFORM == VE_PLATFORM_ANDROID
+	if (type == veShader::FRAGMENT_SHADER) {
+		preDefination += PRECISION_DEFINE_FLOAT + std::string("\n");
+		preDefination += PRECISION_DEFINE_SAMPLER2DARRAYSHADOW + std::string("\n");
+	}
+#endif
+
+	preDefination += SHADER_DEFINE_PLATFORM_IOS;
+	preDefination += SHADER_DEFINE_PLATFORM_ANDROID;
+	preDefination += SHADER_DEFINE_PLATFORM_WIN32;
+	preDefination += SHADER_DEFINE_PLATFORM_LINUX;
+	preDefination += SHADER_DEFINE_PLATFORM_MAC;
+
+#if VE_PLATFORM == VE_PLATFORM_IOS
+	preDefination += std::string("#define VE_PLATFORM VE_PLATFORM_IOS\n");
+#elif VE_PLATFORM == VE_PLATFORM_ANDROID
+	preDefination += std::string("#define VE_PLATFORM VE_PLATFORM_ANDROID\n");
+#elif VE_PLATFORM == VE_PLATFORM_WIN32
+	preDefination += std::string("#define VE_PLATFORM VE_PLATFORM_WIN32\n");
+#elif VE_PLATFORM == VE_PLATFORM_LINUX
+	preDefination += std::string("#define VE_PLATFORM VE_PLATFORM_LINUX\n");
+#elif VE_PLATFORM == VE_PLATFORM_MAC
+	preDefination += std::string("#define VE_PLATFORM VE_PLATFORM_MAC\n");
+#endif
+
+
 	if (!_shader)
 		_shader = glCreateShader(_type);
 
-	std::string source = _shaderHeaders[_type] + _source;
+	std::string source = preDefination + _shaderHeaders + _source;
 	char *buffer = new char[source.size() + 1];
 	strcpy(buffer, source.c_str());
 	glShaderSource(_shader, 1, &buffer, nullptr);
