@@ -133,6 +133,7 @@ void veSurface::initDefaultMaterial()
 	}
 
 	veShader *vShader = getVertexShader();
+	vShader->setShaderHeader("#define ATTR_POSITION 0\n#define ATTR_NORMAL 1\n#define ATTR_TEXTURE_COORD0 2\n");
 	veShader *fShader = getFragmentShader();
 	pass->setShader(vShader);
 	pass->setShader(fShader);

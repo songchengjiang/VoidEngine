@@ -23,8 +23,6 @@ public:
 	{}
 
 	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override {
-		if (!isNeedRendering())
-			return;
 		if (!vao) {
 			glGenVertexArrays(1, &vao);
 			glGenBuffers(1, &vbo);
@@ -62,6 +60,8 @@ public:
 	}
 
 	virtual void draw(veRenderCommand &command) override {
+		if (!isNeedRendering())
+			return;
 		command.pass->apply(command);
 		glBindVertexArray(vao);
 		glDrawArrays(GL_LINES, 0, drawCount);

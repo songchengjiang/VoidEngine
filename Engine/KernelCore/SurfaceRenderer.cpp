@@ -37,8 +37,6 @@ veSurfaceRenderer::~veSurfaceRenderer()
 
 void veSurfaceRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
-	if (!isNeedRendering())
-		return;
 	updateBuffer();
 
 	veRenderCommand rc;
