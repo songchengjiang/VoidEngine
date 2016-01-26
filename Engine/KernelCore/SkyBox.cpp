@@ -27,8 +27,7 @@ public:
 		rc.renderableObj = renderableObj;
 		rc.camera = camera;
 		rc.sceneManager = camera->getSceneManager();
-		rc.renderer = this;
-
+		rc.renderer = this;	
 		auto materials = _skyBox->getMaterialArray();
 		for (unsigned int mat = 0; mat < materials->getMaterialNum(); ++mat) {
 			auto material = materials->getMaterial(mat);
@@ -37,7 +36,8 @@ public:
 				if (camera->getMask() & pass->drawMask()) {
 					rc.pass = pass;
 					pass->visit(rc);
-					camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_BACKGROUND, rc);
+					//camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_BACKGROUND, rc);
+					draw(rc);
 				}
 			}
 		}

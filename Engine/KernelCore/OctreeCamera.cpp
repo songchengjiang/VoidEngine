@@ -2,6 +2,7 @@
 #include "OctreeRenderQueue.h"
 #include "OctreeNode.h"
 #include "Octree.h"
+#include "RenderPipeline.h"
 #include <algorithm>
 
 veOctreeCamera::veOctreeCamera(veSceneManager *sm)
@@ -23,20 +24,20 @@ veOctreeCamera::~veOctreeCamera()
 
 }
 
-void veOctreeCamera::cull()
+void veOctreeCamera::cull(veRenderPipeline *renderPipeline)
 {
 	std::unique_lock<std::mutex> lock(_visitMutex);
-	if (!_visibleOctreeNodeList.empty())
-		_visibleOctreeNodeList.clear();
-	traverseOctree(_octree);
+	if (!_visibleNodeList.empty())
+		_visibleNodeList.clear();
+	traverseOctree(_octree, renderPipeline);
 }
 
 void veOctreeCamera::fillRenderQueue()
 {
 	std::unique_lock<std::mutex> lock(_visitMutex);
-	if (!_visibleOctreeNodeList.empty()) {
+	if (!_visibleNodeList.empty()) {
 		{
-			for (auto &iter : _visibleOctreeNodeList) {
+			for (auto &iter : _visibleNodeList) {
 				for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
 					if (iter->getRenderableObject(i)->isVisible())
 						iter->getRenderableObject(i)->render(iter, this);
@@ -49,9 +50,9 @@ void veOctreeCamera::fillRenderQueue()
 bool veOctreeCamera::hasDynamicNodeVisibleInCamera()
 {
 	std::unique_lock<std::mutex> lock(_visitMutex);
-	if (!_visibleOctreeNodeList.empty()) {
+	if (!_visibleNodeList.empty()) {
 		{
-			for (auto &iter : _visibleOctreeNodeList) {
+			for (auto &iter : _visibleNodeList) {
 				if (iter->isDynamicNode())
 					return true;
 			}
@@ -63,13 +64,13 @@ bool veOctreeCamera::hasDynamicNodeVisibleInCamera()
 bool veOctreeCamera::isNodeVisibleInCamera(veOctreeNode *node)
 {
 	std::unique_lock<std::mutex> lock(_visitMutex);
-	auto iter = std::find(_visibleOctreeNodeList.begin(), _visibleOctreeNodeList.end(), node);
-	if (iter != _visibleOctreeNodeList.end())
+	auto iter = std::find(_visibleNodeList.begin(), _visibleNodeList.end(), node);
+	if (iter != _visibleNodeList.end())
 		return true;
 	return false;
 }
 
-void veOctreeCamera::traverseOctree(veOctree *octant)
+void veOctreeCamera::traverseOctree(veOctree *octant, veRenderPipeline *renderPipeline)
 {
 	if (isOutOfFrustum(octant->boundingBox)) {
 		return;
@@ -81,7 +82,8 @@ void veOctreeCamera::traverseOctree(veOctree *octant)
 			if (iter->isVisible() && (iter->getMask() & getMask())) {
 				if (!isOutOfFrustum(iter->getBoundingBox())) {
 					//std::unique_lock<std::mutex> lock(_visitMutex);
-					_visibleOctreeNodeList.push_back(static_cast<veOctreeNode *>(iter));
+					//_visibleNodeList.push_back(iter);
+					renderPipeline->pushVisibleNode(this, iter);
 				}
 			}
 		}
@@ -89,7 +91,7 @@ void veOctreeCamera::traverseOctree(veOctree *octant)
 
 	for (unsigned int i = 0; i < 8; ++i) {
 		if (octant->children[i]) {
-			traverseOctree(octant->children[i]);
+			traverseOctree(octant->children[i], renderPipeline);
 		}
 	}
 }

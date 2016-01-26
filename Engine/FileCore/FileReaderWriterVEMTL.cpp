@@ -169,10 +169,6 @@ private:
 
 		if (!shader) return;
 
-		if (shaderVal.HasMember(DEFINATION_KEY.c_str())) {
-			shader->setShaderHeader(shaderVal[DEFINATION_KEY.c_str()].GetString());
-		}
-
 		auto member = shaderVal.MemberBegin();
 		for (; member != shaderVal.MemberEnd(); ++member){
 			if (member->name.GetString() == TYPE_KEY){
@@ -191,7 +187,9 @@ private:
 				else {
 					shader->setSource(_fileFolder + source);
 				}
-			}else{
+			}else if (member->name.GetString() == DEFINATION_KEY) {
+				shader->setShaderHeader(member->value.GetString());
+			}else {
 				veUniform *uniform = new veUniform(member->name.GetString());
 				const Value &values = member->value;
 				if (values.IsInt()){

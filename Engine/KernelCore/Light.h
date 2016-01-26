@@ -9,6 +9,7 @@ class VE_EXPORT veLight : public veNode
 	friend class veSceneManager;
 	friend class veShadowGenerator;
 	friend class veDeferredLightSceneIlluminator;
+	friend class veDeferredRenderPipeline;
 public:
 
 	static const veVec2 DEFAULT_SHADOW_AREA;

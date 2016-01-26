@@ -13,6 +13,7 @@
 #include "SkyBox.h"
 #include "PostProcesser.h"
 #include "ShadowGenerator.h"
+#include "RenderPipeline.h"
 
 #include <unordered_map>
 
@@ -22,6 +23,8 @@ class veCamera;
 class veLight;
 class veSurface;
 class veEntity;
+class veSphere;
+class veCone;
 class veFont;
 class veText;
 class veImage;
@@ -52,6 +55,8 @@ public:
 	virtual veRay* createRay(const veVec3 &start, const veVec3 &end);
 	virtual veCamera* createCamera(const std::string &name, const veViewport &vp = { 0, 0, 0, 0 }) = 0;
 	virtual veEntity* createEntity(const std::string &name);
+	virtual veSphere* createSphere(const std::string &name);
+	virtual veCone* createCone(const std::string &name);
 	virtual veSkyBox* createSkyBox(const std::string &name, veReal size = 500.0f);
 	virtual veAnimationPlayer* createAnimationPlayer(const std::string &name, veAnimationContainer *container);
 	virtual veTexture* createTexture(const std::string &name, veTexture::TextureType texType = veTexture::TEXTURE_2D);
@@ -66,7 +71,9 @@ public:
 	const veCameraList& getCameraList() const { return _cameraList; }
 	const veLightListMap& getLightListMap() const { return _lightListMap; }
 	void setSkyBox(veSkyBox *skybox) { _skyBox = skybox; needReload(); }
-	const veSkyBox* getSkyBox() const { return _skyBox.get(); }
+	veSkyBox* getSkyBox() const { return _skyBox.get(); }
+	void setAmbientColor(const veVec3 &color) { _ambient = color; }
+	const veVec3& getAmbientColor() const { return _ambient; }
 
 	veBaseManager* getManager(const std::string &mgType);
 	veMaterialArray* getSystemMaterial() { return _systemMaterials.get(); }
@@ -87,6 +94,7 @@ public:
 
 	void startThreading();
 	void stopThreading();
+	void enqueueTaskToThread(const veThreadPool::TaskCallBack& callback, void* callbackParam, const std::function<void()> &func);
 
 protected:
 
@@ -105,6 +113,8 @@ protected:
 	veLightListMap _lightListMap;
 	vePostProcesserList _postProcesserList;
 	VE_Ptr<veFrameBufferObject> _postProcesserFBO;
+	veVec3                      _ambient;
+	VE_Ptr<veRenderPipeline>    _renderPipeline;
 
 	VE_Ptr<veCamera> _mainCamera;
 	std::unordered_map<std::string, veBaseManager *> _managerList;

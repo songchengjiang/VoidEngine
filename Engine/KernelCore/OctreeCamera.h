@@ -12,7 +12,7 @@ public:
 	veOctreeCamera(veSceneManager *sm, const veViewport &vp);
 	~veOctreeCamera();
 
-	virtual void cull() override;
+	virtual void cull(veRenderPipeline *renderPipeline) override;
 	virtual void fillRenderQueue() override;
 	virtual bool hasDynamicNodeVisibleInCamera() override;
 
@@ -22,11 +22,10 @@ public:
 
 protected:
 
-	void traverseOctree(veOctree *octant);
+	void traverseOctree(veOctree *octant, veRenderPipeline *renderPipeline);
 
 protected:
 
-	std::vector<veOctreeNode *> _visibleOctreeNodeList;
 	std::mutex _visitMutex;
 	veOctree *_octree;
 };

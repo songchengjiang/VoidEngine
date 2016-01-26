@@ -307,6 +307,8 @@ void veUniform::apply(const veRenderCommand &command)
 
 void veUniform::setValue(int val)
 {
+	if (_values.size() == 1 && int(_values[0]) == val)
+		return;
 	_type = Type::INT;
 	_values.resize(1);
 	_values[0] = val;
@@ -318,6 +320,8 @@ void veUniform::setValue(int val)
 
 void veUniform::setValue(bool val)
 {
+	if (_values.size() == 1 && _values[0] == veReal(val))
+		return;
 	_type = Type::BOOL;
 	_values.resize(1);
 	_values[0] = val;
@@ -329,6 +333,8 @@ void veUniform::setValue(bool val)
 
 void veUniform::setValue(veReal val)
 {
+	if (_values.size() == 1 && _values[0] == val)
+		return;
 	_type = Type::REAL;
 	_values.resize(1);
 	_values[0] = val;
@@ -350,6 +356,8 @@ void veUniform::setValue(const std::string &val)
 
 void veUniform::setValue(const veVec2& val)
 {
+	if (_values.size() == 2 && _values[0] == val.x() && _values[1] == val.y())
+		return;
 	_type = Type::VEC2;
 	_values.resize(2);
 	_values[0] = val.x();
@@ -362,6 +370,8 @@ void veUniform::setValue(const veVec2& val)
 
 void veUniform::setValue(const veVec3& val)
 {
+	if (_values.size() == 3 && _values[0] == val.x() && _values[1] == val.y() && _values[2] == val.z())
+		return;
 	_type = Type::VEC3;
 	_values.resize(3);
 	_values[0] = val.x();
@@ -375,6 +385,8 @@ void veUniform::setValue(const veVec3& val)
 
 void veUniform::setValue(const veVec4& val)
 {
+	if (_values.size() == 4 && _values[0] == val.x() && _values[1] == val.y() && _values[2] == val.z() && _values[3] == val.w())
+		return;
 	_type = Type::VEC4;
 	_values.resize(4);
 	_values[0] = val.x();
@@ -389,6 +401,8 @@ void veUniform::setValue(const veVec4& val)
 
 void veUniform::setValue(const veMat3& val)
 {
+	if (_values.size() == 9 && memcmp(&_values[0], val[0], 9) == 0)
+		return;
 	_type = Type::MAT3;
 	_values.resize(9);
 	_values[0] = val[0][0]; _values[3] = val[0][1]; _values[6] = val[0][2];
@@ -402,6 +416,8 @@ void veUniform::setValue(const veMat3& val)
 
 void veUniform::setValue(const veMat4& val)
 {
+	if (_values.size() == 16 && memcmp(&_values[0], val[0], 16) == 0)
+		return;
 	_type = Type::MAT4;
 	_values.resize(16);
 	_values[0] = val[0][0]; _values[4] = val[0][1]; _values[8]  = val[0][2]; _values[12] = val[0][3];
@@ -416,6 +432,8 @@ void veUniform::setValue(const veMat4& val)
 
 void veUniform::setValue(const veRealArray &val)
 {
+	if (_values.size() == val.size() && memcmp(&_values[0], &val[0], _values.size()) == 0)
+		return;
 	_type = Type::REAL_ARRAY;
 	_values = val;
 	if (0 <= _location)
@@ -426,6 +444,8 @@ void veUniform::setValue(const veRealArray &val)
 
 void veUniform::setValue(const veVec2 *val, unsigned int n)
 {
+	if (_values.size() == 2 * n && memcmp(&_values[0], &val[0], _values.size()) == 0)
+		return;
 	_type = Type::VEC2_ARRAY;
 	_values.resize(2 * n);
 	for (unsigned int i = 0; i < n; ++i) {
@@ -440,6 +460,8 @@ void veUniform::setValue(const veVec2 *val, unsigned int n)
 
 void veUniform::setValue(const veVec3 *val, unsigned int n)
 {
+	if (_values.size() == 3 * n && memcmp(&_values[0], &val[0], _values.size()) == 0)
+		return;
 	_type = Type::VEC3_ARRAY;
 	_values.resize(3 * n);
 	for (unsigned int i = 0; i < n; ++i) {
@@ -455,6 +477,8 @@ void veUniform::setValue(const veVec3 *val, unsigned int n)
 
 void veUniform::setValue(const veVec4 *val, unsigned int n)
 {
+	if (_values.size() == 4 * n && memcmp(&_values[0], &val[0], _values.size()) == 0)
+		return;
 	_type = Type::VEC4_ARRAY;
 	_values.resize(4 * n);
 	for (unsigned int i = 0; i < n; ++i) {
@@ -471,6 +495,8 @@ void veUniform::setValue(const veVec4 *val, unsigned int n)
 
 void veUniform::setValue(const veMat3 *val, unsigned int n)
 {
+	if (_values.size() == 9 * n && memcmp(&_values[0], &val[0], _values.size()) == 0)
+		return;
 	_type = Type::MAT3_ARRAY;
 	_values.resize(9 * n);
 	for (unsigned int i = 0; i < n; ++i) {
@@ -486,6 +512,8 @@ void veUniform::setValue(const veMat3 *val, unsigned int n)
 
 void veUniform::setValue(const veMat4 *val, unsigned int n)
 {
+	if (_values.size() == 16 * n && memcmp(&_values[0], &val[0], _values.size()) == 0)
+		return;
 	_type = Type::MAT4_ARRAY;
 	_values.resize(16 * n);
 	for (unsigned int i = 0; i < n; ++i) {

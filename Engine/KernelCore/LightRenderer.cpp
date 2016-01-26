@@ -5,16 +5,16 @@
 #define OCCLUSION_PASS 0
 #define RENDERING_PASS 1
 
-veDirectionalLightRenderer::veDirectionalLightRenderer()
+veScreenLightRenderer::veScreenLightRenderer()
 {
 }
 
-veDirectionalLightRenderer::~veDirectionalLightRenderer()
+veScreenLightRenderer::~veScreenLightRenderer()
 {
 
 }
 
-void veDirectionalLightRenderer::immediatelyRender(veNode *node, vePass *pass, veCamera *camera) {
+void veScreenLightRenderer::immediatelyRender(veNode *node, vePass *pass, veCamera *camera) {
 	updateBuffer();
 	veRenderCommand rc;
 	rc.mask = 0xffffffff;
@@ -26,17 +26,17 @@ void veDirectionalLightRenderer::immediatelyRender(veNode *node, vePass *pass, v
 	draw(rc);
 }
 
-vePointLightRenderer::vePointLightRenderer()
+veSphereLightRenderer::veSphereLightRenderer()
 	: _lightVolumeScale(veMat4::IDENTITY)
 {
 }
 
-vePointLightRenderer::~vePointLightRenderer()
+veSphereLightRenderer::~veSphereLightRenderer()
 {
 
 }
 
-void vePointLightRenderer::immediatelyRender(veNode *node, vePass *pass, veCamera *camera) {
+void veSphereLightRenderer::immediatelyRender(veNode *node, vePass *pass, veCamera *camera) {
 	updateBuffer();
 	veRenderCommand rc;
 	rc.mask = 0xffffffff;
@@ -48,17 +48,17 @@ void vePointLightRenderer::immediatelyRender(veNode *node, vePass *pass, veCamer
 	draw(rc);
 }
 
-veSpotLightRenderer::veSpotLightRenderer()
+veConeLightRenderer::veConeLightRenderer()
 	: _lightVolumeScale(veMat4::IDENTITY)
 {
 }
 
-veSpotLightRenderer::~veSpotLightRenderer()
+veConeLightRenderer::~veConeLightRenderer()
 {
 
 }
 
-void veSpotLightRenderer::immediatelyRender(veNode *node, vePass *pass, veCamera *camera) {
+void veConeLightRenderer::immediatelyRender(veNode *node, vePass *pass, veCamera *camera) {
 	updateBuffer();
 	veRenderCommand rc;
 	rc.mask = 0xffffffff;

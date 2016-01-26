@@ -1,4 +1,4 @@
-layout (location = ATTR_POSITION) in vec3 position;                     
+layout (location = ATTR_POSITION) in vec3 position;
 layout (location = ATTR_NORMAL) in vec3 normal;
 #ifdef ATTR_TEXTURE_COORD0
 layout (location = ATTR_TEXTURE_COORD0) in vec2 texcoord0; 
@@ -23,11 +23,10 @@ layout (location = ATTR_BONE_WEIGHTS) in vec4 boneWeights;
 #endif 
                  
 uniform mat4 u_ModelViewProjectMat;
-uniform mat4 u_ModelViewMat;                       
-uniform mat3 u_NormalMat;
+uniform mat3 u_NormalWorldMat;
 #ifdef VE_USE_BONES
 uniform mat4 u_BoneMates[60];
-void updateBonePositionAndNormal(out vec4 pos, out vec3 norm)
+void updateBonePositionAndNormal(out vec4 pos, out vec3 norm, out vec3 tan, out vec3 bitan)
 {
 	vec4 weights = boneWeights;
 	weights.w = 1.0 - dot(weights.xyz, vec3(1.0));
@@ -37,33 +36,46 @@ void updateBonePositionAndNormal(out vec4 pos, out vec3 norm)
 	boneMat += u_BoneMates[int(boneIndices.w)] * weights.w;
 	pos = boneMat * vec4(position, 1.0);
 	norm = (boneMat * vec4(normal, 0.0)).xyz;
+#ifdef VE_USE_NROMAL_MAPPING
+	tan = (boneMat * vec4(tangent, 0.0)).xyz;
+	bitan = (boneMat * vec4(bitangent, 0.0)).xyz;
+#endif
 }
 
 out vec3 tf_position;
 out vec3 tf_normal;
 
 #endif
-
-out vec4 v_position;          
-out vec4 v_normalAndepth;                   
+   
+out vec3 v_worldNormal;
+#ifdef VE_USE_NROMAL_MAPPING
+out vec3 v_worldTangent;
+out vec3 v_worldBitangent;    
+#endif
+            
 out vec2 v_texcoord;
 
 void main()                                                 
 {   
 	vec4 finalPos;
 	vec3 finalNorm;
+	vec3 finalTangent;
+	vec3 finalBitangent;
 #ifdef VE_USE_BONES
-	updateBonePositionAndNormal(finalPos, finalNorm);
+	updateBonePositionAndNormal(finalPos, finalNorm, finalTangent, finalBitangent);
 	tf_position = finalPos.xyz;
 	tf_normal = finalNorm;
-#else	  
+#else
 	finalPos = vec4(position, 1.0);
 	finalNorm = normal;
 #endif
 	
 	v_texcoord = texcoord0;
-	v_position = u_ModelViewMat * finalPos; 
-	  
+	v_worldNormal = normalize(u_NormalWorldMat * finalNorm);  
+#ifdef VE_USE_NROMAL_MAPPING
+	v_worldTangent = normalize(u_NormalWorldMat * finalTangent);
+	v_worldBitangent = normalize(u_NormalWorldMat * finalBitangent);  
+#endif
+
 	gl_Position = u_ModelViewProjectMat * finalPos; 
-	v_normalAndepth = vec4(u_NormalMat * finalNorm, gl_Position.w);  
 }

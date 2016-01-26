@@ -8,6 +8,7 @@
 #include "FileCore/File.h"
 #include "Application.h"
 #include "MaterialManager.h"
+#include "DeferredRenderPipeline.h"
 
 static const std::string POST_PROCESSER_FRAMEBUFFER_OBJECT = "POST_PROCESSER_FRAMEBUFFER_OBJECT";
 
@@ -39,6 +40,7 @@ void veOctreeSceneManager::init()
 	_root->setSceneManager(this);
 	_octree->originBoundingBox = _octree->boundingBox = _boundingBox;
 	_shadowGenerator = new veShadowGenerator(this);
+	_renderPipeline  = new veDeferredRenderPipeline(this);
 	loadSystemMaterials();
 }
 
@@ -113,15 +115,15 @@ void veOctreeSceneManager::requestRayCast(veRay *ray)
 
 bool veOctreeSceneManager::isNodeVisibleInScene(veNode *node)
 {
-	veOctreeNode *ocNode = static_cast<veOctreeNode *>(node);
-	for (auto &cam : _cameraList) {
-		if (true/*cam->isInScene()*/) {
-			veOctreeCamera *octreeCam = static_cast<veOctreeCamera *>(cam.get());
-			if (octreeCam->isNodeVisibleInCamera(ocNode))
-				return true;
-		}
-	}
-	return false;
+	//veOctreeNode *ocNode = static_cast<veOctreeNode *>(node);
+	//for (auto &cam : _cameraList) {
+	//	if (true/*cam->isInScene()*/) {
+	//		veOctreeCamera *octreeCam = static_cast<veOctreeCamera *>(cam.get());
+	//		if (octreeCam->isNodeVisibleInCamera(ocNode))
+	//			return true;
+	//	}
+	//}
+	return _renderPipeline->isNodeVisible(node);
 }
 
 void veOctreeSceneManager::addOctreeNode(veOctreeNode *node, veOctree *octant, unsigned int depth)
@@ -216,37 +218,39 @@ void veOctreeSceneManager::update()
 void veOctreeSceneManager::render()
 {
 	if (!veApplication::instance()->makeContextCurrent()) return;
-	culling();
+	//culling();
 
-	_shadowGenerator->shadowing();
+	//_shadowGenerator->shadowing();
 
-	for (auto &iter : _cameraList) {
-		if (iter->isVisible() && iter->isInScene() && iter != _mainCamera) {
-			if (iter->getFrameBufferObject()) {
-				veOctreeCamera *rttCam = static_cast<veOctreeCamera *>(iter.get());
-				rttCam->setSkybox(_skyBox.get());
-				rttCam->render();
-			}
-		}
-	}
+	//for (auto &iter : _cameraList) {
+	//	if (iter->isVisible() && iter->isInScene() && iter != _mainCamera) {
+	//		if (iter->getFrameBufferObject()) {
+	//			veOctreeCamera *rttCam = static_cast<veOctreeCamera *>(iter.get());
+	//			rttCam->setSkybox(_skyBox.get());
+	//			rttCam->render();
+	//		}
+	//	}
+	//}
 
-	if (_mainCamera.valid() && _mainCamera->isInScene() && _mainCamera->isVisible()) {
-		veOctreeCamera *mainCam = static_cast<veOctreeCamera *>(_mainCamera.get());
-		mainCam->setSkybox(_skyBox.get());
-		if (!_postProcesserList.empty()) {
-			if (!_postProcesserFBO.valid()) {
-				_postProcesserFBO = veFrameBufferObjectManager::instance()->createFrameBufferObject(POST_PROCESSER_FRAMEBUFFER_OBJECT);
-			}
-			auto fbo = mainCam->getFrameBufferObject();
-			mainCam->setFrameBufferObject(_postProcesserFBO.get());
-			for (size_t i = 0; i < _postProcesserList.size(); ++i) {
-				_postProcesserList[i]->process(_postProcesserFBO.get(), mainCam);
-			}
-			mainCam->setFrameBufferObject(fbo);
-		}
-		mainCam->render();
-		mainCam->discardRenderScene(false);
-	}
+	//if (_mainCamera.valid() && _mainCamera->isInScene() && _mainCamera->isVisible()) {
+	//	veOctreeCamera *mainCam = static_cast<veOctreeCamera *>(_mainCamera.get());
+	//	mainCam->setSkybox(_skyBox.get());
+	//	if (!_postProcesserList.empty()) {
+	//		if (!_postProcesserFBO.valid()) {
+	//			_postProcesserFBO = veFrameBufferObjectManager::instance()->createFrameBufferObject(POST_PROCESSER_FRAMEBUFFER_OBJECT);
+	//		}
+	//		auto fbo = mainCam->getFrameBufferObject();
+	//		mainCam->setFrameBufferObject(_postProcesserFBO.get());
+	//		for (size_t i = 0; i < _postProcesserList.size(); ++i) {
+	//			_postProcesserList[i]->process(_postProcesserFBO.get(), mainCam);
+	//		}
+	//		mainCam->setFrameBufferObject(fbo);
+	//	}
+	//	mainCam->render();
+	//	mainCam->discardRenderScene(false);
+	//}
+	_renderPipeline->rendering();
+
 	veApplication::instance()->swapBuffers();
 }
 
@@ -256,7 +260,7 @@ void veOctreeSceneManager::culling()
 		if (iter->isVisible() && iter->isInScene()) {
 			veOctreeCamera *cam = static_cast<veOctreeCamera *>(iter.get());
 			_threadPool.enqueue(nullptr, nullptr, [cam] {
-				cam->cull();
+				//cam->cull();
 			});
 		}
 	}

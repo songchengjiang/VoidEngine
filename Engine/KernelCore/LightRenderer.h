@@ -6,21 +6,21 @@
 #include "SphereRenderer.h"
 #include "ConeRenderer.h"
 
-class VE_EXPORT veDirectionalLightRenderer : public veSurfaceRenderer
+class VE_EXPORT veScreenLightRenderer : public veSurfaceRenderer
 {
 public:
-	veDirectionalLightRenderer();
-	~veDirectionalLightRenderer();
+	veScreenLightRenderer();
+	~veScreenLightRenderer();
 
 	void immediatelyRender(veNode *node, vePass *pass, veCamera *camera);
 };
 
 
-class VE_EXPORT vePointLightRenderer : public veSphereRenderer
+class VE_EXPORT veSphereLightRenderer : public veSphereRenderer
 {
 public:
-	vePointLightRenderer();
-	~vePointLightRenderer();
+	veSphereLightRenderer();
+	~veSphereLightRenderer();
 
 	void immediatelyRender(veNode *node, vePass *pass, veCamera *camera);
 	void setLightVolumeScale(const veMat4 &scale) { _lightVolumeScale = scale; }
@@ -29,11 +29,11 @@ private:
 	veMat4 _lightVolumeScale;
 };
 
-class VE_EXPORT veSpotLightRenderer : public veConeRenderer
+class VE_EXPORT veConeLightRenderer : public veConeRenderer
 {
 public:
-	veSpotLightRenderer();
-	~veSpotLightRenderer();
+	veConeLightRenderer();
+	~veConeLightRenderer();
 
 	void immediatelyRender(veNode *node, vePass *pass, veCamera *camera);
 	void setLightVolumeScale(const veMat4 &scale) { _lightVolumeScale = scale; }

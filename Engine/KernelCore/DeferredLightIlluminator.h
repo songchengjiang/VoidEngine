@@ -41,9 +41,9 @@ private:
 	VE_Ptr<veTexture>    _illuminationTexture;
 	veVec2               _size;
 
-	VE_Ptr<veDirectionalLightRenderer> _directionalLightRenderer;
-	VE_Ptr<vePointLightRenderer>       _pointLightRenderer;
-	VE_Ptr<veSpotLightRenderer>        _spotLightRenderer;
+	VE_Ptr<veScreenLightRenderer> _directionalLightRenderer;
+	VE_Ptr<veSphereLightRenderer>       _pointLightRenderer;
+	VE_Ptr<veConeLightRenderer>        _spotLightRenderer;
 };
 
 #endif

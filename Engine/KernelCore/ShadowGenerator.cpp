@@ -82,7 +82,7 @@ void veShadowGenerator::directionalLightShadowing(veLight *light)
 		ds.camera->setViewport({ 0, 0, int(light->getShadowResolution().x()), int(light->getShadowResolution().y()) });
 		auto halfShadowArea = light->getShadowArea() * 0.5f;
 		ds.camera->setProjectionMatrixAsOrtho(-halfShadowArea.x(), halfShadowArea.x(), -halfShadowArea.y(), halfShadowArea.y(), 0.1f, light->getAttenuationRange());
-		ds.camera->cull();
+		//ds.camera->cull();
 		ds.camera->fillRenderQueue();
 		ds.camera->sortRenderQueue();
 		ds.camera->renderScene();
@@ -131,7 +131,7 @@ void veShadowGenerator::pointLightShadowing(veLight *light)
 			os.cameras[i]->setViewport({ 0, 0, int(light->getShadowResolution().x()), int(light->getShadowResolution().y()) });
 			os.cameras[i]->setProjectionMatrixAsPerspective(90.0f, 1.0f, 0.1f, light->getAttenuationRange());
 			os.cameras[i]->setMatrix(faceMats[i]);
-			os.cameras[i]->cull();
+			//os.cameras[i]->cull();
 			os.cameras[i]->getFrameBufferObject()->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, os.texture.get());
 			os.cameras[i]->fillRenderQueue();
 			os.cameras[i]->sortRenderQueue();
@@ -169,7 +169,7 @@ void veShadowGenerator::spotLightShadowing(veLight *light)
 		ds.camera->setMatrix(light->getNodeToWorldMatrix());
 		ds.camera->setViewport({ 0, 0, int(light->getShadowResolution().x()), int(light->getShadowResolution().y()) });
 		ds.camera->setProjectionMatrixAsPerspective(2.0f * static_cast<veSpotLight *>(light)->getOuterAngle(), 1.0f, 0.1f, light->getAttenuationRange());
-		ds.camera->cull();
+		//ds.camera->cull();
 		ds.camera->fillRenderQueue();
 		ds.camera->sortRenderQueue();
 		ds.camera->renderScene();

@@ -175,9 +175,9 @@ void veDeferredLightSceneIlluminator::initIlluminationParams()
 	_sceneNormalTexture->setFilterMode(veTexture::NEAREST);
 	_illuminationTexture->setFilterMode(veTexture::NEAREST);
 
-	_directionalLightRenderer = new veDirectionalLightRenderer;
-	_pointLightRenderer = new vePointLightRenderer;
-	_spotLightRenderer = new veSpotLightRenderer;
+	_directionalLightRenderer = new veScreenLightRenderer;
+	_pointLightRenderer = new veSphereLightRenderer;
+	_spotLightRenderer = new veConeLightRenderer;
 }
 
 void veDeferredLightSceneIlluminator::illuminate()

@@ -13,6 +13,7 @@
 
 class veVisualiser;
 class veLight;
+class veRenderPipeline;
 struct VE_EXPORT veViewport
 {
 	int x;
@@ -28,7 +29,7 @@ struct VE_EXPORT veViewport
 		return (x != rkVp.x || y != rkVp.y || width != rkVp.width || height != rkVp.height);
 	}
 
-	bool isNull() {
+	bool isNull() const {
 		return x == y == width == height;
 	}
 };
@@ -90,7 +91,7 @@ public:
 
 	const vePlane& getFrustumPlane(FrustumPlane fp);
 
-	virtual void cull() = 0;
+	virtual void cull(veRenderPipeline *renderPipeline) = 0;
 	void render();
 	void renderDeferredLight();
 	void renderScene();
@@ -107,6 +108,9 @@ public:
 
 	virtual void visit(veNodeVisitor &visitor) override;
 	virtual bool isOutOfFrustum(const veBoundingBox &bbox);
+
+	const std::vector<veNode *>& getVisibleNodeList() const { return _visibleNodeList; }
+
 
 	virtual bool hasDynamicNodeVisibleInCamera() = 0;
 
@@ -137,6 +141,7 @@ protected:
 
 	VE_Ptr<veSkyBox> _skybox;
 	veRenderQueue *_renderQueue;
+	std::vector<veNode *> _visibleNodeList;
 };
 
 typedef std::vector< VE_Ptr<veCamera> > veCameraList;

@@ -59,6 +59,7 @@ veFrameBufferObject::veFrameBufferObject(const veVec2 &size)
 	: USE_VE_PTR_INIT
 	, _fbo(0)
 	, _dsbo(0)
+	, _target(GL_FRAMEBUFFER)
 	, _size(size)
 	, _needRefreshAttachments(true)
 	, _needRefreshBuffers(true)
@@ -92,8 +93,9 @@ void veFrameBufferObject::attach(GLenum attachment, GLenum target, veTexture *at
 	_needRefreshAttachments = true;
 }
 
-void veFrameBufferObject::bind(unsigned int clearMask)
+void veFrameBufferObject::bind(unsigned int clearMask, GLenum target)
 {
+	_target = target;
 	refreshBuffers(clearMask);
 	refreshAttachments();
 }
@@ -101,7 +103,7 @@ void veFrameBufferObject::bind(unsigned int clearMask)
 void veFrameBufferObject::unBind()
 {
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(_target, 0);
 	GLenum bufs = {GL_BACK};
 	glDrawBuffers(1, &bufs);
 	for (auto &iter : _attachments) {
@@ -125,7 +127,7 @@ void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
 	if (!_fbo) {
 		glGenFramebuffers(1, &_fbo);
 	}
-	glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
+	glBindFramebuffer(_target, _fbo);
 
 	if (!_dsbo) {
 		bool hasDepthBuffer = (clearMask & GL_DEPTH_BUFFER_BIT) != 0;
@@ -142,9 +144,9 @@ void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
 				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _size.x() * VE_DEVICE_PIXEL_RATIO, _size.y() * VE_DEVICE_PIXEL_RATIO);
 
 			if (hasDepthBuffer)
-				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _dsbo);
+				glFramebufferRenderbuffer(_target, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _dsbo);
 			if (hasStencilBuffer)
-				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _dsbo);
+				glFramebufferRenderbuffer(_target, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _dsbo);
 		}
 	}
 	glBindRenderbuffer(GL_RENDERBUFFER, _dsbo);
@@ -169,15 +171,15 @@ void veFrameBufferObject::refreshAttachments()
 				//	, iter.second->getInternalFormat(), iter.second->getPixelFormat(), iter.second->getDataType(), nullptr);
 				iter.second.texture->bind();
 				if (iter.second.layer < 0)
-					glFramebufferTexture2D(GL_FRAMEBUFFER, iter.first, iter.second.target, iter.second.texture->glTex(), 0);
+					glFramebufferTexture2D(_target, iter.first, iter.second.target, iter.second.texture->glTex(), 0);
 				else
-					glFramebufferTextureLayer(GL_FRAMEBUFFER, iter.first, iter.second.texture->glTex(), 0, iter.second.layer);		
+					glFramebufferTextureLayer(_target, iter.first, iter.second.texture->glTex(), 0, iter.second.layer);
 			}
 			else {
 				if (iter.second.layer < 0)
-					glFramebufferTexture2D(GL_FRAMEBUFFER, iter.first, 0, 0, 0);
+					glFramebufferTexture2D(_target, iter.first, 0, 0, 0);
 				else
-					glFramebufferTextureLayer(GL_FRAMEBUFFER, iter.first, 0, 0, 0);
+					glFramebufferTextureLayer(_target, iter.first, 0, 0, 0);
 			}
 		}
 		if (!mrt.empty())

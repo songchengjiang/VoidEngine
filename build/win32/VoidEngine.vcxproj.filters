@@ -25,6 +25,9 @@
     <Filter Include="KernelCore\SceneManagement\Octree">
       <UniqueIdentifier>{c95ce5b0-245f-4cb3-85bb-4d6cc70373b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="KernelCore\Renderer\Pipeline">
+      <UniqueIdentifier>{4bb0a7ba-4258-418e-87c8-b7b176955672}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Engine\BaseCore\Matrix3.cpp">
@@ -262,6 +265,18 @@
       <Filter>KernelCore</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\ShadowGenerator.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\DeferredRenderPipeline.cpp">
+      <Filter>KernelCore\Renderer\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\RenderPipeline.cpp">
+      <Filter>KernelCore\Renderer\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Sphere.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Cone.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
   </ItemGroup>
@@ -502,6 +517,18 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\ShadowGenerator.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\DeferredRenderPipeline.h">
+      <Filter>KernelCore\Renderer\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\RenderPipeline.h">
+      <Filter>KernelCore\Renderer\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Sphere.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Cone.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>

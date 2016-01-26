@@ -19,7 +19,7 @@ public:
 	void setFrameBufferSize(const veVec2 &size);
 	void attach(GLenum attachment, GLenum target, veTexture *attachTex, GLint layer = -1, bool needMipmap = false);
 
-	void bind(unsigned int clearMask);
+	void bind(unsigned int clearMask, GLenum target = GL_FRAMEBUFFER);
 	void unBind();
 
 private:
@@ -41,6 +41,7 @@ private:
 	};
 	GLuint _fbo;
 	GLuint _dsbo;
+	GLenum _target;
 	veVec2 _size;
 	bool _needRefreshAttachments;
 	bool _needRefreshBuffers;

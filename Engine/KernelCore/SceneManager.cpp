@@ -4,6 +4,8 @@
 #include "Image.h"
 #include "Text.h"
 #include "Entity.h"
+#include "Sphere.h"
+#include "Cone.h"
 #include "SkyBox.h"
 #include "Animation.h"
 
@@ -18,6 +20,7 @@ veSceneManager::veSceneManager()
 	: USE_VE_PTR_INIT
 	, _deltaTime(0.0)
 	, _simulationTime(0)
+	, _ambient(veVec3(1.0f))
 	, _latestResourceRecoveredTime(RESOURCE_RECOVERY_INTERVAL_TIME)
 	, _stopThreading(true)
 	, _needReload(false)
@@ -74,6 +77,20 @@ veImage* veSceneManager::createImage(const std::string &name, veTexture *texture
 veEntity* veSceneManager::createEntity(const std::string &name)
 {
 	return static_cast<veEntityManager *>(_managerList[veEntityManager::TYPE()])->createEntity(name);
+}
+
+veSphere* veSceneManager::createSphere(const std::string &name)
+{
+	auto sphere = new veSphere(this);
+	sphere->setName(name);
+	return sphere;
+}
+
+veCone* veSceneManager::createCone(const std::string &name)
+{
+	auto cone = new veCone(this);
+	cone->setName(name);
+	return cone;
 }
 
 veSkyBox* veSceneManager::createSkyBox(const std::string &name, veReal size)
@@ -226,6 +243,11 @@ void veSceneManager::stopThreading()
 	_stopThreading = true;
 	_renderingCondition.notify_all();
 	_renderingThread.join();
+}
+
+void veSceneManager::enqueueTaskToThread(const veThreadPool::TaskCallBack& callback, void* callbackParam, const std::function<void()> &func)
+{
+	_threadPool.enqueue(callback, callbackParam, func);
 }
 
 void veSceneManager::postRenderHandle()

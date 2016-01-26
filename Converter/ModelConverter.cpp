@@ -433,10 +433,12 @@ void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shade
 	_matWriter.String((shaderName + std::string(".vert")).c_str());
 	_matWriter.String(MVP_MATRIX_KEY.c_str(), MVP_MATRIX_KEY.size());
 	_matWriter.String(MVP_MATRIX.c_str(), MVP_MATRIX.size());
-	_matWriter.String(MV_MATRIX_KEY.c_str(), MV_MATRIX_KEY.size());
-	_matWriter.String(MV_MATRIX.c_str(), MV_MATRIX.size());
-	_matWriter.String(NORMAL_MATRIX_KEY.c_str(), NORMAL_MATRIX_KEY.size());
-	_matWriter.String(NORMAL_MATRIX.c_str(), NORMAL_MATRIX.size());
+	//_matWriter.String(MV_MATRIX_KEY.c_str(), MV_MATRIX_KEY.size());
+	//_matWriter.String(MV_MATRIX.c_str(), MV_MATRIX.size());
+	//_matWriter.String(NORMAL_MATRIX_KEY.c_str(), NORMAL_MATRIX_KEY.size());
+	//_matWriter.String(NORMAL_MATRIX.c_str(), NORMAL_MATRIX.size());
+	_matWriter.String(NORMAL_WORLD_MATRIX_KEY.c_str(), NORMAL_WORLD_MATRIX_KEY.size());
+	_matWriter.String(NORMAL_WROLD_MATRIX.c_str(), NORMAL_WROLD_MATRIX.size());
 	if (MATERIAL_MESH_MAP[mat]->HasBones()) {
 		_matWriter.String(BONE_MATRIXES_KEY.c_str(), BONE_MATRIXES_KEY.size());
 		_matWriter.String(BONE_MATRIXES.c_str(), BONE_MATRIXES.size());
@@ -497,8 +499,8 @@ void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shade
 
 
 	aiGetMaterialFloat(mat, AI_MATKEY_SHININESS, &valFloat);
-	_matWriter.String(SHININESS_KEY.c_str(), SHININESS_KEY.size());
-	_matWriter.Float(valFloat);
+	_matWriter.String(ROUGHNESS_KEY.c_str(), ROUGHNESS_KEY.size());
+	_matWriter.Float(valFloat <= 128.0f? 1.0f - valFloat / 128.0f: 0.0f);
 
 	aiGetMaterialFloat(mat, AI_MATKEY_OPACITY, &valFloat);
 	_matWriter.String(OPACITY_KEY.c_str(), OPACITY_KEY.size());
@@ -789,8 +791,8 @@ std::string ModelConverter::getShaderDefinations(const aiMaterial *mat, const st
 {
 	std::string definations;
 
+	const aiMesh *mesh = MATERIAL_MESH_MAP[mat];
 	if (type == VERTEXSHADER_KEY) {
-		const aiMesh *mesh = MATERIAL_MESH_MAP[mat];
 		if (mesh->HasBones()) {
 			definations += SHADER_DEFINE_BONES;
 		}
@@ -906,6 +908,12 @@ std::string ModelConverter::getShaderDefinations(const aiMaterial *mat, const st
 			definations += SHADER_DEFINE_TEXTURES;
 		}
 	}
+
+
+	if (mesh->HasTangentsAndBitangents() && hasTexture(mat, aiTextureType_NORMALS)) {
+		definations += SHADER_DEFINE_NROMAL_MAPPING;
+	}
+
 	return definations;
 }
 
