@@ -3,6 +3,18 @@
 #include "Camera.h"
 #include "Constants.h"
 
+static const char* COMMON_FUNCTIONS = " \
+	vec3 decode(vec2 encoded) {     \n \
+		vec2 fenc = encoded * 4.0 - 2.0;    \n \
+		float f = dot(fenc, fenc);    \n \
+		float g = sqrt(1.0 - f / 4.0);    \n \
+		vec3 normal;    \n \
+		normal.xy = fenc * g;    \n \
+		normal.z = 1.0 - f / 2.0;    \n \
+		return normal;    \n \
+	}    \n \
+	";
+
 static const char* AMBIENT_V_SHADER = " \
 	layout(location = 0) in vec3 position; \n \
 	layout(location = 1) in vec3 normal; \n \
@@ -65,7 +77,7 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 		vec4 diffuseAndLightMaskTex = texture(u_diffuseAndLightMaskTex, v_texcoord);    \n \
 		vec4 specularAndRoughnessTex = texture(u_specularAndRoughnessTex, v_texcoord);     \n \
 																							  \n \
-		vec3 normal = normalize(normalAndOpacityTex.xyz);   \n \
+		vec3 normal = normalize(decode(normalAndOpacityTex.xy));   \n \
 		float depth = texture(u_depthTex, v_texcoord).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(v_texcoord * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
@@ -118,7 +130,7 @@ static const char* POINT_LIGHT_F_SHADER = " \
 		vec4 diffuseAndLightMaskTex = texture(u_diffuseAndLightMaskTex, texCoords);    \n \
 		vec4 specularAndRoughnessTex = texture(u_specularAndRoughnessTex, texCoords);     \n \
 																						\n \
-		vec3 normal = normalize(normalAndOpacityTex.xyz);   \n \
+		vec3 normal = normalize(decode(normalAndOpacityTex.xy));   \n \
 		float depth = texture(u_depthTex, texCoords).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
@@ -180,7 +192,7 @@ static const char* SPOT_LIGHT_F_SHADER = " \
 		vec4 diffuseAndLightMaskTex = texture(u_diffuseAndLightMaskTex, texCoords);    \n \
 		vec4 specularAndRoughnessTex = texture(u_specularAndRoughnessTex, texCoords);     \n \
 																						    \n \
-		vec3 normal = normalize(normalAndOpacityTex.xyz);   \n \
+		vec3 normal = normalize(decode(normalAndOpacityTex.xy));   \n \
 		float depth = texture(u_depthTex, texCoords).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
@@ -219,7 +231,7 @@ void veDeferredRenderPipeline::renderCamera(veCamera *camera)
 	auto &clearColor = camera->getClearColor();
 	veVec2 size = veVec2(vp.width - vp.x, vp.height - vp.y);
 	_DS->storage(size.x(), size.y(), 1, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr, 1);
-	_RT0->storage(size.x(), size.y(), 1, GL_RGBA32F, GL_RGBA, GL_FLOAT, nullptr, 1);
+	_RT0->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	_RT1->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	_RT2->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	_FBO->setFrameBufferSize(size);
@@ -302,7 +314,7 @@ veMaterial* veDeferredRenderPipeline::createDirectionalLightMaterial(veLight *li
 	pass->blendFunc().dst = GL_ONE;
 	pass->blendEquation() = GL_FUNC_ADD;
 	pass->setShader(new veShader(veShader::VERTEX_SHADER, DIRECTIONAL_LIGHT_V_SHADER));
-	pass->setShader(new veShader(veShader::FRAGMENT_SHADER, DIRECTIONAL_LIGHT_F_SHADER));
+	pass->setShader(new veShader(veShader::FRAGMENT_SHADER, (std::string(COMMON_FUNCTIONS) + std::string(DIRECTIONAL_LIGHT_F_SHADER)).c_str()));
 	pass->addUniform(new veUniform("u_lightDirection", veVec3::ZERO));
 
 	return material;
@@ -340,7 +352,7 @@ veMaterial* veDeferredRenderPipeline::createPointLightMaterial(veLight *light)
 	pass1->blendEquation() = GL_FUNC_ADD;
 	pass1->stencilFunc() = { GL_NOTEQUAL, 0, 0xFF, GL_NOTEQUAL, 0, 0xFF };
 	pass1->setShader(new veShader(veShader::VERTEX_SHADER, POINT_LIGHT_V_SHADER));
-	pass1->setShader(new veShader(veShader::FRAGMENT_SHADER, POINT_LIGHT_F_SHADER));
+	pass1->setShader(new veShader(veShader::FRAGMENT_SHADER, (std::string(COMMON_FUNCTIONS) + std::string(POINT_LIGHT_F_SHADER)).c_str()));
 	pass1->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
 	pass1->addUniform(new veUniform("u_lightPosition", veVec3(0.0f)));
 	pass1->addUniform(new veUniform("u_lightARI", 0.0f));
@@ -380,7 +392,7 @@ veMaterial* veDeferredRenderPipeline::createSpotLightMaterial(veLight *light)
 	pass1->blendEquation() = GL_FUNC_ADD;
 	pass1->stencilFunc() = { GL_NOTEQUAL, 0, 0xFF, GL_NOTEQUAL, 0, 0xFF };
 	pass1->setShader(new veShader(veShader::VERTEX_SHADER, SPOT_LIGHT_V_SHADER));
-	pass1->setShader(new veShader(veShader::FRAGMENT_SHADER, SPOT_LIGHT_F_SHADER));
+	pass1->setShader(new veShader(veShader::FRAGMENT_SHADER, (std::string(COMMON_FUNCTIONS) + std::string(SPOT_LIGHT_F_SHADER)).c_str()));
 	pass1->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
 	pass1->addUniform(new veUniform("u_lightDirection", veVec3(0.0f)));
 	pass1->addUniform(new veUniform("u_lightPosition", veVec3(0.0f)));

@@ -30,6 +30,12 @@ layout(location=0) out vec4 normalAndOpacity;
 layout(location=1) out vec4 diffuseAndLightMask;
 layout(location=2) out vec4 specularAndRoughness;
 //#endif
+
+vec2 encode (vec3 normal)
+{
+    float p = sqrt(normal.z * 8.0 + 8.0);
+    return vec2(normal.xy / p + 0.5);
+}
              
 void main(){
 
@@ -37,9 +43,9 @@ void main(){
 #ifdef VE_USE_NROMAL_MAPPING
 	mat3 normCoords = mat3(v_worldTangent, v_worldBitangent, v_worldNormal);
 	vec3 norm = texture(u_normalTex, v_texcoord).xyz * 2.0 - 1.0;
-	normalAndOpacity.xyz = normCoords * norm;
+	normalAndOpacity.xy = encode(normCoords * norm);
 #else
-	normalAndOpacity.xyz = v_worldNormal;
+	normalAndOpacity.xy = encode(v_worldNormal);
 #endif
 
 	diffuseAndLightMask.w = u_lightMask;
