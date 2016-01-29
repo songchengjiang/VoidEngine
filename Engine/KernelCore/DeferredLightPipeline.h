@@ -2,15 +2,15 @@
 #define _VE_DEFERRED_LIGHT_PIPELINE_
 #include "RenderPipeline.h"
 
-class DeferredLightPipeline : public RenderPipeline
+class veDeferredLightPipeline : public veRenderPipeline
 {
 public:
-	DeferredLightPipeline(veSceneManager *sm);
-	virtual ~DeferredLightPipeline();
+	veDeferredLightPipeline(veSceneManager *sm);
+	virtual ~veDeferredLightPipeline();
 
 protected:
 
-	virtual void renderCamera(veCamera *camera) override;
+	virtual void renderCamera(veCamera *camera, bool isMainCamera) override;
 
 };
 

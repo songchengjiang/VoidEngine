@@ -1,17 +1,17 @@
 #include "DeferredLightPipeline.h"
 
-DeferredLightPipeline::DeferredLightPipeline(veSceneManager *sm)
-	: RenderPipeline(sm)
+veDeferredLightPipeline::veDeferredLightPipeline(veSceneManager *sm)
+	: veRenderPipeline(sm)
 {
 
 }
 
-DeferredLightPipeline::~DeferredLightPipeline()
+veDeferredLightPipeline::~veDeferredLightPipeline()
 {
 
 }
 
-void DeferredLightPipeline::renderCamera(veCamera *camera)
+void veDeferredLightPipeline::renderCamera(veCamera *camera, bool isMainCamera)
 {
 	
 }

@@ -282,6 +282,9 @@
     <ClCompile Include="..\..\Engine\KernelCore\PostProcesser.cpp">
       <Filter>KernelCore\PostProcesser</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\DeferredLightPipeline.cpp">
+      <Filter>KernelCore\Renderer\Pipeline</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -533,6 +536,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\PostProcesser.h">
       <Filter>KernelCore\PostProcesser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\DeferredLightPipeline.h">
+      <Filter>KernelCore\Renderer\Pipeline</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

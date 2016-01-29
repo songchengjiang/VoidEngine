@@ -680,7 +680,7 @@ GLuint veShader::compile()
 	preDefination += SHADER_VERSION + std::string(str);
 
 #if VE_PLATFORM == VE_PLATFORM_ANDROID
-	if (type == veShader::FRAGMENT_SHADER) {
+	if (_type == veShader::FRAGMENT_SHADER) {
 		preDefination += PRECISION_DEFINE_FLOAT + std::string("\n");
 		preDefination += PRECISION_DEFINE_SAMPLER2DARRAYSHADOW + std::string("\n");
 	}
