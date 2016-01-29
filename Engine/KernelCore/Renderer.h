@@ -27,7 +27,6 @@ public:
 	USE_VE_PTR;
 
 	virtual ~veRenderer();
-	virtual void visit(veNode *node, veRenderableObject *renderableObj, veSceneManager *sm);
 	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) = 0;
 	virtual void draw(veRenderCommand &command) = 0;
 

@@ -9,11 +9,7 @@ public:
 	vePostProcesserRenderer();
 	~vePostProcesserRenderer();
 
-	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override;
-	void setPostProcessingPass(vePass *pass) { _pass = pass; }
-
-private:
-	VE_Ptr<vePass> _pass;
+	void render(veNode *node, vePass *pass, veCamera *camera);
 };
 
 #endif

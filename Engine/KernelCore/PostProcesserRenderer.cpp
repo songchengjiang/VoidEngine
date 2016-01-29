@@ -13,20 +13,19 @@ vePostProcesserRenderer::~vePostProcesserRenderer()
 
 }
 
-void vePostProcesserRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
+void vePostProcesserRenderer::render(veNode *node, vePass *pass, veCamera *camera)
 {
 	updateBuffer();
-	if (_pass.valid()) {
-		if (camera->getMask() & _pass->drawMask()) {
+	if (pass) {
+		if (camera->getMask() & pass->drawMask()) {
 			veRenderCommand rc;
 			rc.mask = node->getMask();
-			rc.pass = _pass.get();
+			rc.pass = pass;
 			rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix());
-			rc.renderableObj = renderableObj;
 			rc.camera = camera;
 			rc.sceneManager = camera->getSceneManager();
 			rc.renderer = this;
-			_pass->visit(rc);
+			pass->visit(rc);
 			camera->getRenderQueue()->pushCommand(0, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
 		}
 	}

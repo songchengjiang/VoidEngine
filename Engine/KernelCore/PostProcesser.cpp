@@ -5,12 +5,9 @@
 vePostProcesser::vePostProcesser(veSceneManager *sm)
 	: USE_VE_PTR_INIT
 	, _sceneManager(sm)
-	, _needRefresh(true)
 {
 	_renderer = new vePostProcesserRenderer;
 	_renderer->setRenderStageMask(_renderer->getRenderStageMask() & ~veRenderer::LIGHTINGING);
-	_surface = _sceneManager->createSurface(_name + std::string("-surface"));
-	_surface->setRenderer(_renderer.get());
 }
 
 vePostProcesser::~vePostProcesser()
@@ -18,31 +15,21 @@ vePostProcesser::~vePostProcesser()
 
 }
 
-void vePostProcesser::process(veFrameBufferObject *fb, veCamera *camera)
+void vePostProcesser::process(veRenderPipeline *pipeline, veFrameBufferObject *fb, veCamera *camera)
 {
-	if (_needRefresh) {
-		for (unsigned int i = 0; i < _materials->getMaterialNum(); ++i) {
-			auto material = _materials->getMaterial(i);
-			for (unsigned int p = 0; p < material->activeTechnique()->getPassNum(); ++p) {
-				auto pass = material->activeTechnique()->getPass(p);
-				pass->getTexture(vePass::AMBIENT_TEXTURE)->storage((camera->getViewport().width - camera->getViewport().x) * VE_DEVICE_PIXEL_RATIO
-					, (camera->getViewport().height - camera->getViewport().y) * VE_DEVICE_PIXEL_RATIO, 1
-					, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
-			}
-		}
-		_surface->setMaterialArray(_materials.get());
-		_needRefresh = false;
-	}
-
+	auto &vp = camera->getViewport();
+	veVec2 size = veVec2(vp.width - vp.x, vp.height - vp.y);
 	for (unsigned int i = 0; i < _materials->getMaterialNum(); ++i) {
 		auto material = _materials->getMaterial(i);
 		for (unsigned int p = 0; p < material->activeTechnique()->getPassNum(); ++p) {
 			auto pass = material->activeTechnique()->getPass(p);
-			fb->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pass->getTexture(vePass::AMBIENT_TEXTURE));
-			camera->render();
-			_renderer->setPostProcessingPass(pass);
-			_surface->render(_sceneManager->getRootNode(), camera);
-			camera->discardRenderScene(true);
+			auto tex = pass->getTexture(vePass::AMBIENT_TEXTURE);
+			tex->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
+			fb->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex);
+			fb->bind(camera->getClearMask(), GL_DRAW_FRAMEBUFFER);
+			pipeline->draw(camera);
+			fb->unBind();
+			_renderer->render(_sceneManager->getRootNode(), pass, camera);
 		}
 	}
 }

@@ -102,7 +102,6 @@ void veEntityRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 			veRenderCommand rc;
 			rc.mask = node->getMask();
 			rc.worldMatrix = new veMat4Ptr(meshRootMat);
-			rc.renderableObj = renderableObj;
 			rc.user1 = node;
 			rc.user2 = mesh;
 			rc.user3 = &buffers;

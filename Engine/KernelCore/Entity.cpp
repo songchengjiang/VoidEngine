@@ -32,8 +32,6 @@ void veEntity::update(veNode *node, veSceneManager *sm)
 		dirtyBoundingBox();
 		_isDirtyBoundingBox = false;
 	}
-	if (_renderer.valid())
-		_renderer->visit(node, this, sm);
 }
 
 bool veEntity::intersectWith(veRay *ray, veNode *node)

@@ -115,12 +115,22 @@ void veFrameBufferObject::unBind()
 
 void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
 {
+	bool needRenderBuffer = false;
 	if (_needRefreshBuffers) {
 		if (_dsbo)
 			glDeleteRenderbuffers(1, &_dsbo);
 		if (_fbo)
 			glDeleteFramebuffers(1, &_fbo);
 		_dsbo = _fbo = 0;
+
+		auto depth = _attachments.find(GL_DEPTH_ATTACHMENT);
+		auto depthAndstencil = _attachments.find(GL_DEPTH_STENCIL_ATTACHMENT);
+		auto stencil = _attachments.find(GL_STENCIL_BUFFER_BIT);
+		if (depth == _attachments.end() && depthAndstencil == _attachments.end() && stencil == _attachments.end()) {
+			if ((clearMask & GL_DEPTH_BUFFER_BIT) || (clearMask & GL_STENCIL_BUFFER_BIT)) {
+				needRenderBuffer = true;
+			}
+		}
 		_needRefreshBuffers = false;
 	}
 
@@ -129,28 +139,29 @@ void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
 	}
 	glBindFramebuffer(_target, _fbo);
 
-	if (!_dsbo) {
-		bool hasDepthBuffer = (clearMask & GL_DEPTH_BUFFER_BIT) != 0;
-		bool hasStencilBuffer = (clearMask & GL_STENCIL_BUFFER_BIT) != 0;
-		if (hasDepthBuffer || hasStencilBuffer) {
-			glGenRenderbuffers(1, &_dsbo);
-		}
+	if (needRenderBuffer){
+		if (!_dsbo) {
+			bool hasDepthBuffer = (clearMask & GL_DEPTH_BUFFER_BIT) != 0;
+			bool hasStencilBuffer = (clearMask & GL_STENCIL_BUFFER_BIT) != 0;
+			if (hasDepthBuffer || hasStencilBuffer) {
+				glGenRenderbuffers(1, &_dsbo);
+			}
 
-		if (_dsbo) {
-			glBindRenderbuffer(GL_RENDERBUFFER, _dsbo);
-			if (hasDepthBuffer && !hasStencilBuffer)
-				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, _size.x() * VE_DEVICE_PIXEL_RATIO, _size.y() * VE_DEVICE_PIXEL_RATIO);
-			else
-				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _size.x() * VE_DEVICE_PIXEL_RATIO, _size.y() * VE_DEVICE_PIXEL_RATIO);
+			if (_dsbo) {
+				glBindRenderbuffer(GL_RENDERBUFFER, _dsbo);
+				if (hasDepthBuffer && !hasStencilBuffer)
+					glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, _size.x() * VE_DEVICE_PIXEL_RATIO, _size.y() * VE_DEVICE_PIXEL_RATIO);
+				else
+					glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _size.x() * VE_DEVICE_PIXEL_RATIO, _size.y() * VE_DEVICE_PIXEL_RATIO);
 
-			if (hasDepthBuffer)
-				glFramebufferRenderbuffer(_target, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _dsbo);
-			if (hasStencilBuffer)
-				glFramebufferRenderbuffer(_target, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _dsbo);
+				if (hasDepthBuffer)
+					glFramebufferRenderbuffer(_target, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _dsbo);
+				if (hasStencilBuffer)
+					glFramebufferRenderbuffer(_target, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _dsbo);
+			}
 		}
+		glBindRenderbuffer(GL_RENDERBUFFER, _dsbo);
 	}
-	glBindRenderbuffer(GL_RENDERBUFFER, _dsbo);
-
 	//for (auto &iter : _attachments) {
 	//	float clearColorZero[4] = { 0.f, 0.f, 0.f, 0.f };
 	//	glClearBufferfv(GL_COLOR, iter.first - GL_COLOR_ATTACHMENT0, clearColorZero);

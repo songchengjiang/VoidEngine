@@ -140,10 +140,14 @@ void veRenderPipeline::visitRenderQueues()
 	auto &cameraList = _sceneManager->getCameraList();
 	for (auto &iter : cameraList) {
 		veCamera *camera = iter.get();
-		if (!camera->getViewport().isNull()) {
+		if (camera != _sceneManager->getCamera() && !camera->getViewport().isNull()) {
 			veRenderState::instance()->resetState();
-			renderCamera(camera);
+			renderCamera(camera, false);
 		}
+	}
+	if (_sceneManager->getCamera()) {
+		veRenderState::instance()->resetState();
+		renderCamera(_sceneManager->getCamera(), true);
 	}
 }
 
@@ -154,7 +158,6 @@ void veRenderPipeline::draw(veCamera *camera)
 	glViewport(vp.x * VE_DEVICE_PIXEL_RATIO, vp.y * VE_DEVICE_PIXEL_RATIO, vp.width * VE_DEVICE_PIXEL_RATIO, vp.height * VE_DEVICE_PIXEL_RATIO);
 	glClear(camera->getClearMask());
 	glClearColor(clearColor.r(), clearColor.g(), clearColor.b(), clearColor.a());
-
 	if (!camera->getRenderQueue()->renderCommandList.empty()) {
 		for (auto &renderPass : camera->getRenderQueue()->renderCommandList) {
 			auto &renderList = renderPass.second;
@@ -170,11 +173,14 @@ void veRenderPipeline::draw(veCamera *camera)
 	}
 }
 
-void veRenderPipeline::renderCamera(veCamera *camera)
+void veRenderPipeline::renderCamera(veCamera *camera, bool isMainCamera)
 {
 	if (camera->getFrameBufferObject()) {
 		camera->getFrameBufferObject()->bind(camera->getClearMask());
 	}
+	auto &clearColor = camera->getClearColor();
+	glClear(camera->getClearMask());
+	glClearColor(clearColor.r(), clearColor.g(), clearColor.b(), clearColor.a());
 	draw(camera);
 	if (camera->getFrameBufferObject()) {
 		camera->getFrameBufferObject()->unBind();

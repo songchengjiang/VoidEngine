@@ -24,7 +24,6 @@ public:
 		mat[2][3] = cameraWorldMat[2][3];
 		mat[0][0] = mat[1][1] = mat[2][2] = _skyBox->getSize() * 0.5f;
 		rc.worldMatrix = new veMat4Ptr(mat);
-		rc.renderableObj = renderableObj;
 		rc.camera = camera;
 		rc.sceneManager = camera->getSceneManager();
 		rc.renderer = this;	
@@ -36,8 +35,8 @@ public:
 				if (camera->getMask() & pass->drawMask()) {
 					rc.pass = pass;
 					pass->visit(rc);
-					//camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_BACKGROUND, rc);
-					draw(rc);
+					camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
+					//draw(rc);
 				}
 			}
 		}

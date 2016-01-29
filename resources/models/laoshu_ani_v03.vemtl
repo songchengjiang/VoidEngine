@@ -27,7 +27,7 @@
                                     "source": "BlinnPhoneShader.frag",
                                     "u_ambient": [0.588000,0.588000,0.588000
                                     ],
-                                    "u_diffuse": [0.588000,0.588000,0.588000
+                                    "u_diffuse": [1.000,1.000,1.000
                                     ],
                                     "u_roughness":0.200000,
                                     "u_opacity":1.000000,
@@ -74,7 +74,7 @@
                                     "source": "BlinnPhoneShader.frag",
                                     "u_ambient": [0.588000,0.588000,0.588000
                                     ],
-                                    "u_diffuse": [0.588000,0.588000,0.588000
+                                    "u_diffuse": [1.000,1.000,1.000
                                     ],
                                     "u_roughness":0.200000,
                                     "u_opacity":1.000000,

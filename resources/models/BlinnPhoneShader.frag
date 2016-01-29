@@ -43,9 +43,9 @@ void main(){
 #ifdef VE_USE_NROMAL_MAPPING
 	mat3 normCoords = mat3(v_worldTangent, v_worldBitangent, v_worldNormal);
 	vec3 norm = texture(u_normalTex, v_texcoord).xyz * 2.0 - 1.0;
-	normalAndOpacity.xy = encode(normCoords * norm);
+	normalAndOpacity.xy = encode(normalize(normCoords * norm));
 #else
-	normalAndOpacity.xy = encode(v_worldNormal);
+	normalAndOpacity.xy = encode(normalize(v_worldNormal));
 #endif
 
 	diffuseAndLightMask.w = u_lightMask;

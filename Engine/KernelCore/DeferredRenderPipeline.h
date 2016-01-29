@@ -4,6 +4,7 @@
 #include "FrameBufferObject.h"
 #include "Texture.h"
 #include "Surface.h"
+#include "Image.h"
 #include "LightRenderer.h"
 
 class VE_EXPORT veDeferredRenderPipeline : public veRenderPipeline
@@ -14,7 +15,7 @@ public:
 
 protected:
 
-	virtual void renderCamera(veCamera *camera) override;
+	virtual void renderCamera(veCamera *camera, bool isMainCamera) override;
 
 	void initDeferredParams();
 	void initLightingParams();
@@ -46,6 +47,9 @@ protected:
 	VE_Ptr<veScreenLightRenderer>     _directionalLightRenderer;
 	VE_Ptr<veSphereLightRenderer>     _pointLightRenderer;
 	VE_Ptr<veConeLightRenderer>       _spotLightRenderer;
+
+	VE_Ptr<veFrameBufferObject>       _fullScreenFBO;
+	VE_Ptr<veImage>                   _fullScreenSurface;
 
 	std::unordered_map< veLight*, VE_Ptr<veMaterial> > _lightRenderParamsList;
 };

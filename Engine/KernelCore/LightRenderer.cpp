@@ -14,7 +14,7 @@ veScreenLightRenderer::~veScreenLightRenderer()
 
 }
 
-void veScreenLightRenderer::immediatelyRender(veNode *node, vePass *pass, veCamera *camera) {
+void veScreenLightRenderer::render(veNode *node, vePass *pass, veCamera *camera) {
 	updateBuffer();
 	veRenderCommand rc;
 	rc.mask = 0xffffffff;
@@ -23,7 +23,8 @@ void veScreenLightRenderer::immediatelyRender(veNode *node, vePass *pass, veCame
 	rc.sceneManager = camera->getSceneManager();
 	rc.renderer = this;
 	rc.pass = pass;
-	draw(rc);
+	//draw(rc);
+	camera->getRenderQueue()->pushCommand(0, veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
 }
 
 veSphereLightRenderer::veSphereLightRenderer()
@@ -36,7 +37,7 @@ veSphereLightRenderer::~veSphereLightRenderer()
 
 }
 
-void veSphereLightRenderer::immediatelyRender(veNode *node, vePass *pass, veCamera *camera) {
+void veSphereLightRenderer::render(veNode *node, vePass *pass, veCamera *camera) {
 	updateBuffer();
 	veRenderCommand rc;
 	rc.mask = 0xffffffff;
@@ -45,7 +46,8 @@ void veSphereLightRenderer::immediatelyRender(veNode *node, vePass *pass, veCame
 	rc.sceneManager = camera->getSceneManager();
 	rc.renderer = this;
 	rc.pass = pass;
-	draw(rc);
+	//draw(rc);
+	camera->getRenderQueue()->pushCommand(0, veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
 }
 
 veConeLightRenderer::veConeLightRenderer()
@@ -58,7 +60,7 @@ veConeLightRenderer::~veConeLightRenderer()
 
 }
 
-void veConeLightRenderer::immediatelyRender(veNode *node, vePass *pass, veCamera *camera) {
+void veConeLightRenderer::render(veNode *node, vePass *pass, veCamera *camera) {
 	updateBuffer();
 	veRenderCommand rc;
 	rc.mask = 0xffffffff;
@@ -67,5 +69,6 @@ void veConeLightRenderer::immediatelyRender(veNode *node, vePass *pass, veCamera
 	rc.sceneManager = camera->getSceneManager();
 	rc.renderer = this;
 	rc.pass = pass;
-	draw(rc);
+	//draw(rc);
+	camera->getRenderQueue()->pushCommand(0, veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
 }

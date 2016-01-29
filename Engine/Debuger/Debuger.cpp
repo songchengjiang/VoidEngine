@@ -52,7 +52,6 @@ public:
 		rc.priority = veRenderCommand::LOW_PRIORITY;
 		rc.pass = _debuger->getMaterialArray()->getMaterial(0)->getTechnique(0)->getPass(0);
 		rc.worldMatrix = new veMat4Ptr(veMat4::IDENTITY);
-		rc.renderableObj = nullptr;
 		rc.camera = camera;
 		rc.sceneManager = camera->getSceneManager();
 		rc.renderer = this;

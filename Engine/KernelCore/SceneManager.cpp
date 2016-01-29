@@ -190,11 +190,6 @@ void veSceneManager::needReload()
 void veSceneManager::dispatchEvents(veEvent &event)
 {
 	if (event.getEventType() == veEvent::VE_WIN_RESIZE) {
-		if (!_postProcesserList.empty()) {
-			for (auto &processer : _postProcesserList) {
-				processer->needRefresh();
-			}
-		}
 		if (_mainCamera.valid()) {
 			_mainCamera->resize(event.getWindowWidth(), event.getWindowHeight());
 		}

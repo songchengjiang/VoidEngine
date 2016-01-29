@@ -31,7 +31,6 @@ void veBillboardRenderer::render(veNode *node, veRenderableObject *renderableObj
 	rc.mask = node->getMask();
 	rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix() * rotMat);
 	//rc.attachedNode = node;
-	rc.renderableObj = renderableObj;
 	rc.camera = camera;
 	rc.sceneManager = camera->getSceneManager();
 	rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];

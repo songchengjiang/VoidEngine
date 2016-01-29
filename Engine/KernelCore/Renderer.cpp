@@ -17,10 +17,6 @@ veRenderer::~veRenderer()
 {
 }
 
-void veRenderer::visit(veNode *node, veRenderableObject *renderableObj, veSceneManager *sm)
-{
-}
-
 bool veRenderer::isNeedRendering()
 {
 	return (CURRENT_RENDER_STAGE & _renderStageMask) != 0;

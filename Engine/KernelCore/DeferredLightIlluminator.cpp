@@ -287,14 +287,14 @@ void veDeferredLightSceneIlluminator::directionalLightIlluminate(veLight *light)
 	veVec3 direction = lightInWorld * -veVec3::UNIT_Z;
 	direction.normalize();
 	pass->getUniform("u_lightDirection")->setValue(direction);
-	_directionalLightRenderer->immediatelyRender(light, pass, _camera);
+	_directionalLightRenderer->render(light, pass, _camera);
 }
 
 void veDeferredLightSceneIlluminator::pointLightCulling(veLight *light)
 {
 	vePass *pass = _lightMatrials->getMaterial(1)->getTechnique(0)->getPass(0);
 	_pointLightRenderer->setLightVolumeScale(veMat4::scale(veVec3(light->getAttenuationRange())));
-	_pointLightRenderer->immediatelyRender(light, pass, _camera);
+	_pointLightRenderer->render(light, pass, _camera);
 }
 
 void veDeferredLightSceneIlluminator::pointLightIlluminate(veLight *light)
@@ -307,7 +307,7 @@ void veDeferredLightSceneIlluminator::pointLightIlluminate(veLight *light)
 	pass->getUniform("u_lightPosition")->setValue(veVec3(lightInWorld[0][3], lightInWorld[1][3], lightInWorld[2][3]));
 	pass->getUniform("u_lightARI")->setValue(pointLight->getAttenuationRangeInverse());
 	_pointLightRenderer->setLightVolumeScale(veMat4::scale(veVec3(pointLight->getAttenuationRange())));
-	_pointLightRenderer->immediatelyRender(pointLight, pass, _camera);
+	_pointLightRenderer->render(pointLight, pass, _camera);
 }
 
 void veDeferredLightSceneIlluminator::spotLightCulling(veLight *light)
@@ -316,7 +316,7 @@ void veDeferredLightSceneIlluminator::spotLightCulling(veLight *light)
 	veSpotLight *spotLight = static_cast<veSpotLight *>(light);
 	float rangeScale = spotLight->getAttenuationRange() * spotLight->getOuterAngle() / 45.0f;
 	_spotLightRenderer->setLightVolumeScale(veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())));
-	_spotLightRenderer->immediatelyRender(spotLight, pass, _camera);
+	_spotLightRenderer->render(spotLight, pass, _camera);
 }
 
 void veDeferredLightSceneIlluminator::spotLightIlluminate(veLight *light)
@@ -337,5 +337,5 @@ void veDeferredLightSceneIlluminator::spotLightIlluminate(veLight *light)
 	pass->getUniform("u_lightOuterAngleCos")->setValue(spotLight->getOuterAngleCos());
 	float rangeScale = spotLight->getAttenuationRange() * spotLight->getOuterAngle() / 45.0f;
 	_spotLightRenderer->setLightVolumeScale(veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())));
-	_spotLightRenderer->immediatelyRender(spotLight, pass, _camera);
+	_spotLightRenderer->render(spotLight, pass, _camera);
 }

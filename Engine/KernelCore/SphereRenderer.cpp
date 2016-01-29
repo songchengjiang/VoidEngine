@@ -107,7 +107,6 @@ void veSphereRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 	rc.mask = node->getMask();
 	rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix());
 	//rc.attachedNode = node;
-	rc.renderableObj = renderableObj;
 	rc.camera = camera;
 	rc.sceneManager = camera->getSceneManager();
 	rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];

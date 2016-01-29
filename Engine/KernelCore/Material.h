@@ -19,6 +19,7 @@ class VE_EXPORT vePass
 	friend class veUniform;
 public:
 	static vePass* CURRENT_PASS;
+	typedef std::function<void()> ApplyFunctionCallback;
 
 	enum TextureType
 	{
@@ -93,6 +94,8 @@ public:
 	void setTransformFeedback(veTransformFeedback *transFeedback) { _transformFeedback = transFeedback; _needLinkProgram = true; }
 	veTransformFeedback* getTransformFeedback() { return _transformFeedback.get(); }
 
+	void setApplyFunctionCallback(const ApplyFunctionCallback &callback) { _callback = callback; }
+
 	void needLink();
 
 private:
@@ -137,6 +140,7 @@ private:
 	std::map< std::string, VE_Ptr<veUniform> >            _uniforms;
 	LightUniformLocations                                 _lightUniformLocations;
 	VE_Ptr<veTransformFeedback>                           _transformFeedback;
+	ApplyFunctionCallback                                 _callback;
 };
 
 class VE_EXPORT veTechnique

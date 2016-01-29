@@ -66,6 +66,8 @@ bool vePass::apply(const veRenderCommand &command)
 	veRenderState::instance()->setStencilOp(_stencilOp);
 	veRenderState::instance()->applyState();
 
+	if (_callback != nullptr)
+		_callback();
 	return true;
 }
 

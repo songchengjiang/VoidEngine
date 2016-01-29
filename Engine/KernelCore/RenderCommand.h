@@ -37,7 +37,7 @@ struct veRenderCommand
 	veReal              depthInCamera;
 	vePass             *pass;
 	//veNode             *attachedNode;
-	veRenderableObject *renderableObj;
+	//veRenderableObject *renderableObj;
 	veCamera           *camera;
 	veSceneManager     *sceneManager;
 	void*               user1;

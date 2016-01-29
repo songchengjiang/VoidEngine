@@ -20,8 +20,6 @@ veRenderableObject::~veRenderableObject()
 void veRenderableObject::update(veNode *node, veSceneManager *sm)
 {
 	if (!_isVisible) return;
-	if (_renderer.valid())
-		_renderer->visit(node, this, sm);
 }
 
 void veRenderableObject::render(veNode *node, veCamera *camera)

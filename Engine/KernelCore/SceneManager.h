@@ -70,6 +70,7 @@ public:
 
 	const veCameraList& getCameraList() const { return _cameraList; }
 	const veLightListMap& getLightListMap() const { return _lightListMap; }
+	const vePostProcesserList& getPostProcesserList() const { return _postProcesserList; }
 	void setSkyBox(veSkyBox *skybox) { _skyBox = skybox; needReload(); }
 	veSkyBox* getSkyBox() const { return _skyBox.get(); }
 	void setAmbientColor(const veVec3 &color) { _ambient = color; }

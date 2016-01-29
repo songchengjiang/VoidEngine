@@ -77,7 +77,7 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 		vec4 diffuseAndLightMaskTex = texture(u_diffuseAndLightMaskTex, v_texcoord);    \n \
 		vec4 specularAndRoughnessTex = texture(u_specularAndRoughnessTex, v_texcoord);     \n \
 																							  \n \
-		vec3 normal = normalize(decode(normalAndOpacityTex.xy));   \n \
+		vec3 normal = decode(normalAndOpacityTex.xy);   \n \
 		float depth = texture(u_depthTex, v_texcoord).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(v_texcoord * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
@@ -130,7 +130,7 @@ static const char* POINT_LIGHT_F_SHADER = " \
 		vec4 diffuseAndLightMaskTex = texture(u_diffuseAndLightMaskTex, texCoords);    \n \
 		vec4 specularAndRoughnessTex = texture(u_specularAndRoughnessTex, texCoords);     \n \
 																						\n \
-		vec3 normal = normalize(decode(normalAndOpacityTex.xy));   \n \
+		vec3 normal = decode(normalAndOpacityTex.xy);   \n \
 		float depth = texture(u_depthTex, texCoords).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
@@ -192,7 +192,7 @@ static const char* SPOT_LIGHT_F_SHADER = " \
 		vec4 diffuseAndLightMaskTex = texture(u_diffuseAndLightMaskTex, texCoords);    \n \
 		vec4 specularAndRoughnessTex = texture(u_specularAndRoughnessTex, texCoords);     \n \
 																						    \n \
-		vec3 normal = normalize(decode(normalAndOpacityTex.xy));   \n \
+		vec3 normal = decode(normalAndOpacityTex.xy);   \n \
 		float depth = texture(u_depthTex, texCoords).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
@@ -225,31 +225,50 @@ veDeferredRenderPipeline::~veDeferredRenderPipeline()
 
 }
 
-void veDeferredRenderPipeline::renderCamera(veCamera *camera)
+void veDeferredRenderPipeline::renderCamera(veCamera *camera, bool isMainCamera)
 {
+	unsigned int deferredClearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
 	auto &vp = camera->getViewport();
-	auto &clearColor = camera->getClearColor();
 	veVec2 size = veVec2(vp.width - vp.x, vp.height - vp.y);
-	_DS->storage(size.x(), size.y(), 1, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr, 1);
+	_DS->storage(size.x(), size.y(), 1, GL_DEPTH24_STENCIL8, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr, 1);
 	_RT0->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	_RT1->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	_RT2->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	_FBO->setFrameBufferSize(size);
-	_FBO->bind(camera->getClearMask());
+	_FBO->bind(deferredClearMask);
 	draw(camera);
 	_FBO->unBind();
 
-	_FBO->bind(camera->getClearMask(), GL_READ_FRAMEBUFFER);
-	camera->getFrameBufferObject()? camera->getFrameBufferObject()->bind(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_DRAW_FRAMEBUFFER)
-		                          : glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	glBlitFramebuffer(0, 0, size.x(), size.y(),
-		0, 0, size.x(), size.y(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-	_FBO->unBind();
-	glViewport(0, 0, GLsizei(size.x()) * VE_DEVICE_PIXEL_RATIO, GLsizei(size.y()) * VE_DEVICE_PIXEL_RATIO);
-	glClear(GL_COLOR_BUFFER_BIT);
 	renderLights(camera);
 	if (_sceneManager->getSkyBox())
 		_sceneManager->getSkyBox()->render(camera);
+	_fullScreenSurface->getTexture()->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
+	_fullScreenFBO->setFrameBufferSize(size);
+	_fullScreenFBO->bind(deferredClearMask, GL_DRAW_FRAMEBUFFER);
+	_FBO->bind(deferredClearMask, GL_READ_FRAMEBUFFER);
+	glBlitFramebuffer(0, 0, size.x(), size.y(),
+		0, 0, size.x(), size.y(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	_fullScreenFBO->bind(deferredClearMask);
+	unsigned int defaultClearMask = camera->getClearMask();
+	camera->setClearMask(GL_COLOR_BUFFER_BIT);
+	draw(camera);
+	camera->setClearMask(defaultClearMask);
+	_fullScreenFBO->unBind();
+
+	_fullScreenSurface->update(_sceneManager->getRootNode(), _sceneManager);
+	_fullScreenSurface->render(_sceneManager->getRootNode(), camera);
+	if (camera->getFrameBufferObject())
+		camera->getFrameBufferObject()->bind(camera->getClearMask(), GL_DRAW_FRAMEBUFFER);
+	if (isMainCamera && !_sceneManager->getPostProcesserList().empty()) {
+		if (!_postProcesserFBO.valid())
+			_postProcesserFBO = veFrameBufferObjectManager::instance()->createFrameBufferObject("_VE_DEFERRED_RENDER_PIPELINE_POST_PROCESSER_FBO_");
+		_postProcesserFBO->setFrameBufferSize(size);
+		for (auto &iter : _sceneManager->getPostProcesserList()) {
+			auto processer = iter.get();
+			processer->process(this, _postProcesserFBO.get(), camera);
+		}
+	}
+	draw(camera);
 	if (camera->getFrameBufferObject())
 		camera->getFrameBufferObject()->unBind();
 }
@@ -262,10 +281,15 @@ void veDeferredRenderPipeline::initDeferredParams()
 	_RT1 = _sceneManager->createTexture("_VE_DEFERRED_RENDER_PIPELINE_RT1_");
 	_RT2 = _sceneManager->createTexture("_VE_DEFERRED_RENDER_PIPELINE_RT2_");
 
-	_FBO->attach(GL_DEPTH_ATTACHMENT,  GL_TEXTURE_2D, _DS.get());
+	_FBO->attach(GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, _DS.get());
 	_FBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _RT0.get());
 	_FBO->attach(GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, _RT1.get());
 	_FBO->attach(GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, _RT2.get());
+
+	_fullScreenFBO = veFrameBufferObjectManager::instance()->createFrameBufferObject("_VE_DEFERRED_RENDER_PIPELINE_FULL_SCREEN_FBO_");
+	auto fullScreenTex = _sceneManager->createTexture("_VE_DEFERRED_RENDER_PIPELINE_FULL_SCREEN_TEXTURE_");
+	_fullScreenSurface = _sceneManager->createImage("_VE_DEFERRED_RENDER_PIPELINE_FULL_SCREEN_SURFACE_", fullScreenTex);
+	_fullScreenFBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fullScreenTex);
 }
 
 void veDeferredRenderPipeline::initLightingParams()
@@ -340,6 +364,10 @@ veMaterial* veDeferredRenderPipeline::createPointLightMaterial(veLight *light)
 	pass0->setShader(new veShader(veShader::VERTEX_SHADER, POINT_LIGHT_V_SHADER));
 	pass0->setShader(new veShader(veShader::FRAGMENT_SHADER, "layout(location=0) out vec4 fragColor;void main(){}"));
 	pass0->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
+	pass0->setApplyFunctionCallback([]() {
+		glClear(GL_STENCIL_BUFFER_BIT);
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	});
 
 	initLightCommomParams(light, pass1);
 	pass1->depthTest() = false;
@@ -356,6 +384,9 @@ veMaterial* veDeferredRenderPipeline::createPointLightMaterial(veLight *light)
 	pass1->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
 	pass1->addUniform(new veUniform("u_lightPosition", veVec3(0.0f)));
 	pass1->addUniform(new veUniform("u_lightARI", 0.0f));
+	pass1->setApplyFunctionCallback([]() {
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	});
 
 	return material;
 }
@@ -380,6 +411,10 @@ veMaterial* veDeferredRenderPipeline::createSpotLightMaterial(veLight *light)
 	pass0->setShader(new veShader(veShader::VERTEX_SHADER, SPOT_LIGHT_V_SHADER));
 	pass0->setShader(new veShader(veShader::FRAGMENT_SHADER, "layout(location=0) out vec4 fragColor;void main(){}"));
 	pass0->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
+	pass0->setApplyFunctionCallback([]() {
+		glClear(GL_STENCIL_BUFFER_BIT);
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	});
 
 	initLightCommomParams(light, pass1);
 	pass1->depthTest() = false;
@@ -399,6 +434,9 @@ veMaterial* veDeferredRenderPipeline::createSpotLightMaterial(veLight *light)
 	pass1->addUniform(new veUniform("u_lightARI", 0.0f));
 	pass1->addUniform(new veUniform("u_lightInnerAngleCos", 0.0f));
 	pass1->addUniform(new veUniform("u_lightOuterAngleCos", 0.0f));
+	pass1->setApplyFunctionCallback([]() {
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	});
 
 	return material;
 }
@@ -453,10 +491,7 @@ void veDeferredRenderPipeline::renderLights(veCamera *camera)
 			if (iter != lightListMap.end()) {
 				auto &pointLightList = iter->second;
 				for (auto &light : pointLightList) {
-					glClear(GL_STENCIL_BUFFER_BIT);
-					glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 					cullPointLight(light.get(), camera);
-					glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 					renderPointLight(light.get(), camera);
 				}
 			}
@@ -467,10 +502,7 @@ void veDeferredRenderPipeline::renderLights(veCamera *camera)
 			if (iter != lightListMap.end()) {
 				auto &spotLightList = iter->second;
 				for (auto &light : spotLightList) {
-					glClear(GL_STENCIL_BUFFER_BIT);
-					glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 					cullSpotLight(light.get(), camera);
-					glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 					renderSpotLight(light.get(), camera);
 				}
 			}
@@ -485,9 +517,9 @@ void veDeferredRenderPipeline::renderLights(veCamera *camera)
 				}
 			}
 		}
-
-		renderAmbientLight(camera);
 	}
+
+	renderAmbientLight(camera);
 }
 
 void veDeferredRenderPipeline::cullPointLight(veLight *light, veCamera *camera)
@@ -498,7 +530,7 @@ void veDeferredRenderPipeline::cullPointLight(veLight *light, veCamera *camera)
 	}
 	vePass *pass = material->getTechnique(0)->getPass(0);
 	_pointLightRenderer->setLightVolumeScale(veMat4::scale(veVec3(light->getAttenuationRange())));
-	_pointLightRenderer->immediatelyRender(light, pass, camera);
+	_pointLightRenderer->render(light, pass, camera);
 }
 
 void veDeferredRenderPipeline::cullSpotLight(veLight *light, veCamera *camera)
@@ -511,13 +543,13 @@ void veDeferredRenderPipeline::cullSpotLight(veLight *light, veCamera *camera)
 	veSpotLight *spotLight = static_cast<veSpotLight *>(light);
 	float rangeScale = spotLight->getAttenuationRange() * spotLight->getOuterAngle() / 45.0f;
 	_spotLightRenderer->setLightVolumeScale(veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())));
-	_spotLightRenderer->immediatelyRender(spotLight, pass, camera);
+	_spotLightRenderer->render(spotLight, pass, camera);
 }
 
 void veDeferredRenderPipeline::renderAmbientLight(veCamera *camera)
 {
 	_ambientLightRenderPass->getUniform("u_ambient")->setValue(_sceneManager->getAmbientColor());
-	_ambientLightRender->immediatelyRender(nullptr, _ambientLightRenderPass.get(), camera);
+	_ambientLightRender->render(nullptr, _ambientLightRenderPass.get(), camera);
 }
 
 void veDeferredRenderPipeline::renderDirectionalLight(veLight *light, veCamera *camera)
@@ -533,7 +565,7 @@ void veDeferredRenderPipeline::renderDirectionalLight(veLight *light, veCamera *
 	veVec3 direction = lightInWorld * -veVec3::UNIT_Z;
 	direction.normalize();
 	pass->getUniform("u_lightDirection")->setValue(direction);
-	_directionalLightRenderer->immediatelyRender(light, pass, camera);
+	_directionalLightRenderer->render(light, pass, camera);
 }
 
 void veDeferredRenderPipeline::renderPointLight(veLight *light, veCamera *camera)
@@ -548,7 +580,7 @@ void veDeferredRenderPipeline::renderPointLight(veLight *light, veCamera *camera
 	pass->getUniform("u_lightPosition")->setValue(veVec3(lightInWorld[0][3], lightInWorld[1][3], lightInWorld[2][3]));
 	pass->getUniform("u_lightARI")->setValue(pointLight->getAttenuationRangeInverse());
 	_pointLightRenderer->setLightVolumeScale(veMat4::scale(veVec3(pointLight->getAttenuationRange())));
-	_pointLightRenderer->immediatelyRender(pointLight, pass, camera);
+	_pointLightRenderer->render(pointLight, pass, camera);
 }
 
 void veDeferredRenderPipeline::renderSpotLight(veLight *light, veCamera *camera)
@@ -571,5 +603,5 @@ void veDeferredRenderPipeline::renderSpotLight(veLight *light, veCamera *camera)
 	pass->getUniform("u_lightOuterAngleCos")->setValue(spotLight->getOuterAngleCos());
 	float rangeScale = spotLight->getAttenuationRange() * spotLight->getOuterAngle() / 45.0f;
 	_spotLightRenderer->setLightVolumeScale(veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())));
-	_spotLightRenderer->immediatelyRender(spotLight, pass, camera);
+	_spotLightRenderer->render(spotLight, pass, camera);
 }
