@@ -15,7 +15,7 @@ static const char* COMMON_FUNCTIONS = " \
 	}    \n \
 	";
 
-static const char* AMBIENT_V_SHADER = " \
+static const char* FULL_SCREEN_V_SHADER = " \
 	layout(location = 0) in vec3 position; \n \
 	layout(location = 1) in vec3 normal; \n \
 	layout(location = 2) in vec2 texcoord; \n \
@@ -26,16 +26,14 @@ static const char* AMBIENT_V_SHADER = " \
 		gl_Position = vec4(position, 1.0); \n \
 	}";
 
-static const char* AMBIENT_F_SHADER = " \
+static const char* FULL_SCREEN_F_SHADER = " \
 	uniform vec3 u_ambient; \n \
-	uniform sampler2D u_depthTex; \n \
-	uniform sampler2D u_normalAndOpacityTex; \n \
-	uniform sampler2D u_diffuseAndLightMaskTex; \n \
-	uniform sampler2D u_specularAndRoughnessTex; \n \
+	uniform sampler2D u_lightTex; \n \
+	uniform sampler2D u_RT1; \n \
 	in vec2 v_texcoord; \n \
 	layout(location = 0) out vec4 fragColor; \n \
 	void main() {  \n \
-		fragColor = vec4(texture(u_diffuseAndLightMaskTex, v_texcoord).xyz * u_ambient, 1.0); \n \
+		fragColor = vec4(texture(u_lightTex, v_texcoord).xyz + texture(u_RT1, v_texcoord).xyz * u_ambient, 1.0); \n \
 	}";
 
 
@@ -52,9 +50,9 @@ static const char* DIRECTIONAL_LIGHT_V_SHADER = " \
 
 static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 	uniform sampler2D u_depthTex; \n \
-	uniform sampler2D u_normalAndOpacityTex; \n \
-	uniform sampler2D u_diffuseAndLightMaskTex; \n \
-	uniform sampler2D u_specularAndRoughnessTex; \n \
+	uniform sampler2D u_RT0; \n \
+	uniform sampler2D u_RT1; \n \
+	uniform sampler2D u_RT2; \n \
 												  \n \
 	uniform mat4 u_InvViewMat;  \n \
 	uniform mat4 u_InvViewProjectMat;  \n \
@@ -74,11 +72,11 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 	in vec2 v_texcoord; \n \
 	layout(location = 0) out vec4 fragColor; \n \
 	void main() {  \n \
-		vec4 normalAndOpacityTex = texture(u_normalAndOpacityTex, v_texcoord);    \n \
-		vec4 diffuseAndLightMaskTex = texture(u_diffuseAndLightMaskTex, v_texcoord);    \n \
-		vec4 specularAndRoughnessTex = texture(u_specularAndRoughnessTex, v_texcoord);     \n \
+		vec4 RT0 = texture(u_RT0, v_texcoord);    \n \
+		vec4 RT1 = texture(u_RT1, v_texcoord);    \n \
+		vec4 RT2 = texture(u_RT2, v_texcoord);     \n \
 																							  \n \
-		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(normalAndOpacityTex.xy)), 0.0)).xyz;   \n \
+		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xy)), 0.0)).xyz;   \n \
 		float depth = texture(u_depthTex, v_texcoord).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(v_texcoord * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
@@ -88,7 +86,7 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 		float NdotH = max(0.0, dot(worldNormal, H));    \n \
 		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity;    \n \
 																							  \n \
-		fragColor = vec4(clamp((diffuseAndLightMaskTex.xyz * NdotL + specularAndRoughnessTex.xyz * pow(NdotH, 16.0)) * lightIntensity, 0.0, 1.0), 1.0);     \n \
+		fragColor = vec4(clamp((RT1.xyz * NdotL + RT2.xyz * pow(NdotH, 16.0)) * lightIntensity, 0.0, 1.0), 1.0);     \n \
 	}";
 
 static const char* POINT_LIGHT_V_SHADER = " \
@@ -103,9 +101,9 @@ static const char* POINT_LIGHT_V_SHADER = " \
 
 static const char* POINT_LIGHT_F_SHADER = " \
 	uniform sampler2D u_depthTex; \n \
-	uniform sampler2D u_normalAndOpacityTex; \n \
-	uniform sampler2D u_diffuseAndLightMaskTex; \n \
-	uniform sampler2D u_specularAndRoughnessTex; \n \
+	uniform sampler2D u_RT0; \n \
+	uniform sampler2D u_RT1; \n \
+	uniform sampler2D u_RT2; \n \
                                                  \n \
 	uniform float u_screenWidth;                \n \
 	uniform float u_screenHeight;                \n \
@@ -128,11 +126,11 @@ static const char* POINT_LIGHT_F_SHADER = " \
 	layout(location = 0) out vec4 fragColor; \n \
 	void main() {  \n \
 		vec2 texCoords = gl_FragCoord.xy / vec2(u_screenWidth, u_screenHeight);   \n \
-		vec4 normalAndOpacityTex = texture(u_normalAndOpacityTex, texCoords);    \n \
-		vec4 diffuseAndLightMaskTex = texture(u_diffuseAndLightMaskTex, texCoords);    \n \
-		vec4 specularAndRoughnessTex = texture(u_specularAndRoughnessTex, texCoords);     \n \
+		vec4 RT0 = texture(u_RT0, texCoords);    \n \
+		vec4 RT1 = texture(u_RT1, texCoords);    \n \
+		vec4 RT2 = texture(u_RT2, texCoords);     \n \
 																						\n \
-		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(normalAndOpacityTex.xy)), 0.0)).xyz;   \n \
+		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xy)), 0.0)).xyz;   \n \
 		float depth = texture(u_depthTex, texCoords).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
@@ -148,7 +146,7 @@ static const char* POINT_LIGHT_F_SHADER = " \
 		float NdotH = max(0.0, dot(worldNormal, H));     \n \
 																						\n \
 		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * attenuation;    \n \
-		fragColor = vec4(clamp((diffuseAndLightMaskTex.xyz * NdotL + specularAndRoughnessTex.xyz * pow(NdotH, 16.0)) * lightIntensity, 0.0, 1.0), 1.0);     \n \
+		fragColor = vec4(clamp((RT1.xyz * NdotL + RT2.xyz * pow(NdotH, 16.0)) * lightIntensity, 0.0, 1.0), 1.0);     \n \
 	}";
 
 static const char* SPOT_LIGHT_V_SHADER = " \
@@ -163,9 +161,9 @@ static const char* SPOT_LIGHT_V_SHADER = " \
 
 static const char* SPOT_LIGHT_F_SHADER = " \
 	uniform sampler2D u_depthTex; \n \
-	uniform sampler2D u_normalAndOpacityTex; \n \
-	uniform sampler2D u_diffuseAndLightMaskTex; \n \
-	uniform sampler2D u_specularAndRoughnessTex; \n \
+	uniform sampler2D u_RT0; \n \
+	uniform sampler2D u_RT1; \n \
+	uniform sampler2D u_RT2; \n \
 										    \n \
 	uniform float u_screenWidth;  \n \
 	uniform float u_screenHeight;  \n \
@@ -191,11 +189,11 @@ static const char* SPOT_LIGHT_F_SHADER = " \
 	layout(location = 0) out vec4 fragColor; \n \
 	void main() {  \n \
 		vec2 texCoords = gl_FragCoord.xy / vec2(u_screenWidth, u_screenHeight);   \n \
-		vec4 normalAndOpacityTex = texture(u_normalAndOpacityTex, texCoords);    \n \
-		vec4 diffuseAndLightMaskTex = texture(u_diffuseAndLightMaskTex, texCoords);    \n \
-		vec4 specularAndRoughnessTex = texture(u_specularAndRoughnessTex, texCoords);     \n \
+		vec4 RT0 = texture(u_RT0, texCoords);    \n \
+		vec4 RT1 = texture(u_RT1, texCoords);    \n \
+		vec4 RT2 = texture(u_RT2, texCoords);     \n \
 																						    \n \
-		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(normalAndOpacityTex.xy)), 0.0)).xyz;   \n \
+		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xy)), 0.0)).xyz;   \n \
 		float depth = texture(u_depthTex, texCoords).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
@@ -213,7 +211,7 @@ static const char* SPOT_LIGHT_F_SHADER = " \
 		float NdotH = max(0.0, dot(worldNormal, H));   \n \
 																						    \n \
 		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * attenuation;    \n \
-		fragColor = vec4(clamp((diffuseAndLightMaskTex.xyz * NdotL + specularAndRoughnessTex.xyz * pow(NdotH, 16.0)) * lightIntensity, 0.0, 1.0), 1.0);     \n \
+		fragColor = vec4(clamp((RT1.xyz * NdotL + RT2.xyz * pow(NdotH, 16.0)) * lightIntensity, 0.0, 1.0), 1.0);     \n \
 	}";
 
 veDeferredRenderPipeline::veDeferredRenderPipeline(veSceneManager *sm)
@@ -245,7 +243,8 @@ void veDeferredRenderPipeline::renderCamera(veCamera *camera, bool isMainCamera)
 	renderLights(camera);
 	if (_sceneManager->getSkyBox())
 		_sceneManager->getSkyBox()->render(camera);
-	_fullScreenSurface->getTexture()->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
+	_ambientColor->setValue(_sceneManager->getAmbientColor());
+	_fullScreenTexture->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	_fullScreenFBO->setFrameBufferSize(size);
 	_fullScreenFBO->bind(deferredClearMask, GL_DRAW_FRAMEBUFFER);
 	_FBO->bind(deferredClearMask, GL_READ_FRAMEBUFFER);
@@ -290,34 +289,37 @@ void veDeferredRenderPipeline::initDeferredParams()
 	_FBO->attach(GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, _RT2.get());
 
 	_fullScreenFBO = veFrameBufferObjectManager::instance()->createFrameBufferObject("_VE_DEFERRED_RENDER_PIPELINE_FULL_SCREEN_FBO_");
-	auto fullScreenTex = _sceneManager->createTexture("_VE_DEFERRED_RENDER_PIPELINE_FULL_SCREEN_TEXTURE_");
-	_fullScreenSurface = _sceneManager->createImage("_VE_DEFERRED_RENDER_PIPELINE_FULL_SCREEN_SURFACE_", fullScreenTex);
-	_fullScreenFBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fullScreenTex);
+	_fullScreenTexture = _sceneManager->createTexture("_VE_DEFERRED_RENDER_PIPELINE_FULL_SCREEN_TEXTURE_");
+	_fullScreenSurface = _sceneManager->createSurface("_VE_DEFERRED_RENDER_PIPELINE_FULL_SCREEN_SURFACE_");
+	_fullScreenFBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _fullScreenTexture.get());
+
+	auto fullScreenMats = _sceneManager->createMaterialArray("_VE_DEFERRED_RENDER_PIPELINE_FULL_SCREEN_MATERIAL_ARRAY_");
+	auto fullScreenMat = new veMaterial;
+	auto fullScreenTech = new veTechnique;
+	auto pass = new vePass;
+	fullScreenMats->addMaterial(fullScreenMat);
+	fullScreenMat->addTechnique(fullScreenTech);
+	fullScreenTech->addPass(pass);
+	_fullScreenSurface->setMaterialArray(fullScreenMats);
+
+	pass->depthTest() = false;
+	pass->depthWrite() = false;
+	pass->cullFace() = true;
+	pass->cullFaceMode() = GL_BACK;
+	pass->blendFunc() = veBlendFunc::DISABLE;
+	pass->setShader(new veShader(veShader::VERTEX_SHADER, FULL_SCREEN_V_SHADER));
+	pass->setShader(new veShader(veShader::FRAGMENT_SHADER, FULL_SCREEN_F_SHADER));
+	pass->addUniform(new veUniform("u_lightTex", 0));
+	pass->addUniform(new veUniform("u_RT1", 1));
+	pass->addTexture(vePass::AMBIENT_TEXTURE, _fullScreenTexture.get());
+	pass->addTexture(vePass::SPECULAR_TEXTURE, _RT1.get());
+
+	_ambientColor = new veUniform("u_ambient", veVec3::ZERO);
+	pass->addUniform(_ambientColor.get());
 }
 
 void veDeferredRenderPipeline::initLightingParams()
 {
-	_ambientLightRenderPass = new vePass;
-	_ambientLightRenderPass->depthTest() = false;
-	_ambientLightRenderPass->depthWrite() = false;
-	_ambientLightRenderPass->cullFace() = true;
-	_ambientLightRenderPass->cullFaceMode() = GL_BACK;
-	_ambientLightRenderPass->blendFunc().src = GL_ONE;
-	_ambientLightRenderPass->blendFunc().dst = GL_ONE;
-	_ambientLightRenderPass->blendEquation() = GL_FUNC_ADD;
-	_ambientLightRenderPass->setShader(new veShader(veShader::VERTEX_SHADER, AMBIENT_V_SHADER));
-	_ambientLightRenderPass->setShader(new veShader(veShader::FRAGMENT_SHADER, AMBIENT_F_SHADER));
-	_ambientLightRenderPass->addUniform(new veUniform("u_ambient", veVec3::ZERO));
-	_ambientLightRenderPass->addUniform(new veUniform("u_depthTex", 0));
-	_ambientLightRenderPass->addUniform(new veUniform("u_normalAndOpacityTex", 1));
-	_ambientLightRenderPass->addUniform(new veUniform("u_diffuseAndLightMaskTex", 2));
-	_ambientLightRenderPass->addUniform(new veUniform("u_specularAndRoughnessTex", 3));
-	_ambientLightRenderPass->addTexture(vePass::AMBIENT_TEXTURE, _DS.get());
-	_ambientLightRenderPass->addTexture(vePass::DIFFUSE_TEXTURE, _RT0.get());
-	_ambientLightRenderPass->addTexture(vePass::SPECULAR_TEXTURE, _RT1.get());
-	_ambientLightRenderPass->addTexture(vePass::EMISSIVE_TEXTURE, _RT2.get());
-
-	_ambientLightRender       = new veScreenLightRenderer;
 	_directionalLightRenderer = new veScreenLightRenderer;
 	_pointLightRenderer       = new veSphereLightRenderer;
 	_spotLightRenderer        = new veConeLightRenderer;
@@ -461,9 +463,9 @@ void veDeferredRenderPipeline::initLightCommomParams(veLight *light, vePass *pas
 	pass->addUniform(new veUniform("u_lightShadowSoftness", 0.0f));
 
 	pass->addUniform(new veUniform("u_depthTex", 0));
-	pass->addUniform(new veUniform("u_normalAndOpacityTex", 1));
-	pass->addUniform(new veUniform("u_diffuseAndLightMaskTex", 2));
-	pass->addUniform(new veUniform("u_specularAndRoughnessTex", 3));
+	pass->addUniform(new veUniform("u_RT0", 1));
+	pass->addUniform(new veUniform("u_RT1", 2));
+	pass->addUniform(new veUniform("u_RT2", 3));
 	pass->addUniform(new veUniform("u_shadowTex", 4));
 	pass->addTexture(vePass::AMBIENT_TEXTURE, _DS.get());
 	pass->addTexture(vePass::DIFFUSE_TEXTURE, _RT0.get());
@@ -522,8 +524,6 @@ void veDeferredRenderPipeline::renderLights(veCamera *camera)
 			}
 		}
 	}
-
-	renderAmbientLight(camera);
 }
 
 void veDeferredRenderPipeline::cullPointLight(veLight *light, veCamera *camera)
@@ -548,12 +548,6 @@ void veDeferredRenderPipeline::cullSpotLight(veLight *light, veCamera *camera)
 	float rangeScale = spotLight->getAttenuationRange() * spotLight->getOuterAngle() / 45.0f;
 	_spotLightRenderer->setLightVolumeScale(veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())));
 	_spotLightRenderer->render(spotLight, pass, camera);
-}
-
-void veDeferredRenderPipeline::renderAmbientLight(veCamera *camera)
-{
-	_ambientLightRenderPass->getUniform("u_ambient")->setValue(_sceneManager->getAmbientColor());
-	_ambientLightRender->render(nullptr, _ambientLightRenderPass.get(), camera);
 }
 
 void veDeferredRenderPipeline::renderDirectionalLight(veLight *light, veCamera *camera)

@@ -25,10 +25,10 @@ in vec3 v_viewBitangent;
             
 in vec2 v_texcoord;
 
-layout(location=0) out vec4 normalAndOpacity;
+layout(location=0) out vec4 RT0;
 //#ifdef VE_USE_DEFERRED_PATH
-layout(location=1) out vec4 diffuseAndLightMask;
-layout(location=2) out vec4 specularAndRoughness;
+layout(location=1) out vec4 RT1;
+layout(location=2) out vec4 RT2;
 //#endif
 
 vec2 encode (vec3 normal)
@@ -39,27 +39,26 @@ vec2 encode (vec3 normal)
              
 void main(){
 
-	normalAndOpacity.w = u_opacity;
 #ifdef VE_USE_NROMAL_MAPPING
 	mat3 normCoords = mat3(v_viewTangent, v_viewBitangent, v_viewNormal);
 	vec3 norm = texture(u_normalTex, v_texcoord).xyz * 2.0 - 1.0;
-	normalAndOpacity.xy = encode(normCoords * norm);
+	RT0.xy = encode(normCoords * norm);
 #else
-	normalAndOpacity.xy = encode(v_viewNormal);
+	RT0.xy = encode(v_viewNormal);
 #endif
+	RT0.z = u_lightMask;
+	RT0.w = u_roughness;
 
-	diffuseAndLightMask.w = u_lightMask;
 #ifdef VE_USE_DIFFUSE_TEXTURE
-	diffuseAndLightMask.xyz = u_diffuse * texture(u_diffuseTex, v_texcoord).xyz;
+	RT1.xyz = u_diffuse * texture(u_diffuseTex, v_texcoord).xyz;
 #else
-	diffuseAndLightMask.xyz = u_diffuse;
+	RT1.xyz = u_diffuse;
 #endif
 
-	specularAndRoughness.w = u_roughness;
 #ifdef VE_USE_SPECULAR_TEXTURE
-	specularAndRoughness.xyz = u_specular * texture(u_specularTex, v_texcoord).xyz;
+	RT2.xyz = u_specular * texture(u_specularTex, v_texcoord).xyz;
 #else
-	specularAndRoughness.xyz = u_specular;
+	RT2.xyz = u_specular;
 #endif
 	
 //#ifdef VE_USE_DEFERRED_PATH

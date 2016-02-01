@@ -29,7 +29,6 @@ protected:
 	void renderLights(veCamera *camera);
 	void cullPointLight(veLight *light, veCamera *camera);
 	void cullSpotLight(veLight *light, veCamera *camera);
-	void renderAmbientLight(veCamera *camera);
 	void renderDirectionalLight(veLight *light, veCamera *camera);
 	void renderPointLight(veLight *light, veCamera *camera);
 	void renderSpotLight(veLight *light, veCamera *camera);
@@ -42,14 +41,14 @@ protected:
 	VE_Ptr<veTexture>           _RT1;//diffuseAndLightMask
 	VE_Ptr<veTexture>           _RT2;//specularAndRoughness
 
-	VE_Ptr<vePass>                    _ambientLightRenderPass;
-	VE_Ptr<veScreenLightRenderer>     _ambientLightRender;
 	VE_Ptr<veScreenLightRenderer>     _directionalLightRenderer;
 	VE_Ptr<veSphereLightRenderer>     _pointLightRenderer;
 	VE_Ptr<veConeLightRenderer>       _spotLightRenderer;
 
 	VE_Ptr<veFrameBufferObject>       _fullScreenFBO;
-	VE_Ptr<veImage>                   _fullScreenSurface;
+	VE_Ptr<veSurface>                 _fullScreenSurface;
+	VE_Ptr<veTexture>                 _fullScreenTexture;
+	VE_Ptr<veUniform>                 _ambientColor;
 
 	std::unordered_map< veLight*, VE_Ptr<veMaterial> > _lightRenderParamsList;
 };
