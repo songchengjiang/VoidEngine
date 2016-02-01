@@ -17,10 +17,10 @@ uniform sampler2D u_specularTex;
 uniform sampler2D u_normalTex;
 #endif
 
-in vec3 v_worldNormal;
+in vec3 v_viewNormal;
 #ifdef VE_USE_NROMAL_MAPPING
-in vec3 v_worldTangent;
-in vec3 v_worldBitangent; 
+in vec3 v_viewTangent;
+in vec3 v_viewBitangent; 
 #endif
             
 in vec2 v_texcoord;
@@ -41,11 +41,11 @@ void main(){
 
 	normalAndOpacity.w = u_opacity;
 #ifdef VE_USE_NROMAL_MAPPING
-	mat3 normCoords = mat3(v_worldTangent, v_worldBitangent, v_worldNormal);
+	mat3 normCoords = mat3(v_viewTangent, v_viewBitangent, v_viewNormal);
 	vec3 norm = texture(u_normalTex, v_texcoord).xyz * 2.0 - 1.0;
-	normalAndOpacity.xy = encode(normalize(normCoords * norm));
+	normalAndOpacity.xy = encode(normCoords * norm);
 #else
-	normalAndOpacity.xy = encode(normalize(v_worldNormal));
+	normalAndOpacity.xy = encode(v_viewNormal);
 #endif
 
 	diffuseAndLightMask.w = u_lightMask;

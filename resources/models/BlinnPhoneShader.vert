@@ -23,7 +23,7 @@ layout (location = ATTR_BONE_WEIGHTS) in vec4 boneWeights;
 #endif 
                  
 uniform mat4 u_ModelViewProjectMat;
-uniform mat3 u_NormalWorldMat;
+uniform mat3 u_NormalMat;
 #ifdef VE_USE_BONES
 uniform mat4 u_BoneMates[60];
 void updateBonePositionAndNormal(out vec4 pos, out vec3 norm, out vec3 tan, out vec3 bitan)
@@ -47,10 +47,10 @@ out vec3 tf_normal;
 
 #endif
    
-out vec3 v_worldNormal;
+out vec3 v_viewNormal;
 #ifdef VE_USE_NROMAL_MAPPING
-out vec3 v_worldTangent;
-out vec3 v_worldBitangent;    
+out vec3 v_viewTangent;
+out vec3 v_viewBitangent;    
 #endif
             
 out vec2 v_texcoord;
@@ -71,10 +71,10 @@ void main()
 #endif
 	
 	v_texcoord = texcoord0;
-	v_worldNormal = normalize(u_NormalWorldMat * finalNorm);  
+	v_viewNormal = normalize(u_NormalMat * finalNorm);  
 #ifdef VE_USE_NROMAL_MAPPING
-	v_worldTangent = normalize(u_NormalWorldMat * finalTangent);
-	v_worldBitangent = normalize(u_NormalWorldMat * finalBitangent);  
+	v_viewTangent = normalize(u_NormalMat * finalTangent);
+	v_viewBitangent = normalize(u_NormalMat * finalBitangent);  
 #endif
 
 	gl_Position = u_ModelViewProjectMat * finalPos; 

@@ -56,6 +56,7 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 	uniform sampler2D u_diffuseAndLightMaskTex; \n \
 	uniform sampler2D u_specularAndRoughnessTex; \n \
 												  \n \
+	uniform mat4 u_InvViewMat;  \n \
 	uniform mat4 u_InvViewProjectMat;  \n \
 	uniform mat4 u_lightMatrix;    \n \
 	uniform vec3 u_cameraPosInWorld;    \n \
@@ -77,14 +78,14 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 		vec4 diffuseAndLightMaskTex = texture(u_diffuseAndLightMaskTex, v_texcoord);    \n \
 		vec4 specularAndRoughnessTex = texture(u_specularAndRoughnessTex, v_texcoord);     \n \
 																							  \n \
-		vec3 normal = decode(normalAndOpacityTex.xy);   \n \
+		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(normalAndOpacityTex.xy)), 0.0)).xyz;   \n \
 		float depth = texture(u_depthTex, v_texcoord).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(v_texcoord * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
 		vec3 eyeDir = normalize(u_cameraPosInWorld - worldPosition.xyz);    \n \
-		float NdotL = max(0.0, dot(normal, -u_lightDirection));    \n \
+		float NdotL = max(0.0, dot(worldNormal, -u_lightDirection));    \n \
 		vec3 H = normalize(eyeDir - u_lightDirection);    \n \
-		float NdotH = max(0.0, dot(normal, H));    \n \
+		float NdotH = max(0.0, dot(worldNormal, H));    \n \
 		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity;    \n \
 																							  \n \
 		fragColor = vec4(clamp((diffuseAndLightMaskTex.xyz * NdotL + specularAndRoughnessTex.xyz * pow(NdotH, 16.0)) * lightIntensity, 0.0, 1.0), 1.0);     \n \
@@ -108,6 +109,7 @@ static const char* POINT_LIGHT_F_SHADER = " \
                                                  \n \
 	uniform float u_screenWidth;                \n \
 	uniform float u_screenHeight;                \n \
+	uniform mat4 u_InvViewMat;  \n \
 	uniform mat4 u_InvViewProjectMat;                \n \
 	uniform mat4 u_lightMatrix;                \n \
 	uniform vec3 u_cameraPosInWorld;                \n \
@@ -130,7 +132,7 @@ static const char* POINT_LIGHT_F_SHADER = " \
 		vec4 diffuseAndLightMaskTex = texture(u_diffuseAndLightMaskTex, texCoords);    \n \
 		vec4 specularAndRoughnessTex = texture(u_specularAndRoughnessTex, texCoords);     \n \
 																						\n \
-		vec3 normal = decode(normalAndOpacityTex.xy);   \n \
+		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(normalAndOpacityTex.xy)), 0.0)).xyz;   \n \
 		float depth = texture(u_depthTex, texCoords).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
@@ -141,9 +143,9 @@ static const char* POINT_LIGHT_F_SHADER = " \
 		float attenuation = clamp(1.0 - dot(attDis, attDis), 0.0, 1.0);     \n \
 		lightDir = normalize(lightDir);     \n \
 																						\n \
-		float NdotL = max(0.0, dot(normal, lightDir));     \n \
+		float NdotL = max(0.0, dot(worldNormal, lightDir));     \n \
 		vec3 H = normalize(eyeDir + lightDir);     \n \
-		float NdotH = max(0.0, dot(normal, H));     \n \
+		float NdotH = max(0.0, dot(worldNormal, H));     \n \
 																						\n \
 		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * attenuation;    \n \
 		fragColor = vec4(clamp((diffuseAndLightMaskTex.xyz * NdotL + specularAndRoughnessTex.xyz * pow(NdotH, 16.0)) * lightIntensity, 0.0, 1.0), 1.0);     \n \
@@ -167,6 +169,7 @@ static const char* SPOT_LIGHT_F_SHADER = " \
 										    \n \
 	uniform float u_screenWidth;  \n \
 	uniform float u_screenHeight;  \n \
+	uniform mat4 u_InvViewMat;  \n \
 	uniform mat4 u_InvViewProjectMat;  \n \
 	uniform mat4 u_lightMatrix;  \n \
 	uniform vec3 u_cameraPosInWorld;  \n \
@@ -192,7 +195,7 @@ static const char* SPOT_LIGHT_F_SHADER = " \
 		vec4 diffuseAndLightMaskTex = texture(u_diffuseAndLightMaskTex, texCoords);    \n \
 		vec4 specularAndRoughnessTex = texture(u_specularAndRoughnessTex, texCoords);     \n \
 																						    \n \
-		vec3 normal = decode(normalAndOpacityTex.xy);   \n \
+		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(normalAndOpacityTex.xy)), 0.0)).xyz;   \n \
 		float depth = texture(u_depthTex, texCoords).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
@@ -205,9 +208,9 @@ static const char* SPOT_LIGHT_F_SHADER = " \
 		float currentAngleCos = dot(lightDir, -u_lightDirection);   \n \
 		attenuation *= smoothstep(u_lightOuterAngleCos, u_lightInnerAngleCos, currentAngleCos);   \n \
 																						    \n \
-		float NdotL = max(0.0, dot(normal, lightDir));   \n \
+		float NdotL = max(0.0, dot(worldNormal, lightDir));   \n \
 		vec3 H = normalize(eyeDir + lightDir);   \n \
-		float NdotH = max(0.0, dot(normal, H));   \n \
+		float NdotH = max(0.0, dot(worldNormal, H));   \n \
 																						    \n \
 		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * attenuation;    \n \
 		fragColor = vec4(clamp((diffuseAndLightMaskTex.xyz * NdotL + specularAndRoughnessTex.xyz * pow(NdotH, 16.0)) * lightIntensity, 0.0, 1.0), 1.0);     \n \
@@ -443,6 +446,7 @@ veMaterial* veDeferredRenderPipeline::createSpotLightMaterial(veLight *light)
 
 void veDeferredRenderPipeline::initLightCommomParams(veLight *light, vePass *pass)
 {
+	pass->addUniform(new veUniform("u_InvViewMat", INV_V_MATRIX));
 	pass->addUniform(new veUniform("u_InvViewProjectMat", INV_VP_MATRIX));
 	pass->addUniform(new veUniform("u_screenWidth", SCREEN_WIDTH));
 	pass->addUniform(new veUniform("u_screenHeight", SCREEN_HEIGHT));
