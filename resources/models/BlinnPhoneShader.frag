@@ -42,7 +42,7 @@ void main(){
 
 #ifdef VE_USE_NROMAL_MAPPING
 	mat3 normCoords = mat3(v_viewTangent, v_viewBitangent, v_viewNormal);
-	vec3 norm = texture(u_normalTex, v_texcoord).xyz * 2.0 - 1.0;
+	vec3 norm = normalize(texture(u_normalTex, v_texcoord).rgb * 2.0 - 1.0);
 	RT0.xy = encode(normCoords * norm);
 #else
 	RT0.xy = encode(v_viewNormal);

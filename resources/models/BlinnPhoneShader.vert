@@ -68,6 +68,8 @@ void main()
 #else
 	finalPos = vec4(position, 1.0);
 	finalNorm = normal;
+	finalTangent = tangent;
+	finalBitangent = bitangent;
 #endif
 	
 	v_texcoord = texcoord0;

@@ -87,5 +87,9 @@ bool veFile::isSupportFile(const std::string &filePath)
 
 std::string veFile::getFileExt(const std::string &filePath)
 {
-	return filePath.substr(filePath.find_last_of(".") + 1);
+	std::string ext = filePath.substr(filePath.find_last_of(".") + 1);
+	for (auto &c : ext) {
+		c = tolower(c);
+	}
+	return ext;
 }

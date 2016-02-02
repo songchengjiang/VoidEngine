@@ -97,6 +97,7 @@
     <ClInclude Include="..\..\Tests\IntersectionTest.h" />
     <ClInclude Include="..\..\Tests\LightTest.h" />
     <ClInclude Include="..\..\Tests\MeshTest.h" />
+    <ClInclude Include="..\..\Tests\NormalMappingTest.h" />
     <ClInclude Include="..\..\Tests\PerformanceTest.h" />
     <ClInclude Include="..\..\Tests\PostProcesserTest.h" />
     <ClInclude Include="..\..\Tests\RenToTex.h" />

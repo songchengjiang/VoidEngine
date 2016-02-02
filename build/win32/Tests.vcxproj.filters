@@ -40,6 +40,9 @@
     <Filter Include="IBLTest">
       <UniqueIdentifier>{20347224-8cca-4af8-8e7c-b88b42ba473a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NormalMappingTest">
+      <UniqueIdentifier>{2ba7255e-c222-4305-9deb-9d05a9ea3409}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Tests\CameraTest.h">
@@ -82,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Tests\IBLTest.h">
       <Filter>IBLTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tests\NormalMappingTest.h">
+      <Filter>NormalMappingTest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

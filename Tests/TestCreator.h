@@ -14,6 +14,7 @@
 #include "CubeMapTest.h"
 #include "ShadowTest.h"
 #include "IBLTest.h"
+#include "NormalMappingTest.h"
 
 //
 class TestCreator
@@ -33,7 +34,8 @@ public:
 		//auto test = new PostProcesserTest;
 		//auto test = new CubeMapTest;
 		//auto test = new ShadowTest;
-		auto test = new IBLTest;
+		//auto test = new IBLTest;
+		auto test = new NormalMappingTest;
 		test->init();
 	}
 

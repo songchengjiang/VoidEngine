@@ -29,7 +29,7 @@ static const char* COMMON_FUNCTIONS = " \
 		return NdotL * max(0.0, (A + B * sin(alpha) * tan(beta) * C));                                                \n\
 	}                                                                                                                 \n\
 			                                                                                                          \n\
-	float CookTorrance(float NdotL, float NdotV, float HdotV, float NdotH, float roughness, float fresnelFactor) {        \n\
+	float CookTorrance(float NdotL, float NdotV, float HdotV, float NdotH, float roughness, float fresnel) {        \n\
 			float alpha = pow(1.0 - (1.0 - roughness) * 0.7, 6.0);                                                        \n\
 			float alpha2 = alpha * alpha;                                                                                 \n\
 			                                                                                                              \n\
@@ -38,7 +38,7 @@ static const char* COMMON_FUNCTIONS = " \
 			float Gv = NdotV / (NdotV * (1.0 - k) + k);                                                                   \n\
 			float G = Gl * Gv;                                                                                            \n\
 			                                                                                                              \n\
-			float F = fresnelFactor + (1.0 - fresnelFactor) * pow(1.0 - HdotV, 5.0);                                      \n\
+			float F = fresnel + (1.0 - fresnel) * pow(1.0 - HdotV, 5.0);                                                  \n\
 			                                                                                                              \n\
 			float Db = PI * pow(NdotH * NdotH * (alpha2 - 1.0) + 1.0, 2.0);                                               \n\
 			float D = alpha2 / Db; 	                                                                                      \n\
