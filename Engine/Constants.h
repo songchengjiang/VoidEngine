@@ -210,6 +210,7 @@ static const std::string SHININESS_KEY = "u_shininess";
 static const std::string OPACITY_KEY = "u_opacity";
 static const std::string ROUGHNESS_KEY = "u_roughness";
 static const std::string REFLECTIVITY_KEY = "u_reflectivity";
+static const std::string LIGHTMASK_KEY = "u_lightMask";
 static const std::string AMBIENTTEX_KEY = "u_ambientTex";
 static const std::string DIFFUSETEX_KEY = "u_diffuseTex";
 static const std::string SPECULARTEX_KEY = "u_specularTex";

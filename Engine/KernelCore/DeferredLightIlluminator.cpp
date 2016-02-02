@@ -40,8 +40,8 @@ void veDeferredLightSceneIlluminator::initPassCommanParams(vePass *pass)
 	pass->addUniform(new veUniform("u_lightShadowStrength", 0.0f));
 	pass->addUniform(new veUniform("u_lightShadowSoft", 0.0f));
 	pass->addUniform(new veUniform("u_lightShadowSoftness", 0.0f));
-	pass->addTexture(vePass::AMBIENT_TEXTURE, _sceneDepthTexture.get());
-	pass->addTexture(vePass::DIFFUSE_TEXTURE, _sceneNormalTexture.get());
+	pass->setTexture(vePass::AMBIENT_TEXTURE, _sceneDepthTexture.get());
+	pass->setTexture(vePass::DIFFUSE_TEXTURE, _sceneNormalTexture.get());
 }
 
 void veDeferredLightSceneIlluminator::initLightMaterials()
@@ -274,7 +274,7 @@ void veDeferredLightSceneIlluminator::fillCommonLightParamsToPass(veLight *light
 	pass->getUniform("u_lightShadowStrength")->setValue(light->getShadowStrength());
 	pass->getUniform("u_lightShadowSoft")->setValue(light->isUseSoftShadow() ? 1.0f: 0.0f);
 	pass->getUniform("u_lightShadowSoftness")->setValue(light->getShadowSoftness());
-	pass->addTexture(vePass::OPACITYT_TEXTURE, light->getShadowTexture());
+	pass->setTexture(vePass::OPACITYT_TEXTURE, light->getShadowTexture());
 }
 
 void veDeferredLightSceneIlluminator::directionalLightIlluminate(veLight *light)

@@ -335,7 +335,7 @@ private:
 			texType = getPassTextureType(texVal[TEXTYPE_KEY.c_str()].GetString());
 		}
 
-		pass->addTexture(texType, texture);
+		pass->setTexture(texType, texture);
 		//else if (texVal.HasMember(TARGET_KEY.c_str())) {
 		//	std::string target = texVal[TARGET_KEY.c_str()].GetString();
 		//	if (target.find_last_of(":") != std::string::npos) {

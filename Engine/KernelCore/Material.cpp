@@ -99,7 +99,7 @@ veShader* vePass::getShader(veShader::Type type)
 //	_needLinkProgram = true;
 //}
 
-void vePass::addTexture(TextureType type, veTexture *texture)
+void vePass::setTexture(TextureType type, veTexture *texture)
 {
 	if (!texture) return;
 	int id = findTextureID(type);

@@ -78,7 +78,7 @@ public:
 
 	//void addTexture(veTexture *texture);
 	//void setTexture(size_t idx, veTexture *texture);
-	void addTexture(TextureType type, veTexture *texture);
+	void setTexture(TextureType type, veTexture *texture);
 	//veTexture* getTexture(size_t idx);
 	veTexture* getTexture(TextureType type);
 	const veTexture* getTexture(TextureType type) const;

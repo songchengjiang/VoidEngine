@@ -75,6 +75,7 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 		vec4 RT0 = texture(u_RT0, v_texcoord);    \n \
 		vec4 RT1 = texture(u_RT1, v_texcoord);    \n \
 		vec4 RT2 = texture(u_RT2, v_texcoord);     \n \
+		if (RT0.z <= 0.0) discard;             \n \
 																							  \n \
 		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xy)), 0.0)).xyz;   \n \
 		float depth = texture(u_depthTex, v_texcoord).r;    \n \
@@ -129,6 +130,7 @@ static const char* POINT_LIGHT_F_SHADER = " \
 		vec4 RT0 = texture(u_RT0, texCoords);    \n \
 		vec4 RT1 = texture(u_RT1, texCoords);    \n \
 		vec4 RT2 = texture(u_RT2, texCoords);     \n \
+		if (RT0.z <= 0.0) discard;             \n \
 																						\n \
 		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xy)), 0.0)).xyz;   \n \
 		float depth = texture(u_depthTex, texCoords).r;    \n \
@@ -192,6 +194,7 @@ static const char* SPOT_LIGHT_F_SHADER = " \
 		vec4 RT0 = texture(u_RT0, texCoords);    \n \
 		vec4 RT1 = texture(u_RT1, texCoords);    \n \
 		vec4 RT2 = texture(u_RT2, texCoords);     \n \
+		if (RT0.z <= 0.0) discard;             \n \
 																						    \n \
 		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xy)), 0.0)).xyz;   \n \
 		float depth = texture(u_depthTex, texCoords).r;    \n \
@@ -311,8 +314,8 @@ void veDeferredRenderPipeline::initDeferredParams()
 	pass->setShader(new veShader(veShader::FRAGMENT_SHADER, FULL_SCREEN_F_SHADER));
 	pass->addUniform(new veUniform("u_lightTex", 0));
 	pass->addUniform(new veUniform("u_RT1", 1));
-	pass->addTexture(vePass::AMBIENT_TEXTURE, _fullScreenTexture.get());
-	pass->addTexture(vePass::SPECULAR_TEXTURE, _RT1.get());
+	pass->setTexture(vePass::AMBIENT_TEXTURE, _fullScreenTexture.get());
+	pass->setTexture(vePass::SPECULAR_TEXTURE, _RT1.get());
 
 	_ambientColor = new veUniform("u_ambient", veVec3::ZERO);
 	pass->addUniform(_ambientColor.get());
@@ -467,11 +470,11 @@ void veDeferredRenderPipeline::initLightCommomParams(veLight *light, vePass *pas
 	pass->addUniform(new veUniform("u_RT1", 2));
 	pass->addUniform(new veUniform("u_RT2", 3));
 	pass->addUniform(new veUniform("u_shadowTex", 4));
-	pass->addTexture(vePass::AMBIENT_TEXTURE, _DS.get());
-	pass->addTexture(vePass::DIFFUSE_TEXTURE, _RT0.get());
-	pass->addTexture(vePass::SPECULAR_TEXTURE, _RT1.get());
-	pass->addTexture(vePass::EMISSIVE_TEXTURE, _RT2.get());
-	pass->addTexture(vePass::OPACITYT_TEXTURE, light->getShadowTexture());
+	pass->setTexture(vePass::AMBIENT_TEXTURE, _DS.get());
+	pass->setTexture(vePass::DIFFUSE_TEXTURE, _RT0.get());
+	pass->setTexture(vePass::SPECULAR_TEXTURE, _RT1.get());
+	pass->setTexture(vePass::EMISSIVE_TEXTURE, _RT2.get());
+	pass->setTexture(vePass::OPACITYT_TEXTURE, light->getShadowTexture());
 }
 
 void veDeferredRenderPipeline::updateLightCommomParams(veLight *light, vePass *pass, veCamera *camera)

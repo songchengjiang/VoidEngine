@@ -31,6 +31,7 @@
                                     ],
                                     "u_roughness":0.200000,
                                     "u_opacity":1.000000,
+                                    "u_lightMask":1.000000,
                                     "u_reflectivity":0.000000,
                                     "u_diffuseTex":0
                                 }
@@ -78,6 +79,7 @@
                                     ],
                                     "u_roughness":0.200000,
                                     "u_opacity":1.000000,
+                                    "u_lightMask":1.000000,
                                     "u_reflectivity":0.000000,
                                     "u_diffuseTex":0
                                 }

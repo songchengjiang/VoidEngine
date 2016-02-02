@@ -454,6 +454,9 @@ void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shade
 	_matWriter.String(SOURCE_KEY.c_str(), SOURCE_KEY.size());
 	_matWriter.String((shaderName + std::string(".frag")).c_str());
 
+	_matWriter.String(LIGHTMASK_KEY.c_str(), LIGHTMASK_KEY.size());
+	_matWriter.Float(1.0f);
+
 	aiColor4D col;
 	aiGetMaterialColor(mat, AI_MATKEY_COLOR_AMBIENT, &col);
 	if (!col.IsBlack()){
