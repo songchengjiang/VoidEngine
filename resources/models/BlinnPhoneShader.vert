@@ -23,7 +23,11 @@ layout (location = ATTR_BONE_WEIGHTS) in vec4 boneWeights;
 #endif 
                  
 uniform mat4 u_ModelViewProjectMat;
+uniform mat4 u_ModelViewMat;
+uniform mat4 u_ModelMat;
 uniform mat3 u_NormalMat;
+uniform mat3 u_NormalWorldMat;
+uniform vec3 u_cameraWorldPos;
 #ifdef VE_USE_BONES
 uniform mat4 u_BoneMates[60];
 void updateBonePositionAndNormal(out vec4 pos, out vec3 norm, out vec3 tan, out vec3 bitan)
@@ -38,7 +42,7 @@ void updateBonePositionAndNormal(out vec4 pos, out vec3 norm, out vec3 tan, out 
 	norm = (boneMat * vec4(normal, 0.0)).xyz;
 #ifdef VE_USE_NROMAL_MAPPING
 	tan = (boneMat * vec4(tangent, 0.0)).xyz;
-	bitan = (boneMat * vec4(bitangent, 0.0)).xyz;
+	bitan = (boneMat * vec4(bitangent, 0.0)).xyz;;
 #endif
 }
 
@@ -50,7 +54,11 @@ out vec3 tf_normal;
 out vec3 v_viewNormal;
 #ifdef VE_USE_NROMAL_MAPPING
 out vec3 v_viewTangent;
-out vec3 v_viewBitangent;    
+out vec3 v_viewBitangent;
+#endif
+
+#ifdef VE_USE_PARALLAX_MAPPING
+out vec3 v_viewDir;
 #endif
             
 out vec2 v_texcoord;
@@ -76,7 +84,20 @@ void main()
 	v_viewNormal = normalize(u_NormalMat * finalNorm);  
 #ifdef VE_USE_NROMAL_MAPPING
 	v_viewTangent = normalize(u_NormalMat * finalTangent);
-	v_viewBitangent = normalize(u_NormalMat * finalBitangent);  
+	v_viewBitangent = normalize(u_NormalMat * finalBitangent);
+#endif
+
+#ifdef VE_USE_PARALLAX_MAPPING
+	vec3 worldTangent = normalize(u_NormalWorldMat * finalTangent);
+	vec3 worldBitangent = normalize(u_NormalWorldMat * finalBitangent);
+	vec3 worldNormal = normalize(u_NormalWorldMat * finalNorm);
+	vec3 worldPosition = (u_ModelMat * finalPos).xyz;
+
+	vec3 viewDir = normalize(u_cameraWorldPos - worldPosition);
+	v_viewDir.x = dot(viewDir, worldTangent);
+	v_viewDir.y = dot(viewDir, worldBitangent);
+	v_viewDir.z = dot(viewDir, worldNormal);
+
 #endif
 
 	gl_Position = u_ModelViewProjectMat * finalPos; 

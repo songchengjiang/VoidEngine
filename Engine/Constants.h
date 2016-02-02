@@ -211,6 +211,8 @@ static const std::string OPACITY_KEY = "u_opacity";
 static const std::string ROUGHNESS_KEY = "u_roughness";
 static const std::string FRESNEL_KEY = "u_fresnel";
 static const std::string REFLECTIVITY_KEY = "u_reflectivity";
+static const std::string DISPLACEMENT_KEY = "u_displacement";
+static const std::string CAMERA_WORLD_POS_KEY = "u_cameraWorldPos";
 static const std::string LIGHTMASK_KEY = "u_lightMask";
 static const std::string AMBIENTTEX_KEY = "u_ambientTex";
 static const std::string DIFFUSETEX_KEY = "u_diffuseTex";
@@ -255,6 +257,7 @@ static const std::string SHADER_DEFINE_BONES             = "#define VE_USE_BONES
 static const std::string SHADER_DEFINE_LIGHTS            = "#define VE_USE_LIGHTS 1\n";
 static const std::string SHADER_DEFINE_TEXTURES          = "#define VE_USE_TEXTURES 1\n";
 static const std::string SHADER_DEFINE_NROMAL_MAPPING    = "#define VE_USE_NROMAL_MAPPING 1\n";
+static const std::string SHADER_DEFINE_PARALLAX_MAPPING  = "#define VE_USE_PARALLAX_MAPPING 1\n";
 
 static const std::string SHADER_DEFINE_AMBIENT_TEXTURE      = "#define VE_USE_AMBIENT_TEXTURE 1\n";
 static const std::string SHADER_DEFINE_DIFFUSE_TEXTURE      = "#define VE_USE_DIFFUSE_TEXTURE 1\n";

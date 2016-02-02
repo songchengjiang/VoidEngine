@@ -6,7 +6,6 @@
 #include "Surface.h"
 #include "Image.h"
 #include "LightRenderer.h"
-
 class VE_EXPORT veDeferredRenderPipeline : public veRenderPipeline
 {
 public:

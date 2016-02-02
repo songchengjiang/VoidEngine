@@ -121,6 +121,7 @@ public:
 			skyBox->setMaterialArray(materials);
 		}
 
+		_sceneManager->setAmbientColor(veVec3(0.0f));
 		auto debuger = new veOctreeDebuger(_sceneManager);
 		debuger->debugDrawBoundingBoxWireframe(false);
 		debuger->debugDrawOctree(true);

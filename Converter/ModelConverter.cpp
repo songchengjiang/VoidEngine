@@ -433,12 +433,16 @@ void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shade
 	_matWriter.String((shaderName + std::string(".vert")).c_str());
 	_matWriter.String(MVP_MATRIX_KEY.c_str(), MVP_MATRIX_KEY.size());
 	_matWriter.String(MVP_MATRIX.c_str(), MVP_MATRIX.size());
-	//_matWriter.String(MV_MATRIX_KEY.c_str(), MV_MATRIX_KEY.size());
-	//_matWriter.String(MV_MATRIX.c_str(), MV_MATRIX.size());
+	_matWriter.String(MV_MATRIX_KEY.c_str(), MV_MATRIX_KEY.size());
+	_matWriter.String(MV_MATRIX.c_str(), MV_MATRIX.size());
+	_matWriter.String(M_MATRIX_KEY.c_str(), M_MATRIX_KEY.size());
+	_matWriter.String(M_MATRIX.c_str(), M_MATRIX.size());
 	_matWriter.String(NORMAL_MATRIX_KEY.c_str(), NORMAL_MATRIX_KEY.size());
 	_matWriter.String(NORMAL_MATRIX.c_str(), NORMAL_MATRIX.size());
-	//_matWriter.String(NORMAL_WORLD_MATRIX_KEY.c_str(), NORMAL_WORLD_MATRIX_KEY.size());
-	//_matWriter.String(NORMAL_WROLD_MATRIX.c_str(), NORMAL_WROLD_MATRIX.size());
+	_matWriter.String(NORMAL_WORLD_MATRIX_KEY.c_str(), NORMAL_WORLD_MATRIX_KEY.size());
+	_matWriter.String(NORMAL_WROLD_MATRIX.c_str(), NORMAL_WROLD_MATRIX.size());
+	_matWriter.String(CAMERA_WORLD_POS_KEY.c_str(), CAMERA_WORLD_POS_KEY.size());
+	_matWriter.String(CAMERA_WORLD_POS.c_str(), CAMERA_WORLD_POS.size());
 	if (MATERIAL_MESH_MAP[mat]->HasBones()) {
 		_matWriter.String(BONE_MATRIXES_KEY.c_str(), BONE_MATRIXES_KEY.size());
 		_matWriter.String(BONE_MATRIXES.c_str(), BONE_MATRIXES.size());
@@ -514,6 +518,12 @@ void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shade
 	aiGetMaterialFloat(mat, AI_MATKEY_REFLECTIVITY, &valFloat);
 	_matWriter.String(REFLECTIVITY_KEY.c_str(), REFLECTIVITY_KEY.size());
 	_matWriter.Float(valFloat);
+
+
+	if (hasTexture(mat, aiTextureType_DISPLACEMENT)) {
+		_matWriter.String(DISPLACEMENT_KEY.c_str(), DISPLACEMENT_KEY.size());
+		_matWriter.Float(0.1f);
+	}
 
 	unsigned int texUnit = 0;
 	if (hasTexture(mat, aiTextureType_AMBIENT)){
@@ -914,9 +924,13 @@ std::string ModelConverter::getShaderDefinations(const aiMaterial *mat, const st
 		}
 	}
 
-
+	bool useTangentSpace = false;
 	if (mesh->HasTangentsAndBitangents() && hasTexture(mat, aiTextureType_NORMALS)) {
 		definations += SHADER_DEFINE_NROMAL_MAPPING;
+	}
+
+	if (mesh->HasTangentsAndBitangents() && hasTexture(mat, aiTextureType_DISPLACEMENT)) {
+		definations += SHADER_DEFINE_PARALLAX_MAPPING;
 	}
 
 	return definations;

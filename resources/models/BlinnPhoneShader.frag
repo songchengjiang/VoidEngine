@@ -17,11 +17,19 @@ uniform sampler2D u_specularTex;
 #ifdef VE_USE_NORMAL_TEXTURE
 uniform sampler2D u_normalTex;
 #endif
+#ifdef VE_USE_DISPLACEMENT_TEXTURE
+uniform float u_displacement;
+uniform sampler2D u_displacementTex;
+#endif
 
 in vec3 v_viewNormal;
 #ifdef VE_USE_NROMAL_MAPPING
 in vec3 v_viewTangent;
 in vec3 v_viewBitangent; 
+#endif
+
+#ifdef VE_USE_PARALLAX_MAPPING
+in vec3 v_viewDir;
 #endif
             
 in vec2 v_texcoord;
@@ -37,8 +45,25 @@ vec2 encode (vec3 normal)
     float p = sqrt(normal.z * 8.0 + 8.0);
     return vec2(normal.xy / p + 0.5);
 }
+
+#ifdef VE_USE_PARALLAX_MAPPING
+vec2 parallaxMapping(vec2 texcoord, vec3 viewDir, float height){
+	vec2 p = viewDir.xy / viewDir.z * height;
+	return texcoord - p;
+}
+#endif
              
 void main(){
+
+	vec2 texcoord;
+#ifdef VE_USE_PARALLAX_MAPPING
+	float height = texture(u_displacementTex, v_texcoord).r * u_displacement;
+	texcoord = parallaxMapping(v_texcoord, v_viewDir, height);
+	if(texcoord.x > 1.0 || texcoord.y > 1.0 || texcoord.x < 0.0 || texcoord.y < 0.0)
+    discard;
+#else
+	texcoord = v_texcoord;
+#endif
 
 #ifdef VE_USE_NROMAL_MAPPING
 	mat3 normCoords = mat3(v_viewTangent, v_viewBitangent, v_viewNormal);
@@ -50,14 +75,14 @@ void main(){
 	RT0.z = u_lightMask;
 
 #ifdef VE_USE_DIFFUSE_TEXTURE
-	RT1.xyz = u_diffuse * texture(u_diffuseTex, v_texcoord).xyz;
+	RT1.xyz = u_diffuse * texture(u_diffuseTex, texcoord).xyz;
 #else
 	RT1.xyz = u_diffuse;
 #endif
 	RT1.w = u_roughness;
 
 #ifdef VE_USE_SPECULAR_TEXTURE
-	RT2.xyz = u_specular * texture(u_specularTex, v_texcoord).xyz;
+	RT2.xyz = u_specular * texture(u_specularTex, texcoord).xyz;
 #else
 	RT2.xyz = u_specular;
 #endif
@@ -65,7 +90,7 @@ void main(){
 	
 //#ifdef VE_USE_DEFERRED_PATH
 //#ifdef VE_USE_DIFFUSE_TEXTURE
-//    fragColor = clamp(vec4(texture(u_diffuseTex, v_texcoord).xyz, u_opacity), 0.0, 1.0);
+//    fragColor = clamp(vec4(texture(u_diffuseTex, texcoord).xyz, u_opacity), 0.0, 1.0);
 //#else //NOT VE_USE_DIFFUSE_TEXTURE
 //    fragColor = clamp(vec4(u_diffuse + u_specular + u_ambient, u_opacity), 0.0, 1.0);
 //#endif
@@ -78,13 +103,13 @@ void main(){
 //    vec3 diffactor = lightVal.rgb;
 //    vec3 specfactor = lightVal.rgb * pow(lightVal.a, u_shininess);
 //#ifdef VE_USE_DIFFUSE_TEXTURE
-//    fragColor = clamp(vec4(diffactor * u_diffuse * texture(u_diffuseTex, v_texcoord).xyz + specfactor * u_specular + u_ambient, u_opacity), 0.0, 1.0);
+//    fragColor = clamp(vec4(diffactor * u_diffuse * texture(u_diffuseTex, texcoord).xyz + specfactor * u_specular + u_ambient, u_opacity), 0.0, 1.0);
 //#else //NOT VE_USE_DIFFUSE_TEXTURE
 //    fragColor = clamp(vec4(diffactor * u_diffuse + specfactor * u_specular + u_ambient, u_opacity), 0.0, 1.0);
 //#endif //VE_USE_DIFFUSE_TEXTURE
 //#else //NOT VE_USE_LIGHTS
 //#ifdef VE_USE_DIFFUSE_TEXTURE
-//    fragColor = clamp(vec4(texture(u_diffuseTex, v_texcoord).xyz, u_opacity), 0.0, 1.0);
+//    fragColor = clamp(vec4(texture(u_diffuseTex, texcoord).xyz, u_opacity), 0.0, 1.0);
 //#else //NOT VE_USE_DIFFUSE_TEXTURE
 //    fragColor = clamp(vec4(u_diffuse + u_specular + u_ambient, u_opacity), 0.0, 1.0);
 //#endif //VE_USE_DIFFUSE_TEXTURE
