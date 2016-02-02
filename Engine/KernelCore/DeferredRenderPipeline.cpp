@@ -13,6 +13,38 @@ static const char* COMMON_FUNCTIONS = " \
 		normal.z = 1.0 - f / 2.0;    \n \
 		return normal;    \n \
 	}    \n \
+                                                                                                                      \n \
+	const float PI = 3.1415926535;                                                                                    \n\
+	float OrenNayar(vec3 norm, vec3 ldir, vec3 vdir, float NdotL, float NdotV, float roughness) {                     \n\
+			                                                                                                          \n\
+		float roughness2 = roughness * roughness;                                                                     \n\
+		float A = 1.0 - 0.5 * (roughness2 / (roughness2 + 0.33));                                                     \n\
+		float B = 0.45 * (roughness2 / (roughness2 + 0.09));                                                          \n\
+		float C = max(0.0, dot(normalize(vdir - norm * NdotV), normalize(ldir - norm * NdotL)));                      \n\
+		float NdotLAgl = acos(NdotL);                                                                                 \n\
+		float NdotVAgl = acos(NdotV);                                                                                 \n\
+		float alpha = max(NdotLAgl, NdotVAgl);                                                                        \n\
+		float beta = min(NdotLAgl, NdotVAgl);                                                                         \n\
+			                                                                                                          \n\
+		return NdotL * max(0.0, (A + B * sin(alpha) * tan(beta) * C));                                                \n\
+	}                                                                                                                 \n\
+			                                                                                                          \n\
+	float CookTorrance(float NdotL, float NdotV, float HdotV, float NdotH, float roughness, float fresnelFactor) {        \n\
+			float alpha = pow(1.0 - (1.0 - roughness) * 0.7, 6.0);                                                        \n\
+			float alpha2 = alpha * alpha;                                                                                 \n\
+			                                                                                                              \n\
+			float k = (0.8 + 0.5 * alpha) * (0.8 + 0.5 * alpha) / 2.0;                                                    \n\
+			float Gl = NdotL / (NdotL * (1.0 - k) + k);                                                                   \n\
+			float Gv = NdotV / (NdotV * (1.0 - k) + k);                                                                   \n\
+			float G = Gl * Gv;                                                                                            \n\
+			                                                                                                              \n\
+			float F = fresnelFactor + (1.0 - fresnelFactor) * pow(1.0 - HdotV, 5.0);                                      \n\
+			                                                                                                              \n\
+			float Db = PI * pow(NdotH * NdotH * (alpha2 - 1.0) + 1.0, 2.0);                                               \n\
+			float D = alpha2 / Db; 	                                                                                      \n\
+			                                                                                                              \n\
+			return max(0.0, (F * D * G) / (4.0f * NdotL * NdotV));                                                        \n\
+	}                                                                                                                     \n\
 	";
 
 static const char* FULL_SCREEN_V_SHADER = " \
@@ -85,9 +117,13 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 		float NdotL = max(0.0, dot(worldNormal, -u_lightDirection));    \n \
 		vec3 H = normalize(eyeDir - u_lightDirection);    \n \
 		float NdotH = max(0.0, dot(worldNormal, H));    \n \
+		float NdotV = max(0.0, dot(worldNormal, eyeDir));    \n \
+		float HdotV = max(0.0, dot(H, eyeDir));    \n \
+		float diffFactor = OrenNayar(worldNormal, -u_lightDirection, eyeDir, NdotL, NdotV, RT1.w);     \n \
+		float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);     \n \
 		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity;    \n \
-																							  \n \
-		fragColor = vec4(clamp((RT1.xyz * NdotL + RT2.xyz * pow(NdotH, 16.0)) * lightIntensity, 0.0, 1.0), 1.0);     \n \
+																							               \n \
+		fragColor = vec4(clamp((RT1.xyz * diffFactor + RT2.xyz * specFactor) * lightIntensity, 0.0, 1.0), 1.0);     \n \
 	}";
 
 static const char* POINT_LIGHT_V_SHADER = " \
@@ -146,9 +182,13 @@ static const char* POINT_LIGHT_F_SHADER = " \
 		float NdotL = max(0.0, dot(worldNormal, lightDir));     \n \
 		vec3 H = normalize(eyeDir + lightDir);     \n \
 		float NdotH = max(0.0, dot(worldNormal, H));     \n \
+		float NdotV = max(0.0, dot(worldNormal, eyeDir));    \n \
+		float HdotV = max(0.0, dot(H, eyeDir));    \n \
+		float diffFactor = OrenNayar(worldNormal, lightDir, eyeDir, NdotL, NdotV, RT1.w);     \n \
+		float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);     \n \
 																						\n \
 		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * attenuation;    \n \
-		fragColor = vec4(clamp((RT1.xyz * NdotL + RT2.xyz * pow(NdotH, 16.0)) * lightIntensity, 0.0, 1.0), 1.0);     \n \
+		fragColor = vec4(clamp((RT1.xyz * diffFactor + RT2.xyz * specFactor) * lightIntensity, 0.0, 1.0), 1.0);     \n \
 	}";
 
 static const char* SPOT_LIGHT_V_SHADER = " \
@@ -212,9 +252,13 @@ static const char* SPOT_LIGHT_F_SHADER = " \
 		float NdotL = max(0.0, dot(worldNormal, lightDir));   \n \
 		vec3 H = normalize(eyeDir + lightDir);   \n \
 		float NdotH = max(0.0, dot(worldNormal, H));   \n \
+		float NdotV = max(0.0, dot(worldNormal, eyeDir));    \n \
+		float HdotV = max(0.0, dot(H, eyeDir));    \n \
+		float diffFactor = OrenNayar(worldNormal, lightDir, eyeDir, NdotL, NdotV, RT1.w);     \n \
+		float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);          \n \
 																						    \n \
 		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * attenuation;    \n \
-		fragColor = vec4(clamp((RT1.xyz * NdotL + RT2.xyz * pow(NdotH, 16.0)) * lightIntensity, 0.0, 1.0), 1.0);     \n \
+		fragColor = vec4(clamp((RT1.xyz * diffFactor + RT2.xyz * specFactor) * lightIntensity, 0.0, 1.0), 1.0);     \n \
 	}";
 
 veDeferredRenderPipeline::veDeferredRenderPipeline(veSceneManager *sm)

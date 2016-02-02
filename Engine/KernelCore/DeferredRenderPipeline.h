@@ -37,9 +37,9 @@ protected:
 
 	VE_Ptr<veFrameBufferObject>   _FBO;
 	VE_Ptr<veTexture>             _DS;
-	VE_Ptr<veTexture>             _RT0;//normal/lightMask/roughness
-	VE_Ptr<veTexture>             _RT1;//diffuse
-	VE_Ptr<veTexture>             _RT2;//specular
+	VE_Ptr<veTexture>             _RT0;//normal/lightMask
+	VE_Ptr<veTexture>             _RT1;//diffuse/roughness
+	VE_Ptr<veTexture>             _RT2;//specular/fresnelFactor
 
 	VE_Ptr<veScreenLightRenderer> _directionalLightRenderer;
 	VE_Ptr<veSphereLightRenderer> _pointLightRenderer;

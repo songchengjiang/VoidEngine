@@ -6,7 +6,8 @@ uniform vec3 u_specular;
 uniform float u_shininess; 
 uniform float u_opacity;
 uniform float u_lightMask;
-uniform float u_roughness;    
+uniform float u_roughness;
+uniform float u_fresnel; 
 #ifdef VE_USE_DIFFUSE_TEXTURE
 uniform sampler2D u_diffuseTex;
 #endif
@@ -47,19 +48,20 @@ void main(){
 	RT0.xy = encode(v_viewNormal);
 #endif
 	RT0.z = u_lightMask;
-	RT0.w = u_roughness;
 
 #ifdef VE_USE_DIFFUSE_TEXTURE
 	RT1.xyz = u_diffuse * texture(u_diffuseTex, v_texcoord).xyz;
 #else
 	RT1.xyz = u_diffuse;
 #endif
+	RT1.w = u_roughness;
 
 #ifdef VE_USE_SPECULAR_TEXTURE
 	RT2.xyz = u_specular * texture(u_specularTex, v_texcoord).xyz;
 #else
 	RT2.xyz = u_specular;
 #endif
+	RT2.w = u_fresnel;
 	
 //#ifdef VE_USE_DEFERRED_PATH
 //#ifdef VE_USE_DIFFUSE_TEXTURE

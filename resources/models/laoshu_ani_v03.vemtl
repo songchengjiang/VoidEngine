@@ -29,7 +29,8 @@
                                     ],
                                     "u_diffuse": [1.000,1.000,1.000
                                     ],
-                                    "u_roughness":0.200000,
+                                    "u_roughness":0.800000,
+                                    "u_fresnel":0.200000,
                                     "u_opacity":1.000000,
                                     "u_lightMask":1.000000,
                                     "u_reflectivity":0.000000,
@@ -77,7 +78,8 @@
                                     ],
                                     "u_diffuse": [1.000,1.000,1.000
                                     ],
-                                    "u_roughness":0.200000,
+                                    "u_roughness":0.800000,
+                                    "u_fresnel":0.200000,
                                     "u_opacity":1.000000,
                                     "u_lightMask":1.000000,
                                     "u_reflectivity":0.000000,
