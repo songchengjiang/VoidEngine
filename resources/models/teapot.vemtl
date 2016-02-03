@@ -16,13 +16,13 @@
                                 {
                                     "type": "VERTEX_SHADER",
                                     "defination": "#define ATTR_POSITION 0\n#define ATTR_NORMAL 1\n#define ATTR_TANGENT 2\n#define ATTR_BITANGENT 3\n#define ATTR_TEXTURE_COORD0 4\n",
-                                    "source": "BlinnPhoneShader.vert",
+                                    "source": "system/StandardShader.vert",
                                     "u_ModelViewProjectMat": "MVP_MATRIX",
                                     "u_NormalMat": "NORMAL_MATRIX"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "BlinnPhoneShader.frag",
+                                    "source": "system/StandardShader.frag",
                                     "u_screenWidth": "SCREEN_WIDTH",
                                     "u_screenHeight": "SCREEN_HEIGHT",                                        
                                     "u_lightMask": 1.000000,
