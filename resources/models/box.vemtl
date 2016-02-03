@@ -39,7 +39,7 @@
                                     "u_fresnel":0.6,
                                     "u_opacity":1.000000,
                                     "u_reflectivity":0.000000,
-                                    "u_displacement":0.05000,
+                                    "u_displacement":0.100,
                                     "u_diffuseTex":0,
                                     "u_normalTex":1,
                                     "u_displacementTex":2

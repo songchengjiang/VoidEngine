@@ -76,28 +76,26 @@ void main()
 #else
 	finalPos = vec4(position, 1.0);
 	finalNorm = normal;
+#ifdef VE_USE_NROMAL_MAPPING
 	finalTangent = tangent;
 	finalBitangent = bitangent;
 #endif
-	
-	v_texcoord = texcoord0;
-	v_viewNormal = normalize(u_NormalMat * finalNorm);  
+#endif
+
 #ifdef VE_USE_NROMAL_MAPPING
 	v_viewTangent = normalize(u_NormalMat * finalTangent);
 	v_viewBitangent = normalize(u_NormalMat * finalBitangent);
 #endif
+	v_viewNormal = normalize(u_NormalMat * finalNorm); 
+	 
+	v_texcoord = texcoord0;
 
 #ifdef VE_USE_PARALLAX_MAPPING
-	vec3 worldTangent = normalize(u_NormalWorldMat * finalTangent);
-	vec3 worldBitangent = normalize(u_NormalWorldMat * finalBitangent);
-	vec3 worldNormal = normalize(u_NormalWorldMat * finalNorm);
-	vec3 worldPosition = (u_ModelMat * finalPos).xyz;
-
-	vec3 viewDir = normalize(u_cameraWorldPos - worldPosition);
-	v_viewDir.x = dot(viewDir, worldTangent);
-	v_viewDir.y = dot(viewDir, worldBitangent);
-	v_viewDir.z = dot(viewDir, worldNormal);
-
+	vec3 viewPosition = (u_ModelViewMat * finalPos).xyz;
+	vec3 viewDir = normalize(-viewPosition);
+	v_viewDir.x = dot(viewDir, v_viewTangent);
+	v_viewDir.y = dot(viewDir, v_viewBitangent);
+	v_viewDir.z = dot(viewDir, v_viewNormal);
 #endif
 
 	gl_Position = u_ModelViewProjectMat * finalPos; 

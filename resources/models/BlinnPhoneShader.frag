@@ -47,9 +47,28 @@ vec2 encode (vec3 normal)
 }
 
 #ifdef VE_USE_PARALLAX_MAPPING
-vec2 parallaxMapping(vec2 texcoord, vec3 viewDir, float height){
-	vec2 p = viewDir.xy / viewDir.z * height;
-	return texcoord - p;
+vec2 parallaxMapping(vec2 texcoord, vec3 viewDir){
+	const float numLayers = 10.0;
+	float layerDepth = 1.0 / numLayers;
+	vec2 p = viewDir.xy * u_displacement;
+	vec2 deltaTexCoord = p / numLayers;
+
+	float currentLayerDepth = 0.0;
+	vec2 currentTexcoord = texcoord;
+	float currentDepthMapValue = texture(u_displacementTex, currentTexcoord).r;
+	while (currentLayerDepth < currentDepthMapValue){
+		currentTexcoord -= deltaTexCoord;
+		currentDepthMapValue = texture(u_displacementTex, currentTexcoord).r;
+		currentLayerDepth += layerDepth;
+	}	
+
+	vec2 prevTexCoord = currentTexcoord + deltaTexCoord;
+	float afterDepth  = currentDepthMapValue - currentLayerDepth;
+    float beforeDepth = texture(u_displacementTex, prevTexCoord).r - currentLayerDepth + layerDepth;
+	float weight = afterDepth / (afterDepth - beforeDepth);
+    vec2 finalTexCoord = mix(currentTexcoord, prevTexCoord, weight);
+
+	return finalTexCoord;
 }
 #endif
              
@@ -57,8 +76,7 @@ void main(){
 
 	vec2 texcoord;
 #ifdef VE_USE_PARALLAX_MAPPING
-	float height = texture(u_displacementTex, v_texcoord).r * u_displacement;
-	texcoord = parallaxMapping(v_texcoord, v_viewDir, height);
+	texcoord = parallaxMapping(v_texcoord, v_viewDir);
 	if(texcoord.x > 1.0 || texcoord.y > 1.0 || texcoord.x < 0.0 || texcoord.y < 0.0)
     discard;
 #else
@@ -67,7 +85,7 @@ void main(){
 
 #ifdef VE_USE_NROMAL_MAPPING
 	mat3 normCoords = mat3(v_viewTangent, v_viewBitangent, v_viewNormal);
-	vec3 norm = normalize(texture(u_normalTex, v_texcoord).rgb * 2.0 - 1.0);
+	vec3 norm = normalize(texture(u_normalTex, texcoord).rgb * 2.0 - 1.0);
 	RT0.xy = encode(normCoords * norm);
 #else
 	RT0.xy = encode(v_viewNormal);
@@ -87,32 +105,4 @@ void main(){
 	RT2.xyz = u_specular;
 #endif
 	RT2.w = u_fresnel;
-	
-//#ifdef VE_USE_DEFERRED_PATH
-//#ifdef VE_USE_DIFFUSE_TEXTURE
-//    fragColor = clamp(vec4(texture(u_diffuseTex, texcoord).xyz, u_opacity), 0.0, 1.0);
-//#else //NOT VE_USE_DIFFUSE_TEXTURE
-//    fragColor = clamp(vec4(u_diffuse + u_specular + u_ambient, u_opacity), 0.0, 1.0);
-//#endif
-//    position = vec4(v_position.xyz, u_shininess);
-//    normAndepth = v_normalAndepth;
-//#else //NOT VE_USE_DEFERRED_PATH
-//#ifdef VE_USE_LIGHTS
-//	vec2 lightTexCoords = gl_FragCoord.xy / vec2(u_screenWidth, u_screenHeight);
-//	vec4 lightVal = texture(ve_lightTex, lightTexCoords);
-//    vec3 diffactor = lightVal.rgb;
-//    vec3 specfactor = lightVal.rgb * pow(lightVal.a, u_shininess);
-//#ifdef VE_USE_DIFFUSE_TEXTURE
-//    fragColor = clamp(vec4(diffactor * u_diffuse * texture(u_diffuseTex, texcoord).xyz + specfactor * u_specular + u_ambient, u_opacity), 0.0, 1.0);
-//#else //NOT VE_USE_DIFFUSE_TEXTURE
-//    fragColor = clamp(vec4(diffactor * u_diffuse + specfactor * u_specular + u_ambient, u_opacity), 0.0, 1.0);
-//#endif //VE_USE_DIFFUSE_TEXTURE
-//#else //NOT VE_USE_LIGHTS
-//#ifdef VE_USE_DIFFUSE_TEXTURE
-//    fragColor = clamp(vec4(texture(u_diffuseTex, texcoord).xyz, u_opacity), 0.0, 1.0);
-//#else //NOT VE_USE_DIFFUSE_TEXTURE
-//    fragColor = clamp(vec4(u_diffuse + u_specular + u_ambient, u_opacity), 0.0, 1.0);
-//#endif //VE_USE_DIFFUSE_TEXTURE
-//#endif //END VE_USE_LIGHTS
-//#endif //END VE_USE_DEFERRED_PATH
 }
