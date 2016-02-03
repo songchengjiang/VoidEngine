@@ -48,7 +48,10 @@ vec2 encode (vec3 normal)
 
 #ifdef VE_USE_PARALLAX_MAPPING
 vec2 parallaxMapping(vec2 texcoord, vec3 viewDir){
-	const float numLayers = 10.0;
+	const float minLayers = 5;
+    const float maxLayers = 10;
+    float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir))); 
+
 	float layerDepth = 1.0 / numLayers;
 	vec2 p = viewDir.xy * u_displacement;
 	vec2 deltaTexCoord = p / numLayers;
