@@ -141,7 +141,7 @@ void veRenderPipeline::renderCameras()
 	}
 }
 
-void veRenderPipeline::draw(veCamera *camera, const std::function<void(veRenderCommand &command)> &callback)
+void veRenderPipeline::draw(veCamera *camera, const std::function<bool(veRenderCommand &command)> &callback)
 {
 	auto &vp = camera->getViewport();
 	auto &clearColor = camera->getClearColor();
@@ -155,9 +155,12 @@ void veRenderPipeline::draw(veCamera *camera, const std::function<void(veRenderC
 				size_t sz = rq.second.size();
 				for (size_t i = 0; i < sz; ++i) {
 					auto &cmd = rq.second[i];
+					bool needDraw = true;
 					if (callback != nullptr)
-						callback(cmd);
-					cmd.renderer->draw(cmd);
+						needDraw = callback(cmd);
+
+					if (needDraw) 
+						cmd.renderer->draw(cmd);
 				}
 			}
 		}
@@ -187,10 +190,15 @@ void veRenderPipeline::renderDirectionalLightShadow(veLight *light)
 	_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dLight->getShadowTexture());
 	_shadowingFBO->bind(GL_DEPTH_BUFFER_BIT);
 	glClear(GL_DEPTH_BUFFER_BIT);
-	draw(dLight->getShadowCamera(), [this](veRenderCommand &command) {
+	draw(dLight->getShadowCamera(), [this](veRenderCommand &command) -> bool {
 		if (command.pass->depthWrite()) {
-			command.pass = this->getOrCreateDirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
+			auto pass = this->getOrCreateDirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
+			pass->cullFace() = command.pass->cullFace();
+			pass->cullFaceMode() = command.pass->cullFaceMode();
+			command.pass = pass;
+			return true;
 		}
+		return false;
 	});
 	_shadowingFBO->unBind();
 }
@@ -204,10 +212,15 @@ void veRenderPipeline::renderPointLightShadow(veLight *light)
 		_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, pLight->getShadowTexture());
 		_shadowingFBO->bind(GL_DEPTH_BUFFER_BIT);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		draw(pLight->getShadowCamera(i), [this](veRenderCommand &command) {
+		draw(pLight->getShadowCamera(i), [this](veRenderCommand &command) -> bool {
 			if (command.pass->depthWrite()) {
-				command.pass = this->getOrCreateOmnidirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
+				auto pass = this->getOrCreateOmnidirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
+				pass->cullFace() = command.pass->cullFace();
+				pass->cullFaceMode() = command.pass->cullFaceMode();
+				command.pass = pass;
+				return true;
 			}
+			return false;
 		});
 	}
 	_shadowingFBO->unBind();
@@ -223,8 +236,13 @@ void veRenderPipeline::renderSpotLightShadow(veLight *light)
 	glClear(GL_DEPTH_BUFFER_BIT);
 	draw(sLight->getShadowCamera(), [this](veRenderCommand &command) {
 		if (command.pass->depthWrite()) {
-			command.pass = this->getOrCreateDirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
+			auto pass = this->getOrCreateDirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
+			pass->cullFace() = command.pass->cullFace();
+			pass->cullFaceMode() = command.pass->cullFaceMode();
+			command.pass = pass;
+			return true;
 		}
+		return false;
 	});
 	_shadowingFBO->unBind();
 }

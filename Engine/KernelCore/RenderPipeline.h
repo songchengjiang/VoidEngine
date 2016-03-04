@@ -17,7 +17,7 @@ public:
 	USE_VE_PTR;
 
 	void rendering();
-	void draw(veCamera *camera, const std::function<void(veRenderCommand &command)> &callback = nullptr);
+	void draw(veCamera *camera, const std::function<bool(veRenderCommand &command)> &callback = nullptr);
 
 	bool isNodeVisible(veNode *node);
 
