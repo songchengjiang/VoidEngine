@@ -2,6 +2,7 @@
 #include "SceneManager.h"
 #include "RenderQueue.h"
 #include "Camera.h"
+#include "Constants.h"
 
 static veLoopQueue<veRenderCommand>::SortFunc PASS_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
 	return right.priority == left.priority ? left.pass <= right.pass : right.priority <= left.priority;
@@ -23,7 +24,7 @@ veRenderPipeline::veRenderPipeline(veSceneManager *sm)
 	: USE_VE_PTR_INIT
 	, _sceneManager(sm)
 {
-
+	_shadowingFBO = veFrameBufferObjectManager::instance()->createFrameBufferObject("_VE_DEFERRED_RENDER_PIPELINE_SHADOWING_FBO_");
 }
 
 veRenderPipeline::~veRenderPipeline()
@@ -33,14 +34,18 @@ veRenderPipeline::~veRenderPipeline()
 
 void veRenderPipeline::rendering()
 {
-	fillRenderQueues();
-	sortRenderQueues();
-	visitRenderQueues();
-}
+	auto &cameraList = _sceneManager->getCameraList();
+	for (auto &iter : cameraList) {
+		cullRenderQueues(iter.get());
+	}
 
-void veRenderPipeline::pushVisibleNode(veCamera *camera, veNode *node)
-{
-	_visibleNodeList[camera].push_back(node);
+	for (auto &iter : cameraList) {
+		fillRenderQueues(iter.get());
+		sortRenderQueues(iter.get());
+	}
+
+	renderShadows();
+	renderCameras();
 }
 
 bool veRenderPipeline::isNodeVisible(veNode *node)
@@ -48,110 +53,95 @@ bool veRenderPipeline::isNodeVisible(veNode *node)
 	std::unique_lock<std::mutex> lock(_visitMutex);
 	for (auto &iter : _visibleNodeList) {
 		for (auto &n : iter.second) {
-			if (node == n)
+			if (node == n.get())
 				return true;
 		}
 	}
 	return false;
 }
 
-void veRenderPipeline::fillRenderQueues()
+void veRenderPipeline::cullRenderQueues(veCamera *camera)
 {
-	auto &cameraList = _sceneManager->getCameraList();
-	for (auto &iter : cameraList) {
-		veCamera *camera = iter.get();
+	if (camera->isVisible()) {
 		_sceneManager->enqueueTaskToThread(nullptr, nullptr, [camera, this] {
+			//veNodeList nodeList;
 			std::unique_lock<std::mutex> lock(_visitMutex);
 			_visibleNodeList[camera].clear();
-			camera->cull(this);
+			camera->cull(_visibleNodeList[camera]);
 		});
-
-		//if (!camera->getVisibleNodeList().empty()) {
-		//	for (auto &iter : camera->getVisibleNodeList()) {
-		//		for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
-		//			if (iter->getRenderableObject(i)->isVisible())
-		//				iter->getRenderableObject(i)->render(iter, camera);
-		//		}
-		//	}
-		//}
 	}
+}
 
-	{
-		std::unique_lock<std::mutex> lock(_visitMutex);
-		for (auto &iter : _visibleNodeList) {
-			auto &camera = iter.first;
-			auto &nodeList = iter.second;
-			if (!nodeList.empty()) {
-				for (auto &node : nodeList) {
-					for (unsigned int i = 0; i < node->getRenderableObjectCount(); ++i) {
-						if (node->getRenderableObject(i)->isVisible())
-							node->getRenderableObject(i)->render(node, camera);
-					}
-				}
+void veRenderPipeline::fillRenderQueues(veCamera *camera)
+{
+	std::unique_lock<std::mutex> lock(_visitMutex);
+	auto &nodeList = _visibleNodeList[camera];
+	if (!nodeList.empty()) {
+		for (auto &node : nodeList) {
+			for (unsigned int i = 0; i < node->getRenderableObjectCount(); ++i) {
+				if (node->getRenderableObject(i)->isVisible())
+					node->getRenderableObject(i)->render(node.get(), camera);
 			}
 		}
 	}
 }
 
-void veRenderPipeline::sortRenderQueues()
+void veRenderPipeline::sortRenderQueues(veCamera *camera)
 {
-	auto &cameraList = _sceneManager->getCameraList();
-	for (auto &iter : cameraList) {
-		veCamera *camera = iter.get();
-		if (!camera->getRenderQueue()->renderCommandList.empty()) {
-			//_sceneManager->enqueueTaskToThread(nullptr, nullptr, [camera] {
-				for (auto &renderPass : camera->getRenderQueue()->renderCommandList) {
-					auto &renderList = renderPass.second;
-					auto bgQueue = renderList.find(veRenderQueue::RENDER_QUEUE_BACKGROUND);
-					if (bgQueue != renderList.end()) {
-						if (!bgQueue->second.empty()) {
-							bgQueue->second.quickSort(PASS_SORT);
-						}
-					}
-
-					auto entityQueue = renderList.find(veRenderQueue::RENDER_QUEUE_ENTITY);
-					if (entityQueue != renderList.end()) {
-						if (!entityQueue->second.empty()) {
-							entityQueue->second.quickSort(ENTITY_SORT);
-						}
-					}
-
-					auto tpQueue = renderList.find(veRenderQueue::RENDER_QUEUE_TRANSPARENT);
-					if (tpQueue != renderList.end()) {
-						if (!tpQueue->second.empty()) {
-							tpQueue->second.quickSort(TRANSPARENT_SORT);
-						}
-					}
-
-					auto olQueue = renderList.find(veRenderQueue::RENDER_QUEUE_OVERLAY);
-					if (olQueue != renderList.end()) {
-						if (!olQueue->second.empty()) {
-							olQueue->second.quickSort(OVERLAY_SORT);
-						}
-					}
+	if (camera->isVisible() && !camera->getRenderQueue()->renderCommandList.empty()) {
+		//_sceneManager->enqueueTaskToThread(nullptr, nullptr, [camera] {
+		for (auto &renderPass : camera->getRenderQueue()->renderCommandList) {
+			auto &renderList = renderPass.second;
+			auto bgQueue = renderList.find(veRenderQueue::RENDER_QUEUE_BACKGROUND);
+			if (bgQueue != renderList.end()) {
+				if (!bgQueue->second.empty()) {
+					bgQueue->second.quickSort(PASS_SORT);
 				}
-			//});
+			}
+
+			auto entityQueue = renderList.find(veRenderQueue::RENDER_QUEUE_ENTITY);
+			if (entityQueue != renderList.end()) {
+				if (!entityQueue->second.empty()) {
+					entityQueue->second.quickSort(ENTITY_SORT);
+				}
+			}
+
+			auto tpQueue = renderList.find(veRenderQueue::RENDER_QUEUE_TRANSPARENT);
+			if (tpQueue != renderList.end()) {
+				if (!tpQueue->second.empty()) {
+					tpQueue->second.quickSort(TRANSPARENT_SORT);
+				}
+			}
+
+			auto olQueue = renderList.find(veRenderQueue::RENDER_QUEUE_OVERLAY);
+			if (olQueue != renderList.end()) {
+				if (!olQueue->second.empty()) {
+					olQueue->second.quickSort(OVERLAY_SORT);
+				}
+			}
 		}
+		//});
 	}
 }
 
-void veRenderPipeline::visitRenderQueues()
+void veRenderPipeline::renderCameras()
 {
 	auto &cameraList = _sceneManager->getCameraList();
 	for (auto &iter : cameraList) {
 		veCamera *camera = iter.get();
-		if (camera != _sceneManager->getCamera() && !camera->getViewport().isNull()) {
+		if (camera->isVisible() && !camera->isShadowCamera() && camera != _sceneManager->getCamera() && !camera->getViewport().isNull()) {
 			veRenderState::instance()->resetState();
-			renderCamera(camera, false);
+			renderScene(camera, false);
 		}
 	}
 	if (_sceneManager->getCamera()) {
 		veRenderState::instance()->resetState();
-		renderCamera(_sceneManager->getCamera(), true);
+		if (_sceneManager->getCamera()->isVisible())
+			renderScene(_sceneManager->getCamera(), true);
 	}
 }
 
-void veRenderPipeline::draw(veCamera *camera)
+void veRenderPipeline::draw(veCamera *camera, const std::function<void(veRenderCommand &command)> &callback)
 {
 	auto &vp = camera->getViewport();
 	auto &clearColor = camera->getClearColor();
@@ -165,6 +155,8 @@ void veRenderPipeline::draw(veCamera *camera)
 				size_t sz = rq.second.size();
 				for (size_t i = 0; i < sz; ++i) {
 					auto &cmd = rq.second[i];
+					if (callback != nullptr)
+						callback(cmd);
 					cmd.renderer->draw(cmd);
 				}
 			}
@@ -173,7 +165,7 @@ void veRenderPipeline::draw(veCamera *camera)
 	}
 }
 
-void veRenderPipeline::renderCamera(veCamera *camera, bool isMainCamera)
+void veRenderPipeline::renderScene(veCamera *camera, bool isMainCamera)
 {
 	if (camera->getFrameBufferObject()) {
 		camera->getFrameBufferObject()->bind(camera->getClearMask());
@@ -184,5 +176,134 @@ void veRenderPipeline::renderCamera(veCamera *camera, bool isMainCamera)
 	draw(camera);
 	if (camera->getFrameBufferObject()) {
 		camera->getFrameBufferObject()->unBind();
+	}
+}
+
+void veRenderPipeline::renderDirectionalLightShadow(veLight *light)
+{
+	if (!light->isShadowEnabled()) return;
+	auto dLight = static_cast<veDirectionalLight *>(light);
+	veRenderState::instance()->resetState();
+	_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dLight->getShadowTexture());
+	_shadowingFBO->bind(GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	draw(dLight->getShadowCamera(), [this](veRenderCommand &command) {
+		if (command.pass->depthWrite()) {
+			command.pass = this->getOrCreateDirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
+		}
+	});
+	_shadowingFBO->unBind();
+}
+
+void veRenderPipeline::renderPointLightShadow(veLight *light)
+{
+	if (!light->isShadowEnabled()) return;
+	auto pLight = static_cast<vePointLight *>(light);
+	for (unsigned short i = 0; i < 6; ++i) {
+		veRenderState::instance()->resetState();
+		_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, pLight->getShadowTexture());
+		_shadowingFBO->bind(GL_DEPTH_BUFFER_BIT);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		draw(pLight->getShadowCamera(i), [this](veRenderCommand &command) {
+			if (command.pass->depthWrite()) {
+				command.pass = this->getOrCreateOmnidirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
+			}
+		});
+	}
+	_shadowingFBO->unBind();
+}
+
+void veRenderPipeline::renderSpotLightShadow(veLight *light)
+{
+	if (!light->isShadowEnabled()) return;
+	auto sLight = static_cast<veSpotLight *>(light);
+	veRenderState::instance()->resetState();
+	_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, sLight->getShadowTexture());
+	_shadowingFBO->bind(GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	draw(sLight->getShadowCamera(), [this](veRenderCommand &command) {
+		if (command.pass->depthWrite()) {
+			command.pass = this->getOrCreateDirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
+		}
+	});
+	_shadowingFBO->unBind();
+}
+
+vePass* veRenderPipeline::getOrCreateDirectionalShadowPass(const std::string &vDef, const std::string &fDef)
+{
+	std::string id = vDef + fDef + std::string("|D");
+	auto iter = _shadowPassList.find(id);
+	if (iter != _shadowPassList.end()) {
+		return iter->second.get();
+	}
+
+	auto pass = new vePass;
+	auto vShader = new veShader(veShader::VERTEX_SHADER, std::string("system/DepthWriter.vert"));
+	vShader->setShaderHeader(vDef);
+	pass->setShader(vShader);
+	auto fShader = new veShader(veShader::FRAGMENT_SHADER, std::string("system/DepthWriter.frag"));
+	fShader->setShaderHeader(fDef);
+	pass->setShader(fShader);
+	pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
+	pass->addUniform(new veUniform("u_BoneMates", BONE_MATRIXES));
+	_shadowPassList[id] = pass;
+	return pass;
+}
+
+vePass* veRenderPipeline::getOrCreateOmnidirectionalShadowPass(const std::string &vDef, const std::string &fDef)
+{
+	std::string id = vDef + fDef + std::string("|OD");
+	auto iter = _shadowPassList.find(id);
+	if (iter != _shadowPassList.end()) {
+		return iter->second.get();
+	}
+
+	auto pass = new vePass;
+	auto vShader = new veShader(veShader::VERTEX_SHADER, std::string("system/SquareDepthWriter.vert"));
+	vShader->setShaderHeader(vDef);
+	pass->setShader(vShader);
+	auto fShader = new veShader(veShader::FRAGMENT_SHADER, std::string("system/SquareDepthWriter.frag"));
+	fShader->setShaderHeader(fDef);
+	pass->setShader(fShader);
+	pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
+	pass->addUniform(new veUniform("u_ModelViewMat", MV_MATRIX));
+	pass->addUniform(new veUniform("u_BoneMates", BONE_MATRIXES));
+	_shadowPassList[id] = pass;
+	return pass;
+}
+
+void veRenderPipeline::renderShadows()
+{
+	auto &lightListMap = _sceneManager->getLightListMap();
+	if (!lightListMap.empty()) {
+		{
+			auto iter = lightListMap.find(veLight::POINT);
+			if (iter != lightListMap.end()) {
+				auto &pointLightList = iter->second;
+				for (auto &light : pointLightList) {
+					renderPointLightShadow(light.get());
+				}
+			}
+		}
+
+		{
+			auto iter = lightListMap.find(veLight::SPOT);
+			if (iter != lightListMap.end()) {
+				auto &spotLightList = iter->second;
+				for (auto &light : spotLightList) {
+					renderSpotLightShadow(light.get());
+				}
+			}
+		}
+
+		{
+			auto iter = lightListMap.find(veLight::DIRECTIONAL);
+			if (iter != lightListMap.end()) {
+				auto &directionalLightList = iter->second;
+				for (auto &light : directionalLightList) {
+					renderDirectionalLightShadow(light.get());
+				}
+			}
+		}
 	}
 }

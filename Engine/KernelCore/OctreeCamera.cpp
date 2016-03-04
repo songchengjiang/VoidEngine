@@ -24,53 +24,12 @@ veOctreeCamera::~veOctreeCamera()
 
 }
 
-void veOctreeCamera::cull(veRenderPipeline *renderPipeline)
+void veOctreeCamera::cull(veNodeList &visibledNodeList)
 {
-	std::unique_lock<std::mutex> lock(_visitMutex);
-	if (!_visibleNodeList.empty())
-		_visibleNodeList.clear();
-	traverseOctree(_octree, renderPipeline);
+	traverseOctree(_octree, visibledNodeList);
 }
 
-void veOctreeCamera::fillRenderQueue()
-{
-	std::unique_lock<std::mutex> lock(_visitMutex);
-	if (!_visibleNodeList.empty()) {
-		{
-			for (auto &iter : _visibleNodeList) {
-				for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
-					if (iter->getRenderableObject(i)->isVisible())
-						iter->getRenderableObject(i)->render(iter, this);
-				}
-			}
-		}
-	}
-}
-
-bool veOctreeCamera::hasDynamicNodeVisibleInCamera()
-{
-	std::unique_lock<std::mutex> lock(_visitMutex);
-	if (!_visibleNodeList.empty()) {
-		{
-			for (auto &iter : _visibleNodeList) {
-				if (iter->isDynamicNode())
-					return true;
-			}
-		}
-	}
-	return false;
-}
-
-bool veOctreeCamera::isNodeVisibleInCamera(veOctreeNode *node)
-{
-	std::unique_lock<std::mutex> lock(_visitMutex);
-	auto iter = std::find(_visibleNodeList.begin(), _visibleNodeList.end(), node);
-	if (iter != _visibleNodeList.end())
-		return true;
-	return false;
-}
-
-void veOctreeCamera::traverseOctree(veOctree *octant, veRenderPipeline *renderPipeline)
+void veOctreeCamera::traverseOctree(veOctree *octant, veNodeList &visibledNodeList)
 {
 	if (isOutOfFrustum(octant->boundingBox)) {
 		return;
@@ -83,7 +42,7 @@ void veOctreeCamera::traverseOctree(veOctree *octant, veRenderPipeline *renderPi
 				if (!isOutOfFrustum(iter->getBoundingBox())) {
 					//std::unique_lock<std::mutex> lock(_visitMutex);
 					//_visibleNodeList.push_back(iter);
-					renderPipeline->pushVisibleNode(this, iter);
+					visibledNodeList.push_back(iter);
 				}
 			}
 		}
@@ -91,7 +50,7 @@ void veOctreeCamera::traverseOctree(veOctree *octant, veRenderPipeline *renderPi
 
 	for (unsigned int i = 0; i < 8; ++i) {
 		if (octant->children[i]) {
-			traverseOctree(octant->children[i], renderPipeline);
+			traverseOctree(octant->children[i], visibledNodeList);
 		}
 	}
 }

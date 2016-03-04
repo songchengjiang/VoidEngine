@@ -704,7 +704,6 @@ GLuint veShader::compile()
 	preDefination += std::string("#define VE_PLATFORM VE_PLATFORM_MAC\n");
 #endif
 
-
 	if (!_shader)
 		_shader = glCreateShader(_type);
 

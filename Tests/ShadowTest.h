@@ -38,7 +38,7 @@ public:
 		}
 
 		{
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/box.vem", "box"));
+			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/cornellbox.vem", "cornellbox"));
 			veNode *node = _sceneManager->createNode("node1");
 			node->addRenderableObject(entity);
 			//node->addComponent(new KeyboardInputer);
@@ -214,6 +214,7 @@ public:
 			skyBox->setMaterialArray(materials);
 		}
 
+		_sceneManager->setAmbientColor(veVec3::ZERO);
 		auto debuger = new veOctreeDebuger(_sceneManager);
 		debuger->debugDrawBoundingBoxWireframe(false);
 		debuger->debugDrawOctree(true);

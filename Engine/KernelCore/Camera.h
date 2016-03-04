@@ -87,20 +87,10 @@ public:
 
 	void setSkybox(veSkyBox *skybox);
 
-	veTexture* getDeferredLightingTexture() { return _deferredLightSceneIlluminator->getIlluminationTexture(); }
-
 	const vePlane& getFrustumPlane(FrustumPlane fp);
 
-	virtual void cull(veRenderPipeline *renderPipeline) = 0;
-	void render();
-	void renderDeferredLight();
-	void renderScene();
-	void discardRenderScene(bool isDiscard) { _isDiscardRenderScene = isDiscard; }
+	virtual void cull(veNodeList &visibledNodeList) = 0;
 
-	virtual void fillRenderQueue() = 0;
-	virtual void clearRenderQueue() { _renderQueue->renderCommandList.clear(); }
-	virtual void sortRenderQueue();
-	virtual void renderRenderQueue();
 	veRenderQueue* getRenderQueue() { return _renderQueue; }
 
 	virtual void setMatrix(const veMat4 &mat) override;
@@ -109,10 +99,8 @@ public:
 	virtual void visit(veNodeVisitor &visitor) override;
 	virtual bool isOutOfFrustum(const veBoundingBox &bbox);
 
-	const std::vector<veNode *>& getVisibleNodeList() const { return _visibleNodeList; }
-
-
-	virtual bool hasDynamicNodeVisibleInCamera() = 0;
+	void setShadowCamera(bool isShadow) { _isShadowCamera = isShadow; }
+	bool isShadowCamera() const { return _isShadowCamera; }
 
 protected:
 
@@ -131,17 +119,16 @@ protected:
 	veVec4       _clearColor;
 	unsigned int _clearMask;
 	VE_Ptr<veFrameBufferObject> _fbo;
-	VE_Ptr<veDeferredLightSceneIlluminator> _deferredLightSceneIlluminator;
 
 	vePlane _frustumPlane[6];
 	bool    _needRefreshFrustumPlane;
 
 	RenderPath _renderPath;
 	bool _isDiscardRenderScene;
+	bool _isShadowCamera;
 
 	VE_Ptr<veSkyBox> _skybox;
 	veRenderQueue *_renderQueue;
-	std::vector<veNode *> _visibleNodeList;
 };
 
 typedef std::vector< VE_Ptr<veCamera> > veCameraList;

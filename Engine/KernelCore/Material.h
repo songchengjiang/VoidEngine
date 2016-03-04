@@ -102,25 +102,9 @@ private:
 
 	void applyProgram(const veRenderCommand &command);
 	void applyUniforms(const veRenderCommand &command);
-	void applyLightTextures(unsigned int beginTexUnit, const veRenderCommand &command);
-	void locateLightUnifroms(const veRenderCommand &command);
 	int findTextureID(TextureType type) const;
 
 private:
-
-	struct LightUniformLocations
-	{
-		GLint lightTexture;
-		GLint dirLightVisible;
-		GLint pointLightVisible;
-		GLint spotLightVisible;
-		GLint dirLightShadowMap;
-		GLint pointLightShadowMap;
-		GLint spotLightShadowMap;
-		std::vector<GLint> dirlightParams;
-		std::vector<GLint> pointlightParams;
-		std::vector<GLint> spotlightParams;
-	};
 
 	bool _depthTest;
 	bool _depthWirte;
@@ -138,7 +122,6 @@ private:
 	std::map<veShader::Type, VE_Ptr<veShader> >           _shaders;
 	std::vector< std::pair<TextureType, VE_Ptr<veTexture> > >            _textures;
 	std::map< std::string, VE_Ptr<veUniform> >            _uniforms;
-	LightUniformLocations                                 _lightUniformLocations;
 	VE_Ptr<veTransformFeedback>                           _transformFeedback;
 	ApplyFunctionCallback                                 _callback;
 };

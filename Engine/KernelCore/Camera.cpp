@@ -29,6 +29,7 @@ veCamera::veCamera(veSceneManager *sm)
 	, _isDiscardRenderScene(false)
 	, _needRefreshFrustumPlane(true)
 	, _renderQueue(nullptr)
+	, _isShadowCamera(false)
 {
 	_sceneManager = sm;
 	setViewport({ 0, 0, 0, 0 });
@@ -44,6 +45,7 @@ veCamera::veCamera(veSceneManager *sm, const veViewport &vp)
 	, _isDiscardRenderScene(false)
 	, _needRefreshFrustumPlane(true)
 	, _renderQueue(nullptr)
+	, _isShadowCamera(false)
 {
 	_sceneManager = sm;
 	setViewport(vp);
@@ -151,107 +153,6 @@ const vePlane& veCamera::getFrustumPlane(FrustumPlane fp)
 {
 	updateFrustumPlane();
 	return _frustumPlane[fp];
-}
-
-void veCamera::sortRenderQueue()
-{
-	if (!_renderQueue->renderCommandList.empty()) {
-		for (auto &renderPass : _renderQueue->renderCommandList) {
-			auto &renderList = renderPass.second;
-			auto bgQueue = renderList.find(veRenderQueue::RENDER_QUEUE_BACKGROUND);
-			if (bgQueue != renderList.end()) {
-				if (!bgQueue->second.empty()) {
-					bgQueue->second.quickSort(PASS_SORT);
-				}
-			}
-
-			auto entityQueue = renderList.find(veRenderQueue::RENDER_QUEUE_ENTITY);
-			if (entityQueue != renderList.end()) {
-				if (!entityQueue->second.empty()) {
-					entityQueue->second.quickSort(ENTITY_SORT);
-				}
-			}
-
-			auto tpQueue = renderList.find(veRenderQueue::RENDER_QUEUE_TRANSPARENT);
-			if (tpQueue != renderList.end()) {
-				if (!tpQueue->second.empty()) {
-					tpQueue->second.quickSort(TRANSPARENT_SORT);
-				}
-			}
-
-			auto olQueue = renderList.find(veRenderQueue::RENDER_QUEUE_OVERLAY);
-			if (olQueue != renderList.end()) {
-				if (!olQueue->second.empty()) {
-					olQueue->second.quickSort(OVERLAY_SORT);
-				}
-			}
-		}
-	}
-}
-
-void veCamera::renderRenderQueue()
-{
-	if (!_renderQueue->renderCommandList.empty()) {
-		for (auto &renderPass : _renderQueue->renderCommandList) {
-			auto &renderList = renderPass.second;
-			for (auto &rq : renderList) {
-				visitQueue(rq.second);
-			}
-		}
-	}
-}
-
-void veCamera::renderDeferredLight()
-{
-	if (_viewport.isNull() || _sceneManager->getLightListMap().empty())
-		return;
-	if (!_renderQueue->renderCommandList.empty()) {
-		if (!_deferredLightSceneIlluminator.valid())
-			_deferredLightSceneIlluminator = new veDeferredLightSceneIlluminator(this);
-		_deferredLightSceneIlluminator->resize(veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y));
-		_deferredLightSceneIlluminator->illuminate();
-	}
-	veRenderState::instance()->resetState();
-}
-
-void veCamera::renderScene()
-{
-	if (_viewport.isNull())
-		return;
-	if (_fbo.valid()) {
-		_fbo->bind(_clearMask);
-	}
-	glViewport(_viewport.x * VE_DEVICE_PIXEL_RATIO, _viewport.y * VE_DEVICE_PIXEL_RATIO, _viewport.width * VE_DEVICE_PIXEL_RATIO, _viewport.height * VE_DEVICE_PIXEL_RATIO);
-	glClear(_clearMask);
-	glClearColor(_clearColor.r(), _clearColor.g(), _clearColor.b(), _clearColor.a());
-
-	if (!_isDiscardRenderScene) {
-		if (_skybox.valid())
-			_skybox->render(this);
-	}
-	renderRenderQueue();
-
-	if (_fbo.valid()) {
-		_fbo->unBind();
-	}
-	veRenderState::instance()->resetState();
-}
-
-void veCamera::render()
-{
-	if (!_isDiscardRenderScene) {
-		fillRenderQueue();
-		sortRenderQueue();
-		veRenderer::CURRENT_RENDER_STAGE = veRenderer::LIGHTINGING;
-		renderDeferredLight();
-		veRenderer::CURRENT_RENDER_STAGE = veRenderer::RENDERING;
-		renderScene();
-		clearRenderQueue();
-	}
-	else {
-		veRenderer::CURRENT_RENDER_STAGE = veRenderer::RENDERING;
-		renderScene();
-	}
 }
 
 void veCamera::setMatrix(const veMat4 &mat)

@@ -125,6 +125,7 @@ public:
 	void setSource(const char *str);
 
 	void setShaderHeader(const std::string &sHeader);
+	const std::string& getShaderHeader() const { return _shaderHeaders; }
 
 private:
 

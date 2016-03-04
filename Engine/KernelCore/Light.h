@@ -8,8 +8,6 @@ class VE_EXPORT veLight : public veNode
 {
 	friend class veSceneManager;
 	friend class veShadowGenerator;
-	friend class veDeferredLightSceneIlluminator;
-	friend class veDeferredRenderPipeline;
 public:
 
 	static const veVec2 DEFAULT_SHADOW_AREA;
@@ -30,6 +28,7 @@ public:
 
 	~veLight();
 
+	virtual void update(veSceneManager *sm, const veMat4 &transform);
 	virtual void visit(veNodeVisitor &visitor) override;
 	//virtual void render(veCamera *camera) override;
 
@@ -50,22 +49,22 @@ public:
 	float getShadowBias() const { return _shadowBias; }
 	void setShadowStrength(float strength) { _shadowStrength = strength; }
 	float getShadowStrength() const { return _shadowStrength; }
-	void setShadowArea(const veVec2 &area) { _shadowArea = area; }
+	void setShadowArea(const veVec2 &area);
 	const veVec2& getShadowArea() const { return _shadowArea; }
 	void setUseSoftShadow(bool use) { _isUseSoftShadow = use; }
 	bool isUseSoftShadow() const { return _isUseSoftShadow; }
 	void setShadowSoftness(float softness) { _shadowSoftness = softness; }
 	float getShadowSoftness() const { return _shadowSoftness; }
 
+	veTexture* getShadowTexture() { return _shadowTexture.get(); }
+	const veMat4& getLightMatrix() const { return _lightMatrix; }
+
 protected:
 	veLight(LightType type);
 
 	virtual void refreshUpdate(veSceneManager *sm, const veMat4 &transform) override;
 	virtual void updateSceneManager() override;
-	veTexture* getShadowTexture() { return _shadowTexture.get(); }
-	void setShadowTexture(veTexture *texture) { _shadowTexture = texture; }
-	void setLightMatrix(const veMat4 &mat) { _lightMatrix = mat; }
-	const veMat4& getLightMatrix() const { return _lightMatrix; }
+	virtual void updateShadow() = 0;
 
 protected:
 
@@ -97,9 +96,16 @@ public:
 
 	~veDirectionalLight();
 
+	veCamera* getShadowCamera() const { return _shadowCamera.get(); }
+
 protected:
 
 	veDirectionalLight();
+	virtual void updateShadow() override;
+
+protected:
+
+	VE_Ptr<veCamera> _shadowCamera;
 };
 
 class VE_EXPORT vePointLight : public veLight
@@ -109,11 +115,16 @@ public:
 
 	~vePointLight();
 
+	veCamera* getShadowCamera(unsigned short idx) const { return _shadowCameras[idx].get(); }
+
 protected:
 
 	vePointLight();
+	virtual void updateShadow() override;
 
 protected:
+
+	VE_Ptr<veCamera> _shadowCameras[6];
 };
 
 class VE_EXPORT veSpotLight : public veLight
@@ -130,9 +141,12 @@ public:
 	float getOuterAngle() { return _outerAngle; }
 	float getOuterAngleCos() { return _outerAngleCos; }
 
+	veCamera* getShadowCamera() const { return _shadowCamera.get(); }
+
 protected:
 
 	veSpotLight();
+	virtual void updateShadow() override;
 
 protected:
 
@@ -140,6 +154,8 @@ protected:
 	float  _innerAngleCos;
 	float  _outerAngle;
 	float  _outerAngleCos;
+
+	VE_Ptr<veCamera> _shadowCamera;
 };
 
 typedef std::vector< VE_Ptr<veLight> > veLightList;

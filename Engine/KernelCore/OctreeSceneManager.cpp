@@ -41,12 +41,6 @@ void veOctreeSceneManager::init()
 	_octree->originBoundingBox = _octree->boundingBox = _boundingBox;
 	_shadowGenerator = new veShadowGenerator(this);
 	_renderPipeline  = new veDeferredRenderPipeline(this);
-	loadSystemMaterials();
-}
-
-void veOctreeSceneManager::loadSystemMaterials()
-{
-	_systemMaterials = static_cast<veMaterialArray *>(veFile::instance()->readFile(this, "system/system.vemtl", "_SYSTEM_"));
 }
 
 veNode* veOctreeSceneManager::createNode(const std::string &name)

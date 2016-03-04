@@ -108,4 +108,5 @@ void main(){
 	RT2.xyz = u_specular;
 #endif
 	RT2.w = u_fresnel;
+
 }

@@ -5,6 +5,7 @@
 #include "TestCreator.h"
 
 void android_main(struct android_app* app){
+    veLog("veApplication::initWindow");
     veApplication::instance()->initWindow(800, 600, "", app);
     TestCreator::createTest();
     veApplication::instance()->run();

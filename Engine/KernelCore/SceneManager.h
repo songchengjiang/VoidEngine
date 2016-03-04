@@ -87,6 +87,8 @@ public:
 	void setCamera(veCamera *camera) { _mainCamera = camera; }
 	veCamera* getCamera() { return _mainCamera.get(); }
 
+	veRenderPipeline* getRenderPipeline() const { return _renderPipeline.get(); }
+
 	void needReload();
 	bool isNeedReload() { return _needReload; }
 

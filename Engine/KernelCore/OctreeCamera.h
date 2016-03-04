@@ -12,17 +12,13 @@ public:
 	veOctreeCamera(veSceneManager *sm, const veViewport &vp);
 	~veOctreeCamera();
 
-	virtual void cull(veRenderPipeline *renderPipeline) override;
-	virtual void fillRenderQueue() override;
-	virtual bool hasDynamicNodeVisibleInCamera() override;
-
-	bool isNodeVisibleInCamera(veOctreeNode *node);
+	virtual void cull(veNodeList &visibledNodeList) override;
 
 	void setOctree(veOctree *octree) { _octree = octree; }
 
 protected:
 
-	void traverseOctree(veOctree *octant, veRenderPipeline *renderPipeline);
+	void traverseOctree(veOctree *octant, veNodeList &visibledNodeList);
 
 protected:
 

@@ -85,6 +85,7 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 	uniform sampler2D u_RT0; \n \
 	uniform sampler2D u_RT1; \n \
 	uniform sampler2D u_RT2; \n \
+	uniform sampler2DShadow u_shadowTex; \n \
 												  \n \
 	uniform mat4 u_InvViewMat;  \n \
 	uniform mat4 u_InvViewProjectMat;  \n \
@@ -103,6 +104,36 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 												  \n \
 	in vec2 v_texcoord; \n \
 	layout(location = 0) out vec4 fragColor; \n \
+												  \n \
+	#define SAMPLE_SIZE 9  \n \
+	const vec2 SAMPLE_OFFSETS[SAMPLE_SIZE] = vec2[]    \n \
+	(                                                       \n \
+		vec2(-1.0, -1.0), vec2(0.0, -1.0), vec2(1.0, -1.0),    \n \
+		vec2(-1.0, 0.0), vec2(0.0, 0.0), vec2(1.0, 1.0),    \n \
+		vec2(-1.0, 1.0), vec2(0.0, 1.0), vec2(1.0, 1.0)   \n \
+	);                                                      \n \
+												  \n \
+	float shadowing(vec3 vertex) {          \n \
+		if (u_lightShadowEnabled < 1.0) return 1.0;          \n \
+		vec4 projectVertex = u_lightMatrix * vec4(vertex, 1.0);          \n \
+		vec3 shadowCoord = vec3(projectVertex.xy, projectVertex.z - u_lightShadowBias) / projectVertex.w;          \n \
+		float factor = 0.0;          \n \
+		if (0.0 < u_lightShadowSoft) {          \n \
+			float sum = 0.0;          \n \
+			for (int i = 0; i < SAMPLE_SIZE; ++i) {          \n \
+				sum += texture(u_shadowTex, vec3(shadowCoord.xy + SAMPLE_OFFSETS[i] * u_lightShadowSoftness, shadowCoord.z));          \n \
+			}          \n \
+			factor = sum / float(SAMPLE_SIZE);          \n \
+		}          \n \
+		else {          \n \
+			factor = texture(u_shadowTex, shadowCoord);          \n \
+		}          \n \
+												  \n \
+		if (factor < 1.0)          \n \
+			factor = mix(1.0, factor, u_lightShadowStrength);          \n \
+		return factor;          \n \
+	}          \n \
+												  \n \
 	void main() {  \n \
 		vec4 RT0 = texture(u_RT0, v_texcoord);    \n \
 		vec4 RT1 = texture(u_RT1, v_texcoord);    \n \
@@ -121,7 +152,7 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 		float HdotV = max(0.0, dot(H, eyeDir));    \n \
 		float diffFactor = OrenNayar(worldNormal, -u_lightDirection, eyeDir, NdotL, NdotV, RT1.w);     \n \
 		float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);     \n \
-		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity;    \n \
+		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * shadowing(worldPosition.xyz);    \n \
 																							               \n \
 		fragColor = vec4(clamp((RT1.xyz * diffFactor + RT2.xyz * specFactor) * lightIntensity, 0.0, 1.0), 1.0);     \n \
 	}";
@@ -141,6 +172,7 @@ static const char* POINT_LIGHT_F_SHADER = " \
 	uniform sampler2D u_RT0; \n \
 	uniform sampler2D u_RT1; \n \
 	uniform sampler2D u_RT2; \n \
+	uniform samplerCubeShadow u_shadowTex;  \n \
                                                  \n \
 	uniform float u_screenWidth;                \n \
 	uniform float u_screenHeight;                \n \
@@ -161,6 +193,40 @@ static const char* POINT_LIGHT_F_SHADER = " \
 	uniform float u_lightShadowSoftness;      \n \
 										    \n \
 	layout(location = 0) out vec4 fragColor; \n \
+										    \n \
+	#define SAMPLE_SIZE 20      \n \
+	const vec3 SAMPLE_OFFSETS[SAMPLE_SIZE] = vec3[]      \n \
+	(                                                    \n \
+		vec3(1.0, 1.0, 1.0), vec3(1.0, -1.0, 1.0), vec3(-1.0, -1.0, 1.0), vec3(-1.0, 1.0, 1.0),      \n \
+		vec3(1.0, 1.0, -1.0), vec3(1.0, -1.0, -1.0), vec3(-1.0, -1.0, -1.0), vec3(-1.0, 1.0, -1.0),      \n \
+		vec3(1.0, 1.0, 0.0), vec3(1.0, -1.0, 0.0), vec3(-1.0, -1.0, 0.0), vec3(-1.0, 1.0, 0.0),      \n \
+		vec3(1.0, 0.0, 1.0), vec3(-1.0, 0.0, 1.0), vec3(1.0, 0.0, -1.0), vec3(-1.0, 0.0, -1.0),      \n \
+		vec3(0.0, 1.0, 1.0), vec3(0.0, -1.0, 1.0), vec3(0.0, -1.0, -1.0), vec3(0.0, 1.0, -1.0)      \n \
+	);      \n \
+										    \n \
+	float shadowing(vec3 vertex) {      \n \
+		if (u_lightShadowEnabled < 1.0) return 1.0;      \n \
+		vec4 projectVertex = u_lightMatrix * vec4(vertex, 1.0);      \n \
+		float pTolDis2 = dot(projectVertex.xyz, projectVertex.xyz);      \n \
+		pTolDis2 = pTolDis2 / (pTolDis2 + 1.0);      \n \
+		vec4 shadowCoord = vec4(projectVertex.xyz, pTolDis2 - u_lightShadowBias);      \n \
+		float factor = 0.0;      \n \
+		if (0.0 < u_lightShadowSoft) {      \n \
+			float sum = 0.0;      \n \
+			for (int i = 0; i < SAMPLE_SIZE; ++i) {      \n \
+				sum += texture(u_shadowTex, vec4(shadowCoord.xyz + SAMPLE_OFFSETS[i] * u_lightShadowSoftness, shadowCoord.w));      \n \
+			}      \n \
+			factor = sum / float(SAMPLE_SIZE);      \n \
+		}      \n \
+		else {      \n \
+			factor = texture(u_shadowTex, shadowCoord);      \n \
+		}      \n \
+										    \n \
+		if (factor < 1.0)      \n \
+			factor = mix(1.0, factor, u_lightShadowStrength);      \n \
+		return factor;      \n \
+	}      \n \
+										    \n \
 	void main() {  \n \
 		vec2 texCoords = gl_FragCoord.xy / vec2(u_screenWidth, u_screenHeight);   \n \
 		vec4 RT0 = texture(u_RT0, texCoords);    \n \
@@ -187,7 +253,7 @@ static const char* POINT_LIGHT_F_SHADER = " \
 		float diffFactor = OrenNayar(worldNormal, lightDir, eyeDir, NdotL, NdotV, RT1.w);     \n \
 		float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);     \n \
 																						\n \
-		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * attenuation;    \n \
+		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * attenuation * shadowing(worldPosition.xyz);    \n \
 		fragColor = vec4(clamp((RT1.xyz * diffFactor + RT2.xyz * specFactor) * lightIntensity, 0.0, 1.0), 1.0);     \n \
 	}";
 
@@ -206,6 +272,7 @@ static const char* SPOT_LIGHT_F_SHADER = " \
 	uniform sampler2D u_RT0; \n \
 	uniform sampler2D u_RT1; \n \
 	uniform sampler2D u_RT2; \n \
+	uniform sampler2DShadow u_shadowTex; \n \
 										    \n \
 	uniform float u_screenWidth;  \n \
 	uniform float u_screenHeight;  \n \
@@ -229,6 +296,36 @@ static const char* SPOT_LIGHT_F_SHADER = " \
 	uniform float u_lightShadowSoftness;  \n \
 										    \n \
 	layout(location = 0) out vec4 fragColor; \n \
+												  \n \
+	#define SAMPLE_SIZE 9  \n \
+	const vec2 SAMPLE_OFFSETS[SAMPLE_SIZE] = vec2[]    \n \
+	(                                                       \n \
+		vec2(-1.0, -1.0), vec2(0.0, -1.0), vec2(1.0, -1.0),    \n \
+		vec2(-1.0, 0.0), vec2(0.0, 0.0), vec2(1.0, 1.0),    \n \
+		vec2(-1.0, 1.0), vec2(0.0, 1.0), vec2(1.0, 1.0)   \n \
+	);                                                      \n \
+												  \n \
+	float shadowing(vec3 vertex) {          \n \
+		if (u_lightShadowEnabled < 1.0) return 1.0;          \n \
+		vec4 projectVertex = u_lightMatrix * vec4(vertex, 1.0);          \n \
+		vec3 shadowCoord = vec3(projectVertex.xy, projectVertex.z - u_lightShadowBias) / projectVertex.w;          \n \
+		float factor = 0.0;          \n \
+		if (0.0 < u_lightShadowSoft) {          \n \
+			float sum = 0.0;          \n \
+			for (int i = 0; i < SAMPLE_SIZE; ++i) {          \n \
+				sum += texture(u_shadowTex, vec3(shadowCoord.xy + SAMPLE_OFFSETS[i] * u_lightShadowSoftness, shadowCoord.z));          \n \
+			}          \n \
+			factor = sum / float(SAMPLE_SIZE);          \n \
+		}          \n \
+		else {          \n \
+			factor = texture(u_shadowTex, shadowCoord);          \n \
+		}          \n \
+												  \n \
+		if (factor < 1.0)          \n \
+			factor = mix(1.0, factor, u_lightShadowStrength);          \n \
+		return factor;          \n \
+	}          \n \
+												  \n \
 	void main() {  \n \
 		vec2 texCoords = gl_FragCoord.xy / vec2(u_screenWidth, u_screenHeight);   \n \
 		vec4 RT0 = texture(u_RT0, texCoords);    \n \
@@ -257,7 +354,7 @@ static const char* SPOT_LIGHT_F_SHADER = " \
 		float diffFactor = OrenNayar(worldNormal, lightDir, eyeDir, NdotL, NdotV, RT1.w);     \n \
 		float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);          \n \
 																						    \n \
-		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * attenuation;    \n \
+		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * attenuation * shadowing(worldPosition.xyz);    \n \
 		fragColor = vec4(clamp((RT1.xyz * diffFactor + RT2.xyz * specFactor) * lightIntensity, 0.0, 1.0), 1.0);     \n \
 	}";
 
@@ -273,7 +370,7 @@ veDeferredRenderPipeline::~veDeferredRenderPipeline()
 
 }
 
-void veDeferredRenderPipeline::renderCamera(veCamera *camera, bool isMainCamera)
+void veDeferredRenderPipeline::renderScene(veCamera *camera, bool isMainCamera)
 {
 	unsigned int deferredClearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
 	auto &vp = camera->getViewport();

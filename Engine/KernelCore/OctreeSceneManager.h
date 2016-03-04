@@ -37,7 +37,6 @@ protected:
 	void addOctreeNode(veOctreeNode *node, veOctree *octant, unsigned int depth = 0);
 	void intersectByRay(veOctree *octant, veRay *ray);
 	void init();
-	void loadSystemMaterials();
 
 protected:
 
