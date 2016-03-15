@@ -39,7 +39,6 @@ void veOctreeSceneManager::init()
 	_root = new veOctreeNode;
 	_root->setSceneManager(this);
 	_octree->originBoundingBox = _octree->boundingBox = _boundingBox;
-	_shadowGenerator = new veShadowGenerator(this);
 	_renderPipeline  = new veDeferredRenderPipeline(this);
 }
 

@@ -9,7 +9,6 @@
 #include "Plane.h"
 #include "Material.h"
 #include "SkyBox.h"
-#include "DeferredLightIlluminator.h"
 
 class veVisualiser;
 class veLight;

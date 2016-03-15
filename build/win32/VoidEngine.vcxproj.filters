@@ -261,12 +261,6 @@
     <ClCompile Include="..\..\Engine\KernelCore\ConeRenderer.cpp">
       <Filter>KernelCore\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\DeferredLightIlluminator.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\ShadowGenerator.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\DeferredRenderPipeline.cpp">
       <Filter>KernelCore\Renderer\Pipeline</Filter>
     </ClCompile>
@@ -515,12 +509,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\ConeRenderer.h">
       <Filter>KernelCore\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\DeferredLightIlluminator.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\ShadowGenerator.h">
-      <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\DeferredRenderPipeline.h">
       <Filter>KernelCore\Renderer\Pipeline</Filter>

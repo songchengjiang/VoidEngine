@@ -46,7 +46,6 @@
     <ClCompile Include="..\..\Engine\KernelCore\Component.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Cone.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\ConeRenderer.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\DeferredLightIlluminator.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\DeferredLightPipeline.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\DeferredRenderPipeline.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Entity.cpp" />
@@ -83,7 +82,6 @@
     <ClCompile Include="..\..\Engine\KernelCore\RenderState.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\SceneManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Shader.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\ShadowGenerator.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\SkyBox.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Sphere.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\SphereRenderer.cpp" />
@@ -126,7 +124,6 @@
     <ClInclude Include="..\..\Engine\KernelCore\Component.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Cone.h" />
     <ClInclude Include="..\..\Engine\KernelCore\ConeRenderer.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\DeferredLightIlluminator.h" />
     <ClInclude Include="..\..\Engine\KernelCore\DeferredLightPipeline.h" />
     <ClInclude Include="..\..\Engine\KernelCore\DeferredRenderPipeline.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Entity.h" />
@@ -169,7 +166,6 @@
     <ClInclude Include="..\..\Engine\KernelCore\SceneManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Shader.h" />
     <ClInclude Include="..\..\Engine\KernelCore\ShaderDefinationGenerator.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\ShadowGenerator.h" />
     <ClInclude Include="..\..\Engine\KernelCore\SkyBox.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Sphere.h" />
     <ClInclude Include="..\..\Engine\KernelCore\SphereRenderer.h" />

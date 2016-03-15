@@ -12,7 +12,6 @@
 #include "Ray.h"
 #include "SkyBox.h"
 #include "PostProcesser.h"
-#include "ShadowGenerator.h"
 #include "RenderPipeline.h"
 
 #include <unordered_map>
@@ -77,7 +76,6 @@ public:
 	const veVec3& getAmbientColor() const { return _ambient; }
 
 	veBaseManager* getManager(const std::string &mgType);
-	veMaterialArray* getSystemMaterial() { return _systemMaterials.get(); }
 
 	veNode* getRootNode() { return _root.get(); }
 	void setDeltaTime(double deltaTime);
@@ -125,10 +123,6 @@ protected:
 	veThreadPool _threadPool;
 	std::mutex                           _requestQueueMutex;
 	veLoopQueue< std::function<void()> > _requestQueue;
-
-	VE_Ptr<veMaterialArray> _systemMaterials;
-
-	VE_Ptr<veShadowGenerator> _shadowGenerator;
 
 	std::mutex  _updatingMutex;
 	std::mutex  _renderingMutex;

@@ -7,7 +7,6 @@ class veCamera;
 class VE_EXPORT veLight : public veNode
 {
 	friend class veSceneManager;
-	friend class veShadowGenerator;
 public:
 
 	static const veVec2 DEFAULT_SHADOW_AREA;
