@@ -57,6 +57,7 @@ private:
 		GLenum dataType = GL_UNSIGNED_BYTE;
 		if (!getFormat(cinfo, internalFormat, pixelFormat)) return;
 		unsigned char *buffer = new unsigned char[width * height * components];
+		//veLog("jpeg: width=%d, height=%d, components=%d", width, height, components);
 		jpeg_start_decompress(&cinfo);
 		JSAMPROW row_pointer[1];
 		while (cinfo.output_scanline < cinfo.output_height)

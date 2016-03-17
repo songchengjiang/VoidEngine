@@ -175,10 +175,14 @@ void veDebuger::initMaterial(veSceneManager *sm)
 	}";
 
 	const char *F_SHADER = " \
-	layout(location = 0) out vec4 fragColor; \n \
+	layout(location=0) out vec4 RT0;\n \
+	layout(location=1) out vec4 RT1;\n \
+	layout(location=2) out vec4 RT2;\n \
 	in vec4 v_color; \n \
 	void main() {  \n \
-		fragColor = v_color; \n \
+		RT0 = vec4(0.0);         \n \
+		RT1.xyz = v_color.xyz;   \n \
+		RT2 = vec4(0.0);         \n \
 	}";
 
 	_materials = sm->createMaterialArray(_name + "-matAry");
@@ -192,6 +196,7 @@ void veDebuger::initMaterial(veSceneManager *sm)
 	pass->depthWrite() = false;
 	pass->cullFace() = true;
 	pass->blendFunc() = veBlendFunc::ALPHA;
+	pass->castShadow() = false;
 
 	auto vShader = new veShader(veShader::VERTEX_SHADER, V_SHADER);
 	auto fShader = new veShader(veShader::FRAGMENT_SHADER, F_SHADER);

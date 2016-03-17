@@ -24,3 +24,4 @@ Debug
 local.properties
 *.jks
 /*.suo
+build/win32/VoidEngine.VC.opendb

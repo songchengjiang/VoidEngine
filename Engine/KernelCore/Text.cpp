@@ -77,12 +77,17 @@ veShader* veText::getFragmentShader()
 	uniform vec4 u_Color; \n \
 	in vec3 v_normal; \n \
 	in vec2 v_texcoord; \n \
-	layout(location = 0) out vec4 fragColor; \n \
+	layout(location=0) out vec4 RT0;\n \
+	layout(location=1) out vec4 RT1;\n \
+	layout(location=2) out vec4 RT2;\n \
 	void main() {  \n \
 		float glyph = texture(u_texture, v_texcoord).r; \n \
 		if (glyph <= 0.1)  \n \
 			discard;  \n \
-		fragColor = u_Color * glyph; \n \
+		RT0 = vec4(0.0);                 \n \
+		RT1.xyz = (u_Color * glyph).xyz;   \n \
+		RT2 = vec4(0.0);                 \n \
+		//fragColor = u_Color * glyph; \n \
 	}";
 
 	return new veShader(veShader::FRAGMENT_SHADER, F_SHADER);

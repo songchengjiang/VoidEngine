@@ -73,6 +73,9 @@ public:
 	const unsigned int& drawMask() const { return _mask; }
 	unsigned int& drawMask() { return _mask; }
 
+	const bool& castShadow() const { return _castShadow; };
+	bool& castShadow() { return _castShadow; }
+
 	void setShader(veShader *shader);
 	veShader* getShader(veShader::Type type);
 
@@ -110,6 +113,7 @@ private:
 	bool _depthWirte;
 	bool _stencilTest;
 	bool _cullFace;
+	bool _castShadow;
 	GLenum _cullFaceMode;
 	veBlendFunc _blendFunc;
 	GLenum _blendEquation;

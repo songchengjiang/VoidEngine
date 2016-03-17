@@ -138,7 +138,7 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 		vec4 RT0 = texture(u_RT0, v_texcoord);    \n \
 		vec4 RT1 = texture(u_RT1, v_texcoord);    \n \
 		vec4 RT2 = texture(u_RT2, v_texcoord);     \n \
-		if (RT0.z <= 0.0) discard;             \n \
+		if (RT0.z <= 0.0){ fragColor = vec4(0.0); return; }             \n \
 																							  \n \
 		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xy)), 0.0)).xyz;   \n \
 		float depth = texture(u_depthTex, v_texcoord).r;    \n \
@@ -232,7 +232,7 @@ static const char* POINT_LIGHT_F_SHADER = " \
 		vec4 RT0 = texture(u_RT0, texCoords);    \n \
 		vec4 RT1 = texture(u_RT1, texCoords);    \n \
 		vec4 RT2 = texture(u_RT2, texCoords);     \n \
-		if (RT0.z <= 0.0) discard;             \n \
+		if (RT0.z <= 0.0){ fragColor = vec4(0.0); return; }             \n \
 																						\n \
 		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xy)), 0.0)).xyz;   \n \
 		float depth = texture(u_depthTex, texCoords).r;    \n \
@@ -331,7 +331,7 @@ static const char* SPOT_LIGHT_F_SHADER = " \
 		vec4 RT0 = texture(u_RT0, texCoords);    \n \
 		vec4 RT1 = texture(u_RT1, texCoords);    \n \
 		vec4 RT2 = texture(u_RT2, texCoords);     \n \
-		if (RT0.z <= 0.0) discard;             \n \
+		if (RT0.z <= 0.0){ fragColor = vec4(0.0); return; }             \n \
 																						    \n \
 		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xy)), 0.0)).xyz;   \n \
 		float depth = texture(u_depthTex, texCoords).r;    \n \

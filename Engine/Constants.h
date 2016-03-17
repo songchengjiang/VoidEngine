@@ -292,7 +292,8 @@ static const std::string SHADER_DEFINE_ATTR_USER1          = "#define ATTR_USER1
 
 static const std::string SHADER_VERSION                        = "#version";
 static const std::string PRECISION_DEFINE_FLOAT                = "precision mediump float;";
-static const std::string PRECISION_DEFINE_SAMPLER2DARRAYSHADOW = "precision highp sampler2DArrayShadow;";
+static const std::string PRECISION_DEFINE_SAMPLER2DSHADOW      = "precision lowp sampler2DShadow;";
+static const std::string PRECISION_DEFINE_SAMPLERCUBESHADOW    = "precision lowp samplerCubeShadow;";
 
 static const std::string SHADER_DEFINE_PLATFORM_IOS     = "#define VE_PLATFORM_IOS 1\n";
 static const std::string SHADER_DEFINE_PLATFORM_ANDROID = "#define VE_PLATFORM_ANDROID 2\n";
