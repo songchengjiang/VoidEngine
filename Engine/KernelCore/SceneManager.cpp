@@ -158,6 +158,20 @@ void veSceneManager::removePostProcesser(const std::string &name)
 	}
 }
 
+void veSceneManager::addComponent(veComponent *component)
+{
+	auto iter = std::find(_componentList.begin(), _componentList.end(), component);
+	if (iter != _componentList.end())
+		return;
+	_componentList.push_back(component);
+}
+
+void veSceneManager::removeComponent(veComponent *component)
+{
+	auto iter = std::find(_componentList.begin(), _componentList.end(), component);
+	_componentList.erase(iter);
+}
+
 void veSceneManager::requestRayCast(veRay *ray)
 {
 	ray->_callBack();
@@ -194,6 +208,16 @@ void veSceneManager::dispatchEvents(veEvent &event)
 			_mainCamera->resize(event.getWindowWidth(), event.getWindowHeight());
 		}
 	}
+
+	if (!_componentList.empty()) {
+		for (auto &com : _componentList) {
+			if (event.getEventType() & com->getEventFilter()) {
+				if (com->handle(this, event)) 
+					return;
+			}
+		}
+	}
+
 	if (_root.valid())
 		_root->routeEvent(event, this);
 }
@@ -214,6 +238,15 @@ bool veSceneManager::simulation()
 	}
 	//render();
 	return true;
+}
+
+void veSceneManager::update()
+{
+	if (!_componentList.empty()) {
+		for (auto &com : _componentList) {
+			com->update(this);
+		}
+	}
 }
 
 void veSceneManager::startThreading()

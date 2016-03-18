@@ -524,7 +524,7 @@ veMaterial* veDeferredRenderPipeline::createPointLightMaterial(veLight *light)
 	pass1->stencilTest() = true;
 	pass1->cullFace() = true;
 	pass1->cullFaceMode() = GL_FRONT;
-	pass1->blendFunc().src = GL_ONE; 
+	pass1->blendFunc().src = GL_ONE;
 	pass1->blendFunc().dst = GL_ONE;
 	pass1->blendEquation() = GL_FUNC_ADD;
 	pass1->stencilFunc() = { GL_NOTEQUAL, 0, 0xFF, GL_NOTEQUAL, 0, 0xFF };

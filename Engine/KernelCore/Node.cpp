@@ -67,6 +67,7 @@ int veNode::addComponent(veComponent *com)
 	auto iter = std::find(_components.begin(), _components.end(), com);
 	if (iter != _components.end()) return -1;
 	_components.push_back(com);
+	com->onAttachToNode(this);
 	return int(_components.size() - 1);
 }
 
@@ -75,6 +76,7 @@ bool veNode::removeComponent(veComponent *com)
 	auto iter = std::find(_components.begin(), _components.end(), com);
 	if (iter == _components.end()) return false;
 	_components.erase(iter);
+	com->onDetachToNode(this);
 	return true;
 }
 
@@ -83,6 +85,7 @@ veComponent* veNode::removeComponent(unsigned int comIndex)
 	veAssert(comIndex < _components.size());
 	veComponent* com = _components[comIndex].get();
 	_components.erase(_components.begin() + comIndex);
+	com->onDetachToNode(this);
 	return com;
 }
 
@@ -187,14 +190,6 @@ bool veNode::routeEvent(const veEvent &event, veSceneManager *sm)
 			return true;
 	}
 
-	if (!_components.empty()){
-		for (auto &com : _components){
-			if (event.getEventType() & com->getEventFilter()){
-				if (com->handle(this, sm, event)) return true;
-			}
-		}
-	}
-
 	if (!_children.empty()){
 		for (auto &child : _children){
 			if (child->routeEvent(event, sm)) return true;
@@ -220,12 +215,6 @@ void veNode::update(veSceneManager *sm, const veMat4 &transform)
 
 	if (_updateCallback != nullptr) {
 		_updateCallback(sm, this);
-	}
-
-	if (!_components.empty()) {
-		for (auto &iter : _components) {
-			iter->update(this, sm);
-		}
 	}
 
 	if (_refresh)

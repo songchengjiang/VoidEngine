@@ -17,12 +17,14 @@ public:
 		_height = height;
 		_oriColor = _desColor = veVec3(veMath::veRandomUnitization(), veMath::veRandomUnitization(), veMath::veRandomUnitization());
 	}
-	virtual bool handle(veNode *node, veSceneManager *sm, const veEvent &event) override{
+	virtual bool handle(veSceneManager *sm, const veEvent &event) override{
 		return false;
 	}
 
-	virtual void update(veNode *node, veSceneManager *sm) override{
-		auto light = static_cast<veLight *>(node);
+	virtual void update(veSceneManager *sm) override{
+		if (_attachedNodeList.empty()) return;
+
+		auto light = static_cast<veLight *>(_attachedNodeList[0]);
 		if (light) {
 			updateColor(light, sm->getDeltaTime());
 			updateMatrix(light, sm->getDeltaTime());
@@ -75,12 +77,13 @@ public:
 	}
 	~CameraManipulator(){}
 
-	virtual void update(veNode *node, veSceneManager *sm) override {
+	virtual void update(veSceneManager *sm) override {
 		_simulationTime += sm->getDeltaTime();
 	}
 
-	virtual bool handle(veNode *node, veSceneManager *sm, const veEvent &event) override{
-		_camera = static_cast<veCamera *>(node);
+	virtual bool handle(veSceneManager *sm, const veEvent &event) override{
+		if (_attachedNodeList.empty()) return false;
+		_camera = static_cast<veCamera *>(_attachedNodeList[0]);
 		if (event.getEventType() & veEvent::VE_MOUSE_EVENT) {
 			if (event.getEventType() == veEvent::VE_PRESS) {
 				_g1 = _g0 = veVec2(event.getMouseX(), event.getMouseY());

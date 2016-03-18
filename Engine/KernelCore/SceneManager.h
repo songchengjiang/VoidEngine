@@ -13,6 +13,7 @@
 #include "SkyBox.h"
 #include "PostProcesser.h"
 #include "RenderPipeline.h"
+#include "Component.h"
 
 #include <unordered_map>
 
@@ -97,9 +98,12 @@ public:
 	void stopThreading();
 	void enqueueTaskToThread(const veThreadPool::TaskCallBack& callback, void* callbackParam, const std::function<void()> &func);
 
+	void addComponent(veComponent *component);
+	void removeComponent(veComponent *component);
+
 protected:
 
-	virtual void update() = 0;
+	virtual void update();
 	virtual void render() = 0;
 	void postRenderHandle();
 	void resourceRecovery();
@@ -119,6 +123,8 @@ protected:
 
 	VE_Ptr<veCamera> _mainCamera;
 	std::unordered_map<std::string, veBaseManager *> _managerList;
+
+	veComponentList _componentList;
 
 	veThreadPool _threadPool;
 	std::mutex                           _requestQueueMutex;

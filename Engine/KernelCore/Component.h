@@ -2,6 +2,7 @@
 #define _VE_COMPONENT_
 #include "Prerequisites.h"
 #include "Event.h"
+#include "VE_Ptr.h"
 
 class veNode;
 class veSceneManager;
@@ -13,8 +14,10 @@ public:
 
 	USE_VE_PTR;
 
-	virtual bool handle(veNode *node, veSceneManager *sm, const veEvent &event) { return false; }
-	virtual void update(veNode *node, veSceneManager *sm) {}
+	virtual bool handle(veSceneManager *sm, const veEvent &event) { return false; }
+	virtual void update(veSceneManager *sm) {}
+	virtual void onAttachToNode(veNode *node);
+	virtual void onDetachToNode(veNode *node);
 
 	void setEventFilter(const veEvent::EventType filter) { _filter = filter; };
 	veEvent::EventType getEventFilter() const { return _filter; };
@@ -22,10 +25,14 @@ public:
     void setEnable(bool isEnable) { _isEnabled = isEnable; }
     bool getEnabled() { return _isEnabled; }
 
+
 protected:
 
 	veEvent::EventType _filter;
     bool _isEnabled;
+	std::vector<veNode *> _attachedNodeList;
 };
+
+typedef std::vector< VE_Ptr<veComponent> > veComponentList;
 
 #endif

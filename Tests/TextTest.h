@@ -10,7 +10,7 @@ public:
 
 	}
 
-	virtual void update(veNode *node, veSceneManager *sm) override {
+	virtual void update(veSceneManager *sm) override {
 		char buf[256];
 		sprintf(buf, "Frame Rate: %f", 1.0f / sm->getDeltaTime());
 		_text->setContent(buf);
@@ -111,6 +111,8 @@ public:
 
 			root->addChild(node);
 		}
+
+
 
 		auto debuger = new veOctreeDebuger(_sceneManager);
 		debuger->debugDrawBoundingBoxWireframe(true, veVec4(1.0f, 0.0f, 0.0f, 1.0f));

@@ -10,7 +10,7 @@ public:
 	}
 	~IntersectionHandler() {}
 
-	virtual bool handle(veNode *node, veSceneManager *sm, const veEvent &event) override {
+	virtual bool handle(veSceneManager *sm, const veEvent &event) override {
 		if (event.getEventType() & veEvent::VE_MOUSE_EVENT || event.getEventType() & veEvent::VE_TOUCH_EVENT) {
 			veVec2 screenCoords;
 			bool state = false;
@@ -58,7 +58,7 @@ public:
 		return false;
 	}
 
-	virtual void update(veNode *node, veSceneManager *sm) override{
+	virtual void update(veSceneManager *sm) override{
 		for (auto &line : _lines) {
 			debuger->debugDrawLine(line.first, line.second, veVec4(0.0f, 1.0f, 0.0f, 1.0f));
 		}

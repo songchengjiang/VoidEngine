@@ -202,6 +202,7 @@ void veOctreeSceneManager::intersectByRay(veOctree *octant, veRay *ray)
 
 void veOctreeSceneManager::update()
 {
+	veSceneManager::update();
 	_root->update(this, veMat4::IDENTITY);
 	//std::unique_lock<std::mutex> lock(_parallelUpdateOctantMutex);
 	//_parallelUpdateOctantCondition.wait(lock, [this] { return _parallelUpdateOctantNum == 0; });
