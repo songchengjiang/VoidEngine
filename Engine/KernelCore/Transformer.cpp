@@ -17,18 +17,10 @@ veTransformer::~veTransformer()
 void veTransformer::update(veSceneManager *sm)
 {
 	if (_needUpdate && !_attachedNodeList.empty()){
-
-		veMat4 transformerMat = veMat4::translation(_transCenter);
-		veMat4 transformerInverseMat = veMat4::translation(-_transCenter);
 		for (auto &node : _attachedNodeList) {
-			auto nodeToTransformer = transformerInverseMat * node->getNodeToWorldMatrix();
-			nodeToTransformer = veMat4::transform(_position, _scale, _rotation) * nodeToTransformer;
-
-			auto mat = transformerMat * nodeToTransformer;
-			if (node->getParent()) {
-				mat = node->getParent()->getWorldToNodeMatrix() * mat;
-			}
-			node->setMatrix(mat);
+			veMat4 m;
+			m.makeTransform(_position, _scale, _rotation);
+			node->setMatrix(m);
 		}
 		_needUpdate = false;
 	}
@@ -37,13 +29,11 @@ void veTransformer::update(veSceneManager *sm)
 void veTransformer::onAttachToNode(veNode *node)
 {
 	veComponent::onAttachToNode(node);
-	caculateTransformCenter();
 }
 
 void veTransformer::onDetachToNode(veNode *node)
 {
 	veComponent::onDetachToNode(node);
-	caculateTransformCenter();
 }
 
 
@@ -96,15 +86,4 @@ void veTransformer::scale(const veVec3 &scl)
 {
 	_scale *= scl;
 	_needUpdate = true;
-}
-
-void veTransformer::caculateTransformCenter()
-{
-	_transCenter = veVec3::ZERO;
-	for (auto &node : _attachedNodeList) {
-		auto &mat = node->getNodeToWorldMatrix();
-		veVec3 pos;
-		mat.decomposition(&pos, nullptr, nullptr);
-		_transCenter += pos;
-	}
 }

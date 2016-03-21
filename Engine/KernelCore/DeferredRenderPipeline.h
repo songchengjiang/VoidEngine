@@ -16,7 +16,6 @@ protected:
 
 	virtual void renderScene(veCamera *camera, bool isMainCamera) override;
 
-	void initDeferredParams();
 	void initLightingParams();
 	void initLightCommomParams(veLight *light, vePass *pass);
 	void updateLightCommomParams(veLight *light, vePass *pass, veCamera *camera);
@@ -34,22 +33,32 @@ protected:
 
 protected:
 
-	VE_Ptr<veFrameBufferObject>   _FBO;
-	VE_Ptr<veTexture>             _DS;
-	VE_Ptr<veTexture>             _RT0;//normal/lightMask
-	VE_Ptr<veTexture>             _RT1;//diffuse/roughness
-	VE_Ptr<veTexture>             _RT2;//specular/fresnelFactor
+	struct CameraRenderParams {
+		VE_Ptr<veFrameBufferObject>   FBO;
+		VE_Ptr<veTexture>             DS;
+		VE_Ptr<veTexture>             RT0;//normal/lightMask
+		VE_Ptr<veTexture>             RT1;//diffuse/roughness
+		VE_Ptr<veTexture>             RT2;//specular/fresnelFactor
+
+		VE_Ptr<veFrameBufferObject>   fullScreenFBO;
+		VE_Ptr<veSurface>             fullScreenSurface;
+		VE_Ptr<veTexture>             fullScreenTexture;
+	};
+
+protected:
+
+	CameraRenderParams& getCameraParams(veCamera *camera);
+
+protected:
 
 	VE_Ptr<veScreenLightRenderer> _directionalLightRenderer;
 	VE_Ptr<veSphereLightRenderer> _pointLightRenderer;
 	VE_Ptr<veConeLightRenderer>   _spotLightRenderer;
 
-	VE_Ptr<veFrameBufferObject>   _fullScreenFBO;
-	VE_Ptr<veSurface>             _fullScreenSurface;
-	VE_Ptr<veTexture>             _fullScreenTexture;
 	VE_Ptr<veUniform>             _ambientColor;
 
 	std::unordered_map< veLight*, VE_Ptr<veMaterial> > _lightRenderParamsList;
+	std::unordered_map< veCamera*, CameraRenderParams > _cameraRenderParamsList;
 };
 
 #endif

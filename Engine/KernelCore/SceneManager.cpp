@@ -14,6 +14,8 @@
 #include "AnimationManager.h"
 #include "MaterialManager.h"
 
+#include <algorithm>
+
 #define RESOURCE_RECOVERY_INTERVAL_TIME 10.0
 
 veSceneManager::veSceneManager()

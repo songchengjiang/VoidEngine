@@ -27,15 +27,9 @@ public:
 
 private:
 
-	void caculateTransformCenter();
-
-private:
-
 	veVec3 _position;
 	veQuat _rotation;
 	veVec3 _scale;
-
-	veVec3 _transCenter;
 	
 	bool _needUpdate;
 };

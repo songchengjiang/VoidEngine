@@ -1,6 +1,7 @@
 #include "Component.h"
 #include "Node.h"
 #include "SceneManager.h"
+#include <algorithm>
 
 veComponent::veComponent()
 	: USE_VE_PTR_INIT

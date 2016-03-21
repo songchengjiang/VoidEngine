@@ -195,7 +195,7 @@ void veDebuger::initMaterial(veSceneManager *sm)
 	pass->depthTest() = true;
 	pass->depthWrite() = false;
 	pass->cullFace() = true;
-	pass->blendFunc() = veBlendFunc::ALPHA;
+	//pass->blendFunc() = veBlendFunc::ALPHA;
 	pass->castShadow() = false;
 
 	auto vShader = new veShader(veShader::VERTEX_SHADER, V_SHADER);
