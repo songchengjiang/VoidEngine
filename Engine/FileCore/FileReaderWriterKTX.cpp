@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include "KernelCore/Texture.h"
 #include "KernelCore/SceneManager.h"
-#include <gli.hpp>
+#include <gli/gli.hpp>
 
 class veFileReaderWriterKTX : public veFileReaderWriter
 {

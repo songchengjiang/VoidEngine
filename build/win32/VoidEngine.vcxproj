@@ -228,7 +228,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_USRDLL;_CRT_SECURE_NO_WARNINGS;VOIDENGINE_EXPORTS;VE_LIBRARY;VE_DISABLE_MSVC_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;$(SolutionDir)..\..\Dependents\freetype\include;$(SolutionDir)..\..\Dependents\gli;$(SolutionDir)..\..\Dependents\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;$(SolutionDir)..\..\Dependents\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -250,7 +250,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;VOIDENGINE_EXPORTS;VE_LIBRARY;VE_DISABLE_MSVC_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;$(SolutionDir)..\..\Dependents\freetype\include;$(SolutionDir)..\..\Dependents\gli;$(SolutionDir)..\..\Dependents\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;$(SolutionDir)..\..\Dependents\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
