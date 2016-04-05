@@ -1,7 +1,7 @@
 #ifndef _TEXTURE_CONVERTER_
 #define _TEXTURE_CONVERTER_
 #include "Converter.h"
-#include <gli.hpp>
+#include <gli/gli.hpp>
 
 class TextureConverter : public Converter
 {
