@@ -104,8 +104,6 @@ void veFrameBufferObject::unBind()
 {
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glBindFramebuffer(_target, 0);
-	GLenum bufs = {GL_BACK};
-	glDrawBuffers(1, &bufs);
 	for (auto &iter : _attachments) {
 		if (iter.second.needMipmap) {
 			iter.second.texture->generateMipMaps();
