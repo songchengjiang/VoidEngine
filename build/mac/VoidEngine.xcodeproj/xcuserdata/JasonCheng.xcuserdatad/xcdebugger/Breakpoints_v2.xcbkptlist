@@ -15,7 +15,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "686"
             endingLineNumber = "686"
-            landmarkName = "ModelConverter::writeVec4(PrettyWriterExt&lt;rapidjson::StringBuffer&gt; &amp;writer, const aiColor4D *col)"
+            landmarkName = "ModelConverter::writeNodeAnim(const aiNodeAnim *nodeAnim)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

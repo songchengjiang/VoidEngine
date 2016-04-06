@@ -163,10 +163,10 @@ void veUniform::apply(const veRenderCommand &command)
 		if (!_autoBindingValue.empty()) {
 
 			if (_autoBindingValue == SCREEN_WIDTH) {
-				glUniform1f(_location, command.camera->getViewport().width - command.camera->getViewport().x);
+				glUniform1f(_location, (command.camera->getViewport().width - command.camera->getViewport().x) * VE_DEVICE_PIXEL_RATIO);
 			}
 			else if (_autoBindingValue == SCREEN_HEIGHT) {
-				glUniform1f(_location, command.camera->getViewport().height - command.camera->getViewport().y);
+				glUniform1f(_location, (command.camera->getViewport().height - command.camera->getViewport().y) * VE_DEVICE_PIXEL_RATIO);
 			}
 			else if (_autoBindingValue == SIM_TIME) {
 				glUniform1f(_location, command.sceneManager->getSimulationTime());

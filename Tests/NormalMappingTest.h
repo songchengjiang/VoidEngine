@@ -31,7 +31,7 @@ public:
 			lightModel->addRenderableObject(lightentity);
 			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
 			point->addChild(lightModel);
-			point->shadowEnable(true);
+			point->shadowEnable(false);
 			point->setUseSoftShadow(true);
 			point->setShadowSoftness(0.05f);
 			point->setShadowBias(0.001f);

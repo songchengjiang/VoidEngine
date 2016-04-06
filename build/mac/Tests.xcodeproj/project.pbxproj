@@ -57,6 +57,9 @@
 		BE412D081BF6312000206513 /* SkyBoxTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkyBoxTest.h; path = ../../Tests/SkyBoxTest.h; sourceTree = "<group>"; };
 		BE412D091BF6312000206513 /* TestCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestCreator.h; path = ../../Tests/TestCreator.h; sourceTree = "<group>"; };
 		BE412D0A1BF6312000206513 /* TextTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextTest.h; path = ../../Tests/TextTest.h; sourceTree = "<group>"; };
+		BE6D3A9F1CB3C53600E9E034 /* IBLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IBLTest.h; path = ../../Tests/IBLTest.h; sourceTree = "<group>"; };
+		BE6D3AA01CB3C53600E9E034 /* NormalMappingTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NormalMappingTest.h; path = ../../Tests/NormalMappingTest.h; sourceTree = "<group>"; };
+		BE6D3AA11CB3C53600E9E034 /* ShadowTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShadowTest.h; path = ../../Tests/ShadowTest.h; sourceTree = "<group>"; };
 		BEB28D5B1C0C76410013E3B7 /* CubeMapTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CubeMapTest.h; path = ../../Tests/CubeMapTest.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -75,22 +78,25 @@
 		BE0E4E5F1BB0447A0001AA36 = {
 			isa = PBXGroup;
 			children = (
-				BE1B50941BB04F580039A346 /* VoidEngine.xcodeproj */,
 				BE1A0B1C1BE24F0900A1A20D /* resources */,
+				BE0E4E701BB0451B0001AA36 /* main.cpp */,
+				BE0E4E6C1BB0451B0001AA36 /* BaseTest.h */,
+				BE0E4E6D1BB0451B0001AA36 /* CameraTest.h */,
+				BEB28D5B1C0C76410013E3B7 /* CubeMapTest.h */,
+				BE6D3A9F1CB3C53600E9E034 /* IBLTest.h */,
+				BE0E4E6E1BB0451B0001AA36 /* ImageTest.h */,
 				BE412D051BF6312000206513 /* IntersectionTest.h */,
+				BE0E4E6F1BB0451B0001AA36 /* LightTest.h */,
+				BE0E4E711BB0451B0001AA36 /* MeshTest.h */,
+				BE6D3AA01CB3C53600E9E034 /* NormalMappingTest.h */,
 				BE412D061BF6312000206513 /* PerformanceTest.h */,
 				BE412D071BF6312000206513 /* PostProcesserTest.h */,
+				BE0E4E721BB0451B0001AA36 /* RenToTex.h */,
+				BE6D3AA11CB3C53600E9E034 /* ShadowTest.h */,
 				BE412D081BF6312000206513 /* SkyBoxTest.h */,
 				BE412D091BF6312000206513 /* TestCreator.h */,
 				BE412D0A1BF6312000206513 /* TextTest.h */,
-				BE0E4E6C1BB0451B0001AA36 /* BaseTest.h */,
-				BE0E4E6D1BB0451B0001AA36 /* CameraTest.h */,
-				BE0E4E6E1BB0451B0001AA36 /* ImageTest.h */,
-				BE0E4E6F1BB0451B0001AA36 /* LightTest.h */,
-				BE0E4E701BB0451B0001AA36 /* main.cpp */,
-				BE0E4E711BB0451B0001AA36 /* MeshTest.h */,
-				BE0E4E721BB0451B0001AA36 /* RenToTex.h */,
-				BEB28D5B1C0C76410013E3B7 /* CubeMapTest.h */,
+				BE1B50941BB04F580039A346 /* VoidEngine.xcodeproj */,
 				BE1B50881BB04DD70039A346 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -138,7 +144,7 @@
 		BE0E4E601BB0447A0001AA36 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0730;
 				TargetAttributes = {
 					BE1B50861BB04DD70039A346 = {
 						CreatedOnToolsVersion = 7.0;
@@ -201,11 +207,13 @@
 		BE0E4E641BB0447A0001AA36 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_TESTABILITY = YES;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../../Dependents\"",
 					"\"$(SRCROOT)/../../Engine\"",
 					"\"$(SRCROOT)/../../Tests\"",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				SYMROOT = ../../mac;
 			};
 			name = Debug;

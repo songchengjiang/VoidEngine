@@ -65,7 +65,8 @@ static const char* FULL_SCREEN_F_SHADER = " \
 	in vec2 v_texcoord; \n \
 	layout(location = 0) out vec4 fragColor; \n \
 	void main() {  \n \
-		fragColor = vec4(texture(u_lightTex, v_texcoord).xyz + texture(u_RT1, v_texcoord).xyz * u_ambient, 1.0); \n \
+		fragColor = vec4(texture(u_lightTex, v_texcoord).xyz + texture(u_RT1, v_texcoord).xyz * u_ambient, 1.0); \
+        \n \
 	}";
 
 
@@ -376,11 +377,11 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, bool isMainCamera)
 	unsigned int deferredClearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
 	auto &vp = camera->getViewport();
 	veVec2 size = veVec2(vp.width - vp.x, vp.height - vp.y);
-	params.DS->storage(size.x(), size.y(), 1, GL_DEPTH24_STENCIL8, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr, 1);
-	params.RT0->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
-	params.RT1->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
-	params.RT2->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
-	params.FBO->setFrameBufferSize(size);
+	params.DS->storage(size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO, 1, GL_DEPTH24_STENCIL8, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr, 1);
+	params.RT0->storage(size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO, 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
+	params.RT1->storage(size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO, 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
+	params.RT2->storage(size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO, 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
+	params.FBO->setFrameBufferSize(size * VE_DEVICE_PIXEL_RATIO);
 	params.FBO->bind(deferredClearMask);
 	draw(camera);
 	params.FBO->unBind();
@@ -389,18 +390,19 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, bool isMainCamera)
 	if (_sceneManager->getSkyBox())
 		_sceneManager->getSkyBox()->render(camera);
 	_ambientColor->setValue(_sceneManager->getAmbientColor());
-	params.fullScreenTexture->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
-	params.fullScreenFBO->setFrameBufferSize(size);
+	params.fullScreenTexture->storage(size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO, 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
+	params.fullScreenFBO->setFrameBufferSize(size * VE_DEVICE_PIXEL_RATIO);
 	params.fullScreenFBO->bind(deferredClearMask, GL_DRAW_FRAMEBUFFER);
 	params.FBO->bind(deferredClearMask, GL_READ_FRAMEBUFFER);
-	glBlitFramebuffer(0, 0, size.x(), size.y(),
-		0, 0, size.x(), size.y(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	glBlitFramebuffer(0, 0, size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO,
+		0, 0, size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 	params.fullScreenFBO->bind(deferredClearMask);
 	unsigned int defaultClearMask = camera->getClearMask();
 	camera->setClearMask(GL_COLOR_BUFFER_BIT);
 	draw(camera);
 	camera->setClearMask(defaultClearMask);
 	params.fullScreenFBO->unBind();
+
 
 	params.fullScreenSurface->update(_sceneManager->getRootNode(), _sceneManager);
 	params.fullScreenSurface->render(_sceneManager->getRootNode(), camera);
@@ -409,7 +411,7 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, bool isMainCamera)
 	if (isMainCamera && !_sceneManager->getPostProcesserList().empty()) {
 		if (!_postProcesserFBO.valid())
 			_postProcesserFBO = veFrameBufferObjectManager::instance()->createFrameBufferObject("_VE_DEFERRED_RENDER_PIPELINE_POST_PROCESSER_FBO_");
-		_postProcesserFBO->setFrameBufferSize(size);
+		_postProcesserFBO->setFrameBufferSize(size * VE_DEVICE_PIXEL_RATIO);
 		for (auto &iter : _sceneManager->getPostProcesserList()) {
 			auto processer = iter.get();
 			processer->process(this, _postProcesserFBO.get(), camera);

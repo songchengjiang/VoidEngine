@@ -7,62 +7,62 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BE1A0AA91BE24C6F00A1A20D /* OctreeDebuger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AA71BE24C6F00A1A20D /* OctreeDebuger.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0AAA1BE24C6F00A1A20D /* OctreeDebuger.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AA81BE24C6F00A1A20D /* OctreeDebuger.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0AB61BE24D1000A1A20D /* AnimationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AAC1BE24D1000A1A20D /* AnimationManager.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0AB71BE24D1000A1A20D /* AnimationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AAD1BE24D1000A1A20D /* AnimationManager.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0AB81BE24D1000A1A20D /* BaseManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AAE1BE24D1000A1A20D /* BaseManager.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0AB91BE24D1000A1A20D /* BaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AAF1BE24D1000A1A20D /* BaseManager.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0ABA1BE24D1000A1A20D /* EntityManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AB01BE24D1000A1A20D /* EntityManager.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0ABB1BE24D1000A1A20D /* EntityManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AB11BE24D1000A1A20D /* EntityManager.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0ABE1BE24D1000A1A20D /* SceneManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AB41BE24D1000A1A20D /* SceneManager.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0ABF1BE24D1000A1A20D /* SceneManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AB51BE24D1000A1A20D /* SceneManager.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0ACB1BE24D6400A1A20D /* Octree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AC11BE24D6400A1A20D /* Octree.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0ACC1BE24D6400A1A20D /* Octree.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AC21BE24D6400A1A20D /* Octree.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0ACD1BE24D6400A1A20D /* OctreeCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AC31BE24D6400A1A20D /* OctreeCamera.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0ACE1BE24D6400A1A20D /* OctreeCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AC41BE24D6400A1A20D /* OctreeCamera.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0ACF1BE24D6400A1A20D /* OctreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AC51BE24D6400A1A20D /* OctreeNode.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0AD01BE24D6400A1A20D /* OctreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AC61BE24D6400A1A20D /* OctreeNode.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0AD11BE24D6400A1A20D /* OctreeRenderQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AC71BE24D6400A1A20D /* OctreeRenderQueue.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0AD21BE24D6400A1A20D /* OctreeRenderQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AC81BE24D6400A1A20D /* OctreeRenderQueue.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0AD31BE24D6400A1A20D /* OctreeSceneManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AC91BE24D6400A1A20D /* OctreeSceneManager.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0AD41BE24D6400A1A20D /* OctreeSceneManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0ACA1BE24D6400A1A20D /* OctreeSceneManager.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0ADE1BE24E4000A1A20D /* BillboardRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AD61BE24E4000A1A20D /* BillboardRenderer.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0ADF1BE24E4000A1A20D /* BillboardRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AD71BE24E4000A1A20D /* BillboardRenderer.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0AE01BE24E4000A1A20D /* BoxRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AD81BE24E4000A1A20D /* BoxRenderer.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0AE11BE24E4000A1A20D /* BoxRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AD91BE24E4000A1A20D /* BoxRenderer.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0AE21BE24E4000A1A20D /* EntityRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0ADA1BE24E4000A1A20D /* EntityRenderer.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0AE31BE24E4000A1A20D /* EntityRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0ADB1BE24E4000A1A20D /* EntityRenderer.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0AE41BE24E4000A1A20D /* SurfaceRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0ADC1BE24E4000A1A20D /* SurfaceRenderer.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0AE51BE24E4000A1A20D /* SurfaceRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0ADD1BE24E4000A1A20D /* SurfaceRenderer.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B011BE24E5B00A1A20D /* BoudingBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AE61BE24E5B00A1A20D /* BoudingBox.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B021BE24E5B00A1A20D /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AE71BE24E5B00A1A20D /* Entity.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B031BE24E5B00A1A20D /* Entity.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AE81BE24E5B00A1A20D /* Entity.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B041BE24E5B00A1A20D /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AE91BE24E5B00A1A20D /* Font.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B051BE24E5B00A1A20D /* Font.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AEA1BE24E5B00A1A20D /* Font.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B061BE24E5B00A1A20D /* FontCharDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AEB1BE24E5B00A1A20D /* FontCharDictionary.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B071BE24E5B00A1A20D /* FontCharDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AEC1BE24E5B00A1A20D /* FontCharDictionary.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B081BE24E5C00A1A20D /* MatrixPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AED1BE24E5B00A1A20D /* MatrixPtr.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B091BE24E5C00A1A20D /* MatrixPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AEE1BE24E5B00A1A20D /* MatrixPtr.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B0A1BE24E5C00A1A20D /* MeshNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AEF1BE24E5B00A1A20D /* MeshNode.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B0B1BE24E5C00A1A20D /* MeshNode.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AF01BE24E5B00A1A20D /* MeshNode.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B0C1BE24E5C00A1A20D /* Plane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AF11BE24E5B00A1A20D /* Plane.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B0D1BE24E5C00A1A20D /* Plane.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AF21BE24E5B00A1A20D /* Plane.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B0E1BE24E5C00A1A20D /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AF31BE24E5B00A1A20D /* Ray.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B0F1BE24E5C00A1A20D /* Ray.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AF41BE24E5B00A1A20D /* Ray.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B101BE24E5C00A1A20D /* SkyBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AF51BE24E5B00A1A20D /* SkyBox.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B111BE24E5C00A1A20D /* SkyBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AF61BE24E5B00A1A20D /* SkyBox.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B121BE24E5C00A1A20D /* Surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AF71BE24E5B00A1A20D /* Surface.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B131BE24E5C00A1A20D /* Surface.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AF81BE24E5B00A1A20D /* Surface.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B141BE24E5C00A1A20D /* Text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AF91BE24E5B00A1A20D /* Text.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B151BE24E5C00A1A20D /* Text.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AFA1BE24E5B00A1A20D /* Text.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B161BE24E5C00A1A20D /* ThreadPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AFB1BE24E5B00A1A20D /* ThreadPool.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B171BE24E5C00A1A20D /* ThreadPool.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AFC1BE24E5B00A1A20D /* ThreadPool.h */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B181BE24E5C00A1A20D /* TransformFeedback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AFD1BE24E5B00A1A20D /* TransformFeedback.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B191BE24E5C00A1A20D /* TransformFeedback.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AFE1BE24E5B00A1A20D /* TransformFeedback.h */; settings = {ASSET_TAGS = (); }; };
+		BE1A0AA91BE24C6F00A1A20D /* OctreeDebuger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AA71BE24C6F00A1A20D /* OctreeDebuger.cpp */; };
+		BE1A0AAA1BE24C6F00A1A20D /* OctreeDebuger.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AA81BE24C6F00A1A20D /* OctreeDebuger.h */; };
+		BE1A0AB61BE24D1000A1A20D /* AnimationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AAC1BE24D1000A1A20D /* AnimationManager.cpp */; };
+		BE1A0AB71BE24D1000A1A20D /* AnimationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AAD1BE24D1000A1A20D /* AnimationManager.h */; };
+		BE1A0AB81BE24D1000A1A20D /* BaseManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AAE1BE24D1000A1A20D /* BaseManager.cpp */; };
+		BE1A0AB91BE24D1000A1A20D /* BaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AAF1BE24D1000A1A20D /* BaseManager.h */; };
+		BE1A0ABA1BE24D1000A1A20D /* EntityManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AB01BE24D1000A1A20D /* EntityManager.cpp */; };
+		BE1A0ABB1BE24D1000A1A20D /* EntityManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AB11BE24D1000A1A20D /* EntityManager.h */; };
+		BE1A0ABE1BE24D1000A1A20D /* SceneManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AB41BE24D1000A1A20D /* SceneManager.cpp */; };
+		BE1A0ABF1BE24D1000A1A20D /* SceneManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AB51BE24D1000A1A20D /* SceneManager.h */; };
+		BE1A0ACB1BE24D6400A1A20D /* Octree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AC11BE24D6400A1A20D /* Octree.cpp */; };
+		BE1A0ACC1BE24D6400A1A20D /* Octree.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AC21BE24D6400A1A20D /* Octree.h */; };
+		BE1A0ACD1BE24D6400A1A20D /* OctreeCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AC31BE24D6400A1A20D /* OctreeCamera.cpp */; };
+		BE1A0ACE1BE24D6400A1A20D /* OctreeCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AC41BE24D6400A1A20D /* OctreeCamera.h */; };
+		BE1A0ACF1BE24D6400A1A20D /* OctreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AC51BE24D6400A1A20D /* OctreeNode.cpp */; };
+		BE1A0AD01BE24D6400A1A20D /* OctreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AC61BE24D6400A1A20D /* OctreeNode.h */; };
+		BE1A0AD11BE24D6400A1A20D /* OctreeRenderQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AC71BE24D6400A1A20D /* OctreeRenderQueue.cpp */; };
+		BE1A0AD21BE24D6400A1A20D /* OctreeRenderQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AC81BE24D6400A1A20D /* OctreeRenderQueue.h */; };
+		BE1A0AD31BE24D6400A1A20D /* OctreeSceneManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AC91BE24D6400A1A20D /* OctreeSceneManager.cpp */; };
+		BE1A0AD41BE24D6400A1A20D /* OctreeSceneManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0ACA1BE24D6400A1A20D /* OctreeSceneManager.h */; };
+		BE1A0ADE1BE24E4000A1A20D /* BillboardRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AD61BE24E4000A1A20D /* BillboardRenderer.cpp */; };
+		BE1A0ADF1BE24E4000A1A20D /* BillboardRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AD71BE24E4000A1A20D /* BillboardRenderer.h */; };
+		BE1A0AE01BE24E4000A1A20D /* BoxRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AD81BE24E4000A1A20D /* BoxRenderer.cpp */; };
+		BE1A0AE11BE24E4000A1A20D /* BoxRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AD91BE24E4000A1A20D /* BoxRenderer.h */; };
+		BE1A0AE21BE24E4000A1A20D /* EntityRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0ADA1BE24E4000A1A20D /* EntityRenderer.cpp */; };
+		BE1A0AE31BE24E4000A1A20D /* EntityRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0ADB1BE24E4000A1A20D /* EntityRenderer.h */; };
+		BE1A0AE41BE24E4000A1A20D /* SurfaceRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0ADC1BE24E4000A1A20D /* SurfaceRenderer.cpp */; };
+		BE1A0AE51BE24E4000A1A20D /* SurfaceRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0ADD1BE24E4000A1A20D /* SurfaceRenderer.h */; };
+		BE1A0B011BE24E5B00A1A20D /* BoudingBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AE61BE24E5B00A1A20D /* BoudingBox.h */; };
+		BE1A0B021BE24E5B00A1A20D /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AE71BE24E5B00A1A20D /* Entity.cpp */; };
+		BE1A0B031BE24E5B00A1A20D /* Entity.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AE81BE24E5B00A1A20D /* Entity.h */; };
+		BE1A0B041BE24E5B00A1A20D /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AE91BE24E5B00A1A20D /* Font.cpp */; };
+		BE1A0B051BE24E5B00A1A20D /* Font.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AEA1BE24E5B00A1A20D /* Font.h */; };
+		BE1A0B061BE24E5B00A1A20D /* FontCharDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AEB1BE24E5B00A1A20D /* FontCharDictionary.cpp */; };
+		BE1A0B071BE24E5B00A1A20D /* FontCharDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AEC1BE24E5B00A1A20D /* FontCharDictionary.h */; };
+		BE1A0B081BE24E5C00A1A20D /* MatrixPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AED1BE24E5B00A1A20D /* MatrixPtr.cpp */; };
+		BE1A0B091BE24E5C00A1A20D /* MatrixPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AEE1BE24E5B00A1A20D /* MatrixPtr.h */; };
+		BE1A0B0A1BE24E5C00A1A20D /* MeshNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AEF1BE24E5B00A1A20D /* MeshNode.cpp */; };
+		BE1A0B0B1BE24E5C00A1A20D /* MeshNode.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AF01BE24E5B00A1A20D /* MeshNode.h */; };
+		BE1A0B0C1BE24E5C00A1A20D /* Plane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AF11BE24E5B00A1A20D /* Plane.cpp */; };
+		BE1A0B0D1BE24E5C00A1A20D /* Plane.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AF21BE24E5B00A1A20D /* Plane.h */; };
+		BE1A0B0E1BE24E5C00A1A20D /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AF31BE24E5B00A1A20D /* Ray.cpp */; };
+		BE1A0B0F1BE24E5C00A1A20D /* Ray.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AF41BE24E5B00A1A20D /* Ray.h */; };
+		BE1A0B101BE24E5C00A1A20D /* SkyBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AF51BE24E5B00A1A20D /* SkyBox.cpp */; };
+		BE1A0B111BE24E5C00A1A20D /* SkyBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AF61BE24E5B00A1A20D /* SkyBox.h */; };
+		BE1A0B121BE24E5C00A1A20D /* Surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AF71BE24E5B00A1A20D /* Surface.cpp */; };
+		BE1A0B131BE24E5C00A1A20D /* Surface.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AF81BE24E5B00A1A20D /* Surface.h */; };
+		BE1A0B141BE24E5C00A1A20D /* Text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AF91BE24E5B00A1A20D /* Text.cpp */; };
+		BE1A0B151BE24E5C00A1A20D /* Text.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AFA1BE24E5B00A1A20D /* Text.h */; };
+		BE1A0B161BE24E5C00A1A20D /* ThreadPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AFB1BE24E5B00A1A20D /* ThreadPool.cpp */; };
+		BE1A0B171BE24E5C00A1A20D /* ThreadPool.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AFC1BE24E5B00A1A20D /* ThreadPool.h */; };
+		BE1A0B181BE24E5C00A1A20D /* TransformFeedback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AFD1BE24E5B00A1A20D /* TransformFeedback.cpp */; };
+		BE1A0B191BE24E5C00A1A20D /* TransformFeedback.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AFE1BE24E5B00A1A20D /* TransformFeedback.h */; };
 		BE1A0B1E1BE2540300A1A20D /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE1A0B1D1BE2540300A1A20D /* libfreetype.a */; };
-		BE1A0B211BE260D900A1A20D /* File-mac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0B1F1BE260D900A1A20D /* File-mac.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE1A0B221BE260D900A1A20D /* File-mac.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0B201BE260D900A1A20D /* File-mac.h */; settings = {ASSET_TAGS = (); }; };
+		BE1A0B211BE260D900A1A20D /* File-mac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0B1F1BE260D900A1A20D /* File-mac.cpp */; };
+		BE1A0B221BE260D900A1A20D /* File-mac.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0B201BE260D900A1A20D /* File-mac.h */; };
 		BE1B50481BB049E30039A346 /* Animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE3D41341BAF0B520063041C /* Animation.cpp */; };
 		BE1B50491BB049E30039A346 /* Bone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE3D41361BAF0B520063041C /* Bone.cpp */; };
 		BE1B504A1BB049E30039A346 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE3D41381BAF0B520063041C /* Camera.cpp */; };
@@ -116,23 +116,41 @@
 		BE1B50801BB04A100039A346 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DC21BB02F530001AA36 /* CoreVideo.framework */; };
 		BE1B50811BB04A120039A346 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DC01BB003190001AA36 /* OpenGL.framework */; };
 		BE1B50821BB04A140039A346 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DBD1BB002CF0001AA36 /* Foundation.framework */; };
-		BE412CF31BF630A200206513 /* MathAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE412CF11BF630A200206513 /* MathAlgorithm.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE412CF41BF630A200206513 /* MathAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = BE412CF21BF630A200206513 /* MathAlgorithm.h */; settings = {ASSET_TAGS = (); }; };
-		BE412CFB1BF630CD00206513 /* Application-desktop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE412CF51BF630CD00206513 /* Application-desktop.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE412CFC1BF630CD00206513 /* Application-desktop.h in Headers */ = {isa = PBXBuildFile; fileRef = BE412CF61BF630CD00206513 /* Application-desktop.h */; settings = {ASSET_TAGS = (); }; };
-		BE412CFD1BF630CD00206513 /* Application.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE412CF71BF630CD00206513 /* Application.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE412CFE1BF630CD00206513 /* Application.h in Headers */ = {isa = PBXBuildFile; fileRef = BE412CF81BF630CD00206513 /* Application.h */; settings = {ASSET_TAGS = (); }; };
-		BE412CFF1BF630CD00206513 /* PostProcesser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE412CF91BF630CD00206513 /* PostProcesser.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE412D001BF630CD00206513 /* PostProcesser.h in Headers */ = {isa = PBXBuildFile; fileRef = BE412CFA1BF630CD00206513 /* PostProcesser.h */; settings = {ASSET_TAGS = (); }; };
-		BE412D031BF630E800206513 /* PostProcesserRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE412D011BF630E800206513 /* PostProcesserRenderer.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE412D041BF630E800206513 /* PostProcesserRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE412D021BF630E800206513 /* PostProcesserRenderer.h */; settings = {ASSET_TAGS = (); }; };
-		BE455BF91BBFE18C00DEC208 /* BoudingBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE455BF71BBFE18C00DEC208 /* BoudingBox.cpp */; settings = {ASSET_TAGS = (); }; };
-		BE4E66941C04B7AE0078717E /* FileReaderWriterKTX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE4E66931C04B7AE0078717E /* FileReaderWriterKTX.cpp */; settings = {ASSET_TAGS = (); }; };
+		BE412CF31BF630A200206513 /* MathAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE412CF11BF630A200206513 /* MathAlgorithm.cpp */; };
+		BE412CF41BF630A200206513 /* MathAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = BE412CF21BF630A200206513 /* MathAlgorithm.h */; };
+		BE412CFB1BF630CD00206513 /* Application-desktop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE412CF51BF630CD00206513 /* Application-desktop.cpp */; };
+		BE412CFC1BF630CD00206513 /* Application-desktop.h in Headers */ = {isa = PBXBuildFile; fileRef = BE412CF61BF630CD00206513 /* Application-desktop.h */; };
+		BE412CFD1BF630CD00206513 /* Application.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE412CF71BF630CD00206513 /* Application.cpp */; };
+		BE412CFE1BF630CD00206513 /* Application.h in Headers */ = {isa = PBXBuildFile; fileRef = BE412CF81BF630CD00206513 /* Application.h */; };
+		BE412CFF1BF630CD00206513 /* PostProcesser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE412CF91BF630CD00206513 /* PostProcesser.cpp */; };
+		BE412D001BF630CD00206513 /* PostProcesser.h in Headers */ = {isa = PBXBuildFile; fileRef = BE412CFA1BF630CD00206513 /* PostProcesser.h */; };
+		BE412D031BF630E800206513 /* PostProcesserRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE412D011BF630E800206513 /* PostProcesserRenderer.cpp */; };
+		BE412D041BF630E800206513 /* PostProcesserRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE412D021BF630E800206513 /* PostProcesserRenderer.h */; };
+		BE455BF91BBFE18C00DEC208 /* BoudingBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE455BF71BBFE18C00DEC208 /* BoudingBox.cpp */; };
+		BE4E66941C04B7AE0078717E /* FileReaderWriterKTX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE4E66931C04B7AE0078717E /* FileReaderWriterKTX.cpp */; };
 		BE5BF1731BB28A1200FAE523 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE5BF1721BB28A1100FAE523 /* libjpeg.a */; };
-		BE5BF1761BB2A05B00FAE523 /* Debuger.h in Headers */ = {isa = PBXBuildFile; fileRef = BE5BF1751BB2A05B00FAE523 /* Debuger.h */; settings = {ASSET_TAGS = (); }; };
-		BE5BF1781BB2A09D00FAE523 /* Debuger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE5BF1771BB2A09D00FAE523 /* Debuger.cpp */; settings = {ASSET_TAGS = (); }; };
-		BEB28D591C0C761F0013E3B7 /* MaterialManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEB28D571C0C761F0013E3B7 /* MaterialManager.cpp */; settings = {ASSET_TAGS = (); }; };
-		BEB28D5A1C0C761F0013E3B7 /* MaterialManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BEB28D581C0C761F0013E3B7 /* MaterialManager.h */; settings = {ASSET_TAGS = (); }; };
+		BE5BF1761BB2A05B00FAE523 /* Debuger.h in Headers */ = {isa = PBXBuildFile; fileRef = BE5BF1751BB2A05B00FAE523 /* Debuger.h */; };
+		BE5BF1781BB2A09D00FAE523 /* Debuger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE5BF1771BB2A09D00FAE523 /* Debuger.cpp */; };
+		BE6D3AAB1CB3C5FD00E9E034 /* DeferredLightPipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6D3AA51CB3C5FD00E9E034 /* DeferredLightPipeline.cpp */; };
+		BE6D3AAC1CB3C5FD00E9E034 /* DeferredLightPipeline.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6D3AA61CB3C5FD00E9E034 /* DeferredLightPipeline.h */; };
+		BE6D3AAD1CB3C5FD00E9E034 /* DeferredRenderPipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6D3AA71CB3C5FD00E9E034 /* DeferredRenderPipeline.cpp */; };
+		BE6D3AAE1CB3C5FD00E9E034 /* DeferredRenderPipeline.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6D3AA81CB3C5FD00E9E034 /* DeferredRenderPipeline.h */; };
+		BE6D3AAF1CB3C5FD00E9E034 /* RenderPipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6D3AA91CB3C5FD00E9E034 /* RenderPipeline.cpp */; };
+		BE6D3AB01CB3C5FD00E9E034 /* RenderPipeline.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6D3AAA1CB3C5FD00E9E034 /* RenderPipeline.h */; };
+		BE6D3AB71CB3C62800E9E034 /* Cone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6D3AB11CB3C62800E9E034 /* Cone.cpp */; };
+		BE6D3AB81CB3C62800E9E034 /* Cone.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6D3AB21CB3C62800E9E034 /* Cone.h */; };
+		BE6D3AB91CB3C62800E9E034 /* RenderState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6D3AB31CB3C62800E9E034 /* RenderState.cpp */; };
+		BE6D3ABA1CB3C62800E9E034 /* RenderState.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6D3AB41CB3C62800E9E034 /* RenderState.h */; };
+		BE6D3ABB1CB3C62800E9E034 /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6D3AB51CB3C62800E9E034 /* Sphere.cpp */; };
+		BE6D3ABC1CB3C62800E9E034 /* Sphere.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6D3AB61CB3C62800E9E034 /* Sphere.h */; };
+		BE6D3AC31CB3C65300E9E034 /* ConeRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6D3ABD1CB3C65300E9E034 /* ConeRenderer.cpp */; };
+		BE6D3AC41CB3C65300E9E034 /* ConeRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6D3ABE1CB3C65300E9E034 /* ConeRenderer.h */; };
+		BE6D3AC51CB3C65300E9E034 /* LightRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6D3ABF1CB3C65300E9E034 /* LightRenderer.cpp */; };
+		BE6D3AC61CB3C65300E9E034 /* LightRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6D3AC01CB3C65300E9E034 /* LightRenderer.h */; };
+		BE6D3AC71CB3C65300E9E034 /* SphereRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6D3AC11CB3C65300E9E034 /* SphereRenderer.cpp */; };
+		BE6D3AC81CB3C65300E9E034 /* SphereRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6D3AC21CB3C65300E9E034 /* SphereRenderer.h */; };
+		BEB28D591C0C761F0013E3B7 /* MaterialManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEB28D571C0C761F0013E3B7 /* MaterialManager.cpp */; };
+		BEB28D5A1C0C761F0013E3B7 /* MaterialManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BEB28D581C0C761F0013E3B7 /* MaterialManager.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -303,6 +321,24 @@
 		BE5BF1721BB28A1100FAE523 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../../Dependents/libjpeg/lib/libjpeg.a; sourceTree = "<group>"; };
 		BE5BF1751BB2A05B00FAE523 /* Debuger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Debuger.h; path = ../../Engine/Debuger/Debuger.h; sourceTree = "<group>"; };
 		BE5BF1771BB2A09D00FAE523 /* Debuger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Debuger.cpp; path = ../../Engine/Debuger/Debuger.cpp; sourceTree = "<group>"; };
+		BE6D3AA51CB3C5FD00E9E034 /* DeferredLightPipeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeferredLightPipeline.cpp; path = ../../Engine/KernelCore/DeferredLightPipeline.cpp; sourceTree = "<group>"; };
+		BE6D3AA61CB3C5FD00E9E034 /* DeferredLightPipeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeferredLightPipeline.h; path = ../../Engine/KernelCore/DeferredLightPipeline.h; sourceTree = "<group>"; };
+		BE6D3AA71CB3C5FD00E9E034 /* DeferredRenderPipeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeferredRenderPipeline.cpp; path = ../../Engine/KernelCore/DeferredRenderPipeline.cpp; sourceTree = "<group>"; };
+		BE6D3AA81CB3C5FD00E9E034 /* DeferredRenderPipeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeferredRenderPipeline.h; path = ../../Engine/KernelCore/DeferredRenderPipeline.h; sourceTree = "<group>"; };
+		BE6D3AA91CB3C5FD00E9E034 /* RenderPipeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderPipeline.cpp; path = ../../Engine/KernelCore/RenderPipeline.cpp; sourceTree = "<group>"; };
+		BE6D3AAA1CB3C5FD00E9E034 /* RenderPipeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderPipeline.h; path = ../../Engine/KernelCore/RenderPipeline.h; sourceTree = "<group>"; };
+		BE6D3AB11CB3C62800E9E034 /* Cone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Cone.cpp; path = ../../Engine/KernelCore/Cone.cpp; sourceTree = "<group>"; };
+		BE6D3AB21CB3C62800E9E034 /* Cone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Cone.h; path = ../../Engine/KernelCore/Cone.h; sourceTree = "<group>"; };
+		BE6D3AB31CB3C62800E9E034 /* RenderState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderState.cpp; path = ../../Engine/KernelCore/RenderState.cpp; sourceTree = "<group>"; };
+		BE6D3AB41CB3C62800E9E034 /* RenderState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderState.h; path = ../../Engine/KernelCore/RenderState.h; sourceTree = "<group>"; };
+		BE6D3AB51CB3C62800E9E034 /* Sphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Sphere.cpp; path = ../../Engine/KernelCore/Sphere.cpp; sourceTree = "<group>"; };
+		BE6D3AB61CB3C62800E9E034 /* Sphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sphere.h; path = ../../Engine/KernelCore/Sphere.h; sourceTree = "<group>"; };
+		BE6D3ABD1CB3C65300E9E034 /* ConeRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ConeRenderer.cpp; path = ../../Engine/KernelCore/ConeRenderer.cpp; sourceTree = "<group>"; };
+		BE6D3ABE1CB3C65300E9E034 /* ConeRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConeRenderer.h; path = ../../Engine/KernelCore/ConeRenderer.h; sourceTree = "<group>"; };
+		BE6D3ABF1CB3C65300E9E034 /* LightRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LightRenderer.cpp; path = ../../Engine/KernelCore/LightRenderer.cpp; sourceTree = "<group>"; };
+		BE6D3AC01CB3C65300E9E034 /* LightRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightRenderer.h; path = ../../Engine/KernelCore/LightRenderer.h; sourceTree = "<group>"; };
+		BE6D3AC11CB3C65300E9E034 /* SphereRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SphereRenderer.cpp; path = ../../Engine/KernelCore/SphereRenderer.cpp; sourceTree = "<group>"; };
+		BE6D3AC21CB3C65300E9E034 /* SphereRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SphereRenderer.h; path = ../../Engine/KernelCore/SphereRenderer.h; sourceTree = "<group>"; };
 		BEB28D571C0C761F0013E3B7 /* MaterialManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MaterialManager.cpp; path = ../../Engine/KernelCore/MaterialManager.cpp; sourceTree = "<group>"; };
 		BEB28D581C0C761F0013E3B7 /* MaterialManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MaterialManager.h; path = ../../Engine/KernelCore/MaterialManager.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -400,6 +436,13 @@
 		BE1A0AD51BE24DA000A1A20D /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
+				BE6D3AA41CB3C5DC00E9E034 /* Pipeline */,
+				BE6D3ABD1CB3C65300E9E034 /* ConeRenderer.cpp */,
+				BE6D3ABE1CB3C65300E9E034 /* ConeRenderer.h */,
+				BE6D3ABF1CB3C65300E9E034 /* LightRenderer.cpp */,
+				BE6D3AC01CB3C65300E9E034 /* LightRenderer.h */,
+				BE6D3AC11CB3C65300E9E034 /* SphereRenderer.cpp */,
+				BE6D3AC21CB3C65300E9E034 /* SphereRenderer.h */,
 				BE412D011BF630E800206513 /* PostProcesserRenderer.cpp */,
 				BE412D021BF630E800206513 /* PostProcesserRenderer.h */,
 				BE1A0AD61BE24E4000A1A20D /* BillboardRenderer.cpp */,
@@ -494,80 +537,85 @@
 		BE3D412B1BAF0B220063041C /* KernelCore */ = {
 			isa = PBXGroup;
 			children = (
-				BE1A0AD51BE24DA000A1A20D /* Renderer */,
-				BE1A0AAB1BE24C7F00A1A20D /* SceneManager */,
-				BE412CF51BF630CD00206513 /* Application-desktop.cpp */,
-				BE412CF61BF630CD00206513 /* Application-desktop.h */,
-				BE412CF71BF630CD00206513 /* Application.cpp */,
-				BE412CF81BF630CD00206513 /* Application.h */,
-				BE412CF91BF630CD00206513 /* PostProcesser.cpp */,
-				BE412CFA1BF630CD00206513 /* PostProcesser.h */,
-				BE1A0AE61BE24E5B00A1A20D /* BoudingBox.h */,
-				BE1A0AE71BE24E5B00A1A20D /* Entity.cpp */,
-				BE1A0AE81BE24E5B00A1A20D /* Entity.h */,
-				BE1A0AE91BE24E5B00A1A20D /* Font.cpp */,
-				BE1A0AEA1BE24E5B00A1A20D /* Font.h */,
-				BE1A0AEB1BE24E5B00A1A20D /* FontCharDictionary.cpp */,
-				BE1A0AEC1BE24E5B00A1A20D /* FontCharDictionary.h */,
-				BE1A0AED1BE24E5B00A1A20D /* MatrixPtr.cpp */,
-				BE1A0AEE1BE24E5B00A1A20D /* MatrixPtr.h */,
-				BE1A0AEF1BE24E5B00A1A20D /* MeshNode.cpp */,
-				BE1A0AF01BE24E5B00A1A20D /* MeshNode.h */,
-				BE1A0AF11BE24E5B00A1A20D /* Plane.cpp */,
-				BE1A0AF21BE24E5B00A1A20D /* Plane.h */,
-				BE1A0AF31BE24E5B00A1A20D /* Ray.cpp */,
-				BE1A0AF41BE24E5B00A1A20D /* Ray.h */,
-				BE1A0AF51BE24E5B00A1A20D /* SkyBox.cpp */,
-				BE1A0AF61BE24E5B00A1A20D /* SkyBox.h */,
-				BE1A0AF71BE24E5B00A1A20D /* Surface.cpp */,
-				BE1A0AF81BE24E5B00A1A20D /* Surface.h */,
-				BE1A0AF91BE24E5B00A1A20D /* Text.cpp */,
-				BE1A0AFA1BE24E5B00A1A20D /* Text.h */,
-				BE1A0AFB1BE24E5B00A1A20D /* ThreadPool.cpp */,
-				BE1A0AFC1BE24E5B00A1A20D /* ThreadPool.h */,
-				BE1A0AFD1BE24E5B00A1A20D /* TransformFeedback.cpp */,
-				BE1A0AFE1BE24E5B00A1A20D /* TransformFeedback.h */,
 				BE3D41341BAF0B520063041C /* Animation.cpp */,
-				BE3D41351BAF0B520063041C /* Animation.h */,
+				BE412CF51BF630CD00206513 /* Application-desktop.cpp */,
+				BE412CF71BF630CD00206513 /* Application.cpp */,
 				BE3D41361BAF0B520063041C /* Bone.cpp */,
-				BE3D41371BAF0B520063041C /* Bone.h */,
+				BE455BF71BBFE18C00DEC208 /* BoudingBox.cpp */,
 				BE3D41381BAF0B520063041C /* Camera.cpp */,
-				BE3D41391BAF0B520063041C /* Camera.h */,
 				BE3D413A1BAF0B520063041C /* Component.cpp */,
-				BE3D413B1BAF0B520063041C /* Component.h */,
-				BE3D413E1BAF0B520063041C /* Event.h */,
+				BE6D3AB11CB3C62800E9E034 /* Cone.cpp */,
+				BE1A0AE71BE24E5B00A1A20D /* Entity.cpp */,
+				BE1A0AE91BE24E5B00A1A20D /* Font.cpp */,
+				BE1A0AEB1BE24E5B00A1A20D /* FontCharDictionary.cpp */,
 				BE3D41411BAF0B520063041C /* FrameBufferObject.cpp */,
+				BE3D41441BAF0B520063041C /* Image.cpp */,
+				BE3D41461BAF0B520063041C /* Light.cpp */,
+				BE3D41491BAF0B520063041C /* Material.cpp */,
+				BE1A0AED1BE24E5B00A1A20D /* MatrixPtr.cpp */,
+				BE3D414B1BAF0B520063041C /* Mesh.cpp */,
+				BE1A0AEF1BE24E5B00A1A20D /* MeshNode.cpp */,
+				BE3D414F1BAF0B520063041C /* Node.cpp */,
+				BE3D41511BAF0B520063041C /* NodeVisitor.cpp */,
+				BE3D41571BAF0B520063041C /* Parameter.cpp */,
+				BE1A0AF11BE24E5B00A1A20D /* Plane.cpp */,
+				BE1A0AF31BE24E5B00A1A20D /* Ray.cpp */,
+				BE3D415A1BAF0B520063041C /* RenderableObject.cpp */,
+				BE6D3AB31CB3C62800E9E034 /* RenderState.cpp */,
+				BE3D41611BAF0B520063041C /* Shader.cpp */,
+				BE1A0AF51BE24E5B00A1A20D /* SkyBox.cpp */,
+				BE6D3AB51CB3C62800E9E034 /* Sphere.cpp */,
+				BE1A0AF71BE24E5B00A1A20D /* Surface.cpp */,
+				BE1A0AF91BE24E5B00A1A20D /* Text.cpp */,
+				BE3D41641BAF0B520063041C /* Texture.cpp */,
+				BE3D41661BAF0B520063041C /* TextureManager.cpp */,
+				BE1A0AFB1BE24E5B00A1A20D /* ThreadPool.cpp */,
+				BE3D41681BAF0B520063041C /* Transformer.cpp */,
+				BE1A0AFD1BE24E5B00A1A20D /* TransformFeedback.cpp */,
+				BE3D41351BAF0B520063041C /* Animation.h */,
+				BE412CF61BF630CD00206513 /* Application-desktop.h */,
+				BE412CF81BF630CD00206513 /* Application.h */,
+				BE3D41371BAF0B520063041C /* Bone.h */,
+				BE1A0AE61BE24E5B00A1A20D /* BoudingBox.h */,
+				BE3D41391BAF0B520063041C /* Camera.h */,
+				BE3D413B1BAF0B520063041C /* Component.h */,
+				BE6D3AB21CB3C62800E9E034 /* Cone.h */,
+				BE1A0AE81BE24E5B00A1A20D /* Entity.h */,
+				BE3D413E1BAF0B520063041C /* Event.h */,
+				BE1A0AEA1BE24E5B00A1A20D /* Font.h */,
+				BE1A0AEC1BE24E5B00A1A20D /* FontCharDictionary.h */,
 				BE3D41421BAF0B520063041C /* FrameBufferObject.h */,
 				BE3D41431BAF0B520063041C /* IDGenerator.h */,
-				BE3D41441BAF0B520063041C /* Image.cpp */,
 				BE3D41451BAF0B520063041C /* Image.h */,
-				BE3D41461BAF0B520063041C /* Light.cpp */,
 				BE3D41471BAF0B520063041C /* Light.h */,
 				BE3D41481BAF0B520063041C /* LoopQueue.h */,
-				BE3D41491BAF0B520063041C /* Material.cpp */,
 				BE3D414A1BAF0B520063041C /* Material.h */,
-				BE3D414B1BAF0B520063041C /* Mesh.cpp */,
+				BE1A0AEE1BE24E5B00A1A20D /* MatrixPtr.h */,
 				BE3D414C1BAF0B520063041C /* Mesh.h */,
-				BE3D414F1BAF0B520063041C /* Node.cpp */,
+				BE1A0AF01BE24E5B00A1A20D /* MeshNode.h */,
 				BE3D41501BAF0B520063041C /* Node.h */,
-				BE3D41511BAF0B520063041C /* NodeVisitor.cpp */,
 				BE3D41521BAF0B520063041C /* NodeVisitor.h */,
-				BE3D41571BAF0B520063041C /* Parameter.cpp */,
 				BE3D41581BAF0B520063041C /* Parameter.h */,
+				BE1A0AF21BE24E5B00A1A20D /* Plane.h */,
+				BE1A0AF41BE24E5B00A1A20D /* Ray.h */,
 				BE3D41591BAF0B520063041C /* Registrar.h */,
-				BE3D415A1BAF0B520063041C /* RenderableObject.cpp */,
 				BE3D415B1BAF0B520063041C /* RenderableObject.h */,
-				BE3D41611BAF0B520063041C /* Shader.cpp */,
+				BE6D3AB41CB3C62800E9E034 /* RenderState.h */,
 				BE3D41621BAF0B520063041C /* Shader.h */,
 				BE3D41631BAF0B520063041C /* ShaderDefinationGenerator.h */,
-				BE3D41641BAF0B520063041C /* Texture.cpp */,
+				BE1A0AF61BE24E5B00A1A20D /* SkyBox.h */,
+				BE6D3AB61CB3C62800E9E034 /* Sphere.h */,
+				BE1A0AF81BE24E5B00A1A20D /* Surface.h */,
+				BE1A0AFA1BE24E5B00A1A20D /* Text.h */,
 				BE3D41651BAF0B520063041C /* Texture.h */,
-				BE3D41661BAF0B520063041C /* TextureManager.cpp */,
 				BE3D41671BAF0B520063041C /* TextureManager.h */,
-				BE3D41681BAF0B520063041C /* Transformer.cpp */,
+				BE1A0AFC1BE24E5B00A1A20D /* ThreadPool.h */,
 				BE3D41691BAF0B520063041C /* Transformer.h */,
+				BE1A0AFE1BE24E5B00A1A20D /* TransformFeedback.h */,
 				BE3D416A1BAF0B520063041C /* VE_Ptr.h */,
-				BE455BF71BBFE18C00DEC208 /* BoudingBox.cpp */,
+				BE6D3AA21CB3C5B200E9E034 /* PostProcesser */,
+				BE1A0AD51BE24DA000A1A20D /* Renderer */,
+				BE1A0AAB1BE24C7F00A1A20D /* SceneManager */,
 			);
 			name = KernelCore;
 			sourceTree = "<group>";
@@ -583,6 +631,28 @@
 			name = Debuger;
 			sourceTree = "<group>";
 		};
+		BE6D3AA21CB3C5B200E9E034 /* PostProcesser */ = {
+			isa = PBXGroup;
+			children = (
+				BE412CF91BF630CD00206513 /* PostProcesser.cpp */,
+				BE412CFA1BF630CD00206513 /* PostProcesser.h */,
+			);
+			name = PostProcesser;
+			sourceTree = "<group>";
+		};
+		BE6D3AA41CB3C5DC00E9E034 /* Pipeline */ = {
+			isa = PBXGroup;
+			children = (
+				BE6D3AA51CB3C5FD00E9E034 /* DeferredLightPipeline.cpp */,
+				BE6D3AA61CB3C5FD00E9E034 /* DeferredLightPipeline.h */,
+				BE6D3AA71CB3C5FD00E9E034 /* DeferredRenderPipeline.cpp */,
+				BE6D3AA81CB3C5FD00E9E034 /* DeferredRenderPipeline.h */,
+				BE6D3AA91CB3C5FD00E9E034 /* RenderPipeline.cpp */,
+				BE6D3AAA1CB3C5FD00E9E034 /* RenderPipeline.h */,
+			);
+			name = Pipeline;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -590,6 +660,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE6D3AB81CB3C62800E9E034 /* Cone.h in Headers */,
 				BE1A0ACC1BE24D6400A1A20D /* Octree.h in Headers */,
 				BE1A0B0B1BE24E5C00A1A20D /* MeshNode.h in Headers */,
 				BE1A0B071BE24E5B00A1A20D /* FontCharDictionary.h in Headers */,
@@ -597,9 +668,11 @@
 				BE1A0AB71BE24D1000A1A20D /* AnimationManager.h in Headers */,
 				BE1A0AE11BE24E4000A1A20D /* BoxRenderer.h in Headers */,
 				BE412CFC1BF630CD00206513 /* Application-desktop.h in Headers */,
+				BE6D3AC41CB3C65300E9E034 /* ConeRenderer.h in Headers */,
 				BE1A0B191BE24E5C00A1A20D /* TransformFeedback.h in Headers */,
 				BE1A0AB91BE24D1000A1A20D /* BaseManager.h in Headers */,
 				BE1A0B0D1BE24E5C00A1A20D /* Plane.h in Headers */,
+				BE6D3AC81CB3C65300E9E034 /* SphereRenderer.h in Headers */,
 				BE1A0B171BE24E5C00A1A20D /* ThreadPool.h in Headers */,
 				BE1A0ABF1BE24D1000A1A20D /* SceneManager.h in Headers */,
 				BE1A0B051BE24E5B00A1A20D /* Font.h in Headers */,
@@ -618,12 +691,18 @@
 				BE1A0B011BE24E5B00A1A20D /* BoudingBox.h in Headers */,
 				BE1A0AD21BE24D6400A1A20D /* OctreeRenderQueue.h in Headers */,
 				BE1A0ABB1BE24D1000A1A20D /* EntityManager.h in Headers */,
+				BE6D3AAC1CB3C5FD00E9E034 /* DeferredLightPipeline.h in Headers */,
 				BE1A0AD41BE24D6400A1A20D /* OctreeSceneManager.h in Headers */,
+				BE6D3ABC1CB3C62800E9E034 /* Sphere.h in Headers */,
 				BE412CFE1BF630CD00206513 /* Application.h in Headers */,
 				BE1A0AD01BE24D6400A1A20D /* OctreeNode.h in Headers */,
+				BE6D3AB01CB3C5FD00E9E034 /* RenderPipeline.h in Headers */,
 				BE412CF41BF630A200206513 /* MathAlgorithm.h in Headers */,
 				BE412D001BF630CD00206513 /* PostProcesser.h in Headers */,
+				BE6D3ABA1CB3C62800E9E034 /* RenderState.h in Headers */,
 				BE1A0AE31BE24E4000A1A20D /* EntityRenderer.h in Headers */,
+				BE6D3AAE1CB3C5FD00E9E034 /* DeferredRenderPipeline.h in Headers */,
+				BE6D3AC61CB3C65300E9E034 /* LightRenderer.h in Headers */,
 				BE1A0B031BE24E5B00A1A20D /* Entity.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -654,7 +733,7 @@
 		BE3D40DF1BAEFF690063041C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0730;
 				TargetAttributes = {
 					BE1B503A1BB0499F0039A346 = {
 						CreatedOnToolsVersion = 7.0;
@@ -691,6 +770,7 @@
 				BE1B504B1BB049E30039A346 /* Component.cpp in Sources */,
 				BE1A0ACD1BE24D6400A1A20D /* OctreeCamera.cpp in Sources */,
 				BE1B504E1BB049E30039A346 /* FrameBufferObject.cpp in Sources */,
+				BE6D3ABB1CB3C62800E9E034 /* Sphere.cpp in Sources */,
 				BE1A0B211BE260D900A1A20D /* File-mac.cpp in Sources */,
 				BE1A0B181BE24E5C00A1A20D /* TransformFeedback.cpp in Sources */,
 				BEB28D591C0C761F0013E3B7 /* MaterialManager.cpp in Sources */,
@@ -707,6 +787,8 @@
 				BE1B50551BB049E30039A346 /* NodeVisitor.cpp in Sources */,
 				BE1B50571BB049E30039A346 /* OverlayRenderer.cpp in Sources */,
 				BE1A0AE41BE24E4000A1A20D /* SurfaceRenderer.cpp in Sources */,
+				BE6D3AC71CB3C65300E9E034 /* SphereRenderer.cpp in Sources */,
+				BE6D3AC51CB3C65300E9E034 /* LightRenderer.cpp in Sources */,
 				BE1B50581BB049E30039A346 /* Parameter.cpp in Sources */,
 				BE1B50591BB049E30039A346 /* RenderableObject.cpp in Sources */,
 				BE1B505A1BB049E30039A346 /* Renderer.cpp in Sources */,
@@ -714,6 +796,7 @@
 				BE1A0B061BE24E5B00A1A20D /* FontCharDictionary.cpp in Sources */,
 				BE1B505B1BB049E30039A346 /* RenderQueue.cpp in Sources */,
 				BE1B505C1BB049E30039A346 /* Shader.cpp in Sources */,
+				BE6D3AAB1CB3C5FD00E9E034 /* DeferredLightPipeline.cpp in Sources */,
 				BE1B505D1BB049E30039A346 /* Texture.cpp in Sources */,
 				BE1B505E1BB049E30039A346 /* TextureManager.cpp in Sources */,
 				BE1B505F1BB049E30039A346 /* Transformer.cpp in Sources */,
@@ -724,13 +807,16 @@
 				BE1A0B081BE24E5C00A1A20D /* MatrixPtr.cpp in Sources */,
 				BE1B50631BB049E30039A346 /* FileReaderWriterANIMATION.cpp in Sources */,
 				BE4E66941C04B7AE0078717E /* FileReaderWriterKTX.cpp in Sources */,
+				BE6D3AB71CB3C62800E9E034 /* Cone.cpp in Sources */,
 				BE1A0ABA1BE24D1000A1A20D /* EntityManager.cpp in Sources */,
 				BE1A0ADE1BE24E4000A1A20D /* BillboardRenderer.cpp in Sources */,
+				BE6D3AB91CB3C62800E9E034 /* RenderState.cpp in Sources */,
 				BE1B50641BB049E30039A346 /* FileReaderWriterCAMERA.cpp in Sources */,
 				BE1A0B021BE24E5B00A1A20D /* Entity.cpp in Sources */,
 				BE1B50651BB049E30039A346 /* FileReaderWriterEXR.cpp in Sources */,
 				BE1A0B0C1BE24E5C00A1A20D /* Plane.cpp in Sources */,
 				BE412CFF1BF630CD00206513 /* PostProcesser.cpp in Sources */,
+				BE6D3AAF1CB3C5FD00E9E034 /* RenderPipeline.cpp in Sources */,
 				BE1B50661BB049E30039A346 /* FileReaderWriterJPEG.cpp in Sources */,
 				BE1A0B161BE24E5C00A1A20D /* ThreadPool.cpp in Sources */,
 				BE1B50671BB049E30039A346 /* FileReaderWriterLIGHT.cpp in Sources */,
@@ -739,7 +825,9 @@
 				BE1A0AE01BE24E4000A1A20D /* BoxRenderer.cpp in Sources */,
 				BE1A0B121BE24E5C00A1A20D /* Surface.cpp in Sources */,
 				BE1A0B0A1BE24E5C00A1A20D /* MeshNode.cpp in Sources */,
+				BE6D3AC31CB3C65300E9E034 /* ConeRenderer.cpp in Sources */,
 				BE1B506A1BB049E30039A346 /* FileReaderWriterVEMTL.cpp in Sources */,
+				BE6D3AAD1CB3C5FD00E9E034 /* DeferredRenderPipeline.cpp in Sources */,
 				BE1B506B1BB049E30039A346 /* Printer.cpp in Sources */,
 				BE1A0B141BE24E5C00A1A20D /* Text.cpp in Sources */,
 				BE1A0AD11BE24D6400A1A20D /* OctreeRenderQueue.cpp in Sources */,
@@ -779,6 +867,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -807,8 +896,6 @@
 					"\"$(SRCROOT)/../../Dependents\"",
 					"\"$(SRCROOT)/../../Engine\"",
 					"\"$(SRCROOT)/../../Dependents/freetype/include\"",
-					"\"$(SRCROOT)/../../Dependents/gli\"",
-					"\"$(SRCROOT)/../../Dependents/glm\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../../Dependents/freetype/lib\"",
@@ -844,6 +931,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -866,8 +954,6 @@
 					"\"$(SRCROOT)/../../Dependents\"",
 					"\"$(SRCROOT)/../../Engine\"",
 					"\"$(SRCROOT)/../../Dependents/freetype/include\"",
-					"\"$(SRCROOT)/../../Dependents/gli\"",
-					"\"$(SRCROOT)/../../Dependents/glm\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../../Dependents/freetype/lib\"",
@@ -888,7 +974,7 @@
 		BE3D40E31BAEFF690063041C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ENABLE_TESTABILITY = YES;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../Dependents\"";
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../../Dependents/freetype/lib\"",
@@ -898,6 +984,7 @@
 					"\"$(SRCROOT)/../../Dependents/openexr/lib\"",
 					"\"$(SRCROOT)/../../Dependents/zlib/lib\"",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
 				SYMROOT = ../../mac;
@@ -907,7 +994,6 @@
 		BE3D40E41BAEFF690063041C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../Dependents\"";
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../../Dependents/freetype/lib\"",

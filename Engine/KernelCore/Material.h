@@ -194,8 +194,8 @@ public:
 	USE_NAME_PROPERTY;
 
 	void addMaterial(veMaterial *material);
-	const veMaterial* getMaterial(unsigned int idx) const;
-	veMaterial* getMaterial(unsigned int idx);
+	const veMaterial* getMaterial(size_t idx) const;
+	veMaterial* getMaterial(size_t idx);
 	const veMaterial* getMaterial(const std::string &name) const;
 	veMaterial* getMaterial(const std::string &name);
 	size_t getMaterialNum() const { return _materials.size(); }

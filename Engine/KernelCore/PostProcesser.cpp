@@ -24,7 +24,7 @@ void vePostProcesser::process(veRenderPipeline *pipeline, veFrameBufferObject *f
 		for (unsigned int p = 0; p < material->activeTechnique()->getPassNum(); ++p) {
 			auto pass = material->activeTechnique()->getPass(p);
 			auto tex = pass->getTexture(vePass::AMBIENT_TEXTURE);
-			tex->storage(size.x(), size.y(), 1, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, nullptr, 1);
+			tex->storage(size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO, 1, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, nullptr, 1);
 			fb->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex);
 			fb->bind(GL_COLOR_BUFFER_BIT, GL_DRAW_FRAMEBUFFER);
 			pipeline->draw(camera);

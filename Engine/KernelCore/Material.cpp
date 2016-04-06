@@ -331,13 +331,13 @@ void veMaterialArray::addMaterial(veMaterial *material)
 	_materials.push_back(material);
 }
 
-const veMaterial* veMaterialArray::getMaterial(unsigned int idx) const
+const veMaterial* veMaterialArray::getMaterial(size_t idx) const
 {
 	veAssert(idx < _materials.size());
 	return _materials[idx].get();
 }
 
-veMaterial* veMaterialArray::getMaterial(unsigned int idx)
+veMaterial* veMaterialArray::getMaterial(size_t idx)
 {
 	veAssert(idx < _materials.size());
 	return _materials[idx].get();

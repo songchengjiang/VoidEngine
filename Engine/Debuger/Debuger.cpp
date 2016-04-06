@@ -66,11 +66,11 @@ public:
 		glDrawArrays(GL_LINES, 0, drawCount);
 	}
 
-	std::mutex      verticesMutex;
-	veRealArray     vertices;
-	unsigned int    drawCount;
-	GLuint          vao;
-	GLuint          vbo;
+	std::mutex  verticesMutex;
+	veRealArray vertices;
+	size_t      drawCount;
+	GLuint      vao;
+	GLuint      vbo;
 
 private:
 

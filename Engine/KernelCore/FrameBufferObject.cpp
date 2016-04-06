@@ -150,9 +150,9 @@ void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
 			if (_dsbo) {
 				glBindRenderbuffer(GL_RENDERBUFFER, _dsbo);
 				if (hasDepthBuffer && !hasStencilBuffer)
-					glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, _size.x() * VE_DEVICE_PIXEL_RATIO, _size.y() * VE_DEVICE_PIXEL_RATIO);
+					glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, _size.x(), _size.y());
 				else
-					glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _size.x() * VE_DEVICE_PIXEL_RATIO, _size.y() * VE_DEVICE_PIXEL_RATIO);
+					glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _size.x(), _size.y());
 
 				if (hasDepthBuffer)
 					glFramebufferRenderbuffer(_target, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _dsbo);
@@ -200,27 +200,27 @@ void veFrameBufferObject::refreshAttachments()
 			glDrawBuffers(1, &bufs);
 		}
 
-		//GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-		//if (status == GL_FRAMEBUFFER_COMPLETE) {
-		//	veLog("GL_FRAMEBUFFER_COMPLETE");
-		//}
-		//else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
-		//	veLog("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
-		//}
-		//else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
-		//	veLog("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
-		//}
-		//else if (status == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
-		//	veLog("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
-		//}
-		//else if (status == GL_FRAMEBUFFER_UNSUPPORTED) {
-		//	veLog("GL_FRAMEBUFFER_UNSUPPORTED");
-		//}
-
-		//int ec = glGetError();
-		//if (ec != GL_NO_ERROR) {
-		//	veLog("veFrameBufferObject: GL ERROR CODE: %d", ec);
-		//}
+//		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+//		if (status == GL_FRAMEBUFFER_COMPLETE) {
+//			veLog("GL_FRAMEBUFFER_COMPLETE\n");
+//		}
+//		else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
+//			veLog("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT\n");
+//		}
+//		else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
+//			veLog("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT\n");
+//		}
+//		else if (status == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
+//			veLog("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT\n");
+//		}
+//		else if (status == GL_FRAMEBUFFER_UNSUPPORTED) {
+//			veLog("GL_FRAMEBUFFER_UNSUPPORTED\n");
+//		}
+//
+//		int ec = glGetError();
+//		if (ec != GL_NO_ERROR) {
+//			veLog("veFrameBufferObject: GL ERROR CODE: 0x%x\n", ec);
+//		}
 		_needRefreshAttachments = false;
 	}
 }

@@ -27,7 +27,7 @@ public:
 
 	~veLight();
 
-	virtual void update(veSceneManager *sm, const veMat4 &transform);
+	virtual void update(veSceneManager *sm, const veMat4 &transform) override;
 	virtual void visit(veNodeVisitor &visitor) override;
 	//virtual void render(veCamera *camera) override;
 

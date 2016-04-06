@@ -55,7 +55,7 @@ public:
 		int height;
 		int depth;
 		unsigned char  *data;
-		unsigned int    dataSize;
+		size_t    dataSize;
 	};
 	typedef std::vector<MipmapLevel> MipmapLevels;
 
