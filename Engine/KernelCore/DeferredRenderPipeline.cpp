@@ -82,7 +82,7 @@ static const char* DIRECTIONAL_LIGHT_V_SHADER = " \
 	}";
 
 static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
-	uniform sampler2D u_depthTex; \n \
+	uniform highp sampler2D u_depthTex; \n \
 	uniform sampler2D u_RT0; \n \
 	uniform sampler2D u_RT1; \n \
 	uniform sampler2D u_RT2; \n \
@@ -169,7 +169,7 @@ static const char* POINT_LIGHT_V_SHADER = " \
 	}";
 
 static const char* POINT_LIGHT_F_SHADER = " \
-	uniform sampler2D u_depthTex; \n \
+	uniform highp sampler2D u_depthTex; \n \
 	uniform sampler2D u_RT0; \n \
 	uniform sampler2D u_RT1; \n \
 	uniform sampler2D u_RT2; \n \
@@ -229,14 +229,14 @@ static const char* POINT_LIGHT_F_SHADER = " \
 	}      \n \
 										    \n \
 	void main() {  \n \
-		vec2 texCoords = gl_FragCoord.xy / vec2(u_screenWidth, u_screenHeight);   \n \
+		highp vec2 texCoords = gl_FragCoord.xy / vec2(u_screenWidth, u_screenHeight);   \n \
 		vec4 RT0 = texture(u_RT0, texCoords);    \n \
 		vec4 RT1 = texture(u_RT1, texCoords);    \n \
 		vec4 RT2 = texture(u_RT2, texCoords);     \n \
 		if (RT0.z <= 0.0){ fragColor = vec4(0.0); return; }             \n \
 																						\n \
 		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xy)), 0.0)).xyz;   \n \
-		float depth = texture(u_depthTex, texCoords).r;    \n \
+		highp float depth = texture(u_depthTex, texCoords).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
 																						\n \
@@ -269,7 +269,7 @@ static const char* SPOT_LIGHT_V_SHADER = " \
 	}";
 
 static const char* SPOT_LIGHT_F_SHADER = " \
-	uniform sampler2D u_depthTex; \n \
+	uniform highp sampler2D u_depthTex; \n \
 	uniform sampler2D u_RT0; \n \
 	uniform sampler2D u_RT1; \n \
 	uniform sampler2D u_RT2; \n \
@@ -328,14 +328,14 @@ static const char* SPOT_LIGHT_F_SHADER = " \
 	}          \n \
 												  \n \
 	void main() {  \n \
-		vec2 texCoords = gl_FragCoord.xy / vec2(u_screenWidth, u_screenHeight);   \n \
+		highp vec2 texCoords = gl_FragCoord.xy / vec2(u_screenWidth, u_screenHeight);   \n \
 		vec4 RT0 = texture(u_RT0, texCoords);    \n \
 		vec4 RT1 = texture(u_RT1, texCoords);    \n \
 		vec4 RT2 = texture(u_RT2, texCoords);     \n \
 		if (RT0.z <= 0.0){ fragColor = vec4(0.0); return; }             \n \
 																						    \n \
 		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xy)), 0.0)).xyz;   \n \
-		float depth = texture(u_depthTex, texCoords).r;    \n \
+		highp float depth = texture(u_depthTex, texCoords).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
 																						    \n \

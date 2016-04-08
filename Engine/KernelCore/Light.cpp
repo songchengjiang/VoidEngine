@@ -91,6 +91,7 @@ void veDirectionalLight::updateShadow()
 				_shadowTexture = _sceneManager->createTexture(_name + std::string("-shadowTex"), veTexture::TEXTURE_2D);
 				_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 				_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+				_shadowTexture->setFilterMode(veTexture::NEAREST);
 			}
 
 			if (!_shadowCamera.valid()) {
@@ -135,6 +136,7 @@ void vePointLight::updateShadow()
 				_shadowTexture = _sceneManager->createTexture(_name + std::string("-shadowTex"), veTexture::TEXTURE_CUBE);
 				_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 				_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+				_shadowTexture->setFilterMode(veTexture::NEAREST);
 			}
 
 			if (!_shadowCameras[0].valid()) {
@@ -195,6 +197,7 @@ void veSpotLight::updateShadow()
 				_shadowTexture = _sceneManager->createTexture(_name + std::string("-shadowTex"), veTexture::TEXTURE_2D);
 				_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 				_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+				_shadowTexture->setFilterMode(veTexture::NEAREST);
 			}
 			if (!_shadowCamera.valid()) {
 				_shadowCamera = _sceneManager->createCamera(_name + std::string("-shadowCamera"));
