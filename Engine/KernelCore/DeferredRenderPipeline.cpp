@@ -432,6 +432,12 @@ veDeferredRenderPipeline::CameraRenderParams& veDeferredRenderPipeline::getCamer
 		params.RT1 = _sceneManager->createTexture(camera->getName() + std::string("_VE_DEFERRED_RENDER_PIPELINE_RT1_"));
 		params.RT2 = _sceneManager->createTexture(camera->getName() + std::string("_VE_DEFERRED_RENDER_PIPELINE_RT2_"));
 
+		params.DS->setFilterMode(veTexture::NEAREST);
+		params.RT0->setFilterMode(veTexture::NEAREST);
+		params.RT1->setFilterMode(veTexture::NEAREST);
+		params.RT2->setFilterMode(veTexture::NEAREST);
+
+
 		params.FBO->attach(GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, params.DS.get());
 		params.FBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, params.RT0.get());
 		params.FBO->attach(GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, params.RT1.get());
@@ -441,6 +447,8 @@ veDeferredRenderPipeline::CameraRenderParams& veDeferredRenderPipeline::getCamer
 		params.fullScreenTexture = _sceneManager->createTexture(camera->getName() + std::string("_VE_DEFERRED_RENDER_PIPELINE_FULL_SCREEN_TEXTURE_"));
 		params.fullScreenSurface = _sceneManager->createSurface(camera->getName() + std::string("_VE_DEFERRED_RENDER_PIPELINE_FULL_SCREEN_SURFACE_"));
 		params.fullScreenFBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, params.fullScreenTexture.get());
+
+		params.fullScreenTexture->setFilterMode(veTexture::NEAREST);
 
 		auto fullScreenMats = _sceneManager->createMaterialArray(camera->getName() + std::string("_VE_DEFERRED_RENDER_PIPELINE_FULL_SCREEN_MATERIAL_ARRAY_"));
 		auto fullScreenMat = new veMaterial;
