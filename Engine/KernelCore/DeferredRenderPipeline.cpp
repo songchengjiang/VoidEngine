@@ -4,14 +4,13 @@
 #include "Constants.h"
 
 static const char* COMMON_FUNCTIONS = " \
-	vec3 decode(vec2 encoded) {     \n \
-		vec2 fenc = encoded * 4.0 - 2.0;    \n \
+	vec3 decode(vec3 encoded) {     \n \
+        float nz = floor(encoded.z * 255.0) / 16.0;     \n \
+        vec2 dec = encoded.xy + vec2(floor(nz) / 16.0, fract(nz)) / 255.0;     \n \
+		vec2 fenc = dec * 4.0 - 2.0;    \n \
 		float f = dot(fenc, fenc);    \n \
 		float g = sqrt(1.0 - f / 4.0);    \n \
-		vec3 normal;    \n \
-		normal.xy = fenc * g;    \n \
-		normal.z = 1.0 - f / 2.0;    \n \
-		return normal;    \n \
+		return vec3(fenc * g, 1.0 - f / 2.0);    \n \
 	}    \n \
                                                                                                                       \n \
 	const float PI = 3.1415926535;                                                                                    \n\
@@ -83,7 +82,7 @@ static const char* DIRECTIONAL_LIGHT_V_SHADER = " \
 
 static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 	uniform highp sampler2D u_depthTex; \n \
-	uniform sampler2D u_RT0; \n \
+	uniform highp sampler2D u_RT0; \n \
 	uniform sampler2D u_RT1; \n \
 	uniform sampler2D u_RT2; \n \
 	uniform sampler2DShadow u_shadowTex; \n \
@@ -139,9 +138,9 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 		vec4 RT0 = texture(u_RT0, v_texcoord);    \n \
 		vec4 RT1 = texture(u_RT1, v_texcoord);    \n \
 		vec4 RT2 = texture(u_RT2, v_texcoord);     \n \
-		if (RT0.z <= 0.0){ fragColor = vec4(0.0); return; }             \n \
+		if (RT0.w <= 0.0){ fragColor = vec4(0.0); return; }             \n \
 																							  \n \
-		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xy)), 0.0)).xyz;   \n \
+		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xyz)), 0.0)).xyz;   \n \
 		float depth = texture(u_depthTex, v_texcoord).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(v_texcoord * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
@@ -170,7 +169,7 @@ static const char* POINT_LIGHT_V_SHADER = " \
 
 static const char* POINT_LIGHT_F_SHADER = " \
 	uniform highp sampler2D u_depthTex; \n \
-	uniform sampler2D u_RT0; \n \
+	uniform highp sampler2D u_RT0; \n \
 	uniform sampler2D u_RT1; \n \
 	uniform sampler2D u_RT2; \n \
 	uniform samplerCubeShadow u_shadowTex;  \n \
@@ -233,9 +232,9 @@ static const char* POINT_LIGHT_F_SHADER = " \
 		vec4 RT0 = texture(u_RT0, texCoords);    \n \
 		vec4 RT1 = texture(u_RT1, texCoords);    \n \
 		vec4 RT2 = texture(u_RT2, texCoords);     \n \
-		if (RT0.z <= 0.0){ fragColor = vec4(0.0); return; }             \n \
+		if (RT0.w <= 0.0){ fragColor = vec4(0.0); return; }             \n \
 																						\n \
-		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xy)), 0.0)).xyz;   \n \
+		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xyz)), 0.0)).xyz;   \n \
 		highp float depth = texture(u_depthTex, texCoords).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
@@ -270,7 +269,7 @@ static const char* SPOT_LIGHT_V_SHADER = " \
 
 static const char* SPOT_LIGHT_F_SHADER = " \
 	uniform highp sampler2D u_depthTex; \n \
-	uniform sampler2D u_RT0; \n \
+	uniform highp sampler2D u_RT0; \n \
 	uniform sampler2D u_RT1; \n \
 	uniform sampler2D u_RT2; \n \
 	uniform sampler2DShadow u_shadowTex; \n \
@@ -332,9 +331,9 @@ static const char* SPOT_LIGHT_F_SHADER = " \
 		vec4 RT0 = texture(u_RT0, texCoords);    \n \
 		vec4 RT1 = texture(u_RT1, texCoords);    \n \
 		vec4 RT2 = texture(u_RT2, texCoords);     \n \
-		if (RT0.z <= 0.0){ fragColor = vec4(0.0); return; }             \n \
+		if (RT0.w <= 0.0){ fragColor = vec4(0.0); return; }             \n \
 																						    \n \
-		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xy)), 0.0)).xyz;   \n \
+		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xyz)), 0.0)).xyz;   \n \
 		highp float depth = texture(u_depthTex, texCoords).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \

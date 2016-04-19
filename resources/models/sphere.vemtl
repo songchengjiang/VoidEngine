@@ -26,7 +26,7 @@
                                     "source": "system/StandardShader.frag",
                                     "u_screenWidth": "SCREEN_WIDTH",
                                     "u_screenHeight": "SCREEN_HEIGHT",                                        
-                                    "u_lightMask": 1.000000,
+                                    "u_lightMask": 0.000000,
                                     "u_ambient": [0.500000,0.500000,0.500000
                                     ],
                                     "u_diffuse": [0.500000,0.500000,0.500000

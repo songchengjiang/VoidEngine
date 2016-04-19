@@ -40,10 +40,12 @@ layout(location=1) out vec4 RT1;
 layout(location=2) out vec4 RT2;
 //#endif
 
-vec2 encode (vec3 normal)
+vec3 encode (vec3 normal)
 {
     float p = sqrt(normal.z * 8.0 + 8.0);
-    return vec2(normal.xy / p + 0.5);
+    vec2 enc255 = vec2(normal.xy / p + 0.5) * 255.0;
+    vec2 residual = floor(fract(enc255) * 16.0);
+    return vec3(floor(enc255), residual.x * 16.0 + residual.y) / 255.0;
 }
 
 #ifdef VE_USE_PARALLAX_MAPPING
@@ -89,11 +91,11 @@ void main(){
 #ifdef VE_USE_NROMAL_MAPPING
 	mat3 normCoords = mat3(v_viewTangent, v_viewBitangent, v_viewNormal);
 	vec3 norm = normalize(texture(u_normalTex, texcoord).rgb * 2.0 - 1.0);
-	RT0.xy = encode(normCoords * norm);
+	RT0.xyz = encode(normCoords * norm);
 #else
-	RT0.xy = encode(v_viewNormal);
+	RT0.xyz = encode(v_viewNormal);
 #endif
-	RT0.z = u_lightMask;
+	RT0.w = u_lightMask;
 
 #ifdef VE_USE_DIFFUSE_TEXTURE
 	RT1.xyz = u_diffuse * texture(u_diffuseTex, texcoord).xyz;
