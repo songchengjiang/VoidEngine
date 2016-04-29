@@ -1,0 +1,107 @@
+#include "MeshNode.h"
+#include "Mesh.h"
+#include <algorithm>
+
+veMeshNode::veMeshNode()
+	: USE_VE_PTR_INIT
+	, _parent(nullptr)
+	, _needRefresh(true)
+{
+}
+
+veMeshNode::~veMeshNode()
+{
+
+}
+
+int veMeshNode::addChild(veMeshNode *child)
+{
+	if (!child) return -1;
+	auto iter = std::find(_children.begin(), _children.end(), child);
+	if (iter != _children.end()) return -1;
+	veAssert(child->_parent == nullptr);
+	child->_parent = this;
+	_children.push_back(child);
+	return int(_children.size() - 1);
+}
+
+bool veMeshNode::removeChild(veMeshNode *child)
+{
+	auto iter = std::find(_children.begin(), _children.end(), child);
+	if (iter == _children.end()) return false;
+	(*iter)->_parent = nullptr;
+	_children.erase(iter);
+	return true;
+}
+
+veMeshNode* veMeshNode::removeChild(size_t cIndex)
+{
+	veAssert(cIndex < _children.size());
+	veMeshNode* child = _children[cIndex].get();
+	child->_parent = nullptr;
+	_children.erase(_children.begin() + cIndex);
+	return child;
+}
+
+veMeshNode* veMeshNode::getChild(size_t cIndex)
+{
+	veAssert(cIndex < _children.size());
+	return _children[cIndex].get();
+}
+
+void veMeshNode::setMatrix(const veMat4 &mat)
+{
+	_matrix = mat;
+	needRefresh();
+}
+
+veMat4 veMeshNode::toMeshNodeRootMatrix()
+{
+	if (_needRefresh) {
+		//veMat4 rootMat = _matrix;
+		//veMeshNode *parent = _parent;
+		//while (parent) {
+		//	rootMat = parent->getMatrix() * rootMat;
+		//	parent = parent->_parent;
+		//}
+		//_worldMatrix = rootMat;
+
+		_worldMatrix = _parent == nullptr? _matrix: _parent->toMeshNodeRootMatrix() * _matrix;
+		_needRefresh = false;
+	}
+	return _worldMatrix;
+}
+
+void veMeshNode::addMeshRef(veMesh *mesh)
+{
+	_meshList.push_back(mesh);
+	mesh->setAttachedNode(this);
+}
+
+bool veMeshNode::removeMeshRef(veMesh *mesh)
+{
+	auto iter = std::find(_meshList.begin(), _meshList.end(), mesh);
+	if (iter == _meshList.end()) return false;
+	(*iter)->setAttachedNode(nullptr);
+	_meshList.erase(iter);
+	return true;
+}
+
+veMesh* veMeshNode::removeMeshRef(unsigned int mIndex)
+{
+	veAssert(mIndex < _meshList.size());
+	veMesh* mesh = _meshList[mIndex];
+	mesh->setAttachedNode(nullptr);
+	_meshList.erase(_meshList.begin() + mIndex);
+	return mesh;
+}
+
+void veMeshNode::needRefresh()
+{
+	if (_needRefresh) 
+		return;
+	_needRefresh = true;
+	for (auto &iter : _children) {
+		iter->needRefresh();
+	}
+}

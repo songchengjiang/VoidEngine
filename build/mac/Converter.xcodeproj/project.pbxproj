@@ -14,6 +14,7 @@
 		BE1B50251BB048A70039A346 /* ModelConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE0E4E331BB03F010001AA36 /* ModelConverter.cpp */; };
 		BE1B50261BB048AC0039A346 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE1B50131BB047720039A346 /* libz.a */; };
 		BE1B50271BB048AE0039A346 /* libassimp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4E471BB0425F0001AA36 /* libassimp.a */; };
+		BE6D3A9E1CB3C1A400E9E034 /* TextureConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6D3A9C1CB3C1A400E9E034 /* TextureConverter.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -45,6 +46,8 @@
 		BE1B502E1BB049690039A346 /* VoidEngine.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoidEngine.hpp; sourceTree = "<group>"; };
 		BE1B50301BB049690039A346 /* VoidEnginePriv.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoidEnginePriv.hpp; sourceTree = "<group>"; };
 		BE1B50321BB049690039A346 /* VoidEngine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VoidEngine.cpp; sourceTree = "<group>"; };
+		BE6D3A9C1CB3C1A400E9E034 /* TextureConverter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureConverter.cpp; path = ../../Converter/TextureConverter.cpp; sourceTree = "<group>"; };
+		BE6D3A9D1CB3C1A400E9E034 /* TextureConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureConverter.h; path = ../../Converter/TextureConverter.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,17 +67,19 @@
 			isa = PBXGroup;
 			children = (
 				BE1B501A1BB0487F0039A346 /* Converter */,
-				BE0E4E491BB0426B0001AA36 /* libs */,
 				BE0E4E2C1BB03F010001AA36 /* Argument.cpp */,
-				BE0E4E2D1BB03F010001AA36 /* Argument.h */,
 				BE0E4E2E1BB03F010001AA36 /* Converter.cpp */,
-				BE0E4E2F1BB03F010001AA36 /* Converter.h */,
 				BE0E4E301BB03F010001AA36 /* ConverterFactory.cpp */,
-				BE0E4E311BB03F010001AA36 /* ConverterFactory.h */,
 				BE0E4E321BB03F010001AA36 /* main.cpp */,
 				BE0E4E331BB03F010001AA36 /* ModelConverter.cpp */,
+				BE6D3A9C1CB3C1A400E9E034 /* TextureConverter.cpp */,
+				BE0E4E2D1BB03F010001AA36 /* Argument.h */,
+				BE0E4E2F1BB03F010001AA36 /* Converter.h */,
+				BE0E4E311BB03F010001AA36 /* ConverterFactory.h */,
 				BE0E4E341BB03F010001AA36 /* ModelConverter.h */,
 				BE0E4E351BB03F010001AA36 /* PrettyWriterExt.h */,
+				BE6D3A9D1CB3C1A400E9E034 /* TextureConverter.h */,
+				BE0E4E491BB0426B0001AA36 /* libs */,
 				BE1B502D1BB049690039A346 /* VoidEngine */,
 			);
 			sourceTree = "<group>";
@@ -124,7 +129,7 @@
 		BE0E4E251BB03ED50001AA36 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0730;
 				TargetAttributes = {
 					BE1B50191BB0487F0039A346 = {
 						CreatedOnToolsVersion = 7.0;
@@ -157,6 +162,7 @@
 				BE1B50221BB048A70039A346 /* Converter.cpp in Sources */,
 				BE1B50231BB048A70039A346 /* ConverterFactory.cpp in Sources */,
 				BE1B50241BB048A70039A346 /* main.cpp in Sources */,
+				BE6D3A9E1CB3C1A400E9E034 /* TextureConverter.cpp in Sources */,
 				BE1B50251BB048A70039A346 /* ModelConverter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -167,6 +173,8 @@
 		BE0E4E291BB03ED50001AA36 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SYMROOT = "$(SRCROOT)/../../mac";
 			};

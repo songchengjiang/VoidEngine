@@ -1,44 +1,47 @@
 #include "FileReaderWriter.h"
 #include <unordered_map>
-#include "KernelCore/Image.h"
+#include "KernelCore/Texture.h"
+#include "KernelCore/SceneManager.h"
 extern "C" {
-#if defined(_MSC_VER)
+#if (VE_PLATFORM == VE_PLATFORM_WIN32)
 #include "libjpeg/include/win/jpeglib.h"
-#elif defined(__APPLE_CC__)
+#elif (VE_PLATFORM == VE_PLATFORM_MAC)
 #include "libjpeg/include/mac/jpeglib.h"
+#elif (VE_PLATFORM == VE_PLATFORM_ANDROID)
+#include "libjpeg/include/android/jpeglib.h"
 #endif
 }
-#if defined(_MSC_VER)
+#if (VE_PLATFORM == VE_PLATFORM_WIN32)
 #pragma comment(lib, "libjpeg/lib/libjpeg.lib")
 #endif
 class veFileReaderWriterJPEG : public veFileReaderWriter
 {
 public:
 	veFileReaderWriterJPEG()
-		: _image(nullptr)
+		: _texture(nullptr)
 	{};
 	virtual ~veFileReaderWriterJPEG(){};
 
-	virtual void* readFile(const std::string &filePath){
-		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
-		_name = fullPath.substr(fullPath.find_last_of("/\\") + 1);
-		FILE *fp = fopen(fullPath.c_str(), "rb");
-		if (fp){
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
+		auto fileData = veFile::instance()->readFileToBuffer(filePath);
+		_sceneManager = sm;
+		if (fileData){
+			_name = name;
 			struct jpeg_decompress_struct cinfo;
 			struct jpeg_error_mgr jerr;
 			cinfo.err = jpeg_std_error(&jerr);
 			jpeg_create_decompress(&cinfo);
-			jpeg_stdio_src(&cinfo, fp);
-			jpeg_read_header(&cinfo, true);
+			//jpeg_stdio_src(&cinfo, fp);
+			jpeg_mem_src(&cinfo, (unsigned char *)fileData->buffer, fileData->size);
+			jpeg_read_header(&cinfo, boolean(true));
 			readImage(cinfo);
 			jpeg_destroy_decompress(&cinfo);
-			fclose(fp);
 		}
-		if (!_image) veLog(std::string("veFileReaderWriterJPEG: read ") + filePath + std::string(" failed!"));
-		return _image;
+		if (!_texture) veLog("veFileReaderWriterJPEG: read %s failed!\n", filePath.c_str());
+		return _texture;
 	}
 
-	virtual bool writeFile(void *data, const std::string &filePath){
+	virtual bool writeFile(veSceneManager *sm, void *data, const std::string &filePath) override{
 		return true;
 	}
 
@@ -54,6 +57,7 @@ private:
 		GLenum dataType = GL_UNSIGNED_BYTE;
 		if (!getFormat(cinfo, internalFormat, pixelFormat)) return;
 		unsigned char *buffer = new unsigned char[width * height * components];
+		//veLog("jpeg: width=%d, height=%d, components=%d", width, height, components);
 		jpeg_start_decompress(&cinfo);
 		JSAMPROW row_pointer[1];
 		while (cinfo.output_scanline < cinfo.output_height)
@@ -62,8 +66,8 @@ private:
 			jpeg_read_scanlines(&cinfo, row_pointer, 1);
 		}
 		jpeg_finish_decompress(&cinfo);
-		_image = new veImage;
-		_image->set(width, height, 1, internalFormat, pixelFormat, dataType, buffer);
+		_texture = _sceneManager->createTexture(_name);
+		_texture->storage(width, height, 1, internalFormat, pixelFormat, dataType, buffer, (unsigned int)log2(width) + 1);
 		delete[] buffer;
 	}
 
@@ -83,8 +87,9 @@ private:
 
 private:
 
-	veImage *_image;
+	veTexture *_texture;
 	std::string _name;
+	veSceneManager *_sceneManager;
 };
 
 VE_READERWRITER_REG("jpg", veFileReaderWriterJPEG);

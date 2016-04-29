@@ -1,12 +1,14 @@
 #include "RenderableObject.h"
-#include "Visualiser.h"
+#include "Camera.h"
 #include "RenderQueue.h"
+#include "SceneManager.h"
 
-veRenderableObject::veRenderableObject()
+veRenderableObject::veRenderableObject(veSceneManager *sm)
 	: USE_VE_PTR_INIT
+	, _sceneManager(sm)
 	, _renderer(nullptr)
 	, _isVisible(true)
-	, _mask(0xffffffff)
+	, _isDirtyBoundingBox(true)
 {
 }
 
@@ -15,23 +17,14 @@ veRenderableObject::~veRenderableObject()
 
 }
 
-void veRenderableObject::update(veNode *node, veVisualiser *vs)
+void veRenderableObject::update(veNode *node, veSceneManager *sm)
 {
 	if (!_isVisible) return;
-	if (_renderer.valid())
-		_renderer->visit(node, this, vs);
 }
 
 void veRenderableObject::render(veNode *node, veCamera *camera)
 {
 	if (!_isVisible) return;
-	if (camera->getMask() & _mask) {
-		if (_renderer.valid())
-			_renderer->render(node, this, camera);
-	}
-}
-
-void veRenderableObject::setRenderer(veRenderer *renderer)
-{
-	_renderer = renderer;
+	if (_renderer.valid() && _materials.valid())
+		_renderer->render(node, this, camera);
 }

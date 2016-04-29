@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "type": "SPOT",
+  "name": "spot0",
+  "color": [ 1.0, 1.0, 1.0],
+  "intensity": 1.0,
+  "attenuation": 200.0,
+  "innerAngle": 0.0,
+  "outerAngle": 20.0,
+  "shadowEnabled": false,
+  "shadowBias": 0.0005,
+  "shadowResolution": [ 512.0, 512.0 ]
+}

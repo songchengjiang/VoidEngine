@@ -1,8 +1,10 @@
 #include "FileReaderWriter.h"
 #include <unordered_map>
-#include "KernelCore/Image.h"
+#include "KernelCore/Texture.h"
+#include "KernelCore/SceneManager.h"
 #include "openexr/include/ImfRgbaFile.h"
 #include "openexr/include/ImfRgba.h"
+#include "openexr/include/ImfIO.h"
 #include "openexr/include/ImfArray.h"
 #include "openexr/include/ImathBox.h"
 
@@ -17,19 +19,63 @@
 #pragma comment(lib, "openexr/lib/IlmImf-2_2.lib")
 #pragma comment(lib, "openexr/lib/IlmThread-2_2.lib")
 #endif
+
+class MemStream : public Imf::IStream
+{
+public:
+
+public:
+	MemStream(char *exrbuf, size_t exrsize)
+		: Imf::IStream("")
+		, _exrsize(exrsize)
+		, _exrpos(0)
+		, _exrbuf(exrbuf)
+	{}
+	virtual ~MemStream(){}
+
+	virtual bool read(char c[/*n*/], int n) {
+		if (n + _exrpos < _exrsize)
+		{
+			memcpy(c, &(_exrbuf[_exrpos]), n);
+			_exrpos += n;
+			return true;
+		}
+		else
+			return false;
+	}
+	virtual Imf::Int64 tellg() {
+		return _exrpos;
+	}
+	virtual void seekg(Imf::Int64 pos) {
+		_exrpos = pos;
+	}
+
+	virtual void clear() {
+
+	}
+
+private:
+
+	Imf::Int64 _exrpos;
+	Imf::Int64 _exrsize;
+	char *_exrbuf;
+};
 class veFileReaderWriterEXR : public veFileReaderWriter
 {
 public:
 	veFileReaderWriterEXR()
-		: _image(nullptr)
+		: _texture(nullptr)
 	{};
 	virtual ~veFileReaderWriterEXR(){};
 
-	virtual void* readFile(const std::string &filePath){
-		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
+		auto fileData = veFile::instance()->readFileToBuffer(filePath);
+		_sceneManager = sm;
 		Imf::Array2D<Imf::Rgba> pixels;
-		Imf::RgbaInputFile file(fullPath.c_str());
+		MemStream memStream(fileData->buffer, fileData->size);
+		Imf::RgbaInputFile file(memStream);
 		if (file.isComplete()){
+			_name = name;
 			Imath::Box2i dw = file.dataWindow();
 			int width = dw.max.x - dw.min.x + 1;
 			int height = dw.max.y - dw.min.y + 1;
@@ -38,11 +84,11 @@ public:
 			file.readPixels(dw.min.y, dw.max.y);
 			readImage(pixels);
 		}
-		if (!_image) veLog(std::string("veFileReaderWriterEXR: read ") + filePath + std::string(" failed!"));
-		return _image;
+		if (!_texture) veLog("veFileReaderWriterEXR: read %s failed!\n", filePath.c_str());
+		return _texture;
 	}
 
-	virtual bool writeFile(void *data, const std::string &filePath){
+	virtual bool writeFile(veSceneManager *sm, void *data, const std::string &filePath) override{
 		return true;
 	}
 
@@ -62,14 +108,15 @@ private:
 				buffer[index++] = pixels[h][w].a;
 			}
 		}
-		_image = new veImage;
-		_image->set(int(pixels.width()), int(pixels.height()), 1, internalFormat, pixelFormat, dataType, (unsigned char *)buffer);
+		_texture = _sceneManager->createTexture(_name);
+		_texture->storage(int(pixels.width()), int(pixels.height()), 1, internalFormat, pixelFormat, dataType, (unsigned char *)buffer, (unsigned int)log2(pixels.width()) + 1);
 	}
 
 private:
 
-	veImage *_image;
+	veTexture *_texture;
 	std::string _name;
+	veSceneManager *_sceneManager;
 };
 
 VE_READERWRITER_REG("exr", veFileReaderWriterEXR);

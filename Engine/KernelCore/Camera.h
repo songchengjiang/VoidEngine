@@ -6,9 +6,13 @@
 #include "Node.h"
 #include "RenderQueue.h"
 #include "FrameBufferObject.h"
+#include "Plane.h"
+#include "Material.h"
+#include "SkyBox.h"
 
 class veVisualiser;
 class veLight;
+class veRenderPipeline;
 struct VE_EXPORT veViewport
 {
 	int x;
@@ -23,10 +27,15 @@ struct VE_EXPORT veViewport
 	inline bool operator != (const veViewport& rkVp) const {
 		return (x != rkVp.x || y != rkVp.y || width != rkVp.width || height != rkVp.height);
 	}
+
+	bool isNull() const {
+		return x == y == width == height;
+	}
 };
 
 class VE_EXPORT veCamera : public veNode
 {
+	friend class veSceneManager;
 public:
 
 	enum class RenderPath
@@ -34,9 +43,20 @@ public:
 		FORWARD_PATH,
 		DEFERRED_PATH
 	};
-	veCamera();
-	veCamera(const veViewport &vp);
+
+	enum FrustumPlane
+	{
+		FRUSTUM_PLANE_NEAR   = 0,
+		FRUSTUM_PLANE_FAR    = 1,
+		FRUSTUM_PLANE_LEFT   = 2,
+		FRUSTUM_PLANE_RIGHT  = 3,
+		FRUSTUM_PLANE_TOP    = 4,
+		FRUSTUM_PLANE_BOTTOM = 5
+	};
+
 	~veCamera();
+
+	virtual void update(veSceneManager *sm, const veMat4 &transform) override;
 
 	void setProjectionMatrixAsOrtho(float left, float right, float bottom, float top, float zNear, float zFar);
 	void setProjectionMatrixAsPerspective(float fovy, float aspectRatio, float zNear, float zFar);
@@ -47,8 +67,11 @@ public:
 	veMat4& viewMatrix() { return _viewMat; }
 	const veMat4& viewMatrix() const { return _viewMat; }
 
+	veVec3 convertScreenCoordsToWorldCoords(const veVec2 &sCoords, veReal zDepth = -1.0f);
+
 	void setFrameBufferObject(veFrameBufferObject *fbo);
 	veFrameBufferObject* getFrameBufferObject() { return _fbo.get(); }
+	const veFrameBufferObject* getFrameBufferObject() const { return _fbo.get(); }
 
 	void setViewport(const veViewport &vp);
 	const veViewport& getViewport() const { return _viewport; }
@@ -61,21 +84,33 @@ public:
 	void setRenderPath(RenderPath renderPath);
 	RenderPath getRenderPath() const { return _renderPath; }
 
-	bool isRenderStateChanged() { return _renderStateChanged; }
+	void setSkybox(veSkyBox *skybox);
+
+	const vePlane& getFrustumPlane(FrustumPlane fp);
+
+	virtual void cull(veNodeList &visibledNodeList) = 0;
+
+	veRenderQueue* getRenderQueue() { return _renderQueue; }
 
 	virtual void setMatrix(const veMat4 &mat) override;
+	virtual void refresh() override;
 
-	void render(veVisualiser *vs, veRenderQueue::RenderCommandList &renderList);
-
-	virtual bool routeEvent(const veEvent &event, veVisualiser *vs) override;
 	virtual void visit(veNodeVisitor &visitor) override;
+	virtual bool isOutOfFrustum(const veBoundingBox &bbox);
 
-private:
+	void setShadowCamera(bool isShadow) { _isShadowCamera = isShadow; }
+	bool isShadowCamera() const { return _isShadowCamera; }
 
-	void renderQueue(veLoopQueue< veRenderCommand > &queue, std::vector<veLight *> *lights);
+protected:
+
+	veCamera(veSceneManager *sm);
+	veCamera(veSceneManager *sm, const veViewport &vp);
+	void visitQueue(veLoopQueue< veRenderCommand > &queue);
 	void resize(int width, int height);
+	void updateFrustumPlane();
+	virtual void updateSceneManager() override;
 
-private:
+protected:
 
 	veMat4 _projectionMat;
 	veMat4 _viewMat;
@@ -84,10 +119,17 @@ private:
 	unsigned int _clearMask;
 	VE_Ptr<veFrameBufferObject> _fbo;
 
+	vePlane _frustumPlane[6];
+	bool    _needRefreshFrustumPlane;
+
 	RenderPath _renderPath;
-	bool _renderStateChanged;
+	bool _isDiscardRenderScene;
+	bool _isShadowCamera;
+
+	VE_Ptr<veSkyBox> _skybox;
+	veRenderQueue *_renderQueue;
 };
 
-typedef std::vector< veCamera* > veCameraList;
+typedef std::vector< VE_Ptr<veCamera> > veCameraList;
 
 #endif

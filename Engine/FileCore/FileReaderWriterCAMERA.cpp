@@ -6,6 +6,7 @@
 #include "KernelCore/TextureManager.h"
 #include "KernelCore/FrameBufferObject.h"
 #include "KernelCore/Camera.h"
+#include "KernelCore/SceneManager.h"
 #include <unordered_map>
 
 using namespace rapidjson;
@@ -14,31 +15,36 @@ class veFileReaderWriterCAMERA : public veFileReaderWriter
 public:
 	veFileReaderWriterCAMERA()
 		: _camera(nullptr)
+		, _doucument(nullptr)
 	{};
 	~veFileReaderWriterCAMERA(){};
 
-	virtual void* readFile(const std::string &filePath){
-		std::string buffer = veFile::readFileToBuffer(filePath);
-		_doucument.Parse(buffer.c_str());
-        if (_doucument.HasParseError()) return  nullptr;
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
+		_sceneManager = sm;
+		_name = name;
+		_doucument = new Document;
+		auto fileData = veFile::instance()->readFileToBuffer(filePath);
+		_doucument->Parse(fileData->buffer);
+		if (_doucument->HasParseError()) return nullptr;
 		readCamera();
+		VE_SAFE_DELETE(_doucument);
 		return _camera;
 	}
 
-	virtual bool writeFile(void *data, const std::string &filePath){
+	virtual bool writeFile(veSceneManager *sm, void *data, const std::string &filePath) override{
 		return true;
 	}
 
 private:
 
 	void readCamera() {
-		_camera = new veCamera;
-		if (_doucument.HasMember(NAME_KEY.c_str())) {
-			_camera->setName(_doucument[NAME_KEY.c_str()].GetString());
-		}
-
-		if (_doucument.HasMember(RENDERPATH_KEY.c_str())) {
-			const char *str = _doucument[RENDERPATH_KEY.c_str()].GetString();
+		_camera = _sceneManager->createCamera(_name);
+		//if ((*_doucument).HasMember(NAME_KEY.c_str())) {
+		//	_camera->setName((*_doucument)[NAME_KEY.c_str()].GetString());
+		//}
+		if (!_camera) return;
+		if ((*_doucument).HasMember(RENDERPATH_KEY.c_str())) {
+			const char *str = (*_doucument)[RENDERPATH_KEY.c_str()].GetString();
 			if (strcmp(FORWARD_KEY.c_str(), str) == 0) {
 				_camera->setRenderPath(veCamera::RenderPath::FORWARD_PATH);
 			}
@@ -47,23 +53,23 @@ private:
 			}
 		}
 
-		if (_doucument.HasMember(VIEWPORT_KEY.c_str())) {
-			const Value &val = _doucument[VIEWPORT_KEY.c_str()];
+		if ((*_doucument).HasMember(VIEWPORT_KEY.c_str())) {
+			const Value &val = (*_doucument)[VIEWPORT_KEY.c_str()];
 			readViewport(val);
 		}
 
-		if (_doucument.HasMember(PROJECTION_KEY.c_str())) {
-			const Value &val = _doucument[PROJECTION_KEY.c_str()];
+		if ((*_doucument).HasMember(PROJECTION_KEY.c_str())) {
+			const Value &val = (*_doucument)[PROJECTION_KEY.c_str()];
 			readProjection(val);
 		}
 
-		if (_doucument.HasMember(LOOKAT_KEY.c_str())) {
-			const Value &val = _doucument[LOOKAT_KEY.c_str()];
+		if ((*_doucument).HasMember(LOOKAT_KEY.c_str())) {
+			const Value &val = (*_doucument)[LOOKAT_KEY.c_str()];
 			readLookat(val);
 		}
 
-		if (_doucument.HasMember(FBO_KEY.c_str())) {
-			const Value &val = _doucument[FBO_KEY.c_str()];
+		if ((*_doucument).HasMember(FBO_KEY.c_str())) {
+			const Value &val = (*_doucument)[FBO_KEY.c_str()];
 			readfbo(val);
 		}
 	}
@@ -160,33 +166,40 @@ private:
 	}
 
 	void readfbo(const Value &fboVal) {
-		auto fbo = veFrameBufferObjectManager::instance()->getOrCreateFrameBufferObject(_camera->getName());
+		auto fbo = veFrameBufferObjectManager::instance()->createFrameBufferObject(_camera->getName());
 		for (unsigned int i = 0; i < fboVal.Size(); ++i) {
 			const Value &attachmentVal = fboVal[i];
-			GLenum attachment = GL_COLOR_ATTACHMENT0;
 			veTexture *texture = nullptr;
-			int width = _camera->getViewport().width;
-			int height = _camera->getViewport().height;
-			GLuint internalFormat = GL_RGBA32F;
-			veTexture::TextureType texType = veTexture::TEXTURE_2D;
-			if (attachmentVal.HasMember(ATTACHMENT_KEY.c_str())) {
-				attachment = getFrameBufferObjectAttach(attachmentVal[ATTACHMENT_KEY.c_str()].GetString());
-			}
 
+			veTexture::TextureType texType = veTexture::TEXTURE_2D;
 			if (attachmentVal.HasMember(TYPE_KEY.c_str())) {
 				texType = getTextureType(attachmentVal[TYPE_KEY.c_str()].GetString());
 			}
 
-			if (attachmentVal.HasMember(SOURCE_KEY.c_str())) {
-				std::string name = attachmentVal[SOURCE_KEY.c_str()].GetString();
-				texture = veTextureManager::instance()->getOrCreateTexture(name, texType);
+			if (attachmentVal.HasMember(NAME_KEY.c_str())) {
+				std::string name = attachmentVal[NAME_KEY.c_str()].GetString();
+				texture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture(name);
+				if (!texture) {
+					texture = _sceneManager->createTexture(name, texType);
+				}
+			}
+			if (!texture) continue;
+			GLenum attachment = GL_COLOR_ATTACHMENT0;
+			GLenum target = GL_TEXTURE_2D;
+			bool   needMipmap = false;
+			int width = _camera->getViewport().width;
+			int height = _camera->getViewport().height;
+			GLuint internalFormat = GL_RGBA32F;
+			if (attachmentVal.HasMember(ATTACHMENT_KEY.c_str())) {
+				attachment = getFrameBufferObjectAttach(attachmentVal[ATTACHMENT_KEY.c_str()].GetString());
 			}
 
-			if (!texture) continue;
+			if (attachmentVal.HasMember(TARGET_KEY.c_str())) {
+				target = getFrameBufferObjectAttachTarget(attachmentVal[TARGET_KEY.c_str()].GetString());
+			}
 
-			if (attachmentVal.HasMember(SOURCE_KEY.c_str())) {
-				std::string name = attachmentVal[SOURCE_KEY.c_str()].GetString();
-				texture = veTextureManager::instance()->getOrCreateTexture(name, texType);
+			if (attachmentVal.HasMember(MIPMAP_KEY.c_str())) {
+				needMipmap = attachmentVal[MIPMAP_KEY.c_str()].GetBool();
 			}
 
 			if (attachmentVal.HasMember(WIDTH_KEY.c_str())) {
@@ -213,8 +226,8 @@ private:
 				}
 			}
 
-			texture->storage(internalFormat, width, height);
-			fbo->attach(attachment, texture);
+			texture->storage(width * VE_DEVICE_PIXEL_RATIO, height * VE_DEVICE_PIXEL_RATIO, 1, internalFormat, GL_RGB, GL_UNSIGNED_BYTE, nullptr, (unsigned int)log2(width * VE_DEVICE_PIXEL_RATIO) + 1);
+			fbo->attach(attachment, target, texture, -1, needMipmap);
 		}
 		_camera->setFrameBufferObject(fbo);
 	}
@@ -223,33 +236,57 @@ private:
 		if (strcmp(TEX_2D_KEY.c_str(), str) == 0) {
 			return veTexture::TEXTURE_2D;
 		}
-		else if (strcmp(TEX_3D_KEY.c_str(), str) == 0) {
-			return veTexture::TEXTURE_3D;
+		else if (strcmp(TEX_CUBE_KEY.c_str(), str) == 0) {
+			return veTexture::TEXTURE_CUBE;
 		}
-		else if (strcmp(TEX_RECT_KEY.c_str(), str) == 0) {
-			return veTexture::TEXTURE_RECT;
-		}
+		//else if (strcmp(TEX_RECT_KEY.c_str(), str) == 0) {
+		//	return veTexture::TEXTURE_RECT;
+		//}
 		return veTexture::TEXTURE_2D;
 	}
 
 
 	GLenum getFrameBufferObjectAttach(const char* str) {
-		if (strncmp(COLOR_KEY.c_str(), str, COLOR_KEY.size()) == 0) {
-			return GL_COLOR_ATTACHMENT0 + atoi(&str[COLOR_KEY.size()]);
+		if (strncmp(COLOR_ATTACHMENT_KEY.c_str(), str, COLOR_ATTACHMENT_KEY.size()) == 0) {
+			return GL_COLOR_ATTACHMENT0 + atoi(&str[COLOR_ATTACHMENT_KEY.size()]);
 		}
-		else if (strcmp(DEPTH_KEY.c_str(), str) == 0) {
+		else if (strcmp(DEPTH_ATTACHMENT_KEY.c_str(), str) == 0) {
 			return GL_DEPTH_ATTACHMENT;
 		}
-		else if (strcmp(STENCIAL_KEY.c_str(), str) == 0) {
+		else if (strcmp(STENCIAL_ATTACHMENT_KEY.c_str(), str) == 0) {
 			return GL_STENCIL_ATTACHMENT;
 		}
 		return 0;
 	}
 
+	GLenum getFrameBufferObjectAttachTarget(const char* str) {
+		if (strcmp(TEX_CUBE_POSITIVE_X_KEY.c_str(), str) == 0) {
+			return GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+		}
+		else if (strcmp(TEX_CUBE_NEGATIVE_X_KEY.c_str(), str) == 0) {
+			return GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+		}
+		else if (strcmp(TEX_CUBE_POSITIVE_Y_KEY.c_str(), str) == 0) {
+			return GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
+		}
+		else if (strcmp(TEX_CUBE_NEGATIVE_Y_KEY.c_str(), str) == 0) {
+			return GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+		}
+		else if (strcmp(TEX_CUBE_POSITIVE_Z_KEY.c_str(), str) == 0) {
+			return GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+		}
+		else if (strcmp(TEX_CUBE_NEGATIVE_Z_KEY.c_str(), str) == 0) {
+			return GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+		}
+		return GL_TEXTURE_2D;
+	}
+
 private:
 
-	Document _doucument;
+	Document *_doucument;
 	veCamera *_camera;
+	veSceneManager *_sceneManager;
+	std::string _name;
 };
 
 VE_READERWRITER_REG("vecamera", veFileReaderWriterCAMERA);

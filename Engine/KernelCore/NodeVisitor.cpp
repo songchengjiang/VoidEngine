@@ -23,8 +23,3 @@ void veNodeVisitor::visit(veCamera &camera)
 {
 	visit(static_cast<veNode&>(camera));
 }
-
-void veNodeVisitor::visit(veLight &light)
-{
-	visit(static_cast<veNode&>(light));
-}

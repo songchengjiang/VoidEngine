@@ -39,14 +39,14 @@ public:
 		veReal m20, veReal m21, veReal m22, veReal m23,
 		veReal m30, veReal m31, veReal m32, veReal m33);
     void makeTranslation(const veVec3 &trans);
-	inline void makeRotation(const veQuat &rot);
-	inline void makeScale(const veVec3 &scl);
+	void makeRotation(const veQuat &rot);
+	void makeScale(const veVec3 &scl);
     void makeTransform(const veVec3& position, const veVec3& scale, const veQuat& orientation);
-	inline void makeLookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &up);
-	inline void decomposition(veVec3* position, veVec3* scale, veQuat* orientation) const;
-	inline void transpose();
+    void makeLookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &up);
+    void decomposition(veVec3* position, veVec3* scale, veQuat* orientation) const;
+    void transpose();
     void inverse();
-	inline veReal determinant() const;
+    veReal determinant() const;
 
 	static veMat4 translation(const veVec3 &trans);
 	static veMat4 rotation(const veQuat &rot);

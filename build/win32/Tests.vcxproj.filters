@@ -16,8 +16,32 @@
     <Filter Include="LightTest">
       <UniqueIdentifier>{13d01622-693c-4534-abe0-18e3a8d575e8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="lights">
-      <UniqueIdentifier>{97d050b0-380e-477f-8ea4-50ff224138c6}</UniqueIdentifier>
+    <Filter Include="TextTest">
+      <UniqueIdentifier>{070f2dd5-3cb1-44d6-99bc-0e97df92d9df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PerfomanceTest">
+      <UniqueIdentifier>{d243922c-95e0-4587-b540-d93c97f65533}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IntersectionTest">
+      <UniqueIdentifier>{f635f1f8-a5cd-43b8-aade-a4ac4505cd46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SkyBoxTest">
+      <UniqueIdentifier>{caddcd8a-0348-4dd0-95a6-4e60f735c0af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PostProcesser">
+      <UniqueIdentifier>{58a51951-ce3c-4209-868a-a4210ab02cdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CubeMapTest">
+      <UniqueIdentifier>{1c55a027-7a23-43ce-8816-245255b5b730}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShadowTest">
+      <UniqueIdentifier>{3f39c563-5625-405e-84e9-9211beba572f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IBLTest">
+      <UniqueIdentifier>{20347224-8cca-4af8-8e7c-b88b42ba473a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NormalMappingTest">
+      <UniqueIdentifier>{2ba7255e-c222-4305-9deb-9d05a9ea3409}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,23 +60,37 @@
     <ClInclude Include="..\..\Tests\RenToTex.h">
       <Filter>RenToTexTest</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Tests\TextTest.h">
+      <Filter>TextTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tests\PerformanceTest.h">
+      <Filter>PerfomanceTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tests\IntersectionTest.h">
+      <Filter>IntersectionTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tests\SkyBoxTest.h">
+      <Filter>SkyBoxTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tests\TestCreator.h" />
+    <ClInclude Include="..\..\Tests\PostProcesserTest.h">
+      <Filter>PostProcesser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tests\CubeMapTest.h">
+      <Filter>CubeMapTest</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Tests\BaseTest.h" />
+    <ClInclude Include="..\..\Tests\ShadowTest.h">
+      <Filter>ShadowTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tests\IBLTest.h">
+      <Filter>IBLTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tests\NormalMappingTest.h">
+      <Filter>NormalMappingTest</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Tests\main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\Tests\lights\directional0.velight">
-      <Filter>lights</Filter>
-    </None>
-    <None Include="..\..\Tests\lights\point.velightemplates">
-      <Filter>lights</Filter>
-    </None>
-    <None Include="..\..\Tests\lights\point0.velight">
-      <Filter>lights</Filter>
-    </None>
-    <None Include="..\..\Tests\lights\spot0.velight">
-      <Filter>lights</Filter>
-    </None>
   </ItemGroup>
 </Project>

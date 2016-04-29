@@ -1,0 +1,32 @@
+{
+  "version": "1.0",
+  "name": "deferred.camera",
+  "viewport": [ 0, 0, 800, 600 ],
+  "renderPath": "DEFERRED",
+  "projection": {
+    "type": "PERSPECTIVE",
+    "fov": 60.0
+  },
+  "lookAt": {
+    "eye": [ 0.0, 0.0, 30.0 ],
+    "center": [ 0.0, 0.0, 0.0 ],
+    "up": [ 0.0, 1.0, 0.0 ]
+  },
+  "fbo": [
+    {
+      "attachment": "COLOR0",
+      "name": "deferred.camera.color",
+      "format": "RGBA8"
+    },
+    {
+      "attachment": "COLOR1",
+      "name": "deferred.camera.position",
+      "format": "RGBA8"
+    },
+    {
+      "attachment": "COLOR2",
+      "name": "deferred.camera.normAndepth",
+      "format": "RGBA8"
+    }
+  ]
+}

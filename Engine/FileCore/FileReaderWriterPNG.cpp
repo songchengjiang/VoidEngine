@@ -1,44 +1,44 @@
 #include "FileReaderWriter.h"
 #include <unordered_map>
-#include "KernelCore/Image.h"
+#include "KernelCore/Texture.h"
+#include "KernelCore/SceneManager.h"
 #include "libpng/include/png.h"
 
+#if (VE_PLATFORM == VE_PLATFORM_WIN32)
 #pragma comment(lib, "libpng/lib/libpng.lib")
+#endif
 class veFileReaderWriterPNG : public veFileReaderWriter
 {
 public:
 	veFileReaderWriterPNG()
-		: _image(nullptr)
+		: _texture(nullptr)
 	{};
 	virtual ~veFileReaderWriterPNG(){};
 
-	virtual void* readFile(const std::string &filePath){
-		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
-		_name = fullPath.substr(fullPath.find_last_of("/\\") + 1);
-		FILE *fp = fopen(fullPath.c_str(), "rb");
-		if (fp){
-			unsigned char header[8];
-			fread(header, 1, 8, fp);
-			if (png_sig_cmp(header, 0, 8) == 0){
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
+		auto fileData = veFile::instance()->readFileToBuffer(filePath);
+		_sceneManager = sm;
+		if (fileData){
+			_name = name;
+			if (png_sig_cmp((unsigned char *)fileData->buffer, 0, 8) == 0){
 				png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 				if (png_ptr){
 					png_infop info_ptr = png_create_info_struct(png_ptr);
 					if (info_ptr){
 						if (!setjmp(png_jmpbuf(png_ptr))){
-							png_init_io(png_ptr, fp);
+							png_set_read_fn(png_ptr, fileData, readDataFromMemory);
 							readImage(png_ptr, info_ptr);
 						}
 						png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 					}
 				}
 			}
-			fclose(fp);
 		}
-		if (!_image) veLog(std::string("veFileReaderWriterPNG: read ") + filePath + std::string(" failed!"));
-		return _image;
+		if (!_texture) veLog("veFileReaderWriterPNG: read %s failed!\n", filePath.c_str());
+		return _texture;
 	}
 
-	virtual bool writeFile(void *data, const std::string &filePath){
+	virtual bool writeFile(veSceneManager *sm, void *data, const std::string &filePath) override{
 		return true;
 	}
 
@@ -49,6 +49,7 @@ private:
 		GLenum pixelFormat = GL_RGB;
 		GLenum dataType = GL_UNSIGNED_BYTE;
 		png_set_sig_bytes(png_ptr, 8);
+		_currentByteIndex = 8;
 		png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_EXPAND, 0);
 		png_byte color_type = png_get_color_type(png_ptr, info_ptr);
 		int width = png_get_image_width(png_ptr, info_ptr);
@@ -102,17 +103,27 @@ private:
 		}
 
 		if (buffer){
-			_image = new veImage;
-			_image->setName(_name);
-			_image->set(width, height, 1, internalFormat, pixelFormat, dataType, buffer);
+			_texture = _sceneManager->createTexture(_name);
+			_texture->storage(width, height, 1, internalFormat, pixelFormat, dataType, buffer, (unsigned int)log2(width) + 1);
 			delete[] buffer;
 		}
 	}
 
+	static void readDataFromMemory(png_structp png_ptr, png_bytep outBytes,
+		png_size_t byteCountToRead) {
+		png_voidp io_ptr = png_get_io_ptr(png_ptr);
+		veFileData *fileData = static_cast<veFileData *>(io_ptr);
+		memcpy(outBytes, &fileData->buffer[_currentByteIndex], byteCountToRead);
+		_currentByteIndex += byteCountToRead;
+	}
 private:
 
-	veImage *_image;
+	veTexture *_texture;
 	std::string _name;
+	veSceneManager *_sceneManager;
+	static png_size_t  _currentByteIndex;
 };
+
+png_size_t veFileReaderWriterPNG::_currentByteIndex = 0;
 
 VE_READERWRITER_REG("png", veFileReaderWriterPNG);

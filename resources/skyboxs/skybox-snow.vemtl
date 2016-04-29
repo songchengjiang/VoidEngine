@@ -1,0 +1,44 @@
+{
+    "version": "1.0",
+    "name": "skybox.vemtl",
+    "materials": [
+        {
+            "name": "skyboxMat",
+            "techniques": [
+                {
+                    "name": "normal",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": false,
+                            "cullFaceMode":  "FRONT",
+                            "shaders": [
+                              {
+                                "type": "VERTEX_SHADER",
+                                "defination": "#define ATTR_POSITION 0\n#define ATTR_NORMAL 1\n#define ATTR_TEXTURE_COORD0 2\n",
+                                "source": "skybox.vert",
+                                "u_ModelViewProjectMat": "MVP_MATRIX"
+                              },
+                              {
+                                "type": "FRAGMENT_SHADER",
+                                "source": "skybox.frag",
+                                "u_cubeMap": 0
+                              }
+                            ],
+                            "textureUnits": [
+                              {
+                                "name":  "skybox.snow.texture",
+                                "type": "TEX_CUBE",
+                                "source": [ "snow_posx.ktx", "snow_negx.ktx", "snow_posy.ktx", "snow_negy.ktx", "snow_posz.ktx", "snow_negz.ktx" ],
+                                "wrap": "CLAMP",
+                                "filter": "LINEAR_MIP_MAP"
+                              }
+                            ]
+                        }  
+                    ]
+                }
+            ]
+        }
+    ]
+}

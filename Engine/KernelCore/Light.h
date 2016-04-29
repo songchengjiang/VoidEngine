@@ -2,68 +2,162 @@
 #define _VE_LIGHT_
 #include "Prerequisites.h"
 #include "Node.h"
-#include "Parameter.h"
-#include <unordered_map>
 
+class veCamera;
 class VE_EXPORT veLight : public veNode
 {
-	friend class veLightManager;
-	friend class vePass;
+	friend class veSceneManager;
 public:
+
+	static const veVec2 DEFAULT_SHADOW_AREA;
+	static const veVec2 DEFAULT_SHADOW_RESOLUTION;
+	static const float  DEFAULT_SHADOW_BIAS;
+	static const float  DEFAULT_SHADOW_STRENGTH;
+	static const std::string DEFUALT_LIGHT_TEXTURE_UNIFORM_NAME;
+
+	static veLight* CURRENT_LIGHT;
+
+	enum LightType
+	{
+		DIRECTIONAL,
+		POINT,
+		SPOT,
+		AREA,
+	};
 
 	~veLight();
 
+	virtual void update(veSceneManager *sm, const veMat4 &transform) override;
 	virtual void visit(veNodeVisitor &visitor) override;
-	virtual void render(veCamera *camera) override;
+	//virtual void render(veCamera *camera) override;
 
-	const std::string& getType() const { return _type; }
-	const veParameterList& getParameters() const { return _parameters; }
-	veParameter* getParameter(const std::string &name);
+	LightType getLightType() const { return _type; }
+	void setColor(const veVec3 &color) { _color = color; }
+	const veVec3& getColor() const { return _color; }
+	void setIntensity(float intensity) { _intensity = intensity; }
+	float getIntensity() const { return _intensity; }
+	void setAttenuationRange(float range) { _attenuationRange = range; _attenuationRangeInverse = 1.0f / _attenuationRange; }
+	float getAttenuationRange() const { return _attenuationRange; }
+	float getAttenuationRangeInverse() const { return _attenuationRangeInverse; }
 
-	veMat4 getLightViewMatrix();
+	void shadowEnable(bool isEnabled) { _shadowEnabled = isEnabled; _needUpdateShadowMap = true;};
+	bool isShadowEnabled() const { return _shadowEnabled; };
+	void setShadowResolution(const veVec2 &resolution);
+	const veVec2& getShadowResolution() const { return _shadowResolution; }
+	void setShadowBias(float bias) { _shadowBias = bias; }
+	float getShadowBias() const { return _shadowBias; }
+	void setShadowStrength(float strength) { _shadowStrength = strength; }
+	float getShadowStrength() const { return _shadowStrength; }
+	void setShadowArea(const veVec2 &area);
+	const veVec2& getShadowArea() const { return _shadowArea; }
+	void setUseSoftShadow(bool use) { _isUseSoftShadow = use; }
+	bool isUseSoftShadow() const { return _isUseSoftShadow; }
+	void setShadowSoftness(float softness) { _shadowSoftness = softness; }
+	float getShadowSoftness() const { return _shadowSoftness; }
+
+	veTexture* getShadowTexture() { return _shadowTexture.get(); }
+	const veMat4& getLightMatrix() const { return _lightMatrix; }
+
+protected:
+	veLight(LightType type);
+
+	virtual void refreshUpdate(veSceneManager *sm, const veMat4 &transform) override;
+	virtual void updateSceneManager() override;
+	virtual void updateShadow() = 0;
 
 protected:
 
-	veLight(const std::string &type, const veParameterList &params);
+	LightType _type;
 
-protected:
+	veVec3 _color;
+	float  _intensity;
+	float  _attenuationRange;
+	float  _attenuationRangeInverse;
+	veMat4 _lightInCamMatrix;
 
-	std::string _type;
-	veParameterList _parameters;
-	veCamera *_camera;
+	bool _shadowEnabled;
+	veVec2 _shadowResolution;
+	veVec2 _shadowArea;
+	float _shadowBias;
+	float _shadowStrength;
+	float _shadowSoftness;
+	bool  _isUseSoftShadow;
+
+	VE_Ptr<veTexture>  _shadowTexture;
+	veMat4             _lightMatrix;
+	bool               _needUpdateShadowMap;
 };
 
-typedef std::vector< veLight* > veLightList;
-typedef std::unordered_map< std::string, veLightList > veLightMap;
-
-class VE_EXPORT veLightManager
+class VE_EXPORT veDirectionalLight : public veLight
 {
+	friend class veSceneManager;
 public:
-	typedef std::vector< std::pair<std::string, std::string> > Parameters;
-	struct LightTemplate
-	{
-		unsigned int limit;
-		Parameters parameters;
-	};
-	typedef std::unordered_map<std::string, LightTemplate> LightTemplateList;
 
-	~veLightManager();
+	~veDirectionalLight();
 
-	static veLightManager* instance();
+	veCamera* getShadowCamera() const { return _shadowCamera.get(); }
 
-	bool loadLightTemplates(const std::string &filePath);
-	void addLightTemplate(const std::string &className, const LightTemplate &lightTemp);
-	const LightTemplate& getLightTemplate(const std::string &className) const;
-	const LightTemplateList& getLightTemplateList() const { return _lightTemplate; }
+protected:
 
-	veLight* instanceOneLight(const std::string &className);
+	veDirectionalLight();
+	virtual void updateShadow() override;
 
-private:
-	veLightManager();
+protected:
 
-private:
-
-	LightTemplateList _lightTemplate;
+	VE_Ptr<veCamera> _shadowCamera;
 };
+
+class VE_EXPORT vePointLight : public veLight
+{
+	friend class veSceneManager;
+public:
+
+	~vePointLight();
+
+	veCamera* getShadowCamera(unsigned short idx) const { return _shadowCameras[idx].get(); }
+
+protected:
+
+	vePointLight();
+	virtual void updateShadow() override;
+
+protected:
+
+	VE_Ptr<veCamera> _shadowCameras[6];
+};
+
+class VE_EXPORT veSpotLight : public veLight
+{
+	friend class veSceneManager;
+public:
+
+	~veSpotLight();
+
+	void setInnerAngle(float innerAng) { _innerAngle = innerAng; _innerAngleCos = veMath::veCos(veMath::veRadian(_innerAngle)); }
+	float getInnerAngle() { return _innerAngle; }
+	float getInnerAngleCos() { return _innerAngleCos; }
+	void setOuterAngle(float outerAng) { _outerAngle = outerAng; _outerAngleCos = veMath::veCos(veMath::veRadian(_outerAngle)); }
+	float getOuterAngle() { return _outerAngle; }
+	float getOuterAngleCos() { return _outerAngleCos; }
+
+	veCamera* getShadowCamera() const { return _shadowCamera.get(); }
+
+protected:
+
+	veSpotLight();
+	virtual void updateShadow() override;
+
+protected:
+
+	float  _innerAngle;
+	float  _innerAngleCos;
+	float  _outerAngle;
+	float  _outerAngleCos;
+
+	VE_Ptr<veCamera> _shadowCamera;
+};
+
+typedef std::vector< VE_Ptr<veLight> > veLightList;
+typedef std::map<veLight::LightType, veLightList> veLightListMap;
 
 #endif

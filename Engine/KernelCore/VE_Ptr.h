@@ -20,7 +20,7 @@ public:
 		unRef();
 	}
 
-	bool valid(){
+	bool valid() const{
 		return _ptr != nullptr;
 	}
 

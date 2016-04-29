@@ -2,9 +2,11 @@
 #define _VE_ARRAY_
 #include "Prerequisites.h"
 
+
 template<typename TYPE>
 class veArray
 {
+#define MAX_SIZE 10000000
 	USE_VE_PTR
 public:
 	explicit veArray()
@@ -105,11 +107,12 @@ private:
 	void reallocSize(){
 		if (_size <= _end){
 			if (_size == 0){
-				_size = 1000;
+				_size = 10;
 				_buffer = new TYPE[_size];
 			}
 			else{
 				size_t newSize = _size * _size;
+				if (MAX_SIZE < newSize) newSize = MAX_SIZE;
 				resizeImp(newSize);
 			}
 		}
@@ -133,6 +136,6 @@ private:
 };
 
 typedef veArray<veReal> veRealArray;
-typedef veArray<unsigned int> veUintArray;
+typedef veArray<uint16_t> veUint16Array;
 
 #endif

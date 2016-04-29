@@ -24,14 +24,15 @@
     <ClCompile Include="..\..\Converter\ConverterFactory.cpp" />
     <ClCompile Include="..\..\Converter\main.cpp" />
     <ClCompile Include="..\..\Converter\ModelConverter.cpp" />
+    <ClCompile Include="..\..\Converter\TextureConverter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Converter\Argument.h" />
     <ClInclude Include="..\..\Converter\Converter.h" />
     <ClInclude Include="..\..\Converter\ConverterFactory.h" />
     <ClInclude Include="..\..\Converter\ModelConverter.h" />
-    <ClInclude Include="..\..\Converter\Prerequisites.h" />
     <ClInclude Include="..\..\Converter\PrettyWriterExt.h" />
+    <ClInclude Include="..\..\Converter\TextureConverter.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{111143A9-C8B6-4509-8215-0C4C0DB412ED}</ProjectGuid>

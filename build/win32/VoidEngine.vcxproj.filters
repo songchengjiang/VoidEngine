@@ -16,11 +16,23 @@
     <Filter Include="FileCore\ReaderWriter">
       <UniqueIdentifier>{5e444bc8-0636-4c75-ada0-4e56b5c27cb3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Debuger">
+      <UniqueIdentifier>{1709491a-9175-456d-9378-f0bc8b1f74c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KernelCore\SceneManagement">
+      <UniqueIdentifier>{6bfb4abf-9b5c-4fca-9f46-48d5c887f39e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KernelCore\SceneManagement\Octree">
+      <UniqueIdentifier>{c95ce5b0-245f-4cb3-85bb-4d6cc70373b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KernelCore\Renderer\Pipeline">
+      <UniqueIdentifier>{4bb0a7ba-4258-418e-87c8-b7b176955672}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KernelCore\PostProcesser">
+      <UniqueIdentifier>{0752a16d-b03f-4a1b-bd4b-c3eadab99dc6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Engine\BaseCore\Math.cpp">
-      <Filter>BaseCore</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Engine\BaseCore\Matrix3.cpp">
       <Filter>BaseCore</Filter>
     </ClCompile>
@@ -72,9 +84,6 @@
     <ClCompile Include="..\..\Engine\FileCore\Printer.cpp">
       <Filter>FileCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\MeshRenderer.cpp">
-      <Filter>KernelCore\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\OverlayRenderer.cpp">
       <Filter>KernelCore\Renderer</Filter>
     </ClCompile>
@@ -96,16 +105,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\Component.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\Director.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\EventDispatcher.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\FrameBufferObject.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\Image.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\Light.cpp">
@@ -121,9 +121,6 @@
       <Filter>KernelCore</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\NodeVisitor.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\Overlay.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\Parameter.cpp">
@@ -144,15 +141,147 @@
     <ClCompile Include="..\..\Engine\KernelCore\Transformer.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\Visualiser.cpp">
+    <ClCompile Include="..\..\Engine\KernelCore\BoudingBox.cpp">
       <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\Debuger\Debuger.cpp">
+      <Filter>Debuger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Font.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Text.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\SceneManager.cpp">
+      <Filter>KernelCore\SceneManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\OctreeSceneManager.cpp">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\OctreeNode.cpp">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\OctreeCamera.cpp">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\BaseManager.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Octree.cpp">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Plane.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\OctreeRenderQueue.cpp">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\Debuger\OctreeDebuger.cpp">
+      <Filter>Debuger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Entity.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\MeshNode.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\EntityRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Ray.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\TransformFeedback.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\MatrixPtr.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\EntityManager.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\SurfaceRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\FontCharDictionary.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\SkyBox.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\BoxRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Surface.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Image.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\BillboardRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\AnimationManager.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\ThreadPool.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\FileCore\File-win32.cpp">
+      <Filter>FileCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Application.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Application-desktop.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\BaseCore\MathAlgorithm.cpp">
+      <Filter>BaseCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\PostProcesserRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterKTX.cpp">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\MaterialManager.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\SphereRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\RenderState.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\LightRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\ConeRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\DeferredRenderPipeline.cpp">
+      <Filter>KernelCore\Renderer\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\RenderPipeline.cpp">
+      <Filter>KernelCore\Renderer\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Sphere.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Cone.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\PostProcesser.cpp">
+      <Filter>KernelCore\PostProcesser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\DeferredLightPipeline.cpp">
+      <Filter>KernelCore\Renderer\Pipeline</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
-      <Filter>BaseCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\BaseCore\Math.h">
       <Filter>BaseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\BaseCore\Matrix3.h">
@@ -182,9 +311,6 @@
     <ClInclude Include="..\..\Engine\FileCore\Printer.h">
       <Filter>FileCore</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\MeshRenderer.h">
-      <Filter>KernelCore\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\OverlayRenderer.h">
       <Filter>KernelCore\Renderer</Filter>
     </ClInclude>
@@ -209,22 +335,13 @@
     <ClInclude Include="..\..\Engine\KernelCore\Component.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\Director.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\Event.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\EventDispatcher.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\FrameBufferObject.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\IDGenerator.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\Image.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\Light.h">
@@ -243,9 +360,6 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\NodeVisitor.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\Overlay.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\Parameter.h">
@@ -275,12 +389,144 @@
     <ClInclude Include="..\..\Engine\KernelCore\VE_Ptr.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\Visualiser.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Engine\Constants.h" />
     <ClInclude Include="..\..\Engine\Export.h" />
     <ClInclude Include="..\..\Engine\Prerequisites.h" />
     <ClInclude Include="..\..\Engine\VoidEngine.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\BoudingBox.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\Debuger\Debuger.h">
+      <Filter>Debuger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Font.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Text.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\SceneManager.h">
+      <Filter>KernelCore\SceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\OctreeSceneManager.h">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\OctreeNode.h">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\OctreeCamera.h">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\BaseManager.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Octree.h">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Plane.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\OctreeRenderQueue.h">
+      <Filter>KernelCore\SceneManagement\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\Debuger\OctreeDebuger.h">
+      <Filter>Debuger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Entity.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\MeshNode.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\EntityRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Ray.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\TransformFeedback.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\MatrixPtr.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\EntityManager.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\SurfaceRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\FontCharDictionary.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\SkyBox.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\BoxRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Surface.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Image.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\BillboardRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\AnimationManager.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\ThreadPool.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\File-win32.h">
+      <Filter>FileCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Application.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Application-desktop.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\BaseCore\MathAlgorithm.h">
+      <Filter>BaseCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\PostProcesserRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\MaterialManager.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\SphereRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\RenderState.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\LightRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\ConeRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\DeferredRenderPipeline.h">
+      <Filter>KernelCore\Renderer\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\RenderPipeline.h">
+      <Filter>KernelCore\Renderer\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Sphere.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Cone.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\PostProcesser.h">
+      <Filter>KernelCore\PostProcesser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\DeferredLightPipeline.h">
+      <Filter>KernelCore\Renderer\Pipeline</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

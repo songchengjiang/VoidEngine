@@ -2,6 +2,7 @@
 #include <rapidjson/include/document.h>
 #include "Constants.h"
 #include "KernelCore/Animation.h"
+#include "KernelCore/SceneManager.h"
 #include <unordered_map>
 
 using namespace rapidjson;
@@ -9,27 +10,33 @@ class veFileReaderWriterANIMATION : public veFileReaderWriter
 {
 public:
 	veFileReaderWriterANIMATION()
+		: _doucument(nullptr)
 	{};
-	~veFileReaderWriterANIMATION(){};
+	~veFileReaderWriterANIMATION(){
+	};
 
-	virtual void* readFile(const std::string &filePath){
-		std::string buffer = veFile::readFileToBuffer(filePath);
-		_doucument.Parse(buffer.c_str());
-        if (_doucument.HasParseError()) return  nullptr;
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
+		_doucument = new Document;
+		auto fileData = veFile::instance()->readFileToBuffer(filePath);
+		_doucument->Parse(fileData->buffer);
+		if (_doucument->HasParseError()) return nullptr;
+		_sceneManager = sm;
+		_name = name;
 		readAnimations();
+		VE_SAFE_DELETE(_doucument);
 		return _animationContainer;
 	}
 
-	virtual bool writeFile(void *data, const std::string &filePath){
+	virtual bool writeFile(veSceneManager *sm, void *data, const std::string &filePath) override{
 		return true;
 	}
 
 private:
 
 	void readAnimations() {
-		_animationContainer = new veAnimationContainer;
-		if (_doucument.HasMember(ANIMATIONS_KEY.c_str())) {
-			const Value &anims = _doucument[ANIMATIONS_KEY.c_str()];
+		_animationContainer = _sceneManager->createAnimationContainer(_name);
+		if ((*_doucument).HasMember(ANIMATIONS_KEY.c_str())) {
+			const Value &anims = (*_doucument)[ANIMATIONS_KEY.c_str()];
 			for (unsigned int i = 0; i < anims.Size(); ++i) {
 				readAnimation(anims[i]);
 			}
@@ -37,11 +44,11 @@ private:
 	}
 
 	void readAnimation(const Value &animVal) {
-		veAnimation *animation = new veAnimation;
-
+		veAnimation *animation = nullptr;
 		if (animVal.HasMember(NAME_KEY.c_str())) {
-			animation->setName(animVal[NAME_KEY.c_str()].GetString());
-		}
+			animation = _sceneManager->createAnimation(animVal[NAME_KEY.c_str()].GetString());
+		}	
+		if (!animation) return;
 
 		if (animVal.HasMember(FRAMES_KEY.c_str())) {
 			animation->setDuration(animVal[FRAMES_KEY.c_str()].GetDouble());
@@ -94,8 +101,10 @@ private:
 
 private:
 
-	Document _doucument;
+	Document *_doucument;
 	veAnimationContainer *_animationContainer;
+	veSceneManager *_sceneManager;
+	std::string _name;
 };
 
 VE_READERWRITER_REG("veanim", veFileReaderWriterANIMATION);

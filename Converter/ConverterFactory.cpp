@@ -1,5 +1,6 @@
 #include "ConverterFactory.h"
 #include "ModelConverter.h"
+#include "TextureConverter.h"
 
 ConverterFactory::~ConverterFactory()
 {
@@ -19,8 +20,11 @@ ConverterFactory* ConverterFactory::instance()
 
 Converter* ConverterFactory::createConverter(const std::string &type)
 {
-	if (type == "MODEL") {
+	if (type == "-m") {
 		return new ModelConverter;
+	}
+	else if (type == "-t") {
+		return new TextureConverter;
 	}
 	return nullptr;
 }

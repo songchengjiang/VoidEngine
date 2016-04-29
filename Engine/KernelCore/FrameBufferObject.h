@@ -8,33 +8,44 @@
 
 class VE_EXPORT veFrameBufferObject
 {
+	friend class veFrameBufferObjectManager;
 public:
 	static veFrameBufferObject* CURRENT_FBO;
-
-	veFrameBufferObject();
-	veFrameBufferObject(const veVec2 &size);
 	~veFrameBufferObject();
 
 	USE_VE_PTR;
 	USE_NAME_PROPERTY;
 
 	void setFrameBufferSize(const veVec2 &size);
-	void attach(GLenum attachment, veTexture *attachTex);
+	void attach(GLenum attachment, GLenum target, veTexture *attachTex, GLint layer = -1, bool needMipmap = false);
 
-	void bind(unsigned int clearMask);
-	static void unBind();
+	void bind(unsigned int clearMask, GLenum target = GL_FRAMEBUFFER);
+	void unBind();
 
 private:
+
+	veFrameBufferObject();
+	veFrameBufferObject(const veVec2 &size);
 
 	void refreshBuffers(unsigned int clearMask);
 	void refreshAttachments();
 
 private:
+
+	struct AttachmentInfo
+	{
+		GLenum target;
+		GLint layer;
+		veTexture *texture;
+		bool   needMipmap;
+	};
 	GLuint _fbo;
 	GLuint _dsbo;
+	GLenum _target;
 	veVec2 _size;
-	bool _needRefresh;
-	std::map<GLenum, VE_Ptr<veTexture>> _attachments;
+	bool _needRefreshAttachments;
+	bool _needRefreshBuffers;
+	std::map<GLenum, AttachmentInfo> _attachments;
 };
 
 class VE_EXPORT veFrameBufferObjectManager
@@ -44,7 +55,8 @@ public:
 	~veFrameBufferObjectManager();
 	static veFrameBufferObjectManager* instance();
 
-	veFrameBufferObject* getOrCreateFrameBufferObject(const std::string &name);
+	veFrameBufferObject* findFrameBufferObject(const std::string &name);
+	veFrameBufferObject* createFrameBufferObject(const std::string &name);
 	veFrameBufferObject* getFrameBufferObject(unsigned int idx);
 	size_t getFrameBufferObjectNum() const { return _fbos.size(); }
 
@@ -52,7 +64,6 @@ public:
 private:
 
 	veFrameBufferObjectManager();
-	veFrameBufferObject* findfbo(const std::string &name);
 
 private:
 

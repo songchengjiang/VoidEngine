@@ -6,11 +6,10 @@
 #include <map>
 #include <unordered_map>
 
-class veVisualiser;
+class veCamera;
 class veRenderQueue
 {
 public:
-	static veRenderQueue *CURRENT_RENDER_QUEUE;
 	typedef std::map<unsigned int, veLoopQueue< veRenderCommand > > RenderCommandList;
 
 	enum RenderQueueType
@@ -22,14 +21,12 @@ public:
 	};
 
 	veRenderQueue();
-	~veRenderQueue();
+	virtual ~veRenderQueue();
 
-	void pushCommand(unsigned int renderQueueType, const veRenderCommand &cmd);
-	void execute(veVisualiser *vs);
+	virtual void pushCommand(unsigned int renderPassIndex, unsigned int renderQueueType, const veRenderCommand &cmd);
 
-private:
-
-	std::unordered_map<veCamera*, RenderCommandList> _renderQueues;
+	std::map<unsigned int, RenderCommandList> renderCommandList;
+	
 };
 
 #endif

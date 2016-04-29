@@ -58,7 +58,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;VE_DISABLE_MSVC_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;$(SolutionDir)..\..\Dependents\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -76,7 +76,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;VE_DISABLE_MSVC_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;$(SolutionDir)..\..\Dependents\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -90,10 +91,20 @@
   <ItemGroup>
     <ClInclude Include="..\..\Tests\BaseTest.h" />
     <ClInclude Include="..\..\Tests\CameraTest.h" />
+    <ClInclude Include="..\..\Tests\CubeMapTest.h" />
+    <ClInclude Include="..\..\Tests\IBLTest.h" />
     <ClInclude Include="..\..\Tests\ImageTest.h" />
+    <ClInclude Include="..\..\Tests\IntersectionTest.h" />
     <ClInclude Include="..\..\Tests\LightTest.h" />
     <ClInclude Include="..\..\Tests\MeshTest.h" />
+    <ClInclude Include="..\..\Tests\NormalMappingTest.h" />
+    <ClInclude Include="..\..\Tests\PerformanceTest.h" />
+    <ClInclude Include="..\..\Tests\PostProcesserTest.h" />
     <ClInclude Include="..\..\Tests\RenToTex.h" />
+    <ClInclude Include="..\..\Tests\ShadowTest.h" />
+    <ClInclude Include="..\..\Tests\SkyBoxTest.h" />
+    <ClInclude Include="..\..\Tests\TestCreator.h" />
+    <ClInclude Include="..\..\Tests\TextTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Tests\main.cpp" />
@@ -102,12 +113,6 @@
     <ProjectReference Include="VoidEngine.vcxproj">
       <Project>{fc047bd9-ca1d-469c-9a04-454a1b313b60}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\Tests\lights\directional0.velight" />
-    <None Include="..\..\Tests\lights\point.velightemplates" />
-    <None Include="..\..\Tests\lights\point0.velight" />
-    <None Include="..\..\Tests\lights\spot0.velight" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

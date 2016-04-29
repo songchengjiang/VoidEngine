@@ -14,11 +14,6 @@ veMat3::veMat3(const veMat3 &copy)
 
 }
 
-veMat3::veMat3(const veQuat &rot)
-{
-
-}
-
 veMat3::veMat3(veReal m00, veReal m01, veReal m02
 	, veReal m10, veReal m11, veReal m12
 	, veReal m20, veReal m21, veReal m22)

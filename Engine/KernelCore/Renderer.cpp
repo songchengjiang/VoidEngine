@@ -5,9 +5,11 @@
 #include "Node.h"
 #include "Camera.h"
 
+unsigned short veRenderer::CURRENT_RENDER_STAGE = RENDERING;
+
 veRenderer::veRenderer()
 	: USE_VE_PTR_INIT
-	, _technique(nullptr)
+	, _renderStageMask(DIRECTIONAL_SHADOW | OMNIDIRECTIONAL_SHADOW | LIGHTINGING | RENDERING)
 {
 }
 
@@ -15,14 +17,7 @@ veRenderer::~veRenderer()
 {
 }
 
-void veRenderer::visit(veNode *node, veRenderableObject *renderableObj, veVisualiser *vs)
+bool veRenderer::isNeedRendering()
 {
-	auto material = renderableObj->getMaterial();
-	if (material)
-		_technique = findOptimalTechnique(material);
-}
-
-veTechnique* veRenderer::findOptimalTechnique(veMaterial *material)
-{
-	return material->activeTechnique();
+	return (CURRENT_RENDER_STAGE & _renderStageMask) != 0;
 }

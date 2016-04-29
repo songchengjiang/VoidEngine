@@ -1,17 +1,12 @@
 #include "VoidEngine.h"
-#include "BaseTest.h"
-#include "MeshTest.h"
-#include "ImageTest.h"
-#include "RenToTex.h"
-#include "CameraTest.h"
-#include "LightTest.h"
+#if (VE_PLATFORM == VE_PLATFORM_WIN32) || (VE_PLATFORM == VE_PLATFORM_MAC)
+#include "TestCreator.h"
 
 int main(int argc, char **argv)
 {
-	//auto test = new LightTest;
-	//auto test = new CameraTest;
-	auto test = new RenToTex;
-	//auto test = new MeshTest;
-	//auto test = new ImageTest;
-	return test->run();
+	veApplication::instance()->initWindow(800, 600, "VoidEngineTest", nullptr);
+	TestCreator::createTest();
+	return veApplication::instance()->run();
 }
+
+#endif

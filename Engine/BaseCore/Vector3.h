@@ -1,7 +1,7 @@
 #ifndef _VE_VECTOR3_
 #define _VE_VECTOR3_
 #include "Prerequisites.h"
-#include "BaseCore/Math.h"
+#include "BaseCore/MathAlgorithm.h"
 
 class VE_EXPORT veVec3
 {
@@ -31,7 +31,7 @@ public:
 	veReal& z() { return _z; };
 	const veReal& z() const { return _z; };
 
-	veReal length() const { return veMath::sqrt(_x * _x + _y * _y + _z * _z); }
+	veReal length() const { return veMath::veSqrt(_x * _x + _y * _y + _z * _z); }
 	veReal squaredLength() const { return _x * _x + _y * _y + _z * _z; }
 	veReal distance(const veVec3& rhs) const { return (*this - rhs).length(); }
 	veReal squaredDistance(const veVec3& rhs) const{ return (*this - rhs).squaredLength(); }
@@ -41,7 +41,7 @@ public:
 	}
 
 	veReal normalize(){
-		veReal fLength = veMath::sqrt(_x * _x + _y * _y + _z * _z);
+		veReal fLength = veMath::veSqrt(_x * _x + _y * _y + _z * _z);
 
 		if (fLength > veReal(0.0f))
 		{
@@ -216,6 +216,18 @@ public:
 
 	inline bool operator >(const veVec3& rhs) const{
 		if (rhs._x < _x && rhs._y < _y && rhs._z < _z)
+			return true;
+		return false;
+	}
+
+	inline bool operator <= (const veVec3& rhs) const {
+		if (_x <= rhs._x && _y <= rhs._y  && _z <= rhs._z)
+			return true;
+		return false;
+	}
+
+	inline bool operator >=(const veVec3& rhs) const {
+		if (rhs._x <= _x && rhs._y <= _y && rhs._z <= _z)
 			return true;
 		return false;
 	}

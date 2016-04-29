@@ -11,21 +11,35 @@ class vePass;
 class veUniform;
 class VE_EXPORT veRenderer
 {
-	USE_VE_PTR
 public:
+
+	enum RenderStage
+	{
+		DIRECTIONAL_SHADOW     = 1,
+		OMNIDIRECTIONAL_SHADOW = 1 << 1,
+		LIGHTINGING            = 1 << 2,
+		RENDERING              = 1 << 3,
+	};
+
+	static unsigned short CURRENT_RENDER_STAGE;
+
 	veRenderer();
+	USE_VE_PTR;
+
 	virtual ~veRenderer();
-	virtual void visit(veNode *node, veRenderableObject *renderableObj, veVisualiser *vs);
 	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) = 0;
-//	virtual void draw(const veRenderCommand &command) = 0;
+	virtual void draw(veRenderCommand &command) = 0;
+
+	void setRenderStageMask(unsigned short mask) { _renderStageMask = mask; }
+	unsigned short getRenderStageMask() const { return _renderStageMask; }
 
 protected:
 
-	virtual veTechnique* findOptimalTechnique(veMaterial *material);
+	bool isNeedRendering();
 
 protected:
 
-	veTechnique     *_technique;
+	unsigned short _renderStageMask;
 };
 
 #endif

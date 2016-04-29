@@ -14,6 +14,7 @@
 #pragma warning( disable : 4267 )
 #pragma warning( disable : 4702 )
 #pragma warning( disable : 4511 )
+#pragma warning( disable : 4005 )
 #endif
 
 #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)

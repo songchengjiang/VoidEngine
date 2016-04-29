@@ -10,7 +10,9 @@ public:
 	veTransformer();
 	~veTransformer();
 
-	virtual void update(veNode *node, veVisualiser *vs) override;
+	virtual void update(veSceneManager *sm) override;
+	virtual void onAttachToNode(veNode *node) override;
+	virtual void onDetachToNode(veNode *node) override;
 
 	void setPosition(const veVec3 &pos);
 	const veVec3& getPosition() const;
@@ -28,7 +30,8 @@ private:
 	veVec3 _position;
 	veQuat _rotation;
 	veVec3 _scale;
-	bool _neeUpdate;
+	
+	bool _needUpdate;
 };
 
 #endif

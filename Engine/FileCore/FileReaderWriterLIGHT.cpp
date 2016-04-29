@@ -2,6 +2,8 @@
 #include <rapidjson/include/document.h>
 #include "Constants.h"
 #include "KernelCore/Light.h"
+#include "KernelCore/SceneManager.h"
+#include "KernelCore/MaterialManager.h"
 #include <unordered_map>
 
 using namespace rapidjson;
@@ -10,71 +12,130 @@ class veFileReaderWriterLIGHT : public veFileReaderWriter
 public:
 	veFileReaderWriterLIGHT()
 		: _light(nullptr)
+		, _doucument(nullptr)
 	{};
 	~veFileReaderWriterLIGHT(){};
 
-	virtual void* readFile(const std::string &filePath){
-		_fileFolder = filePath.substr(0, filePath.find_last_of("/\\") + 1);
-		std::string buffer = veFile::readFileToBuffer(filePath);
-		_doucument.Parse(buffer.c_str());
-        if (_doucument.HasParseError()) return  nullptr;
+	virtual void* readFile(veSceneManager *sm, const std::string &filePath, const std::string &name, const veFileParam &param) override{
+		std::string fullPath = veFile::instance()->getFullFilePath(filePath);
+		_sceneManager = sm;
+		_name = name;
+		_fileFolder = fullPath.substr(0, fullPath.find_last_of("/\\") + 1);
+		_doucument = new Document;
+		auto fileData = veFile::instance()->readFileToBuffer(fullPath);
+		_doucument->Parse(fileData->buffer);
+		if (_doucument->HasParseError()) return nullptr;
 		readLight();
+		VE_SAFE_DELETE(_doucument);
 		return _light;
 	}
 
-	virtual bool writeFile(void *data, const std::string &filePath){
+	virtual bool writeFile(veSceneManager *sm, void *data, const std::string &filePath) override{
 		return true;
 	}
 
 private:
 
 	void readLight() {
-		std::string name = _doucument[NAME_KEY.c_str()].GetString();
-		std::string type = _doucument[TYPE_KEY.c_str()].GetString();
-		_light = veLightManager::instance()->instanceOneLight(type);
+		//std::string name = (*_doucument)[NAME_KEY.c_str()].GetString();
+		std::string type = (*_doucument)[TYPE_KEY.c_str()].GetString();
+		_light = _sceneManager->createLight(getLightType(type), _name);
 		if (!_light) return;
-		_light->setName(name);
-		const Value &paramsVals = _doucument[PARAMETERS_KEY.c_str()];
-		if (!paramsVals.Empty()) {
-			veLightManager::Parameters params;
-			for (unsigned int i = 0; i < paramsVals.Size(); ++i) {
-				const Value & pm = paramsVals[i];
-				const Value & values = pm[VALUES_KEY.c_str()];
-				auto paramter = _light->getParameter(pm[NAME_KEY.c_str()].GetString());
-				if (paramter) {
-					setValues(paramter, values);
+
+		if (_doucument->HasMember(COLOR_KEY.c_str())) {
+			const Value &val = (*_doucument)[COLOR_KEY.c_str()];
+			veVec3 color = veVec3(val[0].GetDouble(), val[1].GetDouble(), val[2].GetDouble());
+			_light->setColor(color);
+		}
+
+		if (_doucument->HasMember(INTENSITY_KEY.c_str())) {
+			const Value &val = (*_doucument)[INTENSITY_KEY.c_str()];
+			_light->setIntensity(val.GetDouble());
+		}
+
+		if (_light->getLightType() == veLight::POINT || _light->getLightType() == veLight::SPOT) {
+			if (_doucument->HasMember(ATTENUATION_KEY.c_str())) {
+				const Value &val = (*_doucument)[ATTENUATION_KEY.c_str()];
+				if (_light->getLightType() == veLight::POINT) {
+					static_cast<vePointLight *>(_light)->setAttenuationRange(val.GetDouble());
 				}
+				if (_light->getLightType() == veLight::SPOT) {
+					static_cast<veSpotLight *>(_light)->setAttenuationRange(val.GetDouble());
+				}
+			}
+		}
+
+		if (_doucument->HasMember(SHADOW_ENABLED_KEY.c_str())) {
+			const Value &val = (*_doucument)[SHADOW_ENABLED_KEY.c_str()];
+			_light->shadowEnable(val.GetBool());
+		}
+
+		if (_doucument->HasMember(SHADOW_BIAS_KEY.c_str())) {
+			const Value &val = (*_doucument)[SHADOW_BIAS_KEY.c_str()];
+			_light->setShadowBias(val.GetDouble());
+		}
+
+		if (_doucument->HasMember(SHADOW_STRENGTH_KEY.c_str())) {
+			const Value &val = (*_doucument)[SHADOW_STRENGTH_KEY.c_str()];
+			_light->setShadowStrength(val.GetDouble());
+		}
+
+		if (_doucument->HasMember(SHADOW_RESOLUTION_KEY.c_str())) {
+			const Value &val = (*_doucument)[SHADOW_RESOLUTION_KEY.c_str()];
+			if (val.Size() == 2)
+				_light->setShadowResolution(veVec2(val[0].GetDouble(), val[1].GetDouble()));
+		}
+
+		if (_doucument->HasMember(SHADOW_AREA_KEY.c_str())) {
+			const Value &val = (*_doucument)[SHADOW_AREA_KEY.c_str()];
+			if (val.Size() == 2)
+				_light->setShadowArea(veVec2(val[0].GetDouble(), val[1].GetDouble()));
+		}
+
+		if (_doucument->HasMember(SHADOW_SOFT_KEY.c_str())) {
+			const Value &val = (*_doucument)[SHADOW_SOFT_KEY.c_str()];
+			_light->setUseSoftShadow(val.GetBool());
+		}
+
+		if (_doucument->HasMember(SHADOW_SOFTNESS_KEY.c_str())) {
+			const Value &val = (*_doucument)[SHADOW_SOFTNESS_KEY.c_str()];
+			_light->setShadowSoftness(val.GetDouble());
+		}
+
+		if (_light->getLightType() == veLight::SPOT) {
+			if (_doucument->HasMember(INNER_ANGLE_KEY.c_str())) {
+				const Value &val = (*_doucument)[INNER_ANGLE_KEY.c_str()];
+				static_cast<veSpotLight *>(_light)->setInnerAngle(val.GetDouble());
+			}
+
+			if (_doucument->HasMember(OUTER_ANGLE_KEY.c_str())) {
+				const Value &val = (*_doucument)[OUTER_ANGLE_KEY.c_str()];
+				static_cast<veSpotLight *>(_light)->setOuterAngle(val.GetDouble());
 			}
 		}
 	}
 
-	void setValues(veParameter *paramter, const Value & values) {
-		if (values.IsInt()) {
-			paramter->set(values.GetInt());
+	veLight::LightType getLightType(const std::string &type) {
+		if (type == DIRECTIONAL_KEY) {
+			return veLight::DIRECTIONAL;
 		}
-		else if (values.IsDouble()) {
-			paramter->set((veReal)values.GetDouble());
+		else if (type == POINT_KEY) {
+			return veLight::POINT;
 		}
-		else if (values.Size() == 2) {
-			veVec2 vec2(values[0].GetDouble(), values[1].GetDouble());
-			paramter->set(vec2);
+		else if (type == SPOT_KEY) {
+			return veLight::SPOT;
 		}
-		else if (values.Size() == 3) {
-			veVec3 vec3(values[0].GetDouble(), values[1].GetDouble(), values[2].GetDouble());
-			paramter->set(vec3);
-		}
-		else if (values.Size() == 4) {
-			veVec4 vec4(values[0].GetDouble(), values[1].GetDouble(), values[2].GetDouble(), values[3].GetDouble());
-			paramter->set(vec4);
-		}
+		else
+			return veLight::DIRECTIONAL;
 	}
 
 private:
 
-	Document _doucument;
-	std::string _fileFolder;
-	std::string _className;
+	Document *_doucument;
 	veLight *_light;
+	veSceneManager *_sceneManager;
+	std::string _name;
+	std::string _fileFolder;
 };
 
 VE_READERWRITER_REG("velight", veFileReaderWriterLIGHT);

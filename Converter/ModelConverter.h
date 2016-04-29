@@ -48,6 +48,7 @@ private:
 
 	void generateMeshNames(const aiScene *scene);
 	void generateMaterialNames(const aiScene *scene);
+	void generateMaterialMeshMap(const aiScene *scene);
 	std::string getShaderName(int shaderMode);
 
 	void outputFiles();
@@ -64,6 +65,11 @@ private:
 
 private:
 
+	std::string getTextureTypeName(aiTextureType texType);
+	std::string getShaderDefinations(const aiMaterial *mat, const std::string &type);
+
+private:
+
 	rapidjson::StringBuffer _modelbuffer;
 	PrettyWriterExt<rapidjson::StringBuffer> _modelWriter;
 
@@ -77,7 +83,6 @@ private:
 	std::string _outputModelName;
 	std::string _outputMaterialName;
 	std::string _outputAnimationName;
-	bool        _hasBonesInfo;
 };
 
 #endif

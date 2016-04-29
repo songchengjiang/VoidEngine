@@ -11,17 +11,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Engine\BaseCore\Math.cpp" />
+    <ClCompile Include="..\..\Engine\BaseCore\MathAlgorithm.cpp" />
     <ClCompile Include="..\..\Engine\BaseCore\Matrix3.cpp" />
     <ClCompile Include="..\..\Engine\BaseCore\Matrix4.cpp" />
     <ClCompile Include="..\..\Engine\BaseCore\Quaternion.cpp" />
     <ClCompile Include="..\..\Engine\BaseCore\Vector2.cpp" />
     <ClCompile Include="..\..\Engine\BaseCore\Vector3.cpp" />
     <ClCompile Include="..\..\Engine\BaseCore\Vector4.cpp" />
+    <ClCompile Include="..\..\Engine\Debuger\Debuger.cpp" />
+    <ClCompile Include="..\..\Engine\Debuger\OctreeDebuger.cpp" />
+    <ClCompile Include="..\..\Engine\FileCore\File-win32.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\File.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriter.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterANIMATION.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterCAMERA.cpp" />
+    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterKTX.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterEXR.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterJPEG.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterLIGHT.cpp" />
@@ -30,34 +34,69 @@
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterVEMTL.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\Printer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Animation.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\AnimationManager.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Application-desktop.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Application.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\BaseManager.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\BillboardRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Bone.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\BoudingBox.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\BoxRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Camera.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Component.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\Director.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\EventDispatcher.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Cone.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\ConeRenderer.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\DeferredLightPipeline.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\DeferredRenderPipeline.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Entity.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\EntityManager.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\EntityRenderer.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Font.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\FontCharDictionary.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\FrameBufferObject.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Image.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Light.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\LightRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Material.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\MaterialManager.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\MatrixPtr.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Mesh.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\MeshRenderer.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\MeshNode.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Node.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\NodeVisitor.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\Overlay.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Octree.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\OctreeCamera.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\OctreeNode.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\OctreeRenderQueue.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\OctreeSceneManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\OverlayRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Parameter.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Plane.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\PostProcesser.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\PostProcesserRenderer.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Ray.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\RenderableObject.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Renderer.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\RenderPipeline.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\RenderQueue.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\RenderState.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\SceneManager.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Shader.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\SkyBox.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Sphere.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\SphereRenderer.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Surface.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\SurfaceRenderer.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Text.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Texture.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\TextureManager.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\ThreadPool.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Transformer.cpp" />
-    <ClCompile Include="..\..\Engine\KernelCore\Visualiser.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\TransformFeedback.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h" />
-    <ClInclude Include="..\..\Engine\BaseCore\Math.h" />
+    <ClInclude Include="..\..\Engine\BaseCore\MathAlgorithm.h" />
     <ClInclude Include="..\..\Engine\BaseCore\Matrix3.h" />
     <ClInclude Include="..\..\Engine\BaseCore\Matrix4.h" />
     <ClInclude Include="..\..\Engine\BaseCore\Quaternion.h" />
@@ -65,42 +104,80 @@
     <ClInclude Include="..\..\Engine\BaseCore\Vector3.h" />
     <ClInclude Include="..\..\Engine\BaseCore\Vector4.h" />
     <ClInclude Include="..\..\Engine\Constants.h" />
+    <ClInclude Include="..\..\Engine\Debuger\Debuger.h" />
+    <ClInclude Include="..\..\Engine\Debuger\OctreeDebuger.h" />
     <ClInclude Include="..\..\Engine\Export.h" />
+    <ClInclude Include="..\..\Engine\FileCore\File-win32.h" />
     <ClInclude Include="..\..\Engine\FileCore\File.h" />
     <ClInclude Include="..\..\Engine\FileCore\FileReaderWriter.h" />
     <ClInclude Include="..\..\Engine\FileCore\Printer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Animation.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\AnimationManager.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Application-desktop.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Application.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\BaseManager.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\BillboardRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Bone.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\BoudingBox.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\BoxRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Camera.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Component.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\Director.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Cone.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\ConeRenderer.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\DeferredLightPipeline.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\DeferredRenderPipeline.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Entity.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\EntityManager.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\EntityRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Event.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\EventDispatcher.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Font.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\FontCharDictionary.h" />
     <ClInclude Include="..\..\Engine\KernelCore\FrameBufferObject.h" />
     <ClInclude Include="..\..\Engine\KernelCore\IDGenerator.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Image.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Light.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\LightRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\LoopQueue.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Material.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\MaterialManager.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\MatrixPtr.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Mesh.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\MeshRenderer.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\MeshNode.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Node.h" />
     <ClInclude Include="..\..\Engine\KernelCore\NodeVisitor.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\Overlay.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Octree.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\OctreeCamera.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\OctreeNode.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\OctreeRenderQueue.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\OctreeSceneManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\OverlayRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Parameter.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Plane.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\PostProcesser.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\PostProcesserRenderer.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Ray.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Registrar.h" />
     <ClInclude Include="..\..\Engine\KernelCore\RenderableObject.h" />
     <ClInclude Include="..\..\Engine\KernelCore\RenderCommand.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Renderer.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\RenderPipeline.h" />
     <ClInclude Include="..\..\Engine\KernelCore\RenderQueue.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\RenderState.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\SceneManager.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Shader.h" />
     <ClInclude Include="..\..\Engine\KernelCore\ShaderDefinationGenerator.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\SkyBox.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Sphere.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\SphereRenderer.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Surface.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\SurfaceRenderer.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Text.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Texture.h" />
     <ClInclude Include="..\..\Engine\KernelCore\TextureManager.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\ThreadPool.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Transformer.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\TransformFeedback.h" />
     <ClInclude Include="..\..\Engine\KernelCore\VE_Ptr.h" />
-    <ClInclude Include="..\..\Engine\KernelCore\Visualiser.h" />
     <ClInclude Include="..\..\Engine\Prerequisites.h" />
     <ClInclude Include="..\..\Engine\VoidEngine.h" />
   </ItemGroup>
@@ -151,7 +228,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_USRDLL;_CRT_SECURE_NO_WARNINGS;VOIDENGINE_EXPORTS;VE_LIBRARY;VE_DISABLE_MSVC_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;$(SolutionDir)..\..\Dependents\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -160,7 +237,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)..\..\Dependents;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glu32.lib;opengl32.lib;glfw\lib\glfw3.lib;glew\lib\glew32s.lib;zlib\lib\zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glu32.lib;opengl32.lib;glfw\lib\glfw3.lib;glew\lib\glew32s.lib;zlib\lib\zlib.lib;freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
@@ -173,14 +250,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;VOIDENGINE_EXPORTS;VE_LIBRARY;VE_DISABLE_MSVC_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Engine;$(SolutionDir)..\..\Dependents;$(SolutionDir)..\..\Dependents\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>glu32.lib;opengl32.lib;glew\lib\glew32s.lib;glfw\lib\glfw3.lib;zlib\lib\zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glu32.lib;opengl32.lib;glew\lib\glew32s.lib;glfw\lib\glfw3.lib;zlib\lib\zlib.lib;freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)..\..\Dependents;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>

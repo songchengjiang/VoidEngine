@@ -1,10 +1,11 @@
 #ifndef _VE_QUATERNION_
 #define _VE_QUATERNION_
 #include "Prerequisites.h"
-#include "BaseCore/Math.h"
+#include "BaseCore/MathAlgorithm.h"
 #include "Vector3.h"
 
 class veVec3;
+class veMat3;
 class VE_EXPORT veQuat
 {
 public:
@@ -14,6 +15,7 @@ public:
 
 	veQuat();
 	veQuat(const veQuat &copy);
+	veQuat(const veMat3 &rotMat);
 	veQuat(const veReal w, const veReal x, const veReal y, const veReal z);
 	veQuat(const veReal angle, const veVec3 &axes);
 	~veQuat();
@@ -27,6 +29,7 @@ public:
 	veReal& z() { return _z; };
 	const veReal& z() const { return _z; };
 
+	void set(const veMat3 &rotMat);
 	void set(const veReal angle, const veVec3 &axes);
 	veReal dot(const veQuat &rkQ) const;
 	veReal normalize();
@@ -149,6 +152,7 @@ public:
 private:
 
 	void fromAngleAxis(const veReal angle, const veVec3 &axes);
+	void fromMat3(const veMat3 &mat);
 
 private:
 

@@ -1,0 +1,43 @@
+{
+    "version": "1.0",
+    "name": "tiling.vemtl",
+    "materials": [
+        {
+            "name": "mat-0",
+            "techniques": [
+                {
+                    "name": "tech-0",
+                    "passes": [
+                        {
+                            "depthTest": false,
+                            "depthWrite": false,
+                            "cullFace": true,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "postprocesser.vert",
+                                    "u_ModelMat": "M_MATRIX"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "tiling.frag",
+                                    "u_colorTex": 0,
+                                    "u_NumTiles": 100.0,
+                                    "u_Threshold": 0.1
+                                }
+                            ],
+                            "textureUnits": [
+                                {
+                                    "name": "tilingtexture",
+                                    "texType": "AMBIENT_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "NERAEST"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

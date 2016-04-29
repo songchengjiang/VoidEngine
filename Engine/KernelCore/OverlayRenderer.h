@@ -1,23 +1,22 @@
 #ifndef _VE_OVERLAY_RENDERER_
 #define _VE_OVERLAY_RENDERER_
-#include "Renderer.h"
+#include "SurfaceRenderer.h"
 #include "BaseCore/Array.h"
 
-class VE_EXPORT veOverlayRenderer : public veRenderer
+class VE_EXPORT veOverlayRenderer : public veSurfaceRenderer
 {
 public:
 	veOverlayRenderer();
 	~veOverlayRenderer();
 
+	void setRenderOrder(int order) { _renderOrder = order; }
+	int getRenderOrder() const { return _renderOrder; }
+
 	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override;
-	void draw(const veRenderCommand &command);
 
 protected:
 
-	GLuint          _vao;
-	GLuint          _vbo;
-	veRealArray     _vertices;
-	bool            _needRefresh;
+	int _renderOrder;
 };
 
 #endif

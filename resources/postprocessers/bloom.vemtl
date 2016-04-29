@@ -1,0 +1,129 @@
+{
+    "version": "1.0",
+    "name": "bloom.vemtl",
+    "materials": [
+        {
+            "name": "mat-0",
+            "techniques": [
+                {
+                    "name": "tech-0",
+                    "passes": [
+                        {
+                            "depthTest": false,
+                            "depthWrite": false,
+                            "cullFace": true,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "postprocesser.vert",
+                                    "u_ModelMat": "M_MATRIX"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "extractlight.frag",
+                                    "u_Threshold": 0.8,
+                                    "u_Texture": 0
+                                }
+                              ],
+                              "textureUnits": [
+                                {
+                                    "name": "bloom-sceneTexture",
+                                    "texType": "AMBIENT_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "NERAEST"
+                                }
+                            ]
+                        },
+                        {
+                            "depthTest": false,
+                            "depthWrite": false,
+                            "cullFace": true,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "postprocesser.vert",
+                                    "u_ModelMat": "M_MATRIX"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "GaussBlurY.frag",
+                                    "weights": [0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216],
+                                    "height":  "SCREEN_HEIGHT",
+                                    "u_Texture": 0
+                                }
+                            ],
+                            "textureUnits": [
+                                {
+                                    "name": "bloom-extractlightTex",
+                                    "texType": "AMBIENT_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "NERAEST"
+                                }
+                            ]
+                        },                        
+                        {
+                            "depthTest": false,
+                            "depthWrite": false,
+                            "cullFace": true,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "postprocesser.vert",
+                                    "u_ModelMat": "M_MATRIX"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "GaussBlurX.frag",
+                                    "weights": [0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216],
+                                    "width":  "SCREEN_WIDTH",
+                                    "u_Texture": 0
+                                }
+                            ],
+                            "textureUnits": [
+                                {
+                                    "name": "bloom-GaussBlurYTex",
+                                    "texType": "AMBIENT_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "NERAEST"
+                                }
+                            ]
+                        },                          
+                        {
+                            "depthTest": false,
+                            "depthWrite": false,
+                            "cullFace": true,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "postprocesser.vert",
+                                    "u_ModelMat": "M_MATRIX"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "bloom.frag",
+                                    "u_exposure": 2.0,
+                                    "u_bloomBlur": 0,
+                                    "u_sceneTex": 1
+                                }
+                            ],
+                            "textureUnits": [
+                                {
+                                    "name": "bloom-GaussBlurXTex",
+                                    "texType": "AMBIENT_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "NERAEST"
+                                },
+                                {
+                                    "name": "bloom-sceneTexture",
+                                    "texType": "DIFFUSE_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "NERAEST"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

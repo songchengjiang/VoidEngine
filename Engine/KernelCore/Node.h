@@ -6,8 +6,9 @@
 #include "Event.h"
 #include "Component.h"
 #include "RenderableObject.h"
+#include <functional>
 
-class veVisualiser;
+class veSceneManager;
 class veNodeVisitor;
 class VE_EXPORT veNode
 {
@@ -16,15 +17,21 @@ public:
 	typedef std::vector< VE_Ptr<veComponent> >        Components;
 	typedef std::vector< VE_Ptr<veNode> >             Children;
 	typedef std::vector< VE_Ptr<veRenderableObject> > RenderableObjects;
+	typedef std::function<bool(const veEvent&, veSceneManager*, veNode*)> NodeEventCallback;
+	typedef std::function<void(veSceneManager*, veNode*)>                 NodeUpdateCallback;
 
 	USE_VE_PTR;
 	USE_NAME_PROPERTY;
 
-	veNode();
 	virtual ~veNode();
 
 	void setVisible(bool isVis) { _isVisible = isVis; }
 	bool isVisible() const { return _isVisible; };
+	void setDynamicNode(bool isStatic) { _isDynamic = isStatic; }
+	bool isDynamicNode() { return _isDynamic; }
+
+	void setMask(unsigned int mask, bool isOverride = false);
+	unsigned int getMask() const { return _mask; }
 
 	int addChild(veNode *child);
 	bool removeChild(veNode *child);
@@ -40,29 +47,51 @@ public:
 	veComponent* getComponent(unsigned int comIndex);
 	size_t getComponentCount() const { return _components.size(); }
 
-	int addRenderableObject(veRenderableObject *obj);
+	virtual int addRenderableObject(veRenderableObject *obj);
 	bool removeRenderableObject(veRenderableObject *obj);
-	veRenderableObject* removeRenderableObject(unsigned int objIndex);
-	veRenderableObject* getRenderableObject(unsigned int objIndex);
+	veRenderableObject* removeRenderableObject(size_t objIndex);
+	veRenderableObject* getRenderableObject(size_t objIndex);
 	size_t getRenderableObjectCount() const { return _renderableObjects.size(); }
 
-	virtual void setMatrix(const veMat4 &mat) { _matrix = mat; _refresh = true; }
+	virtual void setMatrix(const veMat4 &mat) { _matrix = mat; refresh(); }
 	const veMat4& getMatrix() const { return _matrix; }
 
-	veMat4 getNodeToWorldMatrix();
-	veMat4 getWorldToNodeMatrix();
+	void setBoundingBox(const veBoundingBox &bbox) { _boundingBox = bbox; }
+	const veBoundingBox& getBoundingBox() const { return _boundingBox; }
+	void setAutoUpdateBoundingBox(bool isAuto) { _autoUpdateBoundingBox = isAuto; }
 
-	void setMask(unsigned int mask, bool isOverride = false) { _mask = mask; _overrideMask = isOverride; }
-	unsigned int getMask() const { return _mask; }
+	void setSceneManager(veSceneManager *sm) { _sceneManager = sm; }
+	veSceneManager* getSceneManager() { return _sceneManager; }
 
-	void refresh();
+	bool isInScene() const { return _isInScene; }
 
-	virtual bool routeEvent(const veEvent &event, veVisualiser *vs);
-	virtual void update(veVisualiser *vs);
-	virtual void render(veCamera *camera);
+	virtual veMat4 getNodeToWorldMatrix() const;
+	virtual veMat4 getWorldToNodeMatrix() const;
+
+	veMat4 computeNodeToWorldMatrix() const;
+	veMat4 computeWorldToNodeMatrix() const;
+
+	void setUserData(void *ud) { _userData = ud; }
+	void* getUserData() { return _userData; }
+	const void* getUserData() const { return _userData; }
+
+	void setEventCallback(const NodeEventCallback &callback) { _eventCallback = callback; }
+	void setUpdateCallback(const NodeUpdateCallback &callback) { _updateCallback = callback; }
+
+	virtual void refresh();
+
+	virtual bool routeEvent(const veEvent &event, veSceneManager *sm);
+	virtual void update(veSceneManager *sm, const veMat4 &transform);
 
 	virtual void accept(veNodeVisitor &visitor);
 	virtual void visit(veNodeVisitor &visitor);
+
+protected:
+
+	veNode();
+	void updateBoundingBox();
+	virtual void refreshUpdate(veSceneManager *sm, const veMat4 &transform);
+	virtual void updateSceneManager();
 
 protected:
 
@@ -71,11 +100,24 @@ protected:
 	RenderableObjects _renderableObjects;
 	veNode           *_parent;
 
+	veBoundingBox     _boundingBox;
 	veMat4            _matrix;
+	veMat4            _worldMatrix;
 	bool              _isVisible;
 	bool              _refresh;
 	unsigned int      _mask;
 	bool              _overrideMask;
+	bool              _autoUpdateBoundingBox;
+	bool              _isInScene;
+	bool              _isDynamic;
+
+	NodeEventCallback  _eventCallback;
+	NodeUpdateCallback _updateCallback;
+
+	void             *_userData;
+	veSceneManager   *_sceneManager;
 };
+
+typedef std::vector< VE_Ptr<veNode> > veNodeList;
 
 #endif

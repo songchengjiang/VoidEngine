@@ -6,56 +6,50 @@ class ImageTest : public BaseTest
 {
 public:
 	ImageTest() {
-		veNode *root = new veNode;
+		veNode *root = _sceneManager->createNode("root");
 		{
-			veNode *node = new veNode;
+			veNode *node = _sceneManager->createNode("node0");
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
 			transer->setPosition(veVec3(-0.5f, -0.5f, 0.0f));
 			transer->setScale(veVec3(0.5f));
 
-			auto overlay = new veOverlay;
+			veTexture *texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/Desk.exr", "desk"));
+			auto overlay = _sceneManager->createImage("image0", texture);
 			node->addRenderableObject(overlay);
-
-			veImage *image = static_cast<veImage *>(veFile::instance()->readFile("textures/Desk.exr"));
-			overlay->setImage(image);
 
 			root->addChild(node);
 		}
 
 		{
-			veNode *node = new veNode;
+			veNode *node = _sceneManager->createNode("node1");
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
 			transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
 
-			auto overlay = new veOverlay;
+			veTexture *texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/kill.png", "kill"));
+			auto overlay = _sceneManager->createImage("image1", texture);
 			node->addRenderableObject(overlay);
-
-			veImage *image = static_cast<veImage *>(veFile::instance()->readFile("textures/kill.png"));
-			overlay->setImage(image);
-			//overlay->setAlphaThreshold(1.0f);
+			overlay->setAlphaThreshold(0.5f);
 
 			root->addChild(node);
 		}
 
 		{
-			veNode *node = new veNode;
+			veNode *node = _sceneManager->createNode("node2");
 			veTransformer *transer = new veTransformer;
 			node->addComponent(transer);
 			transer->setPosition(veVec3(0.5f, 0.5f, 0.0f));
 			transer->setScale(veVec3(0.5f));
 
-			auto overlay = new veOverlay;
+			veTexture *texture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/kueken7_rgb_etc2_srgb.ktx", "kueken7_rgb_etc2_srgb"));
+			auto overlay = _sceneManager->createImage("image2", texture);
 			node->addRenderableObject(overlay);
-
-			veImage *image = static_cast<veImage *>(veFile::instance()->readFile("textures/sphere.jpg"));
-			overlay->setImage(image);
 
 			root->addChild(node);
 		}
 
-		_visualiser->setSceneNode(root);
+		_sceneManager->getRootNode()->addChild(root);
 	};
 	~ImageTest() {};
 

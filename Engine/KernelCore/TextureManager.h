@@ -1,22 +1,43 @@
 #ifndef _VE_TEXTURE_MANAGER_
 #define _VE_TEXTURE_MANAGER_
 #include "Prerequisites.h"
+#include "BaseManager.h"
 #include "Texture.h"
-#include <unordered_map>
+#include <mutex>
 
-class VE_EXPORT veTextureManager
+class VE_EXPORT veTextureManager : public veBaseManager
 {
+	friend class veSceneManager;
+	friend class veTexture;
 public:
 
-	veTextureManager();
 	~veTextureManager();
 
-	static veTextureManager* instance();
-	veTexture* getOrCreateTexture(const std::string &name, veTexture::TextureType texType = veTexture::TEXTURE_2D);
+	virtual void update() override;
+	virtual void resourceRecovery() override;
+
+	veTexture* findTexture(const std::string &name);
+	veTexture* createTexture(const std::string &name, veTexture::TextureType texType);
+	//void removeTexture(veTexture *tex);
+	bool requestTextureMemory(veTexture *texture) { return (_currentTextureMemory + texture->getTextureTotalMemory()) < _maxTextureMemory; }
+	bool exchangeTextureMemory(veTexture *texture);
+	bool assignTextureMemory(veTexture *texture);
+	bool releaseTextureMemory(veTexture *texture);
+
+	static std::string TYPE() { return "TEXTURE"; }
 
 private:
 
-	std::unordered_map< std::string, VE_Ptr<veTexture> > _texturePool;
+	float getTextureUsageRate(veTexture *texture);
+
+private:
+
+	veTextureManager(veSceneManager *sm, unsigned int maxTextureMemory = 512 * 1024 * 1024);
+	std::vector< VE_Ptr<veTexture> > _texturePool;
+	std::vector< std::pair<veTexture *, unsigned int> > _allocatedTexturePool;
+	std::mutex               _texturePoolMutex;
+	unsigned int _maxTextureMemory;
+	unsigned int _currentTextureMemory;
 };
 
 #endif

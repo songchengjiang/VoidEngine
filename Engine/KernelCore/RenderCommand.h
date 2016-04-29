@@ -1,12 +1,15 @@
 #ifndef _VE_RENDER_COMMAND_
 #define _VE_RENDER_COMMAND_
 #include "Prerequisites.h"
-#include "BaseCore/Matrix4.h"
+#include "MatrixPtr.h"
+#include "VE_Ptr.h"
+#include "BaseCore/Array.h"
 #include <functional>
 #include <unordered_map>
 
 class veRenderer;
 class veRenderableObject;
+class veSceneManager;
 class veCamera;
 class veNode;
 class vePass;
@@ -15,7 +18,10 @@ struct veRenderCommand
 {
 	veRenderCommand()
 		: priority(NORMAL_PRIORITY)
-		, depthInCamera(0.0f){
+		, depthInCamera(0.0f)
+		, user1(nullptr)
+		, user2(nullptr)
+		, user3(nullptr){
 	}
 
 	enum Priority
@@ -26,14 +32,19 @@ struct veRenderCommand
 	};
 
 	int                 priority;
+	unsigned int        mask;
+	VE_Ptr<veMat4Ptr>   worldMatrix;
 	veReal              depthInCamera;
 	vePass             *pass;
-	veNode             *attachedNode;
-	veRenderableObject *renderableObj;
+	//veNode             *attachedNode;
+	//veRenderableObject *renderableObj;
 	veCamera           *camera;
-	//veRenderer         *renderer;
-    std::function<void(const veRenderCommand &)> drawFunc;
-	std::vector<veLight *> *lightList;
+	veSceneManager     *sceneManager;
+	void*               user1;
+	void*               user2;
+	void*               user3;
+	veRenderer         *renderer;
+    //std::function<void(const veRenderCommand &)> drawFunc;
 };
 
 #endif

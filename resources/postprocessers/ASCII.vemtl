@@ -1,0 +1,57 @@
+{
+    "version": "1.0",
+    "name": "ASCII.vemtl",
+    "materials": [
+        {
+            "name": "mat-0",
+            "techniques": [
+                {
+                    "name": "tech-0",
+                    "passes": [
+                        {
+                            "depthTest": false,
+                            "depthWrite": false,
+                            "cullFace": true,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "postprocesser.vert",
+                                    "u_ModelMat": "M_MATRIX"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "ASCII.frag",
+                                    "u_time": "SIM_TIME",
+                                    "u_sinTime": "SIM_SIN_TIME",
+                                    "u_iNumTiles": [0.01, 0.02],
+                                    "u_iNumTiles2": [0.005, 0.01],
+                                    "u_numTiles": [100.0, 50.0],
+                                    "u_lum": [0.30, 0.59, 0.11, 0.0],
+                                    "u_charBias": 0.734375,
+                                    "u_colorTex": 0,
+                                    "u_asc2Tex": 1
+                                }
+                            ],
+                            "textureUnits": [
+                                {
+                                    "name": "scenetexture",
+                                    "texType": "AMBIENT_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "NERAEST"
+                                },
+                                {
+                                    "name": "ASCIITex",
+                                    "source": "textures/ASCII.ktx",
+                                    "type": "TEX_3D",
+                                    "texType": "DIFFUSE_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "LINEAR"
+                                }                          
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
