@@ -129,7 +129,11 @@ void veRenderPipeline::renderCameras()
 	auto &cameraList = _sceneManager->getCameraList();
 	for (auto &iter : cameraList) {
 		veCamera *camera = iter.get();
-		if (camera->isVisible() && !camera->isShadowCamera() && camera != _sceneManager->getCamera() && !camera->getViewport().isNull()) {
+		if (camera->isVisible() &&
+            !camera->isShadowCamera() &&
+            camera != _sceneManager->getCamera() &&
+            !camera->getViewport().isNull() &&
+            camera->getFrameBufferObject()) {
 			veRenderState::instance()->resetState();
 			renderScene(camera, false);
 		}

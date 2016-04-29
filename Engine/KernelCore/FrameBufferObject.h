@@ -36,7 +36,7 @@ private:
 	{
 		GLenum target;
 		GLint layer;
-		VE_Ptr<veTexture> texture;
+		veTexture *texture;
 		bool   needMipmap;
 	};
 	GLuint _fbo;
