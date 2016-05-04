@@ -23,7 +23,7 @@ void veParticleRenderer::draw(veRenderCommand &command)
         return;
     
     glBindVertexArray(_vao);
-    glDrawArrays(GL_TRIANGLES, 0, (GLsizei)_vertices.size());
+    glDrawElements(GL_TRIANGLES, GLsizei(_indices.size()), GL_UNSIGNED_SHORT, nullptr);
 }
 
 void veParticleRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)

@@ -26,8 +26,18 @@ public:
             root->addChild(node);
         }
         
+        {
+            veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot-0"));
+            veNode *node = _sceneManager->createNode("node0");
+            node->addRenderableObject(entity);
+            //node->addComponent(new KeyboardInputer);
+            veTransformer *transer = new veTransformer;
+            node->addComponent(transer);
+            transer->setScale(veVec3(2.0f));
+            root->addChild(node);
+        }
+        
         _sceneManager->getRootNode()->addChild(root);
-        _sceneManager->setAmbientColor(veVec3(0.0f));
     };
     ~ParticleSystemTest() {};
     

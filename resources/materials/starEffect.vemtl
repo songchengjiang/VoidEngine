@@ -1,12 +1,12 @@
 {
     "version": "1.0",
-    "name": “starEffect.vemtl",
+    "name": "starEffect.vemtl",
     "materials": [
         {
-            "name": “SF_MAT",
+            "name": "SF_MAT",
             "techniques": [
                 {
-                      "name": “SF_TECH",
+                      "name": "SF_TECH",
                       "passes": [
                         {
                             "depthTest": true,
@@ -16,21 +16,21 @@
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "defination": "#define ATTR_POSITION 0\n#define ATTR_TEXTURE_COORD0 1\n”,
-                                    "source": “shaders/ParticleSystem.vert",
+                                    "defination": "#define ATTR_POSITION 0\n#define ATTR_COLOR0 1\n#define ATTR_TEXTURE_COORD0 2\n",
+                                    "source": "shaders/ParticleSystem.vert",
                                     "u_ModelViewProjectMat": "MVP_MATRIX"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-				      "defination": "#define VE_USE_DIFFUSE_TEXTURE 1\n#define VE_USE_TEXTURES 1\n",
+                                    "defination": "#define VE_USE_DIFFUSE_TEXTURE 1\n#define VE_USE_TEXTURES 1\n",
                                     "source": "shaders/ParticleSystem.frag",
-				      "u_diffuseTex”: 0
+                                    "u_diffuseTex": 0
                                 }
                             ],
                             "textureUnits": [
                                 {
-                                    "name": “star.png",
-                                    "source": “textures/star.png",
+                                    "name": "star.png",
+                                    "source": "textures/star.png",
                                     "texType": "DIFFUSE_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "NEAREST_MIP_MAP_LINEAR"

@@ -6,7 +6,7 @@ static const veVec4 DEFAULT_COLOR = veVec4::WHITE;
 static const float DEFAULT_EMISSION_RATE = 10.0f;
 static const float DEFAULT_TIME_TO_LIVE = 3.0f;
 static const float DEFAULT_MASS = 1.0f;
-static const float DEFAULT_VELOCITY = 100.0f;
+static const float DEFAULT_VELOCITY = 10.0f;
 static const float DEFAULT_DURATION = 0.0f;
 static const float DEFAULT_REPEAT_DELAY = 0.0f;
 static const float DEFAULT_ANGLE = 20.0f;
@@ -160,6 +160,7 @@ void veEmitter::initParticleDirection(veParticle* particle)
         particle->direction = dir;
     }
     
+    particle->direction.normalize();
     particle->originalDirection = particle->direction;
 }
 
@@ -183,6 +184,7 @@ void veEmitter::initParticleMass(veParticle* particle)
 void veEmitter::initParticleColor(veParticle* particle)
 {
     particle->color = _color;
+    particle->originalColor = particle->color;
 }
 
 void veEmitter::initParticleTextureCoords(veParticle* particle)

@@ -29,16 +29,6 @@ void veQuatRenderer::updateBuffer(veRenderableObject *renderableObj, veCamera *c
     unsigned int vertexNumPerParticle = 4 * getVertexStride();
     if (_vertices.size() < particles.size() * vertexNumPerParticle){
         _vertices.resize(particles.size() * vertexNumPerParticle);
-        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-        
-        unsigned int stride = sizeof(GLfloat) * getVertexStride();
-        //v
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, 0);
-        glEnableVertexAttribArray(0);
-        
-        //tc
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid *)(sizeof(GLfloat) * 3));
-        glEnableVertexAttribArray(1);
     }
     _indices.clear();
     
@@ -63,6 +53,19 @@ void veQuatRenderer::updateBuffer(veRenderableObject *renderableObj, veCamera *c
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(_indices[0]), _indices.buffer(), GL_STATIC_DRAW);
     }
+    
+    unsigned int stride = sizeof(GLfloat) * getVertexStride();
+    //v
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, 0);
+    glEnableVertexAttribArray(0);
+    
+    //col
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (GLvoid *)(sizeof(GLfloat) * 3));
+    glEnableVertexAttribArray(1);
+    
+    //tc
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid *)(sizeof(GLfloat) * 6));
+    glEnableVertexAttribArray(2);
 }
 
 void veQuatRenderer::addQuatParticleToBuffer(unsigned int idx, veParticle *particle, const veVec3 &right, const veVec3 &up, const veVec3 &backward)
@@ -77,27 +80,31 @@ void veQuatRenderer::addQuatParticleToBuffer(unsigned int idx, veParticle *parti
     unsigned int vIdx = idx * 4 * getVertexStride(), iIdx = idx * 4;
     //leftBottom
     _vertices[vIdx++] = leftBottom.x(); _vertices[vIdx++] = leftBottom.y(); _vertices[vIdx++] = leftBottom.z();
+    _vertices[vIdx++] = particle->color.x(); _vertices[vIdx++] = particle->color.y(); _vertices[vIdx++] = particle->color.z();
     _vertices[vIdx++] = 0.0f; _vertices[vIdx++] = 0.0f;
     
     //leftTop
     _vertices[vIdx++] = leftTop.x(); _vertices[vIdx++] = leftTop.y(); _vertices[vIdx++] = leftTop.z();
+    _vertices[vIdx++] = particle->color.x(); _vertices[vIdx++] = particle->color.y(); _vertices[vIdx++] = particle->color.z();
     _vertices[vIdx++] = 0.0f; _vertices[vIdx++] = 1.0f;
     
     //rightBottom
     _vertices[vIdx++] = rightBottom.x(); _vertices[vIdx++] = rightBottom.y(); _vertices[vIdx++] = rightBottom.z();
+    _vertices[vIdx++] = particle->color.x(); _vertices[vIdx++] = particle->color.y(); _vertices[vIdx++] = particle->color.z();
     _vertices[vIdx++] = 1.0f; _vertices[vIdx++] = 0.0f;
     
     //rightTop
     _vertices[vIdx++] = rightTop.x(); _vertices[vIdx++] = rightTop.y(); _vertices[vIdx++] = rightTop.z();
+    _vertices[vIdx++] = particle->color.x(); _vertices[vIdx++] = particle->color.y(); _vertices[vIdx++] = particle->color.z();
     _vertices[vIdx++] = 1.0f; _vertices[vIdx++] = 1.0f;
     
     
-    _indices.push_back(iIdx); _indices.push_back(iIdx + 2); _indices.push_back(iIdx + 1);
-    _indices.push_back(iIdx); _indices.push_back(iIdx + 3); _indices.push_back(iIdx + 2);
+    _indices.push_back(iIdx); _indices.push_back(iIdx + 3); _indices.push_back(iIdx + 1);
+    _indices.push_back(iIdx); _indices.push_back(iIdx + 2); _indices.push_back(iIdx + 3);
     
 }
 
 unsigned int veQuatRenderer::getVertexStride() const
 {
-    return 3 + 2;
+    return 3 + 3 + 2;
 }
