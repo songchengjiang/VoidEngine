@@ -51,6 +51,7 @@
 		BE1A0B1C1BE24F0900A1A20D /* resources */ = {isa = PBXFileReference; lastKnownFileType = folder; name = resources; path = ../../resources; sourceTree = "<group>"; };
 		BE1B50871BB04DD70039A346 /* Tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Tests; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE1B50941BB04F580039A346 /* VoidEngine.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = VoidEngine.xcodeproj; sourceTree = "<group>"; };
+		BE30ABB81CD9E445009477C5 /* ParticleSystemTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleSystemTest.h; path = ../../Tests/ParticleSystemTest.h; sourceTree = "<group>"; };
 		BE412D051BF6312000206513 /* IntersectionTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IntersectionTest.h; path = ../../Tests/IntersectionTest.h; sourceTree = "<group>"; };
 		BE412D061BF6312000206513 /* PerformanceTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PerformanceTest.h; path = ../../Tests/PerformanceTest.h; sourceTree = "<group>"; };
 		BE412D071BF6312000206513 /* PostProcesserTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostProcesserTest.h; path = ../../Tests/PostProcesserTest.h; sourceTree = "<group>"; };
@@ -79,6 +80,7 @@
 			isa = PBXGroup;
 			children = (
 				BE1A0B1C1BE24F0900A1A20D /* resources */,
+				BE30ABB81CD9E445009477C5 /* ParticleSystemTest.h */,
 				BE0E4E701BB0451B0001AA36 /* main.cpp */,
 				BE0E4E6C1BB0451B0001AA36 /* BaseTest.h */,
 				BE0E4E6D1BB0451B0001AA36 /* CameraTest.h */,

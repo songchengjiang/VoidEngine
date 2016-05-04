@@ -36,7 +36,7 @@ public:
 	void setBoundingBox(const veBoundingBox &bbox) { _boundingBox = bbox; }
 	const veBoundingBox& getBoundingBox() const { return _boundingBox; }
 
-	const std::vector<veNode *> getParents() const { return _parents; }
+	const std::vector<veNode *>& getParents() const { return _parents; }
 
 	void dirtyBoundingBox() { _isDirtyBoundingBox = true; }
 

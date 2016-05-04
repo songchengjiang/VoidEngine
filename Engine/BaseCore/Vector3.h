@@ -39,6 +39,9 @@ public:
 	veVec3 crossProduct(const veVec3 &vec) const {
 		return veVec3(_y * vec._z - _z * vec._y, _z * vec._x - _x * vec._z, _x * vec._y - _y * vec._x);
 	}
+    
+    veVec3 perpendicular();
+    veVec3 randomDeviat(veReal angle, const veVec3 &up = veVec3::ZERO);
 
 	veReal normalize(){
 		veReal fLength = veMath::veSqrt(_x * _x + _y * _y + _z * _z);

@@ -150,6 +150,14 @@ vePostProcesser* veSceneManager::createPostProcesser(const std::string &name)
 	return postProcesser;
 }
 
+veParticleSystem* veSceneManager::createParticleSystem(const std::string &name)
+{
+    auto particleSystem = new veParticleSystem(this);
+    particleSystem->setName(name);
+    _particleSystemList.push_back(particleSystem);
+    return particleSystem;
+}
+
 void veSceneManager::removePostProcesser(const std::string &name)
 {
 	for (vePostProcesserList::iterator iter = _postProcesserList.begin(); iter != _postProcesserList.end(); ++iter) {

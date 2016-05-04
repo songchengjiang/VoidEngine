@@ -14,6 +14,7 @@
 #include "PostProcesser.h"
 #include "RenderPipeline.h"
 #include "Component.h"
+#include "EffectCore/ParticleSystem.h"
 
 #include <unordered_map>
 
@@ -62,6 +63,7 @@ public:
 	virtual veTexture* createTexture(const std::string &name, veTexture::TextureType texType = veTexture::TEXTURE_2D);
 	virtual veMaterialArray* createMaterialArray(const std::string &name);
 	virtual vePostProcesser* createPostProcesser(const std::string &name);
+    virtual veParticleSystem* createParticleSystem(const std::string &name);
 	virtual void removePostProcesser(const std::string &name);
 
 	virtual void requestRender(veNode *node) = 0;
@@ -112,21 +114,22 @@ protected:
 
 protected:
 
-	VE_Ptr<veNode> _root;
-	VE_Ptr<veSkyBox> _skyBox;
-	veCameraList _cameraList;
-	veLightListMap _lightListMap;
-	vePostProcesserList _postProcesserList;
+	VE_Ptr<veNode>              _root;
+	VE_Ptr<veSkyBox>            _skyBox;
+	veCameraList                _cameraList;
+	veLightListMap              _lightListMap;
+	vePostProcesserList         _postProcesserList;
+    veParticleSystemList        _particleSystemList;
 	VE_Ptr<veFrameBufferObject> _postProcesserFBO;
 	veVec3                      _ambient;
 	VE_Ptr<veRenderPipeline>    _renderPipeline;
 
-	VE_Ptr<veCamera> _mainCamera;
+	VE_Ptr<veCamera>                                 _mainCamera;
 	std::unordered_map<std::string, veBaseManager *> _managerList;
 
 	veComponentList _componentList;
 
-	veThreadPool _threadPool;
+	veThreadPool                         _threadPool;
 	std::mutex                           _requestQueueMutex;
 	veLoopQueue< std::function<void()> > _requestQueue;
 

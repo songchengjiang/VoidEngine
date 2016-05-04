@@ -31,5 +31,10 @@
 #include "FileCore/Printer.h"
 #include "FileCore/File.h"
 
+#include "EffectCore/ParticleSystem.h"
+#include "EffectCore/PointEmitter.h"
+#include "EffectCore/ColorAffector.h"
+#include "EffectCore/QuatRenderer.h"
+
 #include "Debuger/Debuger.h"
 #include "Debuger/OctreeDebuger.h"
