@@ -6,6 +6,7 @@
 veParticleRenderer::veParticleRenderer()
     : _vao(0)
     , _vbo(0)
+    , _ibo(0)
 {
 
 }
@@ -22,8 +23,10 @@ void veParticleRenderer::draw(veRenderCommand &command)
     if (!command.pass->apply(command))
         return;
     
-    glBindVertexArray(_vao);
-    glDrawElements(GL_TRIANGLES, GLsizei(_indices.size()), GL_UNSIGNED_SHORT, nullptr);
+    if (!_indices.empty()){
+        glBindVertexArray(_vao);
+        glDrawElements(GL_TRIANGLES, GLsizei(_indices.size()), GL_UNSIGNED_SHORT, nullptr);
+    }
 }
 
 void veParticleRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)

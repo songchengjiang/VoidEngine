@@ -16,6 +16,7 @@ vePass* vePass::CURRENT_PASS = nullptr;
 
 vePass::vePass()
 	: USE_VE_PTR_INIT
+, _renderPass(vePass::DEFERRED_PASS)
 	, _depthTest(true)
 	, _depthWirte(true)
 	, _cullFace(true)
@@ -47,7 +48,7 @@ bool vePass::apply(const veRenderCommand &command)
 	//if (CURRENT_PASS == this)
 	//	return true;
 	//CURRENT_PASS = this;
-
+    
 	unsigned int texUnit = 0;
 	for (auto &tex : _textures) {
 		glActiveTexture(GL_TEXTURE0 + texUnit);

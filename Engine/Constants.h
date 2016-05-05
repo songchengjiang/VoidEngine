@@ -126,7 +126,7 @@ static const std::string DECR_KEY = "DECR";
 static const std::string DECR_WRAP_KEY = "DECR_WRAP";
 static const std::string INVERT_KEY = "INVERT";
 
-static const std::string RENDERPATH_KEY = "renderPath";
+static const std::string RENDERPASS_KEY = "renderPass";
 static const std::string FORWARD_KEY = "FORWARD";
 static const std::string DEFERRED_KEY = "DEFERRED";
 static const std::string VIEWPORT_KEY = "viewport";

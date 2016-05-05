@@ -43,8 +43,8 @@ private:
 		//	_camera->setName((*_doucument)[NAME_KEY.c_str()].GetString());
 		//}
 		if (!_camera) return;
-		if ((*_doucument).HasMember(RENDERPATH_KEY.c_str())) {
-			const char *str = (*_doucument)[RENDERPATH_KEY.c_str()].GetString();
+		if ((*_doucument).HasMember(RENDERPASS_KEY.c_str())) {
+			const char *str = (*_doucument)[RENDERPASS_KEY.c_str()].GetString();
 			if (strcmp(FORWARD_KEY.c_str(), str) == 0) {
 				_camera->setRenderPath(veCamera::RenderPath::FORWARD_PATH);
 			}

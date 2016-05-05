@@ -1,6 +1,5 @@
 #include "RenderPipeline.h"
 #include "SceneManager.h"
-#include "RenderQueue.h"
 #include "Camera.h"
 #include "Constants.h"
 
@@ -88,39 +87,43 @@ void veRenderPipeline::fillRenderQueues(veCamera *camera)
 
 void veRenderPipeline::sortRenderQueues(veCamera *camera)
 {
-	if (camera->isVisible() && !camera->getRenderQueue()->renderCommandList.empty()) {
-		//_sceneManager->enqueueTaskToThread(nullptr, nullptr, [camera] {
-		for (auto &renderPass : camera->getRenderQueue()->renderCommandList) {
-			auto &renderList = renderPass.second;
-			auto bgQueue = renderList.find(veRenderQueue::RENDER_QUEUE_BACKGROUND);
-			if (bgQueue != renderList.end()) {
-				if (!bgQueue->second.empty()) {
-					bgQueue->second.quickSort(PASS_SORT);
-				}
-			}
-
-			auto entityQueue = renderList.find(veRenderQueue::RENDER_QUEUE_ENTITY);
-			if (entityQueue != renderList.end()) {
-				if (!entityQueue->second.empty()) {
-					entityQueue->second.quickSort(ENTITY_SORT);
-				}
-			}
-
-			auto tpQueue = renderList.find(veRenderQueue::RENDER_QUEUE_TRANSPARENT);
-			if (tpQueue != renderList.end()) {
-				if (!tpQueue->second.empty()) {
-					tpQueue->second.quickSort(TRANSPARENT_SORT);
-				}
-			}
-
-			auto olQueue = renderList.find(veRenderQueue::RENDER_QUEUE_OVERLAY);
-			if (olQueue != renderList.end()) {
-				if (!olQueue->second.empty()) {
-					olQueue->second.quickSort(OVERLAY_SORT);
-				}
-			}
-		}
-		//});
+    static auto renderGroupSortFunc = [&](veRenderQueue::RenderGroup &rg){
+        if (!rg.empty()){
+            for (auto &renderPass : rg) {
+                auto &renderList = renderPass.second;
+                auto bgQueue = renderList.find(veRenderQueue::RENDER_QUEUE_BACKGROUND);
+                if (bgQueue != renderList.end()) {
+                    if (!bgQueue->second.empty()) {
+                        bgQueue->second.quickSort(PASS_SORT);
+                    }
+                }
+                
+                auto entityQueue = renderList.find(veRenderQueue::RENDER_QUEUE_ENTITY);
+                if (entityQueue != renderList.end()) {
+                    if (!entityQueue->second.empty()) {
+                        entityQueue->second.quickSort(ENTITY_SORT);
+                    }
+                }
+                
+                auto tpQueue = renderList.find(veRenderQueue::RENDER_QUEUE_TRANSPARENT);
+                if (tpQueue != renderList.end()) {
+                    if (!tpQueue->second.empty()) {
+                        tpQueue->second.quickSort(TRANSPARENT_SORT);
+                    }
+                }
+                
+                auto olQueue = renderList.find(veRenderQueue::RENDER_QUEUE_OVERLAY);
+                if (olQueue != renderList.end()) {
+                    if (!olQueue->second.empty()) {
+                        olQueue->second.quickSort(OVERLAY_SORT);
+                    }
+                }
+            }
+        }
+    };
+	if (camera->isVisible()) {
+        renderGroupSortFunc(camera->getRenderQueue()->deferredRenderGroup);
+        renderGroupSortFunc(camera->getRenderQueue()->forwardRenderGroup);
 	}
 }
 
@@ -145,15 +148,19 @@ void veRenderPipeline::renderCameras()
 	}
 }
 
-void veRenderPipeline::draw(veCamera *camera, const std::function<bool(veRenderCommand &command)> &callback)
+void veRenderPipeline::prepareForDraws(veCamera *camera)
 {
-	auto &vp = camera->getViewport();
-	auto &clearColor = camera->getClearColor();
-	glViewport(vp.x * VE_DEVICE_PIXEL_RATIO, vp.y * VE_DEVICE_PIXEL_RATIO, vp.width * VE_DEVICE_PIXEL_RATIO, vp.height * VE_DEVICE_PIXEL_RATIO);
-	glClear(camera->getClearMask());
-	glClearColor(clearColor.r(), clearColor.g(), clearColor.b(), clearColor.a());
-	if (!camera->getRenderQueue()->renderCommandList.empty()) {
-		for (auto &renderPass : camera->getRenderQueue()->renderCommandList) {
+   	auto &vp = camera->getViewport();
+    auto &clearColor = camera->getClearColor();
+    glViewport(vp.x * VE_DEVICE_PIXEL_RATIO, vp.y * VE_DEVICE_PIXEL_RATIO, vp.width * VE_DEVICE_PIXEL_RATIO, vp.height * VE_DEVICE_PIXEL_RATIO);
+    glClear(camera->getClearMask());
+    glClearColor(clearColor.r(), clearColor.g(), clearColor.b(), clearColor.a());
+}
+
+void veRenderPipeline::draw(veCamera *camera, veRenderQueue::RenderGroup &rg, const std::function<bool(veRenderCommand &command)> &callback)
+{
+	if (!rg.empty()) {
+		for (auto &renderPass : rg) {
 			auto &renderList = renderPass.second;
 			for (auto &rq : renderList) {
 				size_t sz = rq.second.size();
@@ -168,7 +175,7 @@ void veRenderPipeline::draw(veCamera *camera, const std::function<bool(veRenderC
 				}
 			}
 		}
-		camera->getRenderQueue()->renderCommandList.clear();
+		rg.clear();
 	}
 }
 
@@ -177,10 +184,9 @@ void veRenderPipeline::renderScene(veCamera *camera, bool isMainCamera)
 	if (camera->getFrameBufferObject()) {
 		camera->getFrameBufferObject()->bind(camera->getClearMask());
 	}
-	auto &clearColor = camera->getClearColor();
-	glClear(camera->getClearMask());
-	glClearColor(clearColor.r(), clearColor.g(), clearColor.b(), clearColor.a());
-	draw(camera);
+    prepareForDraws(camera);
+    draw(camera, camera->getRenderQueue()->deferredRenderGroup);
+	draw(camera, camera->getRenderQueue()->forwardRenderGroup);
 	if (camera->getFrameBufferObject()) {
 		camera->getFrameBufferObject()->unBind();
 	}
@@ -190,11 +196,7 @@ void veRenderPipeline::renderDirectionalLightShadow(veLight *light)
 {
 	if (!light->isShadowEnabled()) return;
 	auto dLight = static_cast<veDirectionalLight *>(light);
-	veRenderState::instance()->resetState();
-	_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dLight->getShadowTexture());
-	_shadowingFBO->bind(GL_DEPTH_BUFFER_BIT);
-	glClear(GL_DEPTH_BUFFER_BIT);
-	draw(dLight->getShadowCamera(), [this](veRenderCommand &command) -> bool {
+    static auto shadowPass = [this](veRenderCommand &command) -> bool {
 		if (command.pass->castShadow()) {
 			auto pass = this->getOrCreateDirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
 			pass->cullFace() = command.pass->cullFace();
@@ -203,7 +205,15 @@ void veRenderPipeline::renderDirectionalLightShadow(veLight *light)
 			return true;
 		}
 		return false;
-	});
+    };
+    
+	veRenderState::instance()->resetState();
+	_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dLight->getShadowTexture());
+	_shadowingFBO->bind(GL_DEPTH_BUFFER_BIT);
+	//glClear(GL_DEPTH_BUFFER_BIT);
+    prepareForDraws(dLight->getShadowCamera());
+	draw(dLight->getShadowCamera(), dLight->getShadowCamera()->getRenderQueue()->deferredRenderGroup, shadowPass);
+    draw(dLight->getShadowCamera(), dLight->getShadowCamera()->getRenderQueue()->forwardRenderGroup, shadowPass);
 	_shadowingFBO->unBind();
 }
 
@@ -211,21 +221,25 @@ void veRenderPipeline::renderPointLightShadow(veLight *light)
 {
 	if (!light->isShadowEnabled()) return;
 	auto pLight = static_cast<vePointLight *>(light);
+    static auto shadowPass = [this](veRenderCommand &command) -> bool {
+        if (command.pass->castShadow()) {
+            auto pass = this->getOrCreateOmnidirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
+            pass->cullFace() = command.pass->cullFace();
+            pass->cullFaceMode() = command.pass->cullFaceMode();
+            command.pass = pass;
+            return true;
+        }
+        return false;
+    };
+    
 	for (unsigned short i = 0; i < 6; ++i) {
 		veRenderState::instance()->resetState();
 		_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, pLight->getShadowTexture());
 		_shadowingFBO->bind(GL_DEPTH_BUFFER_BIT);
-		glClear(GL_DEPTH_BUFFER_BIT);
-		draw(pLight->getShadowCamera(i), [this](veRenderCommand &command) -> bool {
-			if (command.pass->castShadow()) {
-				auto pass = this->getOrCreateOmnidirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
-				pass->cullFace() = command.pass->cullFace();
-				pass->cullFaceMode() = command.pass->cullFaceMode();
-				command.pass = pass;
-				return true;
-			}
-			return false;
-		});
+		//glClear(GL_DEPTH_BUFFER_BIT);
+        prepareForDraws(pLight->getShadowCamera(i));
+		draw(pLight->getShadowCamera(i), pLight->getShadowCamera(i)->getRenderQueue()->deferredRenderGroup, shadowPass);
+        //draw(pLight->getShadowCamera(i), pLight->getShadowCamera(i)->getRenderQueue()->forwardRenderGroup, shadowPass);
 	}
 	_shadowingFBO->unBind();
 }
@@ -234,11 +248,7 @@ void veRenderPipeline::renderSpotLightShadow(veLight *light)
 {
 	if (!light->isShadowEnabled()) return;
 	auto sLight = static_cast<veSpotLight *>(light);
-	veRenderState::instance()->resetState();
-	_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, sLight->getShadowTexture());
-	_shadowingFBO->bind(GL_DEPTH_BUFFER_BIT);
-	glClear(GL_DEPTH_BUFFER_BIT);
-	draw(sLight->getShadowCamera(), [this](veRenderCommand &command) {
+    static auto shadowPass = [this](veRenderCommand &command) {
 		if (command.pass->castShadow()) {
 			auto pass = this->getOrCreateDirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
 			pass->cullFace() = command.pass->cullFace();
@@ -247,7 +257,15 @@ void veRenderPipeline::renderSpotLightShadow(veLight *light)
 			return true;
 		}
 		return false;
-	});
+    };
+    
+	veRenderState::instance()->resetState();
+	_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, sLight->getShadowTexture());
+	_shadowingFBO->bind(GL_DEPTH_BUFFER_BIT);
+	//glClear(GL_DEPTH_BUFFER_BIT);
+    prepareForDraws(sLight->getShadowCamera());
+	draw(sLight->getShadowCamera(), sLight->getShadowCamera()->getRenderQueue()->deferredRenderGroup, shadowPass);
+    draw(sLight->getShadowCamera(), sLight->getShadowCamera()->getRenderQueue()->forwardRenderGroup, shadowPass);
 	_shadowingFBO->unBind();
 }
 

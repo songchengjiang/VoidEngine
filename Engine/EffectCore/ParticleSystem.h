@@ -14,6 +14,7 @@ public:
     ~veParticleSystem();
     
     virtual void update(veNode *node, veSceneManager *sm) override;
+    virtual void setRenderer(veRenderer *renderer) override { _renderer = renderer; _renderer->setRenderStageMask(veRenderer::RENDERING);}
     
     void start();
     void pause();

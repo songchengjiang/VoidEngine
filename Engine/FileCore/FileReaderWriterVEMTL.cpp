@@ -97,6 +97,14 @@ private:
 	}
 
 	void readRenderState(const Value &passVal, vePass *pass) {
+        if (passVal.HasMember(RENDERPASS_KEY.c_str())){
+            std::string renderPass = passVal[RENDERPASS_KEY.c_str()].GetString();
+            if (renderPass == DEFERRED_KEY){
+                pass->setRenderPass(vePass::DEFERRED_PASS);
+            }else if(renderPass == FORWARD_KEY){
+                pass->setRenderPass(vePass::FORWARD_PASS);
+            }
+        }
 		if (passVal.HasMember(DEPTHTEST_KEY.c_str()))
 			pass->depthTest() = passVal[DEPTHTEST_KEY.c_str()].GetBool();
 		if (passVal.HasMember(DEPTHWRITE_KEY.c_str()))
@@ -294,7 +302,7 @@ private:
 
 							if (tempTex) {
 								if (tempTex->getMipmapLevels().empty()) {
-									texture->storage(tempTex->getWidth(), tempTex->getHeight(), tempTex->getDepth(), tempTex->getInternalFormat(), tempTex->getPixelFormat(), tempTex->getDataType(), tempTex->getData());
+									texture->storage(tempTex->getWidth(), tempTex->getHeight(), tempTex->getDepth(), tempTex->getInternalFormat(), tempTex->getPixelFormat(), tempTex->getDataType(), tempTex->getData(), tempTex->getMipMapLevelCount());
 								}
 								else {
 									texture->storage(tempTex->getMipmapLevels(), tempTex->getInternalFormat(), tempTex->getPixelFormat(), tempTex->getDataType());

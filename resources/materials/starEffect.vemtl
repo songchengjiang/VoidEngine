@@ -9,9 +9,10 @@
                       "name": "SF_TECH",
                       "passes": [
                         {
+                            "renderPass": "FORWARD",
                             "depthTest": true,
                             "depthWrite": false,
-                            "cullFace": true,
+                            "cullFace": false,
                             "blendFunc": ["SRC_ALPHA", "ONE"],
                             "shaders": [
                                 {

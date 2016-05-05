@@ -382,7 +382,8 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, bool isMainCamera)
 	params.RT2->storage(size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO, 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	params.FBO->setFrameBufferSize(size * VE_DEVICE_PIXEL_RATIO);
 	params.FBO->bind(deferredClearMask);
-	draw(camera);
+    prepareForDraws(camera);
+	draw(camera, camera->getRenderQueue()->deferredRenderGroup);
 	params.FBO->unBind();
 
 	renderLights(camera);
@@ -398,7 +399,8 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, bool isMainCamera)
 	params.fullScreenFBO->bind(deferredClearMask);
 	unsigned int defaultClearMask = camera->getClearMask();
 	camera->setClearMask(GL_COLOR_BUFFER_BIT);
-	draw(camera);
+    prepareForDraws(camera);
+	draw(camera, camera->getRenderQueue()->forwardRenderGroup);
 	camera->setClearMask(defaultClearMask);
 	params.fullScreenFBO->unBind();
 
@@ -416,7 +418,7 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, bool isMainCamera)
 			processer->process(this, _postProcesserFBO.get(), camera);
 		}
 	}
-	draw(camera);
+	draw(camera, camera->getRenderQueue()->forwardRenderGroup);
 	if (camera->getFrameBufferObject())
 		camera->getFrameBufferObject()->unBind();
 }
@@ -458,6 +460,7 @@ veDeferredRenderPipeline::CameraRenderParams& veDeferredRenderPipeline::getCamer
 		fullScreenTech->addPass(pass);
 		params.fullScreenSurface->setMaterialArray(fullScreenMats);
 
+        pass->setRenderPass(vePass::FORWARD_PASS);
 		pass->depthTest() = false;
 		pass->depthWrite() = false;
 		pass->cullFace() = true;
@@ -490,6 +493,7 @@ veMaterial* veDeferredRenderPipeline::createDirectionalLightMaterial(veLight *li
 	technique->addPass(pass);
 
 	initLightCommomParams(light, pass);
+    pass->setRenderPass(vePass::FORWARD_PASS);
 	pass->depthTest() = false;
 	pass->depthWrite() = false;
 	pass->stencilTest() = false;
@@ -515,6 +519,7 @@ veMaterial* veDeferredRenderPipeline::createPointLightMaterial(veLight *light)
 	technique->addPass(pass0);
 	technique->addPass(pass1);
 
+    pass0->setRenderPass(vePass::FORWARD_PASS);
 	pass0->depthTest() = true;
 	pass0->depthWrite() = false;
 	pass0->stencilTest() = true;
@@ -531,6 +536,7 @@ veMaterial* veDeferredRenderPipeline::createPointLightMaterial(veLight *light)
 	});
 
 	initLightCommomParams(light, pass1);
+    pass1->setRenderPass(vePass::FORWARD_PASS);
 	pass1->depthTest() = false;
 	pass1->depthWrite() = false;
 	pass1->stencilTest() = true;
@@ -562,6 +568,7 @@ veMaterial* veDeferredRenderPipeline::createSpotLightMaterial(veLight *light)
 	technique->addPass(pass0);
 	technique->addPass(pass1);
 
+    pass0->setRenderPass(vePass::FORWARD_PASS);
 	pass0->depthTest() = true;
 	pass0->depthWrite() = false;
 	pass0->stencilTest() = true;
@@ -578,6 +585,7 @@ veMaterial* veDeferredRenderPipeline::createSpotLightMaterial(veLight *light)
 	});
 
 	initLightCommomParams(light, pass1);
+    pass1->setRenderPass(vePass::FORWARD_PASS);
 	pass1->depthTest() = false;
 	pass1->depthWrite() = false;
 	pass1->stencilTest() = true;

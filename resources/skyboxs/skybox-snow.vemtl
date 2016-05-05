@@ -9,6 +9,7 @@
                     "name": "normal",
                     "passes": [
                         {
+                            "renderPass": "FORWARD",
                             "depthTest": true,
                             "depthWrite": true,
                             "cullFace": false,

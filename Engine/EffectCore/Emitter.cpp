@@ -2,7 +2,6 @@
 #include "ParticleSystem.h"
 #include "KernelCore/Node.h"
 
-static const veVec4 DEFAULT_COLOR = veVec4::WHITE;
 static const float DEFAULT_EMISSION_RATE = 10.0f;
 static const float DEFAULT_TIME_TO_LIVE = 3.0f;
 static const float DEFAULT_MASS = 1.0f;
@@ -10,9 +9,9 @@ static const float DEFAULT_VELOCITY = 10.0f;
 static const float DEFAULT_DURATION = 0.0f;
 static const float DEFAULT_REPEAT_DELAY = 0.0f;
 static const float DEFAULT_ANGLE = 20.0f;
-static const float DEFAULT_WIDTH = 1.0f;
-static const float DEFAULT_HEIGHT = 1.0f;
-static const float DEFAULT_DEPTH = 1.0f;
+static const float DEFAULT_WIDTH = 5.0f;
+static const float DEFAULT_HEIGHT = 5.0f;
+static const float DEFAULT_DEPTH = 5.0f;
 
 #define GET_VALUE(VAL, X, DEF_VAL) VAL? VAL->getValue(X): DEF_VAL
 
@@ -20,7 +19,7 @@ veEmitter::veEmitter()
     : USE_VE_PTR_INIT
     , _isEnabled(true)
     , _isKeepLocalParticles(false)
-    , _color(DEFAULT_COLOR)
+    , _color(veVec4::WHITE)
     , _remainder(0.0)
     , _durationRemain(0.0)
     , _repeatDelayRemain(0.0)

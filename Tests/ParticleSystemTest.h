@@ -13,6 +13,10 @@ public:
             ps->setMaterialArray(psMats);
             auto emitter = new vePointEmitter;
             ps->addEmitter(emitter);
+            auto affector = new veColorAffector;
+            affector->addColor(0.0f, veVec4(1.0f, 1.0f, 0.0f, 1.0f));
+            affector->addColor(1.0f, veVec4(0.0f, 1.0f, 0.0f, 1.0f));
+            ps->addAffector(affector);
             auto renderer = new veQuatRenderer;
             ps->setRenderer(renderer);
             ps->start();
@@ -23,17 +27,6 @@ public:
             veTransformer *transer = new veTransformer;
             node->addComponent(transer);
             transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
-            root->addChild(node);
-        }
-        
-        {
-            veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot-0"));
-            veNode *node = _sceneManager->createNode("node0");
-            node->addRenderableObject(entity);
-            //node->addComponent(new KeyboardInputer);
-            veTransformer *transer = new veTransformer;
-            node->addComponent(transer);
-            transer->setScale(veVec3(2.0f));
             root->addChild(node);
         }
         

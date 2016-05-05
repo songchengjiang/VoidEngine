@@ -175,14 +175,10 @@ void veDebuger::initMaterial(veSceneManager *sm)
 	}";
 
 	const char *F_SHADER = " \
-	layout(location=0) out vec4 RT0;\n \
-	layout(location=1) out vec4 RT1;\n \
-	layout(location=2) out vec4 RT2;\n \
+	layout(location=0) out vec4 fragColor;\n \
 	in vec4 v_color; \n \
 	void main() {  \n \
-		RT0 = vec4(0.0);         \n \
-		RT1.xyz = v_color.xyz;   \n \
-		RT2 = vec4(0.0);         \n \
+		fragColor = v_color;   \n \
 	}";
 
 	_materials = sm->createMaterialArray(_name + "-matAry");
@@ -192,6 +188,7 @@ void veDebuger::initMaterial(veSceneManager *sm)
 	material->addTechnique(tech);
 	tech->addPass(pass);
 
+    pass->setRenderPass(vePass::FORWARD_PASS);
 	pass->depthTest() = true;
 	pass->depthWrite() = false;
 	pass->cullFace() = true;

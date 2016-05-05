@@ -4,6 +4,7 @@
 #include <mutex>
 #include "Prerequisites.h"
 #include "FrameBufferObject.h"
+#include "RenderQueue.h"
 #include "Node.h"
 
 class veSceneManager;
@@ -17,7 +18,8 @@ public:
 	USE_VE_PTR;
 
 	void rendering();
-	void draw(veCamera *camera, const std::function<bool(veRenderCommand &command)> &callback = nullptr);
+    void prepareForDraws(veCamera *camera);
+    void draw(veCamera *camera, veRenderQueue::RenderGroup &rg, const std::function<bool(veRenderCommand &command)> &callback = nullptr);
 
 	bool isNodeVisible(veNode *node);
 

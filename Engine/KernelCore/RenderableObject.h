@@ -28,7 +28,7 @@ public:
 
 	void setVisible(bool isVis) { _isVisible = isVis; }
 	bool isVisible() const { return _isVisible; };
-	void setRenderer(veRenderer *renderer) { _renderer = renderer; }
+	virtual void setRenderer(veRenderer *renderer) { _renderer = renderer; }
 	veRenderer* getRenderer() const { return _renderer.get(); }
 	virtual void setMaterialArray(veMaterialArray *material) { _materials = material; }
 	veMaterialArray* getMaterialArray() { return _materials.get(); }

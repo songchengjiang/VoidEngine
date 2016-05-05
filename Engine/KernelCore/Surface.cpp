@@ -41,17 +41,12 @@ const char* veSurface::COMMON_F_SHADER = " \
 	uniform float u_alphaThreshold; \n \
 	in vec3 v_normal; \n \
 	in vec2 v_texcoord; \n \
-	layout(location=0) out vec4 RT0;\n \
-	layout(location=1) out vec4 RT1;\n \
-	layout(location=2) out vec4 RT2;\n \
+	layout(location=0) out vec4 fragColor;\n \
 	void main() {  \n \
 		vec4 texColor = texture(u_texture, v_texcoord); \n \
 		if (texColor.a < u_alphaThreshold) \n \
 			discard;                      \n \
-		RT0 = vec4(0.0);                 \n \
-		RT1.xyz = (u_Color * texColor).xyz;        \n \
-		RT2 = vec4(0.0);                 \n \
-		//fragColor = u_Color * texColor; \n \
+		fragColor = u_Color * texColor; \n \
 	}";
 
 veSurface::veSurface(veSceneManager *sm)
@@ -121,6 +116,7 @@ void veSurface::initDefaultMaterial()
 	material->addTechnique(tech);
 	tech->addPass(pass);
 
+    pass->setRenderPass(vePass::FORWARD_PASS);
 	if (_type == SURFACE) {
 		pass->depthTest() = true;
 		pass->depthWrite() = true;

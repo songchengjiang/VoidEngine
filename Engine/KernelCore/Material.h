@@ -20,6 +20,11 @@ class VE_EXPORT vePass
 public:
 	static vePass* CURRENT_PASS;
 	typedef std::function<void()> ApplyFunctionCallback;
+    
+    enum RenderPass{
+        DEFERRED_PASS,
+        FORWARD_PASS,
+    };
 
 	enum TextureType
 	{
@@ -43,6 +48,9 @@ public:
 	void visit(const veRenderCommand &command);
 	bool apply(const veRenderCommand &command);
 
+    void setRenderPass(RenderPass rp) { _renderPass = rp; }
+    RenderPass getRenderPass() const { return _renderPass; }
+    
 	const bool& depthTest() const { return _depthTest; };
 	bool& depthTest() { return _depthTest; }
 
@@ -109,6 +117,7 @@ private:
 
 private:
 
+    RenderPass _renderPass;
 	bool _depthTest;
 	bool _depthWirte;
 	bool _stencilTest;
