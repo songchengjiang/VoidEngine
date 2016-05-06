@@ -2,16 +2,16 @@
 #include "ParticleSystem.h"
 #include "KernelCore/Node.h"
 
-static const float DEFAULT_EMISSION_RATE = 10.0f;
+static const float DEFAULT_EMISSION_RATE = 50.0f;
 static const float DEFAULT_TIME_TO_LIVE = 3.0f;
 static const float DEFAULT_MASS = 1.0f;
-static const float DEFAULT_VELOCITY = 10.0f;
+static const float DEFAULT_VELOCITY = 2.0f;
 static const float DEFAULT_DURATION = 0.0f;
 static const float DEFAULT_REPEAT_DELAY = 0.0f;
-static const float DEFAULT_ANGLE = 20.0f;
-static const float DEFAULT_WIDTH = 5.0f;
-static const float DEFAULT_HEIGHT = 5.0f;
-static const float DEFAULT_DEPTH = 5.0f;
+static const float DEFAULT_ANGLE = veMath::veRadian(20.0f);
+static const float DEFAULT_WIDTH = 1.0f;
+static const float DEFAULT_HEIGHT = 1.0f;
+static const float DEFAULT_DEPTH = 1.0f;
 
 #define GET_VALUE(VAL, X, DEF_VAL) VAL? VAL->getValue(X): DEF_VAL
 
@@ -229,7 +229,7 @@ void veEmitter::getOrientation(veQuat &start, veQuat &end)
 
 void veEmitter::generateAngle(veReal &angle)
 {
-    angle = veMath::veRadian(GET_VALUE(_angle.get(), _system->getTimeElapsedSinceStart(), 0.f));
+    angle = GET_VALUE(_angle.get(), _system->getTimeElapsedSinceStart(), 0.f);
     if (_angle->getType() == veValue::Type::VAL_FIXED){
         angle = veMath::veRandomUnitization() * angle;
     }

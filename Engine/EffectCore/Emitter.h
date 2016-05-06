@@ -45,8 +45,8 @@ public:
     void setAngle(veValue *value) { _angle = value; }
     veValue* getAngle() const { return _angle.get(); }
     
-    void setEmission(veValue *value) { _emissionRate = value; }
-    veValue* getEmission() const { return _emissionRate.get(); }
+    void setEmissionRate(veValue *value) { _emissionRate = value; }
+    veValue* getEmissionRate() const { return _emissionRate.get(); }
     
     void setTotalTimeToLive(veValue *value) { _totalTimeToLive = value; }
     veValue* getTotalTimeToLive() const { return _totalTimeToLive.get(); }
@@ -63,20 +63,20 @@ public:
     void setRepeatDelay(veValue *value) { _repeatDelay = value; initTimeBase();  }
     veValue* getRepeatDelay() const { return _repeatDelay.get(); }
     
-    void setColor(const veVec4 &col) { _color = col; }
-    const veVec4& getColor() const { return _color; }
+    void setParticleColor(const veVec4 &col) { _color = col; }
+    const veVec4& getParticleColor() const { return _color; }
     
     void setOrientation(const veQuat &start, const veQuat &end);
     void getOrientation(veQuat &start, veQuat &end);
     
-    void setWidth(veValue *value) { _width = value; }
-    veValue* getWidth() const { return _width.get(); }
+    void setParticleWidth(veValue *value) { _width = value; }
+    veValue* getParticleWidth() const { return _width.get(); }
     
-    void setHeight(veValue *value) { _height = value; }
-    veValue* getHeight() const { return _height.get(); }
+    void setParticleHeight(veValue *value) { _height = value; }
+    veValue* getParticleHeight() const { return _height.get(); }
     
-    void setDepth(veValue *value) { _depth = value; }
-    veValue* getDepth() const { return _depth.get(); }
+    void setParticleDepth(veValue *value) { _depth = value; }
+    veValue* getParticleDepth() const { return _depth.get(); }
 
     void makeLocalParticles(veParticle* particle);
     

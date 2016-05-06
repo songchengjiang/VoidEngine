@@ -18,6 +18,32 @@
 		BE05C5291CD342BC0022D797 /* Value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE05C5281CD342BC0022D797 /* Value.cpp */; };
 		BE05C52D1CD34C150022D797 /* Spline.h in Headers */ = {isa = PBXBuildFile; fileRef = BE05C52C1CD34C130022D797 /* Spline.h */; };
 		BE05C52F1CD34C270022D797 /* Spline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE05C52E1CD34C270022D797 /* Spline.cpp */; };
+		BE16BCD61CDC3630006E7146 /* BoxEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BCD51CDC3630006E7146 /* BoxEmitter.h */; };
+		BE16BCD81CDC363E006E7146 /* BoxEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BCD71CDC363E006E7146 /* BoxEmitter.cpp */; };
+		BE16BCDA1CDC3ACD006E7146 /* CircleEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BCD91CDC3ACD006E7146 /* CircleEmitter.h */; };
+		BE16BCDC1CDC3ADD006E7146 /* CircleEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BCDB1CDC3ADD006E7146 /* CircleEmitter.cpp */; };
+		BE16BCDE1CDC485B006E7146 /* LineEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BCDD1CDC485B006E7146 /* LineEmitter.h */; };
+		BE16BCE01CDC486B006E7146 /* LineEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BCDF1CDC486B006E7146 /* LineEmitter.cpp */; };
+		BE16BCE21CDC5C9C006E7146 /* SphereEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BCE11CDC5C9C006E7146 /* SphereEmitter.h */; };
+		BE16BCE41CDC5CA9006E7146 /* SphereEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BCE31CDC5CA9006E7146 /* SphereEmitter.cpp */; };
+		BE16BCE61CDC6D4B006E7146 /* ScaleAffector.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BCE51CDC6D4B006E7146 /* ScaleAffector.h */; };
+		BE16BCE81CDC6D59006E7146 /* ScaleAffector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BCE71CDC6D59006E7146 /* ScaleAffector.cpp */; };
+		BE16BCEA1CDC70EC006E7146 /* ScaleVelocityAffector.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BCE91CDC70EC006E7146 /* ScaleVelocityAffector.h */; };
+		BE16BCEC1CDC70FB006E7146 /* ScaleVelocityAffector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BCEB1CDC70FB006E7146 /* ScaleVelocityAffector.cpp */; };
+		BE16BCEE1CDC757D006E7146 /* GravityAffector.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BCED1CDC757D006E7146 /* GravityAffector.h */; };
+		BE16BCF01CDC7589006E7146 /* GravityAffector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BCEF1CDC7589006E7146 /* GravityAffector.cpp */; };
+		BE16BCF21CDC7C9D006E7146 /* JetAffector.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BCF11CDC7C9D006E7146 /* JetAffector.h */; };
+		BE16BCF41CDC7CAB006E7146 /* JetAffector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BCF31CDC7CAB006E7146 /* JetAffector.cpp */; };
+		BE16BCF71CDC7EDA006E7146 /* FlockCenteringAffector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BCF51CDC7EDA006E7146 /* FlockCenteringAffector.cpp */; };
+		BE16BCF81CDC7EDA006E7146 /* FlockCenteringAffector.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BCF61CDC7EDA006E7146 /* FlockCenteringAffector.h */; };
+		BE16BCFB1CDC80FC006E7146 /* VortexAffector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BCF91CDC80FC006E7146 /* VortexAffector.cpp */; };
+		BE16BCFC1CDC80FC006E7146 /* VortexAffector.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BCFA1CDC80FC006E7146 /* VortexAffector.h */; };
+		BE16BCFE1CDC8825006E7146 /* BaseForceAffector.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BCFD1CDC8825006E7146 /* BaseForceAffector.h */; };
+		BE16BD001CDC8831006E7146 /* BaseForceAffector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BCFF1CDC8831006E7146 /* BaseForceAffector.cpp */; };
+		BE16BD031CDC897F006E7146 /* SineForceAffector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BD011CDC897F006E7146 /* SineForceAffector.cpp */; };
+		BE16BD041CDC897F006E7146 /* SineForceAffector.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BD021CDC897F006E7146 /* SineForceAffector.h */; };
+		BE16BD071CDC92BF006E7146 /* LinearForceAffector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BD051CDC92BF006E7146 /* LinearForceAffector.cpp */; };
+		BE16BD081CDC92BF006E7146 /* LinearForceAffector.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BD061CDC92BF006E7146 /* LinearForceAffector.h */; };
 		BE1A0AA91BE24C6F00A1A20D /* OctreeDebuger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AA71BE24C6F00A1A20D /* OctreeDebuger.cpp */; };
 		BE1A0AAA1BE24C6F00A1A20D /* OctreeDebuger.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AA81BE24C6F00A1A20D /* OctreeDebuger.h */; };
 		BE1A0AB61BE24D1000A1A20D /* AnimationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AAC1BE24D1000A1A20D /* AnimationManager.cpp */; };
@@ -202,6 +228,32 @@
 		BE0E4DC21BB02F530001AA36 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		BE0E4DC41BB02F5D0001AA36 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		BE0E4DC61BB02F6C0001AA36 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		BE16BCD51CDC3630006E7146 /* BoxEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoxEmitter.h; path = ../../Engine/EffectCore/BoxEmitter.h; sourceTree = "<group>"; };
+		BE16BCD71CDC363E006E7146 /* BoxEmitter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoxEmitter.cpp; path = ../../Engine/EffectCore/BoxEmitter.cpp; sourceTree = "<group>"; };
+		BE16BCD91CDC3ACD006E7146 /* CircleEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CircleEmitter.h; path = ../../Engine/EffectCore/CircleEmitter.h; sourceTree = "<group>"; };
+		BE16BCDB1CDC3ADD006E7146 /* CircleEmitter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CircleEmitter.cpp; path = ../../Engine/EffectCore/CircleEmitter.cpp; sourceTree = "<group>"; };
+		BE16BCDD1CDC485B006E7146 /* LineEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LineEmitter.h; path = ../../Engine/EffectCore/LineEmitter.h; sourceTree = "<group>"; };
+		BE16BCDF1CDC486B006E7146 /* LineEmitter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LineEmitter.cpp; path = ../../Engine/EffectCore/LineEmitter.cpp; sourceTree = "<group>"; };
+		BE16BCE11CDC5C9C006E7146 /* SphereEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SphereEmitter.h; path = ../../Engine/EffectCore/SphereEmitter.h; sourceTree = "<group>"; };
+		BE16BCE31CDC5CA9006E7146 /* SphereEmitter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SphereEmitter.cpp; path = ../../Engine/EffectCore/SphereEmitter.cpp; sourceTree = "<group>"; };
+		BE16BCE51CDC6D4B006E7146 /* ScaleAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScaleAffector.h; path = ../../Engine/EffectCore/ScaleAffector.h; sourceTree = "<group>"; };
+		BE16BCE71CDC6D59006E7146 /* ScaleAffector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScaleAffector.cpp; path = ../../Engine/EffectCore/ScaleAffector.cpp; sourceTree = "<group>"; };
+		BE16BCE91CDC70EC006E7146 /* ScaleVelocityAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScaleVelocityAffector.h; path = ../../Engine/EffectCore/ScaleVelocityAffector.h; sourceTree = "<group>"; };
+		BE16BCEB1CDC70FB006E7146 /* ScaleVelocityAffector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScaleVelocityAffector.cpp; path = ../../Engine/EffectCore/ScaleVelocityAffector.cpp; sourceTree = "<group>"; };
+		BE16BCED1CDC757D006E7146 /* GravityAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GravityAffector.h; path = ../../Engine/EffectCore/GravityAffector.h; sourceTree = "<group>"; };
+		BE16BCEF1CDC7589006E7146 /* GravityAffector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GravityAffector.cpp; path = ../../Engine/EffectCore/GravityAffector.cpp; sourceTree = "<group>"; };
+		BE16BCF11CDC7C9D006E7146 /* JetAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JetAffector.h; path = ../../Engine/EffectCore/JetAffector.h; sourceTree = "<group>"; };
+		BE16BCF31CDC7CAB006E7146 /* JetAffector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JetAffector.cpp; path = ../../Engine/EffectCore/JetAffector.cpp; sourceTree = "<group>"; };
+		BE16BCF51CDC7EDA006E7146 /* FlockCenteringAffector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FlockCenteringAffector.cpp; path = ../../Engine/EffectCore/FlockCenteringAffector.cpp; sourceTree = "<group>"; };
+		BE16BCF61CDC7EDA006E7146 /* FlockCenteringAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FlockCenteringAffector.h; path = ../../Engine/EffectCore/FlockCenteringAffector.h; sourceTree = "<group>"; };
+		BE16BCF91CDC80FC006E7146 /* VortexAffector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VortexAffector.cpp; path = ../../Engine/EffectCore/VortexAffector.cpp; sourceTree = "<group>"; };
+		BE16BCFA1CDC80FC006E7146 /* VortexAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VortexAffector.h; path = ../../Engine/EffectCore/VortexAffector.h; sourceTree = "<group>"; };
+		BE16BCFD1CDC8825006E7146 /* BaseForceAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseForceAffector.h; path = ../../Engine/EffectCore/BaseForceAffector.h; sourceTree = "<group>"; };
+		BE16BCFF1CDC8831006E7146 /* BaseForceAffector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BaseForceAffector.cpp; path = ../../Engine/EffectCore/BaseForceAffector.cpp; sourceTree = "<group>"; };
+		BE16BD011CDC897F006E7146 /* SineForceAffector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SineForceAffector.cpp; path = ../../Engine/EffectCore/SineForceAffector.cpp; sourceTree = "<group>"; };
+		BE16BD021CDC897F006E7146 /* SineForceAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SineForceAffector.h; path = ../../Engine/EffectCore/SineForceAffector.h; sourceTree = "<group>"; };
+		BE16BD051CDC92BF006E7146 /* LinearForceAffector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LinearForceAffector.cpp; path = ../../Engine/EffectCore/LinearForceAffector.cpp; sourceTree = "<group>"; };
+		BE16BD061CDC92BF006E7146 /* LinearForceAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinearForceAffector.h; path = ../../Engine/EffectCore/LinearForceAffector.h; sourceTree = "<group>"; };
 		BE1A0AA71BE24C6F00A1A20D /* OctreeDebuger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OctreeDebuger.cpp; path = ../../Engine/Debuger/OctreeDebuger.cpp; sourceTree = "<group>"; };
 		BE1A0AA81BE24C6F00A1A20D /* OctreeDebuger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OctreeDebuger.h; path = ../../Engine/Debuger/OctreeDebuger.h; sourceTree = "<group>"; };
 		BE1A0AAC1BE24D1000A1A20D /* AnimationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AnimationManager.cpp; path = ../../Engine/KernelCore/AnimationManager.cpp; sourceTree = "<group>"; };
@@ -526,6 +578,14 @@
 			children = (
 				BE5AF12E1CD87E820023B025 /* PointEmitter.h */,
 				BE5AF1301CD87E8F0023B025 /* PointEmitter.cpp */,
+				BE16BCD51CDC3630006E7146 /* BoxEmitter.h */,
+				BE16BCD71CDC363E006E7146 /* BoxEmitter.cpp */,
+				BE16BCD91CDC3ACD006E7146 /* CircleEmitter.h */,
+				BE16BCDB1CDC3ADD006E7146 /* CircleEmitter.cpp */,
+				BE16BCDD1CDC485B006E7146 /* LineEmitter.h */,
+				BE16BCDF1CDC486B006E7146 /* LineEmitter.cpp */,
+				BE16BCE11CDC5C9C006E7146 /* SphereEmitter.h */,
+				BE16BCE31CDC5CA9006E7146 /* SphereEmitter.cpp */,
 			);
 			name = Emitters;
 			sourceTree = "<group>";
@@ -533,8 +593,26 @@
 		BE30ABAE1CD9C185009477C5 /* Affectors */ = {
 			isa = PBXGroup;
 			children = (
+				BE16BD051CDC92BF006E7146 /* LinearForceAffector.cpp */,
+				BE16BD061CDC92BF006E7146 /* LinearForceAffector.h */,
+				BE16BD011CDC897F006E7146 /* SineForceAffector.cpp */,
+				BE16BD021CDC897F006E7146 /* SineForceAffector.h */,
+				BE16BCF91CDC80FC006E7146 /* VortexAffector.cpp */,
+				BE16BCFA1CDC80FC006E7146 /* VortexAffector.h */,
+				BE16BCF51CDC7EDA006E7146 /* FlockCenteringAffector.cpp */,
+				BE16BCF61CDC7EDA006E7146 /* FlockCenteringAffector.h */,
 				BE5AF1321CD87F910023B025 /* ColorAffector.h */,
 				BE5AF1341CD87F9F0023B025 /* ColorAffector.cpp */,
+				BE16BCE51CDC6D4B006E7146 /* ScaleAffector.h */,
+				BE16BCE71CDC6D59006E7146 /* ScaleAffector.cpp */,
+				BE16BCE91CDC70EC006E7146 /* ScaleVelocityAffector.h */,
+				BE16BCEB1CDC70FB006E7146 /* ScaleVelocityAffector.cpp */,
+				BE16BCED1CDC757D006E7146 /* GravityAffector.h */,
+				BE16BCEF1CDC7589006E7146 /* GravityAffector.cpp */,
+				BE16BCF11CDC7C9D006E7146 /* JetAffector.h */,
+				BE16BCF31CDC7CAB006E7146 /* JetAffector.cpp */,
+				BE16BCFD1CDC8825006E7146 /* BaseForceAffector.h */,
+				BE16BCFF1CDC8831006E7146 /* BaseForceAffector.cpp */,
 			);
 			name = Affectors;
 			sourceTree = "<group>";
@@ -758,11 +836,15 @@
 				BE1A0B0B1BE24E5C00A1A20D /* MeshNode.h in Headers */,
 				BE1A0B071BE24E5B00A1A20D /* FontCharDictionary.h in Headers */,
 				BE1A0ADF1BE24E4000A1A20D /* BillboardRenderer.h in Headers */,
+				BE16BCE21CDC5C9C006E7146 /* SphereEmitter.h in Headers */,
+				BE16BCFC1CDC80FC006E7146 /* VortexAffector.h in Headers */,
 				BE1A0AB71BE24D1000A1A20D /* AnimationManager.h in Headers */,
 				BE1A0AE11BE24E4000A1A20D /* BoxRenderer.h in Headers */,
 				BE412CFC1BF630CD00206513 /* Application-desktop.h in Headers */,
+				BE16BD081CDC92BF006E7146 /* LinearForceAffector.h in Headers */,
 				BE6D3AC41CB3C65300E9E034 /* ConeRenderer.h in Headers */,
 				BE30ABB11CD9C1E3009477C5 /* QuatRenderer.h in Headers */,
+				BE16BCFE1CDC8825006E7146 /* BaseForceAffector.h in Headers */,
 				BE5AF1371CD885CD0023B025 /* DataPool.h in Headers */,
 				BE1A0B191BE24E5C00A1A20D /* TransformFeedback.h in Headers */,
 				BE1A0AB91BE24D1000A1A20D /* BaseManager.h in Headers */,
@@ -776,11 +858,13 @@
 				BE1A0ACE1BE24D6400A1A20D /* OctreeCamera.h in Headers */,
 				BE412D041BF630E800206513 /* PostProcesserRenderer.h in Headers */,
 				BE1A0B091BE24E5C00A1A20D /* MatrixPtr.h in Headers */,
+				BE16BD041CDC897F006E7146 /* SineForceAffector.h in Headers */,
 				BE1A0B111BE24E5C00A1A20D /* SkyBox.h in Headers */,
 				BE1A0AE51BE24E4000A1A20D /* SurfaceRenderer.h in Headers */,
 				BE1A0B221BE260D900A1A20D /* File-mac.h in Headers */,
 				BE05C5191CD30C860022D797 /* ParticleSystem.h in Headers */,
 				BEB28D5A1C0C761F0013E3B7 /* MaterialManager.h in Headers */,
+				BE16BCD61CDC3630006E7146 /* BoxEmitter.h in Headers */,
 				BE5AF1331CD87F910023B025 /* ColorAffector.h in Headers */,
 				BE5BF1761BB2A05B00FAE523 /* Debuger.h in Headers */,
 				BE05C5211CD30E4C0022D797 /* Affector.h in Headers */,
@@ -788,17 +872,24 @@
 				BE1A0B131BE24E5C00A1A20D /* Surface.h in Headers */,
 				BE1A0B0F1BE24E5C00A1A20D /* Ray.h in Headers */,
 				BE05C5161CD304BD0022D797 /* Particle.h in Headers */,
+				BE16BCF81CDC7EDA006E7146 /* FlockCenteringAffector.h in Headers */,
 				BE1A0B011BE24E5B00A1A20D /* BoudingBox.h in Headers */,
+				BE16BCEE1CDC757D006E7146 /* GravityAffector.h in Headers */,
+				BE16BCEA1CDC70EC006E7146 /* ScaleVelocityAffector.h in Headers */,
+				BE16BCE61CDC6D4B006E7146 /* ScaleAffector.h in Headers */,
 				BE1A0AD21BE24D6400A1A20D /* OctreeRenderQueue.h in Headers */,
 				BE1A0ABB1BE24D1000A1A20D /* EntityManager.h in Headers */,
 				BE6D3AAC1CB3C5FD00E9E034 /* DeferredLightPipeline.h in Headers */,
+				BE16BCDE1CDC485B006E7146 /* LineEmitter.h in Headers */,
 				BE1A0AD41BE24D6400A1A20D /* OctreeSceneManager.h in Headers */,
 				BE6D3ABC1CB3C62800E9E034 /* Sphere.h in Headers */,
 				BE412CFE1BF630CD00206513 /* Application.h in Headers */,
 				BE1A0AD01BE24D6400A1A20D /* OctreeNode.h in Headers */,
 				BE6D3AB01CB3C5FD00E9E034 /* RenderPipeline.h in Headers */,
 				BE05C51D1CD30E2A0022D797 /* Emitter.h in Headers */,
+				BE16BCF21CDC7C9D006E7146 /* JetAffector.h in Headers */,
 				BE412CF41BF630A200206513 /* MathAlgorithm.h in Headers */,
+				BE16BCDA1CDC3ACD006E7146 /* CircleEmitter.h in Headers */,
 				BE412D001BF630CD00206513 /* PostProcesser.h in Headers */,
 				BE6D3ABA1CB3C62800E9E034 /* RenderState.h in Headers */,
 				BE5AF12F1CD87E820023B025 /* PointEmitter.h in Headers */,
@@ -865,6 +956,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE16BCFB1CDC80FC006E7146 /* VortexAffector.cpp in Sources */,
 				BE1A0AB81BE24D1000A1A20D /* BaseManager.cpp in Sources */,
 				BE1B50481BB049E30039A346 /* Animation.cpp in Sources */,
 				BE1B50491BB049E30039A346 /* Bone.cpp in Sources */,
@@ -879,13 +971,16 @@
 				BE1A0B211BE260D900A1A20D /* File-mac.cpp in Sources */,
 				BE1A0B181BE24E5C00A1A20D /* TransformFeedback.cpp in Sources */,
 				BEB28D591C0C761F0013E3B7 /* MaterialManager.cpp in Sources */,
+				BE16BCD81CDC363E006E7146 /* BoxEmitter.cpp in Sources */,
 				BE1B504F1BB049E30039A346 /* Image.cpp in Sources */,
 				BE1A0B0E1BE24E5C00A1A20D /* Ray.cpp in Sources */,
 				BE30ABB71CD9C25B009477C5 /* ParticleRenderer.cpp in Sources */,
 				BE1B50501BB049E30039A346 /* Light.cpp in Sources */,
 				BE1A0AB61BE24D1000A1A20D /* AnimationManager.cpp in Sources */,
+				BE16BCE81CDC6D59006E7146 /* ScaleAffector.cpp in Sources */,
 				BE1B50511BB049E30039A346 /* Material.cpp in Sources */,
 				BE1B50521BB049E30039A346 /* Mesh.cpp in Sources */,
+				BE16BCF71CDC7EDA006E7146 /* FlockCenteringAffector.cpp in Sources */,
 				BE1A0B101BE24E5C00A1A20D /* SkyBox.cpp in Sources */,
 				BE412CFB1BF630CD00206513 /* Application-desktop.cpp in Sources */,
 				BE1A0ABE1BE24D1000A1A20D /* SceneManager.cpp in Sources */,
@@ -894,6 +989,7 @@
 				BE1B50571BB049E30039A346 /* OverlayRenderer.cpp in Sources */,
 				BE1A0AE41BE24E4000A1A20D /* SurfaceRenderer.cpp in Sources */,
 				BE6D3AC71CB3C65300E9E034 /* SphereRenderer.cpp in Sources */,
+				BE16BCE01CDC486B006E7146 /* LineEmitter.cpp in Sources */,
 				BE6D3AC51CB3C65300E9E034 /* LightRenderer.cpp in Sources */,
 				BE1B50581BB049E30039A346 /* Parameter.cpp in Sources */,
 				BE1B50591BB049E30039A346 /* RenderableObject.cpp in Sources */,
@@ -917,6 +1013,7 @@
 				BE6D3AB71CB3C62800E9E034 /* Cone.cpp in Sources */,
 				BE1A0ABA1BE24D1000A1A20D /* EntityManager.cpp in Sources */,
 				BE1A0ADE1BE24E4000A1A20D /* BillboardRenderer.cpp in Sources */,
+				BE16BCDC1CDC3ADD006E7146 /* CircleEmitter.cpp in Sources */,
 				BE6D3AB91CB3C62800E9E034 /* RenderState.cpp in Sources */,
 				BE05C51B1CD30C9C0022D797 /* ParticleSystem.cpp in Sources */,
 				BE1B50641BB049E30039A346 /* FileReaderWriterCAMERA.cpp in Sources */,
@@ -925,32 +1022,39 @@
 				BE1A0B0C1BE24E5C00A1A20D /* Plane.cpp in Sources */,
 				BE412CFF1BF630CD00206513 /* PostProcesser.cpp in Sources */,
 				BE6D3AAF1CB3C5FD00E9E034 /* RenderPipeline.cpp in Sources */,
+				BE16BD001CDC8831006E7146 /* BaseForceAffector.cpp in Sources */,
 				BE1B50661BB049E30039A346 /* FileReaderWriterJPEG.cpp in Sources */,
 				BE05C52F1CD34C270022D797 /* Spline.cpp in Sources */,
 				BE1A0B161BE24E5C00A1A20D /* ThreadPool.cpp in Sources */,
 				BE1B50671BB049E30039A346 /* FileReaderWriterLIGHT.cpp in Sources */,
+				BE16BCF41CDC7CAB006E7146 /* JetAffector.cpp in Sources */,
 				BE1B50681BB049E30039A346 /* FileReaderWriterPNG.cpp in Sources */,
 				BE1B50691BB049E30039A346 /* FileReaderWriterVEM.cpp in Sources */,
 				BE1A0AE01BE24E4000A1A20D /* BoxRenderer.cpp in Sources */,
 				BE1A0B121BE24E5C00A1A20D /* Surface.cpp in Sources */,
+				BE16BD071CDC92BF006E7146 /* LinearForceAffector.cpp in Sources */,
 				BE1A0B0A1BE24E5C00A1A20D /* MeshNode.cpp in Sources */,
 				BE6D3AC31CB3C65300E9E034 /* ConeRenderer.cpp in Sources */,
 				BE1B506A1BB049E30039A346 /* FileReaderWriterVEMTL.cpp in Sources */,
+				BE16BCEC1CDC70FB006E7146 /* ScaleVelocityAffector.cpp in Sources */,
 				BE6D3AAD1CB3C5FD00E9E034 /* DeferredRenderPipeline.cpp in Sources */,
 				BE1B506B1BB049E30039A346 /* Printer.cpp in Sources */,
 				BE1A0B141BE24E5C00A1A20D /* Text.cpp in Sources */,
 				BE1A0AD11BE24D6400A1A20D /* OctreeRenderQueue.cpp in Sources */,
 				BE05C5231CD30E5A0022D797 /* Affector.cpp in Sources */,
 				BE455BF91BBFE18C00DEC208 /* BoudingBox.cpp in Sources */,
+				BE16BCE41CDC5CA9006E7146 /* SphereEmitter.cpp in Sources */,
 				BE1A0AD31BE24D6400A1A20D /* OctreeSceneManager.cpp in Sources */,
 				BE5AF1351CD87F9F0023B025 /* ColorAffector.cpp in Sources */,
 				BE412D031BF630E800206513 /* PostProcesserRenderer.cpp in Sources */,
 				BE1A0ACB1BE24D6400A1A20D /* Octree.cpp in Sources */,
+				BE16BD031CDC897F006E7146 /* SineForceAffector.cpp in Sources */,
 				BE1B506D1BB049E30039A346 /* Matrix3.cpp in Sources */,
 				BE412CFD1BF630CD00206513 /* Application.cpp in Sources */,
 				BE1B506E1BB049E30039A346 /* Matrix4.cpp in Sources */,
 				BE1B506F1BB049E30039A346 /* Quaternion.cpp in Sources */,
 				BE1B50701BB049E30039A346 /* Vector2.cpp in Sources */,
+				BE16BCF01CDC7589006E7146 /* GravityAffector.cpp in Sources */,
 				BE1B50711BB049E30039A346 /* Vector3.cpp in Sources */,
 				BE5BF1781BB2A09D00FAE523 /* Debuger.cpp in Sources */,
 				BE1A0AA91BE24C6F00A1A20D /* OctreeDebuger.cpp in Sources */,

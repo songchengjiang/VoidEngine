@@ -11,12 +11,52 @@ public:
             auto psMats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "materials/starEffect.vemtl", "starEffect"));
             veParticleSystem *ps = _sceneManager->createParticleSystem("ps1");
             ps->setMaterialArray(psMats);
-            auto emitter = new vePointEmitter;
+            
+            auto emitter = new veSphereEmitter;
+            //emitter->setRotation(veQuat(veMath::veRadian(45.0f), veVec3::UNIT_Z));
+            //emitter->setPosition(veVec3(5.0f, 0.0f, 0.0f));
+            auto val = new veValueFixed;
+            val->setValue(veMath::veRadian(90.0f));
+            //emitter->setAngle(val);
+            val = new veValueFixed;
+            val->setValue(100.f);
+            emitter->setEmissionRate(val);
             ps->addEmitter(emitter);
+            
             auto affector = new veColorAffector;
             affector->addColor(0.0f, veVec4(1.0f, 1.0f, 0.0f, 1.0f));
-            affector->addColor(1.0f, veVec4(0.0f, 1.0f, 0.0f, 1.0f));
+            affector->addColor(1.0f, veVec4(0.0f, 1.0f, 0.0f, 0.0f));
             ps->addAffector(affector);
+            
+            auto sclAffector = new veScaleAffector;
+            val = new veValueFixed;
+            val->setValue(1.01f);
+            //sclAffector->setScaleX(val);
+            //ps->addAffector(sclAffector);
+            
+            auto sclVelAffector = new veScaleVelocityAffector;
+            val = new veValueFixed;
+            val->setValue(1.01f);
+            sclVelAffector->setScaleVelocity(val);
+            //ps->addAffector(sclVelAffector);
+            
+            auto gravAffector = new veGravityAffector;
+            gravAffector->setGravity(50.f);
+            ps->addAffector(gravAffector);
+            
+            auto vortexAffector = new veVortexAffector;
+            val = new veValueFixed;
+            val->setValue(veMath::veRadian(200.0f));
+            vortexAffector->setRotationSpeed(val);
+            ps->addAffector(vortexAffector);
+            
+            auto sineForce = new veSineForceAffector;
+            //sineForce->setRotation(veQuat(veMath::veRadian(45.0f), veVec3::UNIT_Z));
+            sineForce->setFrequencyMaximun(5.f);
+            sineForce->setFrequencyMinimum(-5.f);
+            sineForce->setForceScalar(10.f);
+            ps->addAffector(sineForce);
+            
             auto renderer = new veQuatRenderer;
             ps->setRenderer(renderer);
             ps->start();

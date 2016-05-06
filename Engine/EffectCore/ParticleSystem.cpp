@@ -244,6 +244,7 @@ int veParticleSystem::addAffector(veAffector *affector)
     if (!affector) return -1;
     auto iter = std::find(_affectorList.begin(), _affectorList.end(), affector);
     if (iter != _affectorList.end()) return -1;
+    affector->setParticleSystem(this);
     _affectorList.push_back(affector);
     return int(_affectorList.size() - 1);
 }

@@ -36,6 +36,9 @@ public:
     void setPosition(const veVec3 &pos) { _position = pos; }
     const veVec3& getPosition() const { return _position; }
     
+    void setRotation(const veQuat &rot) { _rotation = rot; }
+    const veQuat& getRotation() { return _rotation; }
+    
 protected:
     
     veAffector();
@@ -44,6 +47,7 @@ protected:
     
     veParticleSystem *_system;
     veVec3            _position;
+    veQuat            _rotation;
     bool              _isEnabled;
 };
 

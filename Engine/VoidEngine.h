@@ -33,7 +33,18 @@
 
 #include "EffectCore/ParticleSystem.h"
 #include "EffectCore/PointEmitter.h"
+#include "EffectCore/BoxEmitter.h"
+#include "EffectCore/CircleEmitter.h"
+#include "EffectCore/LineEmitter.h"
+#include "EffectCore/SphereEmitter.h"
 #include "EffectCore/ColorAffector.h"
+#include "EffectCore/ScaleAffector.h"
+#include "EffectCore/ScaleVelocityAffector.h"
+#include "EffectCore/GravityAffector.h"
+#include "EffectCore/FlockCenteringAffector.h"
+#include "EffectCore/VortexAffector.h"
+#include "EffectCore/SineForceAffector.h"
+#include "EffectCore/LinearForceAffector.h"
 #include "EffectCore/QuatRenderer.h"
 
 #include "Debuger/Debuger.h"
