@@ -6,7 +6,7 @@ class VE_EXPORT veBaseForceAffector : public veAffector
 {
 public:
     
-    enum ForceApplication{
+    enum class ForceApplication{
         FA_AVERAGE,
         FA_ADD,
     };

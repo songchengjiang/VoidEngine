@@ -3,7 +3,7 @@
 #include "KernelCore/Node.h"
 
 veBaseForceAffector::veBaseForceAffector()
-    : _forceApplication(veBaseForceAffector::FA_ADD)
+    : _forceApplication(veBaseForceAffector::ForceApplication::FA_ADD)
     , _forceScalar(1.f)
 {
 }

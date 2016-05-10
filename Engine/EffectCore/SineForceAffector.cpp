@@ -43,7 +43,7 @@ void veSineForceAffector::preProcess(double deltaTime)
 
 void veSineForceAffector::update(veParticle *particle, double deltaTime)
 {
-    if (_forceApplication == FA_ADD){
+    if (_forceApplication == ForceApplication::FA_ADD){
         particle->direction += _scaledVector;
     }else{
         particle->direction = (particle->direction + _forceVector) / 2.0f;

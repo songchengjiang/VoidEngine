@@ -3,6 +3,7 @@
 
 veAffector::veAffector()
     : USE_VE_PTR_INIT
+    , _system(nullptr)
     , _isEnabled(true)
 {
     

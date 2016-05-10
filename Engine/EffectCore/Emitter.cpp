@@ -17,6 +17,7 @@ static const float DEFAULT_DEPTH = 1.0f;
 
 veEmitter::veEmitter()
     : USE_VE_PTR_INIT
+    , _system(nullptr)
     , _isEnabled(true)
     , _isKeepLocalParticles(false)
     , _color(veVec4::WHITE)
@@ -206,12 +207,12 @@ void veEmitter::initParticleDimensions(veParticle* particle)
 void veEmitter::initTimeBase()
 {
     if (_isEnabled){
-        _durationRemain = GET_VALUE(_duration.get(), _system->getTimeElapsedSinceStart(), 0.f);
+        _durationRemain = GET_VALUE(_duration.get(), _system? _system->getTimeElapsedSinceStart(): 0.f, 0.f);
         if (0.f < _durationRemain){
             _repeatDelayRemain = 0.f;
         }
     }else {
-        _repeatDelayRemain = GET_VALUE(_repeatDelay.get(), _system->getTimeElapsedSinceStart(), 0.f);
+        _repeatDelayRemain = GET_VALUE(_repeatDelay.get(), _system? _system->getTimeElapsedSinceStart(): 0.f, 0.f);
     }
 }
 

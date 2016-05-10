@@ -8,8 +8,8 @@ public:
     veCircleEmitter();
     virtual ~veCircleEmitter();
     
-    void setCircleRadius(veReal radius) { _radius = radius; }
-    veReal getCircleRadius() const { return _radius; }
+    void setRadius(veReal radius) { _radius = radius; }
+    veReal getRadius() const { return _radius; }
     
     void setStepAngle(veReal stepAngle) { _stepAngle = stepAngle; _circleAngle = 0.0f; }
     veReal getStepAngle() const { return _stepAngle; }

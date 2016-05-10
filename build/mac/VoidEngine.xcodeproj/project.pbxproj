@@ -169,6 +169,7 @@
 		BE412D041BF630E800206513 /* PostProcesserRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE412D021BF630E800206513 /* PostProcesserRenderer.h */; };
 		BE455BF91BBFE18C00DEC208 /* BoudingBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE455BF71BBFE18C00DEC208 /* BoudingBox.cpp */; };
 		BE4E66941C04B7AE0078717E /* FileReaderWriterKTX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE4E66931C04B7AE0078717E /* FileReaderWriterKTX.cpp */; };
+		BE4E754F1CE028A300976FAA /* FileReaderWriterPARTICLE.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE4E754E1CE028A300976FAA /* FileReaderWriterPARTICLE.cpp */; };
 		BE5AF12F1CD87E820023B025 /* PointEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = BE5AF12E1CD87E820023B025 /* PointEmitter.h */; };
 		BE5AF1311CD87E8F0023B025 /* PointEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE5AF1301CD87E8F0023B025 /* PointEmitter.cpp */; };
 		BE5AF1331CD87F910023B025 /* ColorAffector.h in Headers */ = {isa = PBXBuildFile; fileRef = BE5AF1321CD87F910023B025 /* ColorAffector.h */; };
@@ -405,6 +406,7 @@
 		BE412D021BF630E800206513 /* PostProcesserRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostProcesserRenderer.h; path = ../../Engine/KernelCore/PostProcesserRenderer.h; sourceTree = "<group>"; };
 		BE455BF71BBFE18C00DEC208 /* BoudingBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoudingBox.cpp; path = ../../Engine/KernelCore/BoudingBox.cpp; sourceTree = "<group>"; };
 		BE4E66931C04B7AE0078717E /* FileReaderWriterKTX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileReaderWriterKTX.cpp; path = ../../Engine/FileCore/FileReaderWriterKTX.cpp; sourceTree = "<group>"; };
+		BE4E754E1CE028A300976FAA /* FileReaderWriterPARTICLE.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileReaderWriterPARTICLE.cpp; path = ../../Engine/FileCore/FileReaderWriterPARTICLE.cpp; sourceTree = "<group>"; };
 		BE5AF12E1CD87E820023B025 /* PointEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PointEmitter.h; path = ../../Engine/EffectCore/PointEmitter.h; sourceTree = "<group>"; };
 		BE5AF1301CD87E8F0023B025 /* PointEmitter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PointEmitter.cpp; path = ../../Engine/EffectCore/PointEmitter.cpp; sourceTree = "<group>"; };
 		BE5AF1321CD87F910023B025 /* ColorAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColorAffector.h; path = ../../Engine/EffectCore/ColorAffector.h; sourceTree = "<group>"; };
@@ -689,6 +691,7 @@
 				BE3D41A81BAF0B7C0063041C /* File.h */,
 				BE3D41A91BAF0B7C0063041C /* FileReaderWriter.cpp */,
 				BE3D41AA1BAF0B7C0063041C /* FileReaderWriter.h */,
+				BE4E754E1CE028A300976FAA /* FileReaderWriterPARTICLE.cpp */,
 				BE3D41AB1BAF0B7C0063041C /* FileReaderWriterANIMATION.cpp */,
 				BE3D41AC1BAF0B7C0063041C /* FileReaderWriterCAMERA.cpp */,
 				BE3D41AD1BAF0B7C0063041C /* FileReaderWriterEXR.cpp */,
@@ -1043,6 +1046,7 @@
 				BE1A0AD11BE24D6400A1A20D /* OctreeRenderQueue.cpp in Sources */,
 				BE05C5231CD30E5A0022D797 /* Affector.cpp in Sources */,
 				BE455BF91BBFE18C00DEC208 /* BoudingBox.cpp in Sources */,
+				BE4E754F1CE028A300976FAA /* FileReaderWriterPARTICLE.cpp in Sources */,
 				BE16BCE41CDC5CA9006E7146 /* SphereEmitter.cpp in Sources */,
 				BE1A0AD31BE24D6400A1A20D /* OctreeSceneManager.cpp in Sources */,
 				BE5AF1351CD87F9F0023B025 /* ColorAffector.cpp in Sources */,
