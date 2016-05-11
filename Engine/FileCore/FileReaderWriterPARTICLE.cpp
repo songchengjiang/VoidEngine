@@ -63,6 +63,11 @@ private:
             _particleSystem->setMaterialArray(materials);
         }
         
+        if ((*_doucument).HasMember(QUOTA_KEY.c_str())) {
+            const Value &val = (*_doucument)[QUOTA_KEY.c_str()];
+            _particleSystem->setParticleQuota(val.GetUint());
+        }
+        
         if ((*_doucument).HasMember(RENDERER_KEY.c_str())) {
             const Value &val = (*_doucument)[RENDERER_KEY.c_str()];
             readRenderer(val);

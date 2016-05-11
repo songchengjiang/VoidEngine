@@ -7,7 +7,21 @@
 
 veQuatRenderer::veQuatRenderer()
 {
-
+    //0
+    _vertices.push_back(-0.5f); _vertices.push_back(-0.5f); _vertices.push_back(0.0f); //v
+    _vertices.push_back(0.0f); _vertices.push_back(0.0f);                              //tc
+    
+    //1
+    _vertices.push_back(0.5f); _vertices.push_back(-0.5f); _vertices.push_back(0.0f); //v
+    _vertices.push_back(1.0f); _vertices.push_back(0.0f);                              //tc
+    
+    //2
+    _vertices.push_back(-0.5f); _vertices.push_back(0.5f); _vertices.push_back(0.0f); //v
+    _vertices.push_back(0.0f); _vertices.push_back(1.0f);                              //tc
+    
+    //3
+    _vertices.push_back(0.5f); _vertices.push_back(0.5f); _vertices.push_back(0.0f); //v
+    _vertices.push_back(1.0f); _vertices.push_back(1.0f);                              //tc
 }
 
 veQuatRenderer::~veQuatRenderer()
@@ -15,35 +29,57 @@ veQuatRenderer::~veQuatRenderer()
 
 }
 
-void veQuatRenderer::updateBuffer(veRenderableObject *renderableObj, veCamera *camera)
+void veQuatRenderer::draw(veRenderCommand &command)
 {
-    const auto &particles = static_cast<veParticleSystem *>(renderableObj)->getParticles().getActiveDataList();
+    if (!isNeedRendering())
+        return;
     
-//    unsigned int vertexNumPerParticle = 4 * getVertexStride();
-//    if (_vertices.size() < particles.size() * vertexNumPerParticle){
-//        _vertices.resize(particles.size() * vertexNumPerParticle);
-//    }
-    _vertices.clear();
-    _indices.clear();
+    if (!command.pass->apply(command))
+        return;
     
-    const veMat4 &camWorldMat = camera->getNodeToWorldMatrix();
-    veVec3 right(camWorldMat[0][0], camWorldMat[1][0], camWorldMat[2][0]);
-    veVec3 up(camWorldMat[0][1], camWorldMat[1][1], camWorldMat[2][1]);
-    veVec3 backward(camWorldMat[0][2], camWorldMat[1][2], camWorldMat[2][2]);
+    veQuat cameraRot;
+    const veMat4 &camWorldMat = command.camera->getNodeToWorldMatrix();
+    camWorldMat.decomposition(nullptr, nullptr, &cameraRot);
     
-    unsigned int idx = 0;
+    glBindVertexArray(_vao);
+    const auto &particles = _system->getParticles().getActiveDataList();
+    unsigned int instanceNum = 0;
     for (auto particle : particles){
-        addQuatParticleToBuffer(idx, particle, right, up, backward);
-        ++idx;
+        updateInstanceParams(particle, cameraRot, _offsetMats[instanceNum], _colors[instanceNum]);
+        ++instanceNum;
+        if (INSTANCE_MAX_NUM <= instanceNum){
+            _offsetMatsUniform->setValue(_offsetMats, instanceNum);
+            _offsetMatsUniform->apply(command);
+            _colorsUniform->setValue(_colors, instanceNum);
+            _colorsUniform->apply(command);
+            glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, instanceNum);
+            instanceNum = 0;
+        }
     }
     
-    if (!_vertices.empty() && !_indices.empty()){
-        bool firstUpdate = false;
+    if (0 < instanceNum){
+        _offsetMatsUniform->setValue(_offsetMats, instanceNum);
+        _offsetMatsUniform->apply(command);
+        _colorsUniform->setValue(_colors, instanceNum);
+        _colorsUniform->apply(command);
+        glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, instanceNum);
+    }
+}
+
+void veQuatRenderer::updateInstanceParams(veParticle *particle, const veQuat &cameraRot, veMat4 &offsetMat, veVec4 &color)
+{
+    veVec3 scale(particle->width, particle->height, 1.0f);
+    offsetMat.makeTransform(particle->position, veVec3(particle->width, particle->height, 1.0f), cameraRot * particle->orientation);
+    color = particle->color;
+}
+
+void veQuatRenderer::updateBuffer(veRenderableObject *renderableObj, veCamera *camera)
+{
+    if (!_vertices.empty()){
         if (!_vao) {
             glGenVertexArrays(1, &_vao);
             glGenBuffers(1, &_vbo);
             glGenBuffers(1, &_ibo);
-            firstUpdate = true;
         }
         glBindVertexArray(_vao);
         if (!_vertices.empty()){
@@ -51,66 +87,19 @@ void veQuatRenderer::updateBuffer(veRenderableObject *renderableObj, veCamera *c
             glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(_vertices[0]), _vertices.buffer(), GL_STATIC_DRAW);
         }
         
-        if (!_indices.empty()){
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(_indices[0]), _indices.buffer(), GL_STATIC_DRAW);
-        }
+        unsigned int stride = sizeof(GLfloat) * getVertexStride();
+        //v
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, 0);
+        glEnableVertexAttribArray(0);
         
-        if (firstUpdate){
-            unsigned int stride = sizeof(GLfloat) * getVertexStride();
-            //v
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, 0);
-            glEnableVertexAttribArray(0);
-            
-            //col
-            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (GLvoid *)(sizeof(GLfloat) * 3));
-            glEnableVertexAttribArray(1);
-            
-            //tc
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid *)(sizeof(GLfloat) * 7));
-            glEnableVertexAttribArray(2);
-        }
+        //tc
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid *)(sizeof(GLfloat) * 3));
+        glEnableVertexAttribArray(1);
     }
-    
-}
-
-void veQuatRenderer::addQuatParticleToBuffer(unsigned int idx, veParticle *particle, const veVec3 &right, const veVec3 &up, const veVec3 &backward)
-{
-    veVec3 halfWidth   = particle->width * 0.5f * right;
-    veVec3 halfHeight  = particle->height * 0.5f * up;
-    veVec3 leftTop     = particle->position - halfWidth + halfHeight;
-    veVec3 leftBottom  = particle->position - halfWidth - halfHeight;
-    veVec3 rightTop    = particle->position + halfWidth + halfHeight;
-    veVec3 rightBottom = particle->position + halfWidth - halfHeight;
-    
-    unsigned int iIdx = idx * 4;
-    //leftBottom
-    _vertices.push_back(leftBottom.x()); _vertices.push_back(leftBottom.y()); _vertices.push_back(leftBottom.z());
-    _vertices.push_back(particle->color.x()); _vertices.push_back(particle->color.y()); _vertices.push_back(particle->color.z()); _vertices.push_back(particle->color.w());
-    _vertices.push_back(0.0f); _vertices.push_back(0.0f);
-    
-    //leftTop
-    _vertices.push_back(leftTop.x()); _vertices.push_back(leftTop.y()); _vertices.push_back(leftTop.z());
-    _vertices.push_back(particle->color.x()); _vertices.push_back(particle->color.y()); _vertices.push_back(particle->color.z()); _vertices.push_back(particle->color.w());
-    _vertices.push_back(0.0f); _vertices.push_back(1.0f);
-    
-    //rightBottom
-    _vertices.push_back(rightBottom.x()); _vertices.push_back(rightBottom.y()); _vertices.push_back(rightBottom.z());
-    _vertices.push_back(particle->color.x()); _vertices.push_back(particle->color.y()); _vertices.push_back(particle->color.z()); _vertices.push_back(particle->color.w());
-    _vertices.push_back(1.0f); _vertices.push_back(0.0f);
-    
-    //rightTop
-    _vertices.push_back(rightTop.x()); _vertices.push_back(rightTop.y()); _vertices.push_back(rightTop.z());
-    _vertices.push_back(particle->color.x()); _vertices.push_back(particle->color.y()); _vertices.push_back(particle->color.z()); _vertices.push_back(particle->color.w());
-    _vertices.push_back(1.0f); _vertices.push_back(1.0f);
-    
-    
-    _indices.push_back(iIdx); _indices.push_back(iIdx + 3); _indices.push_back(iIdx + 1);
-    _indices.push_back(iIdx); _indices.push_back(iIdx + 2); _indices.push_back(iIdx + 3);
     
 }
 
 unsigned int veQuatRenderer::getVertexStride() const
 {
-    return 3 + 4 + 2;
+    return 3 + 2;
 }

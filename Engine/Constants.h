@@ -181,6 +181,7 @@ static const std::string SHADOW_STRENGTH_KEY = "shadowStrength";
 static const std::string SHADOW_RESOLUTION_KEY = "shadowResolution";
 static const std::string SHADOW_AREA_KEY = "shadowArea";
 
+static const std::string QUOTA_KEY = "quota";
 static const std::string IS_ENABLED_KEY = "isEnabled";
 static const std::string ANGLE_KEY = "angle";
 static const std::string KEEP_LOCAL_KEY = "keepLocal";

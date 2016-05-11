@@ -12,12 +12,12 @@
                             "renderPass": "FORWARD",
                             "depthTest": true,
                             "depthWrite": false,
-                            "cullFace": false,
+                            "cullFace": true,
                             "blendFunc": ["SRC_ALPHA", "ONE"],
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "defination": "#define ATTR_POSITION 0\n#define ATTR_COLOR0 1\n#define ATTR_TEXTURE_COORD0 2\n",
+                                    "defination": "#define ATTR_POSITION 0\n#define ATTR_TEXTURE_COORD0 1\n",
                                     "source": "shaders/ParticleSystem.vert",
                                     "u_ModelViewProjectMat": "MVP_MATRIX"
                                 },

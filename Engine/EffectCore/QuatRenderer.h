@@ -9,12 +9,12 @@ public:
     veQuatRenderer();
     virtual ~veQuatRenderer();
     
+    virtual void draw(veRenderCommand &command) override;
+    
 protected:
     
     virtual void updateBuffer(veRenderableObject *renderableObj, veCamera *camera) override;
-    
-    void addQuatParticleToBuffer(unsigned int idx, veParticle *particle, const veVec3 &right, const veVec3 &up, const veVec3 &backward);
-    
+    void updateInstanceParams(veParticle *particle, const veQuat &cameraRot, veMat4 &offsetMat, veVec4 &color);    
     inline unsigned int getVertexStride() const;
 
 };
