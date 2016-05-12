@@ -1,5 +1,5 @@
 #include "Value.h"
-#include "MathAlgorithm.h"
+#include <algorithm>
 
 veValue::veValue(Type type)
     : USE_VE_PTR_INIT

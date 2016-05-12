@@ -1,6 +1,7 @@
 #include "ParticleSystem.h"
 #include "KernelCore/SceneManager.h"
 #include "ParticleRenderer.h"
+#include <algorithm>
 
 static const unsigned int DEFAULT_QUOTA = 500;
 
