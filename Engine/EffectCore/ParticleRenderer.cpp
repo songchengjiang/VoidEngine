@@ -8,11 +8,11 @@ veParticleRenderer::veParticleRenderer()
     : _vao(0)
     , _vbo(0)
     , _ibo(0)
-    , _system(nullptr)
+    , _mvpbo(0)
+    , _colorbo(0)
+    , _instanceCount(0)
     , _needUpdate(true)
 {
-    _offsetMatsUniform = new veUniform("ve_offsetMats");
-    _colorsUniform = new veUniform("ve_colors");
 }
 
 veParticleRenderer::~veParticleRenderer()
@@ -35,11 +35,7 @@ void veParticleRenderer::draw(veRenderCommand &command)
 
 void veParticleRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
 {
-    _system = static_cast<veParticleSystem *>(renderableObj);
-    if (_needUpdate){
-        updateBuffer(renderableObj, camera);
-        _needUpdate = false;
-    }
+    updateBuffer(renderableObj, camera);
     
     veRenderCommand rc;
     rc.mask = node->getMask();
@@ -69,5 +65,4 @@ void veParticleRenderer::render(veNode *node, veRenderableObject *renderableObj,
 
 void veParticleRenderer::update()
 {
-    //_needUpdate = true;
 }

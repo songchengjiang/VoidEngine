@@ -62,13 +62,33 @@ public:
 //            ps->start();
             
             auto ps = static_cast<veParticleSystem *>(veFile::instance()->readFile(_sceneManager, "effects/star.veparticle", "starPS"));
-            
             veNode *node = _sceneManager->createNode("node");
             node->addRenderableObject(ps);
             veTransformer *transer = new veTransformer;
             node->addComponent(transer);
-            transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
+            transer->setPosition(veVec3(-5.0f, 0.0f, 0.0f));
             root->addChild(node);
+            
+            node->setUpdateCallback([transer](veSceneManager *sm, veNode *node){
+                static bool reverse = false;
+                static float maxDis = 5.0f;
+                static float currentDis = -5.0f;
+                if (reverse) {
+                    currentDis -= 5.0f * sm->getDeltaTime();
+                    if (currentDis < -maxDis) {
+                        currentDis = -maxDis;
+                        reverse = false;
+                    }
+                }
+                else {
+                    currentDis += 5.0f * sm->getDeltaTime();
+                    if (maxDis < currentDis) {
+                        currentDis = maxDis;
+                        reverse = true;
+                    }
+                }
+                transer->setPosition(veVec3(currentDis, 0.0f, 0.0f));
+            });
         }
         
         _sceneManager->getRootNode()->addChild(root);

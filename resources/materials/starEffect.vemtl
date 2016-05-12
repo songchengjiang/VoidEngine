@@ -17,9 +17,8 @@
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "defination": "#define ATTR_POSITION 0\n#define ATTR_TEXTURE_COORD0 1\n",
-                                    "source": "shaders/ParticleSystem.vert",
-                                    "u_ModelViewProjectMat": "MVP_MATRIX"
+                                    "defination": "#define ATTR_POSITION 0\n#define ATTR_TEXTURE_COORD0 1\n#define ATTR_COLOR0 2\n#define ATTR_MVP_MAT 3\n",
+                                    "source": "shaders/ParticleSystem.vert"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",

@@ -16,7 +16,7 @@
             "rotation": [1.0, 0.0, 0.0, 0.0],
             "angle": {
                 "type": "FIXED",
-                "value": 0.349
+                "value": 3.14
             },
             "emissionRate": {
                 "type": "FIXED",

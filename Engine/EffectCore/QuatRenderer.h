@@ -14,7 +14,7 @@ public:
 protected:
     
     virtual void updateBuffer(veRenderableObject *renderableObj, veCamera *camera) override;
-    void updateInstanceParams(veParticle *particle, const veQuat &cameraRot, veMat4 &offsetMat, veVec4 &color);    
+    void updateInstanceParams(veParticle *particle, const veQuat &cameraRot, const veMat4 &vp);
     inline unsigned int getVertexStride() const;
 
 };
