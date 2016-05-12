@@ -5,7 +5,7 @@
 #include "KernelCore/VE_Ptr.h"
 
 class veParticleSystem;
-struct veParticle;
+class veParticle;
 class VE_EXPORT veEmitter
 {
 public:

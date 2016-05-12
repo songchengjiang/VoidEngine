@@ -4,7 +4,7 @@
 #include "BaseCore/Value.h"
 
 class veParticleSystem;
-struct veParticle;
+class veParticle;
 class VE_EXPORT veAffector
 {
 public:
