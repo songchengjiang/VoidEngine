@@ -59,12 +59,12 @@ static const char* FULL_SCREEN_V_SHADER = " \
 
 static const char* FULL_SCREEN_F_SHADER = " \
 	uniform vec3 u_ambient; \n \
-	uniform sampler2D u_lightTex; \n \
+	uniform sampler2D u_sceneTex; \n \
 	uniform sampler2D u_RT1; \n \
 	in vec2 v_texcoord; \n \
 	layout(location = 0) out vec4 fragColor; \n \
 	void main() {  \n \
-		fragColor = vec4(texture(u_lightTex, v_texcoord).xyz + texture(u_RT1, v_texcoord).xyz * u_ambient, 1.0); \
+		fragColor = vec4(texture(u_sceneTex, v_texcoord).xyz + texture(u_RT1, v_texcoord).xyz * u_ambient, 1.0); \
         \n \
 	}";
 
@@ -396,6 +396,8 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, bool isMainCamera)
 	params.FBO->bind(deferredClearMask, GL_READ_FRAMEBUFFER);
 	glBlitFramebuffer(0, 0, size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO,
 		0, 0, size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+    params.FBO->unBind();
+    params.fullScreenFBO->unBind();
 	params.fullScreenFBO->bind(deferredClearMask);
 	unsigned int defaultClearMask = camera->getClearMask();
 	camera->setClearMask(GL_COLOR_BUFFER_BIT);
@@ -468,7 +470,7 @@ veDeferredRenderPipeline::CameraRenderParams& veDeferredRenderPipeline::getCamer
 		pass->blendFunc() = veBlendFunc::DISABLE;
 		pass->setShader(new veShader(veShader::VERTEX_SHADER, FULL_SCREEN_V_SHADER));
 		pass->setShader(new veShader(veShader::FRAGMENT_SHADER, FULL_SCREEN_F_SHADER));
-		pass->addUniform(new veUniform("u_lightTex", 0));
+		pass->addUniform(new veUniform("u_sceneTex", 0));
 		pass->addUniform(new veUniform("u_RT1", 1));
 		pass->setTexture(vePass::AMBIENT_TEXTURE, params.fullScreenTexture.get());
 		pass->setTexture(vePass::SPECULAR_TEXTURE, params.RT1.get());

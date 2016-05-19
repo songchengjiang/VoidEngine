@@ -46,6 +46,8 @@ veFrameBufferObject* veFrameBufferObject::CURRENT_FBO = nullptr;
 
 veFrameBufferObject::veFrameBufferObject()
 	: USE_VE_PTR_INIT
+    , _currentrbo(0)
+    , _currentfbo(0)
 	, _fbo(0)
 	, _dsbo(0)
 	, _size(0, 0)
@@ -57,6 +59,8 @@ veFrameBufferObject::veFrameBufferObject()
 
 veFrameBufferObject::veFrameBufferObject(const veVec2 &size)
 	: USE_VE_PTR_INIT
+    , _currentrbo(0)
+    , _currentfbo(0)
 	, _fbo(0)
 	, _dsbo(0)
 	, _target(GL_FRAMEBUFFER)
@@ -95,6 +99,8 @@ void veFrameBufferObject::attach(GLenum attachment, GLenum target, veTexture *at
 
 void veFrameBufferObject::bind(unsigned int clearMask, GLenum target)
 {
+    glGetIntegerv(GL_RENDERBUFFER_BINDING, &_currentrbo);
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_currentfbo);
 	_target = target;
 	refreshBuffers(clearMask);
 	refreshAttachments();
@@ -102,13 +108,13 @@ void veFrameBufferObject::bind(unsigned int clearMask, GLenum target)
 
 void veFrameBufferObject::unBind()
 {
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glBindFramebuffer(_target, 0);
-	for (auto &iter : _attachments) {
-		if (iter.second.needMipmap) {
-			iter.second.texture->generateMipMaps();
-		}
-	}
+    glBindRenderbuffer(GL_RENDERBUFFER, _currentrbo);
+    glBindFramebuffer(_target, _currentfbo);
+    for (auto &iter : _attachments) {
+        if (iter.second.needMipmap) {
+            iter.second.texture->generateMipMaps();
+        }
+    }
 }
 
 void veFrameBufferObject::refreshBuffers(unsigned int clearMask)

@@ -634,7 +634,7 @@ void veTexture2DArray::bind()
 	}
 }
 
-#if VE_PLATFORM != VE_PLATFORM_ANDROID
+#if VE_PLATFORM != VE_PLATFORM_ANDROID  && VE_PLATFORM != VE_PLATFORM_IOS
 veTextureCubeArray::veTextureCubeArray()
 	: veTexture(GL_TEXTURE_CUBE_MAP_ARRAY)
 {

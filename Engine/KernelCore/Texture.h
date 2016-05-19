@@ -215,7 +215,7 @@ protected:
 
 };
 
-#if VE_PLATFORM != VE_PLATFORM_ANDROID
+#if VE_PLATFORM != VE_PLATFORM_ANDROID && VE_PLATFORM != VE_PLATFORM_IOS
 class VE_EXPORT veTextureCubeArray : public veTexture
 {
 	friend class veTextureManager;

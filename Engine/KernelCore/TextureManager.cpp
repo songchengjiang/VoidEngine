@@ -62,7 +62,7 @@ veTexture* veTextureManager::createTexture(const std::string &name, veTexture::T
 	else if (texType == veTexture::TEXTURE_CUBE) {
 		texture = new veTextureCube;
 	}
-#if VE_PLATFORM != VE_PLATFORM_ANDROID
+#if VE_PLATFORM != VE_PLATFORM_ANDROID && VE_PLATFORM != VE_PLATFORM_IOS
 	else if (texType == veTexture::TEXTURE_CUBE_ARRAY) {
 		texture = new veTextureCubeArray;
 	}

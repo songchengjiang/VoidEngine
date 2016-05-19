@@ -39,6 +39,8 @@ private:
 		veTexture *texture;
 		bool   needMipmap;
 	};
+    GLint  _currentrbo;
+    GLint  _currentfbo;
 	GLuint _fbo;
 	GLuint _dsbo;
 	GLenum _target;
