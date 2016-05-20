@@ -99,6 +99,7 @@ public:
 	void startThreading();
 	void stopThreading();
 	void enqueueTaskToThread(const veThreadPool::TaskCallBack& callback, void* callbackParam, const std::function<void()> &func);
+    void enqueueRequest(const std::function<void()> &func);
 
 	void addComponent(veComponent *component);
 	void removeComponent(veComponent *component);
@@ -110,7 +111,6 @@ protected:
 	void postRenderHandle();
 	void resourceRecovery();
 	void handleRequests();
-	void enqueueRequest(const std::function<void()> &func);
 
 protected:
 

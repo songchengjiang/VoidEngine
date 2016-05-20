@@ -86,6 +86,92 @@
     [_context presentRenderbuffer:GL_RENDERBUFFER];
 }
 
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    CGRect frame = [self frame];
+    CGFloat width = frame.size.width - frame.origin.x;
+    CGFloat height = frame.size.height - frame.origin.y;
+    
+    int i = 0;
+    for (UITouch *touch in touches) {
+        CGFloat x = [touch locationInView: [touch view]].x * self.contentScaleFactor / width;
+        CGFloat y = 1.0 - [touch locationInView: [touch view]].y * self.contentScaleFactor / height;
+        x = (x - 0.5) * 2.0;
+        y = (y - 0.5) * 2.0;
+        self.application->onTouchBegan(i, x, y);
+        ++i;
+    }
+    self.application->onPushCurrentEvent();
+}
+
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    CGRect frame = [self frame];
+    CGFloat width = frame.size.width - frame.origin.x;
+    CGFloat height = frame.size.height - frame.origin.y;
+    
+    int i = 0;
+    for (UITouch *touch in touches) {
+        CGFloat x = [touch locationInView: [touch view]].x * self.contentScaleFactor / width;
+        CGFloat y = 1.0 - [touch locationInView: [touch view]].y * self.contentScaleFactor / height;
+        x = (x - 0.5) * 2.0;
+        y = (y - 0.5) * 2.0;
+//#if defined(__IPHONE_9_0) && (__IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_9_0)
+//        // running on iOS 9.0 or higher version
+//        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 9.0f) {
+//            fs[i] = touch.force;
+//            ms[i] = touch.maximumPossibleForce;
+//        }
+//#endif
+        self.application->onTouchMove(i, x, y);
+        ++i;
+    }
+    self.application->onPushCurrentEvent();
+    
+    //auto glview = cocos2d::Director::getInstance()->getOpenGLView();
+    //glview->handleTouchesMove(i, (intptr_t*)ids, xs, ys, fs, ms);
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    CGRect frame = [self frame];
+    CGFloat width = frame.size.width - frame.origin.x;
+    CGFloat height = frame.size.height - frame.origin.y;
+    
+    int i = 0;
+    for (UITouch *touch in touches) {
+        CGFloat x = [touch locationInView: [touch view]].x * self.contentScaleFactor / width;
+        CGFloat y = 1.0 - [touch locationInView: [touch view]].y * self.contentScaleFactor / height;
+        x = (x - 0.5) * 2.0;
+        y = (y - 0.5) * 2.0;
+        self.application->onTouchEnd(i, x, y);
+        ++i;
+    }
+    self.application->onPushCurrentEvent();
+    
+    //auto glview = cocos2d::Director::getInstance()->getOpenGLView();
+    //glview->handleTouchesEnd(i, (intptr_t*)ids, xs, ys);
+}
+
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+{
+//    UITouch* ids[IOS_MAX_TOUCHES_COUNT] = {0};
+//    float xs[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+//    float ys[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+//    
+//    int i = 0;
+//    for (UITouch *touch in touches) {
+//        ids[i] = touch;
+//        xs[i] = [touch locationInView: [touch view]].x * self.contentScaleFactor;;
+//        ys[i] = [touch locationInView: [touch view]].y * self.contentScaleFactor;;
+//        ++i;
+//    }
+    
+    //auto glview = cocos2d::Director::getInstance()->getOpenGLView();
+    //glview->handleTouchesCancel(i, (intptr_t*)ids, xs, ys);
+}
+
+
 
 - (id)initWithFrame:(CGRect)frame
 {
