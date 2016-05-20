@@ -4,6 +4,7 @@
 #include "Constants.h"
 #include "SceneManager.h"
 #include "Application.h"
+#include "Configuration.h"
 #include "FileCore/File.h"
 
 veText::veText(veSceneManager *sm, veFont *font, const std::string &content)
@@ -104,7 +105,7 @@ void veText::rebuildContentBitmap(int divWidth, int divHeight)
 		if (i != _content.size() - 1)
 			width += (charBitmap->advance.x >> 6);
 	}
-	width += 2 * borderSpace * VE_DEVICE_PIXEL_RATIO;
+	width += 2 * borderSpace;
 	height += 2 * borderSpace;
 	width = FOUR_BYTES_ALIGN(width);
 
@@ -116,14 +117,17 @@ void veText::rebuildContentBitmap(int divWidth, int divHeight)
 		auto charBitmap = _font->getCharBitmap(_content[i]);
 		unsigned int charBaseLine = charBitmap->bitmap.rows - charBitmap->bitmap_top;
 		for (unsigned int h = 0; h < charBitmap->bitmap.rows; ++h) {
-			memcpy(&buf[(h + baseline - charBaseLine  + heightOffset) * width + widthOffset + charBitmap->bitmap_left], &charBitmap->bitmap.buffer[(charBitmap->bitmap.rows - h - 1) * charBitmap->bitmap.width], charBitmap->bitmap.width * sizeof(unsigned char));
+            unsigned char *dst = &buf[(h + baseline - charBaseLine  + heightOffset) * width + widthOffset + charBitmap->bitmap_left];
+            unsigned char *src = &charBitmap->bitmap.buffer[(charBitmap->bitmap.rows - h - 1) * charBitmap->bitmap.width];
+            size_t sz = charBitmap->bitmap.width * sizeof(unsigned char);
+			memcpy(dst, src, sz);
 		}
 		widthOffset += (charBitmap->advance.x >> 6);
 	}
 
 	_texture->storage(width, height, 1, GL_R8, GL_RED, GL_UNSIGNED_BYTE, buf);
 	if (_type == OVERLAY)
-		_scaleMat->setValue(veMat4::scale(veVec3((float)width / (float)(divWidth * VE_DEVICE_PIXEL_RATIO), (float)height / (float)(divHeight * VE_DEVICE_PIXEL_RATIO), 0.0f)));
+		_scaleMat->setValue(veMat4::scale(veVec3((float)width / (float)(divWidth), (float)height / (float)(divHeight), 0.0f)));
 	else if (_type == SURFACE || _type == veSurface::BILLBOARD) {
 		_scaleMat->setValue(veMat4::scale(veVec3(width * 0.5f, height * 0.5f, 0.0f)));
 		_boundingBox.min() = veVec3(-(width * 0.5f), -(height * 0.5f), -0.5f);

@@ -19,6 +19,7 @@
 {
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
     veGLView *glview = [[veGLView alloc] initWithFrame:screenBounds];
+    [glview setMultipleTouchEnabled:YES];
     
     _viewController = [[ViewController alloc] initWithNibName:nil bundle:nil];
     _viewController.view = glview;

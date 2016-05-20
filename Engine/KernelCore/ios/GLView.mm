@@ -7,6 +7,7 @@
 //
 
 #import "GLView.h"
+#include "Configuration.h"
 
 @implementation veGLView
 
@@ -39,7 +40,7 @@
     GLuint depthRenderBuffer, colorRenderBuffer, renderFrameBuffer;
     glGenRenderbuffers(1, &depthRenderBuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, depthRenderBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, self.frame.size.width, self.frame.size.height);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, self.frame.size.width * self.contentScaleFactor, self.frame.size.height * self.contentScaleFactor);
     
     glGenRenderbuffers(1, &colorRenderBuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, colorRenderBuffer);
@@ -94,8 +95,8 @@
     
     int i = 0;
     for (UITouch *touch in touches) {
-        CGFloat x = [touch locationInView: [touch view]].x * self.contentScaleFactor / width;
-        CGFloat y = 1.0 - [touch locationInView: [touch view]].y * self.contentScaleFactor / height;
+        CGFloat x = [touch locationInView: [touch view]].x / width;
+        CGFloat y = 1.0 - [touch locationInView: [touch view]].y / height;
         x = (x - 0.5) * 2.0;
         y = (y - 0.5) * 2.0;
         self.application->onTouchBegan(i, x, y);
@@ -112,8 +113,8 @@
     
     int i = 0;
     for (UITouch *touch in touches) {
-        CGFloat x = [touch locationInView: [touch view]].x * self.contentScaleFactor / width;
-        CGFloat y = 1.0 - [touch locationInView: [touch view]].y * self.contentScaleFactor / height;
+        CGFloat x = [touch locationInView: [touch view]].x / width;
+        CGFloat y = 1.0 - [touch locationInView: [touch view]].y / height;
         x = (x - 0.5) * 2.0;
         y = (y - 0.5) * 2.0;
 //#if defined(__IPHONE_9_0) && (__IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_9_0)
@@ -140,8 +141,8 @@
     
     int i = 0;
     for (UITouch *touch in touches) {
-        CGFloat x = [touch locationInView: [touch view]].x * self.contentScaleFactor / width;
-        CGFloat y = 1.0 - [touch locationInView: [touch view]].y * self.contentScaleFactor / height;
+        CGFloat x = [touch locationInView: [touch view]].x / width;
+        CGFloat y = 1.0 - [touch locationInView: [touch view]].y / height;
         x = (x - 0.5) * 2.0;
         y = (y - 0.5) * 2.0;
         self.application->onTouchEnd(i, x, y);
@@ -178,6 +179,11 @@
     self = [super initWithFrame:frame];
     [self setupLayer];
     _context = nil;
+    
+    if ([self respondsToSelector:@selector(setContentScaleFactor:)]){
+        self.contentScaleFactor = [[UIScreen mainScreen] scale];
+        veConfiguration::VE_DEVICE_PIXEL_RATIO = self.contentScaleFactor;
+    }
     return self;
 }
 

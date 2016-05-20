@@ -1,6 +1,7 @@
 #include "FontCharDictionary.h"
 #include <sstream>
 #include "FileCore/File.h"
+#include "Configuration.h"
 
 veFontCharDictionary::veFontCharDictionary()
 {
@@ -41,7 +42,7 @@ veFont::FontCharList* veFontCharDictionary::getOrCreateFontCharList(const std::s
 		return nullptr;
 	}
 	int dpi = 72;
-	int fontSizePoints = 64 * fontSize * VE_DEVICE_PIXEL_RATIO;
+    int fontSizePoints = 64 * fontSize;
 	FT_Set_Char_Size(face, fontSizePoints, fontSizePoints, dpi, dpi);
 
 	veFont::FontCharList &charList = _fontsDictionary[ss.str()];

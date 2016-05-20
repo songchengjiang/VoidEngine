@@ -17,6 +17,7 @@ public:
 
 	veDebugRenderer(veDebuger *debuger)
 		: _debuger(debuger)
+        , _firstUpdate(true)
 		, drawCount(0)
 		, vao(0)
 		, vbo(0)
@@ -31,22 +32,23 @@ public:
 		glBindVertexArray(vao);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		{
-			std::unique_lock<std::mutex> lock(verticesMutex);
-			if (!vertices.empty())
-				glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.buffer(), GL_STATIC_DRAW);
-			drawCount = vertices.size();
-			vertices.clear();
+            if (!vertices.empty()){
+                glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.buffer(), GL_STATIC_DRAW);
+                if (_firstUpdate){
+                    GLsizei vertexStride = sizeof(GLfloat) * (3 + 4);
+                    //vertex
+                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexStride, 0);
+                    glEnableVertexAttribArray(0);
+                    
+                    //color
+                    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, vertexStride, (GLvoid *)(sizeof(GLfloat) * 3));
+                    glEnableVertexAttribArray(1);
+                    _firstUpdate = false;
+                }
+                drawCount = vertices.size() / (3 + 4);
+                vertices.clear();
+            }
 		}
-
-
-		GLsizei vertexStride = sizeof(GLfloat) * (3 + 4);
-		//vertex
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexStride, 0);
-		glEnableVertexAttribArray(0);
-
-		//color
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, vertexStride, (GLvoid *)(sizeof(GLfloat) * 3));
-		glEnableVertexAttribArray(1);
 
 		veRenderCommand rc;
 		rc.priority = veRenderCommand::LOW_PRIORITY;
@@ -63,10 +65,11 @@ public:
 			return;
 		command.pass->apply(command);
 		glBindVertexArray(vao);
-		glDrawArrays(GL_LINES, 0, drawCount);
+        if (0 < drawCount){
+            glDrawArrays(GL_LINES, 0, GLsizei(drawCount));
+        }
 	}
 
-	std::mutex  verticesMutex;
 	veRealArray vertices;
 	size_t      drawCount;
 	GLuint      vao;
@@ -75,6 +78,7 @@ public:
 private:
 
 	veDebuger *_debuger;
+    bool       _firstUpdate;
 };
 
 class RenderableObjectFinder : public veNodeVisitor
@@ -331,9 +335,10 @@ veVec3 veDebuger::getPlaneCrossPoint(const vePlane &p0, const vePlane &p1, const
 void veDebuger::drawLine(const veVec3 &start, const veVec3 &end, const veVec4 &color)
 {
 	veDebugRenderer *dr = static_cast<veDebugRenderer *>(_renderer.get());
-	std::unique_lock<std::mutex> lock(dr->verticesMutex);
-	dr->vertices.push_back(start.x()); dr->vertices.push_back(start.y()); dr->vertices.push_back(start.z());
-	dr->vertices.push_back(color.x()); dr->vertices.push_back(color.y()); dr->vertices.push_back(color.z()); dr->vertices.push_back(color.w());
-	dr->vertices.push_back(end.x()); dr->vertices.push_back(end.y()); dr->vertices.push_back(end.z());
-	dr->vertices.push_back(color.x()); dr->vertices.push_back(color.y()); dr->vertices.push_back(color.z()); dr->vertices.push_back(color.w());
+    _sceneManager->enqueueRequest([dr, start, end, color]{
+        dr->vertices.push_back(start.x()); dr->vertices.push_back(start.y()); dr->vertices.push_back(start.z());
+        dr->vertices.push_back(color.x()); dr->vertices.push_back(color.y()); dr->vertices.push_back(color.z()); dr->vertices.push_back(color.w());
+        dr->vertices.push_back(end.x()); dr->vertices.push_back(end.y()); dr->vertices.push_back(end.z());
+        dr->vertices.push_back(color.x()); dr->vertices.push_back(color.y()); dr->vertices.push_back(color.z()); dr->vertices.push_back(color.w());
+    });
 }

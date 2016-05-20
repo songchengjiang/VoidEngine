@@ -2,6 +2,7 @@
 #include "SceneManager.h"
 #include "Camera.h"
 #include "Constants.h"
+#include "Configuration.h"
 
 static veLoopQueue<veRenderCommand>::SortFunc PASS_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
 	return right.priority == left.priority ? left.pass <= right.pass : right.priority <= left.priority;
@@ -152,7 +153,7 @@ void veRenderPipeline::prepareForDraws(veCamera *camera)
 {
    	auto &vp = camera->getViewport();
     auto &clearColor = camera->getClearColor();
-    glViewport(vp.x * VE_DEVICE_PIXEL_RATIO, vp.y * VE_DEVICE_PIXEL_RATIO, vp.width * VE_DEVICE_PIXEL_RATIO, vp.height * VE_DEVICE_PIXEL_RATIO);
+    glViewport(vp.x * veConfiguration::VE_DEVICE_PIXEL_RATIO, vp.y * veConfiguration::VE_DEVICE_PIXEL_RATIO, vp.width * veConfiguration::VE_DEVICE_PIXEL_RATIO, vp.height * veConfiguration::VE_DEVICE_PIXEL_RATIO);
     glClear(camera->getClearMask());
     glClearColor(clearColor.r(), clearColor.g(), clearColor.b(), clearColor.a());
 }

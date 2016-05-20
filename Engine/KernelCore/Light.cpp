@@ -1,6 +1,7 @@
 #include "Light.h"
 #include "NodeVisitor.h"
 #include "SceneManager.h"
+#include "Configuration.h"
 
 static const veMat4 LIGHT_BIAS_MAT = veMat4(0.5f, 0.0f, 0.0f, 0.5f
 	, 0.0f, 0.5f, 0.0f, 0.5f
@@ -99,7 +100,7 @@ void veDirectionalLight::updateShadow()
 				_shadowCamera->setShadowCamera(true);
 			}
 
-			_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1
+			_shadowTexture->storage(int(_shadowResolution.x()) * veConfiguration::VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * veConfiguration::VE_DEVICE_PIXEL_RATIO, 1
 				, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
 
 			_shadowCamera->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
@@ -145,7 +146,7 @@ void vePointLight::updateShadow()
 					_shadowCameras[i]->setShadowCamera(true);
 				}
 			}
-			_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1
+			_shadowTexture->storage(int(_shadowResolution.x()) * veConfiguration::VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * veConfiguration::VE_DEVICE_PIXEL_RATIO, 1
 				, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
 			for (unsigned short i = 0; i < 6; ++i) {
 				_shadowCameras[i]->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
@@ -204,7 +205,7 @@ void veSpotLight::updateShadow()
 				_shadowCamera->setShadowCamera(true);
 			}
 
-			_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1
+			_shadowTexture->storage(int(_shadowResolution.x()) * veConfiguration::VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * veConfiguration::VE_DEVICE_PIXEL_RATIO, 1
 				, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
 			_shadowCamera->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y())});
 			_shadowCamera->setMask(_mask);

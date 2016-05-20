@@ -113,13 +113,6 @@ public: const std::string& getName() const { return _name; }
     #define VE_PLATFORM     VE_PLATFORM_UNKNOW
 #endif
 
-#if VE_PLATFORM == VE_PLATFORM_MAC
-#define VE_DEVICE_PIXEL_RATIO 2
-#else
-#define VE_DEVICE_PIXEL_RATIO 1
-#endif
-
-
 
 #if VE_PLATFORM == VE_PLATFORM_WIN32 || VE_PLATFORM == VE_PLATFORM_MAC
 #if VE_PLATFORM == VE_PLATFORM_WIN32

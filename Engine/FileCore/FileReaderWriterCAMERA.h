@@ -1,6 +1,7 @@
 #include "FileReaderWriter.h"
 #include <rapidjson/include/document.h>
 #include "Constants.h"
+#include "Configuration.h"
 #include "KernelCore/Material.h"
 #include "KernelCore/Texture.h"
 #include "KernelCore/TextureManager.h"
@@ -228,7 +229,7 @@ private:
 				}
 			}
 
-			texture->storage(width * VE_DEVICE_PIXEL_RATIO, height * VE_DEVICE_PIXEL_RATIO, 1, internalFormat, GL_RGB, GL_UNSIGNED_BYTE, nullptr, (unsigned int)log2(width * VE_DEVICE_PIXEL_RATIO) + 1);
+			texture->storage(width * veConfiguration::VE_DEVICE_PIXEL_RATIO, height * veConfiguration::VE_DEVICE_PIXEL_RATIO, 1, internalFormat, GL_RGB, GL_UNSIGNED_BYTE, nullptr, (unsigned int)log2(width * veConfiguration::VE_DEVICE_PIXEL_RATIO) + 1);
 			fbo->attach(attachment, target, texture, -1, needMipmap);
 		}
 		_camera->setFrameBufferObject(fbo);

@@ -307,6 +307,9 @@
 		BEAB2EB71CED903100B3F9F8 /* FileReaderWriterPARTICLE.h in Headers */ = {isa = PBXBuildFile; fileRef = BEAB2EB61CED903100B3F9F8 /* FileReaderWriterPARTICLE.h */; };
 		BEB28D591C0C761F0013E3B7 /* MaterialManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEB28D571C0C761F0013E3B7 /* MaterialManager.cpp */; };
 		BEB28D5A1C0C761F0013E3B7 /* MaterialManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BEB28D581C0C761F0013E3B7 /* MaterialManager.h */; };
+		BEC317F81CEEF29300306386 /* Configuration.h in Headers */ = {isa = PBXBuildFile; fileRef = BEC317F71CEEF29300306386 /* Configuration.h */; };
+		BEC317FA1CEEF5E800306386 /* Configuration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEC317F91CEEF5E800306386 /* Configuration.cpp */; };
+		BEC317FB1CEEF5E800306386 /* Configuration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEC317F91CEEF5E800306386 /* Configuration.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -563,6 +566,8 @@
 		BEAB2EB61CED903100B3F9F8 /* FileReaderWriterPARTICLE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileReaderWriterPARTICLE.h; path = ../../Engine/FileCore/FileReaderWriterPARTICLE.h; sourceTree = "<group>"; };
 		BEB28D571C0C761F0013E3B7 /* MaterialManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MaterialManager.cpp; path = ../../Engine/KernelCore/MaterialManager.cpp; sourceTree = "<group>"; };
 		BEB28D581C0C761F0013E3B7 /* MaterialManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MaterialManager.h; path = ../../Engine/KernelCore/MaterialManager.h; sourceTree = "<group>"; };
+		BEC317F71CEEF29300306386 /* Configuration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Configuration.h; path = ../../Engine/Configuration.h; sourceTree = "<group>"; };
+		BEC317F91CEEF5E800306386 /* Configuration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Configuration.cpp; path = ../../Engine/Configuration.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -802,6 +807,8 @@
 				BE3D412D1BAF0B380063041C /* Export.h */,
 				BE3D412E1BAF0B380063041C /* Prerequisites.h */,
 				BE3D412F1BAF0B380063041C /* VoidEngine.h */,
+				BEC317F71CEEF29300306386 /* Configuration.h */,
+				BEC317F91CEEF5E800306386 /* Configuration.cpp */,
 			);
 			name = Engine;
 			sourceTree = "<group>";
@@ -1069,6 +1076,7 @@
 				BE6D3AAC1CB3C5FD00E9E034 /* DeferredLightPipeline.h in Headers */,
 				BE16BCDE1CDC485B006E7146 /* LineEmitter.h in Headers */,
 				BE1A0AD41BE24D6400A1A20D /* OctreeSceneManager.h in Headers */,
+				BEC317F81CEEF29300306386 /* Configuration.h in Headers */,
 				BE6D3ABC1CB3C62800E9E034 /* Sphere.h in Headers */,
 				BE412CFE1BF630CD00206513 /* Application.h in Headers */,
 				BE1A0AD01BE24D6400A1A20D /* OctreeNode.h in Headers */,
@@ -1200,6 +1208,7 @@
 				BE6D3AC51CB3C65300E9E034 /* LightRenderer.cpp in Sources */,
 				BE1B50581BB049E30039A346 /* Parameter.cpp in Sources */,
 				BE1B50591BB049E30039A346 /* RenderableObject.cpp in Sources */,
+				BEC317FA1CEEF5E800306386 /* Configuration.cpp in Sources */,
 				BE1B505A1BB049E30039A346 /* Renderer.cpp in Sources */,
 				BE1A0B041BE24E5B00A1A20D /* Font.cpp in Sources */,
 				BE1A0B061BE24E5B00A1A20D /* FontCharDictionary.cpp in Sources */,
@@ -1303,6 +1312,7 @@
 				BE80F0F91CED59AE00E2EECF /* Quaternion.cpp in Sources */,
 				BE80F0FA1CED59AE00E2EECF /* Vector2.cpp in Sources */,
 				BE80F0FB1CED59AE00E2EECF /* Vector3.cpp in Sources */,
+				BEC317FB1CEEF5E800306386 /* Configuration.cpp in Sources */,
 				BE80F0FC1CED59AE00E2EECF /* Vector4.cpp in Sources */,
 				BE80F0FD1CED59AE00E2EECF /* Spline.cpp in Sources */,
 				BE80F0FE1CED59AE00E2EECF /* File.cpp in Sources */,

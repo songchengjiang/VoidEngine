@@ -2,6 +2,7 @@
 #include "SceneManager.h"
 #include "Camera.h"
 #include "Constants.h"
+#include "Configuration.h"
 
 static const char* COMMON_FUNCTIONS = " \
 	vec3 decode(vec3 encoded) {     \n \
@@ -376,11 +377,11 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, bool isMainCamera)
 	unsigned int deferredClearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
 	auto &vp = camera->getViewport();
 	veVec2 size = veVec2(vp.width - vp.x, vp.height - vp.y);
-	params.DS->storage(size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO, 1, GL_DEPTH24_STENCIL8, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr, 1);
-	params.RT0->storage(size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO, 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
-	params.RT1->storage(size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO, 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
-	params.RT2->storage(size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO, 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
-	params.FBO->setFrameBufferSize(size * VE_DEVICE_PIXEL_RATIO);
+	params.DS->storage(size.x() * veConfiguration::VE_DEVICE_PIXEL_RATIO, size.y() * veConfiguration::VE_DEVICE_PIXEL_RATIO, 1, GL_DEPTH24_STENCIL8, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr, 1);
+	params.RT0->storage(size.x() * veConfiguration::VE_DEVICE_PIXEL_RATIO, size.y() * veConfiguration::VE_DEVICE_PIXEL_RATIO, 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
+	params.RT1->storage(size.x() * veConfiguration::VE_DEVICE_PIXEL_RATIO, size.y() * veConfiguration::VE_DEVICE_PIXEL_RATIO, 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
+	params.RT2->storage(size.x() * veConfiguration::VE_DEVICE_PIXEL_RATIO, size.y() * veConfiguration::VE_DEVICE_PIXEL_RATIO, 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
+	params.FBO->setFrameBufferSize(size * veConfiguration::VE_DEVICE_PIXEL_RATIO);
 	params.FBO->bind(deferredClearMask);
     prepareForDraws(camera);
 	draw(camera, camera->getRenderQueue()->deferredRenderGroup);
@@ -390,12 +391,12 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, bool isMainCamera)
 	if (_sceneManager->getSkyBox())
 		_sceneManager->getSkyBox()->render(camera);
 	_ambientColor->setValue(_sceneManager->getAmbientColor());
-	params.fullScreenTexture->storage(size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO, 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
-	params.fullScreenFBO->setFrameBufferSize(size * VE_DEVICE_PIXEL_RATIO);
+	params.fullScreenTexture->storage(size.x() * veConfiguration::VE_DEVICE_PIXEL_RATIO, size.y() * veConfiguration::VE_DEVICE_PIXEL_RATIO, 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
+	params.fullScreenFBO->setFrameBufferSize(size * veConfiguration::VE_DEVICE_PIXEL_RATIO);
 	params.fullScreenFBO->bind(deferredClearMask, GL_DRAW_FRAMEBUFFER);
 	params.FBO->bind(deferredClearMask, GL_READ_FRAMEBUFFER);
-	glBlitFramebuffer(0, 0, size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO,
-		0, 0, size.x() * VE_DEVICE_PIXEL_RATIO, size.y() * VE_DEVICE_PIXEL_RATIO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	glBlitFramebuffer(0, 0, size.x() * veConfiguration::VE_DEVICE_PIXEL_RATIO, size.y() * veConfiguration::VE_DEVICE_PIXEL_RATIO,
+		0, 0, size.x() * veConfiguration::VE_DEVICE_PIXEL_RATIO, size.y() * veConfiguration::VE_DEVICE_PIXEL_RATIO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
     params.FBO->unBind();
     params.fullScreenFBO->unBind();
 	params.fullScreenFBO->bind(deferredClearMask);
@@ -414,7 +415,7 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, bool isMainCamera)
 	if (isMainCamera && !_sceneManager->getPostProcesserList().empty()) {
 		if (!_postProcesserFBO.valid())
 			_postProcesserFBO = veFrameBufferObjectManager::instance()->createFrameBufferObject("_VE_DEFERRED_RENDER_PIPELINE_POST_PROCESSER_FBO_");
-		_postProcesserFBO->setFrameBufferSize(size * VE_DEVICE_PIXEL_RATIO);
+		_postProcesserFBO->setFrameBufferSize(size * veConfiguration::VE_DEVICE_PIXEL_RATIO);
 		for (auto &iter : _sceneManager->getPostProcesserList()) {
 			auto processer = iter.get();
 			processer->process(this, _postProcesserFBO.get(), camera);
