@@ -33,6 +33,8 @@ private:
 private:
     
     void *_glView;
+    std::thread _runningThread;
+    std::mutex  _eventMutex;
 };
 #endif
 

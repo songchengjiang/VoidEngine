@@ -49,3 +49,5 @@
 
 #include "Debuger/Debuger.h"
 #include "Debuger/OctreeDebuger.h"
+
+#include "Configuration.h"

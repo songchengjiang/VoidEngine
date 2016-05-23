@@ -829,6 +829,7 @@
 				BEAB2EA61CED7F9000B3F9F8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

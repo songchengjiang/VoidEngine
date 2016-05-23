@@ -1,6 +1,7 @@
 #ifndef _BASE_TEST_
 #define _BASE_TEST_
 #include "VoidEngine.h"
+#
 
 #if defined(_MSC_VER)
 #pragma warning( disable : 4996 )
@@ -262,7 +263,7 @@ public:
 		veApplication::instance()->setSceneManager(_sceneManager);
 		int width = veApplication::instance()->width();
 		int height = veApplication::instance()->height();
-		_camera = _sceneManager->createCamera("MainCamera", {0, 0, width, height });
+        _camera = _sceneManager->createCamera("MainCamera", {0, 0, int(width * veConfiguration::VE_DEVICE_PIXEL_RATIO), int(height * veConfiguration::VE_DEVICE_PIXEL_RATIO) });
 		_camera->setProjectionMatrixAsPerspective(30.0f, (float)width / (float)height, 1.0f, 1000.0f);
 		_camera->setViewMatrixAslookAt(veVec3(0.0f, 0.0f, 30.0f), veVec3::ZERO, veVec3::UNIT_Y);
 		_sceneManager->getRootNode()->addChild(_camera);

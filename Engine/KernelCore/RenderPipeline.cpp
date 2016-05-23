@@ -153,7 +153,7 @@ void veRenderPipeline::prepareForDraws(veCamera *camera)
 {
    	auto &vp = camera->getViewport();
     auto &clearColor = camera->getClearColor();
-    glViewport(vp.x * veConfiguration::VE_DEVICE_PIXEL_RATIO, vp.y * veConfiguration::VE_DEVICE_PIXEL_RATIO, vp.width * veConfiguration::VE_DEVICE_PIXEL_RATIO, vp.height * veConfiguration::VE_DEVICE_PIXEL_RATIO);
+    glViewport(vp.x, vp.y, vp.width, vp.height);
     glClear(camera->getClearMask());
     glClearColor(clearColor.r(), clearColor.g(), clearColor.b(), clearColor.a());
 }
