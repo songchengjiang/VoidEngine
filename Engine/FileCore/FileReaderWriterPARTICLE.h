@@ -8,6 +8,7 @@
 #include "EffectCore/ParticleSystem.h"
 
 #include "EffectCore/ParticleQuatRenderer.h"
+#include "EffectCore/ParticleSphereRenderer.h"
 
 #include "EffectCore/PointEmitter.h"
 #include "EffectCore/BoxEmitter.h"
@@ -108,6 +109,9 @@ private:
                         static_cast<veParticleQuatRenderer *>(renderer)->setOrientationType(veParticleQuatRenderer::OrientationType::OT_BILLBOARD);
                     }
                 }
+            }
+            else if (type == RENDERER_SPHERE_KEY) {
+                renderer = new veParticleSphereRenderer;
             }
             _particleSystem->setRenderer(renderer);
         }

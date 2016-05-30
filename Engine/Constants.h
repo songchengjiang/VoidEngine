@@ -214,6 +214,7 @@ static const std::string RENDERER_QUAT_ORIENTATION_TYPE_KEY  = "orientationType"
 static const std::string RENDERER_QUAT_ORIENTATION_BILLBOARD_KEY  = "BILLBOARD";
 static const std::string RENDERER_QUAT_ORIENTATION_DIRECTION_KEY  = "DIRECTION";
 static const std::string RENDERER_QUAT_ORIENTATION_FIXED_KEY  = "FIXED";
+static const std::string RENDERER_SPHERE_KEY = "SPHERE";
 static const std::string EMITTERS_KEY       = "emitters";
 static const std::string EMITTER_POINT_KEY  = "POINT";
 static const std::string EMITTER_BOX_KEY    = "BOX";

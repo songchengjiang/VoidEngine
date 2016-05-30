@@ -66,30 +66,6 @@
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriter.cpp">
       <Filter>FileCore\ReaderWriter</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterANIMATION.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterCAMERA.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterEXR.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterJPEG.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterLIGHT.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterPNG.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterVEM.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterVEMTL.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Engine\FileCore\File.cpp">
       <Filter>FileCore</Filter>
     </ClCompile>
@@ -255,9 +231,6 @@
     <ClCompile Include="..\..\Engine\KernelCore\PostProcesserRenderer.cpp">
       <Filter>KernelCore\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterKTX.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\MaterialManager.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
@@ -296,9 +269,6 @@
     </ClCompile>
     <ClCompile Include="..\..\Engine\BaseCore\Value.cpp">
       <Filter>BaseCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterPARTICLE.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Engine\EffectCore\Affector.cpp">
       <Filter>EffectCore</Filter>
@@ -354,10 +324,14 @@
     <ClCompile Include="..\..\Engine\EffectCore\BoxEmitter.cpp">
       <Filter>EffectCore\Emitters</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\EffectCore\QuatRenderer.cpp">
+    <ClCompile Include="..\..\Engine\EffectCore\ParticleRenderer.cpp">
       <Filter>EffectCore\Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\EffectCore\ParticleRenderer.cpp">
+    <ClCompile Include="..\..\Engine\EffectCore\ParticleQuatRenderer.cpp">
+      <Filter>EffectCore\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\Configuration.cpp" />
+    <ClCompile Include="..\..\Engine\EffectCore\ParticleSphereRenderer.cpp">
       <Filter>EffectCore\Renderers</Filter>
     </ClCompile>
   </ItemGroup>
@@ -675,10 +649,44 @@
     <ClInclude Include="..\..\Engine\EffectCore\BoxEmitter.h">
       <Filter>EffectCore\Emitters</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Engine\EffectCore\QuatRenderer.h">
+    <ClInclude Include="..\..\Engine\EffectCore\ParticleRenderer.h">
       <Filter>EffectCore\Renderers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Engine\EffectCore\ParticleRenderer.h">
+    <ClInclude Include="..\..\Engine\EffectCore\ParticleQuatRenderer.h">
+      <Filter>EffectCore\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterANIMATION.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterCAMERA.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterEXR.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterJPEG.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterKTX.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterLIGHT.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterPARTICLE.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterPNG.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterVEM.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterVEMTL.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\Configuration.h" />
+    <ClInclude Include="..\..\Engine\EffectCore\ParticleSphereRenderer.h">
       <Filter>EffectCore\Renderers</Filter>
     </ClInclude>
   </ItemGroup>
