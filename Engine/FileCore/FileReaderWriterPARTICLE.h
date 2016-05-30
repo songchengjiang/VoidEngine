@@ -7,7 +7,7 @@
 
 #include "EffectCore/ParticleSystem.h"
 
-#include "EffectCore/QuatRenderer.h"
+#include "EffectCore/ParticleQuatRenderer.h"
 
 #include "EffectCore/PointEmitter.h"
 #include "EffectCore/BoxEmitter.h"
@@ -97,7 +97,17 @@ private:
             std::string type = rendererVal[TYPE_KEY.c_str()].GetString();
             veRenderer *renderer = nullptr;
             if (type == RENDERER_QUAT_KEY){
-                renderer = new veQuatRenderer;
+                renderer = new veParticleQuatRenderer;
+                if (rendererVal.HasMember(RENDERER_QUAT_ORIENTATION_TYPE_KEY.c_str())){
+                    std::string otType = rendererVal[RENDERER_QUAT_ORIENTATION_TYPE_KEY.c_str()].GetString();
+                    if (otType == RENDERER_QUAT_ORIENTATION_DIRECTION_KEY){
+                        static_cast<veParticleQuatRenderer *>(renderer)->setOrientationType(veParticleQuatRenderer::OrientationType::OT_DIRECTION);
+                    } else if (otType == RENDERER_QUAT_ORIENTATION_FIXED_KEY){
+                        static_cast<veParticleQuatRenderer *>(renderer)->setOrientationType(veParticleQuatRenderer::OrientationType::OT_FIXED);
+                    } else {
+                        static_cast<veParticleQuatRenderer *>(renderer)->setOrientationType(veParticleQuatRenderer::OrientationType::OT_BILLBOARD);
+                    }
+                }
             }
             _particleSystem->setRenderer(renderer);
         }
@@ -158,15 +168,18 @@ private:
         }
         
         if (emitterVal.HasMember(ORIENTATION_KEY.c_str())){
-            const Value &val = emitterVal[ANGLE_KEY.c_str()];
-            if (val.Size() == 2){
-                veQuat start, end;
+            const Value &val = emitterVal[ORIENTATION_KEY.c_str()];
+            veQuat start, end;
+            if (val.HasMember(START_KEY.c_str())){
                 const Value &startVal = val[START_KEY.c_str()];
-                const Value &endVal   = val[END_KEY.c_str()];
                 start = veQuat(startVal[0].GetDouble(), startVal[1].GetDouble(), startVal[2].GetDouble(), startVal[3].GetDouble());
-                end   = veQuat(endVal[0].GetDouble(), endVal[1].GetDouble(), endVal[2].GetDouble(), endVal[3].GetDouble());
-                emitter->setOrientation(start, end);
             }
+            
+            if (val.HasMember(END_KEY.c_str())){
+                const Value &endVal   = val[END_KEY.c_str()];
+                end = veQuat(endVal[0].GetDouble(), endVal[1].GetDouble(), endVal[2].GetDouble(), endVal[3].GetDouble());
+            }
+            emitter->setOrientation(start, end);
         }
         
         if (emitterVal.HasMember(ANGLE_KEY.c_str())){

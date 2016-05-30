@@ -151,8 +151,8 @@
 		BE1B50801BB04A100039A346 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DC21BB02F530001AA36 /* CoreVideo.framework */; };
 		BE1B50811BB04A120039A346 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DC01BB003190001AA36 /* OpenGL.framework */; };
 		BE1B50821BB04A140039A346 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE0E4DBD1BB002CF0001AA36 /* Foundation.framework */; };
-		BE30ABB11CD9C1E3009477C5 /* QuatRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE30ABB01CD9C1E3009477C5 /* QuatRenderer.h */; };
-		BE30ABB31CD9C1F5009477C5 /* QuatRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE30ABB21CD9C1F5009477C5 /* QuatRenderer.cpp */; };
+		BE30ABB11CD9C1E3009477C5 /* ParticleQuatRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE30ABB01CD9C1E3009477C5 /* ParticleQuatRenderer.h */; };
+		BE30ABB31CD9C1F5009477C5 /* ParticleQuatRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE30ABB21CD9C1F5009477C5 /* ParticleQuatRenderer.cpp */; };
 		BE30ABB51CD9C24E009477C5 /* ParticleRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE30ABB41CD9C24E009477C5 /* ParticleRenderer.h */; };
 		BE30ABB71CD9C25B009477C5 /* ParticleRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE30ABB61CD9C25B009477C5 /* ParticleRenderer.cpp */; };
 		BE412CF31BF630A200206513 /* MathAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE412CF11BF630A200206513 /* MathAlgorithm.cpp */; };
@@ -193,7 +193,7 @@
 		BE6D3AC61CB3C65300E9E034 /* LightRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6D3AC01CB3C65300E9E034 /* LightRenderer.h */; };
 		BE6D3AC71CB3C65300E9E034 /* SphereRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6D3AC11CB3C65300E9E034 /* SphereRenderer.cpp */; };
 		BE6D3AC81CB3C65300E9E034 /* SphereRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6D3AC21CB3C65300E9E034 /* SphereRenderer.h */; };
-		BE80F0DF1CED59AE00E2EECF /* QuatRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE30ABB21CD9C1F5009477C5 /* QuatRenderer.cpp */; };
+		BE80F0DF1CED59AE00E2EECF /* ParticleQuatRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE30ABB21CD9C1F5009477C5 /* ParticleQuatRenderer.cpp */; };
 		BE80F0E01CED59AE00E2EECF /* ParticleRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE30ABB61CD9C25B009477C5 /* ParticleRenderer.cpp */; };
 		BE80F0E11CED59AE00E2EECF /* LinearForceAffector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BD051CDC92BF006E7146 /* LinearForceAffector.cpp */; };
 		BE80F0E21CED59AE00E2EECF /* SineForceAffector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BD011CDC897F006E7146 /* SineForceAffector.cpp */; };
@@ -422,8 +422,8 @@
 		BE1A0AFE1BE24E5B00A1A20D /* TransformFeedback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransformFeedback.h; path = ../../Engine/KernelCore/TransformFeedback.h; sourceTree = "<group>"; };
 		BE1A0B1D1BE2540300A1A20D /* libfreetype.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreetype.a; path = ../../Dependents/freetype/lib/libfreetype.a; sourceTree = "<group>"; };
 		BE1B503B1BB0499F0039A346 /* libVoidEngine.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libVoidEngine.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE30ABB01CD9C1E3009477C5 /* QuatRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuatRenderer.h; path = ../../Engine/EffectCore/QuatRenderer.h; sourceTree = "<group>"; };
-		BE30ABB21CD9C1F5009477C5 /* QuatRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = QuatRenderer.cpp; path = ../../Engine/EffectCore/QuatRenderer.cpp; sourceTree = "<group>"; };
+		BE30ABB01CD9C1E3009477C5 /* ParticleQuatRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleQuatRenderer.h; path = ../../Engine/EffectCore/ParticleQuatRenderer.h; sourceTree = "<group>"; };
+		BE30ABB21CD9C1F5009477C5 /* ParticleQuatRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleQuatRenderer.cpp; path = ../../Engine/EffectCore/ParticleQuatRenderer.cpp; sourceTree = "<group>"; };
 		BE30ABB41CD9C24E009477C5 /* ParticleRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleRenderer.h; path = ../../Engine/EffectCore/ParticleRenderer.h; sourceTree = "<group>"; };
 		BE30ABB61CD9C25B009477C5 /* ParticleRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleRenderer.cpp; path = ../../Engine/EffectCore/ParticleRenderer.cpp; sourceTree = "<group>"; };
 		BE3D412C1BAF0B380063041C /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Constants.h; path = ../../Engine/Constants.h; sourceTree = "<group>"; };
@@ -776,8 +776,8 @@
 		BE30ABAF1CD9C192009477C5 /* Renderers */ = {
 			isa = PBXGroup;
 			children = (
-				BE30ABB01CD9C1E3009477C5 /* QuatRenderer.h */,
-				BE30ABB21CD9C1F5009477C5 /* QuatRenderer.cpp */,
+				BE30ABB01CD9C1E3009477C5 /* ParticleQuatRenderer.h */,
+				BE30ABB21CD9C1F5009477C5 /* ParticleQuatRenderer.cpp */,
 				BE30ABB41CD9C24E009477C5 /* ParticleRenderer.h */,
 				BE30ABB61CD9C25B009477C5 /* ParticleRenderer.cpp */,
 			);
@@ -1037,7 +1037,7 @@
 				BE412CFC1BF630CD00206513 /* Application-desktop.h in Headers */,
 				BE16BD081CDC92BF006E7146 /* LinearForceAffector.h in Headers */,
 				BE6D3AC41CB3C65300E9E034 /* ConeRenderer.h in Headers */,
-				BE30ABB11CD9C1E3009477C5 /* QuatRenderer.h in Headers */,
+				BE30ABB11CD9C1E3009477C5 /* ParticleQuatRenderer.h in Headers */,
 				BE16BCFE1CDC8825006E7146 /* BaseForceAffector.h in Headers */,
 				BE5AF1371CD885CD0023B025 /* DataPool.h in Headers */,
 				BEAB2EB71CED903100B3F9F8 /* FileReaderWriterPARTICLE.h in Headers */,
@@ -1275,7 +1275,7 @@
 				BE5BF1781BB2A09D00FAE523 /* Debuger.cpp in Sources */,
 				BE1A0AA91BE24C6F00A1A20D /* OctreeDebuger.cpp in Sources */,
 				BE1B50721BB049E30039A346 /* Vector4.cpp in Sources */,
-				BE30ABB31CD9C1F5009477C5 /* QuatRenderer.cpp in Sources */,
+				BE30ABB31CD9C1F5009477C5 /* ParticleQuatRenderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1283,7 +1283,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BE80F0DF1CED59AE00E2EECF /* QuatRenderer.cpp in Sources */,
+				BE80F0DF1CED59AE00E2EECF /* ParticleQuatRenderer.cpp in Sources */,
 				BE80F0E01CED59AE00E2EECF /* ParticleRenderer.cpp in Sources */,
 				BE80F0E11CED59AE00E2EECF /* LinearForceAffector.cpp in Sources */,
 				BE80F0E21CED59AE00E2EECF /* SineForceAffector.cpp in Sources */,

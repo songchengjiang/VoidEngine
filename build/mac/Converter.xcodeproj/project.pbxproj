@@ -43,9 +43,6 @@
 		BE0E4E471BB0425F0001AA36 /* libassimp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libassimp.a; path = ../../Dependents/assimp/lib/libassimp.a; sourceTree = "<group>"; };
 		BE1B50131BB047720039A346 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../../Dependents/zlib/lib/libz.a; sourceTree = "<group>"; };
 		BE1B501A1BB0487F0039A346 /* Converter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Converter; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE1B502E1BB049690039A346 /* VoidEngine.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoidEngine.hpp; sourceTree = "<group>"; };
-		BE1B50301BB049690039A346 /* VoidEnginePriv.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VoidEnginePriv.hpp; sourceTree = "<group>"; };
-		BE1B50321BB049690039A346 /* VoidEngine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VoidEngine.cpp; sourceTree = "<group>"; };
 		BE6D3A9C1CB3C1A400E9E034 /* TextureConverter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureConverter.cpp; path = ../../Converter/TextureConverter.cpp; sourceTree = "<group>"; };
 		BE6D3A9D1CB3C1A400E9E034 /* TextureConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureConverter.h; path = ../../Converter/TextureConverter.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -80,7 +77,6 @@
 				BE0E4E351BB03F010001AA36 /* PrettyWriterExt.h */,
 				BE6D3A9D1CB3C1A400E9E034 /* TextureConverter.h */,
 				BE0E4E491BB0426B0001AA36 /* libs */,
-				BE1B502D1BB049690039A346 /* VoidEngine */,
 			);
 			sourceTree = "<group>";
 		};
@@ -91,16 +87,6 @@
 				BE0E4E471BB0425F0001AA36 /* libassimp.a */,
 			);
 			name = libs;
-			sourceTree = "<group>";
-		};
-		BE1B502D1BB049690039A346 /* VoidEngine */ = {
-			isa = PBXGroup;
-			children = (
-				BE1B502E1BB049690039A346 /* VoidEngine.hpp */,
-				BE1B50301BB049690039A346 /* VoidEnginePriv.hpp */,
-				BE1B50321BB049690039A346 /* VoidEngine.cpp */,
-			);
-			path = VoidEngine;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

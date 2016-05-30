@@ -201,7 +201,7 @@ void veParticleSystem::excuteEmitPartilces(veEmitter *emitter, unsigned short re
         particle->addEventFlags(veParticle::PEF_EMITTED);
         
         emitter->initParticleForEmission(particle);
-        particle->position += particle->direction * timePoint;
+        //particle->position += particle->direction * timePoint;
         timePoint += timeInc;
     }
 }

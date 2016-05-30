@@ -13,6 +13,7 @@
 #include "EntityManager.h"
 #include "AnimationManager.h"
 #include "MaterialManager.h"
+#include "Configuration.h"
 
 #include <algorithm>
 
@@ -215,7 +216,7 @@ void veSceneManager::dispatchEvents(veEvent &event)
 {
 	if (event.getEventType() == veEvent::VE_WIN_RESIZE) {
 		if (_mainCamera.valid()) {
-			_mainCamera->resize(event.getWindowWidth(), event.getWindowHeight());
+            _mainCamera->resize(event.getWindowWidth() * veConfiguration::VE_DEVICE_PIXEL_RATIO, event.getWindowHeight() * veConfiguration::VE_DEVICE_PIXEL_RATIO);
 		}
 	}
 

@@ -45,7 +45,7 @@
 #include "EffectCore/VortexAffector.h"
 #include "EffectCore/SineForceAffector.h"
 #include "EffectCore/LinearForceAffector.h"
-#include "EffectCore/QuatRenderer.h"
+#include "EffectCore/ParticleQuatRenderer.h"
 
 #include "Debuger/Debuger.h"
 #include "Debuger/OctreeDebuger.h"

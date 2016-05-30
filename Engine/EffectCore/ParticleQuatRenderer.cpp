@@ -1,11 +1,12 @@
-#include "QuatRenderer.h"
+#include "ParticleQuatRenderer.h"
 #include "KernelCore/Node.h"
 #include "KernelCore/Camera.h"
 #include "KernelCore/RenderQueue.h"
 #include "ParticleSystem.h"
 #include "Particle.h"
 
-veQuatRenderer::veQuatRenderer()
+veParticleQuatRenderer::veParticleQuatRenderer()
+    : _orientationType(OrientationType::OT_BILLBOARD)
 {
     //0
     _vertices.push_back(-0.5f); _vertices.push_back(-0.5f); _vertices.push_back(0.0f); //v
@@ -24,12 +25,12 @@ veQuatRenderer::veQuatRenderer()
     _vertices.push_back(1.0f); _vertices.push_back(1.0f);                              //tc
 }
 
-veQuatRenderer::~veQuatRenderer()
+veParticleQuatRenderer::~veParticleQuatRenderer()
 {
 
 }
 
-void veQuatRenderer::draw(veRenderCommand &command)
+void veParticleQuatRenderer::draw(veRenderCommand &command)
 {
     if (!isNeedRendering())
         return;
@@ -41,17 +42,17 @@ void veQuatRenderer::draw(veRenderCommand &command)
     glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, _instanceCount);
 }
 
-void veQuatRenderer::updateInstanceParams(veParticle *particle, const veQuat &cameraRot, const veMat4 &vp)
+void veParticleQuatRenderer::updateInstanceParams(veParticle *particle, const veMat4 &cameraRot, const veMat4 &vp)
 {
     veVec3 scale(particle->width, particle->height, 1.0f);
-    veMat4 mat = vp * veMat4::transform(particle->position, veVec3(particle->width, particle->height, 1.0f), cameraRot * particle->orientation);
+    veMat4 mat = vp * veMat4::translation(particle->position) * cameraRot * veMat4::rotation(particle->orientation) * veMat4::scale(veVec3(particle->width, particle->height, 1.0f));
     mat.transpose();
     _mvpMats.push_back(mat);
     _colors.push_back(particle->color);
     ++_instanceCount;
 }
 
-void veQuatRenderer::updateBuffer(veRenderableObject *renderableObj, veCamera *camera)
+void veParticleQuatRenderer::updateBuffer(veRenderableObject *renderableObj, veCamera *camera)
 {
     if (!_vertices.empty() && _needUpdate){
         if (!_vao) {
@@ -92,13 +93,27 @@ void veQuatRenderer::updateBuffer(veRenderableObject *renderableObj, veCamera *c
     _instanceCount = 0;
     _mvpMats.clear();
     _colors.clear();
-    veQuat cameraRot;
-    const veMat4 &camWorldMat = camera->getNodeToWorldMatrix();
-    camWorldMat.decomposition(nullptr, nullptr, &cameraRot);
+    veMat4 cameraRot = veMat4::IDENTITY;
+    if (_orientationType == OrientationType::OT_BILLBOARD || _orientationType == OrientationType::OT_DIRECTION){
+        cameraRot = camera->getNodeToWorldMatrix();
+        cameraRot[0][3] = cameraRot[1][3] = cameraRot[2][3] = 0.0f;
+    }
+    veVec3 backward(cameraRot[0][2], cameraRot[1][2], cameraRot[2][2]);
     veMat4 viewProjMat = camera->projectionMatrix() * camera->viewMatrix();
     
     const auto &particles = static_cast<veParticleSystem *>(renderableObj)->getParticles().getActiveDataList();
     for (auto particle : particles){
+        if (_orientationType == OrientationType::OT_DIRECTION){
+            veVec3 up = particle->direction;
+            up.normalize();
+            veVec3 right = up.crossProduct(backward);
+            right.normalize();
+            veVec3 back = right.crossProduct(up);
+            back.normalize();
+            cameraRot[0][0] = right.x(); cameraRot[0][1] = up.x(); cameraRot[0][2] = back.x();
+            cameraRot[1][0] = right.y(); cameraRot[1][1] = up.y(); cameraRot[1][2] = back.y();
+            cameraRot[2][0] = right.z(); cameraRot[2][1] = up.z(); cameraRot[2][2] = back.z();
+        }
         updateInstanceParams(particle, cameraRot, viewProjMat);
     }
     
@@ -113,7 +128,7 @@ void veQuatRenderer::updateBuffer(veRenderableObject *renderableObj, veCamera *c
     }
 }
 
-unsigned int veQuatRenderer::getVertexStride() const
+unsigned int veParticleQuatRenderer::getVertexStride() const
 {
     return 3 + 2;
 }
