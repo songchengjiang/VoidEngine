@@ -49,7 +49,6 @@ void veParticleQuatRenderer::updateInstanceParams(veParticle *particle, const ve
     mat.transpose();
     _mvpMats.push_back(mat);
     _colors.push_back(particle->color);
-    ++_instanceCount;
 }
 
 void veParticleQuatRenderer::updateBuffer(veRenderableObject *renderableObj, veCamera *camera)
@@ -115,6 +114,7 @@ void veParticleQuatRenderer::updateBuffer(veRenderableObject *renderableObj, veC
             cameraRot[2][0] = right.z(); cameraRot[2][1] = up.z(); cameraRot[2][2] = back.z();
         }
         updateInstanceParams(particle, cameraRot, viewProjMat);
+        ++_instanceCount;
     }
     
     if (!_colors.empty()){

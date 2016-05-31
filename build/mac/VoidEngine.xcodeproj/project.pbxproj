@@ -193,6 +193,8 @@
 		BE6D3AC61CB3C65300E9E034 /* LightRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6D3AC01CB3C65300E9E034 /* LightRenderer.h */; };
 		BE6D3AC71CB3C65300E9E034 /* SphereRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6D3AC11CB3C65300E9E034 /* SphereRenderer.cpp */; };
 		BE6D3AC81CB3C65300E9E034 /* SphereRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6D3AC21CB3C65300E9E034 /* SphereRenderer.h */; };
+		BE791C351CFD9218007071AF /* ParticleBoxRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE791C331CFD9218007071AF /* ParticleBoxRenderer.cpp */; };
+		BE791C361CFD9218007071AF /* ParticleBoxRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE791C341CFD9218007071AF /* ParticleBoxRenderer.h */; };
 		BE80F0DF1CED59AE00E2EECF /* ParticleQuatRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE30ABB21CD9C1F5009477C5 /* ParticleQuatRenderer.cpp */; };
 		BE80F0E01CED59AE00E2EECF /* ParticleRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE30ABB61CD9C25B009477C5 /* ParticleRenderer.cpp */; };
 		BE80F0E11CED59AE00E2EECF /* LinearForceAffector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BD051CDC92BF006E7146 /* LinearForceAffector.cpp */; };
@@ -307,6 +309,8 @@
 		BEAB2EB71CED903100B3F9F8 /* FileReaderWriterPARTICLE.h in Headers */ = {isa = PBXBuildFile; fileRef = BEAB2EB61CED903100B3F9F8 /* FileReaderWriterPARTICLE.h */; };
 		BEB28D591C0C761F0013E3B7 /* MaterialManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEB28D571C0C761F0013E3B7 /* MaterialManager.cpp */; };
 		BEB28D5A1C0C761F0013E3B7 /* MaterialManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BEB28D581C0C761F0013E3B7 /* MaterialManager.h */; };
+		BEB952351CFC4B4B00110FF6 /* ParticleSphereRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEB952331CFC4B4B00110FF6 /* ParticleSphereRenderer.cpp */; };
+		BEB952361CFC4B4B00110FF6 /* ParticleSphereRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BEB952341CFC4B4B00110FF6 /* ParticleSphereRenderer.h */; };
 		BEC317F81CEEF29300306386 /* Configuration.h in Headers */ = {isa = PBXBuildFile; fileRef = BEC317F71CEEF29300306386 /* Configuration.h */; };
 		BEC317FA1CEEF5E800306386 /* Configuration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEC317F91CEEF5E800306386 /* Configuration.cpp */; };
 		BEC317FB1CEEF5E800306386 /* Configuration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEC317F91CEEF5E800306386 /* Configuration.cpp */; };
@@ -542,6 +546,8 @@
 		BE6D3AC01CB3C65300E9E034 /* LightRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightRenderer.h; path = ../../Engine/KernelCore/LightRenderer.h; sourceTree = "<group>"; };
 		BE6D3AC11CB3C65300E9E034 /* SphereRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SphereRenderer.cpp; path = ../../Engine/KernelCore/SphereRenderer.cpp; sourceTree = "<group>"; };
 		BE6D3AC21CB3C65300E9E034 /* SphereRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SphereRenderer.h; path = ../../Engine/KernelCore/SphereRenderer.h; sourceTree = "<group>"; };
+		BE791C331CFD9218007071AF /* ParticleBoxRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleBoxRenderer.cpp; path = ../../Engine/EffectCore/ParticleBoxRenderer.cpp; sourceTree = "<group>"; };
+		BE791C341CFD9218007071AF /* ParticleBoxRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleBoxRenderer.h; path = ../../Engine/EffectCore/ParticleBoxRenderer.h; sourceTree = "<group>"; };
 		BE80F0C11CED579E00E2EECF /* File-apple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "File-apple.h"; path = "../../Engine/FileCore/File-apple.h"; sourceTree = "<group>"; };
 		BE80F0C21CED579E00E2EECF /* File-apple.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "File-apple.mm"; path = "../../Engine/FileCore/File-apple.mm"; sourceTree = "<group>"; };
 		BE80F0D61CED58D500E2EECF /* libVoidEngine IOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libVoidEngine IOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -566,6 +572,8 @@
 		BEAB2EB61CED903100B3F9F8 /* FileReaderWriterPARTICLE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileReaderWriterPARTICLE.h; path = ../../Engine/FileCore/FileReaderWriterPARTICLE.h; sourceTree = "<group>"; };
 		BEB28D571C0C761F0013E3B7 /* MaterialManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MaterialManager.cpp; path = ../../Engine/KernelCore/MaterialManager.cpp; sourceTree = "<group>"; };
 		BEB28D581C0C761F0013E3B7 /* MaterialManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MaterialManager.h; path = ../../Engine/KernelCore/MaterialManager.h; sourceTree = "<group>"; };
+		BEB952331CFC4B4B00110FF6 /* ParticleSphereRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleSphereRenderer.cpp; path = ../../Engine/EffectCore/ParticleSphereRenderer.cpp; sourceTree = "<group>"; };
+		BEB952341CFC4B4B00110FF6 /* ParticleSphereRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleSphereRenderer.h; path = ../../Engine/EffectCore/ParticleSphereRenderer.h; sourceTree = "<group>"; };
 		BEC317F71CEEF29300306386 /* Configuration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Configuration.h; path = ../../Engine/Configuration.h; sourceTree = "<group>"; };
 		BEC317F91CEEF5E800306386 /* Configuration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Configuration.cpp; path = ../../Engine/Configuration.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -776,6 +784,10 @@
 		BE30ABAF1CD9C192009477C5 /* Renderers */ = {
 			isa = PBXGroup;
 			children = (
+				BE791C331CFD9218007071AF /* ParticleBoxRenderer.cpp */,
+				BE791C341CFD9218007071AF /* ParticleBoxRenderer.h */,
+				BEB952331CFC4B4B00110FF6 /* ParticleSphereRenderer.cpp */,
+				BEB952341CFC4B4B00110FF6 /* ParticleSphereRenderer.h */,
 				BE30ABB01CD9C1E3009477C5 /* ParticleQuatRenderer.h */,
 				BE30ABB21CD9C1F5009477C5 /* ParticleQuatRenderer.cpp */,
 				BE30ABB41CD9C24E009477C5 /* ParticleRenderer.h */,
@@ -1048,6 +1060,7 @@
 				BE1A0B171BE24E5C00A1A20D /* ThreadPool.h in Headers */,
 				BE1A0ABF1BE24D1000A1A20D /* SceneManager.h in Headers */,
 				BE1A0B051BE24E5B00A1A20D /* Font.h in Headers */,
+				BEB952361CFC4B4B00110FF6 /* ParticleSphereRenderer.h in Headers */,
 				BE30ABB51CD9C24E009477C5 /* ParticleRenderer.h in Headers */,
 				BE1A0B151BE24E5C00A1A20D /* Text.h in Headers */,
 				BE1A0ACE1BE24D6400A1A20D /* OctreeCamera.h in Headers */,
@@ -1080,6 +1093,7 @@
 				BE6D3ABC1CB3C62800E9E034 /* Sphere.h in Headers */,
 				BE412CFE1BF630CD00206513 /* Application.h in Headers */,
 				BE1A0AD01BE24D6400A1A20D /* OctreeNode.h in Headers */,
+				BE791C361CFD9218007071AF /* ParticleBoxRenderer.h in Headers */,
 				BE6D3AB01CB3C5FD00E9E034 /* RenderPipeline.h in Headers */,
 				BE05C51D1CD30E2A0022D797 /* Emitter.h in Headers */,
 				BE16BCF21CDC7C9D006E7146 /* JetAffector.h in Headers */,
@@ -1194,6 +1208,7 @@
 				BEAB2E8E1CED661C00B3F9F8 /* File-apple.mm in Sources */,
 				BE16BCE81CDC6D59006E7146 /* ScaleAffector.cpp in Sources */,
 				BE1B50511BB049E30039A346 /* Material.cpp in Sources */,
+				BEB952351CFC4B4B00110FF6 /* ParticleSphereRenderer.cpp in Sources */,
 				BE1B50521BB049E30039A346 /* Mesh.cpp in Sources */,
 				BE16BCF71CDC7EDA006E7146 /* FlockCenteringAffector.cpp in Sources */,
 				BE1A0B101BE24E5C00A1A20D /* SkyBox.cpp in Sources */,
@@ -1204,6 +1219,7 @@
 				BE1B50571BB049E30039A346 /* OverlayRenderer.cpp in Sources */,
 				BE1A0AE41BE24E4000A1A20D /* SurfaceRenderer.cpp in Sources */,
 				BE6D3AC71CB3C65300E9E034 /* SphereRenderer.cpp in Sources */,
+				BE791C351CFD9218007071AF /* ParticleBoxRenderer.cpp in Sources */,
 				BE16BCE01CDC486B006E7146 /* LineEmitter.cpp in Sources */,
 				BE6D3AC51CB3C65300E9E034 /* LightRenderer.cpp in Sources */,
 				BE1B50581BB049E30039A346 /* Parameter.cpp in Sources */,

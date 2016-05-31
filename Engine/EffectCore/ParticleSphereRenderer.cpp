@@ -290,12 +290,11 @@ void veParticleSphereRenderer::updateInstanceParams(veParticle *particle, const 
     mat.transpose();
     _mvpMats.push_back(mat);
     _colors.push_back(particle->color);
-    ++_instanceCount;
 }
 
 void veParticleSphereRenderer::updateBuffer(veRenderableObject *renderableObj, veCamera *camera)
 {
-    if (!_vertices.empty() && _needUpdate){
+    if (!_vertices.empty() && !_indices.empty() && _needUpdate){
         if (!_vao) {
             glGenVertexArrays(1, &_vao);
             glGenBuffers(1, &_vbo);
@@ -343,6 +342,7 @@ void veParticleSphereRenderer::updateBuffer(veRenderableObject *renderableObj, v
     const auto &particles = static_cast<veParticleSystem *>(renderableObj)->getParticles().getActiveDataList();
     for (auto particle : particles){
         updateInstanceParams(particle, viewProjMat);
+        ++_instanceCount;
     }
     
     if (!_colors.empty()){
