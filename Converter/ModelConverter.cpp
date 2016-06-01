@@ -11,6 +11,8 @@ std::vector<std::string> MESH_NAME_LIST;
 std::vector<std::string> MATERIAL_NAME_LIST;
 std::unordered_map<const aiMaterial*, const aiMesh *> MATERIAL_MESH_MAP;
 
+#define IS_QNAN(f) (f != f)
+
 ModelConverter::ModelConverter()
 	: _modelWriter(_modelbuffer)
 	, _matWriter(_matBuffer)
@@ -220,20 +222,20 @@ void ModelConverter::writeMeshVertices(const aiMesh *mesh)
 
 		//normal
 		if (mesh->HasNormals()){
-			_modelWriter.Float(mesh->mNormals[i].x);
-			_modelWriter.Float(mesh->mNormals[i].y);
-			_modelWriter.Float(mesh->mNormals[i].z);
+            _modelWriter.Float(IS_QNAN(mesh->mNormals[i].x)? 0.0f: mesh->mNormals[i].x);
+			_modelWriter.Float(IS_QNAN(mesh->mNormals[i].y)? 0.0f: mesh->mNormals[i].y);
+			_modelWriter.Float(IS_QNAN(mesh->mNormals[i].z)? 0.0f: mesh->mNormals[i].z);
 		}
 
 		//tangents and bitangents
 		if (mesh->HasTangentsAndBitangents()){
-			_modelWriter.Float(mesh->mTangents[i].x);
-			_modelWriter.Float(mesh->mTangents[i].y);
-			_modelWriter.Float(mesh->mTangents[i].z);
+			_modelWriter.Float(IS_QNAN(mesh->mTangents[i].x)? 0.0f: mesh->mTangents[i].x);
+			_modelWriter.Float(IS_QNAN(mesh->mTangents[i].y)? 0.0f: mesh->mTangents[i].y);
+			_modelWriter.Float(IS_QNAN(mesh->mTangents[i].z)? 0.0f: mesh->mTangents[i].z);
 
-			_modelWriter.Float(mesh->mBitangents[i].x);
-			_modelWriter.Float(mesh->mBitangents[i].y);
-			_modelWriter.Float(mesh->mBitangents[i].z);
+			_modelWriter.Float(IS_QNAN(mesh->mBitangents[i].x)? 0.0f: mesh->mBitangents[i].x);
+			_modelWriter.Float(IS_QNAN(mesh->mBitangents[i].y)? 0.0f: mesh->mBitangents[i].y);
+			_modelWriter.Float(IS_QNAN(mesh->mBitangents[i].z)? 0.0f: mesh->mBitangents[i].z);
 		}
 
 		//uvs

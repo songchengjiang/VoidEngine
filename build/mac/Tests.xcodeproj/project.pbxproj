@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BE1B508F1BB04E010039A346 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE0E4E701BB0451B0001AA36 /* main.cpp */; };
-		BE5B5CFE1BB051ED0018F3A1 /* libVoidEngine.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BE1B50991BB04F590039A346 /* libVoidEngine.dylib */; };
 		BEAB2E751CED60F800B3F9F8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BEAB2E691CED60DD00B3F9F8 /* main.m */; };
 		BEAB2E761CED610000B3F9F8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BEAB2E731CED60ED00B3F9F8 /* Main.storyboard */; };
 		BEAB2E771CED610400B3F9F8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BEAB2E711CED60ED00B3F9F8 /* LaunchScreen.storyboard */; };
@@ -51,13 +49,6 @@
 			remoteGlobalIDString = BE1B503B1BB0499F0039A346;
 			remoteInfo = VoidEngine;
 		};
-		BE1B509A1BB04F670039A346 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BE1B50941BB04F580039A346 /* VoidEngine.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = BE1B503A1BB0499F0039A346;
-			remoteInfo = VoidEngine;
-		};
 		BE80F1911CED5C0400E2EECF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BE1B50941BB04F580039A346 /* VoidEngine.xcodeproj */;
@@ -81,18 +72,6 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		BE1B50851BB04DD70039A346 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		BE0E4E6C1BB0451B0001AA36 /* BaseTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BaseTest.h; path = ../../Tests/BaseTest.h; sourceTree = "<group>"; };
 		BE0E4E6D1BB0451B0001AA36 /* CameraTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CameraTest.h; path = ../../Tests/CameraTest.h; sourceTree = "<group>"; };
@@ -101,7 +80,6 @@
 		BE0E4E701BB0451B0001AA36 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../Tests/main.cpp; sourceTree = "<group>"; };
 		BE0E4E711BB0451B0001AA36 /* MeshTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MeshTest.h; path = ../../Tests/MeshTest.h; sourceTree = "<group>"; };
 		BE0E4E721BB0451B0001AA36 /* RenToTex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RenToTex.h; path = ../../Tests/RenToTex.h; sourceTree = "<group>"; };
-		BE1B50871BB04DD70039A346 /* Tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Tests; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE1B50941BB04F580039A346 /* VoidEngine.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = VoidEngine.xcodeproj; sourceTree = "<group>"; };
 		BE30ABB81CD9E445009477C5 /* ParticleSystemTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleSystemTest.h; path = ../../Tests/ParticleSystemTest.h; sourceTree = "<group>"; };
 		BE412D051BF6312000206513 /* IntersectionTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IntersectionTest.h; path = ../../Tests/IntersectionTest.h; sourceTree = "<group>"; };
@@ -139,14 +117,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		BE1B50841BB04DD70039A346 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BE5B5CFE1BB051ED0018F3A1 /* libVoidEngine.dylib in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BE80F1731CED5C0400E2EECF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -197,7 +167,6 @@
 		BE1B50881BB04DD70039A346 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BE1B50871BB04DD70039A346 /* Tests */,
 				BE80F1761CED5C0400E2EECF /* Tests IOS.app */,
 				BEAB2E931CED7F9000B3F9F8 /* Tests MAC.app */,
 			);
@@ -250,24 +219,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		BE1B50861BB04DD70039A346 /* Tests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BE1B508E1BB04DD70039A346 /* Build configuration list for PBXNativeTarget "Tests" */;
-			buildPhases = (
-				BE1B50831BB04DD70039A346 /* Sources */,
-				BE1B50841BB04DD70039A346 /* Frameworks */,
-				BE1B50851BB04DD70039A346 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				BE1B509B1BB04F670039A346 /* PBXTargetDependency */,
-			);
-			name = Tests;
-			productName = Tests;
-			productReference = BE1B50871BB04DD70039A346 /* Tests */;
-			productType = "com.apple.product-type.tool";
-		};
 		BE80F1751CED5C0400E2EECF /* Tests IOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BE80F1931CED5C0400E2EECF /* Build configuration list for PBXNativeTarget "Tests IOS" */;
@@ -312,9 +263,6 @@
 			attributes = {
 				LastUpgradeCheck = 0730;
 				TargetAttributes = {
-					BE1B50861BB04DD70039A346 = {
-						CreatedOnToolsVersion = 7.0;
-					};
 					BE80F1751CED5C0400E2EECF = {
 						CreatedOnToolsVersion = 7.3;
 					};
@@ -342,7 +290,6 @@
 			);
 			projectRoot = "";
 			targets = (
-				BE1B50861BB04DD70039A346 /* Tests */,
 				BE80F1751CED5C0400E2EECF /* Tests IOS */,
 				BEAB2E921CED7F9000B3F9F8 /* Tests MAC */,
 			);
@@ -410,14 +357,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		BE1B50831BB04DD70039A346 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BE1B508F1BB04E010039A346 /* main.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BE80F1721CED5C0400E2EECF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -439,11 +378,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		BE1B509B1BB04F670039A346 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = VoidEngine;
-			targetProxy = BE1B509A1BB04F670039A346 /* PBXContainerItemProxy */;
-		};
 		BEAB2E7D1CED617E00B3F9F8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "VoidEngine IOS";
@@ -501,99 +435,6 @@
 					"\"$(SRCROOT)/../../Dependents/freetype/include\"",
 				);
 				SYMROOT = ../../mac;
-			};
-			name = Release;
-		};
-		BE1B508C1BB04DD70039A346 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../../Dependents\"",
-					"\"$(SRCROOT)/../../Engine\"",
-					"\"$(SRCROOT)/../../Tests\"",
-					"\"$(SRCROOT)/../../Dependents/freetype/include\"",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SYMROOT = "“../../mac”";
-			};
-			name = Debug;
-		};
-		BE1B508D1BB04DD70039A346 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../../Dependents\"",
-					"\"$(SRCROOT)/../../Engine\"",
-					"\"$(SRCROOT)/../../Tests\"",
-					"\"$(SRCROOT)/../../Dependents/freetype/include\"",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SYMROOT = "“../../mac”";
 			};
 			name = Release;
 		};
@@ -800,15 +641,6 @@
 			buildConfigurations = (
 				BE0E4E641BB0447A0001AA36 /* Debug */,
 				BE0E4E651BB0447A0001AA36 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		BE1B508E1BB04DD70039A346 /* Build configuration list for PBXNativeTarget "Tests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BE1B508C1BB04DD70039A346 /* Debug */,
-				BE1B508D1BB04DD70039A346 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
