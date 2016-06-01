@@ -34,6 +34,7 @@
     <ClCompile Include="..\..\Engine\EffectCore\JetAffector.cpp" />
     <ClCompile Include="..\..\Engine\EffectCore\LinearForceAffector.cpp" />
     <ClCompile Include="..\..\Engine\EffectCore\LineEmitter.cpp" />
+    <ClCompile Include="..\..\Engine\EffectCore\ParticleBoxRenderer.cpp" />
     <ClCompile Include="..\..\Engine\EffectCore\ParticleQuatRenderer.cpp" />
     <ClCompile Include="..\..\Engine\EffectCore\ParticleRenderer.cpp" />
     <ClCompile Include="..\..\Engine\EffectCore\ParticleSphereRenderer.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="..\..\Engine\EffectCore\LinearForceAffector.h" />
     <ClInclude Include="..\..\Engine\EffectCore\LineEmitter.h" />
     <ClInclude Include="..\..\Engine\EffectCore\Particle.h" />
+    <ClInclude Include="..\..\Engine\EffectCore\ParticleBoxRenderer.h" />
     <ClInclude Include="..\..\Engine\EffectCore\ParticleQuatRenderer.h" />
     <ClInclude Include="..\..\Engine\EffectCore\ParticleRenderer.h" />
     <ClInclude Include="..\..\Engine\EffectCore\ParticleSphereRenderer.h" />

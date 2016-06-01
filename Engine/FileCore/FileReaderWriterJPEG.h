@@ -52,7 +52,8 @@ public:
 private:
 
 	void readImage(jpeg_decompress_struct &cinfo){
-		int width = cinfo.image_width;
+#define FOUR_BYTES_ALIGN(BYTES)  ((((BYTES + 4))>>2)<<2)  
+		int width = FOUR_BYTES_ALIGN(cinfo.image_width);
 		int height = cinfo.image_height;
 		int components = cinfo.num_components;
 		if (components < 1) return;

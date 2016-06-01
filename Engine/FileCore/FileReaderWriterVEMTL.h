@@ -258,9 +258,10 @@ private:
 		{
 			if (true) {
 				texture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture(name);
-				if (!texture && !name.empty()) {
+				if (!texture) {
 					texture = _sceneManager->createTexture(name, type);
 				}
+                if (!texture) return;
 
 				if (texVal.HasMember(SOURCE_KEY.c_str())) {
 					if (type == veTexture::TEXTURE_CUBE) {
@@ -315,7 +316,6 @@ private:
 					}
 				}
 
-				if (!texture) return;
 			}
 
 		} while (false);

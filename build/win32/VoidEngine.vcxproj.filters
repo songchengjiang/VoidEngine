@@ -334,6 +334,9 @@
     <ClCompile Include="..\..\Engine\EffectCore\ParticleSphereRenderer.cpp">
       <Filter>EffectCore\Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\ParticleBoxRenderer.cpp">
+      <Filter>EffectCore\Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -687,6 +690,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\Configuration.h" />
     <ClInclude Include="..\..\Engine\EffectCore\ParticleSphereRenderer.h">
+      <Filter>EffectCore\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\ParticleBoxRenderer.h">
       <Filter>EffectCore\Renderers</Filter>
     </ClInclude>
   </ItemGroup>

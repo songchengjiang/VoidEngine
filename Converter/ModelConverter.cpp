@@ -610,7 +610,7 @@ void ModelConverter::writeTextures(const aiMaterial *mat)
 void ModelConverter::writeTexture(const aiMaterial *mat, aiTextureType texType)
 {
 	aiString texturePath;
-	aiTextureMapMode mapMode;
+	aiTextureMapMode mapMode = aiTextureMapMode_Wrap;
 	unsigned int ct = mat->GetTextureCount(texType);
 	mat->GetTexture(texType, 0, &texturePath, 0, 0, 0, 0, &mapMode);
 	if (0 < texturePath.length){
