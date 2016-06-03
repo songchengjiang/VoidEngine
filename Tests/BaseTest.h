@@ -22,7 +22,7 @@ public:
 		return false;
 	}
 
-	virtual void update(veSceneManager *sm) override{
+	virtual void beforeUpdate(veSceneManager *sm) override{
 		if (_attachedNodeList.empty()) return;
 
 		auto light = static_cast<veLight *>(_attachedNodeList[0]);
@@ -78,7 +78,7 @@ public:
 	}
 	~CameraManipulator(){}
 
-	virtual void update(veSceneManager *sm) override {
+	virtual void beforeUpdate(veSceneManager *sm) override {
 		_simulationTime += sm->getDeltaTime();
 	}
 

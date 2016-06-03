@@ -42,7 +42,7 @@ public:
 		return false;
 	}
 
-	virtual void update(veSceneManager *sm) override {
+	virtual void beforeUpdate(veSceneManager *sm) override {
 
 	}
 };

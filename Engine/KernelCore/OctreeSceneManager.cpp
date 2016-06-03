@@ -100,10 +100,7 @@ void veOctreeSceneManager::requestRender(veNode *node)
 
 void veOctreeSceneManager::requestRayCast(veRay *ray)
 {
-	enqueueRequest([this, ray] {
-		this->intersectByRay(_octree, ray);
-		veSceneManager::requestRayCast(ray);
-	});
+    this->intersectByRay(_octree, ray);
 }
 
 bool veOctreeSceneManager::isNodeVisibleInScene(veNode *node)
@@ -202,11 +199,22 @@ void veOctreeSceneManager::intersectByRay(veOctree *octant, veRay *ray)
 
 void veOctreeSceneManager::update()
 {
-	veSceneManager::update();
+    if (!_componentList.empty()) {
+        for (auto &com : _componentList) {
+            com->beforeUpdate(this);
+        }
+    }
+    
 	_root->update(this, veMat4::IDENTITY);
 	//std::unique_lock<std::mutex> lock(_parallelUpdateOctantMutex);
 	//_parallelUpdateOctantCondition.wait(lock, [this] { return _parallelUpdateOctantNum == 0; });
 	_octree->updateBoundingBox();
+    
+    if (!_componentList.empty()) {
+        for (auto &com : _componentList) {
+            com->afterUpdate(this);
+        }
+    }
 }
 
 void veOctreeSceneManager::render()

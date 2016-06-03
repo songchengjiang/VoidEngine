@@ -12,7 +12,7 @@ public:
 
 	}
 
-	virtual void update(veSceneManager *sm) override {
+	virtual void beforeUpdate(veSceneManager *sm) override {
 		char buf[256];
 		sprintf(buf, "Frame Rate: %f", 1.0f / sm->getDeltaTime());
 		_text->setContent(buf);

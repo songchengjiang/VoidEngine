@@ -15,7 +15,8 @@ public:
 	USE_VE_PTR;
 
 	virtual bool handle(veSceneManager *sm, const veEvent &event) { return false; }
-	virtual void update(veSceneManager *sm) {}
+    virtual void beforeUpdate(veSceneManager *sm) {}
+	virtual void afterUpdate(veSceneManager *sm) {}
 	virtual void onAttachToNode(veNode *node);
 	virtual void onDetachToNode(veNode *node);
 

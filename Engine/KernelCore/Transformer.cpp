@@ -14,7 +14,7 @@ veTransformer::~veTransformer()
 
 }
 
-void veTransformer::update(veSceneManager *sm)
+void veTransformer::beforeUpdate(veSceneManager *sm)
 {
 	if (_needUpdate && !_attachedNodeList.empty()){
 		for (auto &node : _attachedNodeList) {

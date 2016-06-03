@@ -11,8 +11,7 @@ class veRenderableObject;
 class veSceneManager;
 class VE_EXPORT veRay
 {
-	friend class veSceneManager;
-	typedef std::function<void()> RayCallback;
+    friend class veSceneManager;
 public:
 	struct Intersection
 	{
@@ -34,11 +33,13 @@ public:
 	const veVec3& getEnd() const { return _end; }
 	const Intersections& getIntersections() const { return _intersections; }
 	void addIntersection(const Intersection &inters);
+    void setDiscardBackFace(bool isDiscard) { _isDicardBackFace = isDiscard; }
+    bool isDiscardBackFace() const { return _isDicardBackFace; }
 
-	void apply(veSceneManager *sm, const RayCallback &callBack);
+	void apply(veSceneManager *sm);
 
 	bool isIntersectWith(const veBoundingBox &bbox);
-	bool isIntersectWith(const veVec3 &p0, const veVec3 &p1, const veVec3 &p2, veVec3 &intersectPoint, veVec3 &intersectNormal, bool isCullingBack = true);
+	bool isIntersectWith(const veVec3 &p0, const veVec3 &p1, const veVec3 &p2, veVec3 &intersectPoint, veVec3 &intersectNormal);
 
 private:
 
@@ -49,7 +50,7 @@ private:
 	veVec3 _end;
 	veVec3 _dir;
 	Intersections _intersections;
-	RayCallback _callBack;
+    bool        _isDicardBackFace;
 };
 
 typedef std::vector< VE_Ptr<veRay> > veRayList;

@@ -10,7 +10,7 @@ public:
 	veTransformer();
 	~veTransformer();
 
-	virtual void update(veSceneManager *sm) override;
+    virtual void beforeUpdate(veSceneManager *sm) override;
 	virtual void onAttachToNode(veNode *node) override;
 	virtual void onDetachToNode(veNode *node) override;
 

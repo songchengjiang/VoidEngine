@@ -16,6 +16,7 @@
 #include "IBLTest.h"
 #include "NormalMappingTest.h"
 #include "ParticleSystemTest.h"
+#include "SceneTest.h"
 
 //
 class TestCreator
@@ -37,7 +38,8 @@ public:
 		//auto test = new ShadowTest;
 		//auto test = new IBLTest;
 		//auto test = new NormalMappingTest;
-        auto test = new ParticleSystemTest;
+        //auto test = new ParticleSystemTest;
+        auto test = new SceneTest;
 		test->init();
 	}
 

@@ -5,6 +5,7 @@ veRay::veRay(const veVec3 &start, const veVec3 &end)
 	: USE_VE_PTR_INIT
 	, _start(start)
 	, _end(end)
+    , _isDicardBackFace(true)
 {
 	_dir = (_end - _start);
 	_dir.normalize();
@@ -29,10 +30,9 @@ void veRay::setEnd(const veVec3 &end)
 	_dir.normalize();
 }
 
-void veRay::apply(veSceneManager *sm, const RayCallback &callBack)
+void veRay::apply(veSceneManager *sm)
 {
 	_intersections.clear();
-	_callBack = callBack;
 	sm->requestRayCast(this);
 }
 
@@ -66,12 +66,12 @@ bool veRay::isIntersectWith(const veBoundingBox &bbox)
 	return true;
 }
 
-bool veRay::isIntersectWith(const veVec3 &p0, const veVec3 &p1, const veVec3 &p2, veVec3 &intersectPoint, veVec3 &intersectNormal, bool isCullingBack)
+bool veRay::isIntersectWith(const veVec3 &p0, const veVec3 &p1, const veVec3 &p2, veVec3 &intersectPoint, veVec3 &intersectNormal)
 {
 	veVec3 e1 = p1 - p0;
 	veVec3 e2 = p2 - p0;
 	veVec3 n = e1.crossProduct(e2);
-	if (isCullingBack) {
+	if (_isDicardBackFace) {
 		if (0 < (_end - p0).dotProduct(n))
 			return false;
 	}

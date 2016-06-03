@@ -209,8 +209,9 @@ static const char* POINT_LIGHT_F_SHADER = " \
 		if (u_lightShadowEnabled < 1.0) return 1.0;      \n \
 		vec4 projectVertex = u_lightMatrix * vec4(vertex, 1.0);      \n \
 		float pTolDis2 = dot(projectVertex.xyz, projectVertex.xyz);      \n \
+        pTolDis2 = pTolDis2 - u_lightShadowBias * pTolDis2;         \n \
 		pTolDis2 = pTolDis2 / (pTolDis2 + 1.0);      \n \
-		vec4 shadowCoord = vec4(projectVertex.xyz, pTolDis2 - u_lightShadowBias);      \n \
+		vec4 shadowCoord = vec4(projectVertex.xyz, pTolDis2);      \n \
 		float factor = 0.0;      \n \
 		if (0.0 < u_lightShadowSoft) {      \n \
 			float sum = 0.0;      \n \

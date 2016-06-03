@@ -52,7 +52,7 @@ vec3 encode (vec3 normal)
 vec2 parallaxMapping(vec2 texcoord, vec3 viewDir){
 	const float minLayers = 5.0;
     const float maxLayers = 10.0;
-    float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir))); 
+    float numLayers = mix(maxLayers, minLayers, clamp(abs(dot(vec3(0.0, 0.0, 1.0), viewDir)), 0.0, 1.0));
 
 	float layerDepth = 1.0 / numLayers;
 	vec2 p = viewDir.xy * u_displacement;

@@ -185,7 +185,6 @@ void veSceneManager::removeComponent(veComponent *component)
 
 void veSceneManager::requestRayCast(veRay *ray)
 {
-	ray->_callBack();
 }
 
 veBaseManager* veSceneManager::getManager(const std::string &mgType)
@@ -255,7 +254,8 @@ void veSceneManager::update()
 {
 	if (!_componentList.empty()) {
 		for (auto &com : _componentList) {
-			com->update(this);
+			com->beforeUpdate(this);
+            com->afterUpdate(this);
 		}
 	}
 }

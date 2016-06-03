@@ -80,6 +80,7 @@
 		BE0E4E701BB0451B0001AA36 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../Tests/main.cpp; sourceTree = "<group>"; };
 		BE0E4E711BB0451B0001AA36 /* MeshTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MeshTest.h; path = ../../Tests/MeshTest.h; sourceTree = "<group>"; };
 		BE0E4E721BB0451B0001AA36 /* RenToTex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RenToTex.h; path = ../../Tests/RenToTex.h; sourceTree = "<group>"; };
+		BE1AB4831CFFD877002906BB /* SceneTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SceneTest.h; path = ../../Tests/SceneTest.h; sourceTree = "<group>"; };
 		BE1B50941BB04F580039A346 /* VoidEngine.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = VoidEngine.xcodeproj; sourceTree = "<group>"; };
 		BE30ABB81CD9E445009477C5 /* ParticleSystemTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleSystemTest.h; path = ../../Tests/ParticleSystemTest.h; sourceTree = "<group>"; };
 		BE412D051BF6312000206513 /* IntersectionTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IntersectionTest.h; path = ../../Tests/IntersectionTest.h; sourceTree = "<group>"; };
@@ -142,6 +143,7 @@
 				BEAB2E661CED60B800B3F9F8 /* ios */,
 				BEAB2E651CED601500B3F9F8 /* resources */,
 				BE30ABB81CD9E445009477C5 /* ParticleSystemTest.h */,
+				BE1AB4831CFFD877002906BB /* SceneTest.h */,
 				BE0E4E701BB0451B0001AA36 /* main.cpp */,
 				BE0E4E6C1BB0451B0001AA36 /* BaseTest.h */,
 				BE0E4E6D1BB0451B0001AA36 /* CameraTest.h */,

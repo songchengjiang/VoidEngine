@@ -32,6 +32,7 @@ public:
 		glBindVertexArray(vao);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		{
+            std::unique_lock<std::mutex> lock(dataMutex);
             if (!vertices.empty()){
                 glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.buffer(), GL_STATIC_DRAW);
                 if (_firstUpdate){
@@ -74,6 +75,7 @@ public:
 	size_t      drawCount;
 	GLuint      vao;
 	GLuint      vbo;
+    std::mutex  dataMutex;
 
 private:
 
@@ -335,10 +337,10 @@ veVec3 veDebuger::getPlaneCrossPoint(const vePlane &p0, const vePlane &p1, const
 void veDebuger::drawLine(const veVec3 &start, const veVec3 &end, const veVec4 &color)
 {
 	veDebugRenderer *dr = static_cast<veDebugRenderer *>(_renderer.get());
-    _sceneManager->enqueueRequest([dr, start, end, color]{
-        dr->vertices.push_back(start.x()); dr->vertices.push_back(start.y()); dr->vertices.push_back(start.z());
-        dr->vertices.push_back(color.x()); dr->vertices.push_back(color.y()); dr->vertices.push_back(color.z()); dr->vertices.push_back(color.w());
-        dr->vertices.push_back(end.x()); dr->vertices.push_back(end.y()); dr->vertices.push_back(end.z());
-        dr->vertices.push_back(color.x()); dr->vertices.push_back(color.y()); dr->vertices.push_back(color.z()); dr->vertices.push_back(color.w());
-    });
+    
+    std::unique_lock<std::mutex> lock(dr->dataMutex);
+    dr->vertices.push_back(start.x()); dr->vertices.push_back(start.y()); dr->vertices.push_back(start.z());
+    dr->vertices.push_back(color.x()); dr->vertices.push_back(color.y()); dr->vertices.push_back(color.z()); dr->vertices.push_back(color.w());
+    dr->vertices.push_back(end.x()); dr->vertices.push_back(end.y()); dr->vertices.push_back(end.z());
+    dr->vertices.push_back(color.x()); dr->vertices.push_back(color.y()); dr->vertices.push_back(color.z()); dr->vertices.push_back(color.w());
 }
