@@ -107,7 +107,7 @@
                                     "u_specular": [0.500000,0.500000,0.500000
                                     ],
                                     "u_roughness":0.684375,
-                                    "u_fresnel":0.815625,
+                                    "u_fresnel":0.215625,
                                     "u_opacity":1.000000,
                                     "u_reflectivity":0.000000,
                                     "u_displacement":0.0050000,

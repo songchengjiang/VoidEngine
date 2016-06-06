@@ -36,6 +36,10 @@ void veApplication::initWindow(int w, int h, const std::string &title, void *par
 	_width = w;
 	_height = h;
 	_title = title;
+    _currentEvent.setEventType(veEvent::VE_WIN_INIT);
+    _currentEvent.setWindowWidth(_width);
+    _currentEvent.setWindowHeight(_height);
+    _events.push_back(_currentEvent);
 	initWindowImplementation(param);
 }
 

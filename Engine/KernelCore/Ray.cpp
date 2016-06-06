@@ -30,10 +30,17 @@ void veRay::setEnd(const veVec3 &end)
 	_dir.normalize();
 }
 
-void veRay::apply(veSceneManager *sm)
+void veRay::apply(veSceneManager *sm, bool isSortResults)
 {
 	_intersections.clear();
 	sm->requestRayCast(this);
+    if (isSortResults){
+        std::sort(_intersections.begin(), _intersections.end(), [this](const Intersection &left, const Intersection &right) -> bool {
+            veReal leftDis2 = (left.worldPosition - _start).squaredLength();
+            veReal rightDis2 = (right.worldPosition - _start).squaredLength();
+            return leftDis2 < rightDis2;
+        });
+    }
 }
 
 void veRay::addIntersection(const Intersection &inters)

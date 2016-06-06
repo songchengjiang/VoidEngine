@@ -17,6 +17,8 @@ public:
 	virtual bool handle(veSceneManager *sm, const veEvent &event) { return false; }
     virtual void beforeUpdate(veSceneManager *sm) {}
 	virtual void afterUpdate(veSceneManager *sm) {}
+    virtual void beforeRender(veSceneManager *sm) {}
+    virtual void afterRender(veSceneManager *sm) {}
 	virtual void onAttachToNode(veNode *node);
 	virtual void onDetachToNode(veNode *node);
 

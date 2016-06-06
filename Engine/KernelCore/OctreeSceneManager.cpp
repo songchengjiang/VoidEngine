@@ -251,7 +251,19 @@ void veOctreeSceneManager::render()
 	//	mainCam->render();
 	//	mainCam->discardRenderScene(false);
 	//}
+    if (!_componentList.empty()) {
+        for (auto &com : _componentList) {
+            com->beforeRender(this);
+        }
+    }
+    
 	_renderPipeline->rendering();
+    
+    if (!_componentList.empty()) {
+        for (auto &com : _componentList) {
+            com->afterRender(this);
+        }
+    }
 
 	veApplication::instance()->swapBuffers();
 }

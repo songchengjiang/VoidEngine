@@ -172,7 +172,7 @@ veApplicationDesktop::veApplicationDesktop()
 void veApplicationDesktop::registerCallbacks()
 {
 	glfwSetKeyCallback(_hwnd, collectKeyEvent);
-	//glfwSetCharModsCallback(wnd, collectCharEvent);
+	glfwSetCharCallback(_hwnd, collectCharEvent);
 	glfwSetMouseButtonCallback(_hwnd, collectMouseEvent);
 	glfwSetCursorPosCallback(_hwnd, collectMouseMoveEvent);
 	glfwSetScrollCallback(_hwnd, collectScrollEvent);
@@ -184,7 +184,7 @@ void veApplicationDesktop::registerCallbacks()
 void veApplicationDesktop::unRegisterCallbacks()
 {
 	glfwSetKeyCallback(_hwnd, nullptr);
-	//glfwSetCharModsCallback(wnd, nullptr);
+	glfwSetCharCallback(_hwnd, nullptr);
 	glfwSetMouseButtonCallback(_hwnd, nullptr);
 	glfwSetCursorPosCallback(_hwnd, nullptr);
 	glfwSetScrollCallback(_hwnd, nullptr);
@@ -321,7 +321,15 @@ void veApplicationDesktop::collectKeyEvent(GLFWwindow* window, int key, int scan
 	event.setKeySymbol(g_KeySymbolMap[key]);
 	event.setEventType(action == GLFW_PRESS ? veEvent::VE_DOWN : veEvent::VE_UP);
 	event.setModKeySymbol(g_ModKeySymbolMap[mods]);
-	app->_events.push_back(event);
+    event.setKeyChar(0);
+    app->_events.push_back(event);
+}
+
+void veApplicationDesktop::collectCharEvent(GLFWwindow* window, unsigned int c)
+{
+    veApplicationDesktop *app = static_cast<veApplicationDesktop *>(glfwGetWindowUserPointer(window));
+    veEvent &event = app->_events.back();
+    event.setKeyChar(c);
 }
 
 void veApplicationDesktop::collectMouseEvent(GLFWwindow* window, int button, int action, int mods)
@@ -355,6 +363,7 @@ void veApplicationDesktop::collectScrollEvent(GLFWwindow* window, double x, doub
 	veApplicationDesktop *app = static_cast<veApplicationDesktop *>(glfwGetWindowUserPointer(window));
 	veEvent &event = app->_currentEvent;
 	event.setEventType(0.0 < y ? veEvent::VE_SCROLL_UP : veEvent::VE_SCROLL_DOWN);
+    event.setMouseScroll(y);
 	app->_events.push_back(event);
 }
 

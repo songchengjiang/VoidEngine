@@ -36,7 +36,7 @@ public:
     void setDiscardBackFace(bool isDiscard) { _isDicardBackFace = isDiscard; }
     bool isDiscardBackFace() const { return _isDicardBackFace; }
 
-	void apply(veSceneManager *sm);
+	void apply(veSceneManager *sm, bool isSortResults = true);
 
 	bool isIntersectWith(const veBoundingBox &bbox);
 	bool isIntersectWith(const veVec3 &p0, const veVec3 &p1, const veVec3 &p2, veVec3 &intersectPoint, veVec3 &intersectNormal);

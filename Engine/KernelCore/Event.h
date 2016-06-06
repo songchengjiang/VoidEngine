@@ -12,8 +12,10 @@ public:
 	: _eventType(VE_UNKNOWN)
 	, _keySymbol(VE_KEY_UNKNOWN)
 	, _mouseSymbol(VE_MOUSE_UNKNOWN)
+    , _keyChar(0)
 	, _mouseX(0.0f)
 	, _mouseY(0.0f)
+    , _mouseScroll(0.0f)
 	, _wndWidth(0)
 	, _wndHeight(0){
 	}
@@ -24,7 +26,7 @@ public:
 
 	enum EventType{
 		VE_UNKNOWN     = -1,
-		VE_RELEASE     = 0,
+		VE_RELEASE     = 1,
 		VE_PRESS       = 1 << 1,
 		VE_DOWN        = 1 << 2,
 		VE_UP          = 1 << 3,
@@ -36,14 +38,15 @@ public:
 		VE_TOUCH_START = 1 << 9,
 		VE_TOUCH_MOVE  = 1 << 10,
 		VE_TOUCH_END   = 1 << 11,
-		VE_WIN_RESIZE  = 1 << 12,
-		VE_WIN_FOCUS   = 1 << 13,
-		VE_WIN_NOFOCUS = 1 << 14,
-		VE_WIN_CLOSE   = 1 << 15,
+        VE_WIN_INIT    = 1 << 12,
+		VE_WIN_RESIZE  = 1 << 13,
+		VE_WIN_FOCUS   = 1 << 14,
+		VE_WIN_NOFOCUS = 1 << 15,
+		VE_WIN_CLOSE   = 1 << 16,
 		VE_KEYBOARD_EVENT = VE_DOWN | VE_UP | VE_REPEAT,
 		VE_MOUSE_EVENT = VE_RELEASE | VE_PRESS | VE_SCROLL_DOWN | VE_SCROLL_UP | VE_MOVE | VE_DRAG,
 		VE_TOUCH_EVENT = VE_TOUCH_START | VE_TOUCH_MOVE | VE_TOUCH_END,
-		VE_WIN_EVENT   = VE_WIN_RESIZE | VE_WIN_FOCUS | VE_WIN_NOFOCUS |VE_WIN_CLOSE,
+		VE_WIN_EVENT   = VE_WIN_INIT | VE_WIN_RESIZE | VE_WIN_FOCUS | VE_WIN_NOFOCUS |VE_WIN_CLOSE,
 		VE_ALL_EVENT   = 0xFFFF,
 	};
 
@@ -211,6 +214,8 @@ public:
 	EventType getEventType() const { return _eventType; }
 	void setKeySymbol(const KeySymbol ks) { _keySymbol = ks; }
 	KeySymbol getKeySymbol() const { return _keySymbol; }
+    void setKeyChar(unsigned int kc) { _keyChar = kc; }
+    unsigned int getKeyChar() const { return _keyChar; }
 	void setModKeySymbol(const ModKeySymbol mks) { _modKeySymbol = mks; }
 	ModKeySymbol getModKeySymbol() const { return _modKeySymbol; }
 	void setMouseSymbol(const MouseSymbol ms) { _mouseSymbol = ms; }
@@ -220,6 +225,8 @@ public:
 	veReal getMouseX() const { return _mouseX; }
 	void setMouseY(veReal y) { _mouseY = y; }
 	veReal getMouseY() const { return _mouseY; }
+    void setMouseScroll(veReal val) { _mouseScroll = val; }
+    veReal getMouseScroll() const { return _mouseScroll; }
 
 	void addTouch(const Touch &touch) { _touches.push_back(touch); }
 	void removeTouch(int id) {
@@ -247,8 +254,10 @@ private:
 	MouseSymbol _mouseSymbol;
 	Touchs    _touches;
 
+    unsigned int _keyChar;
 	veReal _mouseX;
 	veReal _mouseY;
+    veReal _mouseScroll;
 	int _wndWidth;
 	int _wndHeight;
 };
