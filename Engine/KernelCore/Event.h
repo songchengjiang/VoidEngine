@@ -15,6 +15,8 @@ public:
     , _keyChar(0)
 	, _mouseX(0.0f)
 	, _mouseY(0.0f)
+    , _latestMouseX(0.0f)
+    , _latestMouseY(0.0f)
     , _mouseScroll(0.0f)
 	, _wndWidth(0)
 	, _wndHeight(0){
@@ -221,10 +223,12 @@ public:
 	void setMouseSymbol(const MouseSymbol ms) { _mouseSymbol = ms; }
 	MouseSymbol getMouseSymbol() const { return _mouseSymbol; }
 
-	void setMouseX(veReal x) { _mouseX = x; }
+    void setMouseX(veReal x) { _latestMouseX = _mouseX; _mouseX = x; }
 	veReal getMouseX() const { return _mouseX; }
-	void setMouseY(veReal y) { _mouseY = y; }
+    void setMouseY(veReal y) { _latestMouseY = _mouseY; _mouseY = y; }
 	veReal getMouseY() const { return _mouseY; }
+    veReal getLatestMouseX() const { return _latestMouseX; }
+    veReal getLatestMouseY() const { return _latestMouseY; }
     void setMouseScroll(veReal val) { _mouseScroll = val; }
     veReal getMouseScroll() const { return _mouseScroll; }
 
@@ -257,6 +261,8 @@ private:
     unsigned int _keyChar;
 	veReal _mouseX;
 	veReal _mouseY;
+    veReal _latestMouseX;
+    veReal _latestMouseY;
     veReal _mouseScroll;
 	int _wndWidth;
 	int _wndHeight;

@@ -170,6 +170,7 @@ void veEntityRenderer::draw(veRenderCommand &command)
 
 	for (unsigned int i = 0; i < mesh->getPrimitiveNum(); ++i) {
 		auto primitive = mesh->getPrimitive(i);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufs->ibos[i]);
 		glDrawElements(primitive.primitiveType, GLsizei(primitive.indices->size()), GL_UNSIGNED_SHORT, nullptr);
 	}
 

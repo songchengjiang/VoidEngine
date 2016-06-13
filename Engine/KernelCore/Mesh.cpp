@@ -276,7 +276,7 @@ bool veMesh::intersectWith(veRay *ray, veVec3 &position, veVec3 &normal)
 	bool state = false;
 	traversePrimitives([&](const veReal *p1, const veReal *p2, const veReal *p3
 		, const veReal *n1, const veReal *n2, const veReal *n3) -> bool {
-		if (ray->isIntersectWith(veVec3(p1[0], p1[1], p1[2]), veVec3(p2[0], p2[1], p2[2]), veVec3(p3[0], p3[1], p3[2]), position, normal)) {
+		if (ray->isIntersectWith(veVec3(p1[0], p1[1], p1[2]), veVec3(p2[0], p2[1], p2[2]), veVec3(p3[0], p3[1], p3[2]), &position, &normal)) {
 			state = true;
 			return true;
 		}

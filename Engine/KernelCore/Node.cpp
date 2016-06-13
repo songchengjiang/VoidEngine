@@ -64,6 +64,7 @@ veNode* veNode::getChild(unsigned int cIndex)
 
 int veNode::addComponent(veComponent *com)
 {
+    if (!com) return -1;
 	auto iter = std::find(_components.begin(), _components.end(), com);
 	if (iter != _components.end()) return -1;
 	_components.push_back(com);
@@ -73,6 +74,7 @@ int veNode::addComponent(veComponent *com)
 
 bool veNode::removeComponent(veComponent *com)
 {
+    if (!com) return false;
 	auto iter = std::find(_components.begin(), _components.end(), com);
 	if (iter == _components.end()) return false;
 	_components.erase(iter);

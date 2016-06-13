@@ -373,7 +373,7 @@ void veTexture::storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenu
 	_needRefreshSampler = true;
 }
 
-GLuint veTexture::glTex()
+GLuint veTexture::glTex() const
 {
 	return _texID;
 }

@@ -12,8 +12,6 @@ public:
     veImGuiComponent();
     virtual ~veImGuiComponent();
     
-    USE_VE_PTR;
-    
     virtual bool handle(veSceneManager *sm, const veEvent &event) override;
     virtual void beforeUpdate(veSceneManager *sm) override;
     virtual void afterUpdate(veSceneManager *sm) override;
@@ -30,6 +28,7 @@ protected:
     
     ImGuiRenderFunc _renderFunc;
     VE_Ptr<vePass>  _renderPass;
+    VE_Ptr<veTexture>  _fontTexture;
     VE_Ptr<veUniform> _renderProjMatrix;
     bool              _isAnyWindowFocus;
 };

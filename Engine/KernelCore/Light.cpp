@@ -54,8 +54,16 @@ void veLight::visit(veNodeVisitor &visitor)
 
 void veLight::refreshUpdate(veSceneManager *sm, const veMat4 &transform)
 {
-	_needUpdateShadowMap = true;
+	//_needUpdateShadowMap = true;
 	veNode::refreshUpdate(sm, transform);
+}
+
+void veLight::shadowEnable(bool isEnabled)
+{
+    if (_shadowEnabled == isEnabled)
+        return;
+    _shadowEnabled = isEnabled;
+    _needUpdateShadowMap = true;
 }
 
 void veLight::setShadowResolution(const veVec2 &resolution)

@@ -19,14 +19,17 @@ public:
 	virtual void afterUpdate(veSceneManager *sm) {}
     virtual void beforeRender(veSceneManager *sm) {}
     virtual void afterRender(veSceneManager *sm) {}
-	virtual void onAttachToNode(veNode *node);
-	virtual void onDetachToNode(veNode *node);
+	virtual bool onAttachToNode(veNode *node);
+	virtual bool onDetachToNode(veNode *node);
+    const std::vector<veNode *>& getAttachedNodeList() const { return _attachedNodeList; }
 
 	void setEventFilter(const veEvent::EventType filter) { _filter = filter; };
 	veEvent::EventType getEventFilter() const { return _filter; };
     
     void setEnable(bool isEnable) { _isEnabled = isEnable; }
-    bool getEnabled() { return _isEnabled; }
+    bool isEnabled() { return _isEnabled; }
+    void setUpdateOrder(int order) { _updateOrder = order; }
+    int getUpdateOrder() const { return _updateOrder; }
 
 
 protected:
@@ -34,6 +37,7 @@ protected:
 	veEvent::EventType _filter;
     bool _isEnabled;
 	std::vector<veNode *> _attachedNodeList;
+    int                   _updateOrder;
 };
 
 typedef std::vector< VE_Ptr<veComponent> > veComponentList;

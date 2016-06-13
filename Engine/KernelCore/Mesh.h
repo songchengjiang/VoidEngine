@@ -56,7 +56,11 @@ public:
 		{
 			POINTS = GL_POINTS,
 			LINES = GL_LINES,
+            LINE_LOOP = GL_LINE_LOOP,
+            LINE_STRIP = GL_LINE_STRIP,
 			TRIANGLES = GL_TRIANGLES,
+            TRIANGLE_STRIP = GL_TRIANGLE_STRIP,
+            TRIANGLE_FAN = GL_TRIANGLE_FAN,
 		};
 
 		PrimitiveType primitiveType;

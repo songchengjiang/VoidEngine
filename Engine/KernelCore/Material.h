@@ -93,13 +93,15 @@ public:
 	//veTexture* getTexture(size_t idx);
 	veTexture* getTexture(TextureType type);
 	const veTexture* getTexture(TextureType type) const;
-	//const veTexture* getTexture(size_t idx) const;
+	const veTexture* getTexture(size_t idx) const;
 	//veTexture* removeTexture(size_t idx);
 	size_t getTextureNum() const { return _textures.size(); }
 
 	void addUniform(veUniform *uniform);
-	veUniform* getUniform(const std::string &name);
+	veUniform* getUniform(const std::string &name) const;
+    veUniform* getUniform(size_t idx) const;
 	veUniform* removeUniform(const std::string &name);
+    veUniform* removeUniform(size_t idx);
 	size_t getUniformNum() const { return _uniforms.size(); }
 
 	void setTransformFeedback(veTransformFeedback *transFeedback) { _transformFeedback = transFeedback; _needLinkProgram = true; }
@@ -134,7 +136,7 @@ private:
 	bool    _needLinkProgram;
 	std::map<veShader::Type, VE_Ptr<veShader> >           _shaders;
 	std::vector< std::pair<TextureType, VE_Ptr<veTexture> > >            _textures;
-	std::map< std::string, VE_Ptr<veUniform> >            _uniforms;
+	std::vector< VE_Ptr<veUniform> >            _uniforms;
 	VE_Ptr<veTransformFeedback>                           _transformFeedback;
 	ApplyFunctionCallback                                 _callback;
 };

@@ -117,11 +117,11 @@ void vePass::setTexture(TextureType type, veTexture *texture)
 //	return _textures[idx].get();
 //}
 
-//const veTexture* vePass::getTexture(size_t idx) const
-//{
-//	veAssert(idx < _textures.size());
-//	return _textures[idx].get();
-//}
+const veTexture* vePass::getTexture(size_t idx) const
+{
+	veAssert(idx < _textures.size());
+	return _textures[idx].second.get();
+}
 
 veTexture* vePass::getTexture(TextureType type)
 {
@@ -150,26 +150,46 @@ const veTexture* vePass::getTexture(TextureType type) const
 
 void vePass::addUniform(veUniform *uniform)
 {
-	_uniforms[uniform->getName()] = uniform;
+    auto iter = std::find(_uniforms.begin(), _uniforms.end(), uniform);
+    if (iter != _uniforms.end())
+        return;
+    _uniforms.push_back(uniform);
 }
 
-veUniform* vePass::getUniform(const std::string &name)
+veUniform* vePass::getUniform(const std::string &name) const
 {
-	auto iter = _uniforms.find(name);
-	if (iter != _uniforms.end()) {
-		return iter->second.get();
-	}
+    for (auto &uniform : _uniforms){
+        if (uniform->getName() == name)
+            return uniform.get();
+    }
 	return nullptr;
+}
+
+veUniform* vePass::getUniform(size_t idx) const
+{
+    veAssert(idx < _uniforms.size());
+    return _uniforms[idx].get();
 }
 
 veUniform* vePass::removeUniform(const std::string &name)
 {
-	auto iter = _uniforms.find(name);
-	if (iter == _uniforms.end()) 
-		return nullptr;
-	veUniform *uniform = iter->second.get();
-	_uniforms.erase(iter);
+    veUniform *uniform = nullptr;
+    for (auto iter = _uniforms.begin(); iter != _uniforms.end(); ++iter){
+        if ((*iter)->getName() == name){
+            uniform = (*iter).get();
+            _uniforms.erase(iter);
+            break;
+        }
+    }
 	return uniform;
+}
+
+veUniform* vePass::removeUniform(size_t idx)
+{
+    veAssert(idx < _uniforms.size());
+    veUniform *uniform = _uniforms[idx].get();
+    _uniforms.erase(_uniforms.begin() + idx);
+    return uniform;
 }
 
 void vePass::needLink()
@@ -204,8 +224,8 @@ void vePass::applyProgram(const veRenderCommand &command)
 
 void vePass::applyUniforms(const veRenderCommand &command)
 {
-	for (auto &iter : _uniforms) {
-		iter.second->apply(command);
+	for (auto &uniform : _uniforms) {
+		uniform->apply(command);
 	}
 }
 

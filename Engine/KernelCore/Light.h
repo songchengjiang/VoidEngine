@@ -40,7 +40,7 @@ public:
 	float getAttenuationRange() const { return _attenuationRange; }
 	float getAttenuationRangeInverse() const { return _attenuationRangeInverse; }
 
-	void shadowEnable(bool isEnabled) { _shadowEnabled = isEnabled; _needUpdateShadowMap = true;};
+    void shadowEnable(bool isEnabled);
 	bool isShadowEnabled() const { return _shadowEnabled; };
 	void setShadowResolution(const veVec2 &resolution);
 	const veVec2& getShadowResolution() const { return _shadowResolution; }

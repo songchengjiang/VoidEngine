@@ -171,14 +171,19 @@ void veSceneManager::removePostProcesser(const std::string &name)
 
 void veSceneManager::addComponent(veComponent *component)
 {
+    if (!component) return;
 	auto iter = std::find(_componentList.begin(), _componentList.end(), component);
 	if (iter != _componentList.end())
 		return;
 	_componentList.push_back(component);
+    std::sort(_componentList.begin(), _componentList.end(), [this](const VE_Ptr<veComponent> &left, const VE_Ptr<veComponent> &right) -> bool{
+        return left->getUpdateOrder() < right->getUpdateOrder();
+    });
 }
 
 void veSceneManager::removeComponent(veComponent *component)
 {
+    if (!component) return;
 	auto iter = std::find(_componentList.begin(), _componentList.end(), component);
 	_componentList.erase(iter);
 }
@@ -221,10 +226,12 @@ void veSceneManager::dispatchEvents(veEvent &event)
 
 	if (!_componentList.empty()) {
 		for (auto &com : _componentList) {
-			if (event.getEventType() & com->getEventFilter()) {
-				if (com->handle(this, event)) 
-					return;
-			}
+            if (com->isEnabled()){
+                if (event.getEventType() & com->getEventFilter()) {
+                    if (com->handle(this, event))
+                        return;
+                }
+            }
 		}
 	}
 
@@ -254,8 +261,10 @@ void veSceneManager::update()
 {
 	if (!_componentList.empty()) {
 		for (auto &com : _componentList) {
-			com->beforeUpdate(this);
-            com->afterUpdate(this);
+            if (com->isEnabled()){
+                com->beforeUpdate(this);
+                com->afterUpdate(this);
+            }
 		}
 	}
 }

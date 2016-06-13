@@ -31,6 +31,7 @@ void ImGui_RenderDrawLists(ImDrawData* draw_data)
             }
             else
             {
+                glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->TextureId);
                 glScissor((int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
                 glDrawElements(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, GL_UNSIGNED_SHORT, idx_buffer_offset);
             }
@@ -86,15 +87,16 @@ void veImGuiComponent::initPass(veSceneManager *sm)
     _renderPass->cullFace() = false;
     _renderPass->depthTest() = false;
     _renderPass->blendFunc() = veBlendFunc::ALPHA;
-    auto fontTex = sm->createTexture("_VE_IMGUI_COMPONENT_FONT_TEXTURE");
-    _renderPass->setTexture(vePass::AMBIENT_TEXTURE, fontTex);
+    _fontTexture = sm->createTexture("_VE_IMGUI_COMPONENT_FONT_TEXTURE");
     
     ImGuiIO& io = ImGui::GetIO();
     unsigned char* pixels;
     int width, height;
     io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
-    fontTex->storage(width, height, 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, pixels, 1);
-    fontTex->setFilterMode(veTexture::LINEAR);
+    _fontTexture->storage(width, height, 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, pixels, 1);
+    _fontTexture->setFilterMode(veTexture::LINEAR);
+    _fontTexture->bind();
+    io.Fonts->TexID = (void *)(intptr_t)_fontTexture->glTex();
     
     _renderPass->addUniform(_renderProjMatrix.get());
     _renderPass->addUniform(new veUniform("u_texture", 0));
@@ -268,6 +270,7 @@ void veImGuiComponent::afterRender(veSceneManager *sm)
 #undef OFFSETOF
     }
     glEnable(GL_SCISSOR_TEST);
+    glActiveTexture(GL_TEXTURE0);
     ImGui::Render();
     glDisable(GL_SCISSOR_TEST);
 }

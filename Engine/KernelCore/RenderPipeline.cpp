@@ -240,7 +240,7 @@ void veRenderPipeline::renderPointLightShadow(veLight *light)
 		//glClear(GL_DEPTH_BUFFER_BIT);
         prepareForDraws(pLight->getShadowCamera(i));
 		draw(pLight->getShadowCamera(i), pLight->getShadowCamera(i)->getRenderQueue()->deferredRenderGroup, shadowPass);
-        //draw(pLight->getShadowCamera(i), pLight->getShadowCamera(i)->getRenderQueue()->forwardRenderGroup, shadowPass);
+        draw(pLight->getShadowCamera(i), pLight->getShadowCamera(i)->getRenderQueue()->forwardRenderGroup, shadowPass);
         _shadowingFBO->unBind();
 	}
 }

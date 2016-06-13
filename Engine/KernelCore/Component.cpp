@@ -7,6 +7,7 @@ veComponent::veComponent()
 	: USE_VE_PTR_INIT
 	, _filter(veEvent::VE_ALL_EVENT)
     , _isEnabled(true)
+    , _updateOrder(0)
 {
 }
 
@@ -15,17 +16,22 @@ veComponent::~veComponent()
 
 }
 
-void veComponent::onAttachToNode(veNode *node)
+bool veComponent::onAttachToNode(veNode *node)
 {
+    auto nIter = std::find(_attachedNodeList.begin(), _attachedNodeList.end(), node);
+    if (nIter != _attachedNodeList.end()) return false;
 	_attachedNodeList.push_back(node);
 	node->getSceneManager()->addComponent(this);
+    return true;
 }
 
-void veComponent::onDetachToNode(veNode *node)
+bool veComponent::onDetachToNode(veNode *node)
 {
 	auto nIter = std::find(_attachedNodeList.begin(), _attachedNodeList.end(), node);
+    if (nIter == _attachedNodeList.end()) return false;
 	_attachedNodeList.erase(nIter);
 	if (_attachedNodeList.empty()) {
 		node->getSceneManager()->removeComponent(this);
 	}
+    return true;
 }

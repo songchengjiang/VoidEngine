@@ -313,6 +313,24 @@
 		BE80F16C1CED5A9400E2EECF /* libImath-2_2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE80F1651CED5A9400E2EECF /* libImath-2_2.a */; };
 		BE80F16E1CED5A9F00E2EECF /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE80F16D1CED5A9F00E2EECF /* libz.a */; };
 		BE80F1711CED5B4F00E2EECF /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE80F1701CED5B4F00E2EECF /* libjpeg.a */; };
+		BE949D501D097BD9008BC95F /* GizmoComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE949D4E1D097BD9008BC95F /* GizmoComponent.cpp */; };
+		BE949D511D097BD9008BC95F /* GizmoComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE949D4E1D097BD9008BC95F /* GizmoComponent.cpp */; };
+		BE949D521D097BD9008BC95F /* GizmoComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = BE949D4F1D097BD9008BC95F /* GizmoComponent.h */; };
+		BEA445DE1D06A86A00960C84 /* Gizmo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEA445DC1D06A86A00960C84 /* Gizmo.cpp */; };
+		BEA445DF1D06A86A00960C84 /* Gizmo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEA445DC1D06A86A00960C84 /* Gizmo.cpp */; };
+		BEA445E01D06A86A00960C84 /* Gizmo.h in Headers */ = {isa = PBXBuildFile; fileRef = BEA445DD1D06A86A00960C84 /* Gizmo.h */; };
+		BEA445E71D06BD0300960C84 /* GizmoRotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEA445E11D06BD0300960C84 /* GizmoRotation.cpp */; };
+		BEA445E81D06BD0300960C84 /* GizmoRotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEA445E11D06BD0300960C84 /* GizmoRotation.cpp */; };
+		BEA445E91D06BD0300960C84 /* GizmoRotation.h in Headers */ = {isa = PBXBuildFile; fileRef = BEA445E21D06BD0300960C84 /* GizmoRotation.h */; };
+		BEA445EA1D06BD0300960C84 /* GizmoScale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEA445E31D06BD0300960C84 /* GizmoScale.cpp */; };
+		BEA445EB1D06BD0300960C84 /* GizmoScale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEA445E31D06BD0300960C84 /* GizmoScale.cpp */; };
+		BEA445EC1D06BD0300960C84 /* GizmoScale.h in Headers */ = {isa = PBXBuildFile; fileRef = BEA445E41D06BD0300960C84 /* GizmoScale.h */; };
+		BEA445ED1D06BD0300960C84 /* GizmoTranslation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEA445E51D06BD0300960C84 /* GizmoTranslation.cpp */; };
+		BEA445EE1D06BD0300960C84 /* GizmoTranslation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEA445E51D06BD0300960C84 /* GizmoTranslation.cpp */; };
+		BEA445EF1D06BD0300960C84 /* GizmoTranslation.h in Headers */ = {isa = PBXBuildFile; fileRef = BEA445E61D06BD0300960C84 /* GizmoTranslation.h */; };
+		BEA445F21D06C1FF00960C84 /* GizmoRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEA445F01D06C1FF00960C84 /* GizmoRenderer.cpp */; };
+		BEA445F31D06C1FF00960C84 /* GizmoRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEA445F01D06C1FF00960C84 /* GizmoRenderer.cpp */; };
+		BEA445F41D06C1FF00960C84 /* GizmoRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BEA445F11D06C1FF00960C84 /* GizmoRenderer.h */; };
 		BEAB2E8A1CED65EC00B3F9F8 /* GLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE80F14D1CED5A0800E2EECF /* GLView.mm */; };
 		BEAB2E8B1CED65F500B3F9F8 /* Application-ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE80F1481CED59CC00E2EECF /* Application-ios.mm */; };
 		BEAB2E8C1CED660100B3F9F8 /* File-apple.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE80F0C21CED579E00E2EECF /* File-apple.mm */; };
@@ -590,6 +608,18 @@
 		BE80F1651CED5A9400E2EECF /* libImath-2_2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libImath-2_2.a"; path = "../../Dependents/openexr/lib/ios/libImath-2_2.a"; sourceTree = "<group>"; };
 		BE80F16D1CED5A9F00E2EECF /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../../Dependents/zlib/lib/ios/libz.a; sourceTree = "<group>"; };
 		BE80F1701CED5B4F00E2EECF /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../../Dependents/libjpeg/lib/ios/libjpeg.a; sourceTree = "<group>"; };
+		BE949D4E1D097BD9008BC95F /* GizmoComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GizmoComponent.cpp; path = ../../Engine/UtilCore/GizmoComponent.cpp; sourceTree = "<group>"; };
+		BE949D4F1D097BD9008BC95F /* GizmoComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GizmoComponent.h; path = ../../Engine/UtilCore/GizmoComponent.h; sourceTree = "<group>"; };
+		BEA445DC1D06A86A00960C84 /* Gizmo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Gizmo.cpp; path = ../../Engine/UtilCore/Gizmo.cpp; sourceTree = "<group>"; };
+		BEA445DD1D06A86A00960C84 /* Gizmo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Gizmo.h; path = ../../Engine/UtilCore/Gizmo.h; sourceTree = "<group>"; };
+		BEA445E11D06BD0300960C84 /* GizmoRotation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GizmoRotation.cpp; path = ../../Engine/UtilCore/GizmoRotation.cpp; sourceTree = "<group>"; };
+		BEA445E21D06BD0300960C84 /* GizmoRotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GizmoRotation.h; path = ../../Engine/UtilCore/GizmoRotation.h; sourceTree = "<group>"; };
+		BEA445E31D06BD0300960C84 /* GizmoScale.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GizmoScale.cpp; path = ../../Engine/UtilCore/GizmoScale.cpp; sourceTree = "<group>"; };
+		BEA445E41D06BD0300960C84 /* GizmoScale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GizmoScale.h; path = ../../Engine/UtilCore/GizmoScale.h; sourceTree = "<group>"; };
+		BEA445E51D06BD0300960C84 /* GizmoTranslation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GizmoTranslation.cpp; path = ../../Engine/UtilCore/GizmoTranslation.cpp; sourceTree = "<group>"; };
+		BEA445E61D06BD0300960C84 /* GizmoTranslation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GizmoTranslation.h; path = ../../Engine/UtilCore/GizmoTranslation.h; sourceTree = "<group>"; };
+		BEA445F01D06C1FF00960C84 /* GizmoRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GizmoRenderer.cpp; path = ../../Engine/UtilCore/GizmoRenderer.cpp; sourceTree = "<group>"; };
+		BEA445F11D06C1FF00960C84 /* GizmoRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GizmoRenderer.h; path = ../../Engine/UtilCore/GizmoRenderer.h; sourceTree = "<group>"; };
 		BEAB2EB61CED903100B3F9F8 /* FileReaderWriterPARTICLE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileReaderWriterPARTICLE.h; path = ../../Engine/FileCore/FileReaderWriterPARTICLE.h; sourceTree = "<group>"; };
 		BEB28D571C0C761F0013E3B7 /* MaterialManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MaterialManager.cpp; path = ../../Engine/KernelCore/MaterialManager.cpp; sourceTree = "<group>"; };
 		BEB28D581C0C761F0013E3B7 /* MaterialManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MaterialManager.h; path = ../../Engine/KernelCore/MaterialManager.h; sourceTree = "<group>"; };
@@ -831,6 +861,7 @@
 		BE3D41281BAF0AFC0063041C /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				BEA445DB1D06A80500960C84 /* UtilCore */,
 				BE7E032F1D02C2FF00320061 /* ExtCore */,
 				BE05C5141CD3039E0022D797 /* EffectCore */,
 				BE5BF1741BB29FFC00FAE523 /* Debuger */,
@@ -1073,6 +1104,25 @@
 			name = libs.ios;
 			sourceTree = "<group>";
 		};
+		BEA445DB1D06A80500960C84 /* UtilCore */ = {
+			isa = PBXGroup;
+			children = (
+				BEA445E11D06BD0300960C84 /* GizmoRotation.cpp */,
+				BEA445E21D06BD0300960C84 /* GizmoRotation.h */,
+				BEA445E31D06BD0300960C84 /* GizmoScale.cpp */,
+				BEA445E41D06BD0300960C84 /* GizmoScale.h */,
+				BEA445E51D06BD0300960C84 /* GizmoTranslation.cpp */,
+				BEA445E61D06BD0300960C84 /* GizmoTranslation.h */,
+				BEA445DC1D06A86A00960C84 /* Gizmo.cpp */,
+				BEA445DD1D06A86A00960C84 /* Gizmo.h */,
+				BEA445F01D06C1FF00960C84 /* GizmoRenderer.cpp */,
+				BEA445F11D06C1FF00960C84 /* GizmoRenderer.h */,
+				BE949D4E1D097BD9008BC95F /* GizmoComponent.cpp */,
+				BE949D4F1D097BD9008BC95F /* GizmoComponent.h */,
+			);
+			name = UtilCore;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1084,10 +1134,13 @@
 				BE1A0ACC1BE24D6400A1A20D /* Octree.h in Headers */,
 				BE05C5271CD341860022D797 /* Value.h in Headers */,
 				BE1A0B0B1BE24E5C00A1A20D /* MeshNode.h in Headers */,
+				BEA445F41D06C1FF00960C84 /* GizmoRenderer.h in Headers */,
 				BE1A0B071BE24E5B00A1A20D /* FontCharDictionary.h in Headers */,
 				BE1A0ADF1BE24E4000A1A20D /* BillboardRenderer.h in Headers */,
 				BE16BCE21CDC5C9C006E7146 /* SphereEmitter.h in Headers */,
+				BE949D521D097BD9008BC95F /* GizmoComponent.h in Headers */,
 				BE16BCFC1CDC80FC006E7146 /* VortexAffector.h in Headers */,
+				BEA445E91D06BD0300960C84 /* GizmoRotation.h in Headers */,
 				BE1A0AB71BE24D1000A1A20D /* AnimationManager.h in Headers */,
 				BE1A0AE11BE24E4000A1A20D /* BoxRenderer.h in Headers */,
 				BE412CFC1BF630CD00206513 /* Application-desktop.h in Headers */,
@@ -1105,6 +1158,8 @@
 				BE1A0B171BE24E5C00A1A20D /* ThreadPool.h in Headers */,
 				BE1A0ABF1BE24D1000A1A20D /* SceneManager.h in Headers */,
 				BE1A0B051BE24E5B00A1A20D /* Font.h in Headers */,
+				BEA445EF1D06BD0300960C84 /* GizmoTranslation.h in Headers */,
+				BEA445E01D06A86A00960C84 /* Gizmo.h in Headers */,
 				BEB952361CFC4B4B00110FF6 /* ParticleSphereRenderer.h in Headers */,
 				BE30ABB51CD9C24E009477C5 /* ParticleRenderer.h in Headers */,
 				BE1A0B151BE24E5C00A1A20D /* Text.h in Headers */,
@@ -1128,6 +1183,7 @@
 				BE1A0B011BE24E5B00A1A20D /* BoudingBox.h in Headers */,
 				BE16BCEE1CDC757D006E7146 /* GravityAffector.h in Headers */,
 				BE16BCEA1CDC70EC006E7146 /* ScaleVelocityAffector.h in Headers */,
+				BEA445EC1D06BD0300960C84 /* GizmoScale.h in Headers */,
 				BE16BCE61CDC6D4B006E7146 /* ScaleAffector.h in Headers */,
 				BE1A0AD21BE24D6400A1A20D /* OctreeRenderQueue.h in Headers */,
 				BE1A0ABB1BE24D1000A1A20D /* EntityManager.h in Headers */,
@@ -1240,6 +1296,7 @@
 				BE1B504A1BB049E30039A346 /* Camera.cpp in Sources */,
 				BE1A0AE21BE24E4000A1A20D /* EntityRenderer.cpp in Sources */,
 				BE05C5291CD342BC0022D797 /* Value.cpp in Sources */,
+				BEA445E71D06BD0300960C84 /* GizmoRotation.cpp in Sources */,
 				BE1B504B1BB049E30039A346 /* Component.cpp in Sources */,
 				BE05C51F1CD30E380022D797 /* Emitter.cpp in Sources */,
 				BE1A0ACD1BE24D6400A1A20D /* OctreeCamera.cpp in Sources */,
@@ -1255,6 +1312,7 @@
 				BE1A0AB61BE24D1000A1A20D /* AnimationManager.cpp in Sources */,
 				BEAB2E8E1CED661C00B3F9F8 /* File-apple.mm in Sources */,
 				BE16BCE81CDC6D59006E7146 /* ScaleAffector.cpp in Sources */,
+				BEA445F21D06C1FF00960C84 /* GizmoRenderer.cpp in Sources */,
 				BE1B50511BB049E30039A346 /* Material.cpp in Sources */,
 				BEB952351CFC4B4B00110FF6 /* ParticleSphereRenderer.cpp in Sources */,
 				BE1B50521BB049E30039A346 /* Mesh.cpp in Sources */,
@@ -1281,17 +1339,20 @@
 				BE6D3AAB1CB3C5FD00E9E034 /* DeferredLightPipeline.cpp in Sources */,
 				BE5AF1311CD87E8F0023B025 /* PointEmitter.cpp in Sources */,
 				BE1B505D1BB049E30039A346 /* Texture.cpp in Sources */,
+				BEA445DE1D06A86A00960C84 /* Gizmo.cpp in Sources */,
 				BE1B505E1BB049E30039A346 /* TextureManager.cpp in Sources */,
 				BE7E033B1D02C4CD00320061 /* imgui.cpp in Sources */,
 				BE1B505F1BB049E30039A346 /* Transformer.cpp in Sources */,
 				BE1A0ACF1BE24D6400A1A20D /* OctreeNode.cpp in Sources */,
 				BE1B50611BB049E30039A346 /* File.cpp in Sources */,
 				BE412CF31BF630A200206513 /* MathAlgorithm.cpp in Sources */,
+				BEA445ED1D06BD0300960C84 /* GizmoTranslation.cpp in Sources */,
 				BE1B50621BB049E30039A346 /* FileReaderWriter.cpp in Sources */,
 				BE1A0B081BE24E5C00A1A20D /* MatrixPtr.cpp in Sources */,
 				BE1B50631BB049E30039A346 /* FileReaderWriterANIMATION.h in Sources */,
 				BE4E66941C04B7AE0078717E /* FileReaderWriterKTX.h in Sources */,
 				BE6D3AB71CB3C62800E9E034 /* Cone.cpp in Sources */,
+				BEA445EA1D06BD0300960C84 /* GizmoScale.cpp in Sources */,
 				BE1A0ABA1BE24D1000A1A20D /* EntityManager.cpp in Sources */,
 				BE1A0ADE1BE24E4000A1A20D /* BillboardRenderer.cpp in Sources */,
 				BE16BCDC1CDC3ADD006E7146 /* CircleEmitter.cpp in Sources */,
@@ -1310,6 +1371,7 @@
 				BE1B50671BB049E30039A346 /* FileReaderWriterLIGHT.h in Sources */,
 				BE16BCF41CDC7CAB006E7146 /* JetAffector.cpp in Sources */,
 				BE1B50681BB049E30039A346 /* FileReaderWriterPNG.h in Sources */,
+				BE949D501D097BD9008BC95F /* GizmoComponent.cpp in Sources */,
 				BE1B50691BB049E30039A346 /* FileReaderWriterVEM.h in Sources */,
 				BE1A0AE01BE24E4000A1A20D /* BoxRenderer.cpp in Sources */,
 				BE1A0B121BE24E5C00A1A20D /* Surface.cpp in Sources */,
@@ -1388,6 +1450,7 @@
 				BE80F10A1CED59AE00E2EECF /* Printer.cpp in Sources */,
 				BE80F10B1CED59AE00E2EECF /* Animation.cpp in Sources */,
 				BE80F10C1CED59AE00E2EECF /* Application.cpp in Sources */,
+				BE949D511D097BD9008BC95F /* GizmoComponent.cpp in Sources */,
 				BEAB2E8C1CED660100B3F9F8 /* File-apple.mm in Sources */,
 				BE80F10D1CED59AE00E2EECF /* Bone.cpp in Sources */,
 				BE7E033E1D02C4E800320061 /* imgui_draw.cpp in Sources */,
@@ -1401,12 +1464,14 @@
 				BE80F1151CED59AE00E2EECF /* FrameBufferObject.cpp in Sources */,
 				BEAB2E8B1CED65F500B3F9F8 /* Application-ios.mm in Sources */,
 				BE80F1161CED59AE00E2EECF /* Image.cpp in Sources */,
+				BEA445E81D06BD0300960C84 /* GizmoRotation.cpp in Sources */,
 				BE80F1171CED59AE00E2EECF /* Light.cpp in Sources */,
 				BE80F1181CED59AE00E2EECF /* Material.cpp in Sources */,
 				BE80F1191CED59AE00E2EECF /* MatrixPtr.cpp in Sources */,
 				BE80F11A1CED59AE00E2EECF /* Mesh.cpp in Sources */,
 				BEE5E4951D051D7400BD63F8 /* ParticleSphereRenderer.cpp in Sources */,
 				BEE5E4941D051D7200BD63F8 /* ParticleBoxRenderer.cpp in Sources */,
+				BEA445EE1D06BD0300960C84 /* GizmoTranslation.cpp in Sources */,
 				BE80F11B1CED59AE00E2EECF /* MeshNode.cpp in Sources */,
 				BE80F11C1CED59AE00E2EECF /* Node.cpp in Sources */,
 				BE7E03431D02C78A00320061 /* ImGuiComponent.cpp in Sources */,
@@ -1428,9 +1493,11 @@
 				BE80F12C1CED59AE00E2EECF /* TransformFeedback.cpp in Sources */,
 				BE80F12D1CED59AE00E2EECF /* PostProcesser.cpp in Sources */,
 				BE80F12E1CED59AE00E2EECF /* DeferredLightPipeline.cpp in Sources */,
+				BEA445F31D06C1FF00960C84 /* GizmoRenderer.cpp in Sources */,
 				BE80F12F1CED59AE00E2EECF /* DeferredRenderPipeline.cpp in Sources */,
 				BE80F1301CED59AE00E2EECF /* RenderPipeline.cpp in Sources */,
 				BE80F1311CED59AE00E2EECF /* ConeRenderer.cpp in Sources */,
+				BEA445DF1D06A86A00960C84 /* Gizmo.cpp in Sources */,
 				BE80F1321CED59AE00E2EECF /* LightRenderer.cpp in Sources */,
 				BE80F1331CED59AE00E2EECF /* SphereRenderer.cpp in Sources */,
 				BE80F1341CED59AE00E2EECF /* PostProcesserRenderer.cpp in Sources */,
@@ -1448,6 +1515,7 @@
 				BE80F13E1CED59AE00E2EECF /* OctreeCamera.cpp in Sources */,
 				BE80F13F1CED59AE00E2EECF /* OctreeNode.cpp in Sources */,
 				BE80F1401CED59AE00E2EECF /* OctreeRenderQueue.cpp in Sources */,
+				BEA445EB1D06BD0300960C84 /* GizmoScale.cpp in Sources */,
 				BE80F1411CED59AE00E2EECF /* OctreeSceneManager.cpp in Sources */,
 				BE80F1421CED59AE00E2EECF /* AnimationManager.cpp in Sources */,
 				BE80F1431CED59AE00E2EECF /* BaseManager.cpp in Sources */,

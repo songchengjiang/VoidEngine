@@ -26,17 +26,6 @@ void veTransformer::beforeUpdate(veSceneManager *sm)
 	}
 }
 
-void veTransformer::onAttachToNode(veNode *node)
-{
-	veComponent::onAttachToNode(node);
-}
-
-void veTransformer::onDetachToNode(veNode *node)
-{
-	veComponent::onDetachToNode(node);
-}
-
-
 void veTransformer::setPosition(const veVec3 &pos)
 {
 	_position = pos;

@@ -32,6 +32,7 @@ veOctreeSceneManager::veOctreeSceneManager(const veBoundingBox &bbox, unsigned i
 
 veOctreeSceneManager::~veOctreeSceneManager()
 {
+    VE_SAFE_DELETE(_octree);
 }
 
 void veOctreeSceneManager::init()
@@ -253,7 +254,9 @@ void veOctreeSceneManager::render()
 	//}
     if (!_componentList.empty()) {
         for (auto &com : _componentList) {
-            com->beforeRender(this);
+            if (com->isEnabled()){
+                com->beforeRender(this);
+            }
         }
     }
     
@@ -261,7 +264,9 @@ void veOctreeSceneManager::render()
     
     if (!_componentList.empty()) {
         for (auto &com : _componentList) {
-            com->afterRender(this);
+            if (com->isEnabled()){
+                com->afterRender(this);
+            }
         }
     }
 

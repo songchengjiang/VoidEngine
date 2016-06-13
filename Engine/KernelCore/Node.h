@@ -14,7 +14,6 @@ class VE_EXPORT veNode
 {
 public:
 
-	typedef std::vector< VE_Ptr<veComponent> >        Components;
 	typedef std::vector< VE_Ptr<veNode> >             Children;
 	typedef std::vector< VE_Ptr<veRenderableObject> > RenderableObjects;
 	typedef std::function<bool(const veEvent&, veSceneManager*, veNode*)> NodeEventCallback;
@@ -33,10 +32,10 @@ public:
 	void setMask(unsigned int mask, bool isOverride = false);
 	unsigned int getMask() const { return _mask; }
 
-	int addChild(veNode *child);
-	bool removeChild(veNode *child);
-	veNode* removeChild(unsigned int cIndex);
-	veNode* getChild(unsigned int cIndex);
+	virtual int addChild(veNode *child);
+	virtual bool removeChild(veNode *child);
+	virtual veNode* removeChild(unsigned int cIndex);
+	virtual veNode* getChild(unsigned int cIndex);
 	size_t getChildCount() const { return _children.size(); }
 
 	veNode* getParent() { return _parent; }
@@ -95,7 +94,7 @@ protected:
 
 protected:
 
-	Components        _components;
+	veComponentList   _components;
 	Children          _children;
 	RenderableObjects _renderableObjects;
 	veNode           *_parent;

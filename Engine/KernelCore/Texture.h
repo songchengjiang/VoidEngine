@@ -96,8 +96,8 @@ public:
 	unsigned int getMipMapLevelCount() const { return _mipMapLevelCount; }
 	void generateMipMaps() { _needGenerateMipMaps = true; }
 
-	GLuint glTex();
-	GLenum glTarget() { return _target; }
+	GLuint glTex() const;
+	GLenum glTarget() const { return _target; }
 
 	static bool isCompressedTex(GLint internalformat);
 	static bool isSupportFormat(GLenum internalformat);
