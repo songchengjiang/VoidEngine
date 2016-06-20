@@ -19,6 +19,7 @@ const std::string veLight::DEFUALT_LIGHT_TEXTURE_UNIFORM_NAME = "ve_lightTex";
 
 veLight::veLight(LightType type)
 	: _type(type)
+    , _isEnabled(true)
 	, _color(1.0f)
 	, _intensity(1.0f)
 	, _attenuationRange(1000.0f)

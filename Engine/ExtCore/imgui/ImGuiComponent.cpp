@@ -143,6 +143,12 @@ bool veImGuiComponent::handle(veSceneManager *sm, const veEvent &event)
             }else if (event.getMouseSymbol() == veEvent::VE_MOUSE_BUTTON_MIDDLE){
                 io.MouseDown[2] = true;
             }
+            
+            if (event.getEventType() == veEvent::VE_TOUCH_START){
+                auto touch = event.getTouches()[0];
+                io.MousePos.x = (touch.x * 0.5f + 0.5f) * event.getWindowWidth();
+                io.MousePos.y = (1.0f - (touch.y * 0.5f + 0.5f)) * event.getWindowHeight();
+            }
         }
             break;
         case veEvent::VE_RELEASE:

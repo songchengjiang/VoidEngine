@@ -22,23 +22,40 @@ bool veGizmoComponent::handle(veSceneManager *sm, const veEvent &event)
     
     switch (event.getEventType()) {
         case veEvent::VE_PRESS:
+        case veEvent::VE_TOUCH_START:
         {
-            _gizmoAxesType = _gizmo->touchDown(veVec2(event.getMouseX(), event.getMouseY()));
+            veVec2 screenCoords;
+            if (event.getEventType() == veEvent::VE_PRESS){
+                screenCoords = veVec2(event.getMouseX(), event.getMouseY());
+            }else{
+                auto touch = event.getTouches()[0];
+                screenCoords = veVec2(touch.x, touch.y);
+            }
+            _gizmoAxesType = _gizmo->touchDown(screenCoords);
             if (_gizmoAxesType != veGizmo::AxesType::AT_NONE)
                 return true;
         }
             break;
         case veEvent::VE_DRAG:
+        case veEvent::VE_TOUCH_MOVE:
         {
+            veVec2 screenCoords;
+            if (event.getEventType() == veEvent::VE_DRAG){
+                screenCoords = veVec2(event.getMouseX(), event.getMouseY());
+            }else{
+                auto touch = event.getTouches()[0];
+                screenCoords = veVec2(touch.x, touch.y);
+            }
             if (_gizmoAxesType != veGizmo::AxesType::AT_NONE){
                 veVec3 pos,scl; veQuat rot;
-                _gizmo->touchMove(_gizmoAxesType, veVec2(event.getMouseX(), event.getMouseY()), pos, scl, rot);
+                _gizmo->touchMove(_gizmoAxesType, screenCoords, pos, scl, rot);
                 applyGizmoMatrix(pos, scl, rot);
                 return true;
             }
         }
             break;
         case veEvent::VE_RELEASE:
+        case veEvent::VE_TOUCH_END:
         {
             _gizmo->touchUp();
             _gizmoAxesType = veGizmo::AxesType::AT_NONE;

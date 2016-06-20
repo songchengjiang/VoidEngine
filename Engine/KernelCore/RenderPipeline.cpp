@@ -322,7 +322,8 @@ void veRenderPipeline::renderShadows()
 			if (iter != lightListMap.end()) {
 				auto &pointLightList = iter->second;
 				for (auto &light : pointLightList) {
-					renderPointLightShadow(light.get());
+                    if (light->isEnabled())
+                        renderPointLightShadow(light.get());
 				}
 			}
 		}
@@ -332,7 +333,8 @@ void veRenderPipeline::renderShadows()
 			if (iter != lightListMap.end()) {
 				auto &spotLightList = iter->second;
 				for (auto &light : spotLightList) {
-					renderSpotLightShadow(light.get());
+                    if (light->isEnabled())
+                        renderSpotLightShadow(light.get());
 				}
 			}
 		}
@@ -342,7 +344,8 @@ void veRenderPipeline::renderShadows()
 			if (iter != lightListMap.end()) {
 				auto &directionalLightList = iter->second;
 				for (auto &light : directionalLightList) {
-					renderDirectionalLightShadow(light.get());
+                    if (light->isEnabled())
+                        renderDirectionalLightShadow(light.get());
 				}
 			}
 		}

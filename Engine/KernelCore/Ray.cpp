@@ -1,5 +1,6 @@
 #include "Ray.h"
 #include "SceneManager.h"
+#include <algorithm>
 
 veRay::veRay(const veVec3 &start, const veVec3 &end)
 	: USE_VE_PTR_INIT

@@ -3,9 +3,11 @@
 #include "BaseTest.h"
 #include "ExtCore/imgui/ImGuiComponent.h"
 #include "UtilCore/GizmoComponent.h"
+#include <algorithm>
 
 static veNode *INTER_NODE = nullptr;
 static VE_Ptr<veGizmoComponent> GIZMO_COMPONENT = nullptr;
+static bool GIZMO_SELECTOR = false;
 
 #define GIZMO_COMPONENT_ORDER -1
 #define UI_COMPONENT_ORDER    -2
@@ -35,12 +37,12 @@ public:
             }
             
             if (state) {
-                if (event.getModKeySymbol() == veEvent::VE_MOD_ALT) {
-                    auto nodeList = GIZMO_COMPONENT->getAttachedNodeList();
-                    for (auto &node : nodeList){
-                        node->removeComponent(GIZMO_COMPONENT.get());
-                    }
-                }
+//                if (event.getModKeySymbol() == veEvent::VE_MOD_ALT) {
+//                    auto nodeList = GIZMO_COMPONENT->getAttachedNodeList();
+//                    for (auto &node : nodeList){
+//                        node->removeComponent(GIZMO_COMPONENT.get());
+//                    }
+//                }
                 
                 veVec3 start = sm->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
                 veVec3 end = sm->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
@@ -53,8 +55,19 @@ public:
 //                        inter.node->addComponent(GIZMO_COMPONENT.get());
 //                    }
                     INTER_NODE = ray->getIntersections()[0].node;
-                    if (event.getModKeySymbol() == veEvent::VE_MOD_ALT)
-                        INTER_NODE->addComponent(GIZMO_COMPONENT.get());
+//                    if (event.getModKeySymbol() == veEvent::VE_MOD_ALT)
+//                        INTER_NODE->addComponent(GIZMO_COMPONENT.get());
+                    
+                    if (GIZMO_SELECTOR){
+                        auto nodeList = GIZMO_COMPONENT->getAttachedNodeList();
+                        auto niter = std::find(nodeList.begin(), nodeList.end(), INTER_NODE);
+                        if (niter != nodeList.end()){
+                            INTER_NODE->removeComponent(GIZMO_COMPONENT.get());
+                        }else{
+                            INTER_NODE->addComponent(GIZMO_COMPONENT.get());
+                        }
+                        return true;
+                    }
                 }else{
                     INTER_NODE = nullptr;
                     
@@ -62,15 +75,15 @@ public:
             }
         }
     
-        if (event.getEventType() == veEvent::VE_DOWN){
-            if (event.getKeySymbol() == veEvent::VE_KEY_Q){
-                GIZMO_COMPONENT->setGizmoType(veGizmoComponent::GizmoType::GT_TRANSLATION);
-            }else if (event.getKeySymbol() == veEvent::VE_KEY_W){
-                GIZMO_COMPONENT->setGizmoType(veGizmoComponent::GizmoType::GT_ROTATION);
-            }else if (event.getKeySymbol() == veEvent::VE_KEY_E){
-                GIZMO_COMPONENT->setGizmoType(veGizmoComponent::GizmoType::GT_SCALE);
-            }
-        }
+//        if (event.getEventType() == veEvent::VE_DOWN){
+//            if (event.getKeySymbol() == veEvent::VE_KEY_Q){
+//                GIZMO_COMPONENT->setGizmoType(veGizmoComponent::GizmoType::GT_TRANSLATION);
+//            }else if (event.getKeySymbol() == veEvent::VE_KEY_W){
+//                GIZMO_COMPONENT->setGizmoType(veGizmoComponent::GizmoType::GT_ROTATION);
+//            }else if (event.getKeySymbol() == veEvent::VE_KEY_E){
+//                GIZMO_COMPONENT->setGizmoType(veGizmoComponent::GizmoType::GT_SCALE);
+//            }
+//        }
         return false;
     }
 };
@@ -136,6 +149,7 @@ public:
             lightModel->addRenderableObject(lightentity);
             lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
             point->addChild(lightModel);
+            point->setEnabled(true);
             point->shadowEnable(true);
             point->setUseSoftShadow(true);
             point->setShadowSoftness(0.05f);
@@ -143,6 +157,10 @@ public:
             root->addChild(point);
             
             LightingUIFunc = [point, lightTranser]{
+                bool enabled = point->isEnabled();
+                ImGui::Checkbox("Enabled", &enabled);
+                point->setEnabled(enabled);
+                
                 veVec3 possition = lightTranser->getPosition();
                 ImGui::DragFloat3("Position", &possition.x());
                 lightTranser->setPosition(possition);
@@ -176,7 +194,7 @@ public:
                 point->setShadowSoftness(softness);
                 
                 float shadowBias = point->getShadowBias();
-                ImGui::DragFloat("ShadowBias", &shadowBias, 0.001f, 0.0f, 1.0f, "%.4f");
+                ImGui::DragFloat("ShadowBias", &shadowBias, 0.0001f, 0.0f, 1.0f, "%.5f");
                 point->setShadowBias(shadowBias);
                 
                 veVec2 shadowRes = point->getShadowResolution();
@@ -194,12 +212,13 @@ public:
             
             
             if (ImGui::CollapsingHeader("Transform")) {
+                
                 veMat4 mat = INTER_NODE->getMatrix();
                 veVec3 pos, scl; veQuat rot;
                 mat.decomposition(&pos, &scl, &rot);
                 veQuat eularX = veQuat(-rot.yaw(), veVec3::UNIT_Y) * rot;
-                veQuat eularZ = veQuat(-eularX.pitch(), veVec3::UNIT_X) * eularX;
-                veVec3 eularRot(veMath::veDegree(eularX.pitch()), veMath::veDegree(rot.yaw()), veMath::veDegree(eularZ.roll()));
+                veQuat eularZ = veQuat(-eularX.pitch(false), veVec3::UNIT_X) * eularX;
+                veVec3 eularRot(veMath::veDegree(eularX.pitch(false)), veMath::veDegree(rot.yaw()), veMath::veDegree(eularZ.roll(false)));
                 
                 ImGui::InputFloat3("Position", &pos.x());
                 ImGui::InputFloat3("Rotation", &eularRot.x());
@@ -296,8 +315,23 @@ public:
             static bool show_window = true;
             if (show_window)
             {
-                ImGui::SetNextWindowSize(ImVec2(0,0), ImGuiSetCond_FirstUseEver);
+                ImGui::SetNextWindowSize(ImVec2(veApplication::instance()->width() * 0.3f,veApplication::instance()->height()), ImGuiSetCond_FirstUseEver);
+                ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiSetCond_FirstUseEver);
                 ImGui::Begin("Paramters", &show_window);
+                
+                ImGui::Checkbox("Gizmo Selector", &GIZMO_SELECTOR);
+                
+                static int e = 0;
+                ImGui::RadioButton("Tranlation", &e, 0);ImGui::SameLine();
+                ImGui::RadioButton("Rotation", &e, 1);ImGui::SameLine();
+                ImGui::RadioButton("Scale", &e, 2);
+                if (e == 0){
+                    GIZMO_COMPONENT->setGizmoType(veGizmoComponent::GizmoType::GT_TRANSLATION);
+                }else if (e == 1){
+                    GIZMO_COMPONENT->setGizmoType(veGizmoComponent::GizmoType::GT_ROTATION);
+                }else{
+                    GIZMO_COMPONENT->setGizmoType(veGizmoComponent::GizmoType::GT_SCALE);
+                }
                 
                 if (ImGui::CollapsingHeader("Lighting"))
                 {

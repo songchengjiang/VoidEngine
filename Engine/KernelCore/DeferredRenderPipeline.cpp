@@ -103,7 +103,7 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 	uniform float u_lightShadowSoft;      \n \
 	uniform float u_lightShadowSoftness;     \n \
 												  \n \
-	in vec2 v_texcoord; \n \
+	in highp vec2 v_texcoord; \n \
 	layout(location = 0) out vec4 fragColor; \n \
 												  \n \
 	#define SAMPLE_SIZE 9  \n \
@@ -142,7 +142,7 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 		if (RT0.w <= 0.0){ fragColor = vec4(0.0); return; }             \n \
 																							  \n \
 		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xyz)), 0.0)).xyz;   \n \
-		float depth = texture(u_depthTex, v_texcoord).r;    \n \
+		highp float depth = texture(u_depthTex, v_texcoord).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(v_texcoord * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
 		vec3 eyeDir = normalize(u_cameraPosInWorld - worldPosition.xyz);    \n \
@@ -175,8 +175,8 @@ static const char* POINT_LIGHT_F_SHADER = " \
 	uniform sampler2D u_RT2; \n \
 	uniform samplerCubeShadow u_shadowTex;  \n \
                                                  \n \
-	uniform float u_screenWidth;                \n \
-	uniform float u_screenHeight;                \n \
+	uniform highp float u_screenWidth;                \n \
+	uniform highp float u_screenHeight;                \n \
 	uniform mat4 u_InvViewMat;  \n \
 	uniform mat4 u_InvViewProjectMat;                \n \
 	uniform mat4 u_lightMatrix;                \n \
@@ -205,13 +205,13 @@ static const char* POINT_LIGHT_F_SHADER = " \
 		vec3(0.0, 1.0, 1.0), vec3(0.0, -1.0, 1.0), vec3(0.0, -1.0, -1.0), vec3(0.0, 1.0, -1.0)      \n \
 	);      \n \
 										    \n \
-	float shadowing(vec3 vertex) {      \n \
+	float shadowing(highp vec3 vertex) {      \n \
 		if (u_lightShadowEnabled < 1.0) return 1.0;      \n \
-		vec4 projectVertex = u_lightMatrix * vec4(vertex, 1.0);      \n \
-		float pTolDis2 = dot(projectVertex.xyz, projectVertex.xyz);      \n \
+		highp vec4 projectVertex = u_lightMatrix * vec4(vertex, 1.0);      \n \
+		highp float pTolDis2 = dot(projectVertex.xyz, projectVertex.xyz);      \n \
         pTolDis2 = pTolDis2 - u_lightShadowBias * pTolDis2;         \n \
 		pTolDis2 = pTolDis2 / (pTolDis2 + 1.0);      \n \
-		vec4 shadowCoord = vec4(projectVertex.xyz, pTolDis2);      \n \
+		highp vec4 shadowCoord = vec4(projectVertex.xyz, pTolDis2);      \n \
 		float factor = 0.0;      \n \
 		if (0.0 < u_lightShadowSoft) {      \n \
 			float sum = 0.0;      \n \
@@ -238,7 +238,7 @@ static const char* POINT_LIGHT_F_SHADER = " \
 																						\n \
 		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xyz)), 0.0)).xyz;   \n \
 		highp float depth = texture(u_depthTex, texCoords).r;    \n \
-		vec4 worldPosition = u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
+		highp vec4 worldPosition = u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
 																						\n \
 		vec3 eyeDir = normalize(u_cameraPosInWorld - worldPosition.xyz);     \n \
@@ -667,8 +667,10 @@ void veDeferredRenderPipeline::renderLights(veCamera *camera)
 			if (iter != lightListMap.end()) {
 				auto &pointLightList = iter->second;
 				for (auto &light : pointLightList) {
-					cullPointLight(light.get(), camera);
-					renderPointLight(light.get(), camera);
+                    if (light->isEnabled()) {
+                        cullPointLight(light.get(), camera);
+                        renderPointLight(light.get(), camera);
+                    }
 				}
 			}
 		}
@@ -678,8 +680,10 @@ void veDeferredRenderPipeline::renderLights(veCamera *camera)
 			if (iter != lightListMap.end()) {
 				auto &spotLightList = iter->second;
 				for (auto &light : spotLightList) {
-					cullSpotLight(light.get(), camera);
-					renderSpotLight(light.get(), camera);
+                    if (light->isEnabled()) {
+                        cullSpotLight(light.get(), camera);
+                        renderSpotLight(light.get(), camera);
+                    }
 				}
 			}
 		}
@@ -689,7 +693,9 @@ void veDeferredRenderPipeline::renderLights(veCamera *camera)
 			if (iter != lightListMap.end()) {
 				auto &directionalLightList = iter->second;
 				for (auto &light : directionalLightList) {
-					renderDirectionalLight(light.get(), camera);
+                    if (light->isEnabled()) {
+                        renderDirectionalLight(light.get(), camera);
+                    }
 				}
 			}
 		}

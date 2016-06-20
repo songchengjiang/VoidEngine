@@ -31,7 +31,10 @@ public:
 	virtual void visit(veNodeVisitor &visitor) override;
 	//virtual void render(veCamera *camera) override;
 
+    void setEnabled(bool isEnabled) { _isEnabled = isEnabled; }
+    bool isEnabled() const { return _isEnabled; }
 	LightType getLightType() const { return _type; }
+    
 	void setColor(const veVec3 &color) { _color = color; }
 	const veVec3& getColor() const { return _color; }
 	void setIntensity(float intensity) { _intensity = intensity; }
@@ -68,6 +71,7 @@ protected:
 protected:
 
 	LightType _type;
+    bool      _isEnabled;
 
 	veVec3 _color;
 	float  _intensity;
@@ -75,7 +79,7 @@ protected:
 	float  _attenuationRangeInverse;
 	veMat4 _lightInCamMatrix;
 
-	bool _shadowEnabled;
+	bool   _shadowEnabled;
 	veVec2 _shadowResolution;
 	veVec2 _shadowArea;
 	float _shadowBias;
