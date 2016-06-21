@@ -312,13 +312,20 @@ public:
         auto imguiComp = new veImGuiComponent;
         imguiComp->setUpdateOrder(UI_COMPONENT_ORDER);
         imguiComp->setGuiRenderFunc([=]{
+
+            ImGui::SetNextWindowSize(ImVec2(veApplication::instance()->width() * 0.2f,veApplication::instance()->height() * 0.05f), ImGuiSetCond_FirstUseEver);
+            ImGui::SetNextWindowPos(ImVec2(veApplication::instance()->width() - veApplication::instance()->width() * 0.2f,veApplication::instance()->height() - veApplication::instance()->height() * 0.05f), ImGuiSetCond_FirstUseEver);
+            ImGui::Begin("Status", nullptr);
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            ImGui::End();
+
             static bool show_window = true;
             if (show_window)
             {
                 ImGui::SetNextWindowSize(ImVec2(veApplication::instance()->width() * 0.3f,veApplication::instance()->height()), ImGuiSetCond_FirstUseEver);
                 ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiSetCond_FirstUseEver);
                 ImGui::Begin("Paramters", &show_window);
-                
+
                 ImGui::Checkbox("Gizmo Selector", &GIZMO_SELECTOR);
                 
                 static int e = 0;

@@ -1,0 +1,173 @@
+apply plugin: 'com.android.model.native'
+
+def dependents_root = '../../../Dependents'
+
+def ndkDir = System.getenv("ANDROID_NDK_HOME")
+def propertiesFile = project.rootProject.file('local.properties')
+if (propertiesFile.exists()) {
+    Properties properties = new Properties()
+    properties.load(propertiesFile.newDataInputStream())
+    ndkDir = properties.getProperty('ndk.dir')
+}
+
+model {
+
+    repositories {
+        libs(PrebuiltLibraries) {
+            // Configure one pre-built lib: static
+            libpng {
+                // Inform Android Studio where header file dir for this lib
+                headers.srcDir "${dependents_root}"
+                // Inform Android Studio where lib is -- each ABI should have a lib file
+                binaries.withType(StaticLibraryBinary) {
+                    staticLibraryFile = file("${dependents_root}/libpng/lib/android/${targetPlatform.getName()}/libpng.a")
+                }
+            }
+
+            libfreetype {
+                // Inform Android Studio where header file dir for this lib
+                headers.srcDir "${dependents_root}/freetype/include"
+                // Inform Android Studio where lib is -- each ABI should have a lib file
+                binaries.withType(StaticLibraryBinary) {
+                    staticLibraryFile = file("${dependents_root}/freetype/lib/android/${targetPlatform.getName()}/libfreetype.a")
+                }
+            }
+
+            libjpeg {
+                // Inform Android Studio where header file dir for this lib
+                headers.srcDir "${dependents_root}"
+                // Inform Android Studio where lib is -- each ABI should have a lib file
+                binaries.withType(StaticLibraryBinary) {
+                    staticLibraryFile = file("${dependents_root}/libjpeg/lib/android/${targetPlatform.getName()}/libjpeg.a")
+                }
+            }
+
+            libopenexr {
+                // Inform Android Studio where header file dir for this lib
+                headers.srcDir "${dependents_root}"
+                // Inform Android Studio where lib is -- each ABI should have a lib file
+                binaries.withType(StaticLibraryBinary) {
+                    staticLibraryFile = file("${dependents_root}/openexr/lib/android/${targetPlatform.getName()}/libopenexr.a")
+                }
+            }
+
+            libz {
+                // Inform Android Studio where header file dir for this lib
+                headers.srcDir "${dependents_root}"
+                // Inform Android Studio where lib is -- each ABI should have a lib file
+                binaries.withType(StaticLibraryBinary) {
+                    staticLibraryFile = file("${dependents_root}/zlib/lib/android/${targetPlatform.getName()}/libz.a")
+                }
+            }
+        }
+    }
+
+    android {
+        compileSdkVersion = 23
+        buildToolsVersion = "23.0.2"
+
+        defaultConfig.with {
+            minSdkVersion.apiLevel = 18
+            targetSdkVersion.apiLevel = 23
+            versionCode = 1
+            versionName = "1.0"
+            //multiDexEnabled = true
+        }
+
+    }
+
+    android.sources {
+        main {
+            jni {
+                source {
+                    srcDirs = ["../../../Engine"]
+                }
+                dependencies {
+                    library 'libpng' linkage 'static'
+                    library 'libfreetype' linkage 'static'
+                    library 'libjpeg' linkage 'static'
+                    library 'libopenexr' linkage 'static'
+                    library 'libz' linkage 'static'
+                }
+            }
+
+        }
+    }
+
+//    compileOptions.with {
+//        sourceCompatibility = JavaVersion.VERSION_1_7
+//        targetCompatibility = JavaVersion.VERSION_1_7
+//    }
+
+    android.ndk {
+        moduleName = "voidengine"
+        CFlags.add("-I${file("../../../Engine")}".toString())
+        CFlags.add("-I${ndkDir}/sources/android/native_app_glue".toString())
+        cppFlags.add("-I${file("../../../Engine")}".toString())
+        cppFlags.add("-I${ndkDir}/sources/android/native_app_glue".toString())
+//        cppFlags += "-I${file("../../../Dependents")}".toString()
+//        cppFlags += "-I${file("../../../Dependents/freetype/include")}".toString()
+        //cppFlags.add("-I${file("../../../Dependents/gli")}".toString())
+        //cppFlags.add("-I${file("../../../Dependents/glm")}".toString())
+        cppFlags.add("-Werror")
+        cppFlags.add("-frtti")
+        cppFlags.add("-fno-exceptions")
+        cppFlags.add("-DANDROID")
+        cppFlags.add("-std=c++11")
+        ldLibs.addAll(["log", "GLESv3", "EGL", "android"])
+        //ldFlags.add("-c")
+        abiFilters.addAll(['armeabi', 'armeabi-v7a'])
+        stl = "gnustl_static"
+    }
+
+//    android.buildTypes {
+//        release {
+//            minifyEnabled = false
+//            proguardFiles.add(file('proguard-android.txt'))
+//        }
+//    }
+
+//    android.productFlavors {
+//        create("arm7") {
+//            ndk.abiFilters += "armeabi-v7a"
+//            ndk.ldFlags += "${file("../../../Dependents/libpng/lib/android/armeabi-v7a/libpng.a")}".toString()
+//            ndk.ldFlags += "${file("../../../Dependents/freetype/lib/android/armeabi-v7a/libfreetype.a")}".toString()
+//            ndk.ldFlags += "${file("../../../Dependents/libjpeg/lib/android/armeabi-v7a/libjpeg.a")}".toString()
+//            ndk.ldFlags += "${file("../../../Dependents/openexr/lib/android/armeabi-v7a/libopenexr.a")}".toString()
+//            ndk.ldFlags += "${file("../../../Dependents/zlib/lib/android/armeabi-v7a/libz.a")}".toString()
+//        }
+//        create("arm8") {
+//            ndk.abiFilters += "arm64-v8a"
+//            ndk.ldFlags += "${file("../../../Dependents/libpng/lib/android/arm64-v8a/libpng.a")}".toString()
+//            ndk.ldFlags += "${file("../../../Dependents/freetype/lib/android/arm64-v8a/libfreetype.a")}".toString()
+//            ndk.ldFlags += "${file("../../../Dependents/libjpeg/lib/android/arm64-v8a/libjpeg.a")}".toString()
+//            ndk.ldFlags += "${file("../../../Dependents/openexr/lib/android/arm64-v8a/libopenexr.a")}".toString()
+//            ndk.ldFlags += "${file("../../../Dependents/zlib/lib/android/arm64-v8a/libz.a")}".toString()
+//        }
+//        create("x86-64") {
+//            ndk.abiFilters += "x86_64"
+//            ndk.ldFlags += "${file("../../../Dependents/libpng/lib/android/x86_64/libpng.a")}".toString()
+//            ndk.ldFlags += "${file("../../../Dependents/freetype/lib/android/x86_64/libfreetype.a")}".toString()
+//            ndk.ldFlags += "${file("../../../Dependents/libjpeg/lib/android/x86_64/libjpeg.a")}".toString()
+//            ndk.ldFlags += "${file("../../../Dependents/openexr/lib/android/x86_64/libopenexr.a")}".toString()
+//            ndk.ldFlags += "${file("../../../Dependents/zlib/lib/android/x86_64/libz.a")}".toString()
+//        }
+//        // for detailed abiFilter descriptions, refer to "Supported ABIs" @
+//        // https://developer.android.com/ndk/guides/abis.html#sa
+//
+//        // build one including all cpu architectures
+//        // create("all")
+//    }
+}
+
+// This is just copy out the header file and built lib into distribution
+// directory for clint application to use; it is a small overhead of this sample:
+//    both lib and app are put inside one project space [save maintenance time]
+task(distributeLib, type : Copy) {
+    // trigger build library
+    dependsOn assemble
+    into './'
+    from('build/outputs/native/release/lib') {
+        into 'libs/'
+    }
+}

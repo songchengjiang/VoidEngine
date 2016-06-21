@@ -1,6 +1,6 @@
 #include <jni.h>
 #include <errno.h>
-#include "KernelCore/android_native_app_glue.h"
+#include "android_native_app_glue.h"
 #include "VoidEngine.h"
 #include "TestCreator.h"
 
