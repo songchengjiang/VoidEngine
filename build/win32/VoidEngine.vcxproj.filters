@@ -43,6 +43,15 @@
     <Filter Include="EffectCore\Emitters">
       <UniqueIdentifier>{3f767759-f362-44e3-a57e-0149ab4e508f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ExtCore">
+      <UniqueIdentifier>{feb51c19-37df-4405-a745-503090721a13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ExtCore\imgui">
+      <UniqueIdentifier>{78945c06-9d26-406f-ba3c-a80fdf66daa9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UtilCore">
+      <UniqueIdentifier>{00f521a5-7927-46fc-a0ae-7a128325b061}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Engine\BaseCore\Matrix3.cpp">
@@ -336,6 +345,36 @@
     </ClCompile>
     <ClCompile Include="..\..\Engine\EffectCore\ParticleBoxRenderer.cpp">
       <Filter>EffectCore\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\ExtCore\imgui\imgui.cpp">
+      <Filter>ExtCore\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\ExtCore\imgui\imgui_demo.cpp">
+      <Filter>ExtCore\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\ExtCore\imgui\imgui_draw.cpp">
+      <Filter>ExtCore\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\ExtCore\imgui\ImGuiComponent.cpp">
+      <Filter>ExtCore\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\UtilCore\Gizmo.cpp">
+      <Filter>UtilCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\UtilCore\GizmoComponent.cpp">
+      <Filter>UtilCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\UtilCore\GizmoRenderer.cpp">
+      <Filter>UtilCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\UtilCore\GizmoRotation.cpp">
+      <Filter>UtilCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\UtilCore\GizmoScale.cpp">
+      <Filter>UtilCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\UtilCore\GizmoTranslation.cpp">
+      <Filter>UtilCore</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -694,6 +733,45 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\EffectCore\ParticleBoxRenderer.h">
       <Filter>EffectCore\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\imconfig.h">
+      <Filter>ExtCore\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\imgui.h">
+      <Filter>ExtCore\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\imgui_internal.h">
+      <Filter>ExtCore\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\ImGuiComponent.h">
+      <Filter>ExtCore\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\stb_rect_pack.h">
+      <Filter>ExtCore\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\stb_textedit.h">
+      <Filter>ExtCore\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\stb_truetype.h">
+      <Filter>ExtCore\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\UtilCore\Gizmo.h">
+      <Filter>UtilCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\UtilCore\GizmoComponent.h">
+      <Filter>UtilCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\UtilCore\GizmoRenderer.h">
+      <Filter>UtilCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\UtilCore\GizmoRotation.h">
+      <Filter>UtilCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\UtilCore\GizmoScale.h">
+      <Filter>UtilCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\UtilCore\GizmoTranslation.h">
+      <Filter>UtilCore</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

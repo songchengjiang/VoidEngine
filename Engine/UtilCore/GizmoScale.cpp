@@ -178,9 +178,9 @@ void veGizmoScale::drawAxes(const veVec4 &axesXCol, const veVec4 &axesYCol, cons
     gizmoRenderer->drawLines(veVec3::ZERO, veVec3(xLength, 0.0f, 0.0f), axesXCol);
     gizmoRenderer->drawBox(veVec3(xLength, 0.0f, 0.0f) - veVec3(0.05f, 0.0f, 0.0f), 0.05f, axesXCol);
     gizmoRenderer->drawLines(veVec3::ZERO, veVec3(0.0f, yLength, 0.0f), axesYCol);
-    gizmoRenderer->drawBox(veVec3(0.0f, yLength, 0.0f) - veVec3(0.0f, 0.05f, 0.0f), 0.05, axesYCol);
+    gizmoRenderer->drawBox(veVec3(0.0f, yLength, 0.0f) - veVec3(0.0f, 0.05f, 0.0f), 0.05f, axesYCol);
     gizmoRenderer->drawLines(veVec3::ZERO, veVec3(0.0f, 0.0f, zLength), axesZCol);
-    gizmoRenderer->drawBox(veVec3(0.0f, 0.0f, zLength) - veVec3(0.0f, 0.0f, 0.05f), 0.05, axesZCol);
+    gizmoRenderer->drawBox(veVec3(0.0f, 0.0f, zLength) - veVec3(0.0f, 0.0f, 0.05f), 0.05f, axesZCol);
     
     gizmoRenderer->drawTri(veVec3(0.0f, 0.0f, GIZMO_PLANE_SIZE), veVec3::ZERO, veVec3(0.0f, GIZMO_PLANE_SIZE, 0.0f), YZCol);
     gizmoRenderer->drawLines(veVec3(0.0f, 0.0f, GIZMO_PLANE_SIZE), veVec3::ZERO, veVec4(YZCol.x(), YZCol.y(), YZCol.z(), 1.0f));
@@ -198,6 +198,6 @@ void veGizmoScale::drawAxes(const veVec4 &axesXCol, const veVec4 &axesYCol, cons
     gizmoRenderer->drawLines(veVec3(GIZMO_PLANE_SIZE, 0.0f, 0.0f), veVec3(0.0f, GIZMO_PLANE_SIZE, 0.0f), veVec4(XYCol.x(), XYCol.y(), XYCol.z(), 1.0f));
     gizmoRenderer->drawLines(veVec3(0.0f, GIZMO_PLANE_SIZE, 0.0f), veVec3::ZERO, veVec4(XYCol.x(), XYCol.y(), XYCol.z(), 1.0f));
     
-    gizmoRenderer->drawBox(veVec3::ZERO, 0.05, XYZCol);
+    gizmoRenderer->drawBox(veVec3::ZERO, 0.05f, XYZCol);
 }
 

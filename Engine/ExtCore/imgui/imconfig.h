@@ -6,12 +6,15 @@
 
 #pragma once
 
+#include "Prerequisites.h"
+
 //---- Define assertion handler. Defaults to calling assert().
 //#define IM_ASSERT(_EXPR)  MyAssert(_EXPR)
 
 //---- Define attributes of all API symbols declarations, e.g. for DLL under Windows.
 //#define IMGUI_API __declspec( dllexport )
 //#define IMGUI_API __declspec( dllimport )
+#define IMGUI_API VE_EXPORT
 
 //---- Include imgui_user.h at the end of imgui.h
 //#define IMGUI_INCLUDE_IMGUI_USER_H

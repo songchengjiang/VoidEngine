@@ -128,11 +128,11 @@ void veGizmoTranslation::drawAxes(const veVec4 &axesXCol, const veVec4 &axesYCol
     auto gizmoRenderer = static_cast<veGizmoRenderer *>(_renderer.get());
     gizmoRenderer->refresh();
     gizmoRenderer->drawLines(veVec3::ZERO, veVec3::UNIT_X, axesXCol);
-    gizmoRenderer->drawCone(veVec3::UNIT_X - veVec3(0.2f, 0.0f, 0.0f), veVec3::UNIT_X, 0.05, 0.2, axesXCol);
+    gizmoRenderer->drawCone(veVec3::UNIT_X - veVec3(0.2f, 0.0f, 0.0f), veVec3::UNIT_X, 0.05f, 0.2f, axesXCol);
     gizmoRenderer->drawLines(veVec3::ZERO, veVec3::UNIT_Y, axesYCol);
-    gizmoRenderer->drawCone(veVec3::UNIT_Y - veVec3(0.0f, 0.2f, 0.0f), veVec3::UNIT_Y, 0.05, 0.2, axesYCol);
+    gizmoRenderer->drawCone(veVec3::UNIT_Y - veVec3(0.0f, 0.2f, 0.0f), veVec3::UNIT_Y, 0.05f, 0.2f, axesYCol);
     gizmoRenderer->drawLines(veVec3::ZERO, veVec3::UNIT_Z, axesZCol);
-    gizmoRenderer->drawCone(veVec3::UNIT_Z - veVec3(0.0f, 0.0f, 0.2f), veVec3::UNIT_Z, 0.05, 0.2, axesZCol);
+    gizmoRenderer->drawCone(veVec3::UNIT_Z - veVec3(0.0f, 0.0f, 0.2f), veVec3::UNIT_Z, 0.05f, 0.2f, axesZCol);
     
     gizmoRenderer->drawQuat(veVec3(0.0f, 0.0f, GIZMO_PLANE_SIZE), veVec3::ZERO, veVec3(0.0f, GIZMO_PLANE_SIZE, 0.0f), veVec3(0.0f, GIZMO_PLANE_SIZE, GIZMO_PLANE_SIZE), YZCol);
     gizmoRenderer->drawLines(veVec3(0.0f, 0.0f, GIZMO_PLANE_SIZE), veVec3::ZERO, veVec4(YZCol.x(), YZCol.y(), YZCol.z(), 1.0f));

@@ -45,6 +45,10 @@
     <ClCompile Include="..\..\Engine\EffectCore\SineForceAffector.cpp" />
     <ClCompile Include="..\..\Engine\EffectCore\SphereEmitter.cpp" />
     <ClCompile Include="..\..\Engine\EffectCore\VortexAffector.cpp" />
+    <ClCompile Include="..\..\Engine\ExtCore\imgui\imgui.cpp" />
+    <ClCompile Include="..\..\Engine\ExtCore\imgui\ImGuiComponent.cpp" />
+    <ClCompile Include="..\..\Engine\ExtCore\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\..\Engine\ExtCore\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\File-win32.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\File.cpp" />
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriter.cpp" />
@@ -109,6 +113,12 @@
     <ClCompile Include="..\..\Engine\KernelCore\ThreadPool.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Transformer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\TransformFeedback.cpp" />
+    <ClCompile Include="..\..\Engine\UtilCore\Gizmo.cpp" />
+    <ClCompile Include="..\..\Engine\UtilCore\GizmoComponent.cpp" />
+    <ClCompile Include="..\..\Engine\UtilCore\GizmoRenderer.cpp" />
+    <ClCompile Include="..\..\Engine\UtilCore\GizmoRotation.cpp" />
+    <ClCompile Include="..\..\Engine\UtilCore\GizmoScale.cpp" />
+    <ClCompile Include="..\..\Engine\UtilCore\GizmoTranslation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h" />
@@ -150,6 +160,13 @@
     <ClInclude Include="..\..\Engine\EffectCore\SphereEmitter.h" />
     <ClInclude Include="..\..\Engine\EffectCore\VortexAffector.h" />
     <ClInclude Include="..\..\Engine\Export.h" />
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\imconfig.h" />
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\imgui.h" />
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\ImGuiComponent.h" />
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\imgui_internal.h" />
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\stb_rect_pack.h" />
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\stb_textedit.h" />
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\stb_truetype.h" />
     <ClInclude Include="..\..\Engine\FileCore\File-win32.h" />
     <ClInclude Include="..\..\Engine\FileCore\File.h" />
     <ClInclude Include="..\..\Engine\FileCore\FileReaderWriter.h" />
@@ -232,6 +249,12 @@
     <ClInclude Include="..\..\Engine\KernelCore\TransformFeedback.h" />
     <ClInclude Include="..\..\Engine\KernelCore\VE_Ptr.h" />
     <ClInclude Include="..\..\Engine\Prerequisites.h" />
+    <ClInclude Include="..\..\Engine\UtilCore\Gizmo.h" />
+    <ClInclude Include="..\..\Engine\UtilCore\GizmoComponent.h" />
+    <ClInclude Include="..\..\Engine\UtilCore\GizmoRenderer.h" />
+    <ClInclude Include="..\..\Engine\UtilCore\GizmoRotation.h" />
+    <ClInclude Include="..\..\Engine\UtilCore\GizmoScale.h" />
+    <ClInclude Include="..\..\Engine\UtilCore\GizmoTranslation.h" />
     <ClInclude Include="..\..\Engine\VoidEngine.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
