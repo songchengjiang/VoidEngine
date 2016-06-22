@@ -423,7 +423,7 @@
 					"\"$(SRCROOT)/../../Dependents/freetype/include\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
-				SYMROOT = ../../mac;
+				SYMROOT = "$(SRCROOT)";
 			};
 			name = Debug;
 		};
@@ -436,7 +436,7 @@
 					"\"$(SRCROOT)/../../Tests\"",
 					"\"$(SRCROOT)/../../Dependents/freetype/include\"",
 				);
-				SYMROOT = ../../mac;
+				SYMROOT = "$(SRCROOT)";
 			};
 			name = Release;
 		};

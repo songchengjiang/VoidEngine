@@ -1665,7 +1665,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
-				SYMROOT = ../../mac;
+				SYMROOT = "$(SRCROOT)";
 			};
 			name = Debug;
 		};
@@ -1683,7 +1683,7 @@
 				);
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
-				SYMROOT = ../../mac;
+				SYMROOT = "$(SRCROOT)";
 			};
 			name = Release;
 		};
