@@ -11,7 +11,6 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 6CC3B5D2136C7CD6A5CF5A59 /* Build configuration list for PBXNativeTarget "Editor" */;
 			buildPhases = (
-				BEF578311D1BB86B0098F333 /* Update Project */,
 				BEF578171D1B7C060098F333 /* Preprocess */,
 			);
 			dependencies = (
@@ -220,20 +219,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "source ~/.bash_profile\ncd ../../Editor\npython Preprocessor.py";
-		};
-		BEF578311D1BB86B0098F333 /* Update Project */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Update Project";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "source ~/.bash_profile\ncd ./Editor.xcodeproj\npython update_project.py";
 		};
 /* End PBXShellScriptBuildPhase section */
 
