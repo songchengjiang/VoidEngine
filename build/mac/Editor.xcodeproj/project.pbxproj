@@ -11,6 +11,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 6CC3B5D2136C7CD6A5CF5A59 /* Build configuration list for PBXNativeTarget "Editor" */;
 			buildPhases = (
+				BEF578311D1BB86B0098F333 /* Update Project */,
 				BEF578171D1B7C060098F333 /* Preprocess */,
 			);
 			dependencies = (
@@ -220,6 +221,20 @@
 			shellPath = /bin/sh;
 			shellScript = "source ~/.bash_profile\ncd ../../Editor\npython Preprocessor.py";
 		};
+		BEF578311D1BB86B0098F333 /* Update Project */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Update Project";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "source ~/.bash_profile\ncd ./Editor.xcodeproj\npython update_project.py";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -371,23 +386,23 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../Dependents/Qt/lib";
+				FRAMEWORK_SEARCH_PATHS = "$(VE_QT_ROOT)/lib";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				HEADER_SEARCH_PATHS = (
 					.,
 					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/OpenGL.framework/Headers,
 					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/AGL.framework/Headers,
-					"$(SRCROOT)/../../Dependents/Qt/mkspecs/macx-clang",
+					"$(VE_QT_ROOT)/mkspecs/macx-clang",
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/../../Dependents/Qt/lib",
+					"$(VE_QT_ROOT)/lib",
 					/System/Library/Frameworks/,
 				);
 				OTHER_LDFLAGS = (
 					"-headerpad_max_install_names",
 					"-stdlib=libc++",
-					"-Wl,-rpath,$(SRCROOT)/../../Dependents/Qt/lib",
-					"-F$(SRCROOT)/../../Dependents/Qt/lib",
+					"-Wl,-rpath,$(VE_QT_ROOT)/lib",
+					"-F$(VE_QT_ROOT)/lib",
 				);
 				PRODUCT_NAME = Editor;
 				QT_LIBRARY_SUFFIX = "";
@@ -400,24 +415,24 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../Dependents/Qt/lib";
+				FRAMEWORK_SEARCH_PATHS = "$(VE_QT_ROOT)/lib";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = (
 					.,
 					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/OpenGL.framework/Headers,
 					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/AGL.framework/Headers,
-					"$(SRCROOT)/../../Dependents/Qt/mkspecs/macx-clang",
+					"$(VE_QT_ROOT)/mkspecs/macx-clang",
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/../../Dependents/Qt/lib",
+					"$(VE_QT_ROOT)/lib",
 					/System/Library/Frameworks/,
 				);
 				OTHER_LDFLAGS = (
 					"-headerpad_max_install_names",
 					"-stdlib=libc++",
-					"-Wl,-rpath,$(SRCROOT)/../../Dependents/Qt/lib",
-					"-F$(SRCROOT)/../../Dependents/Qt/lib",
+					"-Wl,-rpath,$(VE_QT_ROOT)/lib",
+					"-F$(VE_QT_ROOT)/lib",
 				);
 				PRODUCT_NAME = Editor;
 				QT_LIBRARY_SUFFIX = _debug;
