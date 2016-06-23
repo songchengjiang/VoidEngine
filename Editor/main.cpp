@@ -1,5 +1,5 @@
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
+#include <QtGui/QGuiApplication>
+#include <QtQml/QQmlApplicationEngine>
 
 int main(int argc, char *argv[])
 {
