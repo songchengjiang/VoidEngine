@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Editor.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Converter.xcodeproj">
    </FileRef>
    <FileRef
