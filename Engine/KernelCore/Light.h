@@ -31,7 +31,7 @@ public:
 	virtual void visit(veNodeVisitor &visitor) override;
 	//virtual void render(veCamera *camera) override;
 
-    void setEnabled(bool isEnabled) { _isEnabled = isEnabled; }
+    virtual void setEnabled(bool isEnabled) { _isEnabled = isEnabled; }
     bool isEnabled() const { return _isEnabled; }
 	LightType getLightType() const { return _type; }
     
@@ -99,6 +99,7 @@ public:
 
 	~veDirectionalLight();
 
+    virtual void setEnabled(bool isEnabled) override;
 	veCamera* getShadowCamera() const { return _shadowCamera.get(); }
 
 protected:
@@ -118,6 +119,7 @@ public:
 
 	~vePointLight();
 
+    virtual void setEnabled(bool isEnabled) override;
 	veCamera* getShadowCamera(unsigned short idx) const { return _shadowCameras[idx].get(); }
 
 protected:
@@ -137,6 +139,7 @@ public:
 
 	~veSpotLight();
 
+    virtual void setEnabled(bool isEnabled) override;
 	void setInnerAngle(float innerAng) { _innerAngle = innerAng; _innerAngleCos = veMath::veCos(veMath::veRadian(_innerAngle)); }
 	float getInnerAngle() { return _innerAngle; }
 	float getInnerAngleCos() { return _innerAngleCos; }

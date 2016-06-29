@@ -45,7 +45,8 @@ veLight::~veLight()
 void veLight::update(veSceneManager *sm, const veMat4 &transform)
 {
 	veNode::update(sm, transform);
-	updateShadow();
+    if (_isEnabled)
+        updateShadow();
 }
 
 void veLight::visit(veNodeVisitor &visitor)
@@ -128,6 +129,14 @@ void veDirectionalLight::updateShadow()
 	}
 }
 
+void veDirectionalLight::setEnabled(bool isEnabled)
+{
+    veLight::setEnabled(isEnabled);
+    if (_shadowEnabled && _shadowCamera.valid()){
+        _shadowCamera->setVisible(isEnabled);
+    }
+}
+
 veDirectionalLight::~veDirectionalLight()
 {
 }
@@ -186,6 +195,16 @@ void vePointLight::updateShadow()
 	}
 }
 
+void vePointLight::setEnabled(bool isEnabled)
+{
+    veLight::setEnabled(isEnabled);
+    if (_shadowEnabled && _shadowCameras[0].valid()) {
+        for (unsigned short i = 0; i < 6; ++i) {
+            _shadowCameras[i]->setVisible(isEnabled);
+        }
+    }
+}
+
 vePointLight::~vePointLight()
 {
 }
@@ -229,6 +248,14 @@ void veSpotLight::updateShadow()
 		_shadowCamera->setMatrix(this->getNodeToWorldMatrix());
 		_lightMatrix = LIGHT_BIAS_MAT * _shadowCamera->projectionMatrix() * _shadowCamera->viewMatrix();
 	}
+}
+
+void veSpotLight::setEnabled(bool isEnabled)
+{
+    veLight::setEnabled(isEnabled);
+    if (_shadowEnabled && _shadowCamera.valid()){
+        _shadowCamera->setVisible(isEnabled);
+    }
 }
 
 veSpotLight::~veSpotLight()
