@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 #if (VE_PLATFORM == VE_PLATFORM_MAC)
     veConfiguration::VE_DEVICE_PIXEL_RATIO = 2.0f;
 #endif
-	veApplication::instance()->initWindow(800, 600, "VoidEngineTest", nullptr);
+    veApplication::instance()->createViewer(800, 600, "VoidEngineTest");
 	TestCreator::createTest();
 	return veApplication::instance()->run();
 }

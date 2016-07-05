@@ -18,7 +18,7 @@ public:
 		_height = height;
 		_oriColor = _desColor = veVec3(veMath::veRandomUnitization(), veMath::veRandomUnitization(), veMath::veRandomUnitization());
 	}
-	virtual bool handle(veSceneManager *sm, const veEvent &event) override{
+	virtual bool handle(veSceneManager *sm, veViewer *viewer, const veEvent &event) override{
 		return false;
 	}
 
@@ -82,9 +82,11 @@ public:
 		_simulationTime += sm->getDeltaTime();
 	}
 
-	virtual bool handle(veSceneManager *sm, const veEvent &event) override{
+	virtual bool handle(veSceneManager *sm, veViewer *viewer, const veEvent &event) override{
 		if (_attachedNodeList.empty()) return false;
 		_camera = static_cast<veCamera *>(_attachedNodeList[0]);
+        if (viewer->getCamera() != _camera) return false;
+        
 		if (event.getEventType() & veEvent::VE_MOUSE_EVENT) {
 			if (event.getEventType() == veEvent::VE_PRESS) {
 				_g1 = _g0 = veVec2(event.getMouseX(), event.getMouseY());
@@ -261,13 +263,14 @@ public:
 		veFile::instance()->addSearchPath("../resources/");
 		_sceneManager = new veOctreeSceneManager(veBoundingBox(veVec3(-1000.0f), veVec3(1000.0f)), 8);
 		veApplication::instance()->setSceneManager(_sceneManager);
-		int width = veApplication::instance()->width();
-		int height = veApplication::instance()->height();
-        _camera = _sceneManager->createCamera("MainCamera", {0, 0, int(width * veConfiguration::VE_DEVICE_PIXEL_RATIO), int(height * veConfiguration::VE_DEVICE_PIXEL_RATIO) });
+        _mainViewer = veApplication::instance()->getViewer(0);
+		int width = _mainViewer->width();
+		int height = _mainViewer->height();
+        _camera = _sceneManager->createCamera("MainCamera", {0, 0, width, height });
 		_camera->setProjectionMatrixAsPerspective(30.0f, (float)width / (float)height, 1.0f, 1000.0f);
 		_camera->setViewMatrixAslookAt(veVec3(0.0f, 0.0f, 30.0f), veVec3::ZERO, veVec3::UNIT_Y);
 		_sceneManager->getRootNode()->addChild(_camera);
-		_sceneManager->setCamera(_camera);
+        _mainViewer->setCamera(_camera);
 		_defaultCameraDistance = 30.0f;
 		_defaultCameraZoomScale = 1.0f;
 
@@ -286,6 +289,7 @@ protected:
 
 	veSceneManager *_sceneManager;
 	veCamera  *_camera;
+    veViewer  *_mainViewer;
 	veReal _defaultCameraDistance;
 	veReal _defaultCameraZoomScale;
 };

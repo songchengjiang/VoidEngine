@@ -1,6 +1,7 @@
 #include "GizmoScale.h"
 #include "KernelCore/SceneManager.h"
 #include "GizmoRenderer.h"
+#include "KernelCore/Viewer.h"
 
 #define GIZMO_PLANE_SIZE 0.25f
 
@@ -23,10 +24,10 @@ bool veGizmoScale::intersectWith(veRay *ray, veNode *node)
     return false;
 }
 
-veGizmoScale::AxesType veGizmoScale::touchDown(const veVec2 &screenCoords)
+veGizmoScale::AxesType veGizmoScale::touchDown(veViewer *viewer, const veVec2 &screenCoords)
 {
-    veVec3 start = _sceneManager->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
-    veVec3 end = _sceneManager->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
+    veVec3 start = viewer->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
+    veVec3 end = viewer->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
     veMat4 wton = _parents[0]->getWorldToNodeMatrix();
     _ray->setStart(wton * start);
     _ray->setEnd(wton * end);
@@ -74,10 +75,10 @@ veGizmoScale::AxesType veGizmoScale::touchDown(const veVec2 &screenCoords)
     return at;
 }
 
-void veGizmoScale::touchMove(AxesType at, const veVec2 &screenCoords, veVec3 &pos, veVec3 &scl, veQuat &rot)
+void veGizmoScale::touchMove(veViewer *viewer, AxesType at, const veVec2 &screenCoords, veVec3 &pos, veVec3 &scl, veQuat &rot)
 {
-    veVec3 start = _sceneManager->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
-    veVec3 end = _sceneManager->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
+    veVec3 start = viewer->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
+    veVec3 end = viewer->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
     veMat4 wton = _parents[0]->getWorldToNodeMatrix();
     _ray->setStart(wton * start);
     _ray->setEnd(wton * end);

@@ -9,6 +9,7 @@
 #include "Plane.h"
 #include "Material.h"
 #include "SkyBox.h"
+#include "PostProcesser.h"
 
 class veVisualiser;
 class veLight;
@@ -100,6 +101,12 @@ public:
 
 	void setShadowCamera(bool isShadow) { _isShadowCamera = isShadow; }
 	bool isShadowCamera() const { return _isShadowCamera; }
+    
+    
+    void addPostProcesser(vePostProcesser *processer);
+    const vePostProcesserList& getPostProcesserList() const { return _postProcesserList; }
+    virtual void removePostProcesser(const std::string &name);
+    
 
 protected:
 
@@ -118,6 +125,8 @@ protected:
 	veVec4       _clearColor;
 	unsigned int _clearMask;
 	VE_Ptr<veFrameBufferObject> _fbo;
+    
+    vePostProcesserList         _postProcesserList;
 
 	vePlane _frustumPlane[6];
 	bool    _needRefreshFrustumPlane;

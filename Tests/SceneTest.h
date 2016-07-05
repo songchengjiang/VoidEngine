@@ -12,6 +12,9 @@ static bool GIZMO_SELECTOR = false;
 #define GIZMO_COMPONENT_ORDER -1
 #define UI_COMPONENT_ORDER    -2
 
+#define MASTER_CAMERA_FLAG 1
+#define SECOND_CAMERA_FLAG (1 << 1)
+
 class EntityPicker : public veComponent
 {
 public:
@@ -20,7 +23,7 @@ public:
     }
     ~EntityPicker() {}
     
-    virtual bool handle(veSceneManager *sm, const veEvent &event) override {
+    virtual bool handle(veSceneManager *sm, veViewer *viewer, const veEvent &event) override {
         if (event.getEventType() & veEvent::VE_MOUSE_EVENT || event.getEventType() & veEvent::VE_TOUCH_EVENT) {
             veVec2 screenCoords;
             bool state = false;
@@ -44,8 +47,8 @@ public:
 //                    }
 //                }
                 
-                veVec3 start = sm->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
-                veVec3 end = sm->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
+                veVec3 start = viewer->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
+                veVec3 end = viewer->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
                 auto ray = sm->createRay(start, end);
                 ray->setStart(start);
                 ray->setEnd(end);
@@ -97,6 +100,19 @@ public:
         GIZMO_COMPONENT = new veGizmoComponent;
         GIZMO_COMPONENT->setUpdateOrder(GIZMO_COMPONENT_ORDER);
         GIZMO_COMPONENT->setGizmoType(veGizmoComponent::GizmoType::GT_TRANSLATION);
+        
+        std::string fontFile = "fonts/arial.ttf";
+        {
+            auto text = _sceneManager->createText("text0", new veFont(fontFile, 64), "Hello Void Engine");
+            text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
+            auto node = _sceneManager->createNode("node0");
+            node->addRenderableObject(text);
+            veTransformer *transer = new veTransformer;
+            node->addComponent(transer);
+            transer->setPosition(veVec3(0.0f, 0.8f, 0.0f));
+            root->addChild(node);
+            node->setMask(MASTER_CAMERA_FLAG);
+        }
         
 		{
 			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/Aircraft/Aircraft.vem", "Aircraft-entity"));
@@ -313,8 +329,8 @@ public:
         imguiComp->setUpdateOrder(UI_COMPONENT_ORDER);
         imguiComp->setGuiRenderFunc([=]{
 
-            ImGui::SetNextWindowSize(ImVec2(veApplication::instance()->width() * 0.2f,veApplication::instance()->height() * 0.05f), ImGuiSetCond_FirstUseEver);
-            ImGui::SetNextWindowPos(ImVec2(veApplication::instance()->width() - veApplication::instance()->width() * 0.2f,veApplication::instance()->height() - veApplication::instance()->height() * 0.05f), ImGuiSetCond_FirstUseEver);
+            ImGui::SetNextWindowSize(ImVec2(_mainViewer->width() * 0.2f,_mainViewer->height() * 0.05f), ImGuiSetCond_FirstUseEver);
+            ImGui::SetNextWindowPos(ImVec2(_mainViewer->width() - _mainViewer->width() * 0.2f,_mainViewer->height() - _mainViewer->height() * 0.05f), ImGuiSetCond_FirstUseEver);
             ImGui::Begin("Status", nullptr);
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
             ImGui::End();
@@ -322,7 +338,7 @@ public:
             static bool show_window = true;
             if (show_window)
             {
-                ImGui::SetNextWindowSize(ImVec2(veApplication::instance()->width() * 0.3f,veApplication::instance()->height()), ImGuiSetCond_FirstUseEver);
+                ImGui::SetNextWindowSize(ImVec2(_mainViewer->width() * 0.3f,_mainViewer->height()), ImGuiSetCond_FirstUseEver);
                 ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiSetCond_FirstUseEver);
                 ImGui::Begin("Paramters", &show_window);
 
@@ -373,6 +389,19 @@ public:
         
         auto entityPicker = new EntityPicker;
         _sceneManager->addComponent(entityPicker);
+        
+//        auto viewer = veApplication::instance()->createViewer(800, 600, "Debug", _mainViewer);
+//        int width = viewer->width();
+//        int height = viewer->height();
+//        auto camera = _sceneManager->createCamera("SecondCamera", {0, 0, width, height });
+//        camera->setProjectionMatrixAsPerspective(30.0f, (float)width / (float)height, 1.0f, 1000.0f);
+//        camera->setViewMatrixAslookAt(veVec3(30.0f, 30.0f, 0.0f), veVec3::ZERO, veVec3::UNIT_Y);
+//        _sceneManager->getRootNode()->addChild(camera);
+//        viewer->setCamera(camera);
+//        camera->setMask(SECOND_CAMERA_FLAG);
+        
+        
+        _camera->setMask(MASTER_CAMERA_FLAG);
 	}
 	~SceneTest() {};
 

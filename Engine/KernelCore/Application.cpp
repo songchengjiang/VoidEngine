@@ -10,13 +10,11 @@
 #endif
 
 veApplication::veApplication()
-	: _isRunning(false)
 {
 }
 
 veApplication::~veApplication()
 {
-	stop();
 }
 
 veApplication* veApplication::instance()
@@ -31,26 +29,8 @@ veApplication* veApplication::instance()
 	return &application;
 }
 
-void veApplication::initWindow(int w, int h, const std::string &title, void *param)
+veViewer* veApplication::getViewer(size_t idx)
 {
-	_width = w;
-	_height = h;
-	_title = title;
-    _currentEvent.setEventType(veEvent::VE_WIN_INIT);
-    _currentEvent.setWindowWidth(_width);
-    _currentEvent.setWindowHeight(_height);
-    _events.push_back(_currentEvent);
-	initWindowImplementation(param);
-}
-
-void veApplication::setSceneManager(veSceneManager *sm)
-{
-	if (_sceneManager.valid())
-		_sceneManager->stopThreading();
-	_sceneManager = sm;
-}
-
-void veApplication::stop()
-{
-	_isRunning = false;
+    veAssert(idx < _viewerList.size());
+    return _viewerList[idx];
 }

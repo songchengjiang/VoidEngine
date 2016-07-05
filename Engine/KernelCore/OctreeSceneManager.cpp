@@ -6,9 +6,9 @@
 #include "RenderableObject.h"
 #include "Ray.h"
 #include "FileCore/File.h"
-#include "Application.h"
 #include "MaterialManager.h"
 #include "DeferredRenderPipeline.h"
+#include "Viewer.h"
 
 static const std::string POST_PROCESSER_FRAMEBUFFER_OBJECT = "POST_PROCESSER_FRAMEBUFFER_OBJECT";
 
@@ -198,7 +198,7 @@ void veOctreeSceneManager::intersectByRay(veOctree *octant, veRay *ray)
 	}
 }
 
-void veOctreeSceneManager::update()
+void veOctreeSceneManager::updateImp()
 {
     if (!_componentList.empty()) {
         for (auto &com : _componentList) {
@@ -218,9 +218,9 @@ void veOctreeSceneManager::update()
     }
 }
 
-void veOctreeSceneManager::render()
+void veOctreeSceneManager::renderImp(veViewer *viewer)
 {
-	if (!veApplication::instance()->makeContextCurrent()) return;
+	if (!viewer->makeContextCurrent()) return;
 	//culling();
 
 	//_shadowGenerator->shadowing();
@@ -255,22 +255,22 @@ void veOctreeSceneManager::render()
     if (!_componentList.empty()) {
         for (auto &com : _componentList) {
             if (com->isEnabled()){
-                com->beforeRender(this);
+                com->beforeRender(this, viewer);
             }
         }
     }
     
-	_renderPipeline->rendering();
+	_renderPipeline->rendering(viewer);
     
     if (!_componentList.empty()) {
         for (auto &com : _componentList) {
             if (com->isEnabled()){
-                com->afterRender(this);
+                com->afterRender(this, viewer);
             }
         }
     }
 
-	veApplication::instance()->swapBuffers();
+	viewer->swapBuffers();
 }
 
 void veOctreeSceneManager::culling()

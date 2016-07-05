@@ -1,48 +1,28 @@
 #include "Application-ios.h"
-
-#if (VE_PLATFORM == VE_PLATFORM_IOS)
 #import "ios/GLView.h"
+#include "ios/Viewer-ios.h"
 
 veApplicationIOS::veApplicationIOS(){
 
 }
 
 veApplicationIOS::~veApplicationIOS() {
-}
-
-bool veApplicationIOS::makeContextCurrent() {
-    veGLView *glView = (__bridge veGLView *)_glView;
-    BOOL state = [glView makeContextCurrent];
-    return state == YES? true: false;
-}
-
-void veApplicationIOS::swapBuffers() {
-    veGLView *glView = (__bridge veGLView *)_glView;
-    [glView swapBuffers];
-}
-
-void veApplicationIOS::dispatchEvents() {
-    std::unique_lock<std::mutex> lock(_eventMutex);
-    for (auto &event : _events) {
-        _sceneManager->dispatchEvents(event);
+    for (auto &viewer : _viewerList){
+        viewer->destroy();
+        VE_SAFE_DELETE(viewer);
     }
-    _events.clear();
 }
 
-void veApplicationIOS::initWindowImplementation(void *param) {
-    _glView = param;
-    veGLView *glView = (__bridge veGLView *)_glView;
-    glView.application = this;
-}
-
-bool veApplicationIOS::isWindowShouldClose() {
-    return false;
-}
-
-void veApplicationIOS::simulationFrame(double deltaTime) {
-    _sceneManager->setDeltaTime(deltaTime);
-    this->dispatchEvents();
-    _sceneManager->simulation();
+veViewer* veApplicationIOS::createViewer(int width, int height, const std::string &title, veViewer *sharedContextViewer)
+{
+    auto viewer = new veViewerIOS(width, height, title, sharedContextViewer);
+    _viewerList.push_back(viewer);
+    _viewerList.push_back(viewer);
+    _currentEvent.setEventType(veEvent::VE_WIN_INIT);
+    _currentEvent.setWindowWidth(width);
+    _currentEvent.setWindowHeight(height);
+    _eventDispatcher.addEvent(viewer, _currentEvent);
+    return viewer;
 }
 
 bool veApplicationIOS::run() {
@@ -53,32 +33,33 @@ bool veApplicationIOS::run() {
     
     if (!_sceneManager.valid()) return false;
     _isRunning = true;
-    _sceneManager->startThreading();
     _runningThread = std::thread([this] {
         clock_t frameTimeClocks = 1.0 / 60.0 * CLOCKS_PER_SEC;
         clock_t preFrameTime = clock();
         double invertClocksSec = 1.0 / (double)CLOCKS_PER_SEC;
-        while (_isRunning && !isWindowShouldClose()){
+        while (_isRunning){
+            std::unique_lock<std::mutex> lock(_eventMutex);
             clock_t currentFrameTime = clock();
-            _sceneManager->setDeltaTime((currentFrameTime - preFrameTime) * invertClocksSec);
-            //veLog("Frame Rate: %f\n", 1.0 / _sceneManager->getDeltaTime());
-            this->dispatchEvents();
-            _sceneManager->simulation();
+            _sceneManager->update((currentFrameTime - preFrameTime) * invertClocksSec, &_eventDispatcher);
+            _eventDispatcher.clearEventList();
             while ((clock() - currentFrameTime) < frameTimeClocks) {
                 std::this_thread::sleep_for(std::chrono::microseconds(1));
             }
             preFrameTime = currentFrameTime;
         }
     });
+    for (auto &viewer : _viewerList){
+        viewer->startRender(_sceneManager.get());
+    }
     return true;
 }
 
 void veApplicationIOS::stop() {
     _isRunning = false;
+    for (auto &viewer : _viewerList){
+        viewer->stopRender(_sceneManager.get());
+    }
     _runningThread.join();
-    _sceneManager->stopThreading();
-//    veGLView *glView = (__bridge veGLView *)_glView;
-//    [glView stopRendering];
 }
 
 void veApplicationIOS::onTouchBegan(int touchID, veReal x, veReal y)
@@ -110,10 +91,8 @@ void veApplicationIOS::onTouchEnd(int touchID, veReal x, veReal y)
     event.setEventType(veEvent::VE_TOUCH_END);
 }
 
-void veApplicationIOS::onPushCurrentEvent()
+void veApplicationIOS::onPushCurrentEvent(veViewer *viewer)
 {
     std::unique_lock<std::mutex> lock(_eventMutex);
-    _events.push_back(_currentEvent);
+    _eventDispatcher.addEvent(viewer, _currentEvent);
 }
-
-#endif

@@ -6,14 +6,13 @@
 #include "Application.h"
 #include "Configuration.h"
 #include "FileCore/File.h"
+#include "Viewer.h"
 
 veText::veText(veSceneManager *sm, veFont *font, const std::string &content)
 	: veSurface(sm)
 	, _font(font)
 	, _content(content)
 	, _charSpace(0)
-	, _width(0)
-	, _height(0)
 	, _needRefresh(true)
 {
 }
@@ -23,7 +22,7 @@ veText::~veText()
 
 }
 
-bool veText::handle(veNode *node, veSceneManager *sm, const veEvent &event)
+bool veText::handle(veNode *node, veSceneManager *sm, veViewer *viewer, const veEvent &event)
 {
 	if (event.getEventType() == veEvent::VE_WIN_RESIZE) {
 		_needRefresh = true;
@@ -41,10 +40,24 @@ void veText::update(veNode *node, veSceneManager *sm)
 		_needRefreshMaterial = false;
 	}
 	if (_needRefresh) {
-		rebuildContentBitmap(veApplication::instance()->width(), veApplication::instance()->height());
+		rebuildContentBitmap();
 		_needRefresh = false;
 	}
 	veRenderableObject::update(node, sm);
+}
+
+void veText::render(veNode *node, veCamera *camera)
+{
+    auto &vp = camera->getViewport();
+    veVec2 size = veVec2(vp.width - vp.x, vp.height - vp.y);
+    if (_type == OVERLAY)
+        _scaleMat->setValue(veMat4::scale(veVec3(_texture->getWidth() / size.x(), _texture->getHeight() / size.y(), 0.0f)));
+    else if (_type == SURFACE || _type == veSurface::BILLBOARD) {
+        _scaleMat->setValue(veMat4::scale(veVec3(_texture->getWidth() * 0.5f, _texture->getHeight() * 0.5f, 0.0f)));
+        _boundingBox.min() = veVec3(-(_texture->getWidth() * 0.5f), -(_texture->getHeight() * 0.5f), -0.5f);
+        _boundingBox.max() = veVec3(_texture->getWidth() * 0.5f, _texture->getHeight() * 0.5f, 0.5f);
+    }
+    veSurface::render(node, camera);
 }
 
 void veText::setFont(veFont *font)
@@ -89,7 +102,7 @@ veShader* veText::getFragmentShader()
 	return new veShader(veShader::FRAGMENT_SHADER, F_SHADER);
 }
 
-void veText::rebuildContentBitmap(int divWidth, int divHeight)
+void veText::rebuildContentBitmap()
 {
 	if (_content.empty()) return;
 #define FOUR_BYTES_ALIGN(BYTES)  ((((BYTES + 3))>>2)<<2)  
@@ -126,16 +139,6 @@ void veText::rebuildContentBitmap(int divWidth, int divHeight)
 	}
 
 	_texture->storage(width, height, 1, GL_R8, GL_RED, GL_UNSIGNED_BYTE, buf);
-	if (_type == OVERLAY)
-		_scaleMat->setValue(veMat4::scale(veVec3((float)width / (float)(divWidth), (float)height / (float)(divHeight), 0.0f)));
-	else if (_type == SURFACE || _type == veSurface::BILLBOARD) {
-		_scaleMat->setValue(veMat4::scale(veVec3(width * 0.5f, height * 0.5f, 0.0f)));
-		_boundingBox.min() = veVec3(-(width * 0.5f), -(height * 0.5f), -0.5f);
-		_boundingBox.max() = veVec3(width * 0.5f, height * 0.5f, 0.5f);
-	}
-
-	_width = width;
-	_height = height;
 	//delete[] temp;
 	delete[] buf;
 }

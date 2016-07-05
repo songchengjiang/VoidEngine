@@ -9,6 +9,7 @@
 
 class veSceneManager;
 class veCamera;
+class veViewer;
 class VE_EXPORT veRenderPipeline
 {
 public:
@@ -17,7 +18,7 @@ public:
 
 	USE_VE_PTR;
 
-	void rendering();
+	void rendering(veViewer *viewer);
     void prepareForDraws(veCamera *camera);
     void draw(veCamera *camera, veRenderQueue::RenderGroup &rg, const std::function<bool(veRenderCommand &command)> &callback = nullptr);
 
@@ -25,12 +26,13 @@ public:
 
 protected:
 
+    void visitRenderQueues(veCamera *camera);
 	void cullRenderQueues(veCamera *camera);
 	void fillRenderQueues(veCamera *camera);
 	void sortRenderQueues(veCamera *camera);
 	void renderShadows();
-	void renderCameras();
-	virtual void renderScene(veCamera *camera, bool isMainCamera) = 0;
+	void renderCameras(veViewer *viewer);
+	virtual void renderScene(veCamera *camera) = 0;
 
 	void renderDirectionalLightShadow(veLight *light);
 	void renderPointLightShadow(veLight *light);

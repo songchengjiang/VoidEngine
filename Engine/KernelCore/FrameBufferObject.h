@@ -36,7 +36,7 @@ private:
 	{
 		GLenum target;
 		GLint layer;
-		veTexture *texture;
+		VE_Ptr<veTexture> texture;
 		bool   needMipmap;
 	};
     GLint  _currentrbo;
@@ -69,7 +69,7 @@ private:
 
 private:
 
-	std::vector<veFrameBufferObject *> _fbos;
+	std::vector< VE_Ptr<veFrameBufferObject> > _fbos;
 };
 
 #endif

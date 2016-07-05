@@ -183,24 +183,24 @@ void veNode::refresh()
 	_refresh = true;
 }
 
-bool veNode::routeEvent(const veEvent &event, veSceneManager *sm)
+bool veNode::routeEvent(veSceneManager *sm, veViewer *viewer, const veEvent &event)
 {
 	if (!_isVisible) return false;
 
 	if (_eventCallback != nullptr) {
-		if (_eventCallback(event, sm, this))
+		if (_eventCallback(sm, viewer, event, this))
 			return true;
 	}
 
 	if (!_children.empty()){
 		for (auto &child : _children){
-			if (child->routeEvent(event, sm)) return true;
+			if (child->routeEvent(sm, viewer, event)) return true;
 		}
 	}
 
 	if (!_renderableObjects.empty()) {
 		for (auto &iter : _renderableObjects) {
-			if (iter->handle(this, sm, event)) return true;
+			if (iter->handle(this, sm, viewer, event)) return true;
 		}
 	}
 

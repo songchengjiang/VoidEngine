@@ -7,9 +7,6 @@ veFrameBufferObjectManager::veFrameBufferObjectManager()
 
 veFrameBufferObjectManager::~veFrameBufferObjectManager()
 {
-	for (auto &iter : _fbos) {
-		delete iter;
-	}
 }
 
 veFrameBufferObjectManager* veFrameBufferObjectManager::instance()
@@ -22,7 +19,7 @@ veFrameBufferObject* veFrameBufferObjectManager::findFrameBufferObject(const std
 {
 	for (auto &iter : _fbos) {
 		if (iter->getName() == name)
-			return iter;
+			return iter.get();
 	}
 
 	return nullptr;
@@ -39,7 +36,7 @@ veFrameBufferObject* veFrameBufferObjectManager::createFrameBufferObject(const s
 veFrameBufferObject* veFrameBufferObjectManager::getFrameBufferObject(unsigned int idx)
 {
 	veAssert(idx < _fbos.size());
-	return _fbos[idx];
+	return _fbos[idx].get();
 }
 
 veFrameBufferObject* veFrameBufferObject::CURRENT_FBO = nullptr;
@@ -179,7 +176,7 @@ void veFrameBufferObject::refreshAttachments()
 	if (_needRefreshAttachments) {
 		std::vector<GLenum> mrt;
 		for (auto &iter : _attachments) {
-			if (iter.second.texture) {
+			if (iter.second.texture.valid()) {
 				if (iter.first >= GL_COLOR_ATTACHMENT0 && iter.first <= GL_COLOR_ATTACHMENT15)
 					mrt.push_back(iter.first);
 				//iter.second->storage(iter.second->getWidth(), iter.second->getHeight(), 1

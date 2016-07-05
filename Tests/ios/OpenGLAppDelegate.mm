@@ -9,6 +9,7 @@
 #import "OpenGLAppDelegate.h"
 #import "VoidEngine.h"
 #import "KernelCore/ios/GLView.h"
+#import "KernelCore/ios/Viewer-ios.h"
 #import "TestCreator.h"
 
 @implementation OpenGLAppDelegate
@@ -17,17 +18,20 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    veConfiguration::VE_DEVICE_PIXEL_RATIO = [[UIScreen mainScreen] scale];
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
-    veGLView *glview = [[veGLView alloc] initWithFrame:screenBounds];
-    [glview setMultipleTouchEnabled:YES];
+    
+    auto viewer = static_cast<veViewerIOS *>(veApplication::instance()->createViewer(int(screenBounds.size.width), int(screenBounds.size.height), "VoidEngineTest"));
+    
+    veGLView *glView = [[veGLView alloc] initWithFrame:screenBounds];
+    viewer->createWithGLView((__bridge void *)glView);
     
     _viewController = [[ViewController alloc] initWithNibName:nil bundle:nil];
-    _viewController.view = glview;
+    _viewController.view = glView;
     
     [self.window setRootViewController:_viewController];
     [self.window makeKeyAndVisible];
     
-    veApplication::instance()->initWindow(int(screenBounds.size.width), int(screenBounds.size.height), "VoidEngineTest", (__bridge void *)glview);
     TestCreator::createTest();
     veApplication::instance()->run();
     return YES;

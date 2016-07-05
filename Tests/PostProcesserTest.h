@@ -28,30 +28,35 @@ public:
 		//	auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/grey.vemtl", "grey-mats"));
 		//	auto postProcesser = _sceneManager->createPostProcesser("grey");
 		//	postProcesser->setMaterialArray(mats);
+        //  _mainViewer->getCamera()->addPostProcesser(postProcesser);
 		//}
 
 		//{
 		//	auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/bloom.vemtl", "bloom-mats"));
 		//	auto postProcesser = _sceneManager->createPostProcesser("bloom");
 		//	postProcesser->setMaterialArray(mats);
+        //  _mainViewer->getCamera()->addPostProcesser(postProcesser);
 		//}
 
 		//{
 		//	auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/oldTV.vemtl", "oldTV-mats"));
 		//	auto postProcesser = _sceneManager->createPostProcesser("oldTV");
 		//	postProcesser->setMaterialArray(mats);
+        //  _mainViewer->getCamera()->addPostProcesser(postProcesser);
 		//}
 
 		{
 			auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/ASCII.vemtl", "ASCII-mats"));
 			auto postProcesser = _sceneManager->createPostProcesser("oldTV");
 			postProcesser->setMaterialArray(mats);
+            _mainViewer->getCamera()->addPostProcesser(postProcesser);
 		}
 
 		//{
 		//	auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/tiling.vemtl", "tiling-mats"));
 		//	auto postProcesser = _sceneManager->createPostProcesser("tiling");
 		//	postProcesser->setMaterialArray(mats);
+        //  _mainViewer->getCamera()->addPostProcesser(postProcesser);
 		//}
 
 		_sceneManager->getRootNode()->addChild(root);

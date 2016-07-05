@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import "Prerequisites.h"
+#import "KernelCore/ios/Viewer-ios.h"
 #import "KernelCore/Application-ios.h"
 
 @interface veGLView : UIView {
@@ -17,7 +18,8 @@
     CADisplayLink* _displayLink;
 }
 
-@property(nonatomic,readwrite) veApplicationIOS *application;
+@property(nonatomic,readwrite) veViewerIOS *viewer;
+@property(nonatomic,readwrite) veApplicationIOS *app;
 
 - (void)startRendering;
 - (void)stopRendering;

@@ -30,8 +30,8 @@ protected:
 
 	typedef std::vector<veOctreeNode *> OctreeNodeList;
 
-	virtual void update() override;
-	virtual void render() override;
+	virtual void updateImp() override;
+	virtual void renderImp(veViewer *viewer) override;
 	void culling();
 
 	void addOctreeNode(veOctreeNode *node, veOctree *octant, unsigned int depth = 0);

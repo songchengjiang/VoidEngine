@@ -372,11 +372,11 @@ veDeferredRenderPipeline::~veDeferredRenderPipeline()
 
 }
 
-void veDeferredRenderPipeline::renderScene(veCamera *camera, bool isMainCamera)
+void veDeferredRenderPipeline::renderScene(veCamera *camera)
 {
+    auto &vp = camera->getViewport();
 	auto &params = getCameraParams(camera);
 	unsigned int deferredClearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
-	auto &vp = camera->getViewport();
 	veVec2 size = veVec2(vp.width - vp.x, vp.height - vp.y);
 	params.DS->storage(size.x(), size.y(), 1, GL_DEPTH24_STENCIL8, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr, 1);
 	params.RT0->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
@@ -413,11 +413,11 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, bool isMainCamera)
 	params.fullScreenSurface->render(_sceneManager->getRootNode(), camera);
 	if (camera->getFrameBufferObject())
 		camera->getFrameBufferObject()->bind(camera->getClearMask(), GL_DRAW_FRAMEBUFFER);
-	if (isMainCamera && !_sceneManager->getPostProcesserList().empty()) {
+	if (!camera->getPostProcesserList().empty()) {
 		if (!_postProcesserFBO.valid())
 			_postProcesserFBO = veFrameBufferObjectManager::instance()->createFrameBufferObject("_VE_DEFERRED_RENDER_PIPELINE_POST_PROCESSER_FBO_");
 		_postProcesserFBO->setFrameBufferSize(size);
-		for (auto &iter : _sceneManager->getPostProcesserList()) {
+		for (auto &iter : camera->getPostProcesserList()) {
 			auto processer = iter.get();
 			processer->process(this, _postProcesserFBO.get(), camera);
 		}

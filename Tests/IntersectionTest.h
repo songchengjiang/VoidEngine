@@ -10,7 +10,7 @@ public:
 	}
 	~IntersectionHandler() {}
 
-	virtual bool handle(veSceneManager *sm, const veEvent &event) override {
+	virtual bool handle(veSceneManager *sm, veViewer *viewer, const veEvent &event) override {
 		if (event.getEventType() & veEvent::VE_MOUSE_EVENT || event.getEventType() & veEvent::VE_TOUCH_EVENT) {
 			veVec2 screenCoords;
 			bool state = false;
@@ -27,8 +27,8 @@ public:
 			}
 
 			if (state) {
-				veVec3 start = sm->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
-				veVec3 end = sm->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
+				veVec3 start = viewer->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
+				veVec3 end = viewer->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
 				if (!_ray.valid()) {
 					_ray = sm->createRay(start, end);
 				}

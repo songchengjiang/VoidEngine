@@ -11,7 +11,8 @@
 
 @implementation veGLView
 
-@synthesize application;
+@synthesize viewer;
+@synthesize app;
 
 + (Class)layerClass {
     return [CAEAGLLayer class];
@@ -54,12 +55,7 @@
 }
 
 - (void)rendering:(CADisplayLink*)displayLink {
-    //[self makeContextCurrent];
-    //glClearColor(0, 104.0/255.0, 55.0/255.0, 1.0);
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//    glEnable(GL_DEPTH_TEST);
-    self.application->simulationFrame(_displayLink.duration);
-    //[self swapBuffers];
+    self.app->getSceneManager()->render(self.viewer);
 }
 
 - (void)startRendering {
@@ -99,10 +95,10 @@
         CGFloat y = 1.0 - [touch locationInView: [touch view]].y / height;
         x = (x - 0.5) * 2.0;
         y = (y - 0.5) * 2.0;
-        self.application->onTouchBegan(i, x, y);
+        self.app->onTouchBegan(i, x, y);
         ++i;
     }
-    self.application->onPushCurrentEvent();
+    self.app->onPushCurrentEvent(self.viewer);
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
@@ -124,10 +120,10 @@
 //            ms[i] = touch.maximumPossibleForce;
 //        }
 //#endif
-        self.application->onTouchMove(i, x, y);
+        self.app->onTouchMove(i, x, y);
         ++i;
     }
-    self.application->onPushCurrentEvent();
+    self.app->onPushCurrentEvent(self.viewer);
     
     //auto glview = cocos2d::Director::getInstance()->getOpenGLView();
     //glview->handleTouchesMove(i, (intptr_t*)ids, xs, ys, fs, ms);
@@ -145,10 +141,10 @@
         CGFloat y = 1.0 - [touch locationInView: [touch view]].y / height;
         x = (x - 0.5) * 2.0;
         y = (y - 0.5) * 2.0;
-        self.application->onTouchEnd(i, x, y);
+        self.app->onTouchEnd(i, x, y);
         ++i;
     }
-    self.application->onPushCurrentEvent();
+    self.app->onPushCurrentEvent(self.viewer);
     
     //auto glview = cocos2d::Director::getInstance()->getOpenGLView();
     //glview->handleTouchesEnd(i, (intptr_t*)ids, xs, ys);
@@ -181,8 +177,7 @@
     _context = nil;
     
     if ([self respondsToSelector:@selector(setContentScaleFactor:)]){
-        self.contentScaleFactor = [[UIScreen mainScreen] scale];
-        veConfiguration::VE_DEVICE_PIXEL_RATIO = self.contentScaleFactor;
+        self.contentScaleFactor = veConfiguration::VE_DEVICE_PIXEL_RATIO;
     }
     return self;
 }

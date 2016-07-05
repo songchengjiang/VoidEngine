@@ -11,21 +11,18 @@ class VE_EXPORT veApplicationAndroid : public veApplication
 public:
     virtual ~veApplicationAndroid();
 
-    virtual bool makeContextCurrent() override;
-    virtual void swapBuffers() override;
+    virtual veViewer* createViewer(int width, int height, const std::string &title, veViewer *sharedContextViewer = nullptr) override;
 
-    virtual bool run() override ;
+    void setAndroidApp(android_app *app);
+    virtual bool run() override;
+    virtual void stop() override;
 
 private:
 
     veApplicationAndroid();
 
-    virtual void dispatchEvents() override;
-    virtual void initWindowImplementation(void *param) override;
-    virtual bool isWindowShouldClose() override;
-
     void pollAllEvents();
-    void initGLContext();
+    void init();
     void terminate();
 
     static void collectWindowEvents(struct android_app* app, int32_t cmd);
@@ -33,11 +30,9 @@ private:
 
 private:
 
+    veEvent      _currentEvent;
     android_app* _androidApp;
-    EGLDisplay _display;
-    EGLSurface _surface;
-    EGLContext _context;
-    EGLConfig  _config;
+    bool         _isRunning;
 };
 
 #endif //ANDROID_APPLICATION_ANDROID_H

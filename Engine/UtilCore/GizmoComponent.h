@@ -18,8 +18,9 @@ public:
     veGizmoComponent();
     virtual ~veGizmoComponent();
     
-    virtual bool handle(veSceneManager *sm, const veEvent &event) override;
+    virtual bool handle(veSceneManager *sm, veViewer *viewer, const veEvent &event) override;
     virtual void afterUpdate(veSceneManager *sm) override;
+    virtual void beforeRender(veSceneManager *sm, veViewer *viewer) override;
     virtual bool onAttachToNode(veNode *node) override;
     virtual bool onDetachToNode(veNode *node) override;
     

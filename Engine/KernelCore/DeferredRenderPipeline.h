@@ -14,7 +14,7 @@ public:
 
 protected:
 
-	virtual void renderScene(veCamera *camera, bool isMainCamera) override;
+	virtual void renderScene(veCamera *camera) override;
 
 	void initLightingParams();
 	void initLightCommomParams(veLight *light, vePass *pass);

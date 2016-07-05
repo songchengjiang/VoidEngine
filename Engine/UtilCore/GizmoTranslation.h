@@ -11,8 +11,8 @@ public:
     
     virtual bool intersectWith(veRay *ray, veNode *node) override;
     
-    virtual AxesType touchDown(const veVec2 &screenCoords) override;
-    virtual void touchMove(AxesType at, const veVec2 &screenCoords, veVec3 &pos, veVec3 &scl, veQuat &rot) override;
+    virtual AxesType touchDown(veViewer *viewer, const veVec2 &screenCoords) override;
+    virtual void touchMove(veViewer *viewer, AxesType at, const veVec2 &screenCoords, veVec3 &pos, veVec3 &scl, veQuat &rot) override;
     virtual void touchUp() override;
     
 protected:

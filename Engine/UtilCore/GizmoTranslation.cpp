@@ -1,6 +1,7 @@
 #include "GizmoTranslation.h"
 #include "KernelCore/SceneManager.h"
 #include "GizmoRenderer.h"
+#include "KernelCore/Viewer.h"
 
 #define GIZMO_PLANE_SIZE 0.25f
 
@@ -15,9 +16,9 @@ veGizmoTranslation::~veGizmoTranslation()
 
 }
 
-veGizmoTranslation::AxesType veGizmoTranslation::touchDown(const veVec2 &screenCoords){
-    veVec3 start = _sceneManager->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
-    veVec3 end = _sceneManager->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
+veGizmoTranslation::AxesType veGizmoTranslation::touchDown(veViewer *viewer, const veVec2 &screenCoords){
+    veVec3 start = viewer->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
+    veVec3 end = viewer->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
     veMat4 wton = _parents[0]->getWorldToNodeMatrix();
     _ray->setStart(wton * start);
     _ray->setEnd(wton * end);
@@ -63,10 +64,10 @@ veGizmoTranslation::AxesType veGizmoTranslation::touchDown(const veVec2 &screenC
     return at;
 }
 
-void veGizmoTranslation::touchMove(AxesType at, const veVec2 &screenCoords, veVec3 &pos, veVec3 &scl, veQuat &rot)
+void veGizmoTranslation::touchMove(veViewer *viewer, AxesType at, const veVec2 &screenCoords, veVec3 &pos, veVec3 &scl, veQuat &rot)
 {
-    veVec3 start = _sceneManager->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
-    veVec3 end = _sceneManager->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
+    veVec3 start = viewer->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, -1.0f);
+    veVec3 end = viewer->getCamera()->convertScreenCoordsToWorldCoords(screenCoords, 1.0f);
     veMat4 wton = _parents[0]->getWorldToNodeMatrix();
     _ray->setStart(wton * start);
     _ray->setEnd(wton * end);

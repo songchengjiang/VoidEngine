@@ -1,5 +1,6 @@
 #include "GizmoComponent.h"
 #include "KernelCore/SceneManager.h"
+#include "KernelCore/Viewer.h"
 
 #define GIZMO_SCALE_SQUARED_DISTANCE 10.0f
 
@@ -16,7 +17,7 @@ veGizmoComponent::~veGizmoComponent()
 
 }
 
-bool veGizmoComponent::handle(veSceneManager *sm, const veEvent &event)
+bool veGizmoComponent::handle(veSceneManager *sm, veViewer *viewer, const veEvent &event)
 {
     if (!_gizmo.valid()) return false;
     
@@ -31,7 +32,18 @@ bool veGizmoComponent::handle(veSceneManager *sm, const veEvent &event)
                 auto touch = event.getTouches()[0];
                 screenCoords = veVec2(touch.x, touch.y);
             }
-            _gizmoAxesType = _gizmo->touchDown(screenCoords);
+            
+            veVec3 ntowPos, camtowPos;
+            _gizmoNode->getMatrix().decomposition(&ntowPos, nullptr, nullptr);
+            viewer->getCamera()->getNodeToWorldMatrix().decomposition(&camtowPos, nullptr, nullptr);
+            veReal dis = (camtowPos - ntowPos).length();
+            //_gizmoNode->setMatrix(veMat4::transform(ntowPos, veVec3(dis / GIZMO_SCALE_SQUARED_DISTANCE), nodeRot));
+            veReal scl = _gizmo->getScale();
+            
+            _gizmo->setScale(dis / GIZMO_SCALE_SQUARED_DISTANCE);
+            _gizmoAxesType = _gizmo->touchDown(viewer, screenCoords);
+            _gizmo->setScale(scl);
+            
             if (_gizmoAxesType != veGizmo::AxesType::AT_NONE)
                 return true;
         }
@@ -48,7 +60,7 @@ bool veGizmoComponent::handle(veSceneManager *sm, const veEvent &event)
             }
             if (_gizmoAxesType != veGizmo::AxesType::AT_NONE){
                 veVec3 pos,scl; veQuat rot;
-                _gizmo->touchMove(_gizmoAxesType, screenCoords, pos, scl, rot);
+                _gizmo->touchMove(viewer, _gizmoAxesType, screenCoords, pos, scl, rot);
                 applyGizmoMatrix(pos, scl, rot);
                 return true;
             }
@@ -84,11 +96,14 @@ void veGizmoComponent::afterUpdate(veSceneManager *sm)
         caculateGizmoMatrix();
         _refresh = false;
     }
-    
+
+}
+
+void veGizmoComponent::beforeRender(veSceneManager *sm, veViewer *viewer)
+{
     veVec3 ntowPos, camtowPos;
-    veQuat nodeRot;
-    _gizmoNode->getMatrix().decomposition(&ntowPos, nullptr, &nodeRot);
-    sm->getCamera()->getNodeToWorldMatrix().decomposition(&camtowPos, nullptr, nullptr);
+    _gizmoNode->getMatrix().decomposition(&ntowPos, nullptr, nullptr);
+    viewer->getCamera()->getNodeToWorldMatrix().decomposition(&camtowPos, nullptr, nullptr);
     veReal dis = (camtowPos - ntowPos).length();
     //_gizmoNode->setMatrix(veMat4::transform(ntowPos, veVec3(dis / GIZMO_SCALE_SQUARED_DISTANCE), nodeRot));
     _gizmo->setScale(dis / GIZMO_SCALE_SQUARED_DISTANCE);

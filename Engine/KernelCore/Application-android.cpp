@@ -1,77 +1,76 @@
 #include "Application-android.h"
 #include "FileCore/File-android.h"
+#include "KernelCore/Viewer-android.h"
 #include <android/input.h>
 
 veApplicationAndroid::veApplicationAndroid()
     : _androidApp(nullptr)
-    , _display(EGL_NO_DISPLAY)
-    , _surface(EGL_NO_SURFACE)
-    , _context(EGL_NO_CONTEXT){
+    , _isRunning(false)
+{
 
 }
 
 veApplicationAndroid::~veApplicationAndroid() {
-    eglDestroyContext(_display, _context);
-    eglDestroySurface(_display, _surface);
-}
-
-bool veApplicationAndroid::makeContextCurrent() {
-    //veLog("makeContextCurrent");
-    if (_display && _surface && _context){
-        if (eglMakeCurrent(_display, _surface, _surface, _context) == EGL_TRUE);
-            return true;
+    terminate();
+    stop();
+    for (auto &viewer : _viewerList){
+        VE_SAFE_DELETE(viewer);
     }
-    return false;
 }
 
-void veApplicationAndroid::swapBuffers() {
-    //veLog("swapBuffers");
-    if (_display && _surface)
-        eglSwapBuffers(_display, _surface);
+veViewer* veApplicationAndroid::createViewer(int width, int height, const std::string &title, veViewer *sharedContextViewer)
+{
+    auto viewer = new veViewerAndroid(width, height, title, static_cast<veViewerAndroid *>(sharedContextViewer));
+    _viewerList.push_back(viewer);
+    _currentEvent.setEventType(veEvent::VE_WIN_INIT);
+    _currentEvent.setWindowWidth(width);
+    _currentEvent.setWindowHeight(height);
+    _eventDispatcher.addEvent(viewer, _currentEvent);
+    return viewer;
 }
 
-void veApplicationAndroid::dispatchEvents() {
-    pollAllEvents();
-    for (auto &event : _events) {
-        _sceneManager->dispatchEvents(event);
-    }
-    _events.clear();
-}
-
-void veApplicationAndroid::initWindowImplementation(void *param) {
-    _androidApp = static_cast<android_app* >(param);
+void veApplicationAndroid::setAndroidApp(android_app *app)
+{
+    _androidApp = app;
     _androidApp->userData = this;
     _androidApp->onAppCmd = veApplicationAndroid::collectWindowEvents;
     _androidApp->onInputEvent = veApplicationAndroid::collectInputEvents;
     veFileAndroid::ASSET_MANAGER = _androidApp->activity->assetManager;
 }
 
-bool veApplicationAndroid::isWindowShouldClose() {
-    return  _androidApp->destroyRequested != 0;
-}
-
 bool veApplicationAndroid::run()
 {
-    if (!_sceneManager.valid()) return false;
+    if (!_sceneManager.valid() || _viewerList.empty()) return false;
     _isRunning = true;
     clock_t frameTimeClocks = 1.0 / 60.0 * CLOCKS_PER_SEC;
     clock_t preFrameTime = clock();
     double invertClocksSec = 1.0 / (double)CLOCKS_PER_SEC;
-    _sceneManager->startThreading();
-    while (_isRunning && !isWindowShouldClose())
+
+    for (auto &viewer : _viewerList){
+        viewer->startRender(_sceneManager.get());
+    }
+    while (_isRunning && !_viewerList.empty())
     {
         clock_t currentFrameTime = clock();
-        _sceneManager->setDeltaTime((currentFrameTime - preFrameTime) * invertClocksSec);
         //veLog("FRAME RATE: %f\n", 1.0 / _sceneManager->getDeltaTime());
-        this->dispatchEvents();
-        _sceneManager->simulation();
+        pollAllEvents();
+        _sceneManager->update((currentFrameTime - preFrameTime) * invertClocksSec, &_eventDispatcher);
+        _eventDispatcher.clearEventList();
         while ((clock() - currentFrameTime) < frameTimeClocks) {
             std::this_thread::sleep_for(std::chrono::microseconds(100));
         }
         preFrameTime = currentFrameTime;
     }
-    _sceneManager->stopThreading();
+    stop();
     return true;
+}
+
+void veApplicationAndroid::stop()
+{
+    _isRunning = false;
+    for (auto &viewer : _viewerList){
+        viewer->stopRender(_sceneManager.get());
+    }
 }
 
 void veApplicationAndroid::pollAllEvents() {
@@ -87,66 +86,20 @@ void veApplicationAndroid::pollAllEvents() {
     }
 }
 
-void veApplicationAndroid::initGLContext() {
-    if (_display == EGL_NO_DISPLAY){
-        _display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-        if (!_display) veLog("_display is null!");
-        eglInitialize(_display, nullptr, nullptr);
-        EGLint attribs[] = {
-                EGL_RED_SIZE,       8,
-                EGL_GREEN_SIZE,     8,
-                EGL_BLUE_SIZE,      8,
-                EGL_ALPHA_SIZE,     8,
-                EGL_DEPTH_SIZE,     24,
-                EGL_STENCIL_SIZE,   8,
-                //EGL_SAMPLE_BUFFERS, 0,
-                //EGL_LEVEL,            0,
-                EGL_SURFACE_TYPE,    EGL_WINDOW_BIT,
-                EGL_RENDERABLE_TYPE,EGL_OPENGL_ES2_BIT,
-                EGL_NONE
-        };
-
-        EGLint w, h, dummy, format;
-        EGLint numConfigs;
-        eglChooseConfig(_display, attribs, &_config, 1, &numConfigs);
-        if (!numConfigs){
-            veLog("eglChooseConfig failed!");
-            return;
-        }
-
-        eglGetConfigAttrib(_display, _config, EGL_NATIVE_VISUAL_ID, &format);
-        ANativeWindow_setBuffersGeometry(_androidApp->window, 0, 0, format);
-        if (_display){
-           veLog("init display");
-        }
+void veApplicationAndroid::init()
+{
+    _sceneManager->needReload();
+    for (auto &viewer : _viewerList){
+        static_cast<veViewerAndroid *>(viewer)->setNativeWindow(_androidApp->window);
+        viewer->create();
     }
-
-    if (_surface == EGL_NO_SURFACE){
-        _surface = eglCreateWindowSurface(_display, _config, _androidApp->window, NULL);
-        eglQuerySurface( _display, _surface, EGL_WIDTH, &_width );
-        eglQuerySurface( _display, _surface, EGL_HEIGHT, &_height );
-        if (_surface){
-           veLog("init surface");
-        }
-    }
-
-    if (_context == EGL_NO_CONTEXT){
-        const EGLint context_attribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, //Request opengl ES3.0
-                                           EGL_NONE };
-        _context = eglCreateContext(_display, _config, NULL, context_attribs);
-        if (_context){
-           veLog("init context");
-        }
-    }
-    veLog("initGLContext()");
 }
 
 void veApplicationAndroid::terminate() {
-    //eglDestroyContext(_display, _context);
-    eglDestroySurface(_display, _surface);
-    //_context = EGL_NO_CONTEXT;
-    _surface = EGL_NO_SURFACE;
-    veLog("terminate()");
+
+    for (auto &viewer : _viewerList){
+        viewer->destroy();
+    }
 }
 
 void veApplicationAndroid::collectWindowEvents(struct android_app *app, int32_t cmd) {
@@ -157,10 +110,10 @@ void veApplicationAndroid::collectWindowEvents(struct android_app *app, int32_t 
             break;
         case APP_CMD_INIT_WINDOW:
         {
-            thisApp->initGLContext();
+            thisApp->init();
             event.setEventType(veEvent::VE_WIN_RESIZE);
-            event.setWindowWidth(thisApp->width());
-            event.setWindowHeight(thisApp->height());
+            event.setWindowWidth(thisApp->_viewerList[0]->width());
+            event.setWindowHeight(thisApp->_viewerList[0]->height());
         }
             break;
         case APP_CMD_TERM_WINDOW:
@@ -180,7 +133,7 @@ void veApplicationAndroid::collectWindowEvents(struct android_app *app, int32_t 
         }
             break;
     }
-    thisApp->_events.push_back(event);
+    thisApp->_eventDispatcher.addEvent(thisApp->_viewerList[0], event);
 }
 
 int32_t veApplicationAndroid::collectInputEvents(struct android_app *app, AInputEvent *aEvent) {
@@ -204,8 +157,8 @@ int32_t veApplicationAndroid::collectInputEvents(struct android_app *app, AInput
                 int32_t idx = (flags == AMOTION_EVENT_ACTION_DOWN || flags == AMOTION_EVENT_ACTION_UP)? 0: index;
                 int32_t id = AMotionEvent_getPointerId(aEvent, idx);
                 if (flags == AMOTION_EVENT_ACTION_DOWN || flags == AMOTION_EVENT_ACTION_POINTER_DOWN){
-                    veReal x = (AMotionEvent_getX(aEvent, idx) / veReal(thisApp->width()));
-                    veReal y = 1.0 - AMotionEvent_getY(aEvent, idx) / veReal(thisApp->height());
+                    veReal x = (AMotionEvent_getX(aEvent, idx) / veReal(thisApp->_viewerList[0]->width()));
+                    veReal y = 1.0 - AMotionEvent_getY(aEvent, idx) / veReal(thisApp->_viewerList[0]->height());
                     x = (x - 0.5) * 2.0;
                     y = (y - 0.5) * 2.0;
                     event.addTouch({id, x, y, x, y});
@@ -221,8 +174,8 @@ int32_t veApplicationAndroid::collectInputEvents(struct android_app *app, AInput
             case AMOTION_EVENT_ACTION_MOVE:
             {
                 for (int32_t i = 0; i < count; ++i){
-                    veReal x = (AMotionEvent_getX(aEvent, i) / veReal(thisApp->width()));
-                    veReal y = 1.0 - AMotionEvent_getY(aEvent, i) / veReal(thisApp->height());
+                    veReal x = (AMotionEvent_getX(aEvent, i) / veReal(thisApp->_viewerList[0]->width()));
+                    veReal y = 1.0 - AMotionEvent_getY(aEvent, i) / veReal(thisApp->_viewerList[0]->height());
                     x = (x - 0.5) * 2.0;
                     y = (y - 0.5) * 2.0;
                     int32_t id = AMotionEvent_getPointerId(aEvent, i);
@@ -250,7 +203,7 @@ int32_t veApplicationAndroid::collectInputEvents(struct android_app *app, AInput
         state = true;
     }
     if (state){
-        thisApp->_events.push_back(event);
+        thisApp->_eventDispatcher.addEvent(thisApp->_viewerList[0], event);
         return 1;
     }
     return 0;

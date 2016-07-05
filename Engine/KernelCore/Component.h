@@ -6,6 +6,7 @@
 
 class veNode;
 class veSceneManager;
+class veViewer;
 class VE_EXPORT veComponent
 {
 public:
@@ -14,11 +15,11 @@ public:
 
 	USE_VE_PTR;
 
-	virtual bool handle(veSceneManager *sm, const veEvent &event) { return false; }
+	virtual bool handle(veSceneManager *sm, veViewer *viewer, const veEvent &event) { return false; }
     virtual void beforeUpdate(veSceneManager *sm) {}
 	virtual void afterUpdate(veSceneManager *sm) {}
-    virtual void beforeRender(veSceneManager *sm) {}
-    virtual void afterRender(veSceneManager *sm) {}
+    virtual void beforeRender(veSceneManager *sm, veViewer *viewer) {}
+    virtual void afterRender(veSceneManager *sm, veViewer *viewer) {}
 	virtual bool onAttachToNode(veNode *node);
 	virtual bool onDetachToNode(veNode *node);
     const std::vector<veNode *>& getAttachedNodeList() const { return _attachedNodeList; }

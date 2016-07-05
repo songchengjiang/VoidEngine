@@ -3,6 +3,8 @@
 #include "KernelCore/RenderableObject.h"
 #include "KernelCore/Ray.h"
 
+class veViewer;
+class veCamera;
 class VE_EXPORT veGizmo : public veRenderableObject
 {
 public:
@@ -26,9 +28,10 @@ public:
     void setScale(veReal scl) { _scale = scl; _isDirtyBoundingBox = true; }
     veReal getScale() const { return _scale; }
     
-    virtual AxesType touchDown(const veVec2 &screenCoords) = 0;
-    virtual void touchMove(AxesType at, const veVec2 &screenCoords, veVec3 &pos, veVec3 &scl, veQuat &rot) = 0;
+    virtual AxesType touchDown(veViewer *viewer, const veVec2 &screenCoords) = 0;
+    virtual void touchMove(veViewer *viewer, AxesType at, const veVec2 &screenCoords, veVec3 &pos, veVec3 &scl, veQuat &rot) = 0;
     virtual void touchUp() = 0;
+    
     
 protected:
     

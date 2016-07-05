@@ -8,15 +8,17 @@
 #include "RenderableObject.h"
 #include <functional>
 
+class veViewer;
 class veSceneManager;
 class veNodeVisitor;
+
 class VE_EXPORT veNode
 {
 public:
 
 	typedef std::vector< VE_Ptr<veNode> >             Children;
 	typedef std::vector< VE_Ptr<veRenderableObject> > RenderableObjects;
-	typedef std::function<bool(const veEvent&, veSceneManager*, veNode*)> NodeEventCallback;
+	typedef std::function<bool(veSceneManager*, veViewer*, const veEvent&, veNode*)> NodeEventCallback;
 	typedef std::function<void(veSceneManager*, veNode*)>                 NodeUpdateCallback;
 
 	USE_VE_PTR;
@@ -79,7 +81,7 @@ public:
 
 	virtual void refresh();
 
-	virtual bool routeEvent(const veEvent &event, veSceneManager *sm);
+	virtual bool routeEvent(veSceneManager *sm, veViewer *viewer, const veEvent &event);
 	virtual void update(veSceneManager *sm, const veMat4 &transform);
 
 	virtual void accept(veNodeVisitor &visitor);

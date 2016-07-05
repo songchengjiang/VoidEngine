@@ -9,9 +9,8 @@ class VE_EXPORT veApplicationIOS : public veApplication
 public:
     virtual ~veApplicationIOS();
 
-    virtual bool makeContextCurrent() override;
-    virtual void swapBuffers() override;
-
+    virtual veViewer* createViewer(int width, int height, const std::string &title, veViewer *sharedContextViewer = nullptr)  override;
+    
     virtual bool run() override ;
     virtual void stop() override ;
     
@@ -20,21 +19,19 @@ public:
     void onTouchBegan(int touchID, veReal x, veReal y);
     void onTouchMove(int touchID, veReal x, veReal y);
     void onTouchEnd(int touchID, veReal x, veReal y);
-    void onPushCurrentEvent();
+    void onPushCurrentEvent(veViewer *viewer);
 
 private:
 
     veApplicationIOS();
-
-    virtual void dispatchEvents() override;
-    virtual void initWindowImplementation(void *param) override;
-    virtual bool isWindowShouldClose() override;
     
 private:
     
     void *_glView;
     std::thread _runningThread;
     std::mutex  _eventMutex;
+    veEvent     _currentEvent;
+    bool        _isRunning;
 };
 #endif
 

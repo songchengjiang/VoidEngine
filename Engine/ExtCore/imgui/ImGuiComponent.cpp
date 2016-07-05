@@ -1,5 +1,6 @@
 #include "ImGuiComponent.h"
 #include "KernelCore/SceneManager.h"
+#include "KernelCore/Viewer.h"
 #include "Configuration.h"
 
 static GLuint g_VaoHandle = 0;
@@ -128,7 +129,7 @@ void veImGuiComponent::initPass(veSceneManager *sm)
      _renderPass->setShader(new veShader(veShader::FRAGMENT_SHADER, fragment_shader));
 }
 
-bool veImGuiComponent::handle(veSceneManager *sm, const veEvent &event)
+bool veImGuiComponent::handle(veSceneManager *sm, veViewer *viewer, const veEvent &event)
 {
     ImGuiIO& io = ImGui::GetIO();
     switch (event.getEventType()) {
@@ -234,11 +235,11 @@ void veImGuiComponent::afterUpdate(veSceneManager *sm)
 
 }
 
-void veImGuiComponent::beforeRender(veSceneManager *sm)
+void veImGuiComponent::beforeRender(veSceneManager *sm, veViewer *viewer)
 {
 }
 
-void veImGuiComponent::afterRender(veSceneManager *sm)
+void veImGuiComponent::afterRender(veSceneManager *sm, veViewer *viewer)
 {
     if (!_renderPass.valid())
         initPass(sm);
@@ -253,7 +254,7 @@ void veImGuiComponent::afterRender(veSceneManager *sm)
     veRenderCommand rc;
     rc.mask = 0xffffffff;
     rc.worldMatrix = new veMat4Ptr(veMat4::IDENTITY);
-    rc.camera = sm->getCamera();
+    rc.camera = viewer->getCamera();
     rc.sceneManager = sm;
     rc.pass = _renderPass.get();
     _renderPass->apply(rc);

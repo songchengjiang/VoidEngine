@@ -11,7 +11,7 @@
 #include "Light.h"
 #include "Ray.h"
 #include "SkyBox.h"
-#include "PostProcesser.h"
+
 #include "RenderPipeline.h"
 #include "Component.h"
 #include "EffectCore/ParticleSystem.h"
@@ -35,6 +35,8 @@ class veAnimationPlayer;
 class veBaseManager;
 class veMaterialArray;
 class veRay;
+class veViewer;
+class veEventDispatcher;
 
 class VE_EXPORT veSceneManager
 {
@@ -64,7 +66,6 @@ public:
 	virtual veMaterialArray* createMaterialArray(const std::string &name);
 	virtual vePostProcesser* createPostProcesser(const std::string &name);
     virtual veParticleSystem* createParticleSystem(const std::string &name);
-	virtual void removePostProcesser(const std::string &name);
 
 	virtual void requestRender(veNode *node) = 0;
 	virtual void requestRayCast(veRay *ray) = 0;
@@ -72,7 +73,6 @@ public:
 
 	const veCameraList& getCameraList() const { return _cameraList; }
 	const veLightListMap& getLightListMap() const { return _lightListMap; }
-	const vePostProcesserList& getPostProcesserList() const { return _postProcesserList; }
 	void setSkyBox(veSkyBox *skybox) { _skyBox = skybox; needReload(); }
 	veSkyBox* getSkyBox() const { return _skyBox.get(); }
 	void setAmbientColor(const veVec3 &color) { _ambient = color; }
@@ -81,23 +81,17 @@ public:
 	veBaseManager* getManager(const std::string &mgType);
 
 	veNode* getRootNode() { return _root.get(); }
-	void setDeltaTime(double deltaTime);
 	double getDeltaTime() { return _deltaTime; }
 	double getSimulationTime() { return _simulationTime; }
-
-	void setCamera(veCamera *camera) { _mainCamera = camera; }
-	veCamera* getCamera() { return _mainCamera.get(); }
 
 	veRenderPipeline* getRenderPipeline() const { return _renderPipeline.get(); }
 
 	void needReload();
 	bool isNeedReload() { return _needReload; }
 
-	void dispatchEvents(veEvent &event);
-	bool simulation();
+	void update(double deltaTime, const veEventDispatcher *eventDispatcher);
+    void render(veViewer *viewer);
 
-	void startThreading();
-	void stopThreading();
 	void enqueueTaskToThread(const veThreadPool::TaskCallBack& callback, void* callbackParam, const std::function<void()> &func);
     void enqueueRequest(const std::function<void()> &func);
 
@@ -106,8 +100,13 @@ public:
 
 protected:
 
-	virtual void update();
-	virtual void render() = 0;
+	virtual void updateImp() = 0;
+	virtual void renderImp(veViewer *viewer) = 0;
+    void startThreading();
+    void stopThreading();
+    void setDeltaTime(double deltaTime);
+    void dispatchEvents(const veEventDispatcher *eventDispatcher);
+    void handleEvent(veViewer *viewer, const veEvent &event);
 	void postRenderHandle();
 	void resourceRecovery();
 	void handleRequests();
@@ -118,13 +117,11 @@ protected:
 	VE_Ptr<veSkyBox>            _skyBox;
 	veCameraList                _cameraList;
 	veLightListMap              _lightListMap;
-	vePostProcesserList         _postProcesserList;
     veParticleSystemList        _particleSystemList;
 	VE_Ptr<veFrameBufferObject> _postProcesserFBO;
 	veVec3                      _ambient;
 	VE_Ptr<veRenderPipeline>    _renderPipeline;
 
-	VE_Ptr<veCamera>                                 _mainCamera;
 	std::unordered_map<std::string, veBaseManager *> _managerList;
 
 	veComponentList _componentList;
