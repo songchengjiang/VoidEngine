@@ -171,7 +171,7 @@ veApplicationDesktop::veApplicationDesktop()
 
 veViewer* veApplicationDesktop::createViewer(int width, int height, const std::string &title, veViewer *sharedContextViewer)
 {
-    auto viewer = new veViewerDesktop(width, height, title, sharedContextViewer? static_cast<veViewerDesktop *>(sharedContextViewer)->getHWND(): nullptr);
+    auto viewer = new veViewerDesktop(width, height, title, static_cast<veViewerDesktop *>(sharedContextViewer));
     viewer->create();
     _viewerList.push_back(viewer);
     _currentEvent.setEventType(veEvent::VE_WIN_INIT);

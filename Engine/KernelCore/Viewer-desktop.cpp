@@ -3,32 +3,44 @@
 #include "Application-desktop.h"
 #include "SceneManager.h"
 
-veViewerDesktop::veViewerDesktop(int width, int height, const std::string &title, GLFWwindow *sharedHwnd)
+static GLEWContext *g_currentContext;
+GLEWContext* glewGetContext()
+{
+    return g_currentContext;
+}
+
+veViewerDesktop::veViewerDesktop(int width, int height, const std::string &title, veViewerDesktop *sharedViewer)
     : veViewer(width, height, title)
     , _isInited(false)
     , _isRendering(false)
     , _hwnd(nullptr)
-    , _sharedHwnd(sharedHwnd)
 {
+    _sharedHwnd = sharedViewer ? sharedViewer->_sharedHwnd : nullptr;
+#if VE_PLATFORM == VE_PLATFORM_WIN32
+    _glContext = new GLEWContext;
+#endif
 }
 
 veViewerDesktop::~veViewerDesktop()
 {
-    
+#if VE_PLATFORM == VE_PLATFORM_WIN32
+    VE_SAFE_DELETE(_glContext);
+#endif
 }
 
 bool veViewerDesktop::makeContextCurrent()
 {
     glfwMakeContextCurrent(_hwnd);
-    if (!_isInited) {
 #if VE_PLATFORM == VE_PLATFORM_WIN32
+    g_currentContext = _glContext;
+    if (!_isInited) {
         if (glewInit() != GLEW_OK) {
             veLog("glewInit error!");
             return false;
         }
-#endif
         _isInited = true;
     }
+#endif
     
     return true;
 }

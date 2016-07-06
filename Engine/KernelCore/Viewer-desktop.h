@@ -29,12 +29,15 @@ public:
 
 protected:
     
-    veViewerDesktop(int width, int height, const std::string &title, GLFWwindow *sharedHwnd = nullptr);
+    veViewerDesktop(int width, int height, const std::string &title, veViewerDesktop *sharedViewer = nullptr);
     
 protected:
     
     GLFWwindow *_hwnd;
     GLFWwindow *_sharedHwnd;
+#if VE_PLATFORM == VE_PLATFORM_WIN32
+    GLEWContext *_glContext;
+#endif
     bool        _isInited;
     
     bool        _isRendering;

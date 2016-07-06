@@ -376,6 +376,15 @@
     <ClCompile Include="..\..\Engine\UtilCore\GizmoTranslation.cpp">
       <Filter>UtilCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Viewer.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Viewer-desktop.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\EventDispatcher.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -772,6 +781,15 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\UtilCore\GizmoTranslation.h">
       <Filter>UtilCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Viewer.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Viewer-desktop.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\EventDispatcher.h">
+      <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

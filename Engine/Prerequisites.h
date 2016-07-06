@@ -117,7 +117,9 @@ public: const std::string& getName() const { return _name; }
 #if VE_PLATFORM == VE_PLATFORM_WIN32 || VE_PLATFORM == VE_PLATFORM_MAC
 #if VE_PLATFORM == VE_PLATFORM_WIN32
 #define GLEW_STATIC
+#define GLEW_MX
 #include "glew/include/GL/glew.h"
+extern GLEWContext* glewGetContext();
 #endif
 
 #if VE_PLATFORM == VE_PLATFORM_MAC
