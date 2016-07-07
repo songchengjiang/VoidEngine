@@ -14,6 +14,7 @@ public:
 	virtual ~veComponent();
 
 	USE_VE_PTR;
+    USE_NAME_PROPERTY;
 
 	virtual bool handle(veSceneManager *sm, veViewer *viewer, const veEvent &event) { return false; }
     virtual void beforeUpdate(veSceneManager *sm) {}

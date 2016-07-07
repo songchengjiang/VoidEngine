@@ -19,7 +19,7 @@ bool veOctreeNode::removeChild(veNode *child)
     return veNode::removeChild(child);
 }
 
-veNode* veOctreeNode::removeChild(unsigned int cIndex)
+veNode* veOctreeNode::removeChild(size_t cIndex)
 {
     auto child = veNode::removeChild(cIndex);
     veOctreeNode *octreeChild = static_cast<veOctreeNode *>(child);

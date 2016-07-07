@@ -46,7 +46,7 @@ bool veNode::removeChild(veNode *child)
 	return true;
 }
 
-veNode* veNode::removeChild(unsigned int cIndex)
+veNode* veNode::removeChild(size_t cIndex)
 {
 	veAssert(cIndex < _children.size());
 	veNode* child = _children[cIndex].get();
@@ -56,7 +56,7 @@ veNode* veNode::removeChild(unsigned int cIndex)
 	return child;
 }
 
-veNode* veNode::getChild(unsigned int cIndex)
+veNode* veNode::getChild(size_t cIndex)
 {
 	veAssert(cIndex < _children.size());
 	return _children[cIndex].get();
@@ -287,6 +287,5 @@ void veNode::refreshUpdate(veSceneManager *sm, const veMat4 &transform)
 
 void veNode::updateSceneManager()
 {
-	if (!_renderableObjects.empty())
-		_sceneManager->requestRender(this);
+    _sceneManager->requestRender(this);
 }

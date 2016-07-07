@@ -2,7 +2,7 @@
 #include "KernelCore/RenderableObject.h"
 #include "KernelCore/NodeVisitor.h"
 #include "KernelCore/Node.h"
-#include "KernelCore/Entity.h"
+#include "KernelCore/Mesh.h"
 #include "KernelCore/BoudingBox.h"
 #include "KernelCore/RenderCommand.h"
 #include "KernelCore/RenderQueue.h"
@@ -53,7 +53,7 @@ public:
 
 		veRenderCommand rc;
 		rc.priority = veRenderCommand::LOW_PRIORITY;
-		rc.pass = _debuger->getMaterialArray()->getMaterial(0)->getTechnique(0)->getPass(0);
+		rc.pass = _debuger->getMaterial()->getTechnique(0)->getPass(0);
 		rc.worldMatrix = new veMat4Ptr(veMat4::IDENTITY);
 		rc.camera = camera;
 		rc.sceneManager = camera->getSceneManager();
@@ -145,16 +145,11 @@ void veDebuger::render(veNode *node, veCamera *camera)
 
 			veMat4 rnToNode = iter->getNodeToWorldMatrix();
 			for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
-				auto entity = dynamic_cast<veEntity *>(iter->getRenderableObject(i));
-				if (entity) {
-					if (_isDrawMeshWireframe)
-						for (size_t i = 0; i < entity->getMeshCount(); ++i) {
-							auto mesh = entity->getMesh(i);
-							renderMeshWireframe(mesh, rnToNode * mesh->getAttachedNode()->toMeshNodeRootMatrix());
-						}
-					//if (_isDrawBoundingBoxWireframe)
-					//	renderBoundingBoxWireframe(entity->getBoundingBox() * rnToNode);
-				}
+                if (_isDrawMeshWireframe){
+                    auto mesh = dynamic_cast<veMesh *>(iter->getRenderableObject(i));
+                    if (mesh)
+                        renderMeshWireframe(mesh, mesh->getParents()[0]->getNodeToWorldMatrix());
+                }
 			}
 		}
 	}
@@ -187,11 +182,10 @@ void veDebuger::initMaterial(veSceneManager *sm)
 		fragColor = v_color;   \n \
 	}";
 
-	_materials = sm->createMaterialArray(_name + "-matAry");
-	auto material = new veMaterial;
+	_material = new veMaterial;
 	auto tech = new veTechnique;
 	auto pass = new vePass;
-	material->addTechnique(tech);
+	_material->addTechnique(tech);
 	tech->addPass(pass);
 
     pass->setRenderPass(vePass::FORWARD_PASS);
@@ -207,8 +201,6 @@ void veDebuger::initMaterial(veSceneManager *sm)
 	pass->setShader(fShader);
 
 	pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
-
-	_materials->addMaterial(material);
 }
 
 void veDebuger::renderMeshWireframe(veMesh *mesh, const veMat4 &trans)

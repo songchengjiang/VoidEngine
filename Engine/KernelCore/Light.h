@@ -1,10 +1,17 @@
 #ifndef _VE_LIGHT_
 #define _VE_LIGHT_
 #include "Prerequisites.h"
-#include "Node.h"
+#include "Component.h"
+#include "Texture.h"
+#include "BaseCore/Vector2.h"
+#include "BaseCore/Vector3.h"
+#include "BaseCore/Vector4.h"
+#include "BaseCore/Matrix4.h"
+#include <map>
 
 class veCamera;
-class VE_EXPORT veLight : public veNode
+class veSceneManager;
+class VE_EXPORT veLight : public veComponent
 {
 	friend class veSceneManager;
 public:
@@ -27,8 +34,7 @@ public:
 
 	~veLight();
 
-	virtual void update(veSceneManager *sm, const veMat4 &transform) override;
-	virtual void visit(veNodeVisitor &visitor) override;
+    virtual void beforeUpdate(veSceneManager *sm) override;
 	//virtual void render(veCamera *camera) override;
 
     virtual void setEnabled(bool isEnabled) { _isEnabled = isEnabled; }
@@ -64,8 +70,6 @@ public:
 protected:
 	veLight(LightType type);
 
-	virtual void refreshUpdate(veSceneManager *sm, const veMat4 &transform) override;
-	virtual void updateSceneManager() override;
 	virtual void updateShadow() = 0;
 
 protected:
@@ -90,6 +94,8 @@ protected:
 	VE_Ptr<veTexture>  _shadowTexture;
 	veMat4             _lightMatrix;
 	bool               _needUpdateShadowMap;
+    
+    veSceneManager    *_sceneManager;
 };
 
 class VE_EXPORT veDirectionalLight : public veLight

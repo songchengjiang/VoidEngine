@@ -25,6 +25,6 @@ void veRenderableObject::update(veNode *node, veSceneManager *sm)
 void veRenderableObject::render(veNode *node, veCamera *camera)
 {
 	if (!_isVisible) return;
-	if (_renderer.valid() && _materials.valid())
+	if (_renderer.valid() && _material.valid())
 		_renderer->render(node, this, camera);
 }

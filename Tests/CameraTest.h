@@ -53,16 +53,14 @@ public:
 	CameraTest() {
 		veNode *root = _sceneManager->createNode("root");
 		{
-			veNode *node = _sceneManager->createNode("node0");
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot"));
-			node->addRenderableObject(entity);
+			veNode *entity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot"));
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
-			node->addComponent(transer);
+			entity->addComponent(transer);
 			transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
 			transer->setScale(veVec3(1.0f));
 			//transer->setRotation(veQuat(veMath::PI, veVec3::UNIT_X));
-			root->addChild(node);
+			root->addChild(entity);
 		}
 
 		{

@@ -3,11 +3,13 @@
 #include "Application-desktop.h"
 #include "SceneManager.h"
 
+#if VE_PLATFORM == VE_PLATFORM_WIN32
 static GLEWContext *g_currentContext;
 GLEWContext* glewGetContext()
 {
     return g_currentContext;
 }
+#endif
 
 veViewerDesktop::veViewerDesktop(int width, int height, const std::string &title, veViewerDesktop *sharedViewer)
     : veViewer(width, height, title)

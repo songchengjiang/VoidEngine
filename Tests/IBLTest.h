@@ -9,15 +9,13 @@ public:
 		auto IBLMats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "materials/IBL.vemtl", "IBL"));
 		veNode *root = _sceneManager->createNode("root");
 		{
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/plane.vem", "sphere-0"));
-			veNode *node = _sceneManager->createNode("node");
-			node->addRenderableObject(entity);
+			veNode *entity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/plane.vem", "sphere-0"));
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
-			node->addComponent(transer);
+			entity->addComponent(transer);
 			transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
 			transer->setScale(veVec3(20.0f));
-			root->addChild(node);
+			root->addChild(entity);
 
 
 			//entity->setMaterialArray(IBLMats);
@@ -27,23 +25,23 @@ public:
 		}
 
 		{
+            veNode *lightNode = _sceneManager->createNode("pointNode");
 			veLight *point = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "point0"));
+            lightNode->addComponent(point);
 			veTransformer *lightTranser = new veTransformer;
-			point->addComponent(lightTranser);
+			lightNode->addComponent(lightTranser);
 			//point->addComponent(new LightUpdater(15.0f, 0.0f));
 			point->setIntensity(1.0f);
 			lightTranser->setPosition(veVec3(0.0f, 0.0f, 3.0f));
 
-			veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "point0-sphere"));
-			veNode *lightModel = _sceneManager->createNode("lightnode1");
-			lightModel->addRenderableObject(lightentity);
-			lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
-			point->addChild(lightModel);
+			veNode *lightentity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "point0-sphere"));
+			lightentity->setMatrix(veMat4::scale(veVec3(0.2f)));
+			lightNode->addChild(lightentity);
 			point->shadowEnable(false);
 			point->setUseSoftShadow(true);
 			point->setShadowSoftness(0.05f);
 			point->setShadowBias(0.001f);
-			root->addChild(point);
+			root->addChild(lightNode);
 		}
 
 		_sceneManager->getRootNode()->addChild(root);

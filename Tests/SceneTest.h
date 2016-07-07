@@ -115,37 +115,31 @@ public:
         }
         
 		{
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/Aircraft/Aircraft.vem", "Aircraft-entity"));
-			veNode *node = _sceneManager->createNode("Aircraft-node");
-			node->addRenderableObject(entity);
+			veNode *entity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/Aircraft/Aircraft.vem", "Aircraft-entity"));
             //node->addComponent(GIZMO_COMPONENT.get());
 			veTransformer *transer = new veTransformer;
             //transer->setRotation(veQuat(veMath::QUARTER_PI, veVec3::UNIT_Y) * veQuat(veMath::QUARTER_PI, veVec3::UNIT_X) * veQuat(veMath::HALF_PI, veVec3::UNIT_Z));
-			node->addComponent(transer);
-			root->addChild(node);
+			entity->addComponent(transer);
+			root->addChild(entity);
 		}
         
         {
-            veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/box.vem", "box-entity"));
-            veNode *node = _sceneManager->createNode("box-node");
-            node->addRenderableObject(entity);
+            veNode *entity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/box.vem", "box-entity"));
             //node->addComponent(GIZMO_COMPONENT.get());
             veTransformer *transer = new veTransformer;
-            node->addComponent(transer);
+            entity->addComponent(transer);
             transer->setPosition(veVec3(0.0f, 5.0f, 0.0f));
             //transer->setRotation(veQuat(veMath::QUARTER_PI, veVec3::UNIT_X) * veQuat(veMath::QUARTER_PI, veVec3::UNIT_Y));
             transer->setScale(veVec3(2.0f));
-            root->addChild(node);
+            root->addChild(entity);
         }
         
         {
-            veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/plane.vem", "Plane-entity"));
-            veNode *node = _sceneManager->createNode("Plane-node");
-            node->addRenderableObject(entity);
+            veNode *entity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/plane.vem", "Plane-entity"));
             veTransformer *transer = new veTransformer;
-            node->addComponent(transer);
+            entity->addComponent(transer);
             //node->addComponent(GIZMO_COMPONENT.get());
-            root->addChild(node);
+            root->addChild(entity);
             transer->setScale(veVec3(30.0f));
             transer->setRotation(veQuat(-veMath::HALF_PI, veVec3::UNIT_X));
         }
@@ -153,24 +147,24 @@ public:
         
         std::function<void()> LightingUIFunc = nullptr;
         {
+            veNode *lightNode = _sceneManager->createNode("pointNode");
             veLight *point = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "point0"));
+            lightNode->addComponent(point);
             veTransformer *lightTranser = new veTransformer;
-            point->addComponent(lightTranser);
+            lightNode->addComponent(lightTranser);
             //point->addComponent(new LightUpdater(20.0f, 10.0f));
             point->setIntensity(1.0f);
             lightTranser->setPosition(veVec3(20.0f, 10.0f, 0.0f));
             
-            veEntity *lightentity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "spot0-sphere"));
-            veNode *lightModel = _sceneManager->createNode("lightnode2");
-            lightModel->addRenderableObject(lightentity);
-            lightModel->setMatrix(veMat4::scale(veVec3(0.2f)));
-            point->addChild(lightModel);
+            veNode *lightentity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "spot0-sphere"));
+            lightentity->setMatrix(veMat4::scale(veVec3(0.2f)));
+            lightNode->addChild(lightentity);
             point->setEnabled(true);
             point->shadowEnable(true);
             point->setUseSoftShadow(true);
             point->setShadowSoftness(0.05f);
             point->setShadowBias(0.025f);
-            root->addChild(point);
+            root->addChild(lightNode);
             
             LightingUIFunc = [point, lightTranser]{
                 bool enabled = point->isEnabled();
@@ -245,82 +239,79 @@ public:
             }
             
             if (ImGui::CollapsingHeader("Materials")) {
-                veEntity *entity = dynamic_cast<veEntity *>(INTER_NODE->getRenderableObject(0));
-                auto materials = entity->getMaterialArray();
-                
-                for (size_t i = 0; i < materials->getMaterialNum(); ++i){
-                    auto matpass = materials->getMaterial(i)->activeTechnique()->getPass(0);
-                    if (ImGui::TreeNode(materials->getMaterial(i)->getName().c_str())){
-                        for (size_t u = 0; u < matpass->getUniformNum(); ++u){
-                            auto unifrom = matpass->getUniform(u);
-                            switch (unifrom->getType()) {
-                                case veUniform::Type::INT:
-                                {
-                                    int val;
-                                    unifrom->getValue(val);
-                                    ImGui::InputInt(unifrom->getName().c_str(), &val);
-                                    unifrom->setValue(val);
-                                    
-                                }
-                                    break;
-                                case veUniform::Type::BOOL:
-                                {
-                                    bool val;
-                                    unifrom->getValue(val);
-                                    ImGui::Checkbox(unifrom->getName().c_str(), &val);
-                                    unifrom->setValue(val);
-                                    
-                                }
-                                    break;
-                                case veUniform::Type::REAL:
-                                {
-                                    float val;
-                                    unifrom->getValue(val);
-                                    ImGui::SliderFloat(unifrom->getName().c_str(), &val, 0.0f, 1.0f);
-                                    unifrom->setValue(val);
-                                    
-                                }
-                                    break;
-                                case veUniform::Type::VEC2:
-                                {
-                                    veVec2 val;
-                                    unifrom->getValue(val);
-                                    ImGui::SliderFloat2(unifrom->getName().c_str(), &val.x(), 0.0f, 1.0f);
-                                    unifrom->setValue(val);
-                                    
-                                }
-                                    break;
-                                case veUniform::Type::VEC3:
-                                {
-                                    veVec3 val;
-                                    unifrom->getValue(val);
-                                    ImGui::SliderFloat3(unifrom->getName().c_str(), &val.x(), 0.0f, 1.0f);
-                                    unifrom->setValue(val);
-                                    
-                                }
-                                    break;
-                                case veUniform::Type::VEC4:
-                                {
-                                    veVec4 val;
-                                    unifrom->getValue(val);
-                                    ImGui::ColorEdit4(unifrom->getName().c_str(), &val.x());
-                                    unifrom->setValue(val);
-                                    
-                                }
-                                    break;
-                                    
-                                default:
-                                    break;
+                veMesh *mesh = dynamic_cast<veMesh *>(INTER_NODE->getRenderableObject(0));
+                auto material = mesh->getMaterial();
+                auto matpass = material->activeTechnique()->getPass(0);
+                if (ImGui::TreeNode(material->getName().c_str())){
+                    for (size_t u = 0; u < matpass->getUniformNum(); ++u){
+                        auto unifrom = matpass->getUniform(u);
+                        switch (unifrom->getType()) {
+                            case veUniform::Type::INT:
+                            {
+                                int val;
+                                unifrom->getValue(val);
+                                ImGui::InputInt(unifrom->getName().c_str(), &val);
+                                unifrom->setValue(val);
+                                
                             }
+                                break;
+                            case veUniform::Type::BOOL:
+                            {
+                                bool val;
+                                unifrom->getValue(val);
+                                ImGui::Checkbox(unifrom->getName().c_str(), &val);
+                                unifrom->setValue(val);
+                                
+                            }
+                                break;
+                            case veUniform::Type::REAL:
+                            {
+                                float val;
+                                unifrom->getValue(val);
+                                ImGui::SliderFloat(unifrom->getName().c_str(), &val, 0.0f, 1.0f);
+                                unifrom->setValue(val);
+                                
+                            }
+                                break;
+                            case veUniform::Type::VEC2:
+                            {
+                                veVec2 val;
+                                unifrom->getValue(val);
+                                ImGui::SliderFloat2(unifrom->getName().c_str(), &val.x(), 0.0f, 1.0f);
+                                unifrom->setValue(val);
+                                
+                            }
+                                break;
+                            case veUniform::Type::VEC3:
+                            {
+                                veVec3 val;
+                                unifrom->getValue(val);
+                                ImGui::SliderFloat3(unifrom->getName().c_str(), &val.x(), 0.0f, 1.0f);
+                                unifrom->setValue(val);
+                                
+                            }
+                                break;
+                            case veUniform::Type::VEC4:
+                            {
+                                veVec4 val;
+                                unifrom->getValue(val);
+                                ImGui::ColorEdit4(unifrom->getName().c_str(), &val.x());
+                                unifrom->setValue(val);
+                                
+                            }
+                                break;
+                                
+                            default:
+                                break;
                         }
-                        
-                        for (size_t t = 0; t < matpass->getTextureNum(); ++t){
-                            auto tex = matpass->getTexture(t);
-                            ImGui::Text("%s(%d x %d)", tex->getName().c_str(), tex->getWidth(), tex->getHeight());
-                            ImGui::Image((void *)(intptr_t)(tex->glTex()), ImVec2(256, 256));
-                        }
-                        ImGui::TreePop();
                     }
+                    
+                    for (size_t t = 0; t < matpass->getTextureNum(); ++t){
+                        auto tex = matpass->getTexture(t);
+                        ImGui::Text("%s(%d x %d)", tex->getName().c_str(), tex->getWidth(), tex->getHeight());
+                        ImGui::Image((void *)(intptr_t)(tex->glTex()), ImVec2(256, 256));
+                    }
+                    ImGui::TreePop();
                 }
             }
         };

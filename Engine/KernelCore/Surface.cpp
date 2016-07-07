@@ -109,11 +109,10 @@ void veSurface::setType(Type type)
 
 void veSurface::initDefaultMaterial()
 {
-	_materials = _sceneManager->createMaterialArray(_name + std::string("-matAry"));;
-	auto material = new veMaterial;
+	_material = new veMaterial;
 	auto tech = new veTechnique;
 	auto pass = new vePass;
-	material->addTechnique(tech);
+	_material->addTechnique(tech);
 	tech->addPass(pass);
 
     pass->setRenderPass(vePass::FORWARD_PASS);
@@ -145,8 +144,7 @@ void veSurface::initDefaultMaterial()
 	pass->addUniform(_color.get());
 	pass->addUniform(_scaleMat.get());
 
-	appendMaterial(material);
-	_materials->addMaterial(material);
+	appendMaterial(_material.get());
 }
 
 void veSurface::appendMaterial(veMaterial *material)

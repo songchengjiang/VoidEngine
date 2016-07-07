@@ -455,14 +455,12 @@ veDeferredRenderPipeline::CameraRenderParams& veDeferredRenderPipeline::getCamer
 
 		params.fullScreenTexture->setFilterMode(veTexture::NEAREST);
 
-		auto fullScreenMats = _sceneManager->createMaterialArray(camera->getName() + std::string("_VE_DEFERRED_RENDER_PIPELINE_FULL_SCREEN_MATERIAL_ARRAY_"));
 		auto fullScreenMat = new veMaterial;
 		auto fullScreenTech = new veTechnique;
 		auto pass = new vePass;
-		fullScreenMats->addMaterial(fullScreenMat);
 		fullScreenMat->addTechnique(fullScreenTech);
 		fullScreenTech->addPass(pass);
-		params.fullScreenSurface->setMaterialArray(fullScreenMats);
+		params.fullScreenSurface->setMaterial(fullScreenMat);
 
         pass->setRenderPass(vePass::FORWARD_PASS);
 		pass->depthTest() = false;
@@ -709,8 +707,8 @@ void veDeferredRenderPipeline::cullPointLight(veLight *light, veCamera *camera)
 		_lightRenderParamsList[light] = createPointLightMaterial(light);
 	}
 	vePass *pass = material->getTechnique(0)->getPass(0);
-	_pointLightRenderer->setLightVolumeScale(veMat4::scale(veVec3(light->getAttenuationRange())));
-	_pointLightRenderer->render(light, pass, camera);
+    veMat4 lightInWorld = light->getAttachedNodeList()[0]->getNodeToWorldMatrix();
+	_pointLightRenderer->render(lightInWorld * veMat4::scale(veVec3(light->getAttenuationRange())), pass, camera);
 }
 
 void veDeferredRenderPipeline::cullSpotLight(veLight *light, veCamera *camera)
@@ -721,9 +719,9 @@ void veDeferredRenderPipeline::cullSpotLight(veLight *light, veCamera *camera)
 	}
 	vePass *pass = material->getTechnique(0)->getPass(0);
 	veSpotLight *spotLight = static_cast<veSpotLight *>(light);
+    veMat4 lightInWorld = spotLight->getAttachedNodeList()[0]->getNodeToWorldMatrix();
 	float rangeScale = spotLight->getAttenuationRange() * spotLight->getOuterAngle() / 45.0f;
-	_spotLightRenderer->setLightVolumeScale(veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())));
-	_spotLightRenderer->render(spotLight, pass, camera);
+	_spotLightRenderer->render(lightInWorld * veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())), pass, camera);
 }
 
 void veDeferredRenderPipeline::renderDirectionalLight(veLight *light, veCamera *camera)
@@ -734,12 +732,12 @@ void veDeferredRenderPipeline::renderDirectionalLight(veLight *light, veCamera *
 	}
 	vePass *pass = material->getTechnique(0)->getPass(0);
 	updateLightCommomParams(light, pass, camera);
-	veMat4 lightInWorld = light->getNodeToWorldMatrix();
+	veMat4 lightInWorld = light->getAttachedNodeList()[0]->getNodeToWorldMatrix();
 	lightInWorld[0][3] = lightInWorld[1][3] = lightInWorld[2][3] = 0.0f;
 	veVec3 direction = lightInWorld * -veVec3::UNIT_Z;
 	direction.normalize();
 	pass->getUniform("u_lightDirection")->setValue(direction);
-	_directionalLightRenderer->render(light, pass, camera);
+	_directionalLightRenderer->render(lightInWorld, pass, camera);
 }
 
 void veDeferredRenderPipeline::renderPointLight(veLight *light, veCamera *camera)
@@ -750,11 +748,10 @@ void veDeferredRenderPipeline::renderPointLight(veLight *light, veCamera *camera
 	updateLightCommomParams(light, pass, camera);
 
 	vePointLight *pointLight = static_cast<vePointLight *>(light);
-	veMat4 lightInWorld = pointLight->getNodeToWorldMatrix();
+	veMat4 lightInWorld = pointLight->getAttachedNodeList()[0]->getNodeToWorldMatrix();
 	pass->getUniform("u_lightPosition")->setValue(veVec3(lightInWorld[0][3], lightInWorld[1][3], lightInWorld[2][3]));
 	pass->getUniform("u_lightARI")->setValue(pointLight->getAttenuationRangeInverse());
-	_pointLightRenderer->setLightVolumeScale(veMat4::scale(veVec3(pointLight->getAttenuationRange())));
-	_pointLightRenderer->render(pointLight, pass, camera);
+	_pointLightRenderer->render(lightInWorld * veMat4::scale(veVec3(pointLight->getAttenuationRange())), pass, camera);
 }
 
 void veDeferredRenderPipeline::renderSpotLight(veLight *light, veCamera *camera)
@@ -765,10 +762,11 @@ void veDeferredRenderPipeline::renderSpotLight(veLight *light, veCamera *camera)
 	updateLightCommomParams(light, pass, camera);
 
 	veSpotLight *spotLight = static_cast<veSpotLight *>(light);
-	veMat4 lightInWorld = spotLight->getNodeToWorldMatrix();
+	veMat4 lightInWorld = spotLight->getAttachedNodeList()[0]->getNodeToWorldMatrix();
 	pass->getUniform("u_lightPosition")->setValue(veVec3(lightInWorld[0][3], lightInWorld[1][3], lightInWorld[2][3]));
-	lightInWorld[0][3] = lightInWorld[1][3] = lightInWorld[2][3] = 0.0f;
-	veVec3 direction = lightInWorld * -veVec3::UNIT_Z;
+    veMat4 lightInWorldNoTrans = lightInWorld;
+	lightInWorldNoTrans[0][3] = lightInWorldNoTrans[1][3] = lightInWorldNoTrans[2][3] = 0.0f;
+	veVec3 direction = lightInWorldNoTrans * -veVec3::UNIT_Z;
 	direction.normalize();
 	pass->getUniform("u_lightDirection")->setValue(direction);
 
@@ -776,6 +774,5 @@ void veDeferredRenderPipeline::renderSpotLight(veLight *light, veCamera *camera)
 	pass->getUniform("u_lightInnerAngleCos")->setValue(spotLight->getInnerAngleCos());
 	pass->getUniform("u_lightOuterAngleCos")->setValue(spotLight->getOuterAngleCos());
 	float rangeScale = spotLight->getAttenuationRange() * spotLight->getOuterAngle() / 45.0f;
-	_spotLightRenderer->setLightVolumeScale(veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())));
-	_spotLightRenderer->render(spotLight, pass, camera);
+	_spotLightRenderer->render(lightInWorld * veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())), pass, camera);
 }

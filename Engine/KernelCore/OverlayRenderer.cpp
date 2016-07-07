@@ -26,16 +26,13 @@ void veOverlayRenderer::render(veNode *node, veRenderableObject *renderableObj, 
 	rc.sceneManager = camera->getSceneManager();
 	rc.renderer = this;
 
-	auto materials = renderableObj->getMaterialArray();
-	for (unsigned int mat = 0; mat < materials->getMaterialNum(); ++mat) {
-		auto material = materials->getMaterial(mat);
-		for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {
-			auto pass = material->activeTechnique()->getPass(i);
-			if (camera->getMask() & pass->drawMask()) {
-				rc.pass = pass;
-				pass->visit(rc);
-				camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
-			}
-		}
-	}
+    auto material = renderableObj->getMaterial();
+    for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {
+        auto pass = material->activeTechnique()->getPass(i);
+        if (camera->getMask() & pass->drawMask()) {
+            rc.pass = pass;
+            pass->visit(rc);
+            camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
+        }
+    }
 }

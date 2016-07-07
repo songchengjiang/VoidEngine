@@ -42,21 +42,19 @@ public:
 					unsigned int idx = (veMath::veRandomUnitization() * 0.999f) * (sizeof(MODEL_FILES) / sizeof(MODEL_FILES[0]));
 					//unsigned int idx = 1;
 					sprintf(str, "testing-%d-%d-%d", int(x), int(y), int(z));
-					veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, MODEL_FILES[idx], str));
-					veNode *node = _sceneManager->createNode(str);
-					node->addRenderableObject(entity);
+					veNode *entity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, MODEL_FILES[idx], str));
 					veTransformer *transer = new veTransformer;
-					node->addComponent(transer);
+					entity->addComponent(transer);
 					transer->setPosition(veVec3(x, y, z));
 					transer->setScale(veVec3(2.0f));
-					root->addChild(node);
+					root->addChild(entity);
 
 					if (!MODEL_ANIM_FILES[idx].empty()) {
 						veAnimationPlayer* player = _sceneManager->createAnimationPlayer(str, animationContainer);
 						player->start();
 						player->setFrameRate(animationContainer->getFrameRate() * veMath::veRandomUnitization());
 						player->setLoopAnimation(true);
-						player->attachEntity(entity);
+						player->attachNode(entity);
 					}
 				}
 			}

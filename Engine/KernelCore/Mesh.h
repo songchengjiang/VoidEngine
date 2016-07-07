@@ -4,15 +4,15 @@
 #include "Prerequisites.h"
 #include "BaseCore/Array.h"
 #include "Material.h"
+#include "RenderableObject.h"
 #include "Bone.h"
 #include "VE_Ptr.h"
 
 class veRay;
-class veMeshNode;
-class VE_EXPORT veMesh
+class VE_EXPORT veMesh : public veRenderableObject
 {
-	friend class veEntity;
-	friend class veEntityRenderer;
+    friend class veMeshManager;
+	friend class veMeshRenderer;
 public:
 	static const unsigned int MAX_ATTRIBUTE_NUM;
 
@@ -67,14 +67,14 @@ public:
 		VE_Ptr<veUint16Array> indices;
 	};
 
-	veMesh();
 	virtual ~veMesh();
-
-	USE_VE_PTR;
-	USE_NAME_PROPERTY;
 
 	//virtual void update(veNode *node, veSceneManager *sm) override;
 
+    virtual void render(veNode *node, veCamera *camera) override;
+    virtual void update(veNode *node, veSceneManager *sm) override;
+    virtual bool intersectWith(veRay *ray, veNode *node) override;
+    
 	void setVertexArray(veRealArray *vAry) { _vertices = vAry; _needRefresh = true; }
 	veRealArray* getVertexArray() { return _vertices.get(); }
 	unsigned int getVertexStride();
@@ -99,38 +99,29 @@ public:
 	void setBoundingBox(const veBoundingBox &bbox) { _boundingBox = bbox; }
 	const veBoundingBox& getBoundingBox() const { return _boundingBox; }
 
-	void setAttachedNode(veMeshNode *meshNode) { _meshNode = meshNode; }
-	veMeshNode* getAttachedNode() { return _meshNode; }
-
-	void setMaterial(veMaterial *material) { _material = material; }
-	veMaterial* getMaterial() { return _material.get(); }
-
-	void caculateBoundingBox();
-	void updateBoundingBox(const veMat4 &meshToRoot);
-
-	bool intersectWith(veRay *ray, veVec3 &position, veVec3 &normal);
-
 	typedef std::function<bool(const veReal* /*p1*/, const veReal* /*p2*/, const veReal* /*p3*/
 		                     , const veReal* /*n1*/, const veReal* /*n2*/, const veReal* /*n3*/)> PrimitiveCallback;
 	void traversePrimitives(const PrimitiveCallback &callback);
 
-	bool& needRefresh();
-
+protected:
+    
+    veMesh(veSceneManager *sm);
+    
 protected:
 
+    void caculateBoundingBox();
+    void updateBoundingBox();
+    bool intersectWith(veRay *ray, veVec3 &position, veVec3 &normal);
 	void generateTransformFeedbackBuffer();
 	GLuint getTransformFeedbackBuffer() { return _transformFeedbackBuffer; }
 	GLsizeiptr getTransformFeedbackBufferSize() { return _transformFeedbackBufferSize; }
 
 protected:
 
-	veMeshNode                        *_meshNode;
-	VE_Ptr<veMaterial>                 _material;
 	VE_Ptr<veRealArray>                _vertices;
 	std::vector<VertexAtrribute>       _attributes;
 	std::vector<Primitive>             _primitives;
 	std::vector< VE_Ptr<veBone> >      _bones;
-	veBoundingBox                      _boundingBox;
 	GLuint                             _transformFeedbackBuffer;
 	GLsizeiptr                         _transformFeedbackBufferSize;
 	unsigned int                       _vertexStride;

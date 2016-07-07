@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include "BoudingBox.h"
 
-class veMeshNode;
+class veNode;
 class VE_EXPORT veBone
 {
 public:
@@ -22,9 +22,9 @@ public:
 	//float getWeight(unsigned int vertexIndex) { return _weights[vertexIndex]; };
 	//const std::unordered_map<unsigned int, float>& getWeights() const { return _weights; }
 
-	void setBoneNode(veMeshNode *node) { _boneNode = node; }
-	veMeshNode* getBoneNode() { return _boneNode; }
-	const veMeshNode* getBoneNode() const { return _boneNode; }
+	void setBoneNode(veNode *node) { _boneNode = node; }
+	veNode* getBoneNode() { return _boneNode; }
+	const veNode* getBoneNode() const { return _boneNode; }
 
 	void setBoundingBox(const veBoundingBox &bbox) { _boundingBox = bbox; }
 	const veBoundingBox& getBoundingBox() const { return _boundingBox; }
@@ -34,9 +34,9 @@ public:
 
 private:
 
-	veMat4 _offsetMat;
+	veMat4             _offsetMat;
 	//std::unordered_map<unsigned int, float> _weights;
-	veMeshNode *_boneNode;
+	veNode            *_boneNode;
 	veBoundingBox      _boundingBox;
 	veBoundingBox      _bindPosBoundingBox;
 };

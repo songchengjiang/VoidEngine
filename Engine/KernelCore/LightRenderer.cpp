@@ -1,5 +1,5 @@
 #include "LightRenderer.h"
-#include "Node.h"
+#include "Light.h"
 #include "Camera.h"
 
 #define OCCLUSION_PASS 0
@@ -14,7 +14,7 @@ veScreenLightRenderer::~veScreenLightRenderer()
 
 }
 
-void veScreenLightRenderer::render(veNode *node, vePass *pass, veCamera *camera) {
+void veScreenLightRenderer::render(const veMat4 &transform, vePass *pass, veCamera *camera) {
 	updateBuffer();
 	veRenderCommand rc;
 	rc.mask = 0xffffffff;
@@ -28,7 +28,6 @@ void veScreenLightRenderer::render(veNode *node, vePass *pass, veCamera *camera)
 }
 
 veSphereLightRenderer::veSphereLightRenderer()
-	: _lightVolumeScale(veMat4::IDENTITY)
 {
 }
 
@@ -37,11 +36,11 @@ veSphereLightRenderer::~veSphereLightRenderer()
 
 }
 
-void veSphereLightRenderer::render(veNode *node, vePass *pass, veCamera *camera) {
+void veSphereLightRenderer::render(const veMat4 &transform, vePass *pass, veCamera *camera) {
 	updateBuffer();
 	veRenderCommand rc;
 	rc.mask = 0xffffffff;
-	rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix() * _lightVolumeScale);
+	rc.worldMatrix = new veMat4Ptr(transform);
 	rc.camera = camera;
 	rc.sceneManager = camera->getSceneManager();
 	rc.renderer = this;
@@ -51,7 +50,6 @@ void veSphereLightRenderer::render(veNode *node, vePass *pass, veCamera *camera)
 }
 
 veConeLightRenderer::veConeLightRenderer()
-	: _lightVolumeScale(veMat4::IDENTITY)
 {
 }
 
@@ -60,11 +58,11 @@ veConeLightRenderer::~veConeLightRenderer()
 
 }
 
-void veConeLightRenderer::render(veNode *node, vePass *pass, veCamera *camera) {
+void veConeLightRenderer::render(const veMat4 &transform, vePass *pass, veCamera *camera) {
 	updateBuffer();
 	veRenderCommand rc;
 	rc.mask = 0xffffffff;
-	rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix() * _lightVolumeScale);
+	rc.worldMatrix = new veMat4Ptr(transform);
 	rc.camera = camera;
 	rc.sceneManager = camera->getSceneManager();
 	rc.renderer = this;

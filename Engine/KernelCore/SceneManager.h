@@ -23,7 +23,7 @@ class veNode;
 class veCamera;
 class veLight;
 class veSurface;
-class veEntity;
+class veMesh;
 class veSphere;
 class veCone;
 class veFont;
@@ -57,7 +57,7 @@ public:
 
 	virtual veRay* createRay(const veVec3 &start, const veVec3 &end);
 	virtual veCamera* createCamera(const std::string &name, const veViewport &vp = { 0, 0, 0, 0 }) = 0;
-	virtual veEntity* createEntity(const std::string &name);
+	virtual veMesh* createMesh(const std::string &name);
 	virtual veSphere* createSphere(const std::string &name);
 	virtual veCone* createCone(const std::string &name);
 	virtual veSkyBox* createSkyBox(const std::string &name, veReal size = 500.0f);

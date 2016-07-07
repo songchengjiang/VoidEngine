@@ -3,14 +3,13 @@
 #include "Surface.h"
 #include "Image.h"
 #include "Text.h"
-#include "Entity.h"
 #include "Sphere.h"
 #include "Cone.h"
 #include "SkyBox.h"
 #include "Animation.h"
 
 #include "TextureManager.h"
-#include "EntityManager.h"
+#include "MeshManager.h"
 #include "AnimationManager.h"
 #include "MaterialManager.h"
 #include "Configuration.h"
@@ -32,7 +31,7 @@ veSceneManager::veSceneManager()
 	, _needReload(false)
 {
 	_managerList[veTextureManager::TYPE()] = new veTextureManager(this);
-	_managerList[veEntityManager::TYPE()] = new veEntityManager(this);
+	_managerList[veMeshManager::TYPE()] = new veMeshManager(this);
 	_managerList[veAnimationManager::TYPE()] = new veAnimationManager(this);
 	_managerList[veMaterialManager::TYPE()] = new veMaterialManager(this);
     startThreading();
@@ -59,7 +58,6 @@ veLight* veSceneManager::createLight(veLight::LightType type, const std::string 
 		light = new veSpotLight();
 	}
 	light->setName(name);
-	light->setSceneManager(this);
 	_lightListMap[type].push_back(light);
 	this->needReload();
 	return light;
@@ -81,9 +79,9 @@ veImage* veSceneManager::createImage(const std::string &name, veTexture *texture
 	return image;
 }
 
-veEntity* veSceneManager::createEntity(const std::string &name)
+veMesh* veSceneManager::createMesh(const std::string &name)
 {
-	return static_cast<veEntityManager *>(_managerList[veEntityManager::TYPE()])->createEntity(name);
+	return static_cast<veMeshManager *>(_managerList[veMeshManager::TYPE()])->createMesh(name);
 }
 
 veSphere* veSceneManager::createSphere(const std::string &name)

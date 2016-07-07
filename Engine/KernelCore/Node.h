@@ -36,8 +36,8 @@ public:
 
 	virtual int addChild(veNode *child);
 	virtual bool removeChild(veNode *child);
-	virtual veNode* removeChild(unsigned int cIndex);
-	virtual veNode* getChild(unsigned int cIndex);
+	virtual veNode* removeChild(size_t cIndex);
+	virtual veNode* getChild(size_t cIndex);
 	size_t getChildCount() const { return _children.size(); }
 
 	veNode* getParent() { return _parent; }

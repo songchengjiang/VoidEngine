@@ -12,7 +12,7 @@ public:
 	veScreenLightRenderer();
 	~veScreenLightRenderer();
 
-	void render(veNode *node, vePass *pass, veCamera *camera);
+	void render(const veMat4 &transform, vePass *pass, veCamera *camera);
 };
 
 
@@ -22,11 +22,7 @@ public:
 	veSphereLightRenderer();
 	~veSphereLightRenderer();
 
-	void render(veNode *node, vePass *pass, veCamera *camera);
-	void setLightVolumeScale(const veMat4 &scale) { _lightVolumeScale = scale; }
-
-private:
-	veMat4 _lightVolumeScale;
+	void render(const veMat4 &transform, vePass *pass, veCamera *camera);
 };
 
 class VE_EXPORT veConeLightRenderer : public veConeRenderer
@@ -35,11 +31,7 @@ public:
 	veConeLightRenderer();
 	~veConeLightRenderer();
 
-	void render(veNode *node, vePass *pass, veCamera *camera);
-	void setLightVolumeScale(const veMat4 &scale) { _lightVolumeScale = scale; }
-
-private:
-	veMat4 _lightVolumeScale;
+	void render(const veMat4 &transform, vePass *pass, veCamera *camera);
 };
 
 #endif

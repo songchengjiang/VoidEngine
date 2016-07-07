@@ -10,11 +10,9 @@ veGizmo::veGizmo(veSceneManager *sm)
     , _scale(1.0f)
 {
     _renderer = new veGizmoRenderer;
-    _materials = sm->createMaterialArray("_VE_GIZMO_MATERIALS_");
-    auto material = new veMaterial;
-    _materials->addMaterial(material);
+   _material = new veMaterial;
     auto technique = new veTechnique;
-    material->addTechnique(technique);
+    _material->addTechnique(technique);
     auto pass = new vePass;
     technique->addPass(pass);
     pass->setRenderPass(vePass::FORWARD_PASS);

@@ -65,7 +65,7 @@ private:
         if ((*_doucument).HasMember(MATERIALS_KEY.c_str())) {
             const Value &val = (*_doucument)[MATERIALS_KEY.c_str()];
             auto materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, val.GetString(), _name + std::string("-materials")));
-            _particleSystem->setMaterialArray(materials);
+            _particleSystem->setMaterial(materials->getMaterial(0));
         }
         
         if ((*_doucument).HasMember(QUOTA_KEY.c_str())) {

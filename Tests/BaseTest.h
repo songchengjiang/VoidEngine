@@ -11,8 +11,9 @@ class LightUpdater : public veComponent
 {
 public:
 
-	LightUpdater(float radius, float height)
-		: _lastChangeColorTime(0.0) {
+	LightUpdater(veLight *light, float radius, float height)
+		: _lastChangeColorTime(0.0)
+        , _light(light){
 		_angle = veMath::veRandomUnitization() * veMath::TWO_PI;
 		_radius = radius;
 		_height = height;
@@ -25,18 +26,15 @@ public:
 	virtual void beforeUpdate(veSceneManager *sm) override{
 		if (_attachedNodeList.empty()) return;
 
-		auto light = static_cast<veLight *>(_attachedNodeList[0]);
-		if (light) {
-			updateColor(light, sm->getDeltaTime());
-			updateMatrix(light, sm->getDeltaTime());
-		}
+        updateColor(sm->getDeltaTime());
+        updateMatrix(sm->getDeltaTime());
 	}
 
 private:
 
-	void updateColor(veLight *light, double deltaTime) {
+	void updateColor(double deltaTime) {
 		veVec3 col = _oriColor * (1.0 - _lastChangeColorTime) + _desColor * _lastChangeColorTime;
-		light->setColor(col);
+		_light->setColor(col);
 
 		if (1.0 < _lastChangeColorTime) {
 			_oriColor = _desColor;
@@ -46,10 +44,10 @@ private:
 		_lastChangeColorTime += deltaTime;
 	}
 
-	void updateMatrix(veLight *light, double deltaTime) {
+	void updateMatrix(double deltaTime) {
 		veReal x = _radius * veMath::veCos(_angle);
 		veReal y = _radius * veMath::veSin(_angle);
-		light->setMatrix(veMat4::lookAt(veVec3(x, _height, y), veVec3::ZERO, veVec3::UNIT_Y));
+		_light->getAttachedNodeList()[0]->setMatrix(veMat4::lookAt(veVec3(x, _height, y), veVec3::ZERO, veVec3::UNIT_Y));
 		_angle += veMath::QUARTER_PI * deltaTime;
 		_angle = fmod(_angle, veMath::TWO_PI);
 	}
@@ -62,6 +60,7 @@ private:
 	veReal _angle;
 	veReal _radius;
 	veReal _height;
+    veLight *_light;
 };
 
 class CameraManipulator : public veComponent
