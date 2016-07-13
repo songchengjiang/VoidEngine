@@ -31,11 +31,12 @@ protected:
     
     void caculateGizmoMatrix();
     void applyGizmoMatrix(const veVec3 &trans, const veVec3 &scl, const veQuat &rot);
+    void updateGizmo(const veMat4 &mat);
     
 protected:
     
-    GizmoType      _type;
-    VE_Ptr<veNode> _gizmoNode;
+    GizmoType       _type;
+    VE_Ptr<veNode>  _gizmoNode;
     VE_Ptr<veGizmo> _gizmo;
     veGizmo::AxesType _gizmoAxesType;
     bool            _refresh;

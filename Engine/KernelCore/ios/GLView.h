@@ -19,11 +19,11 @@
 }
 
 @property(nonatomic,readwrite) veViewerIOS *viewer;
-@property(nonatomic,readwrite) veApplicationIOS *app;
 
 - (void)startRendering;
 - (void)stopRendering;
 - (BOOL)makeContextCurrent;
 - (void)swapBuffers;
+- (id)initWithFrame:(CGRect)frame withViewer:(veViewerIOS *)view;
 
 @end

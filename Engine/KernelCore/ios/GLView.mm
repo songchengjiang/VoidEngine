@@ -12,7 +12,6 @@
 @implementation veGLView
 
 @synthesize viewer;
-@synthesize app;
 
 + (Class)layerClass {
     return [CAEAGLLayer class];
@@ -55,7 +54,7 @@
 }
 
 - (void)rendering:(CADisplayLink*)displayLink {
-    self.app->getSceneManager()->render(self.viewer);
+    self.viewer->getSceneManager()->render(self.viewer);
 }
 
 - (void)startRendering {
@@ -95,10 +94,10 @@
         CGFloat y = 1.0 - [touch locationInView: [touch view]].y / height;
         x = (x - 0.5) * 2.0;
         y = (y - 0.5) * 2.0;
-        self.app->onTouchBegan(i, x, y);
+        self.viewer->onTouchBegan(i, x, y);
         ++i;
     }
-    self.app->onPushCurrentEvent(self.viewer);
+    self.viewer->onPushCurrentEvent();
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
@@ -120,10 +119,10 @@
 //            ms[i] = touch.maximumPossibleForce;
 //        }
 //#endif
-        self.app->onTouchMove(i, x, y);
+        self.viewer->onTouchMove(i, x, y);
         ++i;
     }
-    self.app->onPushCurrentEvent(self.viewer);
+    self.viewer->onPushCurrentEvent();
     
     //auto glview = cocos2d::Director::getInstance()->getOpenGLView();
     //glview->handleTouchesMove(i, (intptr_t*)ids, xs, ys, fs, ms);
@@ -141,10 +140,10 @@
         CGFloat y = 1.0 - [touch locationInView: [touch view]].y / height;
         x = (x - 0.5) * 2.0;
         y = (y - 0.5) * 2.0;
-        self.app->onTouchEnd(i, x, y);
+        self.viewer->onTouchEnd(i, x, y);
         ++i;
     }
-    self.app->onPushCurrentEvent(self.viewer);
+    self.viewer->onPushCurrentEvent();
     
     //auto glview = cocos2d::Director::getInstance()->getOpenGLView();
     //glview->handleTouchesEnd(i, (intptr_t*)ids, xs, ys);
@@ -170,15 +169,19 @@
 
 
 
-- (id)initWithFrame:(CGRect)frame
+- (id)initWithFrame:(CGRect)frame withViewer:(veViewerIOS *)view
 {
     self = [super initWithFrame:frame];
     [self setupLayer];
     _context = nil;
+    self.viewer = view;
+    self.viewer->setGLView((__bridge void *)self);
     
     if ([self respondsToSelector:@selector(setContentScaleFactor:)]){
         self.contentScaleFactor = veConfiguration::VE_DEVICE_PIXEL_RATIO;
     }
+    
+    [self setMultipleTouchEnabled:YES];
     return self;
 }
 

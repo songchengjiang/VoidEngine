@@ -34,12 +34,12 @@ public:
 		//auto test = new IntersectionTest;
 		//auto test = new SkyBoxTest;
 		//auto test = new PostProcesserTest;
-		auto test = new CubeMapTest;
+		//auto test = new CubeMapTest;
 		//auto test = new ShadowTest;
 		//auto test = new IBLTest;
 		//auto test = new NormalMappingTest;
         //auto test = new ParticleSystemTest;
-        //auto test = new SceneTest;
+        auto test = new SceneTest;
 		test->init();
 	}
 

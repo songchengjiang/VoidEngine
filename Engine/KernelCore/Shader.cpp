@@ -13,6 +13,7 @@ veUniform::veUniform(const std::string &name)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 }
 
@@ -22,6 +23,7 @@ veUniform::veUniform(const std::string &name, int val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
 }
@@ -32,6 +34,7 @@ veUniform::veUniform(const std::string &name, veReal val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
 }
@@ -42,6 +45,7 @@ veUniform::veUniform(const std::string &name, const std::string &val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
 }
@@ -52,6 +56,7 @@ veUniform::veUniform(const std::string &name, const veVec2& val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
 }
@@ -62,6 +67,7 @@ veUniform::veUniform(const std::string &name, const veVec3& val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
 }
@@ -72,6 +78,7 @@ veUniform::veUniform(const std::string &name, const veVec4& val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
 }
@@ -82,6 +89,7 @@ veUniform::veUniform(const std::string &name, const veMat3& val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
 }
@@ -92,6 +100,7 @@ veUniform::veUniform(const std::string &name, const veMat4& val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
 }
@@ -102,6 +111,7 @@ veUniform::veUniform(const std::string &name, const veRealArray &val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
 }
@@ -168,10 +178,10 @@ void veUniform::apply(const veRenderCommand &command)
 				glUniform1f(_location, (command.camera->getViewport().height - command.camera->getViewport().y));
 			}
 			else if (_autoBindingValue == SIM_TIME) {
-				glUniform1f(_location, command.sceneManager->getSimulationTime());
+				glUniform1f(_location, _simulationTime);
 			}
 			else if (_autoBindingValue == SIM_SIN_TIME) {
-				glUniform1f(_location, veMath::veSin(command.sceneManager->getSimulationTime()));
+				glUniform1f(_location, veMath::veSin(_simulationTime));
 			}
 			else {
 				const veMat4 &worldMat = command.worldMatrix->value();
@@ -301,6 +311,8 @@ void veUniform::apply(const veRenderCommand &command)
 	default:
 		break;
 	}
+                            
+    _simulationTime += command.sceneManager->getDeltaTime();
 }
 
 void veUniform::setValue(int val)

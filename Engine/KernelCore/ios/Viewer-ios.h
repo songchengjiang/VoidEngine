@@ -16,25 +16,32 @@ public:
     
     virtual bool makeContextCurrent() override;
     virtual void swapBuffers() override;
-    virtual void startRender(veSceneManager *sm) override;
-    virtual void stopRender(veSceneManager *sm) override;
     virtual void create() override;
     virtual void destroy() override;
     virtual void show() override;
     virtual void hide() override;
-    virtual bool isNeedClosed() const override;
     
-    void createWithGLView(void *view);
+    
+    virtual bool simulation(double deltaTime) override;
+    virtual void startRender() override;
+    virtual void stopRender() override;
+    
+    void onTouchBegan(int touchID, veReal x, veReal y);
+    void onTouchMove(int touchID, veReal x, veReal y);
+    void onTouchEnd(int touchID, veReal x, veReal y);
+    void onPushCurrentEvent();
+    
+    void setGLView(void *glView) { _glView = glView; }
     void* getGLView() { return _glView; }
     
 protected:
     
-    veViewerIOS(int width, int height, const std::string &title, void *sharedView);
+    veViewerIOS(int width, int height, const std::string &title, veViewerIOS *sharedViewer = nullptr);
     
 protected:
     
-    void       *_glView;
-    void       *_sharedGLView;
+    void        *_glView;
+    veViewerIOS *_sharedViewer;
     
     bool        _isRendering;
     std::thread _renderingThread;

@@ -261,8 +261,8 @@ public:
 	BaseTest() {
 		veFile::instance()->addSearchPath("../resources/");
 		_sceneManager = new veOctreeSceneManager(veBoundingBox(veVec3(-1000.0f), veVec3(1000.0f)), 8);
-		veApplication::instance()->setSceneManager(_sceneManager);
         _mainViewer = veApplication::instance()->getViewer(0);
+        _mainViewer->setSceneManager(_sceneManager);
 		int width = _mainViewer->width();
 		int height = _mainViewer->height();
         _camera = _sceneManager->createCamera("MainCamera", {0, 0, width, height });

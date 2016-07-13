@@ -23,9 +23,6 @@
 		BE0D4DB71D23BF4000BA32D6 /* Viewer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE0D4DB41D23BF4000BA32D6 /* Viewer.h */; };
 		BE0D4DBA1D24C02E00BA32D6 /* Viewer-desktop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE0D4DB81D24C02E00BA32D6 /* Viewer-desktop.cpp */; };
 		BE0D4DBC1D24C02E00BA32D6 /* Viewer-desktop.h in Headers */ = {isa = PBXBuildFile; fileRef = BE0D4DB91D24C02E00BA32D6 /* Viewer-desktop.h */; };
-		BE0D4DBF1D25006200BA32D6 /* EventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE0D4DBD1D25006200BA32D6 /* EventDispatcher.cpp */; };
-		BE0D4DC01D25006200BA32D6 /* EventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE0D4DBD1D25006200BA32D6 /* EventDispatcher.cpp */; };
-		BE0D4DC11D25006200BA32D6 /* EventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = BE0D4DBE1D25006200BA32D6 /* EventDispatcher.h */; };
 		BE0D4DCA1D2A64DE00BA32D6 /* Viewer-ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE0D4DC81D2A64DE00BA32D6 /* Viewer-ios.mm */; };
 		BE16BCD61CDC3630006E7146 /* BoxEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BCD51CDC3630006E7146 /* BoxEmitter.h */; };
 		BE16BCD81CDC363E006E7146 /* BoxEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BCD71CDC363E006E7146 /* BoxEmitter.cpp */; };
@@ -367,8 +364,6 @@
 		BE0D4DB41D23BF4000BA32D6 /* Viewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Viewer.h; path = ../../Engine/KernelCore/Viewer.h; sourceTree = "<group>"; };
 		BE0D4DB81D24C02E00BA32D6 /* Viewer-desktop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "Viewer-desktop.cpp"; path = "../../Engine/KernelCore/Viewer-desktop.cpp"; sourceTree = "<group>"; };
 		BE0D4DB91D24C02E00BA32D6 /* Viewer-desktop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Viewer-desktop.h"; path = "../../Engine/KernelCore/Viewer-desktop.h"; sourceTree = "<group>"; };
-		BE0D4DBD1D25006200BA32D6 /* EventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EventDispatcher.cpp; path = ../../Engine/KernelCore/EventDispatcher.cpp; sourceTree = "<group>"; };
-		BE0D4DBE1D25006200BA32D6 /* EventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventDispatcher.h; path = ../../Engine/KernelCore/EventDispatcher.h; sourceTree = "<group>"; };
 		BE0D4DC81D2A64DE00BA32D6 /* Viewer-ios.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "Viewer-ios.mm"; path = "../../Engine/KernelCore/ios/Viewer-ios.mm"; sourceTree = "<group>"; };
 		BE0D4DC91D2A64DE00BA32D6 /* Viewer-ios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Viewer-ios.h"; path = "../../Engine/KernelCore/ios/Viewer-ios.h"; sourceTree = "<group>"; };
 		BE0E4DA51BB002900001AA36 /* libassimp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libassimp.a; path = ../../Dependents/assimp/lib/libassimp.a; sourceTree = "<group>"; };
@@ -1022,8 +1017,6 @@
 				BE1A0AFD1BE24E5B00A1A20D /* TransformFeedback.cpp */,
 				BE1A0AFE1BE24E5B00A1A20D /* TransformFeedback.h */,
 				BE3D416A1BAF0B520063041C /* VE_Ptr.h */,
-				BE0D4DBD1D25006200BA32D6 /* EventDispatcher.cpp */,
-				BE0D4DBE1D25006200BA32D6 /* EventDispatcher.h */,
 			);
 			name = KernelCore;
 			sourceTree = "<group>";
@@ -1170,7 +1163,6 @@
 				BE1A0B051BE24E5B00A1A20D /* Font.h in Headers */,
 				BEA445EF1D06BD0300960C84 /* GizmoTranslation.h in Headers */,
 				BEA445E01D06A86A00960C84 /* Gizmo.h in Headers */,
-				BE0D4DC11D25006200BA32D6 /* EventDispatcher.h in Headers */,
 				BEB952361CFC4B4B00110FF6 /* ParticleSphereRenderer.h in Headers */,
 				BE30ABB51CD9C24E009477C5 /* ParticleRenderer.h in Headers */,
 				BE1A0B151BE24E5C00A1A20D /* Text.h in Headers */,
@@ -1416,7 +1408,6 @@
 				BE1B50711BB049E30039A346 /* Vector3.cpp in Sources */,
 				BE5BF1781BB2A09D00FAE523 /* Debuger.cpp in Sources */,
 				BE1A0AA91BE24C6F00A1A20D /* OctreeDebuger.cpp in Sources */,
-				BE0D4DBF1D25006200BA32D6 /* EventDispatcher.cpp in Sources */,
 				BE1B50721BB049E30039A346 /* Vector4.cpp in Sources */,
 				BE30ABB31CD9C1F5009477C5 /* ParticleQuatRenderer.cpp in Sources */,
 			);
@@ -1484,7 +1475,6 @@
 				BEE5E4951D051D7400BD63F8 /* ParticleSphereRenderer.cpp in Sources */,
 				BEE5E4941D051D7200BD63F8 /* ParticleBoxRenderer.cpp in Sources */,
 				BEA445EE1D06BD0300960C84 /* GizmoTranslation.cpp in Sources */,
-				BE0D4DC01D25006200BA32D6 /* EventDispatcher.cpp in Sources */,
 				BE80F11C1CED59AE00E2EECF /* Node.cpp in Sources */,
 				BE7E03431D02C78A00320061 /* ImGuiComponent.cpp in Sources */,
 				BE80F11D1CED59AE00E2EECF /* NodeVisitor.cpp in Sources */,

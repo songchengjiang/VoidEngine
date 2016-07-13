@@ -16,32 +16,43 @@ public:
     
     virtual bool makeContextCurrent() override;
     virtual void swapBuffers() override;
-    virtual void startRender(veSceneManager *sm) override;
-    virtual void stopRender(veSceneManager *sm) override;
     virtual void create() override;
     virtual void destroy() override;
     virtual void show() override;
     virtual void hide() override;
-    virtual bool isNeedClosed() const override;
     
-    GLFWwindow* getHWND() { return _hwnd; }
-    
+    virtual bool simulation(double deltaTime) override;
+    virtual void startRender() override;
+    virtual void stopRender() override;
 
 protected:
     
     veViewerDesktop(int width, int height, const std::string &title, veViewerDesktop *sharedViewer = nullptr);
     
+    
+protected:
+    
+    static void caculateMouseUnitCoords(GLFWwindow* window, double x, double y);
+    static void collectKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
+    static void collectCharEvent(GLFWwindow* window, unsigned int c);
+    static void collectMouseEvent(GLFWwindow* window, int button, int action, int mods);
+    static void collectMouseMoveEvent(GLFWwindow* window, double x, double y);
+    static void collectScrollEvent(GLFWwindow* window, double x, double y);
+    static void collectWindowSizeEvent(GLFWwindow* window, int width, int height);
+    static void collectWindowFocusEvent(GLFWwindow* window, int focused);
+    static void collectWindowClose(GLFWwindow* window);
+    
 protected:
     
     GLFWwindow *_hwnd;
-    GLFWwindow *_sharedHwnd;
+    veViewerDesktop *_sharedViewer;
 #if VE_PLATFORM == VE_PLATFORM_WIN32
     GLEWContext *_glContext;
 #endif
     bool        _isInited;
     
-    bool        _isRendering;
     std::thread _renderingThread;
+    bool        _isRendering;
 };
 
 #endif

@@ -139,41 +139,46 @@ bool veGizmoComponent::onDetachToNode(veNode *node)
 void veGizmoComponent::caculateGizmoMatrix()
 {
     if (_attachedNodeList.empty()) return;
-    if (_attachedNodeList.size() <= 1){
-        auto mat = _attachedNodeList[0]->getNodeToWorldMatrix();
-        veVec3 pos; veQuat rot;
-        mat.decomposition(&pos, nullptr, &rot);
-        _gizmoNode->setMatrix(veMat4::transform(pos, veVec3::UNIT_SCALE, rot));
-    }else{
-        veVec3 position;
+//    if (_attachedNodeList.size() <= 1){
+//        updateGizmo(_attachedNodeList[0]->getNodeToWorldMatrix());
+//    }else{
+        veVec3 position; veQuat rotate;
+        veMat4 nTow;
         for (auto &attachedNode : _attachedNodeList){
-            auto mat = attachedNode->getNodeToWorldMatrix();
+            nTow = attachedNode->getNodeToWorldMatrix();
             veVec3 nodePos;
-            mat.decomposition(&nodePos, nullptr, nullptr);
+            nTow.decomposition(&nodePos, nullptr, nullptr);
             position += nodePos;
         }
         position /= _attachedNodeList.size();
-        _gizmoNode->setMatrix(veMat4::translation(position));
-    }
+        nTow.decomposition(nullptr, nullptr, &rotate);
+        updateGizmo(veMat4::transform(position, veVec3::UNIT_SCALE, rotate));
+//    }
 }
 
 void veGizmoComponent::applyGizmoMatrix(const veVec3 &trans, const veVec3 &scl, const veQuat &rot)
 {
     if (_attachedNodeList.empty()) return;
-    _gizmoNode->setMatrix(_gizmoNode->getMatrix() * veMat4::transform(trans, veVec3::UNIT_SCALE, rot));
-    //_gizmoNode->setMatrix(_gizmoNode->getMatrix() * offsetMat);
     
-    if (_attachedNodeList.size() <= 1) {
-        veVec3 npos, nscl; veQuat nrot;
-        _attachedNodeList[0]->getMatrix().decomposition(&npos, &nscl, &nrot);
-        _attachedNodeList[0]->setMatrix(veMat4::transform(nrot * rot * trans + npos, nscl + scl, nrot * rot));
-    }else{
-        for (auto &node : _attachedNodeList) {
-            veVec3 npos, nscl; veQuat nrot;
-            node->getMatrix().decomposition(&npos, &nscl, &nrot);
-            node->setMatrix(veMat4::transform(trans + npos, nscl + scl, nrot * rot));
-        }
+    veVec3 npos, nscl; veQuat nrot;
+    veMat4 gizmoMatInv = _gizmoNode->getMatrix();
+    gizmoMatInv.inverse();
+    for (auto &node : _attachedNodeList) {
+        veMat4 nodeIngizmoMat = gizmoMatInv * node->getNodeToWorldMatrix();
+        nodeIngizmoMat.decomposition(&npos, &nscl, &nrot);
+        nodeIngizmoMat = _gizmoNode->getMatrix() * veMat4::transform(trans, scl + veVec3::UNIT_SCALE, rot) * nodeIngizmoMat;
+        veMat4 toParentMat = node->getParent()? node->getParent()->getWorldToNodeMatrix() : veMat4::IDENTITY;
+        node->setMatrix(toParentMat * nodeIngizmoMat);
     }
+    
+    updateGizmo(_gizmoNode->getMatrix() * veMat4::transform(trans, veVec3::UNIT_SCALE, rot));
+}
+
+void veGizmoComponent::updateGizmo(const veMat4 &mat)
+{
+    veVec3 npos; veQuat nrot;
+    mat.decomposition(&npos, nullptr, &nrot);
+    _gizmoNode->setMatrix(veMat4::transform(npos, veVec3::UNIT_SCALE, nrot));
 }
 
 void veGizmoComponent::setGizmoType(GizmoType type)

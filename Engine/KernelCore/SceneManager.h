@@ -81,15 +81,16 @@ public:
 	veBaseManager* getManager(const std::string &mgType);
 
 	veNode* getRootNode() { return _root.get(); }
+    void setDeltaTime(double deltaTime) { _deltaTime = deltaTime; }
 	double getDeltaTime() { return _deltaTime; }
-	double getSimulationTime() { return _simulationTime; }
 
 	veRenderPipeline* getRenderPipeline() const { return _renderPipeline.get(); }
 
 	void needReload();
 	bool isNeedReload() { return _needReload; }
 
-	void update(double deltaTime, const veEventDispatcher *eventDispatcher);
+    void event(veViewer *viewer);
+	void update();
     void render(veViewer *viewer);
 
 	void enqueueTaskToThread(const veThreadPool::TaskCallBack& callback, void* callbackParam, const std::function<void()> &func);
@@ -104,8 +105,7 @@ protected:
 	virtual void renderImp(veViewer *viewer) = 0;
     void startThreading();
     void stopThreading();
-    void setDeltaTime(double deltaTime);
-    void dispatchEvents(const veEventDispatcher *eventDispatcher);
+    void dispatchEvents(veViewer *viewer);
     void handleEvent(veViewer *viewer, const veEvent &event);
 	void postRenderHandle();
 	void resourceRecovery();
@@ -139,7 +139,6 @@ protected:
 	bool _needReload;
 
 	double _deltaTime;
-	double _simulationTime;
 	double _latestResourceRecoveredTime;
 };
 

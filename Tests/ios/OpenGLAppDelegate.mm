@@ -23,8 +23,7 @@
     
     auto viewer = static_cast<veViewerIOS *>(veApplication::instance()->createViewer(int(screenBounds.size.width), int(screenBounds.size.height), "VoidEngineTest"));
     
-    veGLView *glView = [[veGLView alloc] initWithFrame:screenBounds];
-    viewer->createWithGLView((__bridge void *)glView);
+    veGLView *glView = [[veGLView alloc] initWithFrame:screenBounds withViewer: viewer];
     
     _viewController = [[ViewController alloc] initWithNibName:nil bundle:nil];
     _viewController.view = glView;

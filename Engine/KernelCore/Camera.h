@@ -107,13 +107,13 @@ public:
     const vePostProcesserList& getPostProcesserList() const { return _postProcesserList; }
     virtual void removePostProcesser(const std::string &name);
     
+    void resize(int width, int height);
 
 protected:
 
 	veCamera(veSceneManager *sm);
 	veCamera(veSceneManager *sm, const veViewport &vp);
 	void visitQueue(veLoopQueue< veRenderCommand > &queue);
-	void resize(int width, int height);
 	void updateFrustumPlane();
 	virtual void updateSceneManager() override;
 

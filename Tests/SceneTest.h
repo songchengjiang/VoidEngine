@@ -382,6 +382,7 @@ public:
         _sceneManager->addComponent(entityPicker);
         
 //        auto viewer = veApplication::instance()->createViewer(800, 600, "Debug", _mainViewer);
+//        viewer->setSceneManager(_sceneManager);
 //        int width = viewer->width();
 //        int height = viewer->height();
 //        auto camera = _sceneManager->createCamera("SecondCamera", {0, 0, width, height });

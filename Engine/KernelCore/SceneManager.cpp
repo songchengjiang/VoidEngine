@@ -15,7 +15,6 @@
 #include "Configuration.h"
 
 #include "Viewer.h"
-#include "EventDispatcher.h"
 
 #include <algorithm>
 
@@ -24,7 +23,6 @@
 veSceneManager::veSceneManager()
 	: USE_VE_PTR_INIT
 	, _deltaTime(0.0)
-	, _simulationTime(0)
 	, _ambient(veVec3(1.0f))
 	, _latestResourceRecoveredTime(RESOURCE_RECOVERY_INTERVAL_TIME)
 	, _stopThreading(true)
@@ -191,12 +189,6 @@ veBaseManager* veSceneManager::getManager(const std::string &mgType)
 	return iter->second;
 }
 
-void veSceneManager::setDeltaTime(double deltaTime)
-{
-	_deltaTime = deltaTime;
-	_simulationTime += deltaTime;
-}
-
 void veSceneManager::needReload()
 {
 	if (_needReload)
@@ -207,23 +199,8 @@ void veSceneManager::needReload()
 	});
 }
 
-void veSceneManager::dispatchEvents(const veEventDispatcher *eventDispatcher)
-{
-    for (auto &events : eventDispatcher->getEventList()){
-        for (auto &event : events.second){
-            handleEvent(events.first, event);
-        }
-    }
-}
-
 void veSceneManager::handleEvent(veViewer *viewer, const veEvent &event)
 {
-    if (event.getEventType() == veEvent::VE_WIN_RESIZE) {
-        if (viewer->getCamera()) {
-            viewer->getCamera()->resize(event.getWindowWidth(), event.getWindowHeight());
-        }
-    }
-    
     if (!_componentList.empty()) {
         for (auto &com : _componentList) {
             if (com->isEnabled()){
@@ -239,12 +216,18 @@ void veSceneManager::handleEvent(veViewer *viewer, const veEvent &event)
         _root->routeEvent(this, viewer, event);
 }
 
-void veSceneManager::update(double deltaTime, const veEventDispatcher *eventDispatcher)
+void veSceneManager::event(veViewer *viewer)
 {
-    setDeltaTime(deltaTime);
+    std::unique_lock<std::mutex> updateLock(_updatingMutex);
+    for (auto &event : viewer->getEventList()){
+        handleEvent(viewer, event);
+    }
+}
+
+void veSceneManager::update()
+{
 	{
 		std::unique_lock<std::mutex> updateLock(_updatingMutex);
-        dispatchEvents(eventDispatcher);
 		for (auto &manager : _managerList) {
 			manager.second->update();
 		}

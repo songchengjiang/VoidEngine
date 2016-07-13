@@ -6,9 +6,9 @@
 
 #import "GLView.h"
 
-veViewerIOS::veViewerIOS(int width, int height, const std::string &title, void *sharedView)
+veViewerIOS::veViewerIOS(int width, int height, const std::string &title, veViewerIOS *sharedViewer)
     : veViewer(width, height, title)
-    , _sharedGLView(sharedView)
+    , _sharedViewer(sharedViewer)
     , _glView(nullptr)
     , _isRendering(false)
 {
@@ -32,41 +32,36 @@ void veViewerIOS::swapBuffers()
     [glView swapBuffers];
 }
 
-void veViewerIOS::startRender(veSceneManager *sm)
+bool veViewerIOS::simulation(double deltaTime)
 {
-//    veGLView *glView = (__bridge veGLView *)_glView;
-//    [glView startRendering];
-    if (_isRendering) return;
-    _isRendering = true;
-    _renderingThread = std::thread([sm, this] {
-        while(_isRendering){
-            sm->render(this);
-        }
-    });
+    if (!_sceneManager.valid() || !_camera.valid()) return false;
+    _sceneManager->setDeltaTime(deltaTime);
+    _sceneManager->event(this);
+    _eventList.clear();
+    bool needUpdateSceneManager = _sharedViewer? _sharedViewer->_sceneManager != _sceneManager: true;
+    if (needUpdateSceneManager)
+        _sceneManager->update();
+    return true;
 }
 
-void veViewerIOS::stopRender(veSceneManager *sm)
+void veViewerIOS::startRender()
 {
-//    veGLView *glView = (__bridge veGLView *)_glView;
-//    [glView stopRendering];
-    
-    if (!_isRendering) return;
-    _isRendering = false;
-    _renderingThread.join();
+    veGLView *glView = (__bridge veGLView *)_glView;
+    [glView startRendering];
+}
+
+void veViewerIOS::stopRender()
+{
+    veGLView *glView = (__bridge veGLView *)_glView;
+    [glView startRendering];
 }
 
 void veViewerIOS::create()
 {
-}
-
-void veViewerIOS::createWithGLView(void *view)
-{
-    if (_glView) return;
-    veGLView *glView = (__bridge veGLView *)view;
-    [glView setMultipleTouchEnabled:YES];
-    glView.viewer = this;
-    glView.app = static_cast<veApplicationIOS *>(veApplication::instance());
-    _glView = view;
+    _currentEvent.setEventType(veEvent::VE_WIN_INIT);
+    _currentEvent.setWindowWidth(_width);
+    _currentEvent.setWindowHeight(_height);
+    _eventList.push_back(_currentEvent);
 }
 
 void veViewerIOS::destroy()
@@ -83,9 +78,38 @@ void veViewerIOS::hide()
 {
 }
 
-bool veViewerIOS::isNeedClosed() const
+void veViewerIOS::onTouchBegan(int touchID, veReal x, veReal y)
 {
-    return false;
+    veEvent &event = _currentEvent;
+    event.addTouch({touchID, x, y, x, y});
+    event.setEventType(veEvent::VE_TOUCH_START);
+}
+
+void veViewerIOS::onTouchMove(int touchID, veReal x, veReal y)
+{
+    veEvent &event = _currentEvent;
+    for (auto &touch : event.getTouches()){
+        if (touch.id == touchID){
+            touch.latestx = touch.x;
+            touch.latesty = touch.y;
+            touch.x = x;
+            touch.y = y;
+            event.setEventType(veEvent::VE_TOUCH_MOVE);
+            break;
+        }
+    }
+}
+
+void veViewerIOS::onTouchEnd(int touchID, veReal x, veReal y)
+{
+    veEvent &event = _currentEvent;
+    event.removeTouch(touchID);
+    event.setEventType(veEvent::VE_TOUCH_END);
+}
+
+void veViewerIOS::onPushCurrentEvent()
+{
+    _eventList.push_back(_currentEvent);
 }
 
 #endif

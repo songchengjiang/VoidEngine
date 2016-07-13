@@ -4,7 +4,6 @@
 #include "VE_Ptr.h"
 #include "SceneManager.h"
 #include "Event.h"
-#include "EventDispatcher.h"
 
 class veViewer;
 class VE_EXPORT veApplication
@@ -19,9 +18,6 @@ public:
     size_t getViewerCount() const { return _viewerList.size(); }
 	virtual bool run() = 0;
 	virtual void stop() = 0;
-    
-    void setSceneManager(veSceneManager *sm) { _sceneManager = sm; }
-    veSceneManager* getSceneManager() { return _sceneManager.get(); }
 
 protected:
 
@@ -30,8 +26,6 @@ protected:
 protected:
     
     std::vector<veViewer *> _viewerList;
-    VE_Ptr<veSceneManager>  _sceneManager;
-    veEventDispatcher       _eventDispatcher;
 };
 
 #endif

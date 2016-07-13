@@ -17,21 +17,10 @@ public:
 private:
 
 	veApplicationDesktop();
-
-    void updateViewers();
-    veViewer* findViewerBy(GLFWwindow* window);
-
-	static void caculateMouseUnitCoords(GLFWwindow* window, double x, double y);
-	static void collectKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
-    static void collectCharEvent(GLFWwindow* window, unsigned int c);
-	static void collectMouseEvent(GLFWwindow* window, int button, int action, int mods);
-	static void collectMouseMoveEvent(GLFWwindow* window, double x, double y);
-	static void collectScrollEvent(GLFWwindow* window, double x, double y);
-	static void collectWindowSizeEvent(GLFWwindow* window, int width, int height);
-	static void collectWindowFocusEvent(GLFWwindow* window, int focused);
-	static void collectWindowClose(GLFWwindow* window);
     
 private:
+    
+    void updateViewers();
     
 private:
     

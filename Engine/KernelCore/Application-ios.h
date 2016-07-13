@@ -13,13 +13,7 @@ public:
     
     virtual bool run() override ;
     virtual void stop() override ;
-    
-    void simulationFrame(double deltaTime);
-    
-    void onTouchBegan(int touchID, veReal x, veReal y);
-    void onTouchMove(int touchID, veReal x, veReal y);
-    void onTouchEnd(int touchID, veReal x, veReal y);
-    void onPushCurrentEvent(veViewer *viewer);
+
 
 private:
 

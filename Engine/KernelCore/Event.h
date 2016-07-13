@@ -268,6 +268,6 @@ private:
 	int _wndHeight;
 };
 
-typedef std::vector<veEvent> Events;
+typedef std::vector<veEvent> veEventList;
 
 #endif
