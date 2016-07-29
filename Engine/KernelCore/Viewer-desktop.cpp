@@ -206,7 +206,7 @@ void veViewerDesktop::swapBuffers()
 
 bool veViewerDesktop::simulation(double deltaTime)
 {
-    if (!_sceneManager.valid() || !_camera.valid()) return false;
+    if (!_sceneManager.valid()) return false;
     _sceneManager->setDeltaTime(deltaTime);
     _sceneManager->event(this);
     _eventList.clear();
@@ -218,7 +218,7 @@ bool veViewerDesktop::simulation(double deltaTime)
 
 void veViewerDesktop::startRender()
 {
-    if (!_sceneManager.valid() || !_camera.valid()) return;
+    if (!_sceneManager.valid()) return;
     _isRendering = true;
     _renderingThread = std::thread([this] {
         while(_isRendering && _hwnd){
@@ -355,7 +355,8 @@ void veViewerDesktop::collectWindowSizeEvent(GLFWwindow* window, int width, int 
     event.setEventType(veEvent::VE_WIN_RESIZE);
     event.setWindowWidth(width);
     event.setWindowHeight(height);
-    viewer->getCamera()->resize(event.getWindowWidth(), event.getWindowHeight());
+    if (viewer->getCamera())
+        viewer->getCamera()->resize(event.getWindowWidth(), event.getWindowHeight());
     viewer->_eventList.push_back(event);
 }
 

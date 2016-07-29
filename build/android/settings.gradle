@@ -1,1 +1,1 @@
-include ':app', ':voidengine'
+include ':voidengine', ':vetests'

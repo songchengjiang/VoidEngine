@@ -3,119 +3,63 @@
 
 veViewerAndroid::veViewerAndroid(int width, int height, const std::string &title, veViewerAndroid *sharedViewer)
     : veViewer(width, height, title)
-    , _window(nullptr)
     , _sharedViewer(sharedViewer)
-    , _isRendering(false)
-    , _display(EGL_NO_DISPLAY)
-    , _surface(EGL_NO_SURFACE)
-    , _context(EGL_NO_CONTEXT)
 {
     
 }
 
 veViewerAndroid::~veViewerAndroid()
 {
-    stopRender(nullptr);
-    destroy();
-    eglDestroyContext(_display, _context);
 }
 
 bool veViewerAndroid::makeContextCurrent()
 {
-    if (_display && _surface && _context){
-        if (eglMakeCurrent(_display, _surface, _surface, _context) == EGL_TRUE);
-            return true;
-    }
-    return false;
+    return true;
 }
 
 void veViewerAndroid::swapBuffers()
 {
-    if (_display && _surface)
-        eglSwapBuffers(_display, _surface);
 }
 
-void veViewerAndroid::startRender(veSceneManager *sm)
+bool veViewerAndroid::simulation(double deltaTime)
 {
-    if (_isRendering) return;
-    _isRendering = true;
-    _renderingThread = std::thread([sm, this] {
-        while(_isRendering){
-            if (_surface && _context)
-                sm->render(this);
-        }
-    });
+    if (!_sceneManager.valid()) return false;
+    _sceneManager->setDeltaTime(deltaTime);
+    {
+        std::unique_lock<std::mutex> eventLock(_eventMutex);
+        _sceneManager->event(this);
+        _eventList.clear();
+    }
+    bool needUpdateSceneManager = _sharedViewer? _sharedViewer->_sceneManager != _sceneManager: true;
+    if (needUpdateSceneManager)
+        _sceneManager->update();
+    return true;
 }
 
-void veViewerAndroid::stopRender(veSceneManager *sm)
+void veViewerAndroid::startRender()
 {
-    if (!_isRendering) return;
-    _isRendering = false;
-    _renderingThread.join();
+}
+
+void veViewerAndroid::stopRender()
+{
+}
+
+void veViewerAndroid::frameRender()
+{
+    if (!_sceneManager.valid()) return;
+    _sceneManager->render(this);
 }
 
 void veViewerAndroid::create()
 {
-    if (_display == EGL_NO_DISPLAY){
-        _display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-        if (!_display) veLog("_display is null!");
-        eglInitialize(_display, nullptr, nullptr);
-        EGLint attribs[] = {
-                EGL_RED_SIZE,       8,
-                EGL_GREEN_SIZE,     8,
-                EGL_BLUE_SIZE,      8,
-                EGL_ALPHA_SIZE,     8,
-                EGL_DEPTH_SIZE,     24,
-                EGL_STENCIL_SIZE,   8,
-                //EGL_SAMPLE_BUFFERS, 0,
-                //EGL_LEVEL,            0,
-                EGL_SURFACE_TYPE,    EGL_WINDOW_BIT,
-                EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-                EGL_NONE
-        };
-
-        EGLint format;
-        EGLint numConfigs;
-        eglChooseConfig(_display, attribs, &_config, 1, &numConfigs);
-        if (!numConfigs){
-                    veLog("eglChooseConfig failed!");
-            return;
-        }
-
-        eglGetConfigAttrib(_display, _config, EGL_NATIVE_VISUAL_ID, &format);
-        ANativeWindow_setBuffersGeometry(_window, 0, 0, format);
-        if (_display){
-           veLog("init display");
-        }
-    }
-
-    if (_surface == EGL_NO_SURFACE){
-        _surface = eglCreateWindowSurface(_display, _config, _window, NULL);
-        eglQuerySurface( _display, _surface, EGL_WIDTH, &_width );
-        eglQuerySurface( _display, _surface, EGL_HEIGHT, &_height );
-        if (_surface){
-            veLog("init surface");
-        }
-    }
-
-    if (_context == EGL_NO_CONTEXT){
-        const EGLint context_attribs[] = { EGL_CONTEXT_CLIENT_VERSION, 3, //Request opengl ES3.0
-                                           EGL_NONE };
-        _context = eglCreateContext(_display, _config, NULL, context_attribs);
-        if (_context){
-            veLog("init context");
-        }
-    }
+    _currentEvent.setEventType(veEvent::VE_WIN_INIT);
+    _currentEvent.setWindowWidth(_width);
+    _currentEvent.setWindowHeight(_height);
+    _eventList.push_back(_currentEvent);
 }
 
 void veViewerAndroid::destroy()
 {
-    //if (_context != EGL_NO_CONTEXT)
-    //    eglDestroyContext(_display, _context);
-    if (_surface != EGL_NO_SURFACE)
-        eglDestroySurface(_display, _surface);
-    //_context = EGL_NO_CONTEXT;
-    _surface = EGL_NO_SURFACE;
 }
 
 void veViewerAndroid::show()
@@ -125,4 +69,64 @@ void veViewerAndroid::show()
 void veViewerAndroid::hide()
 {
 
+}
+
+void veViewerAndroid::resize(int width, int height)
+{
+    _width = width;
+    _height = height;
+    _currentEvent.setEventType(veEvent::VE_WIN_RESIZE);
+    _currentEvent.setWindowWidth(width);
+    _currentEvent.setWindowHeight(height);
+    if (this->getCamera())
+        this->getCamera()->resize(_currentEvent.getWindowWidth(), _currentEvent.getWindowHeight());
+    this->_eventList.push_back(_currentEvent);
+}
+
+void veViewerAndroid::onTouchBegan(int touchID, veReal x, veReal y)
+{
+    std::unique_lock<std::mutex> eventLock(_eventMutex);
+    x = x / _width;
+    y = 1.0f - y / _height;
+    x = (x - 0.5f) * 2.0f;
+    y = (y - 0.5f) * 2.0f;
+    veEvent &event = _currentEvent;
+    event.addTouch({touchID, x, y, x, y});
+    event.setEventType(veEvent::VE_TOUCH_START);
+    this->_eventList.push_back(_currentEvent);
+}
+
+void veViewerAndroid::onTouchEnd(int touchID, veReal x, veReal y)
+{
+    std::unique_lock<std::mutex> eventLock(_eventMutex);
+    veEvent &event = _currentEvent;
+    event.removeTouch(touchID);
+    event.setEventType(veEvent::VE_TOUCH_END);
+    this->_eventList.push_back(_currentEvent);
+}
+
+void veViewerAndroid::onTouchsMove(int n, int touchIDs[], veReal xs[], veReal ys[])
+{
+    std::unique_lock<std::mutex> eventLock(_eventMutex);
+    veEvent &event = _currentEvent;
+    for (int i = 0; i < n; ++i) {
+        int touchID = touchIDs[i];
+        veReal x = xs[i];
+        veReal y = ys[i];
+        x = x / _width;
+        y = 1.0f - y / _height;
+        x = (x - 0.5f) * 2.0f;
+        y = (y - 0.5f) * 2.0f;
+        for (auto &touch : event.getTouches()){
+            if (touch.id == touchID){
+                touch.latestx = touch.x;
+                touch.latesty = touch.y;
+                touch.x = x;
+                touch.y = y;
+                event.setEventType(veEvent::VE_TOUCH_MOVE);
+                break;
+            }
+        }
+    }
+    this->_eventList.push_back(_currentEvent);
 }

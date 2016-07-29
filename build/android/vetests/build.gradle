@@ -1,5 +1,4 @@
 apply plugin: 'com.android.model.application'
-
 def ndkDir = System.getenv("ANDROID_NDK_HOME")
 def propertiesFile = project.rootProject.file('local.properties')
 if (propertiesFile.exists()) {
@@ -7,7 +6,6 @@ if (propertiesFile.exists()) {
     properties.load(propertiesFile.newDataInputStream())
     ndkDir = properties.getProperty('ndk.dir')
 }
-
 model {
     repositories {
         libs(PrebuiltLibraries) {
@@ -27,7 +25,7 @@ model {
         buildToolsVersion = "23.0.2"
 
         defaultConfig.with {
-            applicationId = "jasoncheng.voidenginetests"
+            applicationId = "com.voidengine.vetests"
             minSdkVersion.apiLevel = 18
             targetSdkVersion.apiLevel = 23
             versionCode = 1
@@ -41,7 +39,7 @@ model {
         main {
             jni {
                 source {
-                    srcDirs = ["../../../Tests", "${ndkDir}/sources/android/native_app_glue"]
+                    srcDirs = ["../../../Tests"]
                 }
 
                 dependencies {
@@ -68,15 +66,15 @@ model {
 //    }
 
     android.ndk {
-        moduleName = "voidenginetests"
+        moduleName = "vetests"
 //        CFlags.add("-I${file("../../../Engine")}".toString())
-        CFlags.add("-I${ndkDir}/sources/android/native_app_glue".toString())
+//        CFlags.add("-I${ndkDir}/sources/android/native_app_glue".toString())
         cppFlags.add("-I${file("../../../Engine")}".toString())
 //        //cppFlags += "-I${file("../../../Engine/BaseCore")}".toString()
 //        //cppFlags += "-I${file("../../../Engine/Debuger")}".toString()
 //        //cppFlags += "-I${file("../../../Engine/FileCore")}".toString()
 //        //cppFlags += "-I${file("../../../Engine/KernelCore")}".toString()
-        cppFlags.add("-I${ndkDir}/sources/android/native_app_glue".toString())
+//        cppFlags.add("-I${ndkDir}/sources/android/native_app_glue".toString())
         cppFlags.add("-I${file("../../../Dependents")}".toString())
         cppFlags.add("-I${file("../../../Dependents/freetype/include")}".toString())
 //        cppFlags.add("-I${file("../../../Dependents/gli")}".toString())
@@ -135,8 +133,12 @@ model {
 //    compile fileTree(dir: 'libs', include: ['*.jar'])
 //    compile 'com.android.support:appcompat-v7:23.3.0'
 //}
+
 tasks.whenTaskAdded { task ->
     if (task.name.contains('compile')) {
         task.dependsOn ':voidengine:distributeLib'
     }
+}
+dependencies {
+    compile project(':voidengine')
 }

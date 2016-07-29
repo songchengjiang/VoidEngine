@@ -72,6 +72,7 @@ veGizmoScale::AxesType veGizmoScale::touchDown(veViewer *viewer, const veVec2 &s
         _xLength = _yLength = _zLength = 0.0f;
     }
     
+    _latestscreenCoords = screenCoords;
     return at;
 }
 
@@ -144,12 +145,14 @@ void veGizmoScale::touchMove(veViewer *viewer, AxesType at, const veVec2 &screen
             break;
         case veGizmo::AxesType::AT_XYZ:
         {
-            deltaScl.x() = (currentPosition - _latestPosition).dotProduct(veVec3::UNIT_X);
-            deltaScl.y() = (currentPosition - _latestPosition).dotProduct(veVec3::UNIT_Y);
-            deltaScl.z() = (currentPosition - _latestPosition).dotProduct(veVec3::UNIT_Z);
+            deltaScl.x() = (screenCoords - _latestscreenCoords).dotProduct(veVec2::UNIT_X);
+            deltaScl.y() = (screenCoords - _latestscreenCoords).dotProduct(veVec2::UNIT_Y);
+//            deltaScl.z() = (currentPosition - _latestPosition).dotProduct(veVec3::UNIT_Z);
             veReal val = veMath::veAbs(deltaScl.x()) < veMath::veAbs(deltaScl.y())? deltaScl.y(): deltaScl.x();
-            val = veMath::veAbs(val) < veMath::veAbs(deltaScl.z())? deltaScl.z(): val;
-            deltaScl.z() = deltaScl.y() = deltaScl.x() = val;
+//            val = veMath::veAbs(val) < veMath::veAbs(deltaScl.z())? deltaScl.z(): val;
+            //veReal val = deltaScl.x();
+            veReal sign = 0.0f < val? 1.0f: -1.0f;
+            deltaScl.z() = deltaScl.y() = deltaScl.x() = sign * (currentPosition - _latestPosition).length();
             _xLength += deltaScl.x();
             _yLength += deltaScl.y();
             _zLength += deltaScl.z();
@@ -161,8 +164,10 @@ void veGizmoScale::touchMove(veViewer *viewer, AxesType at, const veVec2 &screen
     }
     
     _latestPosition = currentPosition;
+    _latestscreenCoords = screenCoords;
     
-    scl = deltaScl;
+    scl = deltaScl * 0.1f;
+    veLog("(%f, %f, %f)\n", scl.x(), scl.y(), scl.z());
 }
 
 void veGizmoScale::touchUp()

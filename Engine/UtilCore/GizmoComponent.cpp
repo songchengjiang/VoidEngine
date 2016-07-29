@@ -96,7 +96,6 @@ void veGizmoComponent::afterUpdate(veSceneManager *sm)
         caculateGizmoMatrix();
         _refresh = false;
     }
-
 }
 
 void veGizmoComponent::beforeRender(veSceneManager *sm, veViewer *viewer)
@@ -139,27 +138,24 @@ bool veGizmoComponent::onDetachToNode(veNode *node)
 void veGizmoComponent::caculateGizmoMatrix()
 {
     if (_attachedNodeList.empty()) return;
-//    if (_attachedNodeList.size() <= 1){
-//        updateGizmo(_attachedNodeList[0]->getNodeToWorldMatrix());
-//    }else{
-        veVec3 position; veQuat rotate;
-        veMat4 nTow;
-        for (auto &attachedNode : _attachedNodeList){
-            nTow = attachedNode->getNodeToWorldMatrix();
-            veVec3 nodePos;
-            nTow.decomposition(&nodePos, nullptr, nullptr);
-            position += nodePos;
-        }
-        position /= _attachedNodeList.size();
-        nTow.decomposition(nullptr, nullptr, &rotate);
-        updateGizmo(veMat4::transform(position, veVec3::UNIT_SCALE, rotate));
-//    }
+
+    veVec3 position, scale; veQuat rotate;
+    veMat4 nTow;
+    for (auto &attachedNode : _attachedNodeList){
+        nTow = attachedNode->getNodeToWorldMatrix();
+        veVec3 nodePos;
+        nTow.decomposition(&nodePos, &scale, &rotate);
+        position += nodePos;
+    }
+    position /= _attachedNodeList.size();
+    updateGizmo(veMat4::transform(position, veVec3::UNIT_SCALE, rotate));
 }
 
 void veGizmoComponent::applyGizmoMatrix(const veVec3 &trans, const veVec3 &scl, const veQuat &rot)
 {
     if (_attachedNodeList.empty()) return;
     
+    static veVec3 totalGizmoScale = veVec3::UNIT_SCALE;
     veVec3 npos, nscl; veQuat nrot;
     veMat4 gizmoMatInv = _gizmoNode->getMatrix();
     gizmoMatInv.inverse();
@@ -171,6 +167,7 @@ void veGizmoComponent::applyGizmoMatrix(const veVec3 &trans, const veVec3 &scl, 
         node->setMatrix(toParentMat * nodeIngizmoMat);
     }
     
+    totalGizmoScale = scl;
     updateGizmo(_gizmoNode->getMatrix() * veMat4::transform(trans, veVec3::UNIT_SCALE, rot));
 }
 

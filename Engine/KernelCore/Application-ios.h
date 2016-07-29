@@ -23,7 +23,6 @@ private:
     
     void *_glView;
     std::thread _runningThread;
-    std::mutex  _eventMutex;
     veEvent     _currentEvent;
     bool        _isRunning;
 };

@@ -149,7 +149,7 @@ public:
 				if (touchs.size() == 0) {
 					if (_latesTouchTime != 0.0) {
 						if ((_simulationTime - _latesTouchTime) < 0.4) {
-							resetCamera();
+							//resetCamera();
 						}
 						_latesTouchTime = 0.0;
 					}

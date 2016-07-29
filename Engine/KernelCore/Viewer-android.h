@@ -3,36 +3,40 @@
 
 #include "Viewer.h"
 #include <thread>
+#include <mutex>
 
 class VE_EXPORT veViewerAndroid : public veViewer
 {
+    friend class veApplicationAndroid;
 public:
-    veViewerAndroid(int width, int height, const std::string &title, veViewerAndroid *sharedViewer);
-    virtual ~veViewerAndroid();
-    
-    virtual bool makeContextCurrent();
-    virtual void swapBuffers();
-    virtual void startRender(veSceneManager *sm);
-    virtual void stopRender(veSceneManager *sm);
-    virtual void create();
-    virtual void destroy();
-    virtual void show();
-    virtual void hide();
-    virtual bool isNeedClosed() const { return false; }
 
-    void setNativeWindow(ANativeWindow *wnd) { _window = wnd; }
+    virtual ~veViewerAndroid();
+
+    virtual bool makeContextCurrent() override;
+    virtual void swapBuffers() override;
+    virtual void create() override;
+    virtual void destroy() override;
+    virtual void show() override;
+    virtual void hide() override;
+
+    virtual bool simulation(double deltaTime) override;
+    virtual void startRender() override;
+    virtual void stopRender() override;
+    void frameRender();
+    void resize(int width, int height);
+
+    void onTouchBegan(int touchID, veReal x, veReal y);
+    void onTouchEnd(int touchID, veReal x, veReal y);
+    void onTouchsMove(int n, int touchIDs[], veReal xs[], veReal ys[]);
 
 protected:
 
-    EGLDisplay _display;
-    EGLSurface _surface;
-    EGLContext _context;
-    EGLConfig  _config;
-    ANativeWindow* _window;
-    veViewerAndroid *_sharedViewer;
+    veViewerAndroid(int width, int height, const std::string &title, veViewerAndroid *sharedViewer);
 
-    bool        _isRendering;
-    std::thread _renderingThread;
+protected:
+
+    veViewerAndroid *_sharedViewer;
+    std::mutex  _eventMutex;
 };
 
 #endif

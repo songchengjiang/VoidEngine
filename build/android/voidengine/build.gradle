@@ -1,4 +1,4 @@
-apply plugin: 'com.android.model.native'
+apply plugin: 'com.android.model.library'
 
 def dependents_root = '../../../Dependents'
 
@@ -11,6 +11,7 @@ if (propertiesFile.exists()) {
 }
 
 model {
+
 
     repositories {
         libs(PrebuiltLibraries) {
@@ -159,7 +160,6 @@ model {
 //        // create("all")
 //    }
 }
-
 // This is just copy out the header file and built lib into distribution
 // directory for clint application to use; it is a small overhead of this sample:
 //    both lib and app are put inside one project space [save maintenance time]
@@ -167,7 +167,7 @@ task(distributeLib, type : Copy) {
     // trigger build library
     dependsOn assemble
     into './'
-    from('build/outputs/native/release/lib') {
+    from('build/intermediates/binaries/release/lib') {
         into 'libs/'
     }
 }

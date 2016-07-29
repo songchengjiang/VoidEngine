@@ -34,7 +34,7 @@ void veViewerIOS::swapBuffers()
 
 bool veViewerIOS::simulation(double deltaTime)
 {
-    if (!_sceneManager.valid() || !_camera.valid()) return false;
+    if (!_sceneManager.valid()) return false;
     _sceneManager->setDeltaTime(deltaTime);
     _sceneManager->event(this);
     _eventList.clear();

@@ -17,9 +17,6 @@ veViewer* veApplicationIOS::createViewer(int width, int height, const std::strin
 {
     auto viewer = new veViewerIOS(width, height, title, static_cast<veViewerIOS *>(sharedContextViewer));
     _viewerList.push_back(viewer);
-    _currentEvent.setEventType(veEvent::VE_WIN_INIT);
-    _currentEvent.setWindowWidth(width);
-    _currentEvent.setWindowHeight(height);
     return viewer;
 }
 

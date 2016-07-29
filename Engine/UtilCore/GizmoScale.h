@@ -26,6 +26,7 @@ protected:
     veReal _xLength;
     veReal _yLength;
     veReal _zLength;
+    veVec2 _latestscreenCoords;
 };
 
 #endif
