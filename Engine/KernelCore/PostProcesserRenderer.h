@@ -9,7 +9,7 @@ public:
 	vePostProcesserRenderer();
 	~vePostProcesserRenderer();
 
-	void render(veNode *node, vePass *pass, veCamera *camera);
+	void render(veNode *node, vePass *pass, veCamera *camera, unsigned int contextID);
 };
 
 #endif

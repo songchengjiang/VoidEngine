@@ -5,14 +5,6 @@
 #include "TextureManager.h"
 #include <algorithm>
 
-const std::string veMaterial::SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY = "SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY";
-const std::string veMaterial::SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ENTITY = "SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ENTITY";
-const std::string veMaterial::SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY = "SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY";
-const std::string veMaterial::SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ENTITY = "SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ENTITY";
-
-const std::string veMaterial::SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ANIM_ENTITY = "SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ANIM_ENTITY";
-const std::string veMaterial::SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ENTITY = "SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ENTITY";
-
 vePass* vePass::CURRENT_PASS = nullptr;
 
 vePass::vePass()
@@ -28,10 +20,14 @@ vePass::vePass()
 	, _stencilFunc(veStencilFunc::ALWAYS)
 	, _stencilOp(veStencilOp::KEEP)
 	, _castShadow(true)
-	, _program(0)
 	, _needLinkProgram(true)
 	, _mask(0xffffffff)
 {
+    _programBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        return glCreateProgram();
+    }, [](GLuint prog){
+        glDeleteProgram(prog);
+    });
 }
 
 vePass::~vePass()
@@ -53,7 +49,7 @@ bool vePass::apply(const veRenderCommand &command)
 	unsigned int texUnit = 0;
 	for (auto &tex : _textures) {
 		glActiveTexture(GL_TEXTURE0 + texUnit);
-		tex.second->bind();
+		tex.second->bind(command.contextID);
 		++texUnit;
 	}
 
@@ -193,34 +189,32 @@ veUniform* vePass::removeUniform(size_t idx)
     return uniform;
 }
 
-void vePass::needLink()
+void vePass::reloadProgram()
 {
+    _programBuffer->destroyAllData();
 	_needLinkProgram = true;
 }
 
 void vePass::applyProgram(const veRenderCommand &command)
 {
-	if (_needLinkProgram) {
+    auto program = _programBuffer->getData(command.contextID);
+	if (_needLinkProgram || !program) {
 		//glUseProgram(0);
-		if (_program) {
-			glDeleteProgram(_program);
-			_program = 0;
-		}
-		if (!_program)
-			_program = glCreateProgram();
+		if (!program)
+			program = _programBuffer->createData(command.contextID);
 		for (auto &iter : _shaders) {
 			GLuint id = iter.second->compile();
-			glAttachShader(_program, id);
+			glAttachShader(program, id);
 		}
 		if (_transformFeedback.valid()) {
 			auto &varyingList = _transformFeedback->getVaryingList();
-			glTransformFeedbackVaryings(_program, GLsizei(varyingList.size()), &varyingList[0], GL_INTERLEAVED_ATTRIBS);
+			glTransformFeedbackVaryings(program, GLsizei(varyingList.size()), &varyingList[0], GL_INTERLEAVED_ATTRIBS);
 		}
 
-		glLinkProgram(_program);
+		glLinkProgram(program);
 		_needLinkProgram = false;
 	}
-	glUseProgram(_program);
+	glUseProgram(program);
 }
 
 void vePass::applyUniforms(const veRenderCommand &command)

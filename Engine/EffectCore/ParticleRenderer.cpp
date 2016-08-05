@@ -5,14 +5,48 @@
 #include "ParticleSystem.h"
 
 veParticleRenderer::veParticleRenderer()
-    : _vao(0)
-    , _vbo(0)
-    , _ibo(0)
-    , _mvpbo(0)
-    , _colorbo(0)
-    , _instanceCount(0)
+    : _instanceCount(0)
     , _needUpdate(true)
 {
+    _vaoBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint vao;
+        glGenVertexArrays(1, &vao);
+        return vao;
+    }, [](GLuint vao){
+        glDeleteVertexArrays(1, &vao);
+    });
+    
+    _vboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        return vbo;
+    }, [](GLuint vbo){
+        glDeleteBuffers(1, &vbo);
+    });
+    
+    _iboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint ibo;
+        glGenBuffers(1, &ibo);
+        return ibo;
+    }, [](GLuint ibo){
+        glDeleteBuffers(1, &ibo);
+    });
+    
+    _mvpboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        return vbo;
+    }, [](GLuint vbo){
+        glDeleteBuffers(1, &vbo);
+    });
+    
+    _colorboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        return vbo;
+    }, [](GLuint vbo){
+        glDeleteBuffers(1, &vbo);
+    });
 }
 
 veParticleRenderer::~veParticleRenderer()
@@ -28,14 +62,14 @@ void veParticleRenderer::draw(veRenderCommand &command)
         return;
     
     if (!_indices.empty()){
-        glBindVertexArray(_vao);
+        glBindVertexArray(_vaoBuffer->getData(command.contextID));
         glDrawElements(GL_TRIANGLES, GLsizei(_indices.size()), GL_UNSIGNED_SHORT, nullptr);
     }
 }
 
-void veParticleRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
+void veParticleRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID)
 {
-    updateBuffer(renderableObj, camera);
+    updateBuffer(renderableObj, camera, contextID);
     
     veRenderCommand rc;
     rc.mask = node->getMask();
@@ -44,6 +78,7 @@ void veParticleRenderer::render(veNode *node, veRenderableObject *renderableObj,
     rc.sceneManager = camera->getSceneManager();
     rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
     rc.renderer = this;
+    rc.contextID = contextID;
     
     auto material = renderableObj->getMaterial();
     for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {

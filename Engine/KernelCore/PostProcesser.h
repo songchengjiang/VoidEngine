@@ -19,7 +19,7 @@ public:
 	void setMaterialArray(veMaterialArray *material) { _materials = material;}
 	veMaterialArray* getMaterialArray() { return _materials.get(); }
 
-	void process(veRenderPipeline *pipeline, veFrameBufferObject *fb, veCamera *camera);
+	void process(veRenderPipeline *pipeline, veFrameBufferObject *fb, veCamera *camera, unsigned int contextID);
 
 private:
 

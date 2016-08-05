@@ -3,11 +3,39 @@
 #include "Gizmo.h"
 
 veGizmoRenderer::veGizmoRenderer()
-    : _vao(0)
-    , _vbo(0)
-    , _refresh(true)
+    : _refresh(true)
 {
-    _ibo[LINES_INDICES] = _ibo[TRIANGLES_INDICES] = 0;
+    _vaoBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint vao;
+        glGenVertexArrays(1, &vao);
+        return vao;
+    }, [](GLuint vao){
+        glDeleteVertexArrays(1, &vao);
+    });
+    
+    _vboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        return vbo;
+    }, [](GLuint vbo){
+        glDeleteBuffers(1, &vbo);
+    });
+    
+    _iboBuffers[LINES_INDICES] = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint ibo;
+        glGenBuffers(1, &ibo);
+        return ibo;
+    }, [](GLuint ibo){
+        glDeleteBuffers(1, &ibo);
+    });
+    
+    _iboBuffers[TRIANGLES_INDICES] = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint ibo;
+        glGenBuffers(1, &ibo);
+        return ibo;
+    }, [](GLuint ibo){
+        glDeleteBuffers(1, &ibo);
+    });
 }
 
 veGizmoRenderer::~veGizmoRenderer()
@@ -15,17 +43,19 @@ veGizmoRenderer::~veGizmoRenderer()
 
 }
 
-void veGizmoRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
+void veGizmoRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID)
 {
-    if (_refresh && !_vertices.empty()){
-        if (!_vao) {
-            glGenVertexArrays(1, &_vao);
+    auto vao = _vaoBuffer->getData(contextID);
+    if ((_refresh || !vao) && !_vertices.empty()){
+        if (!vao) {
+            vao = _vaoBuffer->createData(contextID);
         }
-        glBindVertexArray(_vao);
+        glBindVertexArray(vao);
         
-        if (!_vbo) {
-            glGenBuffers(1, &_vbo);
-            glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+        auto vbo = _vboBuffer->getData(contextID);
+        if (!vbo) {
+            vbo = _vboBuffer->createData(contextID);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
             unsigned int stride = sizeof(GLfloat) * getVertexStride();
             //v
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, 0);
@@ -36,22 +66,24 @@ void veGizmoRenderer::render(veNode *node, veRenderableObject *renderableObj, ve
             glEnableVertexAttribArray(1);
         }
         
-        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(_vertices[0]), _vertices.buffer(), GL_STATIC_DRAW);
     
         if (!_indices[LINES_INDICES].empty()){
-            if (!_ibo[LINES_INDICES]) {
-                glGenBuffers(1, &_ibo[LINES_INDICES]);
+            auto ibo = _iboBuffers[LINES_INDICES]->getData(contextID);
+            if (!ibo) {
+                ibo = _iboBuffers[LINES_INDICES]->createData(contextID);
             }
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo[LINES_INDICES]);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices[LINES_INDICES].size() * sizeof(_indices[LINES_INDICES][0]), _indices[LINES_INDICES].buffer(), GL_STATIC_DRAW);
         }
         
         if (!_indices[TRIANGLES_INDICES].empty()){
-            if (!_ibo[TRIANGLES_INDICES]) {
-                glGenBuffers(1, &_ibo[TRIANGLES_INDICES]);
+            auto ibo = _iboBuffers[TRIANGLES_INDICES]->getData(contextID);
+            if (!ibo) {
+                ibo = _iboBuffers[TRIANGLES_INDICES]->createData(contextID);
             }
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo[TRIANGLES_INDICES]);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices[TRIANGLES_INDICES].size() * sizeof(_indices[TRIANGLES_INDICES][0]), _indices[TRIANGLES_INDICES].buffer(), GL_STATIC_DRAW);
         }
         
@@ -65,6 +97,7 @@ void veGizmoRenderer::render(veNode *node, veRenderableObject *renderableObj, ve
     rc.sceneManager = camera->getSceneManager();
     rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
     rc.renderer = this;
+    rc.contextID = contextID;
     
     auto material = renderableObj->getMaterial();
     for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {
@@ -87,15 +120,15 @@ void veGizmoRenderer::draw(veRenderCommand &command)
         return;
     if (!command.pass->apply(command))
         return;
-    glBindVertexArray(_vao);
+    glBindVertexArray(_vaoBuffer->getData(command.contextID));
     
     if (!_indices[LINES_INDICES].empty()) {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo[LINES_INDICES]);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _iboBuffers[LINES_INDICES]->getData(command.contextID));
         glDrawElements(GL_LINES, GLsizei(_indices[LINES_INDICES].size()), GL_UNSIGNED_SHORT, nullptr);
     }
     
     if (!_indices[TRIANGLES_INDICES].empty()) {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo[TRIANGLES_INDICES]);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _iboBuffers[TRIANGLES_INDICES]->getData(command.contextID));
         glDrawElements(GL_TRIANGLES, GLsizei(_indices[TRIANGLES_INDICES].size()), GL_UNSIGNED_SHORT, nullptr);
     }
 }

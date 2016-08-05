@@ -357,6 +357,7 @@ void veViewerDesktop::collectWindowSizeEvent(GLFWwindow* window, int width, int 
     event.setWindowHeight(height);
     if (viewer->getCamera())
         viewer->getCamera()->resize(event.getWindowWidth(), event.getWindowHeight());
+    viewer->_sceneManager->reloadRenderContexts();
     viewer->_eventList.push_back(event);
 }
 

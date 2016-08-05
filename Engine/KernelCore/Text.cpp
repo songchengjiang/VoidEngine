@@ -46,7 +46,7 @@ void veText::update(veNode *node, veSceneManager *sm)
 	veRenderableObject::update(node, sm);
 }
 
-void veText::render(veNode *node, veCamera *camera)
+void veText::render(veNode *node, veCamera *camera, unsigned int contextID)
 {
     auto &vp = camera->getViewport();
     veVec2 size = veVec2(vp.width - vp.x, vp.height - vp.y);
@@ -57,7 +57,7 @@ void veText::render(veNode *node, veCamera *camera)
         _boundingBox.min() = veVec3(-(_texture->getWidth() * 0.5f), -(_texture->getHeight() * 0.5f), -0.5f);
         _boundingBox.max() = veVec3(_texture->getWidth() * 0.5f, _texture->getHeight() * 0.5f, 0.5f);
     }
-    veSurface::render(node, camera);
+    veSurface::render(node, camera, contextID);
 }
 
 void veText::setFont(veFont *font)

@@ -23,7 +23,7 @@ public:
 	veMaterial* getMaterial() { return _material.get(); }
 	const veMaterial* getMaterial() const { return _material.get(); }
 
-	void render(veCamera *camera);
+	void render(veCamera *camera, unsigned int contextID);
 
 protected:
 

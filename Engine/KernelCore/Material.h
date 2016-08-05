@@ -7,6 +7,7 @@
 #include "RenderCommand.h"
 #include "RenderState.h"
 #include "TransformFeedback.h"
+#include "GLDataBuffer.h"
 #include <unordered_map>
 
 struct veRenderCommand;
@@ -109,7 +110,7 @@ public:
 
 	void setApplyFunctionCallback(const ApplyFunctionCallback &callback) { _callback = callback; }
 
-	void needLink();
+	void reloadProgram();
 
 private:
 
@@ -132,7 +133,7 @@ private:
 	veStencilOp   _stencilOp;
 	unsigned int _mask;
 	//GLenum _polygonMode;
-	GLuint _program;
+    VE_Ptr<veGLDataBuffer> _programBuffer;
 	bool    _needLinkProgram;
 	std::map<veShader::Type, VE_Ptr<veShader> >           _shaders;
 	std::vector< std::pair<TextureType, VE_Ptr<veTexture> > >            _textures;
@@ -164,13 +165,6 @@ private:
 class VE_EXPORT veMaterial
 {
 public:
-
-	static const std::string SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY;
-	static const std::string SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ENTITY;
-	static const std::string SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY;
-	static const std::string SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ENTITY;
-	static const std::string SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ANIM_ENTITY;
-	static const std::string SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ENTITY;
 
 	veMaterial();
 	~veMaterial();

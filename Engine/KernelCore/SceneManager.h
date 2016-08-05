@@ -73,7 +73,7 @@ public:
 
 	const veCameraList& getCameraList() const { return _cameraList; }
 	const veLightListMap& getLightListMap() const { return _lightListMap; }
-	void setSkyBox(veSkyBox *skybox) { _skyBox = skybox; needReload(); }
+	void setSkyBox(veSkyBox *skybox) { _skyBox = skybox; }
 	veSkyBox* getSkyBox() const { return _skyBox.get(); }
 	void setAmbientColor(const veVec3 &color) { _ambient = color; }
 	const veVec3& getAmbientColor() const { return _ambient; }
@@ -86,8 +86,8 @@ public:
 
 	veRenderPipeline* getRenderPipeline() const { return _renderPipeline.get(); }
 
-	void needReload();
-	bool isNeedReload() { return _needReload; }
+    void setResourceRecoveredIntervalTime(double time) { _resourceRecoveredIntervalTime = time; }
+    void reloadRenderContexts();
 
     void event(veViewer *viewer);
 	void update();
@@ -118,7 +118,6 @@ protected:
 	veCameraList                _cameraList;
 	veLightListMap              _lightListMap;
     veParticleSystemList        _particleSystemList;
-	VE_Ptr<veFrameBufferObject> _postProcesserFBO;
 	veVec3                      _ambient;
 	VE_Ptr<veRenderPipeline>    _renderPipeline;
 
@@ -136,9 +135,9 @@ protected:
 	std::thread _renderingThread;
 	bool        _stopThreading;
 
-	bool _needReload;
-
+    bool   _needReloadRenderContexts;
 	double _deltaTime;
+    double _resourceRecoveredIntervalTime;
 	double _latestResourceRecoveredTime;
 };
 

@@ -9,6 +9,7 @@
 #include "KernelCore/Camera.h"
 #include "KernelCore/SceneManager.h"
 #include "KernelCore/MatrixPtr.h"
+#include "KernelCore/GLDataBuffer.h"
 #include "Constants.h"
 
 class veDebugRenderer : public veRenderer
@@ -19,15 +20,34 @@ public:
 		: _debuger(debuger)
         , _firstUpdate(true)
 		, drawCount(0)
-		, vao(0)
-		, vbo(0)
-	{}
+	{
+        _vaoBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+            GLuint vao;
+            glGenVertexArrays(1, &vao);
+            return vao;
+        }, [](GLuint vao){
+            glDeleteVertexArrays(1, &vao);
+        });
+        
+        _vboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+            GLuint vbo;
+            glGenBuffers(1, &vbo);
+            return vbo;
+        }, [](GLuint vbo){
+            glDeleteBuffers(1, &vbo);
+        });
+    }
 
-	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override {
+	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID) override {
+        auto vao = _vaoBuffer->getData(contextID);
 		if (!vao) {
-			glGenVertexArrays(1, &vao);
-			glGenBuffers(1, &vbo);
+            vao = _vaoBuffer->createData(contextID);
 		}
+        
+        auto vbo = _vboBuffer->getData(contextID);
+        if (!vbo){
+            vbo = _vboBuffer->createData(contextID);
+        }
 
 		glBindVertexArray(vao);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -58,6 +78,7 @@ public:
 		rc.camera = camera;
 		rc.sceneManager = camera->getSceneManager();
 		rc.renderer = this;
+        rc.contextID = contextID;
 		camera->getRenderQueue()->pushCommand(0, veRenderQueue::RENDER_QUEUE_ENTITY, rc);
 	}
 
@@ -65,7 +86,7 @@ public:
 		if (!isNeedRendering())
 			return;
 		command.pass->apply(command);
-		glBindVertexArray(vao);
+		glBindVertexArray(_vaoBuffer->getData(command.contextID));
         if (0 < drawCount){
             glDrawArrays(GL_LINES, 0, GLsizei(drawCount));
         }
@@ -73,8 +94,8 @@ public:
 
 	veRealArray vertices;
 	size_t      drawCount;
-	GLuint      vao;
-	GLuint      vbo;
+    VE_Ptr<veGLDataBuffer> _vaoBuffer;
+    VE_Ptr<veGLDataBuffer> _vboBuffer;
     std::mutex  dataMutex;
 
 private:
@@ -124,7 +145,7 @@ void veDebuger::update(veNode *node, veSceneManager *sm)
 	}
 }
 
-void veDebuger::render(veNode *node, veCamera *camera)
+void veDebuger::render(veNode *node, veCamera *camera, unsigned int contextID)
 {
 	//if (_isDrawBoundingBoxWireframe) {
 	//	renderBoundingBoxWireframe(_attachedNode->getBoundingBox(), nTow);
@@ -154,7 +175,7 @@ void veDebuger::render(veNode *node, veCamera *camera)
 		}
 	}
 
-	veRenderableObject::render(node, camera);
+	veRenderableObject::render(node, camera, contextID);
 }
 
 void veDebuger::debugDrawLine(const veVec3 &start, const veVec3 &end, const veVec4 &color)

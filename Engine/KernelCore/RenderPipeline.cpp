@@ -44,7 +44,7 @@ void veRenderPipeline::rendering(veViewer *viewer)
 //        fillRenderQueues(iter.get());
 //        sortRenderQueues(iter.get());
 //    }
-	renderShadows();
+	renderShadows(viewer);
 	renderCameras(viewer);
 }
 
@@ -60,10 +60,10 @@ bool veRenderPipeline::isNodeVisible(veNode *node)
 	return false;
 }
 
-void veRenderPipeline::visitRenderQueues(veCamera *camera)
+void veRenderPipeline::visitRenderQueues(veCamera *camera, unsigned int contextID)
 {
     cullRenderQueues(camera);
-    fillRenderQueues(camera);
+    fillRenderQueues(camera, contextID);
     sortRenderQueues(camera);
 }
 
@@ -79,7 +79,7 @@ void veRenderPipeline::cullRenderQueues(veCamera *camera)
 	}
 }
 
-void veRenderPipeline::fillRenderQueues(veCamera *camera)
+void veRenderPipeline::fillRenderQueues(veCamera *camera, unsigned int contextID)
 {
 	//std::unique_lock<std::mutex> lock(_visitMutex);
 	auto &nodeList = _visibleNodeList[camera];
@@ -87,7 +87,7 @@ void veRenderPipeline::fillRenderQueues(veCamera *camera)
 		for (auto &node : nodeList) {
 			for (unsigned int i = 0; i < node->getRenderableObjectCount(); ++i) {
 				if (node->getRenderableObject(i)->isVisible())
-					node->getRenderableObject(i)->render(node.get(), camera);
+					node->getRenderableObject(i)->render(node.get(), camera, contextID);
 			}
 		}
 	}
@@ -146,14 +146,14 @@ void veRenderPipeline::renderCameras(veViewer *viewer)
             !camera->getViewport().isNull() &&
             camera->getFrameBufferObject()) {
 			veRenderState::instance()->resetState();
-            visitRenderQueues(camera);
-			renderScene(camera);
+            visitRenderQueues(camera, viewer->getContextID());
+			renderScene(camera, viewer->getContextID());
 		}
 	}
 	if (viewer->getCamera()) {
 		veRenderState::instance()->resetState();
         if (viewer->getCamera()->isVisible()){
-            visitRenderQueues(viewer->getCamera());
+            visitRenderQueues(viewer->getCamera(), viewer->getContextID());
             auto vp = viewer->getCamera()->getViewport();
             viewer->getCamera()->setViewport({
                   vp.x * (int)veConfiguration::VE_DEVICE_PIXEL_RATIO
@@ -161,7 +161,7 @@ void veRenderPipeline::renderCameras(veViewer *viewer)
                 , vp.width * (int)veConfiguration::VE_DEVICE_PIXEL_RATIO
                 , vp.height * (int)veConfiguration::VE_DEVICE_PIXEL_RATIO
             });
-            renderScene(viewer->getCamera());
+            renderScene(viewer->getCamera(), viewer->getContextID());
             viewer->getCamera()->setViewport(vp);
         }
 	}
@@ -198,10 +198,10 @@ void veRenderPipeline::draw(veCamera *camera, veRenderQueue::RenderGroup &rg, co
 	}
 }
 
-void veRenderPipeline::renderScene(veCamera *camera)
+void veRenderPipeline::renderScene(veCamera *camera, unsigned int contextID)
 {
 	if (camera->getFrameBufferObject()) {
-		camera->getFrameBufferObject()->bind(camera->getClearMask());
+		camera->getFrameBufferObject()->bind(contextID, camera->getClearMask());
 	}
     prepareForDraws(camera);
     draw(camera, camera->getRenderQueue()->deferredRenderGroup);
@@ -211,7 +211,7 @@ void veRenderPipeline::renderScene(veCamera *camera)
 	}
 }
 
-void veRenderPipeline::renderDirectionalLightShadow(veLight *light)
+void veRenderPipeline::renderDirectionalLightShadow(veLight *light, veViewer *viewer)
 {
 	if (!light->isShadowEnabled()) return;
 	auto dLight = static_cast<veDirectionalLight *>(light);
@@ -228,16 +228,16 @@ void veRenderPipeline::renderDirectionalLightShadow(veLight *light)
     
 	veRenderState::instance()->resetState();
 	_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dLight->getShadowTexture());
-	_shadowingFBO->bind(GL_DEPTH_BUFFER_BIT);
+	_shadowingFBO->bind(viewer->getContextID(), GL_DEPTH_BUFFER_BIT);
 	//glClear(GL_DEPTH_BUFFER_BIT);
-    visitRenderQueues(dLight->getShadowCamera());
+    visitRenderQueues(dLight->getShadowCamera(), viewer->getContextID());
     prepareForDraws(dLight->getShadowCamera());
 	draw(dLight->getShadowCamera(), dLight->getShadowCamera()->getRenderQueue()->deferredRenderGroup, shadowPass);
     draw(dLight->getShadowCamera(), dLight->getShadowCamera()->getRenderQueue()->forwardRenderGroup, shadowPass);
 	_shadowingFBO->unBind();
 }
 
-void veRenderPipeline::renderPointLightShadow(veLight *light)
+void veRenderPipeline::renderPointLightShadow(veLight *light, veViewer *viewer)
 {
 	if (!light->isShadowEnabled()) return;
 	auto pLight = static_cast<vePointLight *>(light);
@@ -255,9 +255,9 @@ void veRenderPipeline::renderPointLightShadow(veLight *light)
 	for (unsigned short i = 0; i < 6; ++i) {
 		veRenderState::instance()->resetState();
 		_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, pLight->getShadowTexture());
-		_shadowingFBO->bind(GL_DEPTH_BUFFER_BIT);
+		_shadowingFBO->bind(viewer->getContextID(), GL_DEPTH_BUFFER_BIT);
 		//glClear(GL_DEPTH_BUFFER_BIT);
-        visitRenderQueues(pLight->getShadowCamera(i));
+        visitRenderQueues(pLight->getShadowCamera(i), viewer->getContextID());
         prepareForDraws(pLight->getShadowCamera(i));
 		draw(pLight->getShadowCamera(i), pLight->getShadowCamera(i)->getRenderQueue()->deferredRenderGroup, shadowPass);
         draw(pLight->getShadowCamera(i), pLight->getShadowCamera(i)->getRenderQueue()->forwardRenderGroup, shadowPass);
@@ -265,7 +265,7 @@ void veRenderPipeline::renderPointLightShadow(veLight *light)
 	}
 }
 
-void veRenderPipeline::renderSpotLightShadow(veLight *light)
+void veRenderPipeline::renderSpotLightShadow(veLight *light, veViewer *viewer)
 {
 	if (!light->isShadowEnabled()) return;
 	auto sLight = static_cast<veSpotLight *>(light);
@@ -282,9 +282,9 @@ void veRenderPipeline::renderSpotLightShadow(veLight *light)
     
 	veRenderState::instance()->resetState();
 	_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, sLight->getShadowTexture());
-	_shadowingFBO->bind(GL_DEPTH_BUFFER_BIT);
+	_shadowingFBO->bind(viewer->getContextID(), GL_DEPTH_BUFFER_BIT);
 	//glClear(GL_DEPTH_BUFFER_BIT);
-    visitRenderQueues(sLight->getShadowCamera());
+    visitRenderQueues(sLight->getShadowCamera(), viewer->getContextID());
     prepareForDraws(sLight->getShadowCamera());
 	draw(sLight->getShadowCamera(), sLight->getShadowCamera()->getRenderQueue()->deferredRenderGroup, shadowPass);
     draw(sLight->getShadowCamera(), sLight->getShadowCamera()->getRenderQueue()->forwardRenderGroup, shadowPass);
@@ -334,7 +334,7 @@ vePass* veRenderPipeline::getOrCreateOmnidirectionalShadowPass(const std::string
 	return pass;
 }
 
-void veRenderPipeline::renderShadows()
+void veRenderPipeline::renderShadows(veViewer *viewer)
 {
 	auto &lightListMap = _sceneManager->getLightListMap();
 	if (!lightListMap.empty()) {
@@ -344,7 +344,7 @@ void veRenderPipeline::renderShadows()
 				auto &pointLightList = iter->second;
 				for (auto &light : pointLightList) {
                     if (light->isEnabled())
-                        renderPointLightShadow(light.get());
+                        renderPointLightShadow(light.get(), viewer);
 				}
 			}
 		}
@@ -355,7 +355,7 @@ void veRenderPipeline::renderShadows()
 				auto &spotLightList = iter->second;
 				for (auto &light : spotLightList) {
                     if (light->isEnabled())
-                        renderSpotLightShadow(light.get());
+                        renderSpotLightShadow(light.get(), viewer);
 				}
 			}
 		}
@@ -366,7 +366,7 @@ void veRenderPipeline::renderShadows()
 				auto &directionalLightList = iter->second;
 				for (auto &light : directionalLightList) {
                     if (light->isEnabled())
-                        renderDirectionalLightShadow(light.get());
+                        renderDirectionalLightShadow(light.get(), viewer);
 				}
 			}
 		}

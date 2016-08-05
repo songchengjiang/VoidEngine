@@ -14,13 +14,13 @@ veBillboardRenderer::~veBillboardRenderer()
 
 }
 
-void veBillboardRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
+void veBillboardRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID)
 {
 	if (_firstUpdate) {
 		_originBoundingBox = renderableObj->getBoundingBox();
 		_firstUpdate = false;
 	}
-	updateBuffer();
+	updateBuffer(contextID);
 
 	veQuat cameraRot;
 	camera->getNodeToWorldMatrix().decomposition(nullptr, nullptr, &cameraRot);
@@ -35,6 +35,7 @@ void veBillboardRenderer::render(veNode *node, veRenderableObject *renderableObj
 	rc.sceneManager = camera->getSceneManager();
 	rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
 	rc.renderer = this;
+    rc.contextID = contextID;
 
     auto material = renderableObj->getMaterial();
     for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {

@@ -24,7 +24,7 @@ public:
 
 	virtual bool handle(veNode *node, veSceneManager *sm, veViewer *viewer, const veEvent &event) { return false; }
 	virtual void update(veNode *node, veSceneManager *sm);
-	virtual void render(veNode *node, veCamera *camera);
+	virtual void render(veNode *node, veCamera *camera, unsigned int contextID);
 	virtual bool intersectWith(veRay *ray, veNode *node) { return false; };
 
 	void setVisible(bool isVis) { _isVisible = isVis; }

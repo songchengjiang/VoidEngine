@@ -71,7 +71,7 @@ public:
 
 	//virtual void update(veNode *node, veSceneManager *sm) override;
 
-    virtual void render(veNode *node, veCamera *camera) override;
+    virtual void render(veNode *node, veCamera *camera, unsigned int contextID) override;
     virtual void update(veNode *node, veSceneManager *sm) override;
     virtual bool intersectWith(veRay *ray, veNode *node) override;
     
@@ -113,7 +113,7 @@ protected:
     void updateBoundingBox();
     bool intersectWith(veRay *ray, veVec3 &position, veVec3 &normal);
 	void generateTransformFeedbackBuffer();
-	GLuint getTransformFeedbackBuffer() { return _transformFeedbackBuffer; }
+	GLuint getTransformFeedbackBuffer(unsigned int contextID) { return _transformFeedbackBuffer->getData(contextID); }
 	GLsizeiptr getTransformFeedbackBufferSize() { return _transformFeedbackBufferSize; }
 
 protected:
@@ -122,7 +122,8 @@ protected:
 	std::vector<VertexAtrribute>       _attributes;
 	std::vector<Primitive>             _primitives;
 	std::vector< VE_Ptr<veBone> >      _bones;
-	GLuint                             _transformFeedbackBuffer;
+    VE_Ptr<veGLDataBuffer>             _transformFeedbackBuffer;
+    unsigned int                       _currentContextID;
 	GLsizeiptr                         _transformFeedbackBufferSize;
 	unsigned int                       _vertexStride;
 	bool                               _needRefresh;

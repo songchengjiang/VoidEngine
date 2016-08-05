@@ -34,6 +34,8 @@ public:
     void setSceneManager(veSceneManager *sm) { _sceneManager = sm; }
     veSceneManager* getSceneManager() { return _sceneManager.get(); }
     
+    unsigned int getContextID() const { return _contextID; }
+    
 protected:
     
     int                    _width;
@@ -45,6 +47,7 @@ protected:
     veEvent                _currentEvent;
     
     bool                   _isRunning;
+    unsigned int           _contextID;
 };
 
 #endif

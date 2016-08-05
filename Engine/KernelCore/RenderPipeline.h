@@ -26,17 +26,17 @@ public:
 
 protected:
 
-    void visitRenderQueues(veCamera *camera);
+    void visitRenderQueues(veCamera *camera, unsigned int contextID);
 	void cullRenderQueues(veCamera *camera);
-	void fillRenderQueues(veCamera *camera);
+	void fillRenderQueues(veCamera *camera, unsigned int contextID);
 	void sortRenderQueues(veCamera *camera);
-	void renderShadows();
+	void renderShadows(veViewer *viewer);
 	void renderCameras(veViewer *viewer);
-	virtual void renderScene(veCamera *camera) = 0;
+	virtual void renderScene(veCamera *camera, unsigned int contextID) = 0;
 
-	void renderDirectionalLightShadow(veLight *light);
-	void renderPointLightShadow(veLight *light);
-	void renderSpotLightShadow(veLight *light);
+	void renderDirectionalLightShadow(veLight *light, veViewer *viewer);
+	void renderPointLightShadow(veLight *light, veViewer *viewer);
+	void renderSpotLightShadow(veLight *light, veViewer *viewer);
 
 	vePass* getOrCreateDirectionalShadowPass(const std::string &vDef, const std::string &fDef);
 	vePass* getOrCreateOmnidirectionalShadowPass(const std::string &vDef, const std::string &fDef);

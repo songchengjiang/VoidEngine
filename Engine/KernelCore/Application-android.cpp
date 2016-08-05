@@ -50,6 +50,7 @@ JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfacePause
 JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfaceResume
         (JNIEnv *env, jclass jthis, jobject surfaceview)
 {
+    static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->getSceneManager()->reloadRenderContexts();
     veLog("nativeOnSurfaceResume");
 }
 
@@ -86,6 +87,7 @@ JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfaceChang
 {
     if (0 < veApplication::instance()->getViewerCount()) {
         static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->resize(width, height);
+        static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->getSceneManager()->reloadRenderContexts();
     }
      veLog("nativeOnSurfaceChanged");
 }

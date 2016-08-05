@@ -269,7 +269,7 @@ void veOctreeSceneManager::renderImp(veViewer *viewer)
             }
         }
     }
-
+    
 	viewer->swapBuffers();
 }
 

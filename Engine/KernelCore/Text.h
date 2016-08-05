@@ -14,7 +14,7 @@ public:
 
 	virtual bool handle(veNode *node, veSceneManager *sm, veViewer *viewer, const veEvent &event) override;
 	virtual void update(veNode *node, veSceneManager *sm) override;
-    virtual void render(veNode *node, veCamera *camera) override;
+    virtual void render(veNode *node, veCamera *camera, unsigned int contextID) override;
 
 	void setFont(veFont *font);
 	const veFont* getFont() const { return _font.get(); }

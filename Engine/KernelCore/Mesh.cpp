@@ -12,8 +12,16 @@ veMesh::veMesh(veSceneManager *sm)
 	, _vertexStride(0)
 	, _transformFeedbackBuffer(0)
 	, _transformFeedbackBufferSize(0)
+    , _currentContextID(0)
 {
     _renderer = new veMeshRenderer;
+    _transformFeedbackBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        return vbo;
+    }, [](GLuint vbo){
+        glDeleteBuffers(1, &vbo);
+    });
 }
 
 veMesh::~veMesh()
@@ -21,10 +29,11 @@ veMesh::~veMesh()
 
 }
 
-void veMesh::render(veNode *node, veCamera *camera)
+void veMesh::render(veNode *node, veCamera *camera, unsigned int contextID)
 {
+    _currentContextID = contextID;
     generateTransformFeedbackBuffer();
-    veRenderableObject::render(node, camera);
+    veRenderableObject::render(node, camera, contextID);
     _needRefresh = false;
 }
 
@@ -212,13 +221,14 @@ void veMesh::caculateBoundingBox()
 
 void veMesh::generateTransformFeedbackBuffer()
 {
-	if (_needRefresh && !_bones.empty()) {
+    auto tfb = _transformFeedbackBuffer->getData(_currentContextID);
+	if ((_needRefresh || !tfb) && !_bones.empty()) {
 		unsigned int stride = (3 + 3) * sizeof(GLfloat);
 		unsigned int bufSize = stride * getVertexCount();
-		if (!_transformFeedbackBuffer) {
-			glGenBuffers(1, &_transformFeedbackBuffer);
+		if (!tfb) {
+            tfb = _transformFeedbackBuffer->createData(_currentContextID);
 		}
-		glBindBuffer(GL_ARRAY_BUFFER, _transformFeedbackBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, tfb);
 		glBufferData(GL_ARRAY_BUFFER, bufSize, nullptr, GL_DYNAMIC_COPY);
 		_transformFeedbackBufferSize = bufSize;
 	}
@@ -228,11 +238,11 @@ void veMesh::traversePrimitives(const PrimitiveCallback &callback)
 {
 	for (auto &primitive : _primitives) {
 		if (primitive.primitiveType == Primitive::TRIANGLES) {
-			if (!_bones.empty() && _transformFeedbackBuffer) {
+			if (!_bones.empty()) {
 				unsigned int stride = (3 + 3);
 				unsigned int vOffset = 0;
 				unsigned int nOffset = 3;
-				glBindBuffer(GL_ARRAY_BUFFER, _transformFeedbackBuffer);
+				glBindBuffer(GL_ARRAY_BUFFER, _transformFeedbackBuffer->getData(_currentContextID));
 				veReal *vertices = (veReal *)glMapBufferRange(GL_ARRAY_BUFFER, 0, _transformFeedbackBufferSize, GL_MAP_READ_BIT);
 				if (!vertices) {
 					veLog("GL_TRANSFORM_FEEDBACK_BUFFER is NULL!");

@@ -372,7 +372,7 @@ veDeferredRenderPipeline::~veDeferredRenderPipeline()
 
 }
 
-void veDeferredRenderPipeline::renderScene(veCamera *camera)
+void veDeferredRenderPipeline::renderScene(veCamera *camera, unsigned int contextID)
 {
     auto &vp = camera->getViewport();
 	auto &params = getCameraParams(camera);
@@ -383,24 +383,24 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera)
 	params.RT1->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	params.RT2->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	params.FBO->setFrameBufferSize(size);
-	params.FBO->bind(deferredClearMask);
+	params.FBO->bind(contextID, deferredClearMask);
     prepareForDraws(camera);
 	draw(camera, camera->getRenderQueue()->deferredRenderGroup);
 	params.FBO->unBind();
 
-	renderLights(camera);
+	renderLights(camera, contextID);
 	if (_sceneManager->getSkyBox())
-		_sceneManager->getSkyBox()->render(camera);
+		_sceneManager->getSkyBox()->render(camera, contextID);
 	_ambientColor->setValue(_sceneManager->getAmbientColor());
 	params.fullScreenTexture->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	params.fullScreenFBO->setFrameBufferSize(size);
-	params.fullScreenFBO->bind(deferredClearMask, GL_DRAW_FRAMEBUFFER);
-	params.FBO->bind(deferredClearMask, GL_READ_FRAMEBUFFER);
+	params.fullScreenFBO->bind(contextID, deferredClearMask, GL_DRAW_FRAMEBUFFER);
+	params.FBO->bind(contextID, deferredClearMask, GL_READ_FRAMEBUFFER);
 	glBlitFramebuffer(0, 0, size.x(), size.y(),
 		0, 0, size.x(), size.y(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
     params.FBO->unBind();
     params.fullScreenFBO->unBind();
-	params.fullScreenFBO->bind(deferredClearMask);
+	params.fullScreenFBO->bind(contextID, deferredClearMask);
 	unsigned int defaultClearMask = camera->getClearMask();
 	camera->setClearMask(GL_COLOR_BUFFER_BIT);
     prepareForDraws(camera);
@@ -410,16 +410,16 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera)
 
 
 	params.fullScreenSurface->update(_sceneManager->getRootNode(), _sceneManager);
-	params.fullScreenSurface->render(_sceneManager->getRootNode(), camera);
+	params.fullScreenSurface->render(_sceneManager->getRootNode(), camera, contextID);
 	if (camera->getFrameBufferObject())
-		camera->getFrameBufferObject()->bind(camera->getClearMask(), GL_DRAW_FRAMEBUFFER);
+		camera->getFrameBufferObject()->bind(contextID, camera->getClearMask(), GL_DRAW_FRAMEBUFFER);
 	if (!camera->getPostProcesserList().empty()) {
 		if (!_postProcesserFBO.valid())
 			_postProcesserFBO = veFrameBufferObjectManager::instance()->createFrameBufferObject("_VE_DEFERRED_RENDER_PIPELINE_POST_PROCESSER_FBO_");
 		_postProcesserFBO->setFrameBufferSize(size);
 		for (auto &iter : camera->getPostProcesserList()) {
 			auto processer = iter.get();
-			processer->process(this, _postProcesserFBO.get(), camera);
+			processer->process(this, _postProcesserFBO.get(), camera, contextID);
 		}
 	}
 	draw(camera, camera->getRenderQueue()->forwardRenderGroup);
@@ -656,7 +656,7 @@ void veDeferredRenderPipeline::updateLightCommomParams(veLight *light, vePass *p
 	pass->setTexture(vePass::OPACITYT_TEXTURE, light->getShadowTexture());
 }
 
-void veDeferredRenderPipeline::renderLights(veCamera *camera)
+void veDeferredRenderPipeline::renderLights(veCamera *camera, unsigned int contextID)
 {
 	auto &lightListMap = _sceneManager->getLightListMap();
 	if (!lightListMap.empty()) {
@@ -666,8 +666,8 @@ void veDeferredRenderPipeline::renderLights(veCamera *camera)
 				auto &pointLightList = iter->second;
 				for (auto &light : pointLightList) {
                     if (light->isEnabled()) {
-                        cullPointLight(light.get(), camera);
-                        renderPointLight(light.get(), camera);
+                        cullPointLight(light.get(), camera, contextID);
+                        renderPointLight(light.get(), camera, contextID);
                     }
 				}
 			}
@@ -679,8 +679,8 @@ void veDeferredRenderPipeline::renderLights(veCamera *camera)
 				auto &spotLightList = iter->second;
 				for (auto &light : spotLightList) {
                     if (light->isEnabled()) {
-                        cullSpotLight(light.get(), camera);
-                        renderSpotLight(light.get(), camera);
+                        cullSpotLight(light.get(), camera, contextID);
+                        renderSpotLight(light.get(), camera, contextID);
                     }
 				}
 			}
@@ -692,7 +692,7 @@ void veDeferredRenderPipeline::renderLights(veCamera *camera)
 				auto &directionalLightList = iter->second;
 				for (auto &light : directionalLightList) {
                     if (light->isEnabled()) {
-                        renderDirectionalLight(light.get(), camera);
+                        renderDirectionalLight(light.get(), camera, contextID);
                     }
 				}
 			}
@@ -700,7 +700,7 @@ void veDeferredRenderPipeline::renderLights(veCamera *camera)
 	}
 }
 
-void veDeferredRenderPipeline::cullPointLight(veLight *light, veCamera *camera)
+void veDeferredRenderPipeline::cullPointLight(veLight *light, veCamera *camera, unsigned int contextID)
 {
 	auto &material = _lightRenderParamsList[light];
 	if (!material.valid()) {
@@ -708,10 +708,10 @@ void veDeferredRenderPipeline::cullPointLight(veLight *light, veCamera *camera)
 	}
 	vePass *pass = material->getTechnique(0)->getPass(0);
     veMat4 lightInWorld = light->getAttachedNodeList()[0]->getNodeToWorldMatrix();
-	_pointLightRenderer->render(lightInWorld * veMat4::scale(veVec3(light->getAttenuationRange())), pass, camera);
+	_pointLightRenderer->render(lightInWorld * veMat4::scale(veVec3(light->getAttenuationRange())), pass, camera, contextID);
 }
 
-void veDeferredRenderPipeline::cullSpotLight(veLight *light, veCamera *camera)
+void veDeferredRenderPipeline::cullSpotLight(veLight *light, veCamera *camera, unsigned int contextID)
 {
 	auto &material = _lightRenderParamsList[light];
 	if (!material.valid()) {
@@ -721,10 +721,10 @@ void veDeferredRenderPipeline::cullSpotLight(veLight *light, veCamera *camera)
 	veSpotLight *spotLight = static_cast<veSpotLight *>(light);
     veMat4 lightInWorld = spotLight->getAttachedNodeList()[0]->getNodeToWorldMatrix();
 	float rangeScale = spotLight->getAttenuationRange() * spotLight->getOuterAngle() / 45.0f;
-	_spotLightRenderer->render(lightInWorld * veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())), pass, camera);
+	_spotLightRenderer->render(lightInWorld * veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())), pass, camera, contextID);
 }
 
-void veDeferredRenderPipeline::renderDirectionalLight(veLight *light, veCamera *camera)
+void veDeferredRenderPipeline::renderDirectionalLight(veLight *light, veCamera *camera, unsigned int contextID)
 {
 	auto &material = _lightRenderParamsList[light];
 	if (!material.valid()) {
@@ -737,10 +737,10 @@ void veDeferredRenderPipeline::renderDirectionalLight(veLight *light, veCamera *
 	veVec3 direction = lightInWorld * -veVec3::UNIT_Z;
 	direction.normalize();
 	pass->getUniform("u_lightDirection")->setValue(direction);
-	_directionalLightRenderer->render(lightInWorld, pass, camera);
+	_directionalLightRenderer->render(lightInWorld, pass, camera, contextID);
 }
 
-void veDeferredRenderPipeline::renderPointLight(veLight *light, veCamera *camera)
+void veDeferredRenderPipeline::renderPointLight(veLight *light, veCamera *camera, unsigned int contextID)
 {
 	auto &material = _lightRenderParamsList[light];
 
@@ -751,10 +751,10 @@ void veDeferredRenderPipeline::renderPointLight(veLight *light, veCamera *camera
 	veMat4 lightInWorld = pointLight->getAttachedNodeList()[0]->getNodeToWorldMatrix();
 	pass->getUniform("u_lightPosition")->setValue(veVec3(lightInWorld[0][3], lightInWorld[1][3], lightInWorld[2][3]));
 	pass->getUniform("u_lightARI")->setValue(pointLight->getAttenuationRangeInverse());
-	_pointLightRenderer->render(lightInWorld * veMat4::scale(veVec3(pointLight->getAttenuationRange())), pass, camera);
+	_pointLightRenderer->render(lightInWorld * veMat4::scale(veVec3(pointLight->getAttenuationRange())), pass, camera, contextID);
 }
 
-void veDeferredRenderPipeline::renderSpotLight(veLight *light, veCamera *camera)
+void veDeferredRenderPipeline::renderSpotLight(veLight *light, veCamera *camera, unsigned int contextID)
 {
 	auto &material = _lightRenderParamsList[light];
 
@@ -774,5 +774,5 @@ void veDeferredRenderPipeline::renderSpotLight(veLight *light, veCamera *camera)
 	pass->getUniform("u_lightInnerAngleCos")->setValue(spotLight->getInnerAngleCos());
 	pass->getUniform("u_lightOuterAngleCos")->setValue(spotLight->getOuterAngleCos());
 	float rangeScale = spotLight->getAttenuationRange() * spotLight->getOuterAngle() / 45.0f;
-	_spotLightRenderer->render(lightInWorld * veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())), pass, camera);
+	_spotLightRenderer->render(lightInWorld * veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())), pass, camera, contextID);
 }

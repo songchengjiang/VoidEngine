@@ -218,7 +218,7 @@ public:
         }
         
         
-        auto EntityUIFunc = []{
+        auto EntityUIFunc = [](veViewer *viewer){
             
             
             if (ImGui::CollapsingHeader("Transform")) {
@@ -309,7 +309,7 @@ public:
                     for (size_t t = 0; t < matpass->getTextureNum(); ++t){
                         auto tex = matpass->getTexture(t);
                         ImGui::Text("%s(%d x %d)", tex->getName().c_str(), tex->getWidth(), tex->getHeight());
-                        ImGui::Image((void *)(intptr_t)(tex->glTex()), ImVec2(256, 256));
+                        ImGui::Image((void *)(intptr_t)(tex->glTex(viewer->getContextID())), ImVec2(256, 256));
                     }
                     ImGui::TreePop();
                 }
@@ -318,7 +318,7 @@ public:
         
         auto imguiComp = new veImGuiComponent;
         imguiComp->setUpdateOrder(UI_COMPONENT_ORDER);
-        imguiComp->setGuiRenderFunc([=]{
+        imguiComp->setGuiRenderFunc([=](veViewer *viewer){
 
             ImGui::SetNextWindowSize(ImVec2(_mainViewer->width() * 0.2f,_mainViewer->height() * 0.05f), ImGuiSetCond_FirstUseEver);
             ImGui::SetNextWindowPos(ImVec2(_mainViewer->width() - _mainViewer->width() * 0.2f,_mainViewer->height() - _mainViewer->height() * 0.05f), ImGuiSetCond_FirstUseEver);
@@ -355,7 +355,7 @@ public:
                 if (INTER_NODE){
                     if (ImGui::CollapsingHeader(INTER_NODE->getName().c_str()))
                     {
-                        EntityUIFunc();
+                        EntityUIFunc(viewer);
                     }
                 }
                 

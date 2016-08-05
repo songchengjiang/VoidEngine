@@ -5,7 +5,13 @@ veTransformFeedback::veTransformFeedback()
 	, _tfBuffer(0)
 	, _rasterizerDiscard(false)
 {
-
+    _tfBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint tfBuffer;
+        glGenTransformFeedbacks(1, &tfBuffer);
+        return tfBuffer;
+    }, [](GLuint tfBuffer){
+        glDeleteTransformFeedbacks(1, &tfBuffer);
+    });
 }
 
 veTransformFeedback::~veTransformFeedback()
@@ -13,7 +19,6 @@ veTransformFeedback::~veTransformFeedback()
 	for (auto &iter : _tfVaryingList) {
 		delete[] iter;
 	}
-	glDeleteTransformFeedbacks(1, &_tfBuffer);
 }
 
 void veTransformFeedback::addVarying(const char *name)
@@ -30,15 +35,16 @@ void veTransformFeedback::removeVarying(size_t idx)
 	_tfVaryingList.erase(_tfVaryingList.begin() + idx);
 }
 
-void veTransformFeedback::bind(GLuint buffer, GLsizeiptr bufSize, GLenum primitiveMode)
+void veTransformFeedback::bind(unsigned int contextID, GLuint buffer, GLsizeiptr bufSize, GLenum primitiveMode)
 {
-	if (!_tfBuffer) {
-		glGenTransformFeedbacks(1, &_tfBuffer);
+    auto tfBuffer = _tfBuffer->getData(contextID);
+	if (!tfBuffer) {
+        tfBuffer = _tfBuffer->createData(contextID);
 	}
 	if (_rasterizerDiscard)
 		glEnable(GL_RASTERIZER_DISCARD);
 
-	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, _tfBuffer);
+	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfBuffer);
 	glBindBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buffer, 0, bufSize);
 	glBeginTransformFeedback(primitiveMode);
 }

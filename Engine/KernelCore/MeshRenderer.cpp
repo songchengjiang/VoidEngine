@@ -17,11 +17,24 @@
 
 veMeshRenderer::veMeshRenderer()
 	: _drawUsage(GL_STATIC_DRAW)
-    , _vao(0)
-    , _vbo(0)
     , _mesh(nullptr)
     , _needRefresh(false)
 {
+    _vaoBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint vao;
+        glGenVertexArrays(1, &vao);
+        return vao;
+    }, [](GLuint vao){
+        glDeleteVertexArrays(1, &vao);
+    });
+    
+    _vboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        return vbo;
+    }, [](GLuint vbo){
+        glDeleteBuffers(1, &vbo);
+    });
 }
 
 veMeshRenderer::~veMeshRenderer()
@@ -29,18 +42,22 @@ veMeshRenderer::~veMeshRenderer()
 
 }
 
-void veMeshRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
+void veMeshRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID)
 {
     _mesh = static_cast<veMesh *>(renderableObj);
     //if (mesh->getBoneNum()) _drawUsage = GL_DYNAMIC_DRAW;
+    auto vao = _vaoBuffer->getData(contextID);
+    if (!vao){
+        vao = _vaoBuffer->createData(contextID);
+        _needRefresh = true;
+    }
     if (_needRefresh) {
-        if (!_vao) {
-            glGenVertexArrays(1, &_vao);
-            glGenBuffers(1, &_vbo);
-            
+        auto vbo = _vboBuffer->getData(contextID);
+        if (!vbo){
+            vbo = _vboBuffer->createData(contextID);
         }
-        glBindVertexArray(_vao);
-        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
         if (!_mesh->getVertexArray()->empty())
             glBufferData(GL_ARRAY_BUFFER, _mesh->getVertexArray()->size() * sizeof((*_mesh->getVertexArray())[0]), _mesh->getVertexArray()->buffer(), _drawUsage);
         
@@ -56,8 +73,17 @@ void veMeshRenderer::render(veNode *node, veRenderableObject *renderableObj, veC
             else if (attri.valueType == veMesh::VertexAtrribute::USHORT) offset += sizeof(GLushort) * attri.valueNum;
         }
         
-        if (_ibos.size() < _mesh->getPrimitiveNum()) {
-            _ibos.resize(_mesh->getPrimitiveNum(), 0);
+        if (_iboBuffers.size() < _mesh->getPrimitiveNum()) {
+            _iboBuffers.resize(_mesh->getPrimitiveNum());
+            for (auto &iboBuf : _iboBuffers){
+                iboBuf = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+                    GLuint ibo;
+                    glGenBuffers(1, &ibo);
+                    return ibo;
+                }, [](GLuint ibo){
+                    glDeleteBuffers(1, &ibo);
+                });
+            }
         }
         
         if (0 < _mesh->getBoneNum()) {
@@ -77,11 +103,12 @@ void veMeshRenderer::render(veNode *node, veRenderableObject *renderableObj, veC
         }
         
         for (unsigned int i = 0; i < _mesh->getPrimitiveNum(); ++i) {
-            if (!_ibos[i]) {
-                glGenBuffers(1, &_ibos[i]);
+            auto ibo = _iboBuffers[i]->getData(contextID);
+            if (!ibo){
+                ibo = _iboBuffers[i]->createData(contextID);
             }
             auto primitive = _mesh->getPrimitive(i);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibos[i]);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
             if (!primitive.indices->empty())
                 glBufferData(GL_ELEMENT_ARRAY_BUFFER, primitive.indices->size() * sizeof((*primitive.indices)[0]), primitive.indices->buffer(), GL_STATIC_DRAW);
             
@@ -98,6 +125,7 @@ void veMeshRenderer::render(veNode *node, veRenderableObject *renderableObj, veC
     rc.sceneManager = camera->getSceneManager();
     rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
     rc.renderer = this;
+    rc.contextID = contextID;
     
     auto technique = _mesh->getMaterial()->activeTechnique();
     for (unsigned int i = 0; i < technique->getPassNum(); ++i) {
@@ -142,12 +170,13 @@ void veMeshRenderer::draw(veRenderCommand &command)
 
 	if (!command.pass->apply(command))
 		return;
-	glBindVertexArray(_vao);
+    
+	glBindVertexArray(_vaoBuffer->getData(command.contextID));
 
 	auto transformFeedback = command.pass->getTransformFeedback();
 	if (transformFeedback) {
 		glEnable(GL_RASTERIZER_DISCARD);
-		transformFeedback->bind(_mesh->getTransformFeedbackBuffer(), _mesh->getTransformFeedbackBufferSize(), GL_POINTS);
+		transformFeedback->bind(command.contextID, _mesh->getTransformFeedbackBuffer(command.contextID), _mesh->getTransformFeedbackBufferSize(), GL_POINTS);
 		glDrawArrays(GL_POINTS, 0, _mesh->getVertexCount());
 		transformFeedback->unBind();
 		glDisable(GL_RASTERIZER_DISCARD);
@@ -155,7 +184,7 @@ void veMeshRenderer::draw(veRenderCommand &command)
 
 	for (unsigned int i = 0; i < _mesh->getPrimitiveNum(); ++i) {
 		auto primitive = _mesh->getPrimitive(i);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibos[i]);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _iboBuffers[i]->getData(command.contextID));
 		glDrawElements(primitive.primitiveType, GLsizei(primitive.indices->size()), GL_UNSIGNED_SHORT, nullptr);
 	}
 

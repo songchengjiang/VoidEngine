@@ -7,7 +7,11 @@ veViewer::veViewer(int width, int height, const std::string &title)
     , _title(title)
     , _isRunning(false)
 {
-    
+    static unsigned int totalContextID = 0;
+    _contextID = totalContextID;
+#if VE_PLATFORM == VE_PLATFORM_WIN32
+    ++totalContextID;
+#endif
 }
 
 veViewer::~veViewer()

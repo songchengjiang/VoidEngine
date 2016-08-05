@@ -12,7 +12,7 @@ public:
 	veScreenLightRenderer();
 	~veScreenLightRenderer();
 
-	void render(const veMat4 &transform, vePass *pass, veCamera *camera);
+	void render(const veMat4 &transform, vePass *pass, veCamera *camera, unsigned int contextID);
 };
 
 
@@ -22,7 +22,7 @@ public:
 	veSphereLightRenderer();
 	~veSphereLightRenderer();
 
-	void render(const veMat4 &transform, vePass *pass, veCamera *camera);
+	void render(const veMat4 &transform, vePass *pass, veCamera *camera, unsigned int contextID);
 };
 
 class VE_EXPORT veConeLightRenderer : public veConeRenderer
@@ -31,7 +31,7 @@ public:
 	veConeLightRenderer();
 	~veConeLightRenderer();
 
-	void render(const veMat4 &transform, vePass *pass, veCamera *camera);
+	void render(const veMat4 &transform, vePass *pass, veCamera *camera, unsigned int contextID);
 };
 
 #endif

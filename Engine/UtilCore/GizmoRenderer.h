@@ -9,7 +9,7 @@ public:
 
     veGizmoRenderer();
     virtual ~veGizmoRenderer();
-    virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override;
+    virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID) override;
     virtual void draw(veRenderCommand &command) override;
     
     void drawLines(const veVec3 &start, const veVec3 &end, const veVec4 &color);
@@ -30,9 +30,9 @@ protected:
 #define TRIANGLES_INDICES 1
 #define INDICES_COUNT     2
     
-    GLuint          _vao;
-    GLuint          _vbo;
-    GLuint          _ibo[INDICES_COUNT];
+    VE_Ptr<veGLDataBuffer> _vaoBuffer;
+    VE_Ptr<veGLDataBuffer> _vboBuffer;
+    VE_Ptr<veGLDataBuffer> _iboBuffers[INDICES_COUNT];
     veRealArray     _vertices;
     veUint16Array   _indices[INDICES_COUNT];
     bool            _refresh;

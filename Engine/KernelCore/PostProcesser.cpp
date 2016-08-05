@@ -16,7 +16,7 @@ vePostProcesser::~vePostProcesser()
 
 }
 
-void vePostProcesser::process(veRenderPipeline *pipeline, veFrameBufferObject *fb, veCamera *camera)
+void vePostProcesser::process(veRenderPipeline *pipeline, veFrameBufferObject *fb, veCamera *camera, unsigned int contextID)
 {
 	auto &vp = camera->getViewport();
 	veVec2 size = veVec2(vp.width - vp.x, vp.height - vp.y);
@@ -27,11 +27,11 @@ void vePostProcesser::process(veRenderPipeline *pipeline, veFrameBufferObject *f
 			auto tex = pass->getTexture(vePass::AMBIENT_TEXTURE);
 			tex->storage(size.x(), size.y(), 1, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, nullptr, 1);
 			fb->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex);
-			fb->bind(GL_COLOR_BUFFER_BIT, GL_DRAW_FRAMEBUFFER);
+			fb->bind(contextID, GL_COLOR_BUFFER_BIT, GL_DRAW_FRAMEBUFFER);
             pipeline->prepareForDraws(camera);
 			pipeline->draw(camera, camera->getRenderQueue()->forwardRenderGroup);
 			fb->unBind();
-			_renderer->render(_sceneManager->getRootNode(), pass, camera);
+			_renderer->render(_sceneManager->getRootNode(), pass, camera, contextID);
 		}
 	}
 }

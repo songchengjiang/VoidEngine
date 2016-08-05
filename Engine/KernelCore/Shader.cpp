@@ -116,6 +116,61 @@ veUniform::veUniform(const std::string &name, const veRealArray &val)
 	setValue(val);
 }
 
+veUniform::veUniform(const std::string &name, const veVec2 *val, unsigned int n)
+: USE_VE_PTR_INIT
+, _name(name)
+, _location(-1)
+, _preLocation(-1)
+, _maxReLocation(0)
+, _simulationTime(0.0)
+{
+    setValue(val, n);
+}
+
+veUniform::veUniform(const std::string &name, const veVec3 *val, unsigned int n)
+: USE_VE_PTR_INIT
+, _name(name)
+, _location(-1)
+, _preLocation(-1)
+, _maxReLocation(0)
+, _simulationTime(0.0)
+{
+    setValue(val, n);
+}
+
+veUniform::veUniform(const std::string &name, const veVec4 *val, unsigned int n)
+: USE_VE_PTR_INIT
+, _name(name)
+, _location(-1)
+, _preLocation(-1)
+, _maxReLocation(0)
+, _simulationTime(0.0)
+{
+    setValue(val, n);
+}
+
+veUniform::veUniform(const std::string &name, const veMat3 *val, unsigned int n)
+: USE_VE_PTR_INIT
+, _name(name)
+, _location(-1)
+, _preLocation(-1)
+, _maxReLocation(0)
+, _simulationTime(0.0)
+{
+    setValue(val, n);
+}
+
+veUniform::veUniform(const std::string &name, const veMat4 *val, unsigned int n)
+: USE_VE_PTR_INIT
+, _name(name)
+, _location(-1)
+, _preLocation(-1)
+, _maxReLocation(0)
+, _simulationTime(0.0)
+{
+    setValue(val, n);
+}
+
 veUniform::~veUniform()
 {
 
@@ -126,7 +181,7 @@ void veUniform::apply(const veRenderCommand &command)
 	if (_location < 0 && _maxReLocation == 255)
 		return;
 	if (_location < 0) {
-		_location = glGetUniformLocation(command.pass->_program, _name.c_str());
+		_location = glGetUniformLocation(command.pass->_programBuffer->getData(command.contextID), _name.c_str());
 		_location == _preLocation ? ++_maxReLocation : _maxReLocation = 0;
 	}
 	if (_location < 0) return;
@@ -618,6 +673,72 @@ bool veUniform::getValue(veRealArray &val) const
 	return true;
 }
 
+bool veUniform::getValue(veVec2 *val, unsigned int &n) const
+{
+    if (_type != Type::VEC2_ARRAY) return false;
+    n = static_cast<unsigned int>(_values.size() / 2);
+    val = new veVec2[n];
+    for (size_t i = 0; i < n; ++i){
+        val[i].x() = _values[2 * i];
+        val[i].y() = _values[2 * i + 1];
+    }
+    return true;
+}
+
+bool veUniform::getValue(veVec3 *val, unsigned int &n) const
+{
+    if (_type != Type::VEC3_ARRAY) return false;
+    n = static_cast<unsigned int>(_values.size() / 3);
+    val = new veVec3[n];
+    for (size_t i = 0; i < n; ++i){
+        val[i].x() = _values[3 * i];
+        val[i].y() = _values[3 * i + 1];
+        val[i].z() = _values[3 * i + 2];
+    }
+    return true;
+}
+
+bool veUniform::getValue(veVec4 *val, unsigned int &n) const
+{
+    if (_type != Type::VEC4_ARRAY) return false;
+    n = static_cast<unsigned int>(_values.size() / 4);
+    val = new veVec4[n];
+    for (size_t i = 0; i < n; ++i){
+        val[i].x() = _values[4 * i];
+        val[i].y() = _values[4 * i + 1];
+        val[i].z() = _values[4 * i + 2];
+        val[i].w() = _values[4 * i + 3];
+    }
+    return true;
+}
+
+bool veUniform::getValue(veMat3 *val, unsigned int &n) const
+{
+    if (_type != Type::MAT3_ARRAY) return false;
+    n = static_cast<unsigned int>(_values.size() / 9);
+    val = new veMat3[n];
+    for (size_t i = 0; i < n; ++i){
+        val[i][0][0] = _values[9 * i + 0]; val[i][0][1] = _values[9 * i + 3]; val[i][0][2] = _values[9 * i + 6];
+        val[i][1][0] = _values[9 * i + 1]; val[i][1][1] = _values[9 * i + 4]; val[i][1][2] = _values[9 * i + 7];
+        val[i][2][0] = _values[9 * i + 2]; val[i][2][1] = _values[9 * i + 5]; val[i][2][2] = _values[9 * i + 8];
+    }
+    return true;
+}
+
+bool veUniform::getValue(veMat4 *val, unsigned int &n) const
+{
+    if (_type != Type::MAT4_ARRAY) return false;
+    n = static_cast<unsigned int>(_values.size() / 16);
+    val = new veMat4[n];
+    for (unsigned int i = 0; i < n; ++i) {
+        val[i][0][0] = _values[16 * i + 0]; val[i][0][1] = _values[16 * i + 4]; val[i][0][2] = _values[16 * i + 8]; val[i][0][3] = _values[16 * i + 12];
+        val[i][1][0] = _values[16 * i + 1]; val[i][1][1] = _values[16 * i + 5]; val[i][1][2] = _values[16 * i + 9]; val[i][1][3] = _values[16 * i + 13];
+        val[i][2][0] = _values[16 * i + 2]; val[i][2][1] = _values[16 * i + 6]; val[i][2][2] = _values[16 * i + 10]; val[i][2][3] = _values[16 * i + 14];
+        val[i][3][0] = _values[16 * i + 3]; val[i][3][1] = _values[16 * i + 7]; val[i][3][2] = _values[16 * i + 11]; val[i][3][3] = _values[16 * i + 15];
+    }
+    return true;
+}
+
 void veUniform::setName(const std::string &name)
 {
 	_name = name;
@@ -631,8 +752,6 @@ void veUniform::setName(const std::string &name)
 veShader::veShader(Type type, const std::string &filePath)
 	: USE_VE_PTR_INIT
 	, _type(type)
-	, _shader(0)
-	, _isCompiled(false)
 {
 	setSource(filePath);
 }
@@ -640,17 +759,13 @@ veShader::veShader(Type type, const std::string &filePath)
 veShader::veShader(Type type, const char *str)
 	: USE_VE_PTR_INIT
 	, _type(type)
-	, _shader(0)
 	, _source(str)
-	, _isCompiled(false)
 {
 	setSource(str);
 }
 
 veShader::veShader()
 	: USE_VE_PTR_INIT
-	, _shader(0)
-	, _isCompiled(false)
 {
 
 }
@@ -664,13 +779,11 @@ void veShader::setSource(const std::string &filePath)
 {
 	auto fileData = veFile::instance()->readFileToBuffer(filePath);
 	_source.assign(fileData->buffer, fileData->size);
-	_isCompiled = false;
 }
 
 void veShader::setSource(const char *str)
 {
 	_source = str;
-	_isCompiled = false;
 }
 
 void veShader::setShaderHeader(const std::string &sHeader)
@@ -715,22 +828,21 @@ GLuint veShader::compile()
 	preDefination += std::string("#define VE_PLATFORM VE_PLATFORM_MAC\n");
 #endif
 
-	if (!_shader)
-		_shader = glCreateShader(_type);
+    auto shader = glCreateShader(_type);
 
 	std::string source = preDefination + _shaderHeaders + _source;
 	char *buffer = new char[source.size() + 1];
 	strcpy(buffer, source.c_str());
-	glShaderSource(_shader, 1, &buffer, nullptr);
+	glShaderSource(shader, 1, &buffer, nullptr);
 	GLint state = GL_FALSE;
-	glCompileShader(_shader);
-	glGetShaderiv(_shader, GL_COMPILE_STATUS, &state);
+	glCompileShader(shader);
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &state);
 	if (!state) {
 		GLint maxLen;
-		glGetShaderiv(_shader, GL_INFO_LOG_LENGTH, &maxLen);
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLen);
 		if (maxLen > 0) {
 			GLchar *errors = new GLchar[maxLen + 1];
-			glGetShaderInfoLog(_shader, maxLen, &maxLen, errors);
+			glGetShaderInfoLog(shader, maxLen, &maxLen, errors);
 			if (strcmp(errors, "") != 0) {
                 std::string shaderType = typeToString();
                 veLog("%s Shader Errors\n", shaderType.c_str());
@@ -740,11 +852,11 @@ GLuint veShader::compile()
 			}
 			delete[] errors;
 		}
-		glDeleteShader(_shader);
-		_shader = 0;
+		glDeleteShader(shader);
+		shader = 0;
 	}
 	delete[] buffer;
-	return _shader;
+	return shader;
 }
 
 std::string veShader::typeToString()

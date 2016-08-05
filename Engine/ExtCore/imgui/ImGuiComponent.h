@@ -2,12 +2,13 @@
 #define _VE_IMGUI_COMPONENT_
 #include "KernelCore/Component.h"
 #include "KernelCore/Material.h"
+#include "KernelCore/GLDataBuffer.h"
 #include "imgui.h"
 
 class VE_EXPORT veImGuiComponent : public veComponent
 {
 public:
-    typedef std::function<void()> ImGuiRenderFunc;
+    typedef std::function<void(veViewer *)> ImGuiRenderFunc;
     
     veImGuiComponent();
     virtual ~veImGuiComponent();
@@ -22,7 +23,7 @@ public:
     
 protected:
     
-    void initPass(veSceneManager *sm);
+    void initPass(veSceneManager *sm, unsigned int contextID);
     
 protected:
     
@@ -30,6 +31,11 @@ protected:
     VE_Ptr<vePass>  _renderPass;
     VE_Ptr<veTexture>  _fontTexture;
     VE_Ptr<veUniform> _renderProjMatrix;
+    
+    VE_Ptr<veGLDataBuffer> _vaoBuffer;
+    VE_Ptr<veGLDataBuffer> _vboBuffer;
+    VE_Ptr<veGLDataBuffer> _iboBuffer;
+    
     bool              _isAnyWindowFocus;
 };
 

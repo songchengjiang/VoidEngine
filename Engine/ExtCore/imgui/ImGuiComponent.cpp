@@ -72,6 +72,30 @@ veImGuiComponent::veImGuiComponent()
     io.RenderDrawListsFn = ImGui_RenderDrawLists;
     
     _renderProjMatrix = new veUniform("u_ProjectionMatrix");
+    
+    _vaoBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint vao;
+        glGenVertexArrays(1, &vao);
+        return vao;
+    }, [](GLuint vao){
+        glDeleteVertexArrays(1, &vao);
+    });
+    
+    _vboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        return vbo;
+    }, [](GLuint vbo){
+        glDeleteBuffers(1, &vbo);
+    });
+    
+    _iboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint ibo;
+        glGenBuffers(1, &ibo);
+        return ibo;
+    }, [](GLuint ibo){
+        glDeleteBuffers(1, &ibo);
+    });
 }
 
 veImGuiComponent::~veImGuiComponent()
@@ -82,7 +106,7 @@ veImGuiComponent::~veImGuiComponent()
     ImGui::Shutdown();
 }
 
-void veImGuiComponent::initPass(veSceneManager *sm)
+void veImGuiComponent::initPass(veSceneManager *sm, unsigned int contextID)
 {
     _renderPass = new vePass;
     _renderPass->cullFace() = false;
@@ -96,8 +120,6 @@ void veImGuiComponent::initPass(veSceneManager *sm)
     io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
     _fontTexture->storage(width, height, 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, pixels, 1);
     _fontTexture->setFilterMode(veTexture::LINEAR);
-    _fontTexture->bind();
-    io.Fonts->TexID = (void *)(intptr_t)_fontTexture->glTex();
     
     _renderPass->addUniform(_renderProjMatrix.get());
     _renderPass->addUniform(new veUniform("u_texture", 0));
@@ -242,14 +264,16 @@ void veImGuiComponent::beforeRender(veSceneManager *sm, veViewer *viewer)
 void veImGuiComponent::afterRender(veSceneManager *sm, veViewer *viewer)
 {
     if (!_renderPass.valid())
-        initPass(sm);
+        initPass(sm, viewer->getContextID());
     ImGuiIO& io = ImGui::GetIO();
+    _fontTexture->bind(viewer->getContextID());
+    io.Fonts->TexID = (void *)(intptr_t)_fontTexture->glTex(viewer->getContextID());
     io.DeltaTime = sm->getDeltaTime();
     ImGui::NewFrame();
     _isAnyWindowFocus = ImGui::IsMouseHoveringAnyWindow();
     
     if (_renderFunc)
-        _renderFunc();
+        _renderFunc(viewer);
    
     veRenderCommand rc;
     rc.mask = 0xffffffff;
@@ -259,10 +283,11 @@ void veImGuiComponent::afterRender(veSceneManager *sm, veViewer *viewer)
     rc.pass = _renderPass.get();
     _renderPass->apply(rc);
     
+    g_VaoHandle = _vaoBuffer->getData(viewer->getContextID());
     if (!g_VaoHandle){
-        glGenVertexArrays(1, &g_VaoHandle);
-        glGenBuffers(1, &g_VboHandle);
-        glGenBuffers(1, &g_IboHandle);
+        g_VaoHandle = _vaoBuffer->createData(viewer->getContextID());
+        g_VboHandle = _vboBuffer->createData(viewer->getContextID());
+        g_IboHandle = _iboBuffer->createData(viewer->getContextID());
         glBindVertexArray(g_VaoHandle);
         glBindBuffer(GL_ARRAY_BUFFER, g_VboHandle);
         

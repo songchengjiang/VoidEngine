@@ -139,7 +139,6 @@ void veCamera::setViewport(const veViewport &vp)
 void veCamera::setRenderPath(RenderPath renderPath)
 {
 	_renderPath = renderPath;
-	_sceneManager->needReload();
 }
 
 void veCamera::setSkybox(veSkyBox *skybox)

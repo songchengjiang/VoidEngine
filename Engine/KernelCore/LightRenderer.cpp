@@ -14,8 +14,8 @@ veScreenLightRenderer::~veScreenLightRenderer()
 
 }
 
-void veScreenLightRenderer::render(const veMat4 &transform, vePass *pass, veCamera *camera) {
-	updateBuffer();
+void veScreenLightRenderer::render(const veMat4 &transform, vePass *pass, veCamera *camera, unsigned int contextID) {
+	updateBuffer(contextID);
 	veRenderCommand rc;
 	rc.mask = 0xffffffff;
 	rc.worldMatrix = new veMat4Ptr(veMat4::IDENTITY);
@@ -23,6 +23,7 @@ void veScreenLightRenderer::render(const veMat4 &transform, vePass *pass, veCame
 	rc.sceneManager = camera->getSceneManager();
 	rc.renderer = this;
 	rc.pass = pass;
+    rc.contextID = contextID;
 	//draw(rc);
 	camera->getRenderQueue()->pushCommand(0, veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
 }
@@ -36,8 +37,8 @@ veSphereLightRenderer::~veSphereLightRenderer()
 
 }
 
-void veSphereLightRenderer::render(const veMat4 &transform, vePass *pass, veCamera *camera) {
-	updateBuffer();
+void veSphereLightRenderer::render(const veMat4 &transform, vePass *pass, veCamera *camera, unsigned int contextID) {
+	updateBuffer(contextID);
 	veRenderCommand rc;
 	rc.mask = 0xffffffff;
 	rc.worldMatrix = new veMat4Ptr(transform);
@@ -45,6 +46,7 @@ void veSphereLightRenderer::render(const veMat4 &transform, vePass *pass, veCame
 	rc.sceneManager = camera->getSceneManager();
 	rc.renderer = this;
 	rc.pass = pass;
+    rc.contextID = contextID;
 	//draw(rc);
 	camera->getRenderQueue()->pushCommand(0, veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
 }
@@ -58,8 +60,8 @@ veConeLightRenderer::~veConeLightRenderer()
 
 }
 
-void veConeLightRenderer::render(const veMat4 &transform, vePass *pass, veCamera *camera) {
-	updateBuffer();
+void veConeLightRenderer::render(const veMat4 &transform, vePass *pass, veCamera *camera, unsigned int contextID) {
+	updateBuffer(contextID);
 	veRenderCommand rc;
 	rc.mask = 0xffffffff;
 	rc.worldMatrix = new veMat4Ptr(transform);
@@ -67,6 +69,7 @@ void veConeLightRenderer::render(const veMat4 &transform, vePass *pass, veCamera
 	rc.sceneManager = camera->getSceneManager();
 	rc.renderer = this;
 	rc.pass = pass;
+    rc.contextID = contextID;
 	//draw(rc);
 	camera->getRenderQueue()->pushCommand(0, veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
 }

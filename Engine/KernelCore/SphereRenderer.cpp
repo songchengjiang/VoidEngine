@@ -78,10 +78,7 @@ static uint16_t sphere_indices[INDEX_BUFFER_SIZE] = {
 };
 
 veSphereRenderer::veSphereRenderer()
-	: _vao(0)
-	, _vbo(0)
-	, _ibo(0)
-	, _needRefresh(true)
+	: _needRefresh(true)
 {
 	for (unsigned int i = 0; i < VERTEX_BUFFER_SIZE; i += 8) {
 		_vertices.push_back(sphere_vertices[i + 0]); _vertices.push_back(sphere_vertices[i + 1]); _vertices.push_back(sphere_vertices[i + 2]); //v
@@ -92,6 +89,30 @@ veSphereRenderer::veSphereRenderer()
 	for (unsigned int face = 0; face < INDEX_BUFFER_SIZE; face += 3) {
 		_indices.push_back(sphere_indices[face + 0]); _indices.push_back(sphere_indices[face + 1]); _indices.push_back(sphere_indices[face + 2]);
 	}
+    
+    _vaoBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint vao;
+        glGenVertexArrays(1, &vao);
+        return vao;
+    }, [](GLuint vao){
+        glDeleteVertexArrays(1, &vao);
+    });
+    
+    _vboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        return vbo;
+    }, [](GLuint vbo){
+        glDeleteBuffers(1, &vbo);
+    });
+    
+    _iboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint ibo;
+        glGenBuffers(1, &ibo);
+        return ibo;
+    }, [](GLuint ibo){
+        glDeleteBuffers(1, &ibo);
+    });
 }
 
 veSphereRenderer::~veSphereRenderer()
@@ -99,9 +120,9 @@ veSphereRenderer::~veSphereRenderer()
 
 }
 
-void veSphereRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera)
+void veSphereRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID)
 {
-	updateBuffer();
+	updateBuffer(contextID);
 
 	veRenderCommand rc;
 	rc.mask = node->getMask();
@@ -111,6 +132,7 @@ void veSphereRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 	rc.sceneManager = camera->getSceneManager();
 	rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
 	rc.renderer = this;
+    rc.contextID = contextID;
 
     auto material = renderableObj->getMaterial();
     for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {
@@ -133,19 +155,24 @@ void veSphereRenderer::draw(veRenderCommand &command)
 		return;
 	if (!command.pass->apply(command))
 		return;
-	glBindVertexArray(_vao);
+	glBindVertexArray(_vaoBuffer->getData(command.contextID));
 	glDrawElements(GL_TRIANGLES, GLsizei(_indices.size()), GL_UNSIGNED_SHORT, nullptr);
 }
 
-void veSphereRenderer::updateBuffer()
+void veSphereRenderer::updateBuffer(unsigned int contextID)
 {
+    auto vao = _vaoBuffer->getData(contextID);
+    if (!vao) {
+        vao = _vaoBuffer->createData(contextID);
+        _needRefresh = true;
+    }
 	if (_needRefresh) {
-		if (!_vao) {
-			glGenVertexArrays(1, &_vao);
-			glGenBuffers(1, &_vbo);
-		}
-		glBindVertexArray(_vao);
-		glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+        auto vbo = _vboBuffer->getData(contextID);
+        if (!vbo){
+            vbo = _vboBuffer->createData(contextID);
+        }
+		glBindVertexArray(vao);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		if (!_vertices.empty())
 			glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(_vertices[0]), _vertices.buffer(), GL_STATIC_DRAW);
 
@@ -162,11 +189,12 @@ void veSphereRenderer::updateBuffer()
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid *)(sizeof(GLfloat) * 6));
 		glEnableVertexAttribArray(2);
 
-		if (!_ibo) {
-			glGenBuffers(1, &_ibo);
-		}
+        auto ibo = _iboBuffer->getData(contextID);
+        if (!ibo) {
+            ibo = _iboBuffer->createData(contextID);
+        }
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(_indices[0]), _indices.buffer(), GL_STATIC_DRAW);
 
 		_needRefresh = false;

@@ -12,15 +12,15 @@ public:
 	veMeshRenderer();
 	~veMeshRenderer();
 
-	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override;
+	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID) override;
 	virtual void draw(veRenderCommand &command) override;
 
     void needRefresh(){ _needRefresh = true; }
 protected:
 
-    GLuint _vao;
-    GLuint _vbo;
-    std::vector<GLuint> _ibos;
+    VE_Ptr<veGLDataBuffer> _vaoBuffer;
+    VE_Ptr<veGLDataBuffer> _vboBuffer;
+    std::vector< VE_Ptr<veGLDataBuffer> > _iboBuffers;
 	GLenum _drawUsage;
     veMesh *_mesh;
     bool    _needRefresh;

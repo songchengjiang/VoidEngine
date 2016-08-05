@@ -18,15 +18,14 @@
 
 #include <algorithm>
 
-#define RESOURCE_RECOVERY_INTERVAL_TIME 10.0
-
 veSceneManager::veSceneManager()
 	: USE_VE_PTR_INIT
 	, _deltaTime(0.0)
 	, _ambient(veVec3(1.0f))
-	, _latestResourceRecoveredTime(RESOURCE_RECOVERY_INTERVAL_TIME)
+    , _resourceRecoveredIntervalTime(10.0f)
+	, _latestResourceRecoveredTime(_resourceRecoveredIntervalTime)
 	, _stopThreading(true)
-	, _needReload(false)
+    , _needReloadRenderContexts(false)
 {
 	_managerList[veTextureManager::TYPE()] = new veTextureManager(this);
 	_managerList[veMeshManager::TYPE()] = new veMeshManager(this);
@@ -57,7 +56,6 @@ veLight* veSceneManager::createLight(veLight::LightType type, const std::string 
 	}
 	light->setName(name);
 	_lightListMap[type].push_back(light);
-	this->needReload();
 	return light;
 }
 
@@ -189,14 +187,9 @@ veBaseManager* veSceneManager::getManager(const std::string &mgType)
 	return iter->second;
 }
 
-void veSceneManager::needReload()
+void veSceneManager::reloadRenderContexts()
 {
-	if (_needReload)
-		return;
-	_needReload = true;
-	enqueueRequest([this] {
-		this->_needReload = false;
-	});
+    _needReloadRenderContexts = true;
 }
 
 void veSceneManager::handleEvent(veViewer *viewer, const veEvent &event)
@@ -245,6 +238,10 @@ void veSceneManager::render(veViewer *viewer)
 {
     std::unique_lock<std::mutex> renderLock(this->_renderingMutex);
     this->_renderingCondition.wait(renderLock);
+    if (_needReloadRenderContexts){
+        veGLDataBufferManager::instance()->destroyAllGLDataBuffer();
+        _needReloadRenderContexts = false;
+    }
     this->renderImp(viewer);
     this->postRenderHandle();
 }
@@ -287,7 +284,7 @@ void veSceneManager::postRenderHandle()
 
 void veSceneManager::resourceRecovery()
 {
-	if (RESOURCE_RECOVERY_INTERVAL_TIME < _latestResourceRecoveredTime) {
+	if (_resourceRecoveredIntervalTime < _latestResourceRecoveredTime) {
 		for (auto &manager : _managerList) {
 			manager.second->resourceRecovery();
 		}

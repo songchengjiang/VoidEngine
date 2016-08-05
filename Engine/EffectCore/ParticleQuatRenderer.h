@@ -22,7 +22,7 @@ public:
     
 protected:
     
-    virtual void updateBuffer(veRenderableObject *renderableObj, veCamera *camera) override;
+    virtual void updateBuffer(veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID) override;
     void updateInstanceParams(veParticle *particle, const veMat4 &cameraRot, const veMat4 &vp);
     inline unsigned int getVertexStride() const;
 
