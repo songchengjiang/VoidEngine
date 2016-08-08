@@ -29,7 +29,7 @@ public:
     const veEventList& getEventList() const { return _eventList; }
     
     void setCamera(veCamera *camera) { _camera = camera; }
-    veCamera* getCamera() { return _camera.get(); }
+    veCamera* getCamera() { return _camera; }
 
     void setSceneManager(veSceneManager *sm) { _sceneManager = sm; }
     veSceneManager* getSceneManager() { return _sceneManager.get(); }
@@ -41,7 +41,7 @@ protected:
     int                    _width;
     int                    _height;
     std::string            _title;
-    VE_Ptr<veCamera>       _camera;
+    veCamera              *_camera;
     VE_Ptr<veSceneManager> _sceneManager;
     veEventList            _eventList;
     veEvent                _currentEvent;

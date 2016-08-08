@@ -28,11 +28,8 @@ public:
 
 protected:
 
-	typedef std::vector<veOctreeNode *> OctreeNodeList;
-
 	virtual void updateImp() override;
 	virtual void renderImp(veViewer *viewer) override;
-	void culling();
 
 	void addOctreeNode(veOctreeNode *node, veOctree *octant, unsigned int depth = 0);
 	void intersectByRay(veOctree *octant, veRay *ray);
@@ -43,7 +40,6 @@ protected:
 	veBoundingBox _boundingBox;
 	unsigned int _octreeMaxDeep;
 	veOctree *_octree;
-	OctreeNodeList _octreeNodeList;
 
 	unsigned int _parallelUpdateOctantNum;
 	std::mutex   _parallelUpdateOctantMutex;

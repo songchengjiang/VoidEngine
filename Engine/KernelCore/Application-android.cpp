@@ -50,7 +50,7 @@ JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfacePause
 JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfaceResume
         (JNIEnv *env, jclass jthis, jobject surfaceview)
 {
-    static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->getSceneManager()->reloadRenderContexts();
+    static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->getSceneManager()->destroyRenderContexts();
     veLog("nativeOnSurfaceResume");
 }
 
@@ -87,7 +87,7 @@ JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfaceChang
 {
     if (0 < veApplication::instance()->getViewerCount()) {
         static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->resize(width, height);
-        static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->getSceneManager()->reloadRenderContexts();
+        static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->getSceneManager()->destroyRenderContexts();
     }
      veLog("nativeOnSurfaceChanged");
 }
@@ -103,7 +103,7 @@ JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfaceDrawF
     if (0 < veApplication::instance()->getViewerCount()) {
         static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->frameRender();
     }
-//    veLog("nativeOnDrawFrame");
+    //veLog("nativeOnDrawFrame");
 }
 
 /*
@@ -117,7 +117,7 @@ JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfaceTouch
     if (0 < veApplication::instance()->getViewerCount()) {
         static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->onTouchBegan(id, x, y);
     }
-    veLog("nativeOnSurfaceTouchDown(%d, %f, %f)", id, x, y);
+    //veLog("nativeOnSurfaceTouchDown(%d, %f, %f)", id, x, y);
 }
 
 /*
@@ -131,7 +131,7 @@ JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfaceTouch
     if (0 < veApplication::instance()->getViewerCount()) {
         static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->onTouchEnd(id, x, y);
     }
-     veLog("nativeOnSurfaceTouchUp(%d, %f, %f)", id, x, y);
+    //veLog("nativeOnSurfaceTouchUp(%d, %f, %f)", id, x, y);
 }
 
 /*

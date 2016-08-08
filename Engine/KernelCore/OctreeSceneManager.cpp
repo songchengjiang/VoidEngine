@@ -221,6 +221,7 @@ void veOctreeSceneManager::updateImp()
 void veOctreeSceneManager::renderImp(veViewer *viewer)
 {
 	if (!viewer->makeContextCurrent()) return;
+    this->getRenderState(viewer->getContextID())->resetState();
 	//culling();
 
 	//_shadowGenerator->shadowing();
@@ -271,16 +272,4 @@ void veOctreeSceneManager::renderImp(veViewer *viewer)
     }
     
 	viewer->swapBuffers();
-}
-
-void veOctreeSceneManager::culling()
-{
-	for (auto &iter : _cameraList) {
-		if (iter->isVisible() && iter->isInScene()) {
-			veOctreeCamera *cam = static_cast<veOctreeCamera *>(iter.get());
-			_threadPool.enqueue(nullptr, nullptr, [cam] {
-				//cam->cull();
-			});
-		}
-	}
 }

@@ -1,44 +1,5 @@
 #include "FrameBufferObject.h"
 
-veFrameBufferObjectManager::veFrameBufferObjectManager()
-{
-
-}
-
-veFrameBufferObjectManager::~veFrameBufferObjectManager()
-{
-}
-
-veFrameBufferObjectManager* veFrameBufferObjectManager::instance()
-{
-	static veFrameBufferObjectManager fboManager;
-	return &fboManager;
-}
-
-veFrameBufferObject* veFrameBufferObjectManager::findFrameBufferObject(const std::string &name)
-{
-	for (auto &iter : _fbos) {
-		if (iter->getName() == name)
-			return iter.get();
-	}
-
-	return nullptr;
-}
-
-veFrameBufferObject* veFrameBufferObjectManager::createFrameBufferObject(const std::string &name)
-{
-	auto fbo = new veFrameBufferObject;
-	fbo->setName(name);
-	_fbos.push_back(fbo);
-	return fbo;
-}
-
-veFrameBufferObject* veFrameBufferObjectManager::getFrameBufferObject(unsigned int idx)
-{
-	veAssert(idx < _fbos.size());
-	return _fbos[idx].get();
-}
-
 veFrameBufferObject* veFrameBufferObject::CURRENT_FBO = nullptr;
 
 veFrameBufferObject::veFrameBufferObject()

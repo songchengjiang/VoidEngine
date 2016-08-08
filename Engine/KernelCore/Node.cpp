@@ -22,7 +22,16 @@ veNode::veNode()
 
 veNode::~veNode()
 {
-
+    for (auto &com : _components){
+        com->onDetachToNode(this);
+    }
+    
+    for (auto &rb : _renderableObjects){
+        auto parent = std::find(rb->_parents.begin(), rb->_parents.end(), this);
+        if (parent != rb->_parents.end()) {
+            rb->_parents.erase(parent);
+        }
+    }
 }
 
 int veNode::addChild(veNode *child)

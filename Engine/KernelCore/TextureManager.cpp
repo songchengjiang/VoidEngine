@@ -12,9 +12,6 @@ veTextureManager::veTextureManager(veSceneManager *sm, unsigned int maxTextureMe
 
 veTextureManager::~veTextureManager()
 {
-	for (auto &tex : _texturePool) {
-		releaseTextureMemory(tex.get());
-	}
 }
 
 void veTextureManager::update()

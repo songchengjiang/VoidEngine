@@ -37,6 +37,7 @@ class veMaterialArray;
 class veRay;
 class veViewer;
 class veEventDispatcher;
+class veFrameBufferObject;
 
 class VE_EXPORT veSceneManager
 {
@@ -54,6 +55,8 @@ public:
 	virtual veText* createText(const std::string &name, veFont *font, const std::string &content = "");
 	virtual veAnimation* createAnimation(const std::string &name);
 	virtual veAnimationContainer* createAnimationContainer(const std::string &name);
+    
+    virtual veFrameBufferObject* createFrameBufferObject(const std::string &name);
 
 	virtual veRay* createRay(const veVec3 &start, const veVec3 &end);
 	virtual veCamera* createCamera(const std::string &name, const veViewport &vp = { 0, 0, 0, 0 }) = 0;
@@ -85,9 +88,11 @@ public:
 	double getDeltaTime() { return _deltaTime; }
 
 	veRenderPipeline* getRenderPipeline() const { return _renderPipeline.get(); }
+    
+    veRenderState* getRenderState(unsigned int contextID) { return &_renderStateList[contextID]; }
 
     void setResourceRecoveredIntervalTime(double time) { _resourceRecoveredIntervalTime = time; }
-    void reloadRenderContexts();
+    void destroyRenderContexts();
 
     void event(veViewer *viewer);
 	void update();
@@ -113,6 +118,7 @@ protected:
 
 protected:
 
+    veComponentList             _componentList;
 	VE_Ptr<veNode>              _root;
 	VE_Ptr<veSkyBox>            _skyBox;
 	veCameraList                _cameraList;
@@ -122,8 +128,8 @@ protected:
 	VE_Ptr<veRenderPipeline>    _renderPipeline;
 
 	std::unordered_map<std::string, veBaseManager *> _managerList;
-
-	veComponentList _componentList;
+    
+    std::unordered_map<unsigned int, veRenderState> _renderStateList;
 
 	veThreadPool                         _threadPool;
 	std::mutex                           _requestQueueMutex;
@@ -135,7 +141,7 @@ protected:
 	std::thread _renderingThread;
 	bool        _stopThreading;
 
-    bool   _needReloadRenderContexts;
+    bool   _needDestroyRenderContexts;
 	double _deltaTime;
     double _resourceRecoveredIntervalTime;
 	double _latestResourceRecoveredTime;

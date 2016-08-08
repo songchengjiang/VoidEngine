@@ -53,16 +53,16 @@ bool vePass::apply(const veRenderCommand &command)
 		++texUnit;
 	}
 
-	veRenderState::instance()->setDepthTest(_depthTest);
-	veRenderState::instance()->setDepthWrite(_depthWirte);
-	veRenderState::instance()->setCullface(_cullFace);
-	veRenderState::instance()->setCullfaceMode(_cullFaceMode);
-	veRenderState::instance()->setBlendFunc(_blendFunc);
-	veRenderState::instance()->setBlendEquation(_blendEquation);
-	veRenderState::instance()->setStencilTest(_stencilTest);
-	veRenderState::instance()->setStencilFunc(_stencilFunc);
-	veRenderState::instance()->setStencilOp(_stencilOp);
-	veRenderState::instance()->applyState();
+	command.sceneManager->getRenderState(command.contextID)->setDepthTest(_depthTest);
+	command.sceneManager->getRenderState(command.contextID)->setDepthWrite(_depthWirte);
+	command.sceneManager->getRenderState(command.contextID)->setCullface(_cullFace);
+	command.sceneManager->getRenderState(command.contextID)->setCullfaceMode(_cullFaceMode);
+	command.sceneManager->getRenderState(command.contextID)->setBlendFunc(_blendFunc);
+	command.sceneManager->getRenderState(command.contextID)->setBlendEquation(_blendEquation);
+	command.sceneManager->getRenderState(command.contextID)->setStencilTest(_stencilTest);
+	command.sceneManager->getRenderState(command.contextID)->setStencilFunc(_stencilFunc);
+	command.sceneManager->getRenderState(command.contextID)->setStencilOp(_stencilOp);
+	command.sceneManager->getRenderState(command.contextID)->applyState();
 
 	if (_callback != nullptr)
 		_callback();

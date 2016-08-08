@@ -113,7 +113,7 @@ bool veGizmoComponent::onAttachToNode(veNode *node)
     bool state = veComponent::onAttachToNode(node);
     if (state){
         if (_attachedNodeList.size() <= 1){
-            if (!_gizmoNode.valid())
+            if (!_gizmoNode.valid() || _gizmoNode->getSceneManager() != node->getSceneManager())
                 _gizmoNode = node->getSceneManager()->createNode("_VE_GIZMO_NODE_");
             node->getSceneManager()->getRootNode()->addChild(_gizmoNode.get());
         }

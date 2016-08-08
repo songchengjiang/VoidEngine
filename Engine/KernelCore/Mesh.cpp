@@ -10,18 +10,11 @@ veMesh::veMesh(veSceneManager *sm)
 	: veRenderableObject(sm)
 	, _needRefresh(false)
 	, _vertexStride(0)
+	, _transformFeedbackVertices(nullptr)
 	, _transformFeedbackBuffer(0)
 	, _transformFeedbackBufferSize(0)
-    , _currentContextID(0)
 {
     _renderer = new veMeshRenderer;
-    _transformFeedbackBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
-        GLuint vbo;
-        glGenBuffers(1, &vbo);
-        return vbo;
-    }, [](GLuint vbo){
-        glDeleteBuffers(1, &vbo);
-    });
 }
 
 veMesh::~veMesh()
@@ -31,8 +24,7 @@ veMesh::~veMesh()
 
 void veMesh::render(veNode *node, veCamera *camera, unsigned int contextID)
 {
-    _currentContextID = contextID;
-    generateTransformFeedbackBuffer();
+    generateTransformFeedbackBuffer(contextID);
     veRenderableObject::render(node, camera, contextID);
     _needRefresh = false;
 }
@@ -219,18 +211,34 @@ void veMesh::caculateBoundingBox()
 	}
 }
 
-void veMesh::generateTransformFeedbackBuffer()
+void veMesh::generateTransformFeedbackBuffer(unsigned int contextID)
 {
-    auto tfb = _transformFeedbackBuffer->getData(_currentContextID);
-	if ((_needRefresh || !tfb) && !_bones.empty()) {
-		unsigned int stride = (3 + 3) * sizeof(GLfloat);
-		unsigned int bufSize = stride * getVertexCount();
-		if (!tfb) {
-            tfb = _transformFeedbackBuffer->createData(_currentContextID);
+	if (!_bones.empty()) {
+		if (!_transformFeedbackBuffer.valid()) {
+			_transformFeedbackBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+				GLuint vbo;
+				glGenBuffers(1, &vbo);
+				return vbo;
+			}, [](GLuint vbo){
+				glDeleteBuffers(1, &vbo);
+			});
+		}
+
+		auto tfb = _transformFeedbackBuffer->getData(contextID);
+		if (_needRefresh || !tfb) {
+			unsigned int stride = (3 + 3) * sizeof(GLfloat);
+			unsigned int bufSize = stride * getVertexCount();
+			if (!tfb) {
+				tfb = _transformFeedbackBuffer->createData(contextID);
+			}
+			glBindBuffer(GL_ARRAY_BUFFER, tfb);
+			glBufferData(GL_ARRAY_BUFFER, bufSize, nullptr, GL_DYNAMIC_COPY);
+			_transformFeedbackBufferSize = bufSize;
 		}
 		glBindBuffer(GL_ARRAY_BUFFER, tfb);
-		glBufferData(GL_ARRAY_BUFFER, bufSize, nullptr, GL_DYNAMIC_COPY);
-		_transformFeedbackBufferSize = bufSize;
+		_transformFeedbackVertices = (veReal *)glMapBufferRange(GL_ARRAY_BUFFER, 0, _transformFeedbackBufferSize, GL_MAP_READ_BIT);
+		glUnmapBuffer(GL_ARRAY_BUFFER);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
 
@@ -239,32 +247,28 @@ void veMesh::traversePrimitives(const PrimitiveCallback &callback)
 	for (auto &primitive : _primitives) {
 		if (primitive.primitiveType == Primitive::TRIANGLES) {
 			if (!_bones.empty()) {
-				unsigned int stride = (3 + 3);
-				unsigned int vOffset = 0;
-				unsigned int nOffset = 3;
-				glBindBuffer(GL_ARRAY_BUFFER, _transformFeedbackBuffer->getData(_currentContextID));
-				veReal *vertices = (veReal *)glMapBufferRange(GL_ARRAY_BUFFER, 0, _transformFeedbackBufferSize, GL_MAP_READ_BIT);
-				if (!vertices) {
+				if (!_transformFeedbackVertices) {
 					veLog("GL_TRANSFORM_FEEDBACK_BUFFER is NULL!");
 					return;
 				}
+				unsigned int stride = (3 + 3);
+				unsigned int vOffset = 0;
+				unsigned int nOffset = 3;
 				for (size_t idx = 0; idx < primitive.indices->size(); idx += 3) {
 					unsigned int id0 = (*primitive.indices)[idx];
 					unsigned int id1 = (*primitive.indices)[idx + 1];
 					unsigned int id2 = (*primitive.indices)[idx + 2];
-					veReal *p1 = &(vertices)[id0 * stride + vOffset];
-					veReal *p2 = &(vertices)[id1 * stride + vOffset];
-					veReal *p3 = &(vertices)[id2 * stride + vOffset];
-					veReal *n1 = &(vertices)[id0 * stride + nOffset];
-					veReal *n2 = &(vertices)[id1 * stride + nOffset];
-					veReal *n3 = &(vertices)[id2 * stride + nOffset];
+					veReal *p1 = &(_transformFeedbackVertices)[id0 * stride + vOffset];
+					veReal *p2 = &(_transformFeedbackVertices)[id1 * stride + vOffset];
+					veReal *p3 = &(_transformFeedbackVertices)[id2 * stride + vOffset];
+					veReal *n1 = &(_transformFeedbackVertices)[id0 * stride + nOffset];
+					veReal *n2 = &(_transformFeedbackVertices)[id1 * stride + nOffset];
+					veReal *n3 = &(_transformFeedbackVertices)[id2 * stride + nOffset];
 					if (callback != nullptr) {
 						if (callback(p1, p2, p3, n1, n2, n3))
 							break;
 					}
 				}
-				glUnmapBuffer(GL_ARRAY_BUFFER);
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
 			}
 			else {
 				unsigned int stride = 0;

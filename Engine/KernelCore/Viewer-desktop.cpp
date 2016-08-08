@@ -170,6 +170,11 @@ veViewerDesktop::veViewerDesktop(int width, int height, const std::string &title
     , _sharedViewer(sharedViewer)
 {
     initSymbolsMap();
+#if VE_PLATFORM == VE_PLATFORM_MAC
+    if (_sharedViewer){
+        _contextID = _sharedViewer->_contextID;
+    }
+#endif
 #if VE_PLATFORM == VE_PLATFORM_WIN32
     _glContext = new GLEWContext;
 #endif
@@ -219,6 +224,7 @@ bool veViewerDesktop::simulation(double deltaTime)
 void veViewerDesktop::startRender()
 {
     if (!_sceneManager.valid()) return;
+    if (_isRendering) return;
     _isRendering = true;
     _renderingThread = std::thread([this] {
         while(_isRendering && _hwnd){
@@ -229,6 +235,7 @@ void veViewerDesktop::startRender()
 
 void veViewerDesktop::stopRender()
 {
+    if (!_isRendering) return;
     _isRendering = false;
     _renderingThread.join();
 }
@@ -357,7 +364,7 @@ void veViewerDesktop::collectWindowSizeEvent(GLFWwindow* window, int width, int 
     event.setWindowHeight(height);
     if (viewer->getCamera())
         viewer->getCamera()->resize(event.getWindowWidth(), event.getWindowHeight());
-    viewer->_sceneManager->reloadRenderContexts();
+    viewer->_sceneManager->destroyRenderContexts();
     viewer->_eventList.push_back(event);
 }
 

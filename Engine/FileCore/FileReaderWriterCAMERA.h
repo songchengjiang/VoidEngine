@@ -169,7 +169,7 @@ private:
 	}
 
 	void readfbo(const Value &fboVal) {
-		auto fbo = veFrameBufferObjectManager::instance()->createFrameBufferObject(_camera->getName());
+		auto fbo = _sceneManager->createFrameBufferObject(_camera->getName());
 		for (unsigned int i = 0; i < fboVal.Size(); ++i) {
 			const Value &attachmentVal = fboVal[i];
 			veTexture *texture = nullptr;

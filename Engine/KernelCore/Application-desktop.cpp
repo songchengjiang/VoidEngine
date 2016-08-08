@@ -28,7 +28,6 @@ veApplicationDesktop::~veApplicationDesktop()
 {
     stop();
     for (auto &viewer : _viewerList){
-        viewer->destroy();
         VE_SAFE_DELETE(viewer);
     }
 	glfwTerminate();

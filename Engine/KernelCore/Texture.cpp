@@ -9,7 +9,7 @@ const int veTexture::DEFAULT_INTERNAL_FORMAT = GL_RGBA32F;
 
 veTexture::~veTexture()
 {
-	releaseTextureData();
+	//releaseTextureData();
 	releaseMemoryData();
 }
 

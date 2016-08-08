@@ -12,6 +12,7 @@
 #include "MeshManager.h"
 #include "AnimationManager.h"
 #include "MaterialManager.h"
+#include "FrameBufferObjectManager.h"
 #include "Configuration.h"
 
 #include "Viewer.h"
@@ -25,12 +26,13 @@ veSceneManager::veSceneManager()
     , _resourceRecoveredIntervalTime(10.0f)
 	, _latestResourceRecoveredTime(_resourceRecoveredIntervalTime)
 	, _stopThreading(true)
-    , _needReloadRenderContexts(false)
+    , _needDestroyRenderContexts(false)
 {
 	_managerList[veTextureManager::TYPE()] = new veTextureManager(this);
 	_managerList[veMeshManager::TYPE()] = new veMeshManager(this);
 	_managerList[veAnimationManager::TYPE()] = new veAnimationManager(this);
 	_managerList[veMaterialManager::TYPE()] = new veMaterialManager(this);
+    _managerList[veFrameBufferObjectManager::TYPE()] = new veFrameBufferObjectManager(this);
     startThreading();
 }
 
@@ -115,6 +117,11 @@ veAnimationContainer* veSceneManager::createAnimationContainer(const std::string
 	return static_cast<veAnimationManager *>(_managerList[veAnimationManager::TYPE()])->createAnimationContainer(name);
 }
 
+veFrameBufferObject* veSceneManager::createFrameBufferObject(const std::string &name)
+{
+    return static_cast<veFrameBufferObjectManager *>(_managerList[veFrameBufferObjectManager::TYPE()])->createFrameBufferObject(name);
+}
+
 veRay* veSceneManager::createRay(const veVec3 &start, const veVec3 &end)
 {
 	auto ray = new veRay(start, end);
@@ -187,9 +194,9 @@ veBaseManager* veSceneManager::getManager(const std::string &mgType)
 	return iter->second;
 }
 
-void veSceneManager::reloadRenderContexts()
+void veSceneManager::destroyRenderContexts()
 {
-    _needReloadRenderContexts = true;
+    _needDestroyRenderContexts = true;
 }
 
 void veSceneManager::handleEvent(veViewer *viewer, const veEvent &event)
@@ -238,9 +245,9 @@ void veSceneManager::render(veViewer *viewer)
 {
     std::unique_lock<std::mutex> renderLock(this->_renderingMutex);
     this->_renderingCondition.wait(renderLock);
-    if (_needReloadRenderContexts){
+    if (_needDestroyRenderContexts){
         veGLDataBufferManager::instance()->destroyAllGLDataBuffer();
-        _needReloadRenderContexts = false;
+        _needDestroyRenderContexts = false;
     }
     this->renderImp(viewer);
     this->postRenderHandle();

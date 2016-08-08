@@ -3,6 +3,7 @@
 #include "Prerequisites.h"
 #include "BaseCore/Vector2.h"
 #include "BaseCore/Vector4.h"
+#include "BaseManager.h"
 #include "GLDataBuffer.h"
 #include "Texture.h"
 #include <map>
@@ -49,28 +50,6 @@ private:
 	bool _needRefreshAttachments;
 	bool _needRefreshBuffers;
 	std::map<GLenum, AttachmentInfo> _attachments;
-};
-
-class VE_EXPORT veFrameBufferObjectManager
-{
-public:
-
-	~veFrameBufferObjectManager();
-	static veFrameBufferObjectManager* instance();
-
-	veFrameBufferObject* findFrameBufferObject(const std::string &name);
-	veFrameBufferObject* createFrameBufferObject(const std::string &name);
-	veFrameBufferObject* getFrameBufferObject(unsigned int idx);
-	size_t getFrameBufferObjectNum() const { return _fbos.size(); }
-
-
-private:
-
-	veFrameBufferObjectManager();
-
-private:
-
-	std::vector< VE_Ptr<veFrameBufferObject> > _fbos;
 };
 
 #endif
