@@ -177,15 +177,6 @@
     <ClCompile Include="..\..\Engine\Debuger\OctreeDebuger.cpp">
       <Filter>Debuger</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\Entity.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\MeshNode.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\EntityRenderer.cpp">
-      <Filter>KernelCore\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\Ray.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
@@ -193,9 +184,6 @@
       <Filter>KernelCore</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\MatrixPtr.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\EntityManager.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\SurfaceRenderer.cpp">
@@ -382,7 +370,16 @@
     <ClCompile Include="..\..\Engine\KernelCore\Viewer-desktop.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\EventDispatcher.cpp">
+    <ClCompile Include="..\..\Engine\KernelCore\GLDataBuffer.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\MeshManager.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\MeshRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\FrameBufferObjectManager.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
   </ItemGroup>
@@ -538,15 +535,6 @@
     <ClInclude Include="..\..\Engine\Debuger\OctreeDebuger.h">
       <Filter>Debuger</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\Entity.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\MeshNode.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\EntityRenderer.h">
-      <Filter>KernelCore\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\Ray.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
@@ -554,9 +542,6 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\MatrixPtr.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\EntityManager.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\SurfaceRenderer.h">
@@ -788,7 +773,16 @@
     <ClInclude Include="..\..\Engine\KernelCore\Viewer-desktop.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\EventDispatcher.h">
+    <ClInclude Include="..\..\Engine\KernelCore\GLDataBuffer.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\MeshManager.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\MeshRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\FrameBufferObjectManager.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>

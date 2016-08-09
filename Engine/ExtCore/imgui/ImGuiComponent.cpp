@@ -39,7 +39,6 @@ void ImGui_RenderDrawLists(ImDrawData* draw_data)
             idx_buffer_offset += pcmd->ElemCount;
         }
     }
-    
     // Restore modified state
     glBindVertexArray(0);
     glBindBuffer( GL_ARRAY_BUFFER, 0);
@@ -100,13 +99,10 @@ veImGuiComponent::veImGuiComponent()
 
 veImGuiComponent::~veImGuiComponent()
 {
-    if (g_VaoHandle) glDeleteVertexArrays(1, &g_VaoHandle);
-    if (g_VboHandle) glDeleteBuffers(1, &g_VboHandle);
-    if (g_IboHandle) glDeleteBuffers(1, &g_IboHandle);
     ImGui::Shutdown();
 }
 
-void veImGuiComponent::initPass(veSceneManager *sm, unsigned int contextID)
+void veImGuiComponent::initPass(veSceneManager *sm)
 {
     _renderPass = new vePass;
     _renderPass->cullFace() = false;
@@ -264,7 +260,7 @@ void veImGuiComponent::beforeRender(veSceneManager *sm, veViewer *viewer)
 void veImGuiComponent::afterRender(veSceneManager *sm, veViewer *viewer)
 {
     if (!_renderPass.valid())
-        initPass(sm, viewer->getContextID());
+        initPass(sm);
     ImGuiIO& io = ImGui::GetIO();
     _fontTexture->bind(viewer->getContextID());
     io.Fonts->TexID = (void *)(intptr_t)_fontTexture->glTex(viewer->getContextID());
@@ -283,11 +279,24 @@ void veImGuiComponent::afterRender(veSceneManager *sm, veViewer *viewer)
     rc.pass = _renderPass.get();
     _renderPass->apply(rc);
     
+    bool needRefresh = false;
     g_VaoHandle = _vaoBuffer->getData(viewer->getContextID());
-    if (!g_VaoHandle){
+    if (!g_VaoHandle) {
         g_VaoHandle = _vaoBuffer->createData(viewer->getContextID());
+        needRefresh = true;
+    }
+
+    g_VboHandle = _vboBuffer->getData(viewer->getContextID());
+    if (!g_VboHandle) {
         g_VboHandle = _vboBuffer->createData(viewer->getContextID());
+    }
+
+    g_IboHandle = _iboBuffer->getData(viewer->getContextID());
+    if (!g_IboHandle) {
         g_IboHandle = _iboBuffer->createData(viewer->getContextID());
+    }
+
+    if (needRefresh){
         glBindVertexArray(g_VaoHandle);
         glBindBuffer(GL_ARRAY_BUFFER, g_VboHandle);
         

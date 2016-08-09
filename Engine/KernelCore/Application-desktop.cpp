@@ -36,39 +36,41 @@ veApplicationDesktop::~veApplicationDesktop()
 #if (VE_PLATFORM == VE_PLATFORM_WIN32)
 bool veApplicationDesktop::run()
 {
-	if (!_sceneManager.valid()) return false;
-	_isRunning = true;
+    if (_viewerList.empty()) return false;
+    _isRunning = true;
 
-	LARGE_INTEGER  frequency;
-	LARGE_INTEGER frameTimeLimit;
-	LARGE_INTEGER preFrameTime;
-	QueryPerformanceFrequency(&frequency);
-	frameTimeLimit.QuadPart = (1.0 / 60.0) * frequency.QuadPart;
-	QueryPerformanceCounter(&preFrameTime);
-	double frequencyPreSec = 1.0 / frequency.QuadPart;
-    
-    for (auto &viewer : _viewerList){
-        viewer->startRender(_sceneManager.get());
+    LARGE_INTEGER  frequency;
+    LARGE_INTEGER frameTimeLimit;
+    LARGE_INTEGER preFrameTime;
+    QueryPerformanceFrequency(&frequency);
+    frameTimeLimit.QuadPart = (1.0 / 60.0) * frequency.QuadPart;
+    QueryPerformanceCounter(&preFrameTime);
+    double frequencyPreSec = 1.0 / frequency.QuadPart;
+
+    for (auto &viewer : _viewerList) {
+        viewer->create();
+        viewer->startRender();
     }
-	while (_isRunning && !_viewerList.empty())
-	{
-		LARGE_INTEGER currentFrameTime;
-		QueryPerformanceCounter(&currentFrameTime);
-		if (frameTimeLimit.QuadPart <= (currentFrameTime.QuadPart - preFrameTime.QuadPart)) {
+    while (_isRunning && !_viewerList.empty())
+    {
+        LARGE_INTEGER currentFrameTime;
+        QueryPerformanceCounter(&currentFrameTime);
+        if (frameTimeLimit.QuadPart <= (currentFrameTime.QuadPart - preFrameTime.QuadPart)) {
             glfwPollEvents();
-            _sceneManager->update((currentFrameTime.QuadPart - preFrameTime.QuadPart) * frequencyPreSec, &_eventDispatcher);
-            _eventDispatcher.clearEventList();
+            for (auto &viewer : _viewerList) {
+                viewer->simulation((currentFrameTime.QuadPart - preFrameTime.QuadPart) * frequencyPreSec);
+            }
             updateViewers();
-            
-			preFrameTime.QuadPart = currentFrameTime.QuadPart;
-		}
-		else {
-			//std::this_thread::sleep_for(std::chrono::microseconds(1));
-		}
-	}
-	stop();
 
-	return true;
+            preFrameTime.QuadPart = currentFrameTime.QuadPart;
+        }
+        else {
+            //std::this_thread::sleep_for(std::chrono::microseconds(1));
+        }
+    }
+    stop();
+
+    return true;
 }
 #endif
 

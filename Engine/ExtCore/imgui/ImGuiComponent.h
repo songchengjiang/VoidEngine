@@ -4,6 +4,7 @@
 #include "KernelCore/Material.h"
 #include "KernelCore/GLDataBuffer.h"
 #include "imgui.h"
+#include <mutex>
 
 class VE_EXPORT veImGuiComponent : public veComponent
 {
@@ -23,7 +24,7 @@ public:
     
 protected:
     
-    void initPass(veSceneManager *sm, unsigned int contextID);
+    void initPass(veSceneManager *sm);
     
 protected:
     
