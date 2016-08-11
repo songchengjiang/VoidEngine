@@ -182,6 +182,22 @@ void veSceneManager::removeComponent(veComponent *component)
 	_componentList.erase(iter);
 }
 
+void veSceneManager::attachViewer(veViewer *viewer)
+{
+    auto iter = std::find(_attachedViewers.begin(), _attachedViewers.end(), viewer);
+    if (iter == _attachedViewers.end()){
+        _attachedViewers.push_back(viewer);
+    }
+}
+
+void veSceneManager::detachViewer(veViewer *viewer)
+{
+    auto iter = std::find(_attachedViewers.begin(), _attachedViewers.end(), viewer);
+    if (iter != _attachedViewers.end()){
+        _attachedViewers.erase(iter);
+    }
+}
+
 void veSceneManager::requestRayCast(veRay *ray)
 {
 }
@@ -224,8 +240,10 @@ void veSceneManager::event(veViewer *viewer)
     }
 }
 
-void veSceneManager::update()
+void veSceneManager::update(veViewer *viewer)
 {
+    if (viewer != _attachedViewers.front())
+        return;
 	{
 		std::unique_lock<std::mutex> updateLock(_updatingMutex);
 		for (auto &manager : _managerList) {

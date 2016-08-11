@@ -22,9 +22,8 @@ public:
     virtual void hide() override;
     
     
-    virtual bool simulation(double deltaTime) override;
-    virtual void startRender() override;
-    virtual void stopRender() override;
+    virtual void startSimulation() override;
+    virtual void stopSimulation() override;
     
     void onTouchBegan(int touchID, veReal x, veReal y);
     void onTouchMove(int touchID, veReal x, veReal y);
@@ -37,14 +36,15 @@ public:
 protected:
     
     veViewerIOS(int width, int height, const std::string &title, veViewerIOS *sharedViewer = nullptr);
+    void update(double deltaTime);
     
 protected:
     
     void        *_glView;
     veViewerIOS *_sharedViewer;
     
-    bool        _isRendering;
-    std::thread _renderingThread;
+    std::thread _updateThread;
+    std::mutex  _eventMutex;
 };
 
 #endif

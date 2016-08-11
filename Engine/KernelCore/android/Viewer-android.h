@@ -1,7 +1,7 @@
 #ifndef _VE_VIEWER_ANDROID_
 #define _VE_VIEWER_ANDROID_
 
-#include "Viewer.h"
+#include "KernelCore/Viewer.h"
 #include <thread>
 #include <mutex>
 
@@ -19,10 +19,9 @@ public:
     virtual void show() override;
     virtual void hide() override;
 
-    virtual bool simulation(double deltaTime) override;
-    virtual void startRender() override;
-    virtual void stopRender() override;
-    void frameRender();
+    virtual void startSimulation() override;
+    virtual void stopSimulation() override;
+    void render();
     void resize(int width, int height);
 
     void onTouchBegan(int touchID, veReal x, veReal y);
@@ -32,10 +31,11 @@ public:
 protected:
 
     veViewerAndroid(int width, int height, const std::string &title, veViewerAndroid *sharedViewer);
-
+    void update(double deltaTime);
 protected:
 
     veViewerAndroid *_sharedViewer;
+    std::thread _updateThread;
     std::mutex  _eventMutex;
 };
 

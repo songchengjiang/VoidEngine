@@ -23,34 +23,16 @@ veViewer* veApplicationIOS::createViewer(int width, int height, const std::strin
 bool veApplicationIOS::run() {
     if (_viewerList.empty()) return false;
     
-    _isRunning = true;
     for (auto &viewer : _viewerList){
         viewer->create();
-        viewer->startRender();
+        viewer->startSimulation();
     }
-    _runningThread = std::thread([this] {
-        clock_t frameTimeClocks = 1.0 / 60.0 * CLOCKS_PER_SEC;
-        clock_t preFrameTime = clock();
-        double invertClocksSec = 1.0 / (double)CLOCKS_PER_SEC;
-        while (_isRunning){
-            clock_t currentFrameTime = clock();
-            for (auto &viewer : _viewerList){
-                viewer->simulation((currentFrameTime - preFrameTime) * invertClocksSec);
-            }
-            while ((clock() - currentFrameTime) < frameTimeClocks) {
-                std::this_thread::sleep_for(std::chrono::microseconds(1));
-            }
-            preFrameTime = currentFrameTime;
-        }
-    });
     return true;
 }
 
 void veApplicationIOS::stop() {
-    _isRunning = false;
     for (auto &viewer : _viewerList){
-        viewer->stopRender();
+        viewer->stopSimulation();
         viewer->destroy();
     }
-    _runningThread.join();
 }

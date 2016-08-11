@@ -1,6 +1,6 @@
 #include "Application-android.h"
 #include "FileCore/File-android.h"
-#include "KernelCore/Viewer-android.h"
+#include "KernelCore/android/Viewer-android.h"
 #include <android/input.h>
 #include <android/asset_manager_jni.h>
 
@@ -101,7 +101,7 @@ JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfaceDrawF
         (JNIEnv *env, jclass jthis, jobject surfaceview)
 {
     if (0 < veApplication::instance()->getViewerCount()) {
-        static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->frameRender();
+        static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->render();
     }
     //veLog("nativeOnDrawFrame");
 }
@@ -165,7 +165,6 @@ JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfaceTouch
 
 veApplicationAndroid::veApplicationAndroid()
 //    : _androidApp(nullptr)
-    : _isRunning(false)
 {
 
 }
@@ -196,39 +195,20 @@ veViewer* veApplicationAndroid::createViewer(int width, int height, const std::s
 bool veApplicationAndroid::run()
 {
     if (_viewerList.empty()) return false;
-    _isRunning = true;
 
     for (auto &viewer : _viewerList){
         viewer->create();
+        viewer->startSimulation();
     }
-    _runningThread = std::thread([this] {
-        clock_t frameTimeClocks = 1.0 / 60.0 * CLOCKS_PER_SEC;
-        clock_t preFrameTime = clock();
-        double invertClocksSec = 1.0 / (double)CLOCKS_PER_SEC;
-        while (_isRunning && !_viewerList.empty())
-        {
-            clock_t currentFrameTime = clock();
-
-            for (auto &viewer : _viewerList){
-                viewer->simulation((currentFrameTime - preFrameTime) * invertClocksSec);
-            }
-            //veLog("Frame Rate: %f\n", 1.0 / _sceneManager->getDeltaTime());
-            while ((clock() - currentFrameTime) < frameTimeClocks) {
-                std::this_thread::sleep_for(std::chrono::microseconds(1));
-            }
-            preFrameTime = currentFrameTime;
-        }
-    });
     return true;
 }
 
 void veApplicationAndroid::stop()
 {
-    _isRunning = false;
     for (auto &viewer : _viewerList){
+        viewer->stopSimulation();
         viewer->destroy();
     }
-    _runningThread.join();
 }
 
 //void veApplicationAndroid::pollAllEvents() {

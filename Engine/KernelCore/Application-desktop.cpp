@@ -33,85 +33,29 @@ veApplicationDesktop::~veApplicationDesktop()
 	glfwTerminate();
 }
 
-#if (VE_PLATFORM == VE_PLATFORM_WIN32)
 bool veApplicationDesktop::run()
 {
     if (_viewerList.empty()) return false;
     _isRunning = true;
-
-    LARGE_INTEGER  frequency;
-    LARGE_INTEGER frameTimeLimit;
-    LARGE_INTEGER preFrameTime;
-    QueryPerformanceFrequency(&frequency);
-    frameTimeLimit.QuadPart = (1.0 / 60.0) * frequency.QuadPart;
-    QueryPerformanceCounter(&preFrameTime);
-    double frequencyPreSec = 1.0 / frequency.QuadPart;
-
+    
     for (auto &viewer : _viewerList) {
         viewer->create();
-        viewer->startRender();
+        viewer->startSimulation();
     }
-    while (_isRunning && !_viewerList.empty())
-    {
-        LARGE_INTEGER currentFrameTime;
-        QueryPerformanceCounter(&currentFrameTime);
-        if (frameTimeLimit.QuadPart <= (currentFrameTime.QuadPart - preFrameTime.QuadPart)) {
-            glfwPollEvents();
-            for (auto &viewer : _viewerList) {
-                viewer->simulation((currentFrameTime.QuadPart - preFrameTime.QuadPart) * frequencyPreSec);
-            }
-            updateViewers();
-
-            preFrameTime.QuadPart = currentFrameTime.QuadPart;
-        }
-        else {
-            //std::this_thread::sleep_for(std::chrono::microseconds(1));
-        }
-    }
-    stop();
-
-    return true;
-}
-#endif
-
-#if (VE_PLATFORM == VE_PLATFORM_MAC)
-bool veApplicationDesktop::run()
-{
-    if (_viewerList.empty()) return false;
-    _isRunning = true;
-    clock_t frameTimeClocks = 1.0 / 60.0 * CLOCKS_PER_SEC;
-    clock_t preFrameTime = clock();
-    double invertClocksSec = 1.0 / (double)CLOCKS_PER_SEC;
-    
-    for (auto &viewer : _viewerList){
-        viewer->create();
-        viewer->startRender();
-    }
-    while (_isRunning && !_viewerList.empty())
-    {
-        clock_t currentFrameTime = clock();
+    while (_isRunning && !_viewerList.empty()) {
         glfwPollEvents();
-        
-        for (auto &viewer : _viewerList){
-            viewer->simulation((currentFrameTime - preFrameTime) * invertClocksSec);
-        }
         updateViewers();
-        //veLog("Frame Rate: %f\n", 1.0 / _sceneManager->getDeltaTime());
-        while ((clock() - currentFrameTime) < frameTimeClocks) {
-            std::this_thread::sleep_for(std::chrono::microseconds(1));
-        }
-        preFrameTime = currentFrameTime;
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
     stop();
     return true;
 }
-#endif
 
 void veApplicationDesktop::stop()
 {
     _isRunning = false;
     for (auto &viewer : _viewerList){
-        viewer->stopRender();
+        viewer->stopSimulation();
         viewer->destroy();
     }
 }
@@ -120,7 +64,7 @@ void veApplicationDesktop::updateViewers()
 {
     for (auto viewer = _viewerList.begin(); viewer != _viewerList.end();){
         if (glfwWindowShouldClose(static_cast<veViewerDesktop *>(*viewer)->_hwnd) != 0){
-            (*viewer)->stopRender();
+            (*viewer)->stopSimulation();
             (*viewer)->destroy();
             viewer = _viewerList.erase(viewer);
         }else{

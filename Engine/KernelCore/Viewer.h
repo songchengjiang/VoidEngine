@@ -18,9 +18,8 @@ public:
     virtual void show() = 0;
     virtual void hide() = 0;
     
-    virtual bool simulation(double deltaTime) = 0;
-    virtual void startRender() = 0;
-    virtual void stopRender() = 0;
+    virtual void startSimulation() = 0;
+    virtual void stopSimulation() = 0;
     
     int width() const { return _width; }
     int height() const { return _height; }

@@ -95,7 +95,7 @@ public:
     void destroyRenderContexts();
 
     void event(veViewer *viewer);
-	void update();
+	void update(veViewer *viewer);
     void render(veViewer *viewer);
 
 	void enqueueTaskToThread(const veThreadPool::TaskCallBack& callback, void* callbackParam, const std::function<void()> &func);
@@ -103,6 +103,9 @@ public:
 
 	void addComponent(veComponent *component);
 	void removeComponent(veComponent *component);
+    
+    void attachViewer(veViewer *viewer);
+    void detachViewer(veViewer *viewer);
 
 protected:
 
@@ -126,6 +129,7 @@ protected:
     veParticleSystemList        _particleSystemList;
 	veVec3                      _ambient;
 	VE_Ptr<veRenderPipeline>    _renderPipeline;
+    std::vector<veViewer *>     _attachedViewers;
 
 	std::unordered_map<std::string, veBaseManager *> _managerList;
     

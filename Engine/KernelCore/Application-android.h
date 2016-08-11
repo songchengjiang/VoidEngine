@@ -23,12 +23,6 @@ private:
 
 //    static void collectWindowEvents(struct android_app* app, int32_t cmd);
 //    static int32_t collectInputEvents(struct android_app* app, AInputEvent* event);
-
-private:
-
-    std::thread _runningThread;
-    //android_app* _androidApp;
-    bool         _isRunning;
 };
 
 #endif //ANDROID_APPLICATION_ANDROID_H

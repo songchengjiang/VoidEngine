@@ -16,3 +16,13 @@ veViewer::~veViewer()
 {
 
 }
+
+void veViewer::startSimulation()
+{
+    _sceneManager->attachViewer(this);
+}
+
+void veViewer::stopSimulation()
+{
+    _sceneManager->detachViewer(this);
+}

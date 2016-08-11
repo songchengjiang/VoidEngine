@@ -166,7 +166,6 @@ veViewerDesktop::veViewerDesktop(int width, int height, const std::string &title
     : veViewer(width, height, title)
     , _isInited(false)
     , _hwnd(nullptr)
-    , _isRendering(false)
     , _sharedViewer(sharedViewer)
 {
     initSymbolsMap();
@@ -209,35 +208,94 @@ void veViewerDesktop::swapBuffers()
     glfwSwapBuffers(_hwnd);
 }
 
-bool veViewerDesktop::simulation(double deltaTime)
-{
-    if (!_sceneManager.valid()) return false;
-    _sceneManager->setDeltaTime(deltaTime);
-    _sceneManager->event(this);
-    _eventList.clear();
-    bool needUpdateSceneManager = _sharedViewer? _sharedViewer->_sceneManager != _sceneManager: true;
-    if (needUpdateSceneManager)
-        _sceneManager->update();
-    return true;
-}
-
-void veViewerDesktop::startRender()
+#if (VE_PLATFORM == VE_PLATFORM_WIN32)
+void veViewerDesktop::startSimulation()
 {
     if (!_sceneManager.valid()) return;
-    if (_isRendering) return;
-    _isRendering = true;
+    _isRunning = true;
+    
+    _updateThread = std::thread([this] {
+        LARGE_INTEGER frequency;
+        LARGE_INTEGER frameTimeLimit;
+        LARGE_INTEGER preFrameTime;
+        QueryPerformanceFrequency(&frequency);
+        frameTimeLimit.QuadPart = (1.0 / 60.0) * frequency.QuadPart;
+        QueryPerformanceCounter(&preFrameTime);
+        double frequencyPreSec = 1.0 / frequency.QuadPart;
+        while(_isRunning){
+            
+            LARGE_INTEGER currentFrameTime;
+            QueryPerformanceCounter(&currentFrameTime);
+            if (frameTimeLimit.QuadPart <= (currentFrameTime.QuadPart - preFrameTime.QuadPart)){
+                this->update((currentFrameTime.QuadPart - preFrameTime.QuadPart) * frequencyPreSec);
+                preFrameTime.QuadPart = currentFrameTime.QuadPart;
+            }
+        }
+    });
+    
     _renderingThread = std::thread([this] {
-        while(_isRendering && _hwnd){
+        while(_isRunning && _hwnd){
             _sceneManager->render(this);
         }
     });
 }
+#endif
 
-void veViewerDesktop::stopRender()
+
+#if (VE_PLATFORM == VE_PLATFORM_MAC)
+void veViewerDesktop::startSimulation()
 {
-    if (!_isRendering) return;
-    _isRendering = false;
+    if (!_sceneManager.valid()) return;
+    veViewer::startSimulation();
+    
+    _isRunning = true;
+    
+    _updateThread = std::thread([this] {
+        clock_t frameTimeClocks = 1.0 / 60.0 * CLOCKS_PER_SEC;
+        clock_t preFrameTime = clock();
+        double invertClocksSec = 1.0 / (double)CLOCKS_PER_SEC;
+        while(_isRunning){
+            clock_t currentFrameTime = clock();
+            this->update((currentFrameTime - preFrameTime) * invertClocksSec);
+            while ((clock() - currentFrameTime) < frameTimeClocks) {
+                std::this_thread::sleep_for(std::chrono::microseconds(1));
+            }
+            preFrameTime = currentFrameTime;
+        }
+    });
+    
+    _renderingThread = std::thread([this] {
+        while(_isRunning && _hwnd){
+            _sceneManager->render(this);
+        }
+    });
+}
+#endif
+
+void veViewerDesktop::stopSimulation()
+{
+    if (!_sceneManager.valid()) return;
+    if (!_isRunning) return;
+    _isRunning = false;
+    _updateThread.join();
     _renderingThread.join();
+    veViewer::stopSimulation();
+}
+
+void veViewerDesktop::update(double deltaTime)
+{
+    _sceneManager->setDeltaTime(deltaTime);
+    {
+        std::unique_lock<std::mutex> lock(_eventMutex);
+        _sceneManager->event(this);
+        _eventList.clear();
+    }
+    _sceneManager->update(this);
+}
+
+void veViewerDesktop::render()
+{
+    _sceneManager->render(this);
 }
 
 void veViewerDesktop::create()
@@ -302,6 +360,7 @@ void veViewerDesktop::caculateMouseUnitCoords(GLFWwindow* window, double x, doub
 void veViewerDesktop::collectKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     veViewerDesktop *viewer = static_cast<veViewerDesktop *>(glfwGetWindowUserPointer(window));
+    std::unique_lock<std::mutex> lock(viewer->_eventMutex);
     veEvent &event = viewer->_currentEvent;
     event.setKeySymbol(g_KeySymbolMap[key]);
     event.setEventType(action == GLFW_PRESS ? veEvent::VE_DOWN : veEvent::VE_UP);
@@ -313,6 +372,7 @@ void veViewerDesktop::collectKeyEvent(GLFWwindow* window, int key, int scancode,
 void veViewerDesktop::collectCharEvent(GLFWwindow* window, unsigned int c)
 {
     veViewerDesktop *viewer = static_cast<veViewerDesktop *>(glfwGetWindowUserPointer(window));
+    std::unique_lock<std::mutex> lock(viewer->_eventMutex);
     veEvent &event = viewer->_eventList.back();
     event.setKeyChar(c);
 }
@@ -320,6 +380,7 @@ void veViewerDesktop::collectCharEvent(GLFWwindow* window, unsigned int c)
 void veViewerDesktop::collectMouseEvent(GLFWwindow* window, int button, int action, int mods)
 {
     veViewerDesktop *viewer = static_cast<veViewerDesktop *>(glfwGetWindowUserPointer(window));
+    std::unique_lock<std::mutex> lock(viewer->_eventMutex);
     veEvent &event = viewer->_currentEvent;
     event.setMouseSymbol(g_MouseSymbolMap[button]);
     event.setEventType(action == GLFW_PRESS ? veEvent::VE_PRESS : veEvent::VE_RELEASE);
@@ -330,6 +391,7 @@ void veViewerDesktop::collectMouseEvent(GLFWwindow* window, int button, int acti
 void veViewerDesktop::collectMouseMoveEvent(GLFWwindow* window, double x, double y)
 {
     veViewerDesktop *viewer = static_cast<veViewerDesktop *>(glfwGetWindowUserPointer(window));
+    std::unique_lock<std::mutex> lock(viewer->_eventMutex);
     caculateMouseUnitCoords(window, x, y);
     veEvent &event = viewer->_currentEvent;
     if (event.getEventType() != veEvent::VE_DRAG) {
@@ -346,6 +408,7 @@ void veViewerDesktop::collectMouseMoveEvent(GLFWwindow* window, double x, double
 void veViewerDesktop::collectScrollEvent(GLFWwindow* window, double x, double y)
 {
     veViewerDesktop *viewer = static_cast<veViewerDesktop *>(glfwGetWindowUserPointer(window));
+    std::unique_lock<std::mutex> lock(viewer->_eventMutex);
     veEvent &event = viewer->_currentEvent;
     event.setEventType(0.0 < y ? veEvent::VE_SCROLL_UP : veEvent::VE_SCROLL_DOWN);
     event.setMouseScroll(y);
@@ -356,6 +419,7 @@ void veViewerDesktop::collectWindowSizeEvent(GLFWwindow* window, int width, int 
 {
     if (width == 0 || height == 0) return;
     veViewerDesktop *viewer = static_cast<veViewerDesktop *>(glfwGetWindowUserPointer(window));
+    std::unique_lock<std::mutex> lock(viewer->_eventMutex);
     viewer->_width = width;
     viewer->_height = height;
     veEvent &event = viewer->_currentEvent;
@@ -371,6 +435,7 @@ void veViewerDesktop::collectWindowSizeEvent(GLFWwindow* window, int width, int 
 void veViewerDesktop::collectWindowFocusEvent(GLFWwindow* window, int focused)
 {
     veViewerDesktop *viewer = static_cast<veViewerDesktop *>(glfwGetWindowUserPointer(window));
+    std::unique_lock<std::mutex> lock(viewer->_eventMutex);
     veEvent &event = viewer->_currentEvent;
     event.setEventType(focused != 0? veEvent::VE_WIN_FOCUS: veEvent::VE_WIN_NOFOCUS);
     viewer->_eventList.push_back(event);
@@ -379,6 +444,7 @@ void veViewerDesktop::collectWindowFocusEvent(GLFWwindow* window, int focused)
 void veViewerDesktop::collectWindowClose(GLFWwindow* window)
 {
     veViewerDesktop *viewer = static_cast<veViewerDesktop *>(glfwGetWindowUserPointer(window));
+    std::unique_lock<std::mutex> lock(viewer->_eventMutex);
     veEvent &event = viewer->_currentEvent;
     event.setEventType(veEvent::VE_WIN_CLOSE);
     viewer->_eventList.push_back(event);

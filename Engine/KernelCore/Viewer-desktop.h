@@ -21,14 +21,15 @@ public:
     virtual void show() override;
     virtual void hide() override;
     
-    virtual bool simulation(double deltaTime) override;
-    virtual void startRender() override;
-    virtual void stopRender() override;
+    virtual void startSimulation() override;
+    virtual void stopSimulation() override;
 
 protected:
     
     veViewerDesktop(int width, int height, const std::string &title, veViewerDesktop *sharedViewer = nullptr);
     
+    void update(double deltaTime);
+    void render();
     
 protected:
     
@@ -51,8 +52,9 @@ protected:
 #endif
     bool        _isInited;
     
+    std::thread _updateThread;
     std::thread _renderingThread;
-    bool        _isRendering;
+    std::mutex  _eventMutex;
 };
 
 #endif

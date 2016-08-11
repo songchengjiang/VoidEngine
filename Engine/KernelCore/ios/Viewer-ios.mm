@@ -10,7 +10,6 @@ veViewerIOS::veViewerIOS(int width, int height, const std::string &title, veView
     : veViewer(width, height, title)
     , _sharedViewer(sharedViewer)
     , _glView(nullptr)
-    , _isRendering(false)
 {
 }
 
@@ -32,28 +31,51 @@ void veViewerIOS::swapBuffers()
     [glView swapBuffers];
 }
 
-bool veViewerIOS::simulation(double deltaTime)
+void veViewerIOS::startSimulation()
 {
-    if (!_sceneManager.valid()) return false;
+    if (!_sceneManager.valid()) return;
+    veViewer::startSimulation();
+    
+    _isRunning = true;
+    
+    _updateThread = std::thread([this] {
+        clock_t frameTimeClocks = 1.0 / 60.0 * CLOCKS_PER_SEC;
+        clock_t preFrameTime = clock();
+        double invertClocksSec = 1.0 / (double)CLOCKS_PER_SEC;
+        while(_isRunning){
+            clock_t currentFrameTime = clock();
+            this->update((currentFrameTime - preFrameTime) * invertClocksSec);
+            while ((clock() - currentFrameTime) < frameTimeClocks) {
+                std::this_thread::sleep_for(std::chrono::microseconds(1));
+            }
+            preFrameTime = currentFrameTime;
+        }
+    });
+ 
+    veGLView *glView = (__bridge veGLView *)_glView;
+    [glView startRendering];
+}
+
+void veViewerIOS::stopSimulation()
+{
+    if (!_sceneManager.valid()) return;
+    if (!_isRunning) return;
+    _isRunning = false;
+    _updateThread.join();
+    
+    veGLView *glView = (__bridge veGLView *)_glView;
+    [glView stopRendering];
+}
+
+void veViewerIOS::update(double deltaTime)
+{
     _sceneManager->setDeltaTime(deltaTime);
-    _sceneManager->event(this);
-    _eventList.clear();
-    bool needUpdateSceneManager = _sharedViewer? _sharedViewer->_sceneManager != _sceneManager: true;
-    if (needUpdateSceneManager)
-        _sceneManager->update();
-    return true;
-}
-
-void veViewerIOS::startRender()
-{
-    veGLView *glView = (__bridge veGLView *)_glView;
-    [glView startRendering];
-}
-
-void veViewerIOS::stopRender()
-{
-    veGLView *glView = (__bridge veGLView *)_glView;
-    [glView startRendering];
+    {
+        std::unique_lock<std::mutex> lock(_eventMutex);
+        _sceneManager->event(this);
+        _eventList.clear();
+    }
+    _sceneManager->update(this);
 }
 
 void veViewerIOS::create()
@@ -109,6 +131,7 @@ void veViewerIOS::onTouchEnd(int touchID, veReal x, veReal y)
 
 void veViewerIOS::onPushCurrentEvent()
 {
+    std::unique_lock<std::mutex> lock(_eventMutex);
     _eventList.push_back(_currentEvent);
 }
 

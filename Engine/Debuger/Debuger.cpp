@@ -18,7 +18,6 @@ public:
 
 	veDebugRenderer(veDebuger *debuger)
 		: _debuger(debuger)
-        , _firstUpdate(true)
 		, drawCount(0)
 	{
         _vaoBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
@@ -40,8 +39,10 @@ public:
 
 	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID) override {
         auto vao = _vaoBuffer->getData(contextID);
+		bool needRefresh = false;
 		if (!vao) {
             vao = _vaoBuffer->createData(contextID);
+			needRefresh = true;
 		}
         
         auto vbo = _vboBuffer->getData(contextID);
@@ -55,7 +56,7 @@ public:
             std::unique_lock<std::mutex> lock(dataMutex);
             if (!vertices.empty()){
                 glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.buffer(), GL_STATIC_DRAW);
-                if (_firstUpdate){
+                if (needRefresh){
                     GLsizei vertexStride = sizeof(GLfloat) * (3 + 4);
                     //vertex
                     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexStride, 0);
@@ -64,7 +65,6 @@ public:
                     //color
                     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, vertexStride, (GLvoid *)(sizeof(GLfloat) * 3));
                     glEnableVertexAttribArray(1);
-                    _firstUpdate = false;
                 }
                 drawCount = vertices.size() / (3 + 4);
                 vertices.clear();
@@ -101,7 +101,6 @@ public:
 private:
 
 	veDebuger *_debuger;
-    bool       _firstUpdate;
 };
 
 class RenderableObjectFinder : public veNodeVisitor

@@ -18,13 +18,7 @@ public:
 private:
 
     veApplicationIOS();
-    
-private:
-    
-    void *_glView;
-    std::thread _runningThread;
-    veEvent     _currentEvent;
-    bool        _isRunning;
+
 };
 #endif
 

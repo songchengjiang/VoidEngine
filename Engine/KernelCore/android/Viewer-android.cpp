@@ -1,5 +1,5 @@
 #include "Viewer-android.h"
-#include "SceneManager.h"
+#include "KernelCore/SceneManager.h"
 
 veViewerAndroid::veViewerAndroid(int width, int height, const std::string &title, veViewerAndroid *sharedViewer)
     : veViewer(width, height, title)
@@ -21,30 +21,49 @@ void veViewerAndroid::swapBuffers()
 {
 }
 
-bool veViewerAndroid::simulation(double deltaTime)
+void veViewerAndroid::startSimulation()
 {
-    if (!_sceneManager.valid()) return false;
+    if (!_sceneManager.valid()) return;
+    veViewer::startSimulation();
+
+    _isRunning = true;
+
+    _updateThread = std::thread([this] {
+        clock_t frameTimeClocks = 1.0 / 60.0 * CLOCKS_PER_SEC;
+        clock_t preFrameTime = clock();
+        double invertClocksSec = 1.0 / (double)CLOCKS_PER_SEC;
+        while(_isRunning){
+            clock_t currentFrameTime = clock();
+            this->update((currentFrameTime - preFrameTime) * invertClocksSec);
+            while ((clock() - currentFrameTime) < frameTimeClocks) {
+                std::this_thread::sleep_for(std::chrono::microseconds(1));
+            }
+            preFrameTime = currentFrameTime;
+        }
+    });
+}
+
+void veViewerAndroid::stopSimulation()
+{
+    if (!_sceneManager.valid()) return;
+    if (!_isRunning) return;
+    _isRunning = false;
+    _updateThread.join();
+    veViewer::stopSimulation();
+}
+
+void veViewerAndroid::update(double deltaTime)
+{
     _sceneManager->setDeltaTime(deltaTime);
     {
-        std::unique_lock<std::mutex> eventLock(_eventMutex);
+        std::unique_lock<std::mutex> lock(_eventMutex);
         _sceneManager->event(this);
         _eventList.clear();
     }
-    bool needUpdateSceneManager = _sharedViewer? _sharedViewer->_sceneManager != _sceneManager: true;
-    if (needUpdateSceneManager)
-        _sceneManager->update();
-    return true;
+    _sceneManager->update(this);
 }
 
-void veViewerAndroid::startRender()
-{
-}
-
-void veViewerAndroid::stopRender()
-{
-}
-
-void veViewerAndroid::frameRender()
+void veViewerAndroid::render()
 {
     if (!_sceneManager.valid()) return;
     _sceneManager->render(this);
