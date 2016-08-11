@@ -1,6 +1,9 @@
 #include "Viewer-desktop.h"
 #if (VE_PLATFORM == VE_PLATFORM_WIN32) || (VE_PLATFORM == VE_PLATFORM_MAC)
 #include "SceneManager.h"
+#if (VE_PLATFORM == VE_PLATFORM_WIN32)
+#include <windows.h>
+#endif
 
 static std::unordered_map<int, veEvent::KeySymbol> g_KeySymbolMap;
 static std::unordered_map<int, veEvent::ModKeySymbol> g_ModKeySymbolMap;
@@ -212,6 +215,7 @@ void veViewerDesktop::swapBuffers()
 void veViewerDesktop::startSimulation()
 {
     if (!_sceneManager.valid()) return;
+    veViewer::startSimulation();
     _isRunning = true;
     
     _updateThread = std::thread([this] {

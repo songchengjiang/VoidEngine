@@ -1,8 +1,5 @@
 #include "Application-desktop.h"
 #if (VE_PLATFORM == VE_PLATFORM_WIN32) || (VE_PLATFORM == VE_PLATFORM_MAC)
-#if (VE_PLATFORM == VE_PLATFORM_WIN32)
-#include <windows.h>
-#endif
 #include "Viewer-desktop.h"
 
 veApplicationDesktop::veApplicationDesktop()

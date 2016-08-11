@@ -72,7 +72,7 @@ void veRenderPipeline::cullRenderQueues(veCamera *camera)
 	if (camera->isVisible()) {
 		//_sceneManager->enqueueTaskToThread(nullptr, nullptr, [camera, this] {
 			//veNodeList nodeList;
-			//std::unique_lock<std::mutex> lock(_visitMutex);
+			std::unique_lock<std::mutex> lock(_visitMutex);
 			_visibleNodeList[camera].clear();
 			camera->cull(_visibleNodeList[camera]);
 		//});
