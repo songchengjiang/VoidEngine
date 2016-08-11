@@ -24,6 +24,9 @@
 		BE0D4DBA1D24C02E00BA32D6 /* Viewer-desktop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE0D4DB81D24C02E00BA32D6 /* Viewer-desktop.cpp */; };
 		BE0D4DBC1D24C02E00BA32D6 /* Viewer-desktop.h in Headers */ = {isa = PBXBuildFile; fileRef = BE0D4DB91D24C02E00BA32D6 /* Viewer-desktop.h */; };
 		BE0D4DCA1D2A64DE00BA32D6 /* Viewer-ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE0D4DC81D2A64DE00BA32D6 /* Viewer-ios.mm */; };
+		BE154E281D5855D7003B3C9B /* FrameBufferObjectManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE154E261D5855D7003B3C9B /* FrameBufferObjectManager.cpp */; };
+		BE154E291D5855D7003B3C9B /* FrameBufferObjectManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BE154E271D5855D7003B3C9B /* FrameBufferObjectManager.h */; };
+		BE154E2A1D58561A003B3C9B /* FrameBufferObjectManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE154E261D5855D7003B3C9B /* FrameBufferObjectManager.cpp */; };
 		BE16BCD61CDC3630006E7146 /* BoxEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BCD51CDC3630006E7146 /* BoxEmitter.h */; };
 		BE16BCD81CDC363E006E7146 /* BoxEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BCD71CDC363E006E7146 /* BoxEmitter.cpp */; };
 		BE16BCDA1CDC3ACD006E7146 /* CircleEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BCD91CDC3ACD006E7146 /* CircleEmitter.h */; };
@@ -331,6 +334,9 @@
 		BEA445F21D06C1FF00960C84 /* GizmoRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEA445F01D06C1FF00960C84 /* GizmoRenderer.cpp */; };
 		BEA445F31D06C1FF00960C84 /* GizmoRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEA445F01D06C1FF00960C84 /* GizmoRenderer.cpp */; };
 		BEA445F41D06C1FF00960C84 /* GizmoRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BEA445F11D06C1FF00960C84 /* GizmoRenderer.h */; };
+		BEA592881D51F26500C87526 /* GLDataBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEA592861D51F26500C87526 /* GLDataBuffer.cpp */; };
+		BEA592891D51F26500C87526 /* GLDataBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEA592861D51F26500C87526 /* GLDataBuffer.cpp */; };
+		BEA5928A1D51F26500C87526 /* GLDataBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = BEA592871D51F26500C87526 /* GLDataBuffer.h */; };
 		BEAB2E8A1CED65EC00B3F9F8 /* GLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE80F14D1CED5A0800E2EECF /* GLView.mm */; };
 		BEAB2E8B1CED65F500B3F9F8 /* Application-ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE80F1481CED59CC00E2EECF /* Application-ios.mm */; };
 		BEAB2E8C1CED660100B3F9F8 /* File-apple.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE80F0C21CED579E00E2EECF /* File-apple.mm */; };
@@ -383,6 +389,8 @@
 		BE0E4DC21BB02F530001AA36 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		BE0E4DC41BB02F5D0001AA36 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		BE0E4DC61BB02F6C0001AA36 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		BE154E261D5855D7003B3C9B /* FrameBufferObjectManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FrameBufferObjectManager.cpp; path = ../../Engine/KernelCore/FrameBufferObjectManager.cpp; sourceTree = "<group>"; };
+		BE154E271D5855D7003B3C9B /* FrameBufferObjectManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameBufferObjectManager.h; path = ../../Engine/KernelCore/FrameBufferObjectManager.h; sourceTree = "<group>"; };
 		BE16BCD51CDC3630006E7146 /* BoxEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoxEmitter.h; path = ../../Engine/EffectCore/BoxEmitter.h; sourceTree = "<group>"; };
 		BE16BCD71CDC363E006E7146 /* BoxEmitter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoxEmitter.cpp; path = ../../Engine/EffectCore/BoxEmitter.cpp; sourceTree = "<group>"; };
 		BE16BCD91CDC3ACD006E7146 /* CircleEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CircleEmitter.h; path = ../../Engine/EffectCore/CircleEmitter.h; sourceTree = "<group>"; };
@@ -622,6 +630,8 @@
 		BEA445E61D06BD0300960C84 /* GizmoTranslation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GizmoTranslation.h; path = ../../Engine/UtilCore/GizmoTranslation.h; sourceTree = "<group>"; };
 		BEA445F01D06C1FF00960C84 /* GizmoRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GizmoRenderer.cpp; path = ../../Engine/UtilCore/GizmoRenderer.cpp; sourceTree = "<group>"; };
 		BEA445F11D06C1FF00960C84 /* GizmoRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GizmoRenderer.h; path = ../../Engine/UtilCore/GizmoRenderer.h; sourceTree = "<group>"; };
+		BEA592861D51F26500C87526 /* GLDataBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLDataBuffer.cpp; path = ../../Engine/KernelCore/GLDataBuffer.cpp; sourceTree = "<group>"; };
+		BEA592871D51F26500C87526 /* GLDataBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLDataBuffer.h; path = ../../Engine/KernelCore/GLDataBuffer.h; sourceTree = "<group>"; };
 		BEAB2EB61CED903100B3F9F8 /* FileReaderWriterPARTICLE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileReaderWriterPARTICLE.h; path = ../../Engine/FileCore/FileReaderWriterPARTICLE.h; sourceTree = "<group>"; };
 		BEB28D571C0C761F0013E3B7 /* MaterialManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MaterialManager.cpp; path = ../../Engine/KernelCore/MaterialManager.cpp; sourceTree = "<group>"; };
 		BEB28D581C0C761F0013E3B7 /* MaterialManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MaterialManager.h; path = ../../Engine/KernelCore/MaterialManager.h; sourceTree = "<group>"; };
@@ -728,12 +738,16 @@
 			isa = PBXGroup;
 			children = (
 				BE1A0AC01BE24D2600A1A20D /* Octree */,
+				BE154E261D5855D7003B3C9B /* FrameBufferObjectManager.cpp */,
+				BE154E271D5855D7003B3C9B /* FrameBufferObjectManager.h */,
 				BE1A0AAC1BE24D1000A1A20D /* AnimationManager.cpp */,
 				BE1A0AAD1BE24D1000A1A20D /* AnimationManager.h */,
 				BE1A0AAE1BE24D1000A1A20D /* BaseManager.cpp */,
 				BE1A0AAF1BE24D1000A1A20D /* BaseManager.h */,
 				BE1A0AB01BE24D1000A1A20D /* MeshManager.cpp */,
 				BE1A0AB11BE24D1000A1A20D /* MeshManager.h */,
+				BE3D41661BAF0B520063041C /* TextureManager.cpp */,
+				BE3D41671BAF0B520063041C /* TextureManager.h */,
 				BE1A0AB41BE24D1000A1A20D /* SceneManager.cpp */,
 				BE1A0AB51BE24D1000A1A20D /* SceneManager.h */,
 			);
@@ -1008,8 +1022,6 @@
 				BE1A0AFA1BE24E5B00A1A20D /* Text.h */,
 				BE3D41641BAF0B520063041C /* Texture.cpp */,
 				BE3D41651BAF0B520063041C /* Texture.h */,
-				BE3D41661BAF0B520063041C /* TextureManager.cpp */,
-				BE3D41671BAF0B520063041C /* TextureManager.h */,
 				BE1A0AFB1BE24E5B00A1A20D /* ThreadPool.cpp */,
 				BE1A0AFC1BE24E5B00A1A20D /* ThreadPool.h */,
 				BE3D41681BAF0B520063041C /* Transformer.cpp */,
@@ -1017,6 +1029,8 @@
 				BE1A0AFD1BE24E5B00A1A20D /* TransformFeedback.cpp */,
 				BE1A0AFE1BE24E5B00A1A20D /* TransformFeedback.h */,
 				BE3D416A1BAF0B520063041C /* VE_Ptr.h */,
+				BEA592861D51F26500C87526 /* GLDataBuffer.cpp */,
+				BEA592871D51F26500C87526 /* GLDataBuffer.h */,
 			);
 			name = KernelCore;
 			sourceTree = "<group>";
@@ -1164,6 +1178,7 @@
 				BEA445EF1D06BD0300960C84 /* GizmoTranslation.h in Headers */,
 				BEA445E01D06A86A00960C84 /* Gizmo.h in Headers */,
 				BEB952361CFC4B4B00110FF6 /* ParticleSphereRenderer.h in Headers */,
+				BE154E291D5855D7003B3C9B /* FrameBufferObjectManager.h in Headers */,
 				BE30ABB51CD9C24E009477C5 /* ParticleRenderer.h in Headers */,
 				BE1A0B151BE24E5C00A1A20D /* Text.h in Headers */,
 				BE1A0ACE1BE24D6400A1A20D /* OctreeCamera.h in Headers */,
@@ -1171,6 +1186,7 @@
 				BE1A0B091BE24E5C00A1A20D /* MatrixPtr.h in Headers */,
 				BE0D4DBC1D24C02E00BA32D6 /* Viewer-desktop.h in Headers */,
 				BE16BD041CDC897F006E7146 /* SineForceAffector.h in Headers */,
+				BEA5928A1D51F26500C87526 /* GLDataBuffer.h in Headers */,
 				BE1A0B111BE24E5C00A1A20D /* SkyBox.h in Headers */,
 				BE1A0AE51BE24E4000A1A20D /* SurfaceRenderer.h in Headers */,
 				BE05C5191CD30C860022D797 /* ParticleSystem.h in Headers */,
@@ -1327,6 +1343,7 @@
 				BE1A0ABE1BE24D1000A1A20D /* SceneManager.cpp in Sources */,
 				BE1B50541BB049E30039A346 /* Node.cpp in Sources */,
 				BE1B50551BB049E30039A346 /* NodeVisitor.cpp in Sources */,
+				BE154E281D5855D7003B3C9B /* FrameBufferObjectManager.cpp in Sources */,
 				BE1B50571BB049E30039A346 /* OverlayRenderer.cpp in Sources */,
 				BE1A0AE41BE24E4000A1A20D /* SurfaceRenderer.cpp in Sources */,
 				BE6D3AC71CB3C65300E9E034 /* SphereRenderer.cpp in Sources */,
@@ -1381,6 +1398,7 @@
 				BE1A0AE01BE24E4000A1A20D /* BoxRenderer.cpp in Sources */,
 				BE1A0B121BE24E5C00A1A20D /* Surface.cpp in Sources */,
 				BE16BD071CDC92BF006E7146 /* LinearForceAffector.cpp in Sources */,
+				BEA592881D51F26500C87526 /* GLDataBuffer.cpp in Sources */,
 				BE6D3AC31CB3C65300E9E034 /* ConeRenderer.cpp in Sources */,
 				BE1B506A1BB049E30039A346 /* FileReaderWriterVEMTL.h in Sources */,
 				BE7E03391D02C4CD00320061 /* imgui_draw.cpp in Sources */,
@@ -1425,6 +1443,7 @@
 				BE80F0E41CED59AE00E2EECF /* FlockCenteringAffector.cpp in Sources */,
 				BE80F0E51CED59AE00E2EECF /* ColorAffector.cpp in Sources */,
 				BE80F0E61CED59AE00E2EECF /* ScaleAffector.cpp in Sources */,
+				BE154E2A1D58561A003B3C9B /* FrameBufferObjectManager.cpp in Sources */,
 				BE80F0E71CED59AE00E2EECF /* ScaleVelocityAffector.cpp in Sources */,
 				BE80F0E81CED59AE00E2EECF /* GravityAffector.cpp in Sources */,
 				BE80F0E91CED59AE00E2EECF /* JetAffector.cpp in Sources */,
@@ -1459,6 +1478,7 @@
 				BE80F10D1CED59AE00E2EECF /* Bone.cpp in Sources */,
 				BE7E033E1D02C4E800320061 /* imgui_draw.cpp in Sources */,
 				BE80F10E1CED59AE00E2EECF /* BoudingBox.cpp in Sources */,
+				BEA592891D51F26500C87526 /* GLDataBuffer.cpp in Sources */,
 				BE80F10F1CED59AE00E2EECF /* Camera.cpp in Sources */,
 				BE80F1101CED59AE00E2EECF /* Component.cpp in Sources */,
 				BE80F1111CED59AE00E2EECF /* Cone.cpp in Sources */,

@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
-        <file>MainForm.ui.qml</file>
+        <file>./main.qml</file>
+        <file>./MainForm.ui.qml</file>
+        <file>./Menus/EditMenu.qml</file>
+        <file>./Menus/ElementsMenu.qml</file>
+        <file>./Menus/FileMenu.qml</file>
     </qresource>
 </RCC>

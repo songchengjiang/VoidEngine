@@ -32,3 +32,4 @@ def replace_string(filepath, src_string, dst_string):
 if __name__ == '__main__':
     qt_root = os.environ.get('QT_ROOT')
     replace_string('./mac/Editor.xcodeproj/project.pbxproj', '$(VE_QT_ROOT)', qt_root)
+    #replace_string('./mac/Editor.xcodeproj/project.pbxproj', qt_root, '$(VE_QT_ROOT)')
