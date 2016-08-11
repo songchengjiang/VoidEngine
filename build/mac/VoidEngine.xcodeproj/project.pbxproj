@@ -343,6 +343,10 @@
 		BEC317F81CEEF29300306386 /* Configuration.h in Headers */ = {isa = PBXBuildFile; fileRef = BEC317F71CEEF29300306386 /* Configuration.h */; };
 		BEC317FA1CEEF5E800306386 /* Configuration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEC317F91CEEF5E800306386 /* Configuration.cpp */; };
 		BEC317FB1CEEF5E800306386 /* Configuration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEC317F91CEEF5E800306386 /* Configuration.cpp */; };
+		BEDE3C0A1D5C502B008F579F /* FrameBufferObjectManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEDE3C061D5C502B008F579F /* FrameBufferObjectManager.cpp */; };
+		BEDE3C0B1D5C502B008F579F /* FrameBufferObjectManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BEDE3C071D5C502B008F579F /* FrameBufferObjectManager.h */; };
+		BEDE3C0C1D5C502B008F579F /* GLDataBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEDE3C081D5C502B008F579F /* GLDataBuffer.cpp */; };
+		BEDE3C0D1D5C502B008F579F /* GLDataBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = BEDE3C091D5C502B008F579F /* GLDataBuffer.h */; };
 		BEE5E4941D051D7200BD63F8 /* ParticleBoxRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE791C331CFD9218007071AF /* ParticleBoxRenderer.cpp */; };
 		BEE5E4951D051D7400BD63F8 /* ParticleSphereRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEB952331CFC4B4B00110FF6 /* ParticleSphereRenderer.cpp */; };
 		BEF5C0AD1D05202000E87E66 /* Event.h in Headers */ = {isa = PBXBuildFile; fileRef = BE3D413E1BAF0B520063041C /* Event.h */; };
@@ -629,6 +633,10 @@
 		BEB952341CFC4B4B00110FF6 /* ParticleSphereRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleSphereRenderer.h; path = ../../Engine/EffectCore/ParticleSphereRenderer.h; sourceTree = "<group>"; };
 		BEC317F71CEEF29300306386 /* Configuration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Configuration.h; path = ../../Engine/Configuration.h; sourceTree = "<group>"; };
 		BEC317F91CEEF5E800306386 /* Configuration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Configuration.cpp; path = ../../Engine/Configuration.cpp; sourceTree = "<group>"; };
+		BEDE3C061D5C502B008F579F /* FrameBufferObjectManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FrameBufferObjectManager.cpp; path = ../../Engine/KernelCore/FrameBufferObjectManager.cpp; sourceTree = "<group>"; };
+		BEDE3C071D5C502B008F579F /* FrameBufferObjectManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameBufferObjectManager.h; path = ../../Engine/KernelCore/FrameBufferObjectManager.h; sourceTree = "<group>"; };
+		BEDE3C081D5C502B008F579F /* GLDataBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLDataBuffer.cpp; path = ../../Engine/KernelCore/GLDataBuffer.cpp; sourceTree = "<group>"; };
+		BEDE3C091D5C502B008F579F /* GLDataBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLDataBuffer.h; path = ../../Engine/KernelCore/GLDataBuffer.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -935,6 +943,10 @@
 		BE3D412B1BAF0B220063041C /* KernelCore */ = {
 			isa = PBXGroup;
 			children = (
+				BEDE3C061D5C502B008F579F /* FrameBufferObjectManager.cpp */,
+				BEDE3C071D5C502B008F579F /* FrameBufferObjectManager.h */,
+				BEDE3C081D5C502B008F579F /* GLDataBuffer.cpp */,
+				BEDE3C091D5C502B008F579F /* GLDataBuffer.h */,
 				BE0D4DB81D24C02E00BA32D6 /* Viewer-desktop.cpp */,
 				BE0D4DB91D24C02E00BA32D6 /* Viewer-desktop.h */,
 				BE0D4DB31D23BF4000BA32D6 /* Viewer.cpp */,
@@ -1143,6 +1155,7 @@
 				BE16BCE21CDC5C9C006E7146 /* SphereEmitter.h in Headers */,
 				BE949D521D097BD9008BC95F /* GizmoComponent.h in Headers */,
 				BE16BCFC1CDC80FC006E7146 /* VortexAffector.h in Headers */,
+				BEDE3C0B1D5C502B008F579F /* FrameBufferObjectManager.h in Headers */,
 				BEA445E91D06BD0300960C84 /* GizmoRotation.h in Headers */,
 				BE1A0AB71BE24D1000A1A20D /* AnimationManager.h in Headers */,
 				BE1A0AE11BE24E4000A1A20D /* BoxRenderer.h in Headers */,
@@ -1156,6 +1169,7 @@
 				BEAB2EB71CED903100B3F9F8 /* FileReaderWriterPARTICLE.h in Headers */,
 				BE1A0B191BE24E5C00A1A20D /* TransformFeedback.h in Headers */,
 				BE1A0AB91BE24D1000A1A20D /* BaseManager.h in Headers */,
+				BEDE3C0D1D5C502B008F579F /* GLDataBuffer.h in Headers */,
 				BE1A0B0D1BE24E5C00A1A20D /* Plane.h in Headers */,
 				BE6D3AC81CB3C65300E9E034 /* SphereRenderer.h in Headers */,
 				BE1A0B171BE24E5C00A1A20D /* ThreadPool.h in Headers */,
@@ -1375,6 +1389,7 @@
 				BE1A0B161BE24E5C00A1A20D /* ThreadPool.cpp in Sources */,
 				BE1B50671BB049E30039A346 /* FileReaderWriterLIGHT.h in Sources */,
 				BE16BCF41CDC7CAB006E7146 /* JetAffector.cpp in Sources */,
+				BEDE3C0C1D5C502B008F579F /* GLDataBuffer.cpp in Sources */,
 				BE1B50681BB049E30039A346 /* FileReaderWriterPNG.h in Sources */,
 				BE949D501D097BD9008BC95F /* GizmoComponent.cpp in Sources */,
 				BE1B50691BB049E30039A346 /* FileReaderWriterVEM.h in Sources */,
@@ -1407,6 +1422,7 @@
 				BE16BCF01CDC7589006E7146 /* GravityAffector.cpp in Sources */,
 				BE1B50711BB049E30039A346 /* Vector3.cpp in Sources */,
 				BE5BF1781BB2A09D00FAE523 /* Debuger.cpp in Sources */,
+				BEDE3C0A1D5C502B008F579F /* FrameBufferObjectManager.cpp in Sources */,
 				BE1A0AA91BE24C6F00A1A20D /* OctreeDebuger.cpp in Sources */,
 				BE1B50721BB049E30039A346 /* Vector4.cpp in Sources */,
 				BE30ABB31CD9C1F5009477C5 /* ParticleQuatRenderer.cpp in Sources */,
