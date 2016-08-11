@@ -29,3 +29,5 @@ build/win32/VoidEngine.VC.opendb
 *.xcscheme
 
 *.xcuserstate
+
+xcuserdata/

@@ -5,3 +5,6 @@
 .DS_Store
 /build
 /captures
+
+/voidengine/build
+/voidengine/libs
