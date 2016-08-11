@@ -13,9 +13,9 @@ vePostProcesserRenderer::~vePostProcesserRenderer()
 
 }
 
-void vePostProcesserRenderer::render(veNode *node, vePass *pass, veCamera *camera)
+void vePostProcesserRenderer::render(veNode *node, vePass *pass, veCamera *camera, unsigned int contextID)
 {
-	updateBuffer();
+	updateBuffer(contextID);
 	if (pass) {
 		if (camera->getMask() & pass->drawMask()) {
 			veRenderCommand rc;
@@ -25,6 +25,7 @@ void vePostProcesserRenderer::render(veNode *node, vePass *pass, veCamera *camer
 			rc.camera = camera;
 			rc.sceneManager = camera->getSceneManager();
 			rc.renderer = this;
+            rc.contextID = contextID;
 			pass->visit(rc);
 			camera->getRenderQueue()->pushCommand(0, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
 		}

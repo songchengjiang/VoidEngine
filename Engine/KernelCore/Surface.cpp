@@ -41,17 +41,12 @@ const char* veSurface::COMMON_F_SHADER = " \
 	uniform float u_alphaThreshold; \n \
 	in vec3 v_normal; \n \
 	in vec2 v_texcoord; \n \
-	layout(location=0) out vec4 RT0;\n \
-	layout(location=1) out vec4 RT1;\n \
-	layout(location=2) out vec4 RT2;\n \
+	layout(location=0) out vec4 fragColor;\n \
 	void main() {  \n \
 		vec4 texColor = texture(u_texture, v_texcoord); \n \
 		if (texColor.a < u_alphaThreshold) \n \
 			discard;                      \n \
-		RT0 = vec4(0.0);                 \n \
-		RT1.xyz = (u_Color * texColor).xyz;        \n \
-		RT2 = vec4(0.0);                 \n \
-		//fragColor = u_Color * texColor; \n \
+		fragColor = u_Color * texColor; \n \
 	}";
 
 veSurface::veSurface(veSceneManager *sm)
@@ -114,13 +109,13 @@ void veSurface::setType(Type type)
 
 void veSurface::initDefaultMaterial()
 {
-	_materials = _sceneManager->createMaterialArray(_name + std::string("-matAry"));;
-	auto material = new veMaterial;
+	_material = new veMaterial;
 	auto tech = new veTechnique;
 	auto pass = new vePass;
-	material->addTechnique(tech);
+	_material->addTechnique(tech);
 	tech->addPass(pass);
 
+    pass->setRenderPass(vePass::FORWARD_PASS);
 	if (_type == SURFACE) {
 		pass->depthTest() = true;
 		pass->depthWrite() = true;
@@ -149,8 +144,7 @@ void veSurface::initDefaultMaterial()
 	pass->addUniform(_color.get());
 	pass->addUniform(_scaleMat.get());
 
-	appendMaterial(material);
-	_materials->addMaterial(material);
+	appendMaterial(_material.get());
 }
 
 void veSurface::appendMaterial(veMaterial *material)

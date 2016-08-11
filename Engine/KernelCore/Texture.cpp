@@ -9,7 +9,7 @@ const int veTexture::DEFAULT_INTERNAL_FORMAT = GL_RGBA32F;
 
 veTexture::~veTexture()
 {
-	releaseTextureData();
+	//releaseTextureData();
 	releaseMemoryData();
 }
 
@@ -19,7 +19,6 @@ veTexture::veTexture(GLenum target)
 	, _filterMode(NEAREST_MIP_MAP_LINEAR)
 	, _needRefreshTex(true)
 	, _needRefreshSampler(true)
-	, _texID(0)
 	, _target(target)
 	, _width(DEFAULT_WIDTH)
 	, _height(DEFAULT_HEIGHT)
@@ -40,6 +39,14 @@ veTexture::veTexture(GLenum target)
 	_swizzleMode[1] = SWIZZLE_G;
 	_swizzleMode[2] = SWIZZLE_B;
 	_swizzleMode[3] = SWIZZLE_A;
+    
+    _textureBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint texid;
+        glGenTextures(1, &texid);
+        return texid;
+    }, [](GLuint texid){
+        glDeleteTextures(1, &texid);
+    });
 }
 
 unsigned int veTexture::perPixelSize() const
@@ -109,11 +116,7 @@ unsigned int veTexture::getImageSize(int width, int height) const
 
 void veTexture::releaseTextureData()
 {
-	if (_texID) {
-		glDeleteTextures(1, &_texID);
-		_texID = 0;
-		_needRefreshTex = true;
-	}
+    _textureBuffer->destroyAllData();
 }
 
 void veTexture::releaseMemoryData()
@@ -237,16 +240,20 @@ unsigned int veTexture::getTextureTotalMemory()
 	return _dataSize;
 }
 
-void veTexture::bind()
+void veTexture::bind(unsigned int contextID)
 {
-	if (_needRefreshTex && _texID) {
+    auto texID = _textureBuffer->getData(contextID);
+    if (!texID){
+        _needRefreshTex = true;
+        _needRefreshSampler = true;
+    }
+	if (_needRefreshTex) {
 		_manager->releaseTextureMemory(this);
 	}
-	if (!_texID) {
-        glGenTextures(1, &_texID);
-		//glCreateTextures(_target, 1, &_texID);
+	if (!texID) {
+        texID = _textureBuffer->createData(contextID);
 	}
-	glBindTexture(_target, _texID);
+	glBindTexture(_target, texID);
 
 	if (_needRefreshSampler) {
 		glTexParameteri(_target, GL_TEXTURE_MIN_FILTER, _filterMode);
@@ -373,9 +380,9 @@ void veTexture::storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenu
 	_needRefreshSampler = true;
 }
 
-GLuint veTexture::glTex()
+GLuint veTexture::glTex(unsigned int contextID) const
 {
-	return _texID;
+	return _textureBuffer->getData(contextID);
 }
 
 veTexture2D::veTexture2D()
@@ -388,9 +395,9 @@ veTexture2D::~veTexture2D()
 {
 }
 
-void veTexture2D::bind()
+void veTexture2D::bind(unsigned int contextID)
 {
-	veTexture::bind();
+	veTexture::bind(contextID);
 	if (_needRefreshTex) {
 		if (_manager->exchangeTextureMemory(this)) {
 			if (_width != 0 && _height != 0)
@@ -440,9 +447,9 @@ veTexture3D::~veTexture3D()
 
 }
 
-void veTexture3D::bind()
+void veTexture3D::bind(unsigned int contextID)
 {
-	veTexture::bind();
+	veTexture::bind(contextID);
 	if (_needRefreshTex) {
 		if (_manager->exchangeTextureMemory(this)) {
 			if (_width != 0 && _height != 0 && _depthOrLayer != 0)
@@ -510,9 +517,9 @@ veTextureCube::~veTextureCube()
 
 }
 
-void veTextureCube::bind()
+void veTextureCube::bind(unsigned int contextID)
 {
-	veTexture::bind();
+	veTexture::bind(contextID);
 	if (_needRefreshTex) {
 		if (_manager->exchangeTextureMemory(this)) {
 			_width = _textures[0].valid() ? _textures[0]->getWidth() : _width;
@@ -592,9 +599,9 @@ veTexture2DArray::veTexture2DArray()
 	_type = veTexture::TEXTURE_2D_ARRAY;
 }
 
-void veTexture2DArray::bind()
+void veTexture2DArray::bind(unsigned int contextID)
 {
-	veTexture::bind();
+	veTexture::bind(contextID);
 	if (_needRefreshTex) {
 		if (_manager->exchangeTextureMemory(this)) {
 			if (_width != 0 && _height != 0 && _depthOrLayer != 0)
@@ -634,7 +641,7 @@ void veTexture2DArray::bind()
 	}
 }
 
-#if VE_PLATFORM != VE_PLATFORM_ANDROID
+#if VE_PLATFORM != VE_PLATFORM_ANDROID  && VE_PLATFORM != VE_PLATFORM_IOS
 veTextureCubeArray::veTextureCubeArray()
 	: veTexture(GL_TEXTURE_CUBE_MAP_ARRAY)
 {
@@ -646,9 +653,9 @@ veTextureCubeArray::~veTextureCubeArray()
 
 }
 
-void veTextureCubeArray::bind()
+void veTextureCubeArray::bind(unsigned int contextID)
 {
-	veTexture::bind();
+	veTexture::bind(contextID);
 	if (_needRefreshTex) {
 		if (_manager->exchangeTextureMemory(this)) {
 			_width = !_textures.empty() ? _textures[0].faces[0]->getWidth() : _width;

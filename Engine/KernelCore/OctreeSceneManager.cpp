@@ -6,9 +6,9 @@
 #include "RenderableObject.h"
 #include "Ray.h"
 #include "FileCore/File.h"
-#include "Application.h"
 #include "MaterialManager.h"
 #include "DeferredRenderPipeline.h"
+#include "Viewer.h"
 
 static const std::string POST_PROCESSER_FRAMEBUFFER_OBJECT = "POST_PROCESSER_FRAMEBUFFER_OBJECT";
 
@@ -32,6 +32,7 @@ veOctreeSceneManager::veOctreeSceneManager(const veBoundingBox &bbox, unsigned i
 
 veOctreeSceneManager::~veOctreeSceneManager()
 {
+    VE_SAFE_DELETE(_octree);
 }
 
 void veOctreeSceneManager::init()
@@ -100,10 +101,7 @@ void veOctreeSceneManager::requestRender(veNode *node)
 
 void veOctreeSceneManager::requestRayCast(veRay *ray)
 {
-	enqueueRequest([this, ray] {
-		this->intersectByRay(_octree, ray);
-		veSceneManager::requestRayCast(ray);
-	});
+    this->intersectByRay(_octree, ray);
 }
 
 bool veOctreeSceneManager::isNodeVisibleInScene(veNode *node)
@@ -200,18 +198,30 @@ void veOctreeSceneManager::intersectByRay(veOctree *octant, veRay *ray)
 	}
 }
 
-void veOctreeSceneManager::update()
+void veOctreeSceneManager::updateImp()
 {
-	veSceneManager::update();
+    if (!_componentList.empty()) {
+        for (auto &com : _componentList) {
+            com->beforeUpdate(this);
+        }
+    }
+    
 	_root->update(this, veMat4::IDENTITY);
 	//std::unique_lock<std::mutex> lock(_parallelUpdateOctantMutex);
 	//_parallelUpdateOctantCondition.wait(lock, [this] { return _parallelUpdateOctantNum == 0; });
 	_octree->updateBoundingBox();
+    
+    if (!_componentList.empty()) {
+        for (auto &com : _componentList) {
+            com->afterUpdate(this);
+        }
+    }
 }
 
-void veOctreeSceneManager::render()
+void veOctreeSceneManager::renderImp(veViewer *viewer)
 {
-	if (!veApplication::instance()->makeContextCurrent()) return;
+	if (!viewer->makeContextCurrent()) return;
+    this->getRenderState(viewer->getContextID())->resetState();
 	//culling();
 
 	//_shadowGenerator->shadowing();
@@ -243,19 +253,23 @@ void veOctreeSceneManager::render()
 	//	mainCam->render();
 	//	mainCam->discardRenderScene(false);
 	//}
-	_renderPipeline->rendering();
-
-	veApplication::instance()->swapBuffers();
-}
-
-void veOctreeSceneManager::culling()
-{
-	for (auto &iter : _cameraList) {
-		if (iter->isVisible() && iter->isInScene()) {
-			veOctreeCamera *cam = static_cast<veOctreeCamera *>(iter.get());
-			_threadPool.enqueue(nullptr, nullptr, [cam] {
-				//cam->cull();
-			});
-		}
-	}
+    if (!_componentList.empty()) {
+        for (auto &com : _componentList) {
+            if (com->isEnabled()){
+                com->beforeRender(this, viewer);
+            }
+        }
+    }
+    
+	_renderPipeline->rendering(viewer);
+    
+    if (!_componentList.empty()) {
+        for (auto &com : _componentList) {
+            if (com->isEnabled()){
+                com->afterRender(this, viewer);
+            }
+        }
+    }
+    
+	viewer->swapBuffers();
 }

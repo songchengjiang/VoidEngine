@@ -1,0 +1,70 @@
+{
+    "version": "1.0",
+    "name": "star.veparticle",
+    "materials": "materials/starEffect.vemtl",
+    "renderer": {
+        "type": "QUAT"
+    },
+    "emitters": [
+        {
+            "type": "POINT",
+            "name": "starEmitter",
+            "keepLocal": false,
+            "isEnabled": true,
+            "color": [1.0, 1.0, 1.0, 1.0],
+            "position": [0.0, 0.0, 0.0],
+            "rotation": [1.0, 0.0, 0.0, 0.0],
+            "angle": {
+                "type": "FIXED",
+                "value": 3.14
+            },
+            "emissionRate": {
+                "type": "FIXED",
+                "value": 50.0
+            },
+            "totalTimeToLive": {
+                "type": "RANDOM",
+                "minimum": 1.0,
+                "maximum": 3.0
+            }
+        }
+    ],
+    "affectors": [
+        {
+            "type": "COLOR",
+            "name": "colorAffector",
+            "colors": [
+                [0.0, 1.0, 1.0, 0.0, 1.0],
+                [1.0, 0.0, 1.0, 0.0, 0.0]
+            ]
+        },
+        {
+            "type": "SCALE",
+            "name": "scaleAffector",
+            "scaleX": {
+                "type": "CURVED",
+                "controlPoints": [
+                    [0.0, 1.0],
+                    [0.5, 0.0],
+                    [1.0, -5.0]
+                ]
+            },
+            "scaleY": {
+                "type": "CURVED",
+                "controlPoints": [
+                    [0.0, 1.0],
+                    [0.5, 0.0],
+                    [1.0, -5.0]
+                ]
+            }
+        },
+        {
+            "type": "SCALE_VELOCITY",
+            "name": "scaleVelAffector",
+            "scale": {
+                "type": "FIXED",
+                "value": 1.0
+            }
+        }
+    ]
+}

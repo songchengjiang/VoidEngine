@@ -13,7 +13,7 @@ class veMeshNode;
 class veAnimKeyValues;
 class veAnimation;
 class veAnimationManager;
-typedef std::pair<veMeshNode*, veAnimKeyValues*> BoneAnimationKeyValues;
+typedef std::pair<veNode*, veAnimKeyValues*> BoneAnimationKeyValues;
 typedef std::vector<BoneAnimationKeyValues> BoneAnimations;
 typedef std::map< veAnimation*, BoneAnimations> AnimationMap;
 
@@ -113,7 +113,7 @@ public:
 	void setLoopAnimation(bool isLoop) { _isLoop = isLoop; }
 	bool isLoopAnimation() { return _isLoop; }
 
-	void attachEntity(veEntity *entity);
+	void attachNode(veNode *node);
 
 	veAnimationContainer* getAnimationContainer() { return _animationContainer.get(); }
 	void setActiveAnimationChannel(veAnimation *animation) { _activeAnimationChannel = animation; }
@@ -127,7 +127,7 @@ private:
 
 	VE_Ptr<veAnimationContainer> _animationContainer;
 	AnimationMap _animationMap;
-	veEntity * _entity;
+	veNode * _node;
 	veAnimation* _activeAnimationChannel;
 	double _smimulationFrame;
 	double _startFrame;

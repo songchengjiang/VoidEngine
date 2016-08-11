@@ -11,9 +11,10 @@
 #include "Light.h"
 #include "Ray.h"
 #include "SkyBox.h"
-#include "PostProcesser.h"
+
 #include "RenderPipeline.h"
 #include "Component.h"
+#include "EffectCore/ParticleSystem.h"
 
 #include <unordered_map>
 
@@ -22,7 +23,7 @@ class veNode;
 class veCamera;
 class veLight;
 class veSurface;
-class veEntity;
+class veMesh;
 class veSphere;
 class veCone;
 class veFont;
@@ -34,6 +35,9 @@ class veAnimationPlayer;
 class veBaseManager;
 class veMaterialArray;
 class veRay;
+class veViewer;
+class veEventDispatcher;
+class veFrameBufferObject;
 
 class VE_EXPORT veSceneManager
 {
@@ -51,10 +55,12 @@ public:
 	virtual veText* createText(const std::string &name, veFont *font, const std::string &content = "");
 	virtual veAnimation* createAnimation(const std::string &name);
 	virtual veAnimationContainer* createAnimationContainer(const std::string &name);
+    
+    virtual veFrameBufferObject* createFrameBufferObject(const std::string &name);
 
 	virtual veRay* createRay(const veVec3 &start, const veVec3 &end);
 	virtual veCamera* createCamera(const std::string &name, const veViewport &vp = { 0, 0, 0, 0 }) = 0;
-	virtual veEntity* createEntity(const std::string &name);
+	virtual veMesh* createMesh(const std::string &name);
 	virtual veSphere* createSphere(const std::string &name);
 	virtual veCone* createCone(const std::string &name);
 	virtual veSkyBox* createSkyBox(const std::string &name, veReal size = 500.0f);
@@ -62,7 +68,7 @@ public:
 	virtual veTexture* createTexture(const std::string &name, veTexture::TextureType texType = veTexture::TEXTURE_2D);
 	virtual veMaterialArray* createMaterialArray(const std::string &name);
 	virtual vePostProcesser* createPostProcesser(const std::string &name);
-	virtual void removePostProcesser(const std::string &name);
+    virtual veParticleSystem* createParticleSystem(const std::string &name);
 
 	virtual void requestRender(veNode *node) = 0;
 	virtual void requestRayCast(veRay *ray) = 0;
@@ -70,8 +76,7 @@ public:
 
 	const veCameraList& getCameraList() const { return _cameraList; }
 	const veLightListMap& getLightListMap() const { return _lightListMap; }
-	const vePostProcesserList& getPostProcesserList() const { return _postProcesserList; }
-	void setSkyBox(veSkyBox *skybox) { _skyBox = skybox; needReload(); }
+	void setSkyBox(veSkyBox *skybox) { _skyBox = skybox; }
 	veSkyBox* getSkyBox() const { return _skyBox.get(); }
 	void setAmbientColor(const veVec3 &color) { _ambient = color; }
 	const veVec3& getAmbientColor() const { return _ambient; }
@@ -79,54 +84,58 @@ public:
 	veBaseManager* getManager(const std::string &mgType);
 
 	veNode* getRootNode() { return _root.get(); }
-	void setDeltaTime(double deltaTime);
+    void setDeltaTime(double deltaTime) { _deltaTime = deltaTime; }
 	double getDeltaTime() { return _deltaTime; }
-	double getSimulationTime() { return _simulationTime; }
-
-	void setCamera(veCamera *camera) { _mainCamera = camera; }
-	veCamera* getCamera() { return _mainCamera.get(); }
 
 	veRenderPipeline* getRenderPipeline() const { return _renderPipeline.get(); }
+    
+    veRenderState* getRenderState(unsigned int contextID) { return &_renderStateList[contextID]; }
 
-	void needReload();
-	bool isNeedReload() { return _needReload; }
+    void setResourceRecoveredIntervalTime(double time) { _resourceRecoveredIntervalTime = time; }
+    void destroyRenderContexts();
 
-	void dispatchEvents(veEvent &event);
-	bool simulation();
+    void event(veViewer *viewer);
+	void update(veViewer *viewer);
+    void render(veViewer *viewer);
 
-	void startThreading();
-	void stopThreading();
 	void enqueueTaskToThread(const veThreadPool::TaskCallBack& callback, void* callbackParam, const std::function<void()> &func);
+    void enqueueRequest(const std::function<void()> &func);
 
 	void addComponent(veComponent *component);
 	void removeComponent(veComponent *component);
+    
+    void attachViewer(veViewer *viewer);
+    void detachViewer(veViewer *viewer);
 
 protected:
 
-	virtual void update();
-	virtual void render() = 0;
+	virtual void updateImp() = 0;
+	virtual void renderImp(veViewer *viewer) = 0;
+    void startThreading();
+    void stopThreading();
+    void dispatchEvents(veViewer *viewer);
+    void handleEvent(veViewer *viewer, const veEvent &event);
 	void postRenderHandle();
 	void resourceRecovery();
 	void handleRequests();
-	void enqueueRequest(const std::function<void()> &func);
 
 protected:
 
-	VE_Ptr<veNode> _root;
-	VE_Ptr<veSkyBox> _skyBox;
-	veCameraList _cameraList;
-	veLightListMap _lightListMap;
-	vePostProcesserList _postProcesserList;
-	VE_Ptr<veFrameBufferObject> _postProcesserFBO;
+    veComponentList             _componentList;
+	VE_Ptr<veNode>              _root;
+	VE_Ptr<veSkyBox>            _skyBox;
+	veCameraList                _cameraList;
+	veLightListMap              _lightListMap;
+    veParticleSystemList        _particleSystemList;
 	veVec3                      _ambient;
 	VE_Ptr<veRenderPipeline>    _renderPipeline;
+    std::vector<veViewer *>     _attachedViewers;
 
-	VE_Ptr<veCamera> _mainCamera;
 	std::unordered_map<std::string, veBaseManager *> _managerList;
+    
+    std::unordered_map<unsigned int, veRenderState> _renderStateList;
 
-	veComponentList _componentList;
-
-	veThreadPool _threadPool;
+	veThreadPool                         _threadPool;
 	std::mutex                           _requestQueueMutex;
 	veLoopQueue< std::function<void()> > _requestQueue;
 
@@ -136,10 +145,9 @@ protected:
 	std::thread _renderingThread;
 	bool        _stopThreading;
 
-	bool _needReload;
-
+    bool   _needDestroyRenderContexts;
 	double _deltaTime;
-	double _simulationTime;
+    double _resourceRecoveredIntervalTime;
 	double _latestResourceRecoveredTime;
 };
 

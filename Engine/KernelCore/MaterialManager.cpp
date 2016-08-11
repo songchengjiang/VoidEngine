@@ -14,19 +14,6 @@ veMaterialManager::~veMaterialManager()
 
 void veMaterialManager::update()
 {
-	if (_sceneManager->isNeedReload()) {
-		for (auto &mats : _materialPool) {
-			for (size_t mat = 0; mat < mats->getMaterialNum(); ++mat) {
-				auto material = mats->getMaterial(mat);
-				for (size_t tec = 0; tec < material->getTechniqueNum(); ++tec) {
-					auto technique = material->getTechnique(tec);
-					for (size_t ps = 0; ps < technique->getPassNum(); ++ps) {
-						technique->getPass(ps)->needLink();
-					}
-				}
-			}
-		}
-	}
 }
 
 void veMaterialManager::resourceRecovery()

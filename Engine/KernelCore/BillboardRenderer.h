@@ -10,7 +10,7 @@ public:
 	veBillboardRenderer();
 	~veBillboardRenderer();
 
-	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override;
+	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID) override;
 
 private:
 

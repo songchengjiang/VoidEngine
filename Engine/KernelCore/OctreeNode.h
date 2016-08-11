@@ -8,6 +8,9 @@ class VE_EXPORT veOctreeNode : public veNode
 public:
 	veOctreeNode();
 	~veOctreeNode();
+    
+    virtual bool removeChild(veNode *child) override;
+    virtual veNode* removeChild(size_t cIndex) override;
 
 	bool isIn(const veBoundingBox & bbox);
 

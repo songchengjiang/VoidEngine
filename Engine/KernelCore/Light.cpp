@@ -1,6 +1,7 @@
 #include "Light.h"
 #include "NodeVisitor.h"
 #include "SceneManager.h"
+#include "Configuration.h"
 
 static const veMat4 LIGHT_BIAS_MAT = veMat4(0.5f, 0.0f, 0.0f, 0.5f
 	, 0.0f, 0.5f, 0.0f, 0.5f
@@ -18,6 +19,7 @@ const std::string veLight::DEFUALT_LIGHT_TEXTURE_UNIFORM_NAME = "ve_lightTex";
 
 veLight::veLight(LightType type)
 	: _type(type)
+    , _isEnabled(true)
 	, _color(1.0f)
 	, _intensity(1.0f)
 	, _attenuationRange(1000.0f)
@@ -40,21 +42,19 @@ veLight::~veLight()
 
 }
 
-void veLight::update(veSceneManager *sm, const veMat4 &transform)
+void veLight::beforeUpdate(veSceneManager *sm)
 {
-	veNode::update(sm, transform);
-	updateShadow();
+    _sceneManager = sm;
+    if (_isEnabled)
+        updateShadow();
 }
 
-void veLight::visit(veNodeVisitor &visitor)
+void veLight::shadowEnable(bool isEnabled)
 {
-	visitor.visit(*this);
-}
-
-void veLight::refreshUpdate(veSceneManager *sm, const veMat4 &transform)
-{
-	_needUpdateShadowMap = true;
-	veNode::refreshUpdate(sm, transform);
+    if (_shadowEnabled == isEnabled)
+        return;
+    _shadowEnabled = isEnabled;
+    _needUpdateShadowMap = true;
 }
 
 void veLight::setShadowResolution(const veVec2 &resolution)
@@ -71,11 +71,6 @@ void veLight::setShadowArea(const veVec2 &area)
 		return;
 	_shadowArea = area;
 	_needUpdateShadowMap = true;
-}
-
-void veLight::updateSceneManager()
-{
-
 }
 
 veDirectionalLight::veDirectionalLight()
@@ -99,11 +94,11 @@ void veDirectionalLight::updateShadow()
 				_shadowCamera->setShadowCamera(true);
 			}
 
-			_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1
+			_shadowTexture->storage(int(_shadowResolution.x()), int(_shadowResolution.y()), 1
 				, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
 
 			_shadowCamera->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
-			_shadowCamera->setMask(_mask);
+			_shadowCamera->setMask(_attachedNodeList[0]->getMask());
 			auto halfShadowArea = _shadowArea * 0.5f;
 			_shadowCamera->setProjectionMatrixAsOrtho(-halfShadowArea.x(), halfShadowArea.x(), -halfShadowArea.y(), halfShadowArea.y(), 0.1f, _attenuationRange);
 		}
@@ -113,9 +108,17 @@ void veDirectionalLight::updateShadow()
 	}
 
 	if (_shadowEnabled) {
-		_shadowCamera->setMatrix(this->getNodeToWorldMatrix());
+		_shadowCamera->setMatrix(_attachedNodeList[0]->getNodeToWorldMatrix());
 		_lightMatrix = LIGHT_BIAS_MAT * _shadowCamera->projectionMatrix() * _shadowCamera->viewMatrix();
 	}
+}
+
+void veDirectionalLight::setEnabled(bool isEnabled)
+{
+    veLight::setEnabled(isEnabled);
+    if (_shadowEnabled && _shadowCamera.valid()){
+        _shadowCamera->setVisible(isEnabled);
+    }
 }
 
 veDirectionalLight::~veDirectionalLight()
@@ -145,11 +148,11 @@ void vePointLight::updateShadow()
 					_shadowCameras[i]->setShadowCamera(true);
 				}
 			}
-			_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1
+			_shadowTexture->storage(int(_shadowResolution.x()), int(_shadowResolution.y()), 1
 				, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
 			for (unsigned short i = 0; i < 6; ++i) {
 				_shadowCameras[i]->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
-				_shadowCameras[i]->setMask(_mask);
+				_shadowCameras[i]->setMask(_attachedNodeList[0]->getMask());
 				_shadowCameras[i]->setVisible(true);
 				_shadowCameras[i]->setProjectionMatrixAsPerspective(90.0f, 1.0f, 0.1f, _attenuationRange);
 			}
@@ -163,7 +166,7 @@ void vePointLight::updateShadow()
 	}
 
 	if (_shadowEnabled) {
-		veMat4 lightWorldMat = this->getNodeToWorldMatrix();
+		veMat4 lightWorldMat = _attachedNodeList[0]->getNodeToWorldMatrix();
 		veVec3 lightWorldPos = veVec3(lightWorldMat[0][3], lightWorldMat[1][3], lightWorldMat[2][3]);
 		_shadowCameras[0]->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_X, veVec3::NEGATIVE_UNIT_Y));
 		_shadowCameras[1]->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_X, veVec3::NEGATIVE_UNIT_Y));
@@ -174,6 +177,16 @@ void vePointLight::updateShadow()
 
 		_lightMatrix = veMat4::translation(-lightWorldPos);
 	}
+}
+
+void vePointLight::setEnabled(bool isEnabled)
+{
+    veLight::setEnabled(isEnabled);
+    if (_shadowEnabled && _shadowCameras[0].valid()) {
+        for (unsigned short i = 0; i < 6; ++i) {
+            _shadowCameras[i]->setVisible(isEnabled);
+        }
+    }
 }
 
 vePointLight::~vePointLight()
@@ -204,10 +217,10 @@ void veSpotLight::updateShadow()
 				_shadowCamera->setShadowCamera(true);
 			}
 
-			_shadowTexture->storage(int(_shadowResolution.x()) * VE_DEVICE_PIXEL_RATIO, int(_shadowResolution.y()) * VE_DEVICE_PIXEL_RATIO, 1
+			_shadowTexture->storage(int(_shadowResolution.x()), int(_shadowResolution.y()), 1
 				, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
 			_shadowCamera->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y())});
-			_shadowCamera->setMask(_mask);
+			_shadowCamera->setMask(_attachedNodeList[0]->getMask());
 			_shadowCamera->setProjectionMatrixAsPerspective(2.0f * _outerAngle, 1.0f, 0.1f, _attenuationRange);
 		}
 		if (_shadowCamera.valid())
@@ -216,9 +229,17 @@ void veSpotLight::updateShadow()
 	}
 
 	if (_shadowEnabled) {
-		_shadowCamera->setMatrix(this->getNodeToWorldMatrix());
+		_shadowCamera->setMatrix(_attachedNodeList[0]->getNodeToWorldMatrix());
 		_lightMatrix = LIGHT_BIAS_MAT * _shadowCamera->projectionMatrix() * _shadowCamera->viewMatrix();
 	}
+}
+
+void veSpotLight::setEnabled(bool isEnabled)
+{
+    veLight::setEnabled(isEnabled);
+    if (_shadowEnabled && _shadowCamera.valid()){
+        _shadowCamera->setVisible(isEnabled);
+    }
 }
 
 veSpotLight::~veSpotLight()

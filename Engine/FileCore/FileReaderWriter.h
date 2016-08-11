@@ -15,6 +15,6 @@ public:
 };
 
 typedef veRegistrar<std::string, veFileReaderWriter> FileReaderWriterRegistrar;
-#define VE_READERWRITER_REG(EXT, CLASS) static veRegistrarAgent<std::string, veFileReaderWriter, CLASS> g_regAgent_##CLASS(EXT);
+#define VE_READERWRITER_REG(EXT, CLASS) static veRegistrarAgent<std::string, veFileReaderWriter, CLASS> g_regAgent_##CLASS(EXT)
 
 #endif

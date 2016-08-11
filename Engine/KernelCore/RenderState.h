@@ -69,14 +69,11 @@ struct VE_EXPORT veStencilOp
 class VE_EXPORT veRenderState
 {
 public:
+    veRenderState();
 	~veRenderState();
-
-	static veRenderState* instance();
 
 	void applyState();
 	void resetState();
-
-	void lockState(bool isTrue) { _isLockState = isTrue; }
 
 	void setDepthTest(bool isTrue) { _depthTest = isTrue; };
 	void setDepthWrite(bool isTrue) { _depthWrite = isTrue; }
@@ -89,7 +86,6 @@ public:
 	void setStencilOp(const veStencilOp &op) { _stencilOp = op; }
 
 private:
-	veRenderState();
 	void init();
 
 private:
@@ -103,8 +99,17 @@ private:
 	GLenum        _blendEquation;
 	veStencilFunc _stencilFunc;
 	veStencilOp   _stencilOp;
-
-	bool _isLockState;
+    
+    bool          _currentDepthTest;
+    bool          _currentDepthWrite;
+    bool          _currentStencilTest;
+    bool          _currentCullFace;
+    GLenum        _currentCullfaceMode;
+    veBlendFunc   _currentBlendFunc;
+    GLenum        _currentBlendEquation;
+    veStencilFunc _currentStencilFunc;
+    veStencilOp   _currentStencilOp;
+    
 	bool _isInited;
 };
 

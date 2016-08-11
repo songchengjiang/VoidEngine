@@ -2,21 +2,20 @@
 #include "Node.h"
 #include "NodeVisitor.h"
 #include "SceneManager.h"
-#include "Entity.h"
 #include <set>
 
 class FindMeshNodes 
 {
 public:
 
-	void find(veMeshNode *node) {
+	void find(veNode *node) {
 		nodeList.push_back(node);
 		for (size_t i = 0; i < node->getChildCount(); ++i) {
 			find(node->getChild(i));
 		}
 	}
 
-	std::vector<veMeshNode *> nodeList;
+	std::vector<veNode *> nodeList;
 };
 
 veAnimKeyValues::veAnimKeyValues()
@@ -201,7 +200,7 @@ veAnimationPlayer::veAnimationPlayer(veAnimationContainer *animationContainer)
 	, _needUpdate(false)
 	, _requestNoUpdate(false)
 	, _isLoop(false)
-	, _entity(nullptr)
+	, _node(nullptr)
 	, _manager(nullptr)
 	, _activeAnimationChannel(nullptr)
 {
@@ -215,19 +214,15 @@ veAnimationPlayer::~veAnimationPlayer()
 
 void veAnimationPlayer::update(veSceneManager *sm)
 {
-	if (!_entity || _animationMap.empty()) return;
+	if (!_node || _animationMap.empty()) return;
 	if (_needUpdate) {
 		if (!_activeAnimationChannel && _animationContainer->getAnimationChannelNum()) {
 			_activeAnimationChannel = _animationContainer->getAnimationChannel(0);
 		}
-		for (auto &parentNode : _entity->getParents()) {
-			if (sm->isNodeVisibleInScene(parentNode)) {
-				updateAnimations();
-				_entity->dirtyBoundingBox();
-				if (_requestNoUpdate) _needUpdate = false;
-				break;
-			}
-		}
+        if (sm->isNodeVisibleInScene(_node)) {
+            updateAnimations();
+            if (_requestNoUpdate) _needUpdate = false;
+        }
 	}
 
 	if (_smimulationFrame <= _endFrame)
@@ -268,13 +263,13 @@ void veAnimationPlayer::stop()
 	_smimulationFrame = 0.0;
 }
 
-void veAnimationPlayer::attachEntity(veEntity *entity)
+void veAnimationPlayer::attachNode(veNode *node)
 {
-	_entity = entity;
-	if (_entity && _animationContainer.valid()) {
+	_node = node;
+	if (_node && _animationContainer.valid()) {
 		_animationMap.clear();
 		FindMeshNodes finder;
-		finder.find(entity->getRootMeshNode());
+		finder.find(_node);
 		for (size_t i = 0; i < _animationContainer->getAnimationChannelNum(); ++i) {
 			veAnimation *animation = _animationContainer->getAnimationChannel(i);
 			for (auto &iter : finder.nodeList) {

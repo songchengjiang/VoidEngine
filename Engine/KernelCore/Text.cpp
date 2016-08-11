@@ -4,15 +4,15 @@
 #include "Constants.h"
 #include "SceneManager.h"
 #include "Application.h"
+#include "Configuration.h"
 #include "FileCore/File.h"
+#include "Viewer.h"
 
 veText::veText(veSceneManager *sm, veFont *font, const std::string &content)
 	: veSurface(sm)
 	, _font(font)
 	, _content(content)
 	, _charSpace(0)
-	, _width(0)
-	, _height(0)
 	, _needRefresh(true)
 {
 }
@@ -22,7 +22,7 @@ veText::~veText()
 
 }
 
-bool veText::handle(veNode *node, veSceneManager *sm, const veEvent &event)
+bool veText::handle(veNode *node, veSceneManager *sm, veViewer *viewer, const veEvent &event)
 {
 	if (event.getEventType() == veEvent::VE_WIN_RESIZE) {
 		_needRefresh = true;
@@ -40,10 +40,24 @@ void veText::update(veNode *node, veSceneManager *sm)
 		_needRefreshMaterial = false;
 	}
 	if (_needRefresh) {
-		rebuildContentBitmap(veApplication::instance()->width(), veApplication::instance()->height());
+		rebuildContentBitmap();
 		_needRefresh = false;
 	}
 	veRenderableObject::update(node, sm);
+}
+
+void veText::render(veNode *node, veCamera *camera, unsigned int contextID)
+{
+    auto &vp = camera->getViewport();
+    veVec2 size = veVec2(vp.width - vp.x, vp.height - vp.y);
+    if (_type == OVERLAY)
+        _scaleMat->setValue(veMat4::scale(veVec3(_texture->getWidth() / size.x(), _texture->getHeight() / size.y(), 0.0f)));
+    else if (_type == SURFACE || _type == veSurface::BILLBOARD) {
+        _scaleMat->setValue(veMat4::scale(veVec3(_texture->getWidth() * 0.5f, _texture->getHeight() * 0.5f, 0.0f)));
+        _boundingBox.min() = veVec3(-(_texture->getWidth() * 0.5f), -(_texture->getHeight() * 0.5f), -0.5f);
+        _boundingBox.max() = veVec3(_texture->getWidth() * 0.5f, _texture->getHeight() * 0.5f, 0.5f);
+    }
+    veSurface::render(node, camera, contextID);
 }
 
 void veText::setFont(veFont *font)
@@ -77,26 +91,21 @@ veShader* veText::getFragmentShader()
 	uniform vec4 u_Color; \n \
 	in vec3 v_normal; \n \
 	in vec2 v_texcoord; \n \
-	layout(location=0) out vec4 RT0;\n \
-	layout(location=1) out vec4 RT1;\n \
-	layout(location=2) out vec4 RT2;\n \
+	layout(location=0) out vec4 fragColor;\n \
 	void main() {  \n \
 		float glyph = texture(u_texture, v_texcoord).r; \n \
 		if (glyph <= 0.1)  \n \
 			discard;  \n \
-		RT0 = vec4(0.0);                 \n \
-		RT1.xyz = (u_Color * glyph).xyz;   \n \
-		RT2 = vec4(0.0);                 \n \
-		//fragColor = u_Color * glyph; \n \
+		fragColor = u_Color * glyph; \n \
 	}";
 
 	return new veShader(veShader::FRAGMENT_SHADER, F_SHADER);
 }
 
-void veText::rebuildContentBitmap(int divWidth, int divHeight)
+void veText::rebuildContentBitmap()
 {
 	if (_content.empty()) return;
-#define FOUR_BYTES_ALIGN(BYTES)  ((((BYTES + 4))>>2)<<2)  
+#define FOUR_BYTES_ALIGN(BYTES)  ((((BYTES + 3))>>2)<<2)  
 
 	unsigned int borderSpace = _font->getFontSize() * 0.5;
 	unsigned int width = 0;
@@ -109,7 +118,7 @@ void veText::rebuildContentBitmap(int divWidth, int divHeight)
 		if (i != _content.size() - 1)
 			width += (charBitmap->advance.x >> 6);
 	}
-	width += 2 * borderSpace * VE_DEVICE_PIXEL_RATIO;
+	width += 2 * borderSpace;
 	height += 2 * borderSpace;
 	width = FOUR_BYTES_ALIGN(width);
 
@@ -121,22 +130,15 @@ void veText::rebuildContentBitmap(int divWidth, int divHeight)
 		auto charBitmap = _font->getCharBitmap(_content[i]);
 		unsigned int charBaseLine = charBitmap->bitmap.rows - charBitmap->bitmap_top;
 		for (unsigned int h = 0; h < charBitmap->bitmap.rows; ++h) {
-			memcpy(&buf[(h + baseline - charBaseLine  + heightOffset) * width + widthOffset + charBitmap->bitmap_left], &charBitmap->bitmap.buffer[(charBitmap->bitmap.rows - h - 1) * charBitmap->bitmap.width], charBitmap->bitmap.width * sizeof(unsigned char));
+            unsigned char *dst = &buf[(h + baseline - charBaseLine  + heightOffset) * width + widthOffset + charBitmap->bitmap_left];
+            unsigned char *src = &charBitmap->bitmap.buffer[(charBitmap->bitmap.rows - h - 1) * charBitmap->bitmap.width];
+            size_t sz = charBitmap->bitmap.width * sizeof(unsigned char);
+			memcpy(dst, src, sz);
 		}
 		widthOffset += (charBitmap->advance.x >> 6);
 	}
 
 	_texture->storage(width, height, 1, GL_R8, GL_RED, GL_UNSIGNED_BYTE, buf);
-	if (_type == OVERLAY)
-		_scaleMat->setValue(veMat4::scale(veVec3((float)width / (float)(divWidth * VE_DEVICE_PIXEL_RATIO), (float)height / (float)(divHeight * VE_DEVICE_PIXEL_RATIO), 0.0f)));
-	else if (_type == SURFACE || _type == veSurface::BILLBOARD) {
-		_scaleMat->setValue(veMat4::scale(veVec3(width * 0.5f, height * 0.5f, 0.0f)));
-		_boundingBox.min() = veVec3(-(width * 0.5f), -(height * 0.5f), -0.5f);
-		_boundingBox.max() = veVec3(width * 0.5f, height * 0.5f, 0.5f);
-	}
-
-	_width = width;
-	_height = height;
 	//delete[] temp;
 	delete[] buf;
 }

@@ -2,15 +2,36 @@
 #include "FileReaderWriter.h"
 #if (VE_PLATFORM == VE_PLATFORM_WIN32)
 #include "File-win32.h"
-#elif (VE_PLATFORM == VE_PLATFORM_MAC)
-#include "File-mac.h"
+#elif (VE_PLATFORM == VE_PLATFORM_MAC || VE_PLATFORM == VE_PLATFORM_IOS)
+#include "File-apple.h"
 #elif (VE_PLATFORM == VE_PLATFORM_ANDROID)
 #include "File-android.h"
 #endif
+#include "FileReaderWriterPARTICLE.h"
+#include "FileReaderWriterANIMATION.h"
+#include "FileReaderWriterCAMERA.h"
+#include "FileReaderWriterEXR.h"
+#include "FileReaderWriterJPEG.h"
+#include "FileReaderWriterLIGHT.h"
+#include "FileReaderWriterPNG.h"
+#include "FileReaderWriterKTX.h"
+#include "FileReaderWriterVEM.h"
+#include "FileReaderWriterVEMTL.h"
+
+
 
 veFile::veFile()
 {
-
+    VE_READERWRITER_REG("veparticle", veFileReaderWriterPARTICLE);
+    VE_READERWRITER_REG("veanim", veFileReaderWriterANIMATION);
+    VE_READERWRITER_REG("vecamera", veFileReaderWriterCAMERA);
+    VE_READERWRITER_REG("exr", veFileReaderWriterEXR);
+    VE_READERWRITER_REG("jpg", veFileReaderWriterJPEG);
+    VE_READERWRITER_REG("velight", veFileReaderWriterLIGHT);
+    VE_READERWRITER_REG("png", veFileReaderWriterPNG);
+    VE_READERWRITER_REG("ktx", veFileReaderWriterKTX);
+    VE_READERWRITER_REG("vem", veFileReaderWriterVEM);
+    VE_READERWRITER_REG("vemtl", veFileReaderWriterVEMTL);
 }
 
 veFile::~veFile()
@@ -24,8 +45,8 @@ veFile* veFile::instance()
 {
 #if (VE_PLATFORM == VE_PLATFORM_WIN32)
 	static veFileWin32 fileReader;
-#elif (VE_PLATFORM == VE_PLATFORM_MAC)
-    static veFileMac fileReader;
+#elif (VE_PLATFORM == VE_PLATFORM_MAC || VE_PLATFORM == VE_PLATFORM_IOS)
+    static veFileApple fileReader;
 #elif (VE_PLATFORM == VE_PLATFORM_ANDROID)
 	static veFileAndroid fileReader;
 #endif

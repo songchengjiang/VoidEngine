@@ -19,11 +19,11 @@ public:
 	void setMask(unsigned int mask);
 	unsigned int getMask() const { return _mask; }
 
-	void setMaterialArray(veMaterialArray *material) { _materials = material; }
-	veMaterialArray* getMaterialArray() { return _materials.get(); }
-	const veMaterialArray* getMaterialArray() const { return _materials.get(); }
+	void setMaterial(veMaterial *material) { _material = material; }
+	veMaterial* getMaterial() { return _material.get(); }
+	const veMaterial* getMaterial() const { return _material.get(); }
 
-	void render(veCamera *camera);
+	void render(veCamera *camera, unsigned int contextID);
 
 protected:
 
@@ -34,7 +34,7 @@ protected:
 	veReal                  _size;
 	unsigned int            _mask;
 	VE_Ptr<veRenderer>      _renderer;
-	VE_Ptr<veMaterialArray> _materials;
+	VE_Ptr<veMaterial>      _material;
 	veSceneManager         *_sceneManager;
 };
 

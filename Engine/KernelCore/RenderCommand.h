@@ -21,7 +21,8 @@ struct veRenderCommand
 		, depthInCamera(0.0f)
 		, user1(nullptr)
 		, user2(nullptr)
-		, user3(nullptr){
+		, user3(nullptr)
+        , contextID(0){
 	}
 
 	enum Priority
@@ -44,6 +45,7 @@ struct veRenderCommand
 	void*               user2;
 	void*               user3;
 	veRenderer         *renderer;
+    unsigned int        contextID;
     //std::function<void(const veRenderCommand &)> drawFunc;
 };
 

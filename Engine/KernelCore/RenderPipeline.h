@@ -4,10 +4,12 @@
 #include <mutex>
 #include "Prerequisites.h"
 #include "FrameBufferObject.h"
+#include "RenderQueue.h"
 #include "Node.h"
 
 class veSceneManager;
 class veCamera;
+class veViewer;
 class VE_EXPORT veRenderPipeline
 {
 public:
@@ -16,23 +18,25 @@ public:
 
 	USE_VE_PTR;
 
-	void rendering();
-	void draw(veCamera *camera, const std::function<bool(veRenderCommand &command)> &callback = nullptr);
+	void rendering(veViewer *viewer);
+    void prepareForDraws(veCamera *camera);
+    void draw(veCamera *camera, veRenderQueue::RenderGroup &rg, const std::function<bool(veRenderCommand &command)> &callback = nullptr);
 
 	bool isNodeVisible(veNode *node);
 
 protected:
 
+    void visitRenderQueues(veCamera *camera, unsigned int contextID);
 	void cullRenderQueues(veCamera *camera);
-	void fillRenderQueues(veCamera *camera);
+	void fillRenderQueues(veCamera *camera, unsigned int contextID);
 	void sortRenderQueues(veCamera *camera);
-	void renderShadows();
-	void renderCameras();
-	virtual void renderScene(veCamera *camera, bool isMainCamera) = 0;
+	void renderShadows(veViewer *viewer);
+	void renderCameras(veViewer *viewer);
+	virtual void renderScene(veCamera *camera, unsigned int contextID) = 0;
 
-	void renderDirectionalLightShadow(veLight *light);
-	void renderPointLightShadow(veLight *light);
-	void renderSpotLightShadow(veLight *light);
+	void renderDirectionalLightShadow(veLight *light, veViewer *viewer);
+	void renderPointLightShadow(veLight *light, veViewer *viewer);
+	void renderSpotLightShadow(veLight *light, veViewer *viewer);
 
 	vePass* getOrCreateDirectionalShadowPass(const std::string &vDef, const std::string &fDef);
 	vePass* getOrCreateOmnidirectionalShadowPass(const std::string &vDef, const std::string &fDef);

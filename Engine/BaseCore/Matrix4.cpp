@@ -197,35 +197,93 @@ void veMat4::decomposition(veVec3* position, veVec3* scale, veQuat* orientation)
 	}
 
 	if (scale || orientation){
-		veVec3 row0 = veVec3(m[0][0], m[0][1], m[0][2]);
-		veVec3 row1 = veVec3(m[1][0], m[1][1], m[1][2]);
-		veVec3 row2 = veVec3(m[2][0], m[2][1], m[2][2]);
-		float row0Length = row0.length();
-		float row1Length = row1.length();
-		float row2Length = row2.length();
-		if (scale) {
-			scale->x() = row0Length;
-			scale->y() = row1Length;
-			scale->z() = row2Length;
-		}
-
-		if (orientation) {
-			if (row0Length) {
-				row0 /= row0Length;
-			}
-
-			if (row1Length) {
-				row1 /= row1Length;
-			}
-
-			if (row2Length) {
-				row2 /= row2Length;
-			}
-
-			orientation->set(veMat3(row0.x(), row0.y(), row0.z()
-				                 ,  row1.x(), row1.y(), row1.z()
-				                 ,  row2.x(), row2.y(), row2.z()));
-		}
+        veMat3 m3x3(m[0][0], m[0][1], m[0][2]
+                  , m[1][0], m[1][1], m[1][2]
+                  , m[2][0], m[2][1], m[2][2]);
+        veMat3 kQ;
+        // Factor M = QR = QDU where Q is orthogonal, D is diagonal,
+        // and U is upper triangular with ones on its diagonal.  Algorithm uses
+        // Gram-Schmidt orthogonalization (the QR algorithm).
+        //
+        // If M = [ m0 | m1 | m2 ] and Q = [ q0 | q1 | q2 ], then
+        //
+        //   q0 = m0/|m0|
+        //   q1 = (m1-(q0*m1)q0)/|m1-(q0*m1)q0|
+        //   q2 = (m2-(q0*m2)q0-(q1*m2)q1)/|m2-(q0*m2)q0-(q1*m2)q1|
+        //
+        // where |V| indicates length of vector V and A*B indicates dot
+        // product of vectors A and B.  The matrix R has entries
+        //
+        //   r00 = q0*m0  r01 = q0*m1  r02 = q0*m2
+        //   r10 = 0      r11 = q1*m1  r12 = q1*m2
+        //   r20 = 0      r21 = 0      r22 = q2*m2
+        //
+        // so D = diag(r00,r11,r22) and U has entries u01 = r01/r00,
+        // u02 = r02/r00, and u12 = r12/r11.
+        
+        // Q = rotation
+        // D = scaling
+        // U = shear
+        
+        // D stores the three diagonal entries r00, r11, r22
+        // U stores the entries U[0] = u01, U[1] = u02, U[2] = u12
+        
+        // build orthogonal matrix Q
+        veReal fInvLength = m3x3[0][0] * m3x3[0][0] + m3x3[1][0] * m3x3[1][0] + m3x3[2][0] * m3x3[2][0];
+        if (fInvLength != 0.0f) fInvLength = 1.0f / veMath::veSqrt(fInvLength);
+        
+        kQ[0][0] = m3x3[0][0] * fInvLength;
+        kQ[1][0] = m3x3[1][0] * fInvLength;
+        kQ[2][0] = m3x3[2][0] * fInvLength;
+        
+        veReal fDot = kQ[0][0] * m3x3[0][1] + kQ[1][0] * m3x3[1][1] + kQ[2][0] * m3x3[2][1];
+        kQ[0][1] = m3x3[0][1]-fDot * kQ[0][0];
+        kQ[1][1] = m3x3[1][1]-fDot * kQ[1][0];
+        kQ[2][1] = m3x3[2][1]-fDot * kQ[2][0];
+        fInvLength = kQ[0][1] * kQ[0][1] + kQ[1][1] * kQ[1][1] + kQ[2][1] * kQ[2][1];
+        if (fInvLength != 0.0f) fInvLength = 1.0f / veMath::veSqrt(fInvLength);
+        
+        kQ[0][1] *= fInvLength;
+        kQ[1][1] *= fInvLength;
+        kQ[2][1] *= fInvLength;
+        
+        fDot = kQ[0][0] * m3x3[0][2] + kQ[1][0] * m3x3[1][2] + kQ[2][0] * m3x3[2][2];
+        kQ[0][2] = m3x3[0][2]-fDot * kQ[0][0];
+        kQ[1][2] = m3x3[1][2]-fDot * kQ[1][0];
+        kQ[2][2] = m3x3[2][2]-fDot * kQ[2][0];
+        fDot = kQ[0][1] * m3x3[0][2] + kQ[1][1] * m3x3[1][2] + kQ[2][1] * m3x3[2][2];
+        kQ[0][2] -= fDot * kQ[0][1];
+        kQ[1][2] -= fDot * kQ[1][1];
+        kQ[2][2] -= fDot * kQ[2][1];
+        fInvLength = kQ[0][2] * kQ[0][2] + kQ[1][2] * kQ[1][2] + kQ[2][2] * kQ[2][2];
+        if (fInvLength != 0.0f) fInvLength = 1.0f / veMath::veSqrt(fInvLength);
+        
+        kQ[0][2] *= fInvLength;
+        kQ[1][2] *= fInvLength;
+        kQ[2][2] *= fInvLength;
+        
+        // guarantee that orthogonal matrix has determinant 1 (no reflections)
+        veReal fDet = kQ[0][0] * kQ[1][1] * kQ[2][2] + kQ[0][1] * kQ[1][2] * kQ[2][0] +
+        kQ[0][2] * kQ[1][0] * kQ[2][1] - kQ[0][2] * kQ[1][1] * kQ[2][0] -
+        kQ[0][1] * kQ[1][0] * kQ[2][2] - kQ[0][0] * kQ[1][2] * kQ[2][1];
+        
+        if ( fDet < 0.0 )
+        {
+            for (size_t iRow = 0; iRow < 3; iRow++)
+                for (size_t iCol = 0; iCol < 3; iCol++)
+                    kQ[iRow][iCol] = -kQ[iRow][iCol];
+        }
+        
+        if (scale) {
+            // the scaling component
+            scale->x() = kQ[0][0] * m3x3[0][0] + kQ[1][0] * m3x3[1][0] + kQ[2][0] * m3x3[2][0];
+            scale->y() = kQ[0][1] * m3x3[0][1] + kQ[1][1] * m3x3[1][1] + kQ[2][1] * m3x3[2][1];
+            scale->z() = kQ[0][2] * m3x3[0][2] + kQ[1][2] * m3x3[1][2] + kQ[2][2] * m3x3[2][2];
+        }
+        
+        if (orientation) {
+            orientation->set(kQ);
+        }
 	}
 }
 

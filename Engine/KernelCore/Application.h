@@ -5,7 +5,7 @@
 #include "SceneManager.h"
 #include "Event.h"
 
-class veSceneManager;
+class veViewer;
 class VE_EXPORT veApplication
 {
 public:
@@ -13,39 +13,19 @@ public:
 
 	static veApplication* instance();
 
-	void initWindow(int w, int h, const std::string &title, void *param);
-	int width() { return _width; }
-	int height() { return _height; }
-
-	void setSceneManager(veSceneManager *sm);
-	veSceneManager* getSceneManager() { return _sceneManager.get(); }
-
-	virtual bool makeContextCurrent() = 0;
-	virtual void swapBuffers() = 0;
-
+    virtual veViewer* createViewer(int width, int height, const std::string &title, veViewer *sharedContextViewer = nullptr) = 0;
+    veViewer* getViewer(size_t idx);
+    size_t getViewerCount() const { return _viewerList.size(); }
 	virtual bool run() = 0;
-	virtual void stop();
+	virtual void stop() = 0;
 
 protected:
 
 	veApplication();
-
-	virtual void dispatchEvents() = 0;
-	virtual void initWindowImplementation(void *param) = 0;
-	virtual bool isWindowShouldClose() = 0;
-
+    
 protected:
-	
-	//typedef std::vector< VE_Ptr<veVisualiser> > VisualiserList;
-	//VisualiserList _visualiserList;
-	VE_Ptr<veSceneManager> _sceneManager;
-	bool                   _isRunning;
-
-	int _width;
-	int _height;
-	std::string _title;
-	Events  _events;
-	veEvent _currentEvent;
+    
+    std::vector<veViewer *> _viewerList;
 };
 
 #endif

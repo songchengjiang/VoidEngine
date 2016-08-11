@@ -10,7 +10,7 @@ public:
 
 	}
 
-	virtual void update(veSceneManager *sm) override {
+	virtual void beforeUpdate(veSceneManager *sm) override {
 		char buf[256];
 		sprintf(buf, "Frame Rate: %f", 1.0f / sm->getDeltaTime());
 		_text->setContent(buf);
@@ -50,22 +50,20 @@ public:
 
 		{
 			veNode *mouseNode = _sceneManager->createNode("MouseNode");
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu"));
-			veNode *node = _sceneManager->createNode("node2");
-			node->addRenderableObject(entity);
+			veNode *entity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu"));
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
-			node->addComponent(transer);
+			entity->addComponent(transer);
 			//transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
 			transer->setScale(veVec3(0.3f));
 			//transer->setRotation(veQuat(veMath::HALF_PI, veVec3::UNIT_Y));
-			mouseNode->addChild(node);
+			mouseNode->addChild(entity);
 
 			veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim-0"));
 			veAnimationPlayer* player = _sceneManager->createAnimationPlayer("player0", animationContainer);
 			player->start();
 			player->setLoopAnimation(true);
-			player->attachEntity(entity);
+			player->attachNode(entity);
 
 			veNode *textNode = _sceneManager->createNode("textnode");
 			auto text = _sceneManager->createText("text2", new veFont(fontFile, 64), "Boss");

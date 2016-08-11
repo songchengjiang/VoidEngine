@@ -12,7 +12,7 @@ public:
 	void setRenderOrder(int order) { _renderOrder = order; }
 	int getRenderOrder() const { return _renderOrder; }
 
-	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override;
+	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID) override;
 
 protected:
 

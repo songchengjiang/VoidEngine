@@ -31,6 +31,27 @@
     <Filter Include="KernelCore\PostProcesser">
       <UniqueIdentifier>{0752a16d-b03f-4a1b-bd4b-c3eadab99dc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EffectCore">
+      <UniqueIdentifier>{82b58894-1171-4689-b77e-21cafb16f2c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EffectCore\Renderers">
+      <UniqueIdentifier>{9ab94d64-4978-4498-8f84-d59fa01f15e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EffectCore\Affectors">
+      <UniqueIdentifier>{b538a2ee-8608-4ad7-887d-1b263f362883}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EffectCore\Emitters">
+      <UniqueIdentifier>{3f767759-f362-44e3-a57e-0149ab4e508f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ExtCore">
+      <UniqueIdentifier>{feb51c19-37df-4405-a745-503090721a13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ExtCore\imgui">
+      <UniqueIdentifier>{78945c06-9d26-406f-ba3c-a80fdf66daa9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UtilCore">
+      <UniqueIdentifier>{00f521a5-7927-46fc-a0ae-7a128325b061}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Engine\BaseCore\Matrix3.cpp">
@@ -52,30 +73,6 @@
       <Filter>BaseCore</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Engine\FileCore\FileReaderWriter.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterANIMATION.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterCAMERA.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterEXR.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterJPEG.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterLIGHT.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterPNG.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterVEM.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterVEMTL.cpp">
       <Filter>FileCore\ReaderWriter</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Engine\FileCore\File.cpp">
@@ -180,15 +177,6 @@
     <ClCompile Include="..\..\Engine\Debuger\OctreeDebuger.cpp">
       <Filter>Debuger</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\Entity.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\MeshNode.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\EntityRenderer.cpp">
-      <Filter>KernelCore\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\Ray.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
@@ -196,9 +184,6 @@
       <Filter>KernelCore</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\MatrixPtr.cpp">
-      <Filter>KernelCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Engine\KernelCore\EntityManager.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\SurfaceRenderer.cpp">
@@ -243,9 +228,6 @@
     <ClCompile Include="..\..\Engine\KernelCore\PostProcesserRenderer.cpp">
       <Filter>KernelCore\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Engine\FileCore\FileReaderWriterKTX.cpp">
-      <Filter>FileCore\ReaderWriter</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\MaterialManager.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
@@ -278,6 +260,127 @@
     </ClCompile>
     <ClCompile Include="..\..\Engine\KernelCore\DeferredLightPipeline.cpp">
       <Filter>KernelCore\Renderer\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\BaseCore\Spline.cpp">
+      <Filter>BaseCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\BaseCore\Value.cpp">
+      <Filter>BaseCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\Affector.cpp">
+      <Filter>EffectCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\Emitter.cpp">
+      <Filter>EffectCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\ParticleSystem.cpp">
+      <Filter>EffectCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\BaseForceAffector.cpp">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\ColorAffector.cpp">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\FlockCenteringAffector.cpp">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\GravityAffector.cpp">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\LinearForceAffector.cpp">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\JetAffector.cpp">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\ScaleVelocityAffector.cpp">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\ScaleAffector.cpp">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\SineForceAffector.cpp">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\VortexAffector.cpp">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\SphereEmitter.cpp">
+      <Filter>EffectCore\Emitters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\PointEmitter.cpp">
+      <Filter>EffectCore\Emitters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\LineEmitter.cpp">
+      <Filter>EffectCore\Emitters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\CircleEmitter.cpp">
+      <Filter>EffectCore\Emitters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\BoxEmitter.cpp">
+      <Filter>EffectCore\Emitters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\ParticleRenderer.cpp">
+      <Filter>EffectCore\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\ParticleQuatRenderer.cpp">
+      <Filter>EffectCore\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\Configuration.cpp" />
+    <ClCompile Include="..\..\Engine\EffectCore\ParticleSphereRenderer.cpp">
+      <Filter>EffectCore\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\EffectCore\ParticleBoxRenderer.cpp">
+      <Filter>EffectCore\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\ExtCore\imgui\imgui.cpp">
+      <Filter>ExtCore\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\ExtCore\imgui\imgui_demo.cpp">
+      <Filter>ExtCore\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\ExtCore\imgui\imgui_draw.cpp">
+      <Filter>ExtCore\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\ExtCore\imgui\ImGuiComponent.cpp">
+      <Filter>ExtCore\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\UtilCore\Gizmo.cpp">
+      <Filter>UtilCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\UtilCore\GizmoComponent.cpp">
+      <Filter>UtilCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\UtilCore\GizmoRenderer.cpp">
+      <Filter>UtilCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\UtilCore\GizmoRotation.cpp">
+      <Filter>UtilCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\UtilCore\GizmoScale.cpp">
+      <Filter>UtilCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\UtilCore\GizmoTranslation.cpp">
+      <Filter>UtilCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Viewer.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Viewer-desktop.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\GLDataBuffer.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\MeshManager.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\MeshRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\FrameBufferObjectManager.cpp">
+      <Filter>KernelCore</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -432,15 +535,6 @@
     <ClInclude Include="..\..\Engine\Debuger\OctreeDebuger.h">
       <Filter>Debuger</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\Entity.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\MeshNode.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\EntityRenderer.h">
-      <Filter>KernelCore\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\Ray.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
@@ -448,9 +542,6 @@
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\MatrixPtr.h">
-      <Filter>KernelCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Engine\KernelCore\EntityManager.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\SurfaceRenderer.h">
@@ -527,6 +618,172 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\DeferredLightPipeline.h">
       <Filter>KernelCore\Renderer\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\BaseCore\DataPool.h">
+      <Filter>BaseCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\BaseCore\Spline.h">
+      <Filter>BaseCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\BaseCore\Value.h">
+      <Filter>BaseCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\Affector.h">
+      <Filter>EffectCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\Emitter.h">
+      <Filter>EffectCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\Particle.h">
+      <Filter>EffectCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\ParticleSystem.h">
+      <Filter>EffectCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\BaseForceAffector.h">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\ColorAffector.h">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\FlockCenteringAffector.h">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\GravityAffector.h">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\LinearForceAffector.h">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\JetAffector.h">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\ScaleVelocityAffector.h">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\ScaleAffector.h">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\SineForceAffector.h">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\VortexAffector.h">
+      <Filter>EffectCore\Affectors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\SphereEmitter.h">
+      <Filter>EffectCore\Emitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\PointEmitter.h">
+      <Filter>EffectCore\Emitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\LineEmitter.h">
+      <Filter>EffectCore\Emitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\CircleEmitter.h">
+      <Filter>EffectCore\Emitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\BoxEmitter.h">
+      <Filter>EffectCore\Emitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\ParticleRenderer.h">
+      <Filter>EffectCore\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\ParticleQuatRenderer.h">
+      <Filter>EffectCore\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterANIMATION.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterCAMERA.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterEXR.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterJPEG.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterKTX.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterLIGHT.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterPARTICLE.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterPNG.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterVEM.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\FileCore\FileReaderWriterVEMTL.h">
+      <Filter>FileCore\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\Configuration.h" />
+    <ClInclude Include="..\..\Engine\EffectCore\ParticleSphereRenderer.h">
+      <Filter>EffectCore\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\EffectCore\ParticleBoxRenderer.h">
+      <Filter>EffectCore\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\imconfig.h">
+      <Filter>ExtCore\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\imgui.h">
+      <Filter>ExtCore\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\imgui_internal.h">
+      <Filter>ExtCore\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\ImGuiComponent.h">
+      <Filter>ExtCore\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\stb_rect_pack.h">
+      <Filter>ExtCore\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\stb_textedit.h">
+      <Filter>ExtCore\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\ExtCore\imgui\stb_truetype.h">
+      <Filter>ExtCore\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\UtilCore\Gizmo.h">
+      <Filter>UtilCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\UtilCore\GizmoComponent.h">
+      <Filter>UtilCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\UtilCore\GizmoRenderer.h">
+      <Filter>UtilCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\UtilCore\GizmoRotation.h">
+      <Filter>UtilCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\UtilCore\GizmoScale.h">
+      <Filter>UtilCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\UtilCore\GizmoTranslation.h">
+      <Filter>UtilCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Viewer.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Viewer-desktop.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\GLDataBuffer.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\MeshManager.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\MeshRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\FrameBufferObjectManager.h">
+      <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

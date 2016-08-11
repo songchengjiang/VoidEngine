@@ -5,39 +5,27 @@
 
 class VE_EXPORT veApplicationDesktop : public veApplication
 {
-	friend class veApplication;
+    friend class veApplication;
+	friend class veViewerDesktop;
 public:
 	virtual ~veApplicationDesktop();
 
-	virtual bool makeContextCurrent() override;
-	virtual void swapBuffers() override;
-
-	virtual bool run() override;
+    virtual veViewer* createViewer(int width, int height, const std::string &title, veViewer *sharedContextViewer) override;
+    virtual bool run() override;
+    virtual void stop() override;
 
 private:
 
 	veApplicationDesktop();
-
-	void registerCallbacks();
-	void unRegisterCallbacks();
-
-	virtual void dispatchEvents() override;
-	virtual void initWindowImplementation(void *param) override;
-	virtual bool isWindowShouldClose() override;
-
-	static void caculateMouseUnitCoords(GLFWwindow* window, double x, double y);
-	static void collectKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
-	static void collectMouseEvent(GLFWwindow* window, int button, int action, int mods);
-	static void collectMouseMoveEvent(GLFWwindow* window, double x, double y);
-	static void collectScrollEvent(GLFWwindow* window, double x, double y);
-	static void collectWindowSizeEvent(GLFWwindow* window, int width, int height);
-	static void collectWindowFocusEvent(GLFWwindow* window, int focused);
-	static void collectWindowClose(GLFWwindow* window);
-
+    
 private:
-
-	GLFWwindow *_hwnd;
-	bool        _isInited;
+    
+    void updateViewers();
+    
+private:
+    
+    veEvent     _currentEvent;
+    bool        _isRunning;
 };
 #endif
 

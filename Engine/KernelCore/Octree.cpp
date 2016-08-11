@@ -12,7 +12,7 @@ veOctree::veOctree()
 veOctree::~veOctree()
 {
 	for (unsigned int i = 0; i < 8; ++i) {
-		delete children[i];
+        VE_SAFE_DELETE(children[i]);
 	}
 }
 

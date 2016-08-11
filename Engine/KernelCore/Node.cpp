@@ -22,7 +22,16 @@ veNode::veNode()
 
 veNode::~veNode()
 {
-
+    for (auto &com : _components){
+        com->onDetachToNode(this);
+    }
+    
+    for (auto &rb : _renderableObjects){
+        auto parent = std::find(rb->_parents.begin(), rb->_parents.end(), this);
+        if (parent != rb->_parents.end()) {
+            rb->_parents.erase(parent);
+        }
+    }
 }
 
 int veNode::addChild(veNode *child)
@@ -46,7 +55,7 @@ bool veNode::removeChild(veNode *child)
 	return true;
 }
 
-veNode* veNode::removeChild(unsigned int cIndex)
+veNode* veNode::removeChild(size_t cIndex)
 {
 	veAssert(cIndex < _children.size());
 	veNode* child = _children[cIndex].get();
@@ -56,7 +65,7 @@ veNode* veNode::removeChild(unsigned int cIndex)
 	return child;
 }
 
-veNode* veNode::getChild(unsigned int cIndex)
+veNode* veNode::getChild(size_t cIndex)
 {
 	veAssert(cIndex < _children.size());
 	return _children[cIndex].get();
@@ -64,6 +73,7 @@ veNode* veNode::getChild(unsigned int cIndex)
 
 int veNode::addComponent(veComponent *com)
 {
+    if (!com) return -1;
 	auto iter = std::find(_components.begin(), _components.end(), com);
 	if (iter != _components.end()) return -1;
 	_components.push_back(com);
@@ -73,6 +83,7 @@ int veNode::addComponent(veComponent *com)
 
 bool veNode::removeComponent(veComponent *com)
 {
+    if (!com) return false;
 	auto iter = std::find(_components.begin(), _components.end(), com);
 	if (iter == _components.end()) return false;
 	_components.erase(iter);
@@ -181,24 +192,24 @@ void veNode::refresh()
 	_refresh = true;
 }
 
-bool veNode::routeEvent(const veEvent &event, veSceneManager *sm)
+bool veNode::routeEvent(veSceneManager *sm, veViewer *viewer, const veEvent &event)
 {
 	if (!_isVisible) return false;
 
 	if (_eventCallback != nullptr) {
-		if (_eventCallback(event, sm, this))
+		if (_eventCallback(sm, viewer, event, this))
 			return true;
 	}
 
 	if (!_children.empty()){
 		for (auto &child : _children){
-			if (child->routeEvent(event, sm)) return true;
+			if (child->routeEvent(sm, viewer, event)) return true;
 		}
 	}
 
 	if (!_renderableObjects.empty()) {
 		for (auto &iter : _renderableObjects) {
-			if (iter->handle(this, sm, event)) return true;
+			if (iter->handle(this, sm, viewer, event)) return true;
 		}
 	}
 
@@ -285,6 +296,5 @@ void veNode::refreshUpdate(veSceneManager *sm, const veMat4 &transform)
 
 void veNode::updateSceneManager()
 {
-	if (!_renderableObjects.empty())
-		_sceneManager->requestRender(this);
+    _sceneManager->requestRender(this);
 }

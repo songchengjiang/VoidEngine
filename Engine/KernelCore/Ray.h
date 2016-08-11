@@ -3,6 +3,7 @@
 #include "Prerequisites.h"
 #include "BaseCore/Vector3.h"
 #include "BoudingBox.h"
+#include "Plane.h"
 #include "VE_Ptr.h"
 #include <functional>
 
@@ -11,8 +12,7 @@ class veRenderableObject;
 class veSceneManager;
 class VE_EXPORT veRay
 {
-	friend class veSceneManager;
-	typedef std::function<void()> RayCallback;
+    friend class veSceneManager;
 public:
 	struct Intersection
 	{
@@ -32,13 +32,18 @@ public:
 	void setEnd(const veVec3 &end);
 	const veVec3& getStart() const { return _start; }
 	const veVec3& getEnd() const { return _end; }
+    const veVec3& getDirection() const { return _dir; }
 	const Intersections& getIntersections() const { return _intersections; }
 	void addIntersection(const Intersection &inters);
+    void setDiscardBackFace(bool isDiscard) { _isDicardBackFace = isDiscard; }
+    bool isDiscardBackFace() const { return _isDicardBackFace; }
 
-	void apply(veSceneManager *sm, const RayCallback &callBack);
+	void apply(veSceneManager *sm, bool isSortResults = true);
 
 	bool isIntersectWith(const veBoundingBox &bbox);
-	bool isIntersectWith(const veVec3 &p0, const veVec3 &p1, const veVec3 &p2, veVec3 &intersectPoint, veVec3 &intersectNormal, bool isCullingBack = true);
+    bool isIntersectWith(const vePlane &plane, veVec3 *intersectPoint);
+    bool isIntersectWith(const veVec3 &p0, const veVec3 &p1, veVec3 *intersectPoint, veReal errRange2 = 0.005f);
+	bool isIntersectWith(const veVec3 &p0, const veVec3 &p1, const veVec3 &p2, veVec3 *intersectPoint, veVec3 *intersectNormal);
 
 private:
 
@@ -49,7 +54,7 @@ private:
 	veVec3 _end;
 	veVec3 _dir;
 	Intersections _intersections;
-	RayCallback _callBack;
+    bool        _isDicardBackFace;
 };
 
 typedef std::vector< VE_Ptr<veRay> > veRayList;

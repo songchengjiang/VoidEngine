@@ -3,6 +3,8 @@
 #include "Prerequisites.h"
 #include "BaseCore/Vector2.h"
 #include "BaseCore/Vector4.h"
+#include "BaseManager.h"
+#include "GLDataBuffer.h"
 #include "Texture.h"
 #include <map>
 
@@ -19,7 +21,7 @@ public:
 	void setFrameBufferSize(const veVec2 &size);
 	void attach(GLenum attachment, GLenum target, veTexture *attachTex, GLint layer = -1, bool needMipmap = false);
 
-	void bind(unsigned int clearMask, GLenum target = GL_FRAMEBUFFER);
+	void bind(unsigned int contextID, unsigned int clearMask, GLenum target = GL_FRAMEBUFFER);
 	void unBind();
 
 private:
@@ -27,8 +29,8 @@ private:
 	veFrameBufferObject();
 	veFrameBufferObject(const veVec2 &size);
 
-	void refreshBuffers(unsigned int clearMask);
-	void refreshAttachments();
+	void refreshBuffers(unsigned int contextID, unsigned int clearMask);
+	void refreshAttachments(unsigned int contextID);
 
 private:
 
@@ -36,38 +38,18 @@ private:
 	{
 		GLenum target;
 		GLint layer;
-		veTexture *texture;
+		VE_Ptr<veTexture> texture;
 		bool   needMipmap;
 	};
-	GLuint _fbo;
-	GLuint _dsbo;
+    GLint  _currentrbo;
+    GLint  _currentfbo;
+    VE_Ptr<veGLDataBuffer> _fboBuffer;
+    VE_Ptr<veGLDataBuffer> _dsboBuffer;
 	GLenum _target;
 	veVec2 _size;
 	bool _needRefreshAttachments;
 	bool _needRefreshBuffers;
 	std::map<GLenum, AttachmentInfo> _attachments;
-};
-
-class VE_EXPORT veFrameBufferObjectManager
-{
-public:
-
-	~veFrameBufferObjectManager();
-	static veFrameBufferObjectManager* instance();
-
-	veFrameBufferObject* findFrameBufferObject(const std::string &name);
-	veFrameBufferObject* createFrameBufferObject(const std::string &name);
-	veFrameBufferObject* getFrameBufferObject(unsigned int idx);
-	size_t getFrameBufferObjectNum() const { return _fbos.size(); }
-
-
-private:
-
-	veFrameBufferObjectManager();
-
-private:
-
-	std::vector<veFrameBufferObject *> _fbos;
 };
 
 #endif

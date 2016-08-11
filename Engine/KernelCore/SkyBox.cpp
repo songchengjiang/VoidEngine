@@ -11,10 +11,10 @@ public:
 		: _skyBox(skybox)
 	{}
 
-	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override {
+	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID) override {
 		if (!isNeedRendering())
 			return;
-		updateBuffer();
+		updateBuffer(contextID);
 
 		veMat4 cameraWorldMat = camera->getNodeToWorldMatrix();
 		veRenderCommand rc;
@@ -26,20 +26,18 @@ public:
 		rc.worldMatrix = new veMat4Ptr(mat);
 		rc.camera = camera;
 		rc.sceneManager = camera->getSceneManager();
-		rc.renderer = this;	
-		auto materials = _skyBox->getMaterialArray();
-		for (unsigned int mat = 0; mat < materials->getMaterialNum(); ++mat) {
-			auto material = materials->getMaterial(mat);
-			for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {
-				auto pass = material->activeTechnique()->getPass(i);
-				if (camera->getMask() & pass->drawMask()) {
-					rc.pass = pass;
-					pass->visit(rc);
-					camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
-					//draw(rc);
-				}
-			}
-		}
+		rc.renderer = this;
+        rc.contextID = contextID;
+        auto material = _skyBox->getMaterial();
+        for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {
+            auto pass = material->activeTechnique()->getPass(i);
+            if (camera->getMask() & pass->drawMask()) {
+                rc.pass = pass;
+                pass->visit(rc);
+                camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
+                //draw(rc);
+            }
+        }
 	}
 
 private:
@@ -70,10 +68,9 @@ void veSkyBox::setSize(veReal size)
 void veSkyBox::setMask(unsigned int mask)
 {
 	_mask = mask;
-	_sceneManager->needReload();
 }
 
-void veSkyBox::render(veCamera *camera)
+void veSkyBox::render(veCamera *camera, unsigned int contextID)
 {
-	_renderer->render(nullptr, nullptr, camera);
+	_renderer->render(nullptr, nullptr, camera, contextID);
 }

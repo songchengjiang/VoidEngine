@@ -1,78 +1,60 @@
 #include "FrameBufferObject.h"
 
-veFrameBufferObjectManager::veFrameBufferObjectManager()
-{
-
-}
-
-veFrameBufferObjectManager::~veFrameBufferObjectManager()
-{
-	for (auto &iter : _fbos) {
-		delete iter;
-	}
-}
-
-veFrameBufferObjectManager* veFrameBufferObjectManager::instance()
-{
-	static veFrameBufferObjectManager fboManager;
-	return &fboManager;
-}
-
-veFrameBufferObject* veFrameBufferObjectManager::findFrameBufferObject(const std::string &name)
-{
-	for (auto &iter : _fbos) {
-		if (iter->getName() == name)
-			return iter;
-	}
-
-	return nullptr;
-}
-
-veFrameBufferObject* veFrameBufferObjectManager::createFrameBufferObject(const std::string &name)
-{
-	auto fbo = new veFrameBufferObject;
-	fbo->setName(name);
-	_fbos.push_back(fbo);
-	return fbo;
-}
-
-veFrameBufferObject* veFrameBufferObjectManager::getFrameBufferObject(unsigned int idx)
-{
-	veAssert(idx < _fbos.size());
-	return _fbos[idx];
-}
-
 veFrameBufferObject* veFrameBufferObject::CURRENT_FBO = nullptr;
 
 veFrameBufferObject::veFrameBufferObject()
 	: USE_VE_PTR_INIT
-	, _fbo(0)
-	, _dsbo(0)
+    , _currentrbo(0)
+    , _currentfbo(0)
 	, _size(0, 0)
 	, _needRefreshAttachments(true)
 	, _needRefreshBuffers(true)
 {
-
+    _fboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint fbo;
+        glGenFramebuffers(1, &fbo);
+        return fbo;
+    }, [](GLuint fbo){
+        glDeleteFramebuffers(1, &fbo);
+    });
+    
+    _dsboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint dsbo;
+        glGenRenderbuffers(1, &dsbo);
+        return dsbo;
+    }, [](GLuint dsbo){
+        glDeleteRenderbuffers(1, &dsbo);
+    });
 }
 
 veFrameBufferObject::veFrameBufferObject(const veVec2 &size)
 	: USE_VE_PTR_INIT
-	, _fbo(0)
-	, _dsbo(0)
+    , _currentrbo(0)
+    , _currentfbo(0)
 	, _target(GL_FRAMEBUFFER)
 	, _size(size)
 	, _needRefreshAttachments(true)
 	, _needRefreshBuffers(true)
 {
-
+    _fboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint fbo;
+        glGenFramebuffers(1, &fbo);
+        return fbo;
+    }, [](GLuint fbo){
+        glDeleteFramebuffers(1, &fbo);
+    });
+    
+    _dsboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+        GLuint dsbo;
+        glGenRenderbuffers(1, &dsbo);
+        return dsbo;
+    }, [](GLuint dsbo){
+        glDeleteRenderbuffers(1, &dsbo);
+    });
 }
 
 veFrameBufferObject::~veFrameBufferObject()
 {
-	if (_dsbo)
-		glDeleteRenderbuffers(1, &_dsbo);
-	if (_fbo)
-		glDeleteFramebuffers(1, &_fbo);
 }
 
 void veFrameBufferObject::setFrameBufferSize(const veVec2 &size)
@@ -93,34 +75,41 @@ void veFrameBufferObject::attach(GLenum attachment, GLenum target, veTexture *at
 	_needRefreshAttachments = true;
 }
 
-void veFrameBufferObject::bind(unsigned int clearMask, GLenum target)
+void veFrameBufferObject::bind(unsigned int contextID, unsigned int clearMask, GLenum target)
 {
+    glGetIntegerv(GL_RENDERBUFFER_BINDING, &_currentrbo);
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_currentfbo);
 	_target = target;
-	refreshBuffers(clearMask);
-	refreshAttachments();
+    if (_needRefreshBuffers){
+        _fboBuffer->destroyAllData();
+        _dsboBuffer->destroyAllData();
+    }
+	refreshBuffers(contextID, clearMask);
+	refreshAttachments(contextID);
 }
 
 void veFrameBufferObject::unBind()
 {
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glBindFramebuffer(_target, 0);
-	for (auto &iter : _attachments) {
-		if (iter.second.needMipmap) {
-			iter.second.texture->generateMipMaps();
-		}
-	}
+    glBindRenderbuffer(GL_RENDERBUFFER, _currentrbo);
+    glBindFramebuffer(_target, _currentfbo);
+    for (auto &iter : _attachments) {
+        if (iter.second.needMipmap) {
+            iter.second.texture->generateMipMaps();
+        }
+    }
 }
 
-void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
+void veFrameBufferObject::refreshBuffers(unsigned int contextID, unsigned int clearMask)
 {
+    auto fbo = _fboBuffer->getData(contextID);
+    if (!fbo){
+        fbo = _fboBuffer->createData(contextID);
+        _needRefreshBuffers = true;
+        _needRefreshAttachments = true;
+    }
+    
 	bool needRenderBuffer = false;
 	if (_needRefreshBuffers) {
-		if (_dsbo)
-			glDeleteRenderbuffers(1, &_dsbo);
-		if (_fbo)
-			glDeleteFramebuffers(1, &_fbo);
-		_dsbo = _fbo = 0;
-
 		auto depth = _attachments.find(GL_DEPTH_ATTACHMENT);
 		auto depthAndstencil = _attachments.find(GL_DEPTH_STENCIL_ATTACHMENT);
 		auto stencil = _attachments.find(GL_STENCIL_BUFFER_BIT);
@@ -132,33 +121,31 @@ void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
 		_needRefreshBuffers = false;
 	}
 
-	if (!_fbo) {
-		glGenFramebuffers(1, &_fbo);
-	}
-	glBindFramebuffer(_target, _fbo);
+	glBindFramebuffer(_target, fbo);
 
 	if (needRenderBuffer){
-		if (!_dsbo) {
+        auto dsbo = _dsboBuffer->getData(contextID);
+		if (!dsbo) {
 			bool hasDepthBuffer = (clearMask & GL_DEPTH_BUFFER_BIT) != 0;
 			bool hasStencilBuffer = (clearMask & GL_STENCIL_BUFFER_BIT) != 0;
 			if (hasDepthBuffer || hasStencilBuffer) {
-				glGenRenderbuffers(1, &_dsbo);
+                dsbo = _dsboBuffer->createData(contextID);
 			}
 
-			if (_dsbo) {
-				glBindRenderbuffer(GL_RENDERBUFFER, _dsbo);
+			if (dsbo) {
+				glBindRenderbuffer(GL_RENDERBUFFER, dsbo);
 				if (hasDepthBuffer && !hasStencilBuffer)
 					glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, _size.x(), _size.y());
 				else
 					glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _size.x(), _size.y());
 
 				if (hasDepthBuffer)
-					glFramebufferRenderbuffer(_target, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _dsbo);
+					glFramebufferRenderbuffer(_target, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, dsbo);
 				if (hasStencilBuffer)
-					glFramebufferRenderbuffer(_target, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _dsbo);
+					glFramebufferRenderbuffer(_target, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, dsbo);
 			}
 		}
-		glBindRenderbuffer(GL_RENDERBUFFER, _dsbo);
+		glBindRenderbuffer(GL_RENDERBUFFER, dsbo);
 	}
 	//for (auto &iter : _attachments) {
 	//	float clearColorZero[4] = { 0.f, 0.f, 0.f, 0.f };
@@ -168,21 +155,21 @@ void veFrameBufferObject::refreshBuffers(unsigned int clearMask)
 	//}
 }
 
-void veFrameBufferObject::refreshAttachments()
+void veFrameBufferObject::refreshAttachments(unsigned int contextID)
 {
 	if (_needRefreshAttachments) {
 		std::vector<GLenum> mrt;
 		for (auto &iter : _attachments) {
-			if (iter.second.texture) {
+			if (iter.second.texture.valid()) {
 				if (iter.first >= GL_COLOR_ATTACHMENT0 && iter.first <= GL_COLOR_ATTACHMENT15)
 					mrt.push_back(iter.first);
 				//iter.second->storage(iter.second->getWidth(), iter.second->getHeight(), 1
 				//	, iter.second->getInternalFormat(), iter.second->getPixelFormat(), iter.second->getDataType(), nullptr);
-				iter.second.texture->bind();
+				iter.second.texture->bind(contextID);
 				if (iter.second.layer < 0)
-					glFramebufferTexture2D(_target, iter.first, iter.second.target, iter.second.texture->glTex(), 0);
+					glFramebufferTexture2D(_target, iter.first, iter.second.target, iter.second.texture->glTex(contextID), 0);
 				else
-					glFramebufferTextureLayer(_target, iter.first, iter.second.texture->glTex(), 0, iter.second.layer);
+					glFramebufferTextureLayer(_target, iter.first, iter.second.texture->glTex(contextID), 0, iter.second.layer);
 			}
 			else {
 				if (iter.second.layer < 0)

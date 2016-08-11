@@ -111,7 +111,7 @@ private:
 				_buffer = new TYPE[_size];
 			}
 			else{
-				size_t newSize = _size * _size;
+				size_t newSize = 2 * _size;
 				if (MAX_SIZE < newSize) newSize = MAX_SIZE;
 				resizeImp(newSize);
 			}

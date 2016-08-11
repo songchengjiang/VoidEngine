@@ -10,7 +10,7 @@ public:
 
 protected:
 
-	virtual void renderScene(veCamera *camera, bool isMainCamera) override;
+	virtual void renderScene(veCamera *camera, unsigned int contextID) override;
 
 };
 

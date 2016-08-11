@@ -11,7 +11,7 @@ public:
 	{}
 	~keyboardInput(){}
 
-	virtual bool handle(veSceneManager *sm, const veEvent &event) override{
+	virtual bool handle(veSceneManager *sm, veViewer *viewer, const veEvent &event) override{
 		if (_attachedNodeList.empty()) return false;
 
 		if (event.getEventType() == veEvent::VE_DOWN) {
@@ -22,7 +22,7 @@ public:
 				--CURRENT_CAMERA;
 				if (CURRENT_CAMERA < 0) CURRENT_CAMERA = int(_attachedNodeList[0]->getChildCount()) - 1;
 				auto cam = static_cast<veCamera *>(_attachedNodeList[0]->getChild(CURRENT_CAMERA));
-				sm->setCamera(cam);
+				viewer->setCamera(cam);
 			}
 				break;
 
@@ -31,7 +31,7 @@ public:
 				++CURRENT_CAMERA;
 				if ((int)_attachedNodeList[0]->getChildCount() <= CURRENT_CAMERA) CURRENT_CAMERA = 0;
 				auto cam = static_cast<veCamera *>(_attachedNodeList[0]->getChild(CURRENT_CAMERA));
-				sm->setCamera(cam);
+				viewer->setCamera(cam);
 			}
 				break;
 
@@ -42,7 +42,7 @@ public:
 		return false;
 	}
 
-	virtual void update(veSceneManager *sm) override {
+	virtual void beforeUpdate(veSceneManager *sm) override {
 
 	}
 };
@@ -53,16 +53,14 @@ public:
 	CameraTest() {
 		veNode *root = _sceneManager->createNode("root");
 		{
-			veNode *node = _sceneManager->createNode("node0");
-			veEntity *entity = static_cast<veEntity *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot"));
-			node->addRenderableObject(entity);
+			veNode *entity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/teapot.vem", "teapot"));
 			//node->addComponent(new KeyboardInputer);
 			veTransformer *transer = new veTransformer;
-			node->addComponent(transer);
+			entity->addComponent(transer);
 			transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
 			transer->setScale(veVec3(1.0f));
 			//transer->setRotation(veQuat(veMath::PI, veVec3::UNIT_X));
-			root->addChild(node);
+			root->addChild(entity);
 		}
 
 		{

@@ -17,7 +17,7 @@ public:
     virtual ~veDebuger();
     
 	virtual void update(veNode *node, veSceneManager *sm) override;
-	virtual void render(veNode *node, veCamera *camera) override;
+	virtual void render(veNode *node, veCamera *camera, unsigned int contextID) override;
 
 	void debugDrawMeshWireframe(bool isDraw, const veVec4 &color = veVec4::WHITE) {
 		_isDrawMeshWireframe = isDraw; 

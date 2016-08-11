@@ -8,16 +8,17 @@
 #include "RenderableObject.h"
 #include <functional>
 
+class veViewer;
 class veSceneManager;
 class veNodeVisitor;
+
 class VE_EXPORT veNode
 {
 public:
 
-	typedef std::vector< VE_Ptr<veComponent> >        Components;
 	typedef std::vector< VE_Ptr<veNode> >             Children;
 	typedef std::vector< VE_Ptr<veRenderableObject> > RenderableObjects;
-	typedef std::function<bool(const veEvent&, veSceneManager*, veNode*)> NodeEventCallback;
+	typedef std::function<bool(veSceneManager*, veViewer*, const veEvent&, veNode*)> NodeEventCallback;
 	typedef std::function<void(veSceneManager*, veNode*)>                 NodeUpdateCallback;
 
 	USE_VE_PTR;
@@ -33,10 +34,10 @@ public:
 	void setMask(unsigned int mask, bool isOverride = false);
 	unsigned int getMask() const { return _mask; }
 
-	int addChild(veNode *child);
-	bool removeChild(veNode *child);
-	veNode* removeChild(unsigned int cIndex);
-	veNode* getChild(unsigned int cIndex);
+	virtual int addChild(veNode *child);
+	virtual bool removeChild(veNode *child);
+	virtual veNode* removeChild(size_t cIndex);
+	virtual veNode* getChild(size_t cIndex);
 	size_t getChildCount() const { return _children.size(); }
 
 	veNode* getParent() { return _parent; }
@@ -80,7 +81,7 @@ public:
 
 	virtual void refresh();
 
-	virtual bool routeEvent(const veEvent &event, veSceneManager *sm);
+	virtual bool routeEvent(veSceneManager *sm, veViewer *viewer, const veEvent &event);
 	virtual void update(veSceneManager *sm, const veMat4 &transform);
 
 	virtual void accept(veNodeVisitor &visitor);
@@ -95,7 +96,7 @@ protected:
 
 protected:
 
-	Components        _components;
+	veComponentList   _components;
 	Children          _children;
 	RenderableObjects _renderableObjects;
 	veNode           *_parent;

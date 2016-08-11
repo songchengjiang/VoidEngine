@@ -7,19 +7,8 @@ veBlendFunc veBlendFunc::ALPHA = { GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA };
 veStencilFunc veStencilFunc::ALWAYS = { GL_ALWAYS, 0, 0, GL_ALWAYS, 0, 0 };
 veStencilOp veStencilOp::KEEP = { GL_KEEP, GL_KEEP, GL_KEEP, GL_KEEP, GL_KEEP, GL_KEEP };
 
-static bool          DEPTH_TEST = false;
-static bool          DEPTH_WRITE = false;
-static bool          STENCIL_TEST = true;
-static bool          CULL_FACE = false;
-static GLenum        CULL_FACE_MODE;
-static veBlendFunc   BLEND_FUNC;
-static GLenum        BLEND_EQUATION;
-static veStencilFunc STENCIL_FUNC;
-static veStencilOp   STENCIL_OP;
-
 veRenderState::veRenderState()
 	: _isInited(false)
-	, _isLockState(false)
 {
 
 }
@@ -27,52 +16,37 @@ veRenderState::veRenderState()
 
 void veRenderState::init()
 {
-	if (!DEPTH_TEST) {
-		glEnable(GL_DEPTH_TEST);
-		_depthTest = DEPTH_TEST = true;
-	}
 
-	if (!DEPTH_WRITE) {
-		glDepthMask(GL_TRUE);
-		_depthWrite = DEPTH_WRITE = true;
-	}
+    glEnable(GL_DEPTH_TEST);
+    _depthTest = _currentDepthTest = true;
 
-	if (!CULL_FACE) {
-		glEnable(GL_CULL_FACE);
-		_cullFace = CULL_FACE = true;
-		glCullFace(GL_BACK);
-		_cullfaceMode = CULL_FACE_MODE = GL_BACK;
-	}
+    glDepthMask(GL_TRUE);
+    _depthWrite = _currentDepthWrite = true;
 
-	if (BLEND_FUNC != veBlendFunc::DISABLE) {
-		glDisable(GL_BLEND);
-		glBlendFunc(GL_ONE, GL_ZERO);
-		glBlendEquation(GL_FUNC_ADD);
-		_blendFunc = BLEND_FUNC = veBlendFunc::DISABLE;
-		_blendEquation = BLEND_EQUATION = GL_FUNC_ADD;
-	}
+    glEnable(GL_CULL_FACE);
+    _cullFace = _currentCullFace = true;
+    glCullFace(GL_BACK);
+    _cullfaceMode = _currentCullfaceMode = GL_BACK;
 
-	if (STENCIL_TEST) {
-		glDisable(GL_STENCIL_TEST);
-		glStencilFuncSeparate(GL_FRONT, GL_ALWAYS, 0, 0);
-		glStencilFuncSeparate(GL_BACK, GL_ALWAYS, 0, 0);
-		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_KEEP, GL_KEEP);
-		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_KEEP);
-		_stencilTest = STENCIL_TEST = false;
-		_stencilFunc = STENCIL_FUNC = veStencilFunc::ALWAYS;
-		_stencilOp = STENCIL_OP = veStencilOp::KEEP;
-	}
+    glDisable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ZERO);
+    glBlendEquation(GL_FUNC_ADD);
+    _blendFunc = _currentBlendFunc = veBlendFunc::DISABLE;
+    _blendEquation = _currentBlendEquation = GL_FUNC_ADD;
+
+    glDisable(GL_STENCIL_TEST);
+    glStencilFuncSeparate(GL_FRONT, GL_ALWAYS, 0, 0);
+    glStencilFuncSeparate(GL_BACK, GL_ALWAYS, 0, 0);
+    glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_KEEP, GL_KEEP);
+    glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_KEEP);
+    _stencilTest = _currentStencilTest = false;
+    _stencilFunc = _currentStencilFunc = veStencilFunc::ALWAYS;
+    _stencilOp = _currentStencilOp = veStencilOp::KEEP;
 }
 
 veRenderState::~veRenderState()
 {
 
-}
-
-veRenderState* veRenderState::instance()
-{
-	static veRenderState rs;
-	return &rs;
 }
 
 void veRenderState::applyState()
@@ -81,60 +55,60 @@ void veRenderState::applyState()
 		init();
 		_isInited = true;
 	}
-	if (!_isLockState) {
-		if (_depthTest != DEPTH_TEST) {
+	if (true) {
+		if (_depthTest != _currentDepthTest) {
 			_depthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
-			DEPTH_TEST = _depthTest;
+			_currentDepthTest = _depthTest;
 		}
 
-		if (_depthWrite != DEPTH_WRITE) {
+		if (_depthWrite != _currentDepthWrite) {
 			_depthWrite ? glDepthMask(GL_TRUE) : glDepthMask(GL_FALSE);
-			DEPTH_WRITE = _depthWrite;
+			_currentDepthWrite = _depthWrite;
 		}
 
-		if (_cullFace != CULL_FACE) {
+		if (_cullFace != _currentCullFace) {
 			_cullFace ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
-			CULL_FACE = _cullFace;
+			_currentCullFace = _cullFace;
 		}
 
-		if (CULL_FACE) {
-			if (_cullfaceMode != CULL_FACE_MODE) {
+		if (_currentCullFace) {
+			if (_cullfaceMode != _currentCullfaceMode) {
 				glCullFace(_cullfaceMode);
-				CULL_FACE_MODE = _cullfaceMode;
+				_currentCullfaceMode = _cullfaceMode;
 			}
 		}
 
-		if (_blendFunc != BLEND_FUNC) {
+		if (_blendFunc != _currentBlendFunc) {
 			if (_blendFunc != veBlendFunc::DISABLE) {
 				glEnable(GL_BLEND);
 				glBlendFunc(_blendFunc.src, _blendFunc.dst);
-				if (_blendEquation != BLEND_EQUATION) {
+				if (_blendEquation != _currentBlendEquation) {
 					glBlendEquation(_blendEquation);
-					BLEND_EQUATION = _blendEquation;
+					_currentBlendEquation = _blendEquation;
 				}
 			}
 			else {
 				glDisable(GL_BLEND);
 			}
-			BLEND_FUNC = _blendFunc;
+			_currentBlendFunc = _blendFunc;
 		}
 
-		if (_stencilTest != STENCIL_TEST) {
+		if (_stencilTest != _currentStencilTest) {
 			_stencilTest ? glEnable(GL_STENCIL_TEST) : glDisable(GL_STENCIL_TEST);
-			STENCIL_TEST = _stencilTest;
+			_currentStencilTest = _stencilTest;
 		}
 
-		if (STENCIL_TEST) {
-			if (_stencilFunc != STENCIL_FUNC) {
+		if (_currentStencilTest) {
+			if (_stencilFunc != _currentStencilFunc) {
 				glStencilFuncSeparate(GL_FRONT, _stencilFunc.frontfunc, _stencilFunc.frontref, _stencilFunc.frontmask);
 				glStencilFuncSeparate(GL_BACK, _stencilFunc.backfunc, _stencilFunc.backref, _stencilFunc.backmask);
-				STENCIL_FUNC = _stencilFunc;
+				_currentStencilFunc = _stencilFunc;
 			}
 
-			if (_stencilOp != STENCIL_OP) {
+			if (_stencilOp != _currentStencilOp) {
 				glStencilOpSeparate(GL_FRONT, _stencilOp.frontsfail, _stencilOp.frontdpfail, _stencilOp.frontdppass);
 				glStencilOpSeparate(GL_BACK, _stencilOp.backsfail, _stencilOp.backdpfail, _stencilOp.backdppass);
-				STENCIL_OP = _stencilOp;
+				_currentStencilOp = _stencilOp;
 			}
 		}
 	}

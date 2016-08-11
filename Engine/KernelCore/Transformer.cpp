@@ -14,7 +14,7 @@ veTransformer::~veTransformer()
 
 }
 
-void veTransformer::update(veSceneManager *sm)
+void veTransformer::beforeUpdate(veSceneManager *sm)
 {
 	if (_needUpdate && !_attachedNodeList.empty()){
 		for (auto &node : _attachedNodeList) {
@@ -25,17 +25,6 @@ void veTransformer::update(veSceneManager *sm)
 		_needUpdate = false;
 	}
 }
-
-void veTransformer::onAttachToNode(veNode *node)
-{
-	veComponent::onAttachToNode(node);
-}
-
-void veTransformer::onDetachToNode(veNode *node)
-{
-	veComponent::onDetachToNode(node);
-}
-
 
 void veTransformer::setPosition(const veVec3 &pos)
 {

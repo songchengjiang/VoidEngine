@@ -139,7 +139,6 @@ void veCamera::setViewport(const veViewport &vp)
 void veCamera::setRenderPath(RenderPath renderPath)
 {
 	_renderPath = renderPath;
-	_sceneManager->needReload();
 }
 
 void veCamera::setSkybox(veSkyBox *skybox)
@@ -253,4 +252,19 @@ void veCamera::updateFrustumPlane()
 
 void veCamera::updateSceneManager()
 {
+}
+
+void veCamera::addPostProcesser(vePostProcesser *processer)
+{
+    _postProcesserList.push_back(processer);
+}
+
+void veCamera::removePostProcesser(const std::string &name)
+{
+    for (vePostProcesserList::iterator iter = _postProcesserList.begin(); iter != _postProcesserList.end(); ++iter) {
+        if ((*iter)->getName() == name) {
+            _postProcesserList.erase(iter);
+            break;
+        }
+    }
 }

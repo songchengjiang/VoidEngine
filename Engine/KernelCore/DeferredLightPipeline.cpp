@@ -11,7 +11,7 @@ veDeferredLightPipeline::~veDeferredLightPipeline()
 
 }
 
-void veDeferredLightPipeline::renderScene(veCamera *camera, bool isMainCamera)
+void veDeferredLightPipeline::renderScene(veCamera *camera, unsigned int contextID)
 {
 	
 }

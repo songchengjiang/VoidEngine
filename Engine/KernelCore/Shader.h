@@ -84,6 +84,11 @@ public:
 	bool getValue(veMat3 &val) const;
 	bool getValue(veMat4 &val) const;
 	bool getValue(veRealArray &val) const;
+    bool getValue(veVec2 *val, unsigned int &n) const;
+    bool getValue(veVec3 *val, unsigned int &n) const;
+    bool getValue(veVec4 *val, unsigned int &n) const;
+    bool getValue(veMat3 *val, unsigned int &n) const;
+    bool getValue(veMat4 *val, unsigned int &n) const;
 
 	void setName(const std::string &name);
 	const std::string& getName() const { return _name; }
@@ -98,6 +103,7 @@ private:
 	GLint       _location;
 	GLint       _preLocation;
 	unsigned char _maxReLocation;
+    double        _simulationTime;
 };
 
 class VE_EXPORT veShader
@@ -135,9 +141,7 @@ private:
 private:
 
 	Type _type;
-	GLuint _shader;
 	std::string _source;
 	std::string _shaderHeaders;
-	bool _isCompiled;
 };
 #endif

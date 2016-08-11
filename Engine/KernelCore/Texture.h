@@ -2,6 +2,7 @@
 #define _VE_TEXTURE_
 #include "Prerequisites.h"
 #include "VE_Ptr.h"
+#include "GLDataBuffer.h"
 #include <functional>
 #include <unordered_map>
 
@@ -66,7 +67,7 @@ public:
 
 	TextureType getType() const { return _type; }
 
-	virtual void bind();
+	virtual void bind(unsigned int contextID);
 
 	void setWrapMode(WrapMode wrapMode) { _wrapMode = wrapMode; _needRefreshSampler = true; }
 	WrapMode getWrapMode() const { return _wrapMode; }
@@ -96,8 +97,8 @@ public:
 	unsigned int getMipMapLevelCount() const { return _mipMapLevelCount; }
 	void generateMipMaps() { _needGenerateMipMaps = true; }
 
-	GLuint glTex();
-	GLenum glTarget() { return _target; }
+	GLuint glTex(unsigned int contextID) const;
+	GLenum glTarget() const { return _target; }
 
 	static bool isCompressedTex(GLint internalformat);
 	static bool isSupportFormat(GLenum internalformat);
@@ -117,7 +118,7 @@ protected:
 	SwizzleMode     _swizzleMode[4];
 	bool            _needRefreshTex;
 	bool            _needRefreshSampler;
-	GLuint          _texID;
+    VE_Ptr<veGLDataBuffer> _textureBuffer;
 	GLenum          _target;
 	TextureType     _type;
 	std::unordered_map<GLenum, GLint> _texParameterList;
@@ -148,7 +149,7 @@ public:
 
 	~veTexture2D();
 
-	virtual void bind() override;
+	virtual void bind(unsigned int contextID) override;
 
 protected:
 	veTexture2D();
@@ -162,7 +163,7 @@ public:
 
 	~veTexture3D();
 
-	virtual void bind() override;
+	virtual void bind(unsigned int contextID) override;
 
 protected:
 	veTexture3D();
@@ -187,7 +188,7 @@ public:
 
 	~veTextureCube();
 
-	virtual void bind() override;
+	virtual void bind(unsigned int contextID) override;
 
 	void setTexture(CubeMapTexType texType, veTexture *texture);
 	veTexture* getTexture(CubeMapTexType texType);
@@ -208,14 +209,14 @@ public:
 
 	~veTexture2DArray();
 
-	virtual void bind() override;
+	virtual void bind(unsigned int contextID) override;
 
 protected:
 	veTexture2DArray();
 
 };
 
-#if VE_PLATFORM != VE_PLATFORM_ANDROID
+#if VE_PLATFORM != VE_PLATFORM_ANDROID && VE_PLATFORM != VE_PLATFORM_IOS
 class VE_EXPORT veTextureCubeArray : public veTexture
 {
 	friend class veTextureManager;
@@ -238,7 +239,7 @@ public:
 
 	~veTextureCubeArray();
 
-	virtual void bind() override;
+	virtual void bind(unsigned int contextID) override;
 
 protected:
 	veTextureCubeArray();

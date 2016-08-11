@@ -11,6 +11,7 @@ class veRenderQueue
 {
 public:
 	typedef std::map<unsigned int, veLoopQueue< veRenderCommand > > RenderCommandList;
+    typedef std::map<unsigned int, RenderCommandList> RenderGroup;
 
 	enum RenderQueueType
 	{
@@ -25,8 +26,8 @@ public:
 
 	virtual void pushCommand(unsigned int renderPassIndex, unsigned int renderQueueType, const veRenderCommand &cmd);
 
-	std::map<unsigned int, RenderCommandList> renderCommandList;
-	
+	RenderGroup deferredRenderGroup;
+	RenderGroup forwardRenderGroup;
 };
 
 #endif

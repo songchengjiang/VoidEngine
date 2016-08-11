@@ -1,6 +1,7 @@
 #ifndef _BASE_TEST_
 #define _BASE_TEST_
 #include "VoidEngine.h"
+#
 
 #if defined(_MSC_VER)
 #pragma warning( disable : 4996 )
@@ -10,32 +11,30 @@ class LightUpdater : public veComponent
 {
 public:
 
-	LightUpdater(float radius, float height)
-		: _lastChangeColorTime(0.0) {
+	LightUpdater(veLight *light, float radius, float height)
+		: _lastChangeColorTime(0.0)
+        , _light(light){
 		_angle = veMath::veRandomUnitization() * veMath::TWO_PI;
 		_radius = radius;
 		_height = height;
 		_oriColor = _desColor = veVec3(veMath::veRandomUnitization(), veMath::veRandomUnitization(), veMath::veRandomUnitization());
 	}
-	virtual bool handle(veSceneManager *sm, const veEvent &event) override{
+	virtual bool handle(veSceneManager *sm, veViewer *viewer, const veEvent &event) override{
 		return false;
 	}
 
-	virtual void update(veSceneManager *sm) override{
+	virtual void beforeUpdate(veSceneManager *sm) override{
 		if (_attachedNodeList.empty()) return;
 
-		auto light = static_cast<veLight *>(_attachedNodeList[0]);
-		if (light) {
-			updateColor(light, sm->getDeltaTime());
-			updateMatrix(light, sm->getDeltaTime());
-		}
+        updateColor(sm->getDeltaTime());
+        updateMatrix(sm->getDeltaTime());
 	}
 
 private:
 
-	void updateColor(veLight *light, double deltaTime) {
+	void updateColor(double deltaTime) {
 		veVec3 col = _oriColor * (1.0 - _lastChangeColorTime) + _desColor * _lastChangeColorTime;
-		light->setColor(col);
+		_light->setColor(col);
 
 		if (1.0 < _lastChangeColorTime) {
 			_oriColor = _desColor;
@@ -45,10 +44,10 @@ private:
 		_lastChangeColorTime += deltaTime;
 	}
 
-	void updateMatrix(veLight *light, double deltaTime) {
+	void updateMatrix(double deltaTime) {
 		veReal x = _radius * veMath::veCos(_angle);
 		veReal y = _radius * veMath::veSin(_angle);
-		light->setMatrix(veMat4::lookAt(veVec3(x, _height, y), veVec3::ZERO, veVec3::UNIT_Y));
+		_light->getAttachedNodeList()[0]->setMatrix(veMat4::lookAt(veVec3(x, _height, y), veVec3::ZERO, veVec3::UNIT_Y));
 		_angle += veMath::QUARTER_PI * deltaTime;
 		_angle = fmod(_angle, veMath::TWO_PI);
 	}
@@ -61,6 +60,7 @@ private:
 	veReal _angle;
 	veReal _radius;
 	veReal _height;
+    veLight *_light;
 };
 
 class CameraManipulator : public veComponent
@@ -77,13 +77,15 @@ public:
 	}
 	~CameraManipulator(){}
 
-	virtual void update(veSceneManager *sm) override {
+	virtual void beforeUpdate(veSceneManager *sm) override {
 		_simulationTime += sm->getDeltaTime();
 	}
 
-	virtual bool handle(veSceneManager *sm, const veEvent &event) override{
+	virtual bool handle(veSceneManager *sm, veViewer *viewer, const veEvent &event) override{
 		if (_attachedNodeList.empty()) return false;
 		_camera = static_cast<veCamera *>(_attachedNodeList[0]);
+        if (viewer->getCamera() != _camera) return false;
+        
 		if (event.getEventType() & veEvent::VE_MOUSE_EVENT) {
 			if (event.getEventType() == veEvent::VE_PRESS) {
 				_g1 = _g0 = veVec2(event.getMouseX(), event.getMouseY());
@@ -147,7 +149,7 @@ public:
 				if (touchs.size() == 0) {
 					if (_latesTouchTime != 0.0) {
 						if ((_simulationTime - _latesTouchTime) < 0.4) {
-							resetCamera();
+							//resetCamera();
 						}
 						_latesTouchTime = 0.0;
 					}
@@ -259,14 +261,15 @@ public:
 	BaseTest() {
 		veFile::instance()->addSearchPath("../resources/");
 		_sceneManager = new veOctreeSceneManager(veBoundingBox(veVec3(-1000.0f), veVec3(1000.0f)), 8);
-		veApplication::instance()->setSceneManager(_sceneManager);
-		int width = veApplication::instance()->width();
-		int height = veApplication::instance()->height();
-		_camera = _sceneManager->createCamera("MainCamera", {0, 0, width, height });
+        _mainViewer = veApplication::instance()->getViewer(0);
+        _mainViewer->setSceneManager(_sceneManager);
+		int width = _mainViewer->width();
+		int height = _mainViewer->height();
+        _camera = _sceneManager->createCamera("MainCamera", {0, 0, width, height });
 		_camera->setProjectionMatrixAsPerspective(30.0f, (float)width / (float)height, 1.0f, 1000.0f);
 		_camera->setViewMatrixAslookAt(veVec3(0.0f, 0.0f, 30.0f), veVec3::ZERO, veVec3::UNIT_Y);
 		_sceneManager->getRootNode()->addChild(_camera);
-		_sceneManager->setCamera(_camera);
+        _mainViewer->setCamera(_camera);
 		_defaultCameraDistance = 30.0f;
 		_defaultCameraZoomScale = 1.0f;
 
@@ -285,6 +288,7 @@ protected:
 
 	veSceneManager *_sceneManager;
 	veCamera  *_camera;
+    veViewer  *_mainViewer;
 	veReal _defaultCameraDistance;
 	veReal _defaultCameraZoomScale;
 };

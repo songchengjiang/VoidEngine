@@ -9,17 +9,17 @@ public:
 	veSurfaceRenderer();
 	~veSurfaceRenderer();
 
-	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override;
+	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID) override;
 	void draw(veRenderCommand &command) override;
 
 protected:
 
-	void updateBuffer();
+	void updateBuffer(unsigned int contextID);
 
 protected:
 
-	GLuint          _vao;
-	GLuint          _vbo;
+    VE_Ptr<veGLDataBuffer> _vaoBuffer;
+    VE_Ptr<veGLDataBuffer> _vboBuffer;
 	veRealArray     _vertices;
 	bool            _needRefresh;
 };

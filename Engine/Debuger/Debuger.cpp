@@ -2,13 +2,14 @@
 #include "KernelCore/RenderableObject.h"
 #include "KernelCore/NodeVisitor.h"
 #include "KernelCore/Node.h"
-#include "KernelCore/Entity.h"
+#include "KernelCore/Mesh.h"
 #include "KernelCore/BoudingBox.h"
 #include "KernelCore/RenderCommand.h"
 #include "KernelCore/RenderQueue.h"
 #include "KernelCore/Camera.h"
 #include "KernelCore/SceneManager.h"
 #include "KernelCore/MatrixPtr.h"
+#include "KernelCore/GLDataBuffer.h"
 #include "Constants.h"
 
 class veDebugRenderer : public veRenderer
@@ -18,43 +19,66 @@ public:
 	veDebugRenderer(veDebuger *debuger)
 		: _debuger(debuger)
 		, drawCount(0)
-		, vao(0)
-		, vbo(0)
-	{}
+	{
+        _vaoBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+            GLuint vao;
+            glGenVertexArrays(1, &vao);
+            return vao;
+        }, [](GLuint vao){
+            glDeleteVertexArrays(1, &vao);
+        });
+        
+        _vboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+            GLuint vbo;
+            glGenBuffers(1, &vbo);
+            return vbo;
+        }, [](GLuint vbo){
+            glDeleteBuffers(1, &vbo);
+        });
+    }
 
-	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera) override {
+	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID) override {
+        auto vao = _vaoBuffer->getData(contextID);
+		bool needRefresh = false;
 		if (!vao) {
-			glGenVertexArrays(1, &vao);
-			glGenBuffers(1, &vbo);
+            vao = _vaoBuffer->createData(contextID);
+			needRefresh = true;
 		}
+        
+        auto vbo = _vboBuffer->getData(contextID);
+        if (!vbo){
+            vbo = _vboBuffer->createData(contextID);
+        }
 
 		glBindVertexArray(vao);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		{
-			std::unique_lock<std::mutex> lock(verticesMutex);
-			if (!vertices.empty())
-				glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.buffer(), GL_STATIC_DRAW);
-			drawCount = vertices.size();
-			vertices.clear();
+            std::unique_lock<std::mutex> lock(dataMutex);
+            if (!vertices.empty()){
+                glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.buffer(), GL_STATIC_DRAW);
+                if (needRefresh){
+                    GLsizei vertexStride = sizeof(GLfloat) * (3 + 4);
+                    //vertex
+                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexStride, 0);
+                    glEnableVertexAttribArray(0);
+                    
+                    //color
+                    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, vertexStride, (GLvoid *)(sizeof(GLfloat) * 3));
+                    glEnableVertexAttribArray(1);
+                }
+                drawCount = vertices.size() / (3 + 4);
+                vertices.clear();
+            }
 		}
-
-
-		GLsizei vertexStride = sizeof(GLfloat) * (3 + 4);
-		//vertex
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexStride, 0);
-		glEnableVertexAttribArray(0);
-
-		//color
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, vertexStride, (GLvoid *)(sizeof(GLfloat) * 3));
-		glEnableVertexAttribArray(1);
 
 		veRenderCommand rc;
 		rc.priority = veRenderCommand::LOW_PRIORITY;
-		rc.pass = _debuger->getMaterialArray()->getMaterial(0)->getTechnique(0)->getPass(0);
+		rc.pass = _debuger->getMaterial()->getTechnique(0)->getPass(0);
 		rc.worldMatrix = new veMat4Ptr(veMat4::IDENTITY);
 		rc.camera = camera;
 		rc.sceneManager = camera->getSceneManager();
 		rc.renderer = this;
+        rc.contextID = contextID;
 		camera->getRenderQueue()->pushCommand(0, veRenderQueue::RENDER_QUEUE_ENTITY, rc);
 	}
 
@@ -62,15 +86,17 @@ public:
 		if (!isNeedRendering())
 			return;
 		command.pass->apply(command);
-		glBindVertexArray(vao);
-		glDrawArrays(GL_LINES, 0, drawCount);
+		glBindVertexArray(_vaoBuffer->getData(command.contextID));
+        if (0 < drawCount){
+            glDrawArrays(GL_LINES, 0, GLsizei(drawCount));
+        }
 	}
 
-	std::mutex  verticesMutex;
 	veRealArray vertices;
 	size_t      drawCount;
-	GLuint      vao;
-	GLuint      vbo;
+    VE_Ptr<veGLDataBuffer> _vaoBuffer;
+    VE_Ptr<veGLDataBuffer> _vboBuffer;
+    std::mutex  dataMutex;
 
 private:
 
@@ -118,7 +144,7 @@ void veDebuger::update(veNode *node, veSceneManager *sm)
 	}
 }
 
-void veDebuger::render(veNode *node, veCamera *camera)
+void veDebuger::render(veNode *node, veCamera *camera, unsigned int contextID)
 {
 	//if (_isDrawBoundingBoxWireframe) {
 	//	renderBoundingBoxWireframe(_attachedNode->getBoundingBox(), nTow);
@@ -139,21 +165,16 @@ void veDebuger::render(veNode *node, veCamera *camera)
 
 			veMat4 rnToNode = iter->getNodeToWorldMatrix();
 			for (unsigned int i = 0; i < iter->getRenderableObjectCount(); ++i) {
-				auto entity = dynamic_cast<veEntity *>(iter->getRenderableObject(i));
-				if (entity) {
-					if (_isDrawMeshWireframe)
-						for (size_t i = 0; i < entity->getMeshCount(); ++i) {
-							auto mesh = entity->getMesh(i);
-							renderMeshWireframe(mesh, rnToNode * mesh->getAttachedNode()->toMeshNodeRootMatrix());
-						}
-					//if (_isDrawBoundingBoxWireframe)
-					//	renderBoundingBoxWireframe(entity->getBoundingBox() * rnToNode);
-				}
+                if (_isDrawMeshWireframe){
+                    auto mesh = dynamic_cast<veMesh *>(iter->getRenderableObject(i));
+                    if (mesh)
+                        renderMeshWireframe(mesh, mesh->getParents()[0]->getNodeToWorldMatrix());
+                }
 			}
 		}
 	}
 
-	veRenderableObject::render(node, camera);
+	veRenderableObject::render(node, camera, contextID);
 }
 
 void veDebuger::debugDrawLine(const veVec3 &start, const veVec3 &end, const veVec4 &color)
@@ -175,23 +196,19 @@ void veDebuger::initMaterial(veSceneManager *sm)
 	}";
 
 	const char *F_SHADER = " \
-	layout(location=0) out vec4 RT0;\n \
-	layout(location=1) out vec4 RT1;\n \
-	layout(location=2) out vec4 RT2;\n \
+	layout(location=0) out vec4 fragColor;\n \
 	in vec4 v_color; \n \
 	void main() {  \n \
-		RT0 = vec4(0.0);         \n \
-		RT1.xyz = v_color.xyz;   \n \
-		RT2 = vec4(0.0);         \n \
+		fragColor = v_color;   \n \
 	}";
 
-	_materials = sm->createMaterialArray(_name + "-matAry");
-	auto material = new veMaterial;
+	_material = new veMaterial;
 	auto tech = new veTechnique;
 	auto pass = new vePass;
-	material->addTechnique(tech);
+	_material->addTechnique(tech);
 	tech->addPass(pass);
 
+    pass->setRenderPass(vePass::FORWARD_PASS);
 	pass->depthTest() = true;
 	pass->depthWrite() = false;
 	pass->cullFace() = true;
@@ -204,8 +221,6 @@ void veDebuger::initMaterial(veSceneManager *sm)
 	pass->setShader(fShader);
 
 	pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
-
-	_materials->addMaterial(material);
 }
 
 void veDebuger::renderMeshWireframe(veMesh *mesh, const veMat4 &trans)
@@ -334,9 +349,10 @@ veVec3 veDebuger::getPlaneCrossPoint(const vePlane &p0, const vePlane &p1, const
 void veDebuger::drawLine(const veVec3 &start, const veVec3 &end, const veVec4 &color)
 {
 	veDebugRenderer *dr = static_cast<veDebugRenderer *>(_renderer.get());
-	std::unique_lock<std::mutex> lock(dr->verticesMutex);
-	dr->vertices.push_back(start.x()); dr->vertices.push_back(start.y()); dr->vertices.push_back(start.z());
-	dr->vertices.push_back(color.x()); dr->vertices.push_back(color.y()); dr->vertices.push_back(color.z()); dr->vertices.push_back(color.w());
-	dr->vertices.push_back(end.x()); dr->vertices.push_back(end.y()); dr->vertices.push_back(end.z());
-	dr->vertices.push_back(color.x()); dr->vertices.push_back(color.y()); dr->vertices.push_back(color.z()); dr->vertices.push_back(color.w());
+    
+    std::unique_lock<std::mutex> lock(dr->dataMutex);
+    dr->vertices.push_back(start.x()); dr->vertices.push_back(start.y()); dr->vertices.push_back(start.z());
+    dr->vertices.push_back(color.x()); dr->vertices.push_back(color.y()); dr->vertices.push_back(color.z()); dr->vertices.push_back(color.w());
+    dr->vertices.push_back(end.x()); dr->vertices.push_back(end.y()); dr->vertices.push_back(end.z());
+    dr->vertices.push_back(color.x()); dr->vertices.push_back(color.y()); dr->vertices.push_back(color.z()); dr->vertices.push_back(color.w());
 }

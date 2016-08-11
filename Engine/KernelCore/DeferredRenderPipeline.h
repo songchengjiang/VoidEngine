@@ -14,7 +14,7 @@ public:
 
 protected:
 
-	virtual void renderScene(veCamera *camera, bool isMainCamera) override;
+	virtual void renderScene(veCamera *camera, unsigned int contextID) override;
 
 	void initLightingParams();
 	void initLightCommomParams(veLight *light, vePass *pass);
@@ -24,12 +24,12 @@ protected:
 	veMaterial* createPointLightMaterial(veLight *light);
 	veMaterial* createSpotLightMaterial(veLight *light);
 
-	void renderLights(veCamera *camera);
-	void cullPointLight(veLight *light, veCamera *camera);
-	void cullSpotLight(veLight *light, veCamera *camera);
-	void renderDirectionalLight(veLight *light, veCamera *camera);
-	void renderPointLight(veLight *light, veCamera *camera);
-	void renderSpotLight(veLight *light, veCamera *camera);
+	void renderLights(veCamera *camera, unsigned int contextID);
+	void cullPointLight(veLight *light, veCamera *camera, unsigned int contextID);
+	void cullSpotLight(veLight *light, veCamera *camera, unsigned int contextID);
+	void renderDirectionalLight(veLight *light, veCamera *camera, unsigned int contextID);
+	void renderPointLight(veLight *light, veCamera *camera, unsigned int contextID);
+	void renderSpotLight(veLight *light, veCamera *camera, unsigned int contextID);
 
 protected:
 

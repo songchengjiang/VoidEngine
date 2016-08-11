@@ -3,39 +3,42 @@
 #include "Surface.h"
 #include "Image.h"
 #include "Text.h"
-#include "Entity.h"
 #include "Sphere.h"
 #include "Cone.h"
 #include "SkyBox.h"
 #include "Animation.h"
 
 #include "TextureManager.h"
-#include "EntityManager.h"
+#include "MeshManager.h"
 #include "AnimationManager.h"
 #include "MaterialManager.h"
+#include "FrameBufferObjectManager.h"
+#include "Configuration.h"
+
+#include "Viewer.h"
 
 #include <algorithm>
-
-#define RESOURCE_RECOVERY_INTERVAL_TIME 10.0
 
 veSceneManager::veSceneManager()
 	: USE_VE_PTR_INIT
 	, _deltaTime(0.0)
-	, _simulationTime(0)
 	, _ambient(veVec3(1.0f))
-	, _latestResourceRecoveredTime(RESOURCE_RECOVERY_INTERVAL_TIME)
+    , _resourceRecoveredIntervalTime(10.0f)
+	, _latestResourceRecoveredTime(_resourceRecoveredIntervalTime)
 	, _stopThreading(true)
-	, _needReload(false)
+    , _needDestroyRenderContexts(false)
 {
 	_managerList[veTextureManager::TYPE()] = new veTextureManager(this);
-	_managerList[veEntityManager::TYPE()] = new veEntityManager(this);
+	_managerList[veMeshManager::TYPE()] = new veMeshManager(this);
 	_managerList[veAnimationManager::TYPE()] = new veAnimationManager(this);
 	_managerList[veMaterialManager::TYPE()] = new veMaterialManager(this);
+    _managerList[veFrameBufferObjectManager::TYPE()] = new veFrameBufferObjectManager(this);
+    startThreading();
 }
 
 veSceneManager::~veSceneManager()
 {
-	stopThreading();
+    stopThreading();
 	for (auto &iter : _managerList) {
 		VE_SAFE_DELETE(iter.second);
 	}
@@ -54,9 +57,7 @@ veLight* veSceneManager::createLight(veLight::LightType type, const std::string 
 		light = new veSpotLight();
 	}
 	light->setName(name);
-	light->setSceneManager(this);
 	_lightListMap[type].push_back(light);
-	this->needReload();
 	return light;
 }
 
@@ -76,9 +77,9 @@ veImage* veSceneManager::createImage(const std::string &name, veTexture *texture
 	return image;
 }
 
-veEntity* veSceneManager::createEntity(const std::string &name)
+veMesh* veSceneManager::createMesh(const std::string &name)
 {
-	return static_cast<veEntityManager *>(_managerList[veEntityManager::TYPE()])->createEntity(name);
+	return static_cast<veMeshManager *>(_managerList[veMeshManager::TYPE()])->createMesh(name);
 }
 
 veSphere* veSceneManager::createSphere(const std::string &name)
@@ -116,6 +117,11 @@ veAnimationContainer* veSceneManager::createAnimationContainer(const std::string
 	return static_cast<veAnimationManager *>(_managerList[veAnimationManager::TYPE()])->createAnimationContainer(name);
 }
 
+veFrameBufferObject* veSceneManager::createFrameBufferObject(const std::string &name)
+{
+    return static_cast<veFrameBufferObjectManager *>(_managerList[veFrameBufferObjectManager::TYPE()])->createFrameBufferObject(name);
+}
+
 veRay* veSceneManager::createRay(const veVec3 &start, const veVec3 &end)
 {
 	auto ray = new veRay(start, end);
@@ -146,37 +152,54 @@ vePostProcesser* veSceneManager::createPostProcesser(const std::string &name)
 {
 	auto postProcesser = new vePostProcesser(this);
 	postProcesser->setName(name);
-	_postProcesserList.push_back(postProcesser);
 	return postProcesser;
 }
 
-void veSceneManager::removePostProcesser(const std::string &name)
+veParticleSystem* veSceneManager::createParticleSystem(const std::string &name)
 {
-	for (vePostProcesserList::iterator iter = _postProcesserList.begin(); iter != _postProcesserList.end(); ++iter) {
-		if ((*iter)->getName() == name) {
-			_postProcesserList.erase(iter);
-			break;
-		}
-	}
+    auto particleSystem = new veParticleSystem(this);
+    particleSystem->setName(name);
+    _particleSystemList.push_back(particleSystem);
+    return particleSystem;
 }
 
 void veSceneManager::addComponent(veComponent *component)
 {
+    if (!component) return;
 	auto iter = std::find(_componentList.begin(), _componentList.end(), component);
 	if (iter != _componentList.end())
 		return;
 	_componentList.push_back(component);
+    std::sort(_componentList.begin(), _componentList.end(), [this](const VE_Ptr<veComponent> &left, const VE_Ptr<veComponent> &right) -> bool{
+        return left->getUpdateOrder() < right->getUpdateOrder();
+    });
 }
 
 void veSceneManager::removeComponent(veComponent *component)
 {
+    if (!component) return;
 	auto iter = std::find(_componentList.begin(), _componentList.end(), component);
 	_componentList.erase(iter);
 }
 
+void veSceneManager::attachViewer(veViewer *viewer)
+{
+    auto iter = std::find(_attachedViewers.begin(), _attachedViewers.end(), viewer);
+    if (iter == _attachedViewers.end()){
+        _attachedViewers.push_back(viewer);
+    }
+}
+
+void veSceneManager::detachViewer(veViewer *viewer)
+{
+    auto iter = std::find(_attachedViewers.begin(), _attachedViewers.end(), viewer);
+    if (iter != _attachedViewers.end()){
+        _attachedViewers.erase(iter);
+    }
+}
+
 void veSceneManager::requestRayCast(veRay *ray)
 {
-	ray->_callBack();
 }
 
 veBaseManager* veSceneManager::getManager(const std::string &mgType)
@@ -187,51 +210,46 @@ veBaseManager* veSceneManager::getManager(const std::string &mgType)
 	return iter->second;
 }
 
-void veSceneManager::setDeltaTime(double deltaTime)
+void veSceneManager::destroyRenderContexts()
 {
-	_deltaTime = deltaTime;
-	_simulationTime += deltaTime;
+    _needDestroyRenderContexts = true;
 }
 
-void veSceneManager::needReload()
+void veSceneManager::handleEvent(veViewer *viewer, const veEvent &event)
 {
-	if (_needReload)
-		return;
-	_needReload = true;
-	enqueueRequest([this] {
-		this->_needReload = false;
-	});
+    if (!_componentList.empty()) {
+        for (auto &com : _componentList) {
+            if (com->isEnabled()){
+                if (event.getEventType() & com->getEventFilter()) {
+                    if (com->handle(this, viewer, event))
+                        return;
+                }
+            }
+        }
+    }
+    
+    if (_root.valid())
+        _root->routeEvent(this, viewer, event);
 }
 
-void veSceneManager::dispatchEvents(veEvent &event)
+void veSceneManager::event(veViewer *viewer)
 {
-	if (event.getEventType() == veEvent::VE_WIN_RESIZE) {
-		if (_mainCamera.valid()) {
-			_mainCamera->resize(event.getWindowWidth(), event.getWindowHeight());
-		}
-	}
-
-	if (!_componentList.empty()) {
-		for (auto &com : _componentList) {
-			if (event.getEventType() & com->getEventFilter()) {
-				if (com->handle(this, event)) 
-					return;
-			}
-		}
-	}
-
-	if (_root.valid())
-		_root->routeEvent(event, this);
+    std::unique_lock<std::mutex> updateLock(_updatingMutex);
+    for (auto &event : viewer->getEventList()){
+        handleEvent(viewer, event);
+    }
 }
 
-bool veSceneManager::simulation()
+void veSceneManager::update(veViewer *viewer)
 {
+    if (viewer != _attachedViewers.front())
+        return;
 	{
 		std::unique_lock<std::mutex> updateLock(_updatingMutex);
 		for (auto &manager : _managerList) {
 			manager.second->update();
 		}
-		update();
+		updateImp();
 	}
 
 	{
@@ -239,16 +257,18 @@ bool veSceneManager::simulation()
 		_renderingCondition.notify_all();
 	}
 	//render();
-	return true;
 }
 
-void veSceneManager::update()
+void veSceneManager::render(veViewer *viewer)
 {
-	if (!_componentList.empty()) {
-		for (auto &com : _componentList) {
-			com->update(this);
-		}
-	}
+    std::unique_lock<std::mutex> renderLock(this->_renderingMutex);
+    this->_renderingCondition.wait(renderLock);
+    if (_needDestroyRenderContexts){
+        veGLDataBufferManager::instance()->destroyAllGLDataBuffer();
+        _needDestroyRenderContexts = false;
+    }
+    this->renderImp(viewer);
+    this->postRenderHandle();
 }
 
 void veSceneManager::startThreading()
@@ -256,14 +276,14 @@ void veSceneManager::startThreading()
 	if (!_stopThreading) return;
 	_stopThreading = false;
 	_threadPool.start();
-	_renderingThread = std::thread([this] {
-		while(!this->_stopThreading){
-			std::unique_lock<std::mutex> renderLock(this->_renderingMutex);
-			this->_renderingCondition.wait(renderLock);
-			this->render();
-			this->postRenderHandle();
-		}
-	});
+//	_renderingThread = std::thread([this] {
+//		while(!this->_stopThreading){
+//			std::unique_lock<std::mutex> renderLock(this->_renderingMutex);
+//			this->_renderingCondition.wait(renderLock);
+//			this->renderImp();
+//			this->postRenderHandle();
+//		}
+//	});
 }
 
 void veSceneManager::stopThreading()
@@ -271,8 +291,8 @@ void veSceneManager::stopThreading()
 	if (_stopThreading) return;
 	_threadPool.stop();
 	_stopThreading = true;
-	_renderingCondition.notify_all();
-	_renderingThread.join();
+	//_renderingCondition.notify_all();
+	//_renderingThread.join();
 }
 
 void veSceneManager::enqueueTaskToThread(const veThreadPool::TaskCallBack& callback, void* callbackParam, const std::function<void()> &func)
@@ -289,7 +309,7 @@ void veSceneManager::postRenderHandle()
 
 void veSceneManager::resourceRecovery()
 {
-	if (RESOURCE_RECOVERY_INTERVAL_TIME < _latestResourceRecoveredTime) {
+	if (_resourceRecoveredIntervalTime < _latestResourceRecoveredTime) {
 		for (auto &manager : _managerList) {
 			manager.second->resourceRecovery();
 		}

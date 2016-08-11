@@ -1,4 +1,5 @@
 Debug
+Release
 *.sdf
 .vs
 *.user
@@ -26,8 +27,10 @@ local.properties
 /*.suo
 build/win32/VoidEngine.VC.opendb
 
+libs/
+idea/
+
+xcschememanagement.plist
 *.xcscheme
-
 *.xcuserstate
-
 xcuserdata/

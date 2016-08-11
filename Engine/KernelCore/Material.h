@@ -7,6 +7,7 @@
 #include "RenderCommand.h"
 #include "RenderState.h"
 #include "TransformFeedback.h"
+#include "GLDataBuffer.h"
 #include <unordered_map>
 
 struct veRenderCommand;
@@ -20,6 +21,11 @@ class VE_EXPORT vePass
 public:
 	static vePass* CURRENT_PASS;
 	typedef std::function<void()> ApplyFunctionCallback;
+    
+    enum RenderPass{
+        DEFERRED_PASS,
+        FORWARD_PASS,
+    };
 
 	enum TextureType
 	{
@@ -43,6 +49,9 @@ public:
 	void visit(const veRenderCommand &command);
 	bool apply(const veRenderCommand &command);
 
+    void setRenderPass(RenderPass rp) { _renderPass = rp; }
+    RenderPass getRenderPass() const { return _renderPass; }
+    
 	const bool& depthTest() const { return _depthTest; };
 	bool& depthTest() { return _depthTest; }
 
@@ -85,13 +94,15 @@ public:
 	//veTexture* getTexture(size_t idx);
 	veTexture* getTexture(TextureType type);
 	const veTexture* getTexture(TextureType type) const;
-	//const veTexture* getTexture(size_t idx) const;
+	const veTexture* getTexture(size_t idx) const;
 	//veTexture* removeTexture(size_t idx);
 	size_t getTextureNum() const { return _textures.size(); }
 
 	void addUniform(veUniform *uniform);
-	veUniform* getUniform(const std::string &name);
+	veUniform* getUniform(const std::string &name) const;
+    veUniform* getUniform(size_t idx) const;
 	veUniform* removeUniform(const std::string &name);
+    veUniform* removeUniform(size_t idx);
 	size_t getUniformNum() const { return _uniforms.size(); }
 
 	void setTransformFeedback(veTransformFeedback *transFeedback) { _transformFeedback = transFeedback; _needLinkProgram = true; }
@@ -99,7 +110,7 @@ public:
 
 	void setApplyFunctionCallback(const ApplyFunctionCallback &callback) { _callback = callback; }
 
-	void needLink();
+	void reloadProgram();
 
 private:
 
@@ -109,6 +120,7 @@ private:
 
 private:
 
+    RenderPass _renderPass;
 	bool _depthTest;
 	bool _depthWirte;
 	bool _stencilTest;
@@ -121,11 +133,11 @@ private:
 	veStencilOp   _stencilOp;
 	unsigned int _mask;
 	//GLenum _polygonMode;
-	GLuint _program;
+    VE_Ptr<veGLDataBuffer> _programBuffer;
 	bool    _needLinkProgram;
 	std::map<veShader::Type, VE_Ptr<veShader> >           _shaders;
 	std::vector< std::pair<TextureType, VE_Ptr<veTexture> > >            _textures;
-	std::map< std::string, VE_Ptr<veUniform> >            _uniforms;
+	std::vector< VE_Ptr<veUniform> >            _uniforms;
 	VE_Ptr<veTransformFeedback>                           _transformFeedback;
 	ApplyFunctionCallback                                 _callback;
 };
@@ -153,13 +165,6 @@ private:
 class VE_EXPORT veMaterial
 {
 public:
-
-	static const std::string SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY;
-	static const std::string SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ENTITY;
-	static const std::string SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY;
-	static const std::string SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ENTITY;
-	static const std::string SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ANIM_ENTITY;
-	static const std::string SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ENTITY;
 
 	veMaterial();
 	~veMaterial();

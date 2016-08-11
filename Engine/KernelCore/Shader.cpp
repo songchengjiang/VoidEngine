@@ -3,10 +3,9 @@
 #include "Constants.h"
 #include "FileCore/File.h"
 #include "Mesh.h"
-#include "MeshNode.h"
 #include "Camera.h"
-#include "EntityRenderer.h"
 #include "SceneManager.h"
+#include "Configuration.h"
 
 veUniform::veUniform(const std::string &name)
 	: USE_VE_PTR_INIT
@@ -14,6 +13,7 @@ veUniform::veUniform(const std::string &name)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 }
 
@@ -23,6 +23,7 @@ veUniform::veUniform(const std::string &name, int val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
 }
@@ -33,6 +34,7 @@ veUniform::veUniform(const std::string &name, veReal val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
 }
@@ -43,6 +45,7 @@ veUniform::veUniform(const std::string &name, const std::string &val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
 }
@@ -53,6 +56,7 @@ veUniform::veUniform(const std::string &name, const veVec2& val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
 }
@@ -63,6 +67,7 @@ veUniform::veUniform(const std::string &name, const veVec3& val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
 }
@@ -73,6 +78,7 @@ veUniform::veUniform(const std::string &name, const veVec4& val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
 }
@@ -83,6 +89,7 @@ veUniform::veUniform(const std::string &name, const veMat3& val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
 }
@@ -93,6 +100,7 @@ veUniform::veUniform(const std::string &name, const veMat4& val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
 }
@@ -103,8 +111,64 @@ veUniform::veUniform(const std::string &name, const veRealArray &val)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _simulationTime(0.0)
 {
 	setValue(val);
+}
+
+veUniform::veUniform(const std::string &name, const veVec2 *val, unsigned int n)
+: USE_VE_PTR_INIT
+, _name(name)
+, _location(-1)
+, _preLocation(-1)
+, _maxReLocation(0)
+, _simulationTime(0.0)
+{
+    setValue(val, n);
+}
+
+veUniform::veUniform(const std::string &name, const veVec3 *val, unsigned int n)
+: USE_VE_PTR_INIT
+, _name(name)
+, _location(-1)
+, _preLocation(-1)
+, _maxReLocation(0)
+, _simulationTime(0.0)
+{
+    setValue(val, n);
+}
+
+veUniform::veUniform(const std::string &name, const veVec4 *val, unsigned int n)
+: USE_VE_PTR_INIT
+, _name(name)
+, _location(-1)
+, _preLocation(-1)
+, _maxReLocation(0)
+, _simulationTime(0.0)
+{
+    setValue(val, n);
+}
+
+veUniform::veUniform(const std::string &name, const veMat3 *val, unsigned int n)
+: USE_VE_PTR_INIT
+, _name(name)
+, _location(-1)
+, _preLocation(-1)
+, _maxReLocation(0)
+, _simulationTime(0.0)
+{
+    setValue(val, n);
+}
+
+veUniform::veUniform(const std::string &name, const veMat4 *val, unsigned int n)
+: USE_VE_PTR_INIT
+, _name(name)
+, _location(-1)
+, _preLocation(-1)
+, _maxReLocation(0)
+, _simulationTime(0.0)
+{
+    setValue(val, n);
 }
 
 veUniform::~veUniform()
@@ -117,7 +181,7 @@ void veUniform::apply(const veRenderCommand &command)
 	if (_location < 0 && _maxReLocation == 255)
 		return;
 	if (_location < 0) {
-		_location = glGetUniformLocation(command.pass->_program, _name.c_str());
+		_location = glGetUniformLocation(command.pass->_programBuffer->getData(command.contextID), _name.c_str());
 		_location == _preLocation ? ++_maxReLocation : _maxReLocation = 0;
 	}
 	if (_location < 0) return;
@@ -163,16 +227,16 @@ void veUniform::apply(const veRenderCommand &command)
 		if (!_autoBindingValue.empty()) {
 
 			if (_autoBindingValue == SCREEN_WIDTH) {
-				glUniform1f(_location, (command.camera->getViewport().width - command.camera->getViewport().x) * VE_DEVICE_PIXEL_RATIO);
+				glUniform1f(_location, (command.camera->getViewport().width - command.camera->getViewport().x));
 			}
 			else if (_autoBindingValue == SCREEN_HEIGHT) {
-				glUniform1f(_location, (command.camera->getViewport().height - command.camera->getViewport().y) * VE_DEVICE_PIXEL_RATIO);
+				glUniform1f(_location, (command.camera->getViewport().height - command.camera->getViewport().y));
 			}
 			else if (_autoBindingValue == SIM_TIME) {
-				glUniform1f(_location, command.sceneManager->getSimulationTime());
+				glUniform1f(_location, _simulationTime);
 			}
 			else if (_autoBindingValue == SIM_SIN_TIME) {
-				glUniform1f(_location, veMath::veSin(command.sceneManager->getSimulationTime()));
+				glUniform1f(_location, veMath::veSin(_simulationTime));
 			}
 			else {
 				const veMat4 &worldMat = command.worldMatrix->value();
@@ -275,14 +339,13 @@ void veUniform::apply(const veRenderCommand &command)
 				}
 				else if (_autoBindingValue == BONE_MATRIXES) {
 					static float boneMates[60 * 16];
-					veNode *node = static_cast<veNode *>(command.user1);
-					veMesh *mesh = static_cast<veMesh *>(command.user2);
+					veMesh *mesh = static_cast<veMesh *>(command.user1);
 					veMat4 worldToMesh = worldMat;
 					worldToMesh.inverse();
 					for (unsigned int i = 0; i < mesh->getBoneNum(); ++i) {
 						unsigned int idx = 16 * i;
 						const auto &bone = mesh->getBone(i);
-						veMat4 boneMat = worldToMesh * node->getNodeToWorldMatrix() * bone->getBoneNode()->toMeshNodeRootMatrix() * bone->getOffsetMat();
+						veMat4 boneMat = worldToMesh * bone->getBoneNode()->getNodeToWorldMatrix() * bone->getOffsetMat();
 						boneMates[idx + 0] = boneMat[0][0]; boneMates[idx + 4] = boneMat[0][1]; boneMates[idx + 8] = boneMat[0][2]; boneMates[idx + 12] = boneMat[0][3];
 						boneMates[idx + 1] = boneMat[1][0]; boneMates[idx + 5] = boneMat[1][1]; boneMates[idx + 9] = boneMat[1][2]; boneMates[idx + 13] = boneMat[1][3];
 						boneMates[idx + 2] = boneMat[2][0]; boneMates[idx + 6] = boneMat[2][1]; boneMates[idx + 10] = boneMat[2][2]; boneMates[idx + 14] = boneMat[2][3];
@@ -303,6 +366,8 @@ void veUniform::apply(const veRenderCommand &command)
 	default:
 		break;
 	}
+                            
+    _simulationTime += command.sceneManager->getDeltaTime();
 }
 
 void veUniform::setValue(int val)
@@ -608,6 +673,72 @@ bool veUniform::getValue(veRealArray &val) const
 	return true;
 }
 
+bool veUniform::getValue(veVec2 *val, unsigned int &n) const
+{
+    if (_type != Type::VEC2_ARRAY) return false;
+    n = static_cast<unsigned int>(_values.size() / 2);
+    val = new veVec2[n];
+    for (size_t i = 0; i < n; ++i){
+        val[i].x() = _values[2 * i];
+        val[i].y() = _values[2 * i + 1];
+    }
+    return true;
+}
+
+bool veUniform::getValue(veVec3 *val, unsigned int &n) const
+{
+    if (_type != Type::VEC3_ARRAY) return false;
+    n = static_cast<unsigned int>(_values.size() / 3);
+    val = new veVec3[n];
+    for (size_t i = 0; i < n; ++i){
+        val[i].x() = _values[3 * i];
+        val[i].y() = _values[3 * i + 1];
+        val[i].z() = _values[3 * i + 2];
+    }
+    return true;
+}
+
+bool veUniform::getValue(veVec4 *val, unsigned int &n) const
+{
+    if (_type != Type::VEC4_ARRAY) return false;
+    n = static_cast<unsigned int>(_values.size() / 4);
+    val = new veVec4[n];
+    for (size_t i = 0; i < n; ++i){
+        val[i].x() = _values[4 * i];
+        val[i].y() = _values[4 * i + 1];
+        val[i].z() = _values[4 * i + 2];
+        val[i].w() = _values[4 * i + 3];
+    }
+    return true;
+}
+
+bool veUniform::getValue(veMat3 *val, unsigned int &n) const
+{
+    if (_type != Type::MAT3_ARRAY) return false;
+    n = static_cast<unsigned int>(_values.size() / 9);
+    val = new veMat3[n];
+    for (size_t i = 0; i < n; ++i){
+        val[i][0][0] = _values[9 * i + 0]; val[i][0][1] = _values[9 * i + 3]; val[i][0][2] = _values[9 * i + 6];
+        val[i][1][0] = _values[9 * i + 1]; val[i][1][1] = _values[9 * i + 4]; val[i][1][2] = _values[9 * i + 7];
+        val[i][2][0] = _values[9 * i + 2]; val[i][2][1] = _values[9 * i + 5]; val[i][2][2] = _values[9 * i + 8];
+    }
+    return true;
+}
+
+bool veUniform::getValue(veMat4 *val, unsigned int &n) const
+{
+    if (_type != Type::MAT4_ARRAY) return false;
+    n = static_cast<unsigned int>(_values.size() / 16);
+    val = new veMat4[n];
+    for (unsigned int i = 0; i < n; ++i) {
+        val[i][0][0] = _values[16 * i + 0]; val[i][0][1] = _values[16 * i + 4]; val[i][0][2] = _values[16 * i + 8]; val[i][0][3] = _values[16 * i + 12];
+        val[i][1][0] = _values[16 * i + 1]; val[i][1][1] = _values[16 * i + 5]; val[i][1][2] = _values[16 * i + 9]; val[i][1][3] = _values[16 * i + 13];
+        val[i][2][0] = _values[16 * i + 2]; val[i][2][1] = _values[16 * i + 6]; val[i][2][2] = _values[16 * i + 10]; val[i][2][3] = _values[16 * i + 14];
+        val[i][3][0] = _values[16 * i + 3]; val[i][3][1] = _values[16 * i + 7]; val[i][3][2] = _values[16 * i + 11]; val[i][3][3] = _values[16 * i + 15];
+    }
+    return true;
+}
+
 void veUniform::setName(const std::string &name)
 {
 	_name = name;
@@ -621,8 +752,6 @@ void veUniform::setName(const std::string &name)
 veShader::veShader(Type type, const std::string &filePath)
 	: USE_VE_PTR_INIT
 	, _type(type)
-	, _shader(0)
-	, _isCompiled(false)
 {
 	setSource(filePath);
 }
@@ -630,17 +759,13 @@ veShader::veShader(Type type, const std::string &filePath)
 veShader::veShader(Type type, const char *str)
 	: USE_VE_PTR_INIT
 	, _type(type)
-	, _shader(0)
 	, _source(str)
-	, _isCompiled(false)
 {
 	setSource(str);
 }
 
 veShader::veShader()
 	: USE_VE_PTR_INIT
-	, _shader(0)
-	, _isCompiled(false)
 {
 
 }
@@ -654,13 +779,11 @@ void veShader::setSource(const std::string &filePath)
 {
 	auto fileData = veFile::instance()->readFileToBuffer(filePath);
 	_source.assign(fileData->buffer, fileData->size);
-	_isCompiled = false;
 }
 
 void veShader::setSource(const char *str)
 {
 	_source = str;
-	_isCompiled = false;
 }
 
 void veShader::setShaderHeader(const std::string &sHeader)
@@ -679,7 +802,7 @@ GLuint veShader::compile()
 #endif
 	preDefination += SHADER_VERSION + std::string(str);
 
-#if VE_PLATFORM == VE_PLATFORM_ANDROID
+#if VE_PLATFORM == VE_PLATFORM_ANDROID || VE_PLATFORM == VE_PLATFORM_IOS
 	if (_type == veShader::FRAGMENT_SHADER) {
 		preDefination += PRECISION_DEFINE_FLOAT + std::string("\n");
 		preDefination += PRECISION_DEFINE_SAMPLER2DSHADOW + std::string("\n");
@@ -705,22 +828,21 @@ GLuint veShader::compile()
 	preDefination += std::string("#define VE_PLATFORM VE_PLATFORM_MAC\n");
 #endif
 
-	if (!_shader)
-		_shader = glCreateShader(_type);
+    auto shader = glCreateShader(_type);
 
 	std::string source = preDefination + _shaderHeaders + _source;
 	char *buffer = new char[source.size() + 1];
 	strcpy(buffer, source.c_str());
-	glShaderSource(_shader, 1, &buffer, nullptr);
+	glShaderSource(shader, 1, &buffer, nullptr);
 	GLint state = GL_FALSE;
-	glCompileShader(_shader);
-	glGetShaderiv(_shader, GL_COMPILE_STATUS, &state);
+	glCompileShader(shader);
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &state);
 	if (!state) {
 		GLint maxLen;
-		glGetShaderiv(_shader, GL_INFO_LOG_LENGTH, &maxLen);
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLen);
 		if (maxLen > 0) {
 			GLchar *errors = new GLchar[maxLen + 1];
-			glGetShaderInfoLog(_shader, maxLen, &maxLen, errors);
+			glGetShaderInfoLog(shader, maxLen, &maxLen, errors);
 			if (strcmp(errors, "") != 0) {
                 std::string shaderType = typeToString();
                 veLog("%s Shader Errors\n", shaderType.c_str());
@@ -730,11 +852,11 @@ GLuint veShader::compile()
 			}
 			delete[] errors;
 		}
-		glDeleteShader(_shader);
-		_shader = 0;
+		glDeleteShader(shader);
+		shader = 0;
 	}
 	delete[] buffer;
-	return _shader;
+	return shader;
 }
 
 std::string veShader::typeToString()

@@ -43,6 +43,9 @@
     <Filter Include="NormalMappingTest">
       <UniqueIdentifier>{2ba7255e-c222-4305-9deb-9d05a9ea3409}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SceneTest">
+      <UniqueIdentifier>{c7c724c8-ea95-4fa1-a2ac-69e0682a54f6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Tests\CameraTest.h">
@@ -88,6 +91,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Tests\NormalMappingTest.h">
       <Filter>NormalMappingTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tests\SceneTest.h">
+      <Filter>SceneTest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -85,12 +85,6 @@ public: const std::string& getName() const { return _name; }
 #include <vector>
 #include <string>
 
-#if defined(__APPLE_CC__)
-#define VE_DEVICE_PIXEL_RATIO 2
-#else
-#define VE_DEVICE_PIXEL_RATIO 1
-#endif
-
 #define VE_GL_VERSION_MAJOR 4
 #define VE_GL_VERSION_MINOR 1
 
@@ -105,23 +99,30 @@ public: const std::string& getName() const { return _name; }
 #define VE_PLATFORM_UNKNOW             6
 
 #if defined(_MSC_VER)
-#define VE_PLATFORM     VE_PLATFORM_WIN32
-#elif defined(__APPLE_CC__)
-#define VE_PLATFORM     VE_PLATFORM_MAC
+    #define VE_PLATFORM     VE_PLATFORM_WIN32
+#elif defined(__APPLE__)
+    #include <TargetConditionals.h>
+    #if TARGET_OS_IPHONE // TARGET_OS_IPHONE inlcudes TARGET_OS_IOS TARGET_OS_TV and TARGET_OS_WATCH. see TargetConditionals.h
+        #define VE_PLATFORM         VE_PLATFORM_IOS
+    #elif TARGET_OS_MAC
+        #define VE_PLATFORM         VE_PLATFORM_MAC
+    #endif
 #elif defined(ANDROID)
-#define VE_PLATFORM     VE_PLATFORM_ANDROID
+    #define VE_PLATFORM     VE_PLATFORM_ANDROID
 #else
-#define VE_PLATFORM     VE_PLATFORM_UNKNOW
+    #define VE_PLATFORM     VE_PLATFORM_UNKNOW
 #endif
 
 
-#if defined(_MSC_VER) || defined(__APPLE_CC__)
-#if defined(_MSC_VER)
+#if VE_PLATFORM == VE_PLATFORM_WIN32 || VE_PLATFORM == VE_PLATFORM_MAC
+#if VE_PLATFORM == VE_PLATFORM_WIN32
 #define GLEW_STATIC
+#define GLEW_MX
 #include "glew/include/GL/glew.h"
+extern GLEWContext* glewGetContext();
 #endif
 
-#if defined(__APPLE_CC__)
+#if VE_PLATFORM == VE_PLATFORM_MAC
 #define GLFW_INCLUDE_GLCOREARB
 #define GLFW_INCLUDE_GLEXT
 #include <OpenGL/gl3.h>
@@ -130,7 +131,12 @@ public: const std::string& getName() const { return _name; }
 #include "glfw/include/GLFW/glfw3.h"
 #endif
 
-#if defined(ANDROID)
+#if VE_PLATFORM == VE_PLATFORM_IOS
+#include <OpenGLES/ES3/gl.h>
+#include <OpenGLES/ES3/glext.h>
+#endif
+
+#if VE_PLATFORM == VE_PLATFORM_ANDROID
 #include <EGL/egl.h>
 #include <GLES3/gl3.h>
 #endif
