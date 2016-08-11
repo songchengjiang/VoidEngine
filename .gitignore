@@ -33,6 +33,5 @@ idea/
 xcschememanagement.plist
 *.xcscheme
 *.xcuserstate
-xcuserdata/
 
-GeneratedFiles/
+xcuserdata/
