@@ -4,6 +4,7 @@
 #include "KernelCore/Viewer.h"
 #include <thread>
 #include <mutex>
+#include <jni.h>
 
 class VE_EXPORT veViewerAndroid : public veViewer
 {
@@ -21,8 +22,13 @@ public:
 
     virtual void startSimulation() override;
     virtual void stopSimulation() override;
-    void render();
-    void resize(int width, int height);
+
+    void onCreated(int width, int height);
+    void onDestroy();
+    void onChanged(int width, int height);
+    void onPause();
+    void onResume();
+    void onDrawFrame();
 
     void onTouchBegan(int touchID, veReal x, veReal y);
     void onTouchEnd(int touchID, veReal x, veReal y);
@@ -32,6 +38,8 @@ protected:
 
     veViewerAndroid(int width, int height, const std::string &title, veViewerAndroid *sharedViewer);
     void update(double deltaTime);
+    void resize(int width, int height);
+
 protected:
 
     veViewerAndroid *_sharedViewer;

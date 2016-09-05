@@ -82,8 +82,8 @@ void main(){
 	vec2 texcoord;
 #ifdef VE_USE_PARALLAX_MAPPING
 	texcoord = parallaxMapping(v_texcoord, v_viewDir);
-	if(texcoord.x > 1.0 || texcoord.y > 1.0 || texcoord.x < 0.0 || texcoord.y < 0.0)
-    discard;
+//	if(texcoord.x > 1.0 || texcoord.y > 1.0 || texcoord.x < 0.0 || texcoord.y < 0.0)
+//    discard;
 #else
 	texcoord = v_texcoord;
 #endif

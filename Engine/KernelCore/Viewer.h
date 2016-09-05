@@ -4,6 +4,7 @@
 #include "Event.h"
 #include "Camera.h"
 #include "SceneManager.h"
+#include "ViewerListener.h"
 
 class VE_EXPORT veViewer
 {
@@ -26,6 +27,9 @@ public:
     const std::string& title() const { return _title; }
     
     const veEventList& getEventList() const { return _eventList; }
+
+    void addListener(veViewerListener *listener);
+    void removeListener(veViewerListener *listener);
     
     void setCamera(veCamera *camera) { _camera = camera; }
     veCamera* getCamera() { return _camera; }
@@ -47,6 +51,9 @@ protected:
     
     bool                   _isRunning;
     unsigned int           _contextID;
+
+    typedef std::vector< VE_Ptr<veViewerListener> > ViewerListenerList;
+    ViewerListenerList     _listenerList;
 };
 
 #endif

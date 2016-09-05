@@ -1,5 +1,6 @@
 #include "Viewer-android.h"
 #include "KernelCore/SceneManager.h"
+#include "ViewerListener-android.h"
 
 veViewerAndroid::veViewerAndroid(int width, int height, const std::string &title, veViewerAndroid *sharedViewer)
     : veViewer(width, height, title)
@@ -63,18 +64,8 @@ void veViewerAndroid::update(double deltaTime)
     _sceneManager->update(this);
 }
 
-void veViewerAndroid::render()
-{
-    if (!_sceneManager.valid()) return;
-    _sceneManager->render(this);
-}
-
 void veViewerAndroid::create()
 {
-    _currentEvent.setEventType(veEvent::VE_WIN_INIT);
-    _currentEvent.setWindowWidth(_width);
-    _currentEvent.setWindowHeight(_height);
-    _eventList.push_back(_currentEvent);
 }
 
 void veViewerAndroid::destroy()
@@ -88,6 +79,65 @@ void veViewerAndroid::show()
 void veViewerAndroid::hide()
 {
 
+}
+
+void veViewerAndroid::onCreated(int width, int height)
+{
+    for (auto &listener : _listenerList){
+        static_cast<veViewerListenerAndroid *>(listener.get())->onCreated(this, width, height);
+    }
+    std::unique_lock<std::mutex> eventLock(_eventMutex);
+    _currentEvent.setEventType(veEvent::VE_WIN_INIT);
+    _currentEvent.setWindowWidth(width);
+    _currentEvent.setWindowHeight(height);
+    this->_eventList.push_back(_currentEvent);
+}
+
+void veViewerAndroid::onDestroy()
+{
+    for (auto &listener : _listenerList){
+        static_cast<veViewerListenerAndroid *>(listener.get())->onDestroy(this);
+    }
+    std::unique_lock<std::mutex> eventLock(_eventMutex);
+    _currentEvent.setEventType(veEvent::VE_WIN_CLOSE);
+    this->_eventList.push_back(_currentEvent);
+}
+
+void veViewerAndroid::onChanged(int width, int height)
+{
+    for (auto &listener : _listenerList){
+        static_cast<veViewerListenerAndroid *>(listener.get())->onChanged(this, width, height);
+    }
+    std::unique_lock<std::mutex> eventLock(_eventMutex);
+    resize(width, height);
+    _sceneManager->destroyRenderContexts();
+}
+
+void veViewerAndroid::onPause()
+{
+    for (auto &listener : _listenerList){
+        static_cast<veViewerListenerAndroid *>(listener.get())->onPause(this);
+    }
+    std::unique_lock<std::mutex> eventLock(_eventMutex);
+    _currentEvent.setEventType(veEvent::VE_WIN_NOFOCUS);
+    this->_eventList.push_back(_currentEvent);
+}
+
+void veViewerAndroid::onResume()
+{
+    for (auto &listener : _listenerList){
+        static_cast<veViewerListenerAndroid *>(listener.get())->onResume(this);
+    }
+    std::unique_lock<std::mutex> eventLock(_eventMutex);
+    _currentEvent.setEventType(veEvent::VE_WIN_FOCUS);
+    this->_eventList.push_back(_currentEvent);
+    _sceneManager->destroyRenderContexts();
+}
+
+void veViewerAndroid::onDrawFrame()
+{
+    if (!_sceneManager.valid()) return;
+    _sceneManager->render(this);
 }
 
 void veViewerAndroid::resize(int width, int height)

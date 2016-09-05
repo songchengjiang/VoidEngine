@@ -8,7 +8,6 @@ Release
 *.iml
 *.ap_
 *.apk
-*.xml
 *.log
 *.obj
 *.tlog
@@ -27,8 +26,10 @@ local.properties
 /*.suo
 build/win32/VoidEngine.VC.opendb
 
+.DS_Store
+
 libs/
-idea/
+.idea/
 
 xcschememanagement.plist
 *.xcscheme

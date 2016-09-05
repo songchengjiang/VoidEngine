@@ -187,7 +187,6 @@ void veMeshRenderer::draw(veRenderCommand &command)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _iboBuffers[i]->getData(command.contextID));
 		glDrawElements(primitive.primitiveType, GLsizei(primitive.indices->size()), GL_UNSIGNED_SHORT, nullptr);
 	}
-
 	//if (renderPass) {
 	//	command.pass = renderPass;
 	//}

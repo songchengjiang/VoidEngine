@@ -15,10 +15,23 @@ public class VEMainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         onLoadLibrary();
-        VEJNIWrapper.nativeOnActivityCreate(this, this.getAssets());
 
         mSurfaceView = new VESurfaceView(this);
         setContentView(mSurfaceView);
+
+        mSurfaceView.queueEvent(new VEActivityRunnable(this) {
+            @Override
+            public void run() {
+                VEJNIWrapper.nativeOnActivityCreate(mActivity, mActivity.getAssets());
+            }
+        });
+    }
+
+    abstract public class VEActivityRunnable implements Runnable {
+        protected VEMainActivity mActivity;
+        VEActivityRunnable(VEMainActivity ac){
+            mActivity = ac;
+        }
     }
 
     @Override
@@ -35,8 +48,12 @@ public class VEMainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        mSurfaceView.onDestroy();
-        VEJNIWrapper.nativeOnActivityDestroy(this);
+        mSurfaceView.queueEvent(new VEActivityRunnable(this) {
+            @Override
+            public void run() {
+                VEJNIWrapper.nativeOnActivityDestroy(mActivity);
+            }
+        });
         super.onDestroy();
     }
 

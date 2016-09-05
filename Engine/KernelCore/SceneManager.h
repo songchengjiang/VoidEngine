@@ -86,6 +86,7 @@ public:
 	veNode* getRootNode() { return _root.get(); }
     void setDeltaTime(double deltaTime) { _deltaTime = deltaTime; }
 	double getDeltaTime() { return _deltaTime; }
+	double getSimulationTime() { return _simulationTime; }
 
 	veRenderPipeline* getRenderPipeline() const { return _renderPipeline.get(); }
     
@@ -98,11 +99,12 @@ public:
 	void update(veViewer *viewer);
     void render(veViewer *viewer);
 
-	void enqueueTaskToThread(const veThreadPool::TaskCallBack& callback, void* callbackParam, const std::function<void()> &func);
-    void enqueueRequest(const std::function<void()> &func);
+	void enqueueTaskToThread(const std::function<void()> &func);
+    void enqueueRequestToRenderThread(const std::function<void()> &func);
 
 	void addComponent(veComponent *component);
 	void removeComponent(veComponent *component);
+	const veComponentList& getComponentList() const { return _componentList; }
     
     void attachViewer(veViewer *viewer);
     void detachViewer(veViewer *viewer);
@@ -147,6 +149,7 @@ protected:
 
     bool   _needDestroyRenderContexts;
 	double _deltaTime;
+	double _simulationTime;
     double _resourceRecoveredIntervalTime;
 	double _latestResourceRecoveredTime;
 };

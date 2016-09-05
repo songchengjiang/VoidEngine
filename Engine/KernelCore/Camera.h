@@ -61,11 +61,13 @@ public:
 
 	void setProjectionMatrixAsOrtho(float left, float right, float bottom, float top, float zNear, float zFar);
 	void setProjectionMatrixAsPerspective(float fovy, float aspectRatio, float zNear, float zFar);
-	veMat4& projectionMatrix() { return _projectionMat; }
+	//veMat4& projectionMatrix() { return _projectionMat; }
 	const veMat4& projectionMatrix() const { return _projectionMat; }
+	void setProjectionMatrix(const veMat4 &mat);
 
 	void setViewMatrixAslookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &up);
-	veMat4& viewMatrix() { return _viewMat; }
+	void setViewMatrix(const veMat4 &mat);
+	//veMat4& viewMatrix() { return _viewMat; }
 	const veMat4& viewMatrix() const { return _viewMat; }
 
 	veVec3 convertScreenCoordsToWorldCoords(const veVec2 &sCoords, veReal zDepth = -1.0f);
@@ -85,8 +87,6 @@ public:
 	void setRenderPath(RenderPath renderPath);
 	RenderPath getRenderPath() const { return _renderPath; }
 
-	void setSkybox(veSkyBox *skybox);
-
 	const vePlane& getFrustumPlane(FrustumPlane fp);
 
 	virtual void cull(veNodeList &visibledNodeList) = 0;
@@ -101,7 +101,7 @@ public:
 
 	void setShadowCamera(bool isShadow) { _isShadowCamera = isShadow; }
 	bool isShadowCamera() const { return _isShadowCamera; }
-    
+
     
     void addPostProcesser(vePostProcesser *processer);
     const vePostProcesserList& getPostProcesserList() const { return _postProcesserList; }
@@ -135,7 +135,6 @@ protected:
 	bool _isDiscardRenderScene;
 	bool _isShadowCamera;
 
-	VE_Ptr<veSkyBox> _skybox;
 	veRenderQueue *_renderQueue;
 };
 

@@ -5,6 +5,7 @@
 #include "VE_Ptr.h"
 
 class veNode;
+class veCamera;
 class veSceneManager;
 class veViewer;
 class VE_EXPORT veComponent
@@ -21,6 +22,8 @@ public:
 	virtual void afterUpdate(veSceneManager *sm) {}
     virtual void beforeRender(veSceneManager *sm, veViewer *viewer) {}
     virtual void afterRender(veSceneManager *sm, veViewer *viewer) {}
+	virtual void beforeDraw(veSceneManager *sm, veCamera *camera) {}
+	virtual void afterDraw(veSceneManager *sm, veCamera *camera) {}
 	virtual bool onAttachToNode(veNode *node);
 	virtual bool onDetachToNode(veNode *node);
     const std::vector<veNode *>& getAttachedNodeList() const { return _attachedNodeList; }
