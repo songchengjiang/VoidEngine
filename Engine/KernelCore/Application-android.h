@@ -3,6 +3,7 @@
 #include "Application.h"
 #include <mutex>
 #include <condition_variable>
+#include <jni.h>
 
 class VE_EXPORT veApplicationAndroid : public veApplication
 {
@@ -15,9 +16,16 @@ public:
     virtual bool run() override;
     virtual void stop() override;
 
+    void setJavaVM(JavaVM *vm) { _javaVM = vm; }
+    JavaVM* getJavaVM() const { return _javaVM; }
+
 private:
 
     veApplicationAndroid();
+
+private:
+
+    JavaVM *_javaVM;
 
     //void pollAllEvents();
 

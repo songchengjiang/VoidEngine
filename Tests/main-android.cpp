@@ -1,20 +1,35 @@
 #include <jni.h>
+#include <android/asset_manager_jni.h>
 #include <errno.h>
 #include "VoidEngine.h"
+#include "FileCore/File-android.h"
 #include "TestCreator.h"
 
-void android_activity_onCreated(jobject activity){
+extern "C" {
+/*
+ * Class:     com_voidengine_lib_VEJNIWrapper
+ * Method:    nativeOnActivityCreate
+ * Signature: (Landroid/app/Activity;Landroid/content/res/AssetManager;)V
+ */
+JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnActivityCreate
+        (JNIEnv *env, jclass jthis, jobject activity, jobject assetMgr) {
+    veFileAndroid::ASSET_MANAGER = AAssetManager_fromJava(env, assetMgr);
+
     veApplication::instance()->createViewer(800, 600, "VoidEngineTest");
     TestCreator::createTest();
     veApplication::instance()->run();
+    veLog("nativeOnActivityCreate");
 }
 
-void android_activity_onDestroy(jobject activity){
+/*
+ * Class:     com_voidengine_lib_VEJNIWrapper
+ * Method:    nativeOnActivityDestroy
+ * Signature: (Landroid/app/Activity;)V
+ */
+JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnActivityDestroy
+        (JNIEnv *env, jclass jthis, jobject activity) {
     veApplication::instance()->stop();
+    veLog("nativeOnActivityDestroy");
 }
-//void android_main(struct android_app* app){
-//    static_cast<veApplicationAndroid *>(veApplication::instance())->setAndroidApp(app);
-//    veApplication::instance()->createViewer(800, 600, "VoidEngineTest");
-//    TestCreator::createTest();
-//    veApplication::instance()->run();
-//}
+
+}

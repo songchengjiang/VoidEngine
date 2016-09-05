@@ -78,6 +78,7 @@ public:
 	void setDepthTest(bool isTrue) { _depthTest = isTrue; };
 	void setDepthWrite(bool isTrue) { _depthWrite = isTrue; }
 	void setStencilTest(bool isTrue) { _stencilTest = isTrue; }
+	void setScissorTest(bool isTrue) { _scissorTest = isTrue; }
 	void setCullface(bool isTrue) { _cullFace = isTrue; }
 	void setCullfaceMode(GLenum mode) { _cullfaceMode = mode; }
 	void setBlendFunc(const veBlendFunc &func) { _blendFunc = func; }
@@ -94,6 +95,7 @@ private:
 	bool          _depthWrite;
 	bool          _stencilTest;
 	bool          _cullFace;
+	bool          _scissorTest;
 	GLenum        _cullfaceMode;
 	veBlendFunc   _blendFunc;
 	GLenum        _blendEquation;
@@ -104,6 +106,7 @@ private:
     bool          _currentDepthWrite;
     bool          _currentStencilTest;
     bool          _currentCullFace;
+	bool          _currentScissorTest;
     GLenum        _currentCullfaceMode;
     veBlendFunc   _currentBlendFunc;
     GLenum        _currentBlendEquation;

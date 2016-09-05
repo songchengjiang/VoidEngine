@@ -90,6 +90,12 @@ void veCamera::setProjectionMatrixAsPerspective(float fovy, float aspectRatio, f
 	_needRefreshFrustumPlane = true;
 }
 
+void veCamera::setProjectionMatrix(const veMat4 &mat)
+{
+	_projectionMat = mat;
+	_needRefreshFrustumPlane = true;
+}
+
 void veCamera::setViewMatrixAslookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &up)
 {
 	setMatrix(veMat4::lookAt(eye, center, up));
@@ -112,6 +118,14 @@ void veCamera::setViewMatrixAslookAt(const veVec3 &eye, const veVec3 &center, co
 	//	, u.x(), u.y(), u.z(), -u.dotProduct(eye)
 	//	, f.x(), f.y(), f.z(), -f.dotProduct(eye)
 	//	, 0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+void veCamera::setViewMatrix(const veMat4 &mat)
+{
+	refresh();
+	_matrix = _parent? mat * _parent->getNodeToWorldMatrix() : mat;
+	_matrix.inverse();
+	_viewMat = mat;
 }
 
 veVec3 veCamera::convertScreenCoordsToWorldCoords(const veVec2 &sCoords, veReal zDepth)
@@ -139,13 +153,6 @@ void veCamera::setViewport(const veViewport &vp)
 void veCamera::setRenderPath(RenderPath renderPath)
 {
 	_renderPath = renderPath;
-}
-
-void veCamera::setSkybox(veSkyBox *skybox)
-{
-	if (_skybox == skybox)
-		return;
-	_skybox = skybox;
 }
 
 const vePlane& veCamera::getFrustumPlane(FrustumPlane fp)

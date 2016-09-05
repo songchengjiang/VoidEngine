@@ -76,8 +76,8 @@ int veNode::addComponent(veComponent *com)
     if (!com) return -1;
 	auto iter = std::find(_components.begin(), _components.end(), com);
 	if (iter != _components.end()) return -1;
+	if (!com->onAttachToNode(this)) return -1;
 	_components.push_back(com);
-	com->onAttachToNode(this);
 	return int(_components.size() - 1);
 }
 
@@ -86,8 +86,8 @@ bool veNode::removeComponent(veComponent *com)
     if (!com) return false;
 	auto iter = std::find(_components.begin(), _components.end(), com);
 	if (iter == _components.end()) return false;
+	if (!com->onDetachToNode(this)) return false;
 	_components.erase(iter);
-	com->onDetachToNode(this);
 	return true;
 }
 

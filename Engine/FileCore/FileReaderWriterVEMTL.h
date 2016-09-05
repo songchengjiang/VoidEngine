@@ -310,6 +310,9 @@ private:
 								else {
 									texture->storage(tempTex->getMipmapLevels(), tempTex->getInternalFormat(), tempTex->getPixelFormat(), tempTex->getDataType());
 								}
+                                veTexture::SwizzleMode r, g, b, a;
+                                tempTex->getSwizzleMode(r, g, b, a);
+                                texture->setSwizzleMode(r, g, b, a);
 							}
 							//static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->removeTexture(tempTex);
 						}

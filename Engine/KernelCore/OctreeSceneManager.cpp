@@ -221,7 +221,6 @@ void veOctreeSceneManager::updateImp()
 void veOctreeSceneManager::renderImp(veViewer *viewer)
 {
 	if (!viewer->makeContextCurrent()) return;
-    this->getRenderState(viewer->getContextID())->resetState();
 	//culling();
 
 	//_shadowGenerator->shadowing();
@@ -260,7 +259,6 @@ void veOctreeSceneManager::renderImp(veViewer *viewer)
             }
         }
     }
-    
 	_renderPipeline->rendering(viewer);
     
     if (!_componentList.empty()) {

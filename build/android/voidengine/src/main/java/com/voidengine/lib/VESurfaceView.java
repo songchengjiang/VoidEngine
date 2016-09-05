@@ -2,46 +2,114 @@ package com.voidengine.lib;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 
+import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLContext;
+import javax.microedition.khronos.egl.EGLDisplay;
+import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
 public class VESurfaceView extends GLSurfaceView {
     private static final String TAG = "VESurfaceView";
-    protected Renderer mRenderer;
+    private Renderer mRenderer;
+    private boolean mNeedCreate = true;
 
     public VESurfaceView(Context context) {
         super(context);
         // Pick an EGLConfig with RGBA8 color, 24-bit depth, 8-bit stencil,
         // supporting OpenGL ES 2.0 or later backwards-compatible versions.
-        setEGLConfigChooser(8, 8, 8, 8, 24, 8);
-        setEGLContextClientVersion(2);
+
+        //setEGLConfigChooser(8, 8, 8, 8, 24, 8);
+        setEGLConfigChooser(new VESurfaceViewChooser());
+        setEGLContextClientVersion(3);
         setFocusableInTouchMode(true);
         mRenderer = new Renderer(this);
         setRenderer(mRenderer);
     }
 
+
+    public class VESurfaceViewChooser implements GLSurfaceView.EGLConfigChooser {
+
+        @Override
+        public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display)
+        {
+            int[] EGLattribs = {
+                    EGL10.EGL_RED_SIZE, 8,
+                    EGL10.EGL_GREEN_SIZE, 8,
+                    EGL10.EGL_BLUE_SIZE, 8,
+                    EGL10.EGL_ALPHA_SIZE, 8,
+                    EGL10.EGL_DEPTH_SIZE, 24,
+                    EGL10.EGL_STENCIL_SIZE,8,
+                    EGL10.EGL_RENDERABLE_TYPE, 0x0040, //EGL_OPENGL_ES3_BIT_KHR
+                    EGL10.EGL_SURFACE_TYPE, EGL10.EGL_WINDOW_BIT | EGL10.EGL_PBUFFER_BIT,
+                    EGL10.EGL_NONE
+            };
+            EGLConfig[] configs = new EGLConfig[1];
+            int[] numConfigs = new int[1];
+            boolean eglChooseResult = egl.eglChooseConfig(display, EGLattribs, configs, 1, numConfigs);
+            if (eglChooseResult && numConfigs[0] > 0) {
+                return configs[0];
+            }
+            return null;
+        }
+
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        this.queueEvent(new VESurfaceRunnable(this) {
+            @Override
+            public void run() {
+                if (!mSurfaceView.mNeedCreate) {
+                    VEJNIWrapper.nativeOnSurfaceDestroy(mSurfaceView);
+                }
+            }
+        });
+        super.surfaceDestroyed(holder);
+    }
+
+    abstract public class VESurfaceRunnable implements Runnable {
+        protected VESurfaceView mSurfaceView;
+        VESurfaceRunnable(VESurfaceView sv){
+            mSurfaceView = sv;
+        }
+    }
+
     @Override
     public void onPause() {
-        super.onPause();
-        VEJNIWrapper.nativeOnSurfacePause(this);
+        mNeedCreate = false;
+        this.queueEvent(new VESurfaceRunnable(this) {
+            @Override
+            public void run() {
+                VEJNIWrapper.nativeOnSurfacePause(mSurfaceView);
+            }
+        });
+        this.setRenderMode(RENDERMODE_WHEN_DIRTY);
+        //super.onPause();
     }
 
     @Override
     public void onResume() {
+        mNeedCreate = true;
         super.onResume();
-        VEJNIWrapper.nativeOnSurfaceResume(this);
+        this.setRenderMode(RENDERMODE_CONTINUOUSLY);
+        this.queueEvent(new VESurfaceRunnable(this) {
+            @Override
+            public void run() {
+                VEJNIWrapper.nativeOnSurfaceResume(mSurfaceView);
+            }
+        });
     }
 
     @Override
     protected void onSizeChanged(final int pNewSurfaceWidth, final int pNewSurfaceHeight
                                , final int pOldSurfaceWidth, final int pOldSurfaceHeight) {
         mRenderer.setSurfaceSize(pNewSurfaceWidth, pNewSurfaceHeight);
-    }
-
-    public void onDestroy() {
-        VEJNIWrapper.nativeOnSurfaceDestroy(this);
     }
 
     @Override
@@ -130,7 +198,11 @@ public class VESurfaceView extends GLSurfaceView {
         }
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            VEJNIWrapper.nativeOnSurfaceCreated(mSurfaceView, mSurfaceWidth, mSurfaceHeight);
+            if (mSurfaceView.mNeedCreate) {
+                VEJNIWrapper.nativeOnSurfaceCreated(mSurfaceView, mSurfaceWidth, mSurfaceHeight);
+            }
+            Log.i(TAG, "nativeOnSurfaceCreated");
         }
+
     }
 }

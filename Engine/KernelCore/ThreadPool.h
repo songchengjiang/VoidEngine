@@ -22,7 +22,7 @@ public:
 	void stop();
 
     template<class Func>
-    inline void enqueue(const TaskCallBack& callback, void* callbackParam, Func&& f);
+    inline void enqueue(Func&& f);
     
 protected:
 
@@ -31,7 +31,7 @@ protected:
     
 protected:
     
-	std::queue< std::function<void()> > _tasks;
+	std::queue< std::function<void()> >   _tasks;
 	//std::queue<AsyncTaskCallBack>       _taskCallBacks;
 
 	std::vector<std::thread *>          _threadPool;
@@ -44,16 +44,12 @@ protected:
 };
 
 template<class Func>
-inline void veThreadPool::enqueue(const TaskCallBack& callback, void* callbackParam, Func&& f)
+inline void veThreadPool::enqueue(Func&& f)
 {
 	if (_stop) return;
 	{
 		std::unique_lock<std::mutex> lock(_queueMutex);
-		//AsyncTaskCallBack taskCallBack;
-		//taskCallBack.callback = callback;
-		//taskCallBack.callbackParam = callbackParam;
 		_tasks.emplace(f);
-		//_taskCallBacks.emplace(taskCallBack);
 	}
 	_condition.notify_one();
 }

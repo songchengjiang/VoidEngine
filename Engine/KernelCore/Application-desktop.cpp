@@ -40,9 +40,8 @@ bool veApplicationDesktop::run()
         viewer->startSimulation();
     }
     while (_isRunning && !_viewerList.empty()) {
-        glfwPollEvents();
+        glfwWaitEvents();
         updateViewers();
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
     stop();
     return true;

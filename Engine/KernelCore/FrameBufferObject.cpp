@@ -1,5 +1,18 @@
 #include "FrameBufferObject.h"
 
+#if VE_PLATFORM == VE_PLATFORM_ANDROID
+#if !defined( GL_EXT_multisampled_render_to_texture )
+typedef void (GL_APIENTRY* PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC) (GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
+typedef void (GL_APIENTRY* PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEEXTPROC) (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLsizei samples);
+
+PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC glRenderbufferStorageMultisampleEXT = (PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC)eglGetProcAddress( "glRenderbufferStorageMultisampleEXT" );
+PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEEXTPROC glFramebufferTexture2DMultisampleEXT = (PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEEXTPROC)eglGetProcAddress( "glFramebufferTexture2DMultisampleEXT" );
+#endif
+#else
+void (*glRenderbufferStorageMultisampleEXT)(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height) = nullptr;
+void (*glFramebufferTexture2DMultisampleEXT)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLsizei samples) = nullptr;
+#endif
+
 veFrameBufferObject* veFrameBufferObject::CURRENT_FBO = nullptr;
 
 veFrameBufferObject::veFrameBufferObject()
@@ -7,6 +20,7 @@ veFrameBufferObject::veFrameBufferObject()
     , _currentrbo(0)
     , _currentfbo(0)
 	, _size(0, 0)
+	, _multisamples(0)
 	, _needRefreshAttachments(true)
 	, _needRefreshBuffers(true)
 {
@@ -33,6 +47,7 @@ veFrameBufferObject::veFrameBufferObject(const veVec2 &size)
     , _currentfbo(0)
 	, _target(GL_FRAMEBUFFER)
 	, _size(size)
+	, _multisamples(0)
 	, _needRefreshAttachments(true)
 	, _needRefreshBuffers(true)
 {
@@ -67,11 +82,36 @@ void veFrameBufferObject::setFrameBufferSize(const veVec2 &size)
 
 void veFrameBufferObject::attach(GLenum attachment, GLenum target, veTexture *attachTex, GLint layer, bool needMipmap)
 {
-	if (_attachments[attachment].target == target
-		&& _attachments[attachment].texture == attachTex
-		&& _attachments[attachment].needMipmap == needMipmap)
+	auto iter = _attachments.find(attachment);
+	if (iter != _attachments.end()) {
+		if (iter->second.target == target
+			&& iter->second.texture == attachTex
+			&& iter->second.needMipmap == needMipmap)
+			return;
+	}
+	_attachments[attachment] = AttachmentInfo{target, layer, 0, attachTex, needMipmap};
+	_needRefreshAttachments = true;
+}
+
+void veFrameBufferObject::attach(GLenum attachment, GLenum target, GLint texID, GLint layer, bool needMipmap)
+{
+	auto iter = _attachments.find(attachment);
+	if (iter != _attachments.end()) {
+		if (iter->second.target == target
+			&& iter->second.texID == texID
+			&& iter->second.needMipmap == needMipmap)
+			return;
+	}
+	_attachments[attachment] = AttachmentInfo{target, layer, texID, nullptr, needMipmap};
+	_needRefreshAttachments = true;
+}
+
+void veFrameBufferObject::setMultisamplesLevel(int samples)
+{
+	if (_multisamples == samples)
 		return;
-	_attachments[attachment] = AttachmentInfo{target, layer, attachTex, needMipmap};
+	_multisamples = samples;
+	_needRefreshBuffers = true;
 	_needRefreshAttachments = true;
 }
 
@@ -135,9 +175,17 @@ void veFrameBufferObject::refreshBuffers(unsigned int contextID, unsigned int cl
 			if (dsbo) {
 				glBindRenderbuffer(GL_RENDERBUFFER, dsbo);
 				if (hasDepthBuffer && !hasStencilBuffer)
-					glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, _size.x(), _size.y());
+					if (0 < _multisamples && glRenderbufferStorageMultisampleEXT != nullptr){
+						glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, _multisamples, GL_DEPTH_COMPONENT24, _size.x(), _size.y());
+						veLog("glRenderbufferStorageMultisampleEXT");
+					}
+					else
+						glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, _size.x(), _size.y());
 				else
-					glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _size.x(), _size.y());
+					if (0 < _multisamples && glRenderbufferStorageMultisampleEXT != nullptr)
+						glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, _multisamples, GL_DEPTH24_STENCIL8, _size.x(), _size.y());
+					else
+						glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _size.x(), _size.y());
 
 				if (hasDepthBuffer)
 					glFramebufferRenderbuffer(_target, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, dsbo);
@@ -160,20 +208,29 @@ void veFrameBufferObject::refreshAttachments(unsigned int contextID)
 	if (_needRefreshAttachments) {
 		std::vector<GLenum> mrt;
 		for (auto &iter : _attachments) {
-			if (iter.second.texture.valid()) {
+			if (iter.second.texture.valid() || 0 < iter.second.texID) {
 				if (iter.first >= GL_COLOR_ATTACHMENT0 && iter.first <= GL_COLOR_ATTACHMENT15)
 					mrt.push_back(iter.first);
 				//iter.second->storage(iter.second->getWidth(), iter.second->getHeight(), 1
 				//	, iter.second->getInternalFormat(), iter.second->getPixelFormat(), iter.second->getDataType(), nullptr);
-				iter.second.texture->bind(contextID);
+				if (iter.second.texture.valid())
+					iter.second.texture->bind(contextID);
 				if (iter.second.layer < 0)
-					glFramebufferTexture2D(_target, iter.first, iter.second.target, iter.second.texture->glTex(contextID), 0);
+					if (0 < _multisamples && glFramebufferTexture2DMultisampleEXT != nullptr){
+						glFramebufferTexture2DMultisampleEXT(_target, iter.first, iter.second.target, iter.second.texture.valid()? iter.second.texture->glTex(contextID): iter.second.texID, 0, _multisamples);
+					}
+					else {
+						glFramebufferTexture2D(_target, iter.first, iter.second.target, iter.second.texture.valid()? iter.second.texture->glTex(contextID): iter.second.texID, 0);
+					}
 				else
-					glFramebufferTextureLayer(_target, iter.first, iter.second.texture->glTex(contextID), 0, iter.second.layer);
+					glFramebufferTextureLayer(_target, iter.first, iter.second.texture.valid()? iter.second.texture->glTex(contextID): iter.second.texID, 0, iter.second.layer);
 			}
 			else {
 				if (iter.second.layer < 0)
-					glFramebufferTexture2D(_target, iter.first, 0, 0, 0);
+					if (0 < _multisamples && glFramebufferTexture2DMultisampleEXT != nullptr)
+						glFramebufferTexture2DMultisampleEXT(_target, iter.first, 0, 0, 0, 0);
+					else
+						glFramebufferTexture2D(_target, iter.first, 0, 0, 0);
 				else
 					glFramebufferTextureLayer(_target, iter.first, 0, 0, 0);
 			}

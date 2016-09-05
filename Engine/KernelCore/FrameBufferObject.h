@@ -20,6 +20,9 @@ public:
 
 	void setFrameBufferSize(const veVec2 &size);
 	void attach(GLenum attachment, GLenum target, veTexture *attachTex, GLint layer = -1, bool needMipmap = false);
+	void attach(GLenum attachment, GLenum target, GLint texID, GLint layer = -1, bool needMipmap = false);
+
+	void setMultisamplesLevel(int samples);
 
 	void bind(unsigned int contextID, unsigned int clearMask, GLenum target = GL_FRAMEBUFFER);
 	void unBind();
@@ -38,6 +41,7 @@ private:
 	{
 		GLenum target;
 		GLint layer;
+		GLint texID;
 		VE_Ptr<veTexture> texture;
 		bool   needMipmap;
 	};
@@ -47,6 +51,7 @@ private:
     VE_Ptr<veGLDataBuffer> _dsboBuffer;
 	GLenum _target;
 	veVec2 _size;
+	int    _multisamples;
 	bool _needRefreshAttachments;
 	bool _needRefreshBuffers;
 	std::map<GLenum, AttachmentInfo> _attachments;

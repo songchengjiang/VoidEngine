@@ -103,7 +103,6 @@ private:
 	GLint       _location;
 	GLint       _preLocation;
 	unsigned char _maxReLocation;
-    double        _simulationTime;
 };
 
 class VE_EXPORT veShader

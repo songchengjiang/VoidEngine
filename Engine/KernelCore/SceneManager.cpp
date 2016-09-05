@@ -22,6 +22,7 @@
 veSceneManager::veSceneManager()
 	: USE_VE_PTR_INIT
 	, _deltaTime(0.0)
+	, _simulationTime(0.0)
 	, _ambient(veVec3(1.0f))
     , _resourceRecoveredIntervalTime(10.0f)
 	, _latestResourceRecoveredTime(_resourceRecoveredIntervalTime)
@@ -170,9 +171,9 @@ void veSceneManager::addComponent(veComponent *component)
 	if (iter != _componentList.end())
 		return;
 	_componentList.push_back(component);
-    std::sort(_componentList.begin(), _componentList.end(), [this](const VE_Ptr<veComponent> &left, const VE_Ptr<veComponent> &right) -> bool{
-        return left->getUpdateOrder() < right->getUpdateOrder();
-    });
+	std::sort(_componentList.begin(), _componentList.end(), [this](const VE_Ptr<veComponent> &left, const VE_Ptr<veComponent> &right) -> bool{
+		return left->getUpdateOrder() < right->getUpdateOrder();
+	});
 }
 
 void veSceneManager::removeComponent(veComponent *component)
@@ -256,6 +257,7 @@ void veSceneManager::update(veViewer *viewer)
 		std::unique_lock<std::mutex> renderLock(_renderingMutex);
 		_renderingCondition.notify_all();
 	}
+	_simulationTime += _deltaTime;
 	//render();
 }
 
@@ -267,6 +269,7 @@ void veSceneManager::render(veViewer *viewer)
         veGLDataBufferManager::instance()->destroyAllGLDataBuffer();
         _needDestroyRenderContexts = false;
     }
+    this->handleRequests();
     this->renderImp(viewer);
     this->postRenderHandle();
 }
@@ -295,15 +298,14 @@ void veSceneManager::stopThreading()
 	//_renderingThread.join();
 }
 
-void veSceneManager::enqueueTaskToThread(const veThreadPool::TaskCallBack& callback, void* callbackParam, const std::function<void()> &func)
+void veSceneManager::enqueueTaskToThread(const std::function<void()> &func)
 {
-	_threadPool.enqueue(callback, callbackParam, func);
+	_threadPool.enqueue(func);
 }
 
 void veSceneManager::postRenderHandle()
 {
 	std::unique_lock<std::mutex> updateLock(_updatingMutex);
-	handleRequests();
 	resourceRecovery();
 }
 
@@ -331,7 +333,7 @@ void veSceneManager::handleRequests()
 	}
 }
 
-void veSceneManager::enqueueRequest(const std::function<void()> &func)
+void veSceneManager::enqueueRequestToRenderThread(const std::function<void()> &func)
 {
 	std::unique_lock<std::mutex> lock(_requestQueueMutex);
 	_requestQueue.push_back(func);

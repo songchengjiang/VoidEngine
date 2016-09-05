@@ -87,9 +87,9 @@ bool veRay::isIntersectWith(const veBoundingBox &bbox)
 	veReal vx = veMath::veAbs(w.x());
 	veReal vy = veMath::veAbs(w.y());
 	veReal vz = veMath::veAbs(w.z());
-	if ((vx + h.x()) < veMath::veAbs(c.x())) 
+	if ((vx + h.x()) < veMath::veAbs(c.x()))
 		return false;
-	if ((vy + h.y()) < veMath::veAbs(c.y())) 
+	if ((vy + h.y()) < veMath::veAbs(c.y()))
 		return false;
 	if ((vz + h.z()) < veMath::veAbs(c.z()))
 		return false;
@@ -116,6 +116,7 @@ bool veRay::isIntersectWith(const vePlane &plane, veVec3 *intersectPoint)
     return true;
 }
 
+//Real Time Rendering, Third Edition(Ray/Triangle Intersection)
 bool veRay::isIntersectWith(const veVec3 &p0, const veVec3 &p1, const veVec3 &p2, veVec3 *intersectPoint, veVec3 *intersectNormal)
 {
 	veVec3 e1 = p1 - p0;

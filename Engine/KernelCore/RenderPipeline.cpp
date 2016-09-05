@@ -145,13 +145,13 @@ void veRenderPipeline::renderCameras(veViewer *viewer)
             camera != viewer->getCamera() &&
             !camera->getViewport().isNull() &&
             camera->getFrameBufferObject()) {
-			//_sceneManager->getRenderState(viewer->getContextID())->resetState();
+			_sceneManager->getRenderState(viewer->getContextID())->resetState();
             visitRenderQueues(camera, viewer->getContextID());
 			renderScene(camera, viewer->getContextID());
 		}
 	}
 	if (viewer->getCamera()) {
-		//_sceneManager->getRenderState(viewer->getContextID())->resetState();
+		_sceneManager->getRenderState(viewer->getContextID())->resetState();
         if (viewer->getCamera()->isVisible()){
             visitRenderQueues(viewer->getCamera(), viewer->getContextID());
             auto vp = viewer->getCamera()->getViewport();
@@ -226,7 +226,7 @@ void veRenderPipeline::renderDirectionalLightShadow(veLight *light, veViewer *vi
 		return false;
     };
     
-	//_sceneManager->getRenderState(viewer->getContextID())->resetState();
+	_sceneManager->getRenderState(viewer->getContextID())->resetState();
 	_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dLight->getShadowTexture());
 	_shadowingFBO->bind(viewer->getContextID(), GL_DEPTH_BUFFER_BIT);
 	//glClear(GL_DEPTH_BUFFER_BIT);
@@ -253,7 +253,7 @@ void veRenderPipeline::renderPointLightShadow(veLight *light, veViewer *viewer)
     };
     
 	for (unsigned short i = 0; i < 6; ++i) {
-		//_sceneManager->getRenderState(viewer->getContextID())->resetState();
+		_sceneManager->getRenderState(viewer->getContextID())->resetState();
 		_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, pLight->getShadowTexture());
 		_shadowingFBO->bind(viewer->getContextID(), GL_DEPTH_BUFFER_BIT);
 		//glClear(GL_DEPTH_BUFFER_BIT);
@@ -280,7 +280,7 @@ void veRenderPipeline::renderSpotLightShadow(veLight *light, veViewer *viewer)
 		return false;
     };
     
-	//_sceneManager->getRenderState(viewer->getContextID())->resetState();
+	_sceneManager->getRenderState(viewer->getContextID())->resetState();
 	_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, sLight->getShadowTexture());
 	_shadowingFBO->bind(viewer->getContextID(), GL_DEPTH_BUFFER_BIT);
 	//glClear(GL_DEPTH_BUFFER_BIT);

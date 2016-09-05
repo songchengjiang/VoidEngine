@@ -72,12 +72,14 @@ public:
 		, _defaultCameraZoomScale(defaultCameraZoomScale)
 		, _simulationTime(0.0)
 		, _latesTouchTime(0.0)
+        , _sceneManager(nullptr)
 	{
 		resetCamera();
 	}
 	~CameraManipulator(){}
 
 	virtual void beforeUpdate(veSceneManager *sm) override {
+        _sceneManager = sm;
 		_simulationTime += sm->getDeltaTime();
 	}
 
@@ -196,13 +198,25 @@ private:
 
 	void updateViewMatrix()
 	{
-		veMat4 center;
-		center.makeTranslation(_center);
-		veMat4 trans;
-		trans.makeTranslation(_translate);
-
-		if (_camera)
-			_camera->setMatrix(center * veMat4::rotation(_rotation) * trans);
+        if (_sceneManager) {
+            _sceneManager->enqueueRequestToRenderThread([this]{
+                veMat4 center;
+                center.makeTranslation(_center);
+                veMat4 trans;
+                trans.makeTranslation(_translate);
+                
+                if (_camera)
+                    _camera->setMatrix(center * veMat4::rotation(_rotation) * trans);
+            });
+        }else{
+            veMat4 center;
+            center.makeTranslation(_center);
+            veMat4 trans;
+            trans.makeTranslation(_translate);
+            
+            if (_camera)
+                _camera->setMatrix(center * veMat4::rotation(_rotation) * trans);
+        }
 	}
 
 	void trackball(veVec3 & axis, float & angle, float p1x, float p1y, float p2x, float p2y) {
@@ -253,6 +267,7 @@ private:
 	veReal _defaultCameraZoomScale;
 	double _simulationTime;
 	double _latesTouchTime;
+    veSceneManager *_sceneManager;
 };
 
 class BaseTest

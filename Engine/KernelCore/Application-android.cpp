@@ -4,33 +4,17 @@
 #include <android/input.h>
 #include <android/asset_manager_jni.h>
 
-void android_activity_onCreated(jobject activity) __attribute__((weak));
-void android_activity_onDestroy(jobject activity) __attribute__((weak));
+//extern void android_activity_onCreated(JNIEnv *env, jobject activity) __attribute__((weak));
+//extern void android_activity_onDestroy(JNIEnv *env, jobject activity) __attribute__((weak));
 
 extern "C" {
-/*
- * Class:     com_voidengine_lib_VEJNIWrapper
- * Method:    nativeOnActivityCreate
- * Signature: (Landroid/app/Activity;Landroid/content/res/AssetManager;)V
- */
-JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnActivityCreate
-        (JNIEnv *env, jclass jthis, jobject activity, jobject assetMgr)
-{
-    veFileAndroid::ASSET_MANAGER = AAssetManager_fromJava(env, assetMgr);
-    android_activity_onCreated(activity);
-}
 
-/*
- * Class:     com_voidengine_lib_VEJNIWrapper
- * Method:    nativeOnActivityDestroy
- * Signature: (Landroid/app/Activity;)V
- */
-JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnActivityDestroy
-        (JNIEnv *env, jclass jthis, jobject activity)
+JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved)
 {
-    android_activity_onDestroy(activity);
+    static_cast<veApplicationAndroid *>(veApplication::instance())->setJavaVM(vm);
+    veLog("VE: JNI_OnLoad");
+    return JNI_VERSION_1_4;
 }
-
 /*
  * Class:     com_voidengine_lib_VEJNIWrapper
  * Method:    nativeOnSurfacePause
@@ -39,6 +23,9 @@ JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnActivityDest
 JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfacePause
         (JNIEnv *env, jclass jthis, jobject surfaceview)
 {
+    if (0 < veApplication::instance()->getViewerCount()) {
+        static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->onPause();
+    }
     veLog("nativeOnSurfacePause");
 }
 
@@ -50,7 +37,9 @@ JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfacePause
 JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfaceResume
         (JNIEnv *env, jclass jthis, jobject surfaceview)
 {
-    static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->getSceneManager()->destroyRenderContexts();
+    if (0 < veApplication::instance()->getViewerCount()) {
+        static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->onResume();
+    }
     veLog("nativeOnSurfaceResume");
 }
 
@@ -62,6 +51,9 @@ JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfaceResum
 JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfaceCreated
         (JNIEnv *env, jclass jthis, jobject surfaceview, jint width, jint height)
 {
+    if (0 < veApplication::instance()->getViewerCount()) {
+        static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->onCreated(width, height);
+    }
     veLog("nativeOnSurfaceCreated");
 }
 
@@ -73,7 +65,9 @@ JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfaceCreat
 JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfaceDestroy
         (JNIEnv *env, jclass jthis, jobject surfaceview)
 {
-    //android_surface_onDestroy(surfaceview);
+    if (0 < veApplication::instance()->getViewerCount()) {
+        static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->onDestroy();
+    }
     veLog("nativeOnSurfaceDestroy");
 }
 
@@ -86,10 +80,9 @@ JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfaceChang
         (JNIEnv *env, jclass jthis, jobject surfaceview, jint width, jint height)
 {
     if (0 < veApplication::instance()->getViewerCount()) {
-        static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->resize(width, height);
-        static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->getSceneManager()->destroyRenderContexts();
+        static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->onChanged(width, height);
     }
-     veLog("nativeOnSurfaceChanged");
+    veLog("nativeOnSurfaceChanged");
 }
 
 /*
@@ -101,9 +94,9 @@ JNIEXPORT void JNICALL Java_com_voidengine_lib_VEJNIWrapper_nativeOnSurfaceDrawF
         (JNIEnv *env, jclass jthis, jobject surfaceview)
 {
     if (0 < veApplication::instance()->getViewerCount()) {
-        static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->render();
+        static_cast<veViewerAndroid *>(veApplication::instance()->getViewer(0))->onDrawFrame();
     }
-    //veLog("nativeOnDrawFrame");
+//    veLog("nativeOnDrawFrame");
 }
 
 /*
@@ -171,7 +164,7 @@ veApplicationAndroid::veApplicationAndroid()
 
 veApplicationAndroid::~veApplicationAndroid() {
     stop();
-    for (auto &viewer : _viewerList){
+    for (auto &viewer : _viewerList) {
         VE_SAFE_DELETE(viewer);
     }
 }
@@ -196,7 +189,7 @@ bool veApplicationAndroid::run()
 {
     if (_viewerList.empty()) return false;
 
-    for (auto &viewer : _viewerList){
+    for (auto &viewer : _viewerList) {
         viewer->create();
         viewer->startSimulation();
     }
@@ -205,7 +198,7 @@ bool veApplicationAndroid::run()
 
 void veApplicationAndroid::stop()
 {
-    for (auto &viewer : _viewerList){
+    for (auto &viewer : _viewerList) {
         viewer->stopSimulation();
         viewer->destroy();
     }

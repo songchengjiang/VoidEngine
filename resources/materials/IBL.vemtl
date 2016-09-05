@@ -9,12 +9,14 @@
                       "name": "IBL_TECH",
                       "passes": [
                           {
+                              "renderPass": "FORWARD",
                               "depthTest": true,
                               "depthWrite": true,
                               "cullFace": true,
                               "shaders": [
                                   {
                                       "type": "VERTEX_SHADER",
+                                      "defination": "#define ATTR_POSITION 0\n#define ATTR_NORMAL 1\n#define ATTR_TANGENT 2\n#define ATTR_BITANGENT 3\n#define ATTR_TEXTURE_COORD0 4\n",
                                       "source": "IBL.vert",
                                       "u_ModelViewProjectMat": "MVP_MATRIX",
                                       "u_ModelMat": "M_MATRIX",
@@ -24,32 +26,26 @@
                                   {
                                       "type": "FRAGMENT_SHADER",
                                       "source": "IBL.frag",
-                                      "u_IBLEnvMap" : 0,
-                                      "u_IBLDiffMap": 1,
-                                      "u_IBLSpecMap": 2
+                                      "u_IBLDiffMap": 0,
+                                      "u_IBLSpecMap": 1
                                   }
                               ],
                               "textureUnits": [
                                   {
-                                      "name": "IBL_Florence_env",
-                                      "source": "textures/IBL_Florence_env.exr",
-                                      "texType": "AMBIENT_TEXTURE",
-                                      "type": "TEX_2D",
-                                      "wrap": "CLAMP"                    
-                                  },
-                                  {
                                       "name": "IBL_Florence_diff",
-                                      "source": "textures/IBL_Florence_diff.exr",
+                                      "source": "textures/output_iem.ktx",
                                       "texType": "DIFFUSE_TEXTURE",
                                       "type": "TEX_2D",
-                                      "wrap": "CLAMP"                    
+                                      "wrap": "REPEAT",
+                                      "filter": "LINEAR"
                                   },
                                   {
                                       "name": "IBL_Florence_spec",
-                                      "source": "textures/IBL_Florence_spec.exr",
+                                      "source": "textures/output_pmrem.ktx",
                                       "texType": "SPECULAR_TEXTURE",
                                       "type": "TEX_2D",
-                                      "wrap": "CLAMP"                    
+                                      "wrap": "REPEAT",
+                                      "filter": "LINEAR_MIP_MAP_LINEAR"
                                   }                                  
                               ]  
                           }

@@ -5,6 +5,7 @@
 #include "Configuration.h"
 
 static const char* COMMON_FUNCTIONS = " \
+	precision highp float;           \n \
 	vec3 decode(vec3 encoded) {     \n \
         float nz = floor(encoded.z * 255.0) / 16.0;     \n \
         vec2 dec = encoded.xy + vec2(floor(nz) / 16.0, fract(nz)) / 255.0;     \n \
@@ -19,7 +20,7 @@ static const char* COMMON_FUNCTIONS = " \
 			                                                                                                          \n\
 		float roughness2 = roughness * roughness;                                                                     \n\
 		float A = 1.0 - 0.5 * (roughness2 / (roughness2 + 0.33));                                                     \n\
-		float B = 0.45 * (roughness2 / (roughness2 + 0.09));                                                          \n\
+		float B = 0.45 * (roughness2 / (roughness2 + 0.09));                                                           \n\
 		float C = max(0.0, dot(normalize(vdir - norm * NdotV), normalize(ldir - norm * NdotL)));                      \n\
 		float NdotLAgl = acos(NdotL);                                                                                 \n\
 		float NdotVAgl = acos(NdotV);                                                                                 \n\
@@ -243,8 +244,9 @@ static const char* POINT_LIGHT_F_SHADER = " \
 																						\n \
 		vec3 eyeDir = normalize(u_cameraPosInWorld - worldPosition.xyz);     \n \
 		vec3 lightDir = u_lightPosition - worldPosition.xyz;     \n \
-		vec3 attDis = lightDir * u_lightARI;     \n \
-		float attenuation = clamp(1.0 - dot(attDis, attDis), 0.0, 1.0);     \n \
+		float attDis = 1.0 + length(lightDir) * u_lightARI;     \n \
+        attDis = 1.0 / (attDis * attDis);\n \
+		float attenuation = clamp(attDis, 0.0, 1.0);     \n \
 		lightDir = normalize(lightDir);     \n \
 																						\n \
 		float NdotL = max(0.0, dot(worldNormal, lightDir));     \n \
@@ -412,7 +414,10 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, unsigned int contex
 	params.fullScreenSurface->update(_sceneManager->getRootNode(), _sceneManager);
 	params.fullScreenSurface->render(_sceneManager->getRootNode(), camera, contextID);
 	if (camera->getFrameBufferObject())
-		camera->getFrameBufferObject()->bind(contextID, camera->getClearMask(), GL_DRAW_FRAMEBUFFER);
+		camera->getFrameBufferObject()->bind(contextID, camera->getClearMask());
+	for (auto &comp : _sceneManager->getComponentList()) {
+		(comp.get())->beforeDraw(_sceneManager, camera);
+	}
 	if (!camera->getPostProcesserList().empty()) {
 		if (!_postProcesserFBO.valid())
 			_postProcesserFBO = _sceneManager->createFrameBufferObject("_VE_DEFERRED_RENDER_PIPELINE_POST_PROCESSER_FBO_");
@@ -422,7 +427,11 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, unsigned int contex
 			processer->process(this, _postProcesserFBO.get(), camera, contextID);
 		}
 	}
+	prepareForDraws(camera);
 	draw(camera, camera->getRenderQueue()->forwardRenderGroup);
+	for (auto &comp : _sceneManager->getComponentList()) {
+		(comp.get())->afterDraw(_sceneManager, camera);
+	}
 	if (camera->getFrameBufferObject())
 		camera->getFrameBufferObject()->unBind();
 }
@@ -432,7 +441,7 @@ veDeferredRenderPipeline::CameraRenderParams& veDeferredRenderPipeline::getCamer
 	auto &params = _cameraRenderParamsList[camera];
 	if (!params.FBO.valid()) {
 		params.FBO = _sceneManager->createFrameBufferObject(camera->getName() + std::string("_VE_DEFERRED_RENDER_PIPELINE_FBO_"));
-		params.DS = _sceneManager->createTexture(camera->getName() + std::string("_VE_DEFERRED_RENDER_PIPELINE_DS_"));
+		params.DS  = _sceneManager->createTexture(camera->getName() + std::string("_VE_DEFERRED_RENDER_PIPELINE_DS_"));
 		params.RT0 = _sceneManager->createTexture(camera->getName() + std::string("_VE_DEFERRED_RENDER_PIPELINE_RT0_"));
 		params.RT1 = _sceneManager->createTexture(camera->getName() + std::string("_VE_DEFERRED_RENDER_PIPELINE_RT1_"));
 		params.RT2 = _sceneManager->createTexture(camera->getName() + std::string("_VE_DEFERRED_RENDER_PIPELINE_RT2_"));
