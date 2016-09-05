@@ -1,2 +1,4 @@
-include ':voidengine', ':vetests'
+include ':voidengine', ':vetests', ':vrtests'
 
+include ':vrapi'
+project(':vrapi').projectDir = new File(settingsDir, '../../Dependents/gearvr/VrApi/Projects/AndroidPrebuilt')

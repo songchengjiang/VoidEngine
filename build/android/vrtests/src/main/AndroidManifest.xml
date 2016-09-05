@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.voidengine.vrtests">
+
+    <uses-sdk android:minSdkVersion="19" android:targetSdkVersion="19" />
+    <uses-feature android:glEsVersion="0x00030000" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+
+        <meta-data android:name="android.app.lib_name"
+            android:value="vrtests" />
+        <meta-data android:name="com.samsung.android.vr.application.mode" android:value="vr_only"/>
+
+        <activity android:name=".VRTestsActivity"
+                  android:launchMode="singleTask"
+                  android:screenOrientation="landscape"
+                  android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+                  android:configChanges="orientation|keyboardHidden|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+    <!-- Allow reading of the appropriate lens distortion file for the device. -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!-- Network access needed for OVRMonitor -->
+    <uses-permission android:name="android.permission.INTERNET" />
+</manifest>

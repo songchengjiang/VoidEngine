@@ -25,7 +25,7 @@ model {
         buildToolsVersion = "23.0.2"
 
         defaultConfig.with {
-            applicationId = "com.voidengine.vetests"
+            applicationId = "com.voidengine.vrtests"
             minSdkVersion.apiLevel = 19
             targetSdkVersion.apiLevel = 23
             versionCode = 1
@@ -39,7 +39,7 @@ model {
         main {
             jni {
                 source {
-                    srcDirs = ["../../../Tests"]
+                    srcDirs = ["../../../TestsVR"]
                 }
 
                 dependencies {
@@ -66,7 +66,7 @@ model {
 //    }
 
     android.ndk {
-        moduleName = "vetests"
+        moduleName = "vrtests"
 //        CFlags.add("-I${file("../../../Engine")}".toString())
 //        CFlags.add("-I${ndkDir}/sources/android/native_app_glue".toString())
         cppFlags.add("-I${file("../../../Engine")}".toString())
@@ -96,37 +96,6 @@ model {
         }
     }
 
-//    android.productFlavors {
-//        create("arm7") {
-//            ndk.abiFilters += "armeabi-v7a"
-////            ndk.ldFlags += "${file("../../../Dependents/libpng/lib/android/armeabi-v7a/libpng.a")}".toString()
-////            ndk.ldFlags += "${file("../../../Dependents/freetype/lib/android/armeabi-v7a/libfreetype.a")}".toString()
-////            ndk.ldFlags += "${file("../../../Dependents/libjpeg/lib/android/armeabi-v7a/libjpeg.a")}".toString()
-////            ndk.ldFlags += "${file("../../../Dependents/openexr/lib/android/armeabi-v7a/libopenexr.a")}".toString()
-////            ndk.ldFlags += "${file("../../../Dependents/zlib/lib/android/armeabi-v7a/libz.a")}".toString()
-//        }
-//        create("arm8") {
-//            ndk.abiFilters += "arm64-v8a"
-////            ndk.ldFlags += "${file("../../../Dependents/libpng/lib/android/arm64-v8a/libpng.a")}".toString()
-////            ndk.ldFlags += "${file("../../../Dependents/freetype/lib/android/arm64-v8a/libfreetype.a")}".toString()
-////            ndk.ldFlags += "${file("../../../Dependents/libjpeg/lib/android/arm64-v8a/libjpeg.a")}".toString()
-////            ndk.ldFlags += "${file("../../../Dependents/openexr/lib/android/arm64-v8a/libopenexr.a")}".toString()
-////            ndk.ldFlags += "${file("../../../Dependents/zlib/lib/android/arm64-v8a/libz.a")}".toString()
-//        }
-//        create("x86-64") {
-//            ndk.abiFilters += "x86_64"
-////            ndk.ldFlags += "${file("../../../Dependents/libpng/lib/android/x86_64/libpng.a")}".toString()
-////            ndk.ldFlags += "${file("../../../Dependents/freetype/lib/android/x86_64/libfreetype.a")}".toString()
-////            ndk.ldFlags += "${file("../../../Dependents/libjpeg/lib/android/x86_64/libjpeg.a")}".toString()
-////            ndk.ldFlags += "${file("../../../Dependents/openexr/lib/android/x86_64/libopenexr.a")}".toString()
-////            ndk.ldFlags += "${file("../../../Dependents/zlib/lib/android/x86_64/libz.a")}".toString()
-//        }
-//        // for detailed abiFilter descriptions, refer to "Supported ABIs" @
-//        // https://developer.android.com/ndk/guides/abis.html#sa
-//
-//        // build one including all cpu architectures
-//        // create("all")
-//    }
 }
 //dependencies {
 //    println rootProject.getName()

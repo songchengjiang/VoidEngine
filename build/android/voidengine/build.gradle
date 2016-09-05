@@ -1,7 +1,5 @@
 apply plugin: 'com.android.model.library'
-
 def dependents_root = '../../../Dependents'
-
 def ndkDir = System.getenv("ANDROID_NDK_HOME")
 def propertiesFile = project.rootProject.file('local.properties')
 if (propertiesFile.exists()) {
@@ -9,7 +7,6 @@ if (propertiesFile.exists()) {
     properties.load(propertiesFile.newDataInputStream())
     ndkDir = properties.getProperty('ndk.dir')
 }
-
 model {
 
 
@@ -60,6 +57,15 @@ model {
                     staticLibraryFile = file("${dependents_root}/zlib/lib/android/${targetPlatform.getName()}/libz.a")
                 }
             }
+
+            libvrapi {
+                // Inform Android Studio where header file dir for this lib
+                headers.srcDir "${dependents_root}"
+                // Inform Android Studio where lib is -- each ABI should have a lib file
+                binaries.withType(SharedLibraryBinary) {
+                    sharedLibraryFile = file("${dependents_root}/gearvr/VrApi/Libs/Android/${targetPlatform.getName()}/libvrapi.so")
+                }
+            }
         }
     }
 
@@ -68,7 +74,7 @@ model {
         buildToolsVersion = "23.0.2"
 
         defaultConfig.with {
-            minSdkVersion.apiLevel = 18
+            minSdkVersion.apiLevel = 19
             targetSdkVersion.apiLevel = 23
             versionCode = 1
             versionName = "1.0"
@@ -89,6 +95,7 @@ model {
                     library 'libjpeg' linkage 'static'
                     library 'libopenexr' linkage 'static'
                     library 'libz' linkage 'static'
+                    library 'libvrapi' linkage 'shared'
                 }
             }
 
@@ -103,9 +110,7 @@ model {
     android.ndk {
         moduleName = "voidengine"
         CFlags.add("-I${file("../../../Engine")}".toString())
-        CFlags.add("-I${ndkDir}/sources/android/native_app_glue".toString())
         cppFlags.add("-I${file("../../../Engine")}".toString())
-        cppFlags.add("-I${ndkDir}/sources/android/native_app_glue".toString())
 //        cppFlags += "-I${file("../../../Dependents")}".toString()
 //        cppFlags += "-I${file("../../../Dependents/freetype/include")}".toString()
         //cppFlags.add("-I${file("../../../Dependents/gli")}".toString())
@@ -117,7 +122,7 @@ model {
         cppFlags.add("-std=c++11")
         ldLibs.addAll(["log", "GLESv3", "EGL", "android"])
         //ldFlags.add("-c")
-        abiFilters.addAll(['armeabi', 'armeabi-v7a'])
+        abiFilters.addAll(['armeabi-v7a'])
         stl = "gnustl_static"
     }
 
@@ -163,11 +168,18 @@ model {
 // This is just copy out the header file and built lib into distribution
 // directory for clint application to use; it is a small overhead of this sample:
 //    both lib and app are put inside one project space [save maintenance time]
-task(distributeLib, type : Copy) {
+task(distributeLib, type: Copy) {
     // trigger build library
     dependsOn assemble
     into './'
     from('build/intermediates/binaries/release/lib') {
         into 'libs/'
     }
+
+    from("${dependents_root}/gearvr/VrApi/Libs/Android") {
+        into 'libs/'
+    }
+}
+dependencies {
+    compile project(':vrapi')
 }
