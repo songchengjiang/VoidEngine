@@ -77,7 +77,7 @@
                             ],
                           "textureUnits": [
                             {
-                              "name": "skybox.snow.texture",
+                              "name": "skybox.texture",
                               "type": "TEX_CUBE"
                             }
                           ]
@@ -109,7 +109,7 @@
                       ],
                       "textureUnits": [
                         {
-                          "name": "skybox.snow.texture",
+                          "name": "skybox.texture",
                           "type": "TEX_CUBE"                  
                         }
                       ]
@@ -142,7 +142,7 @@
                               ],
                               "textureUnits": [
                                   {
-                                      "name": "skybox.snow.texture",
+                                      "name": "skybox.texture",
                                       "type": "TEX_CUBE"                                   
                                   }
                               ]  

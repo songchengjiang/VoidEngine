@@ -21,6 +21,12 @@ uniform sampler2D u_normalTex;
 uniform float u_displacement;
 uniform sampler2D u_displacementTex;
 #endif
+#ifdef VE_USE_ROUGHNESS_TEXTURE
+uniform sampler2D u_roughnessTex;
+#endif
+#ifdef VE_USE_REFLECTION_TEXTURE
+uniform sampler2D u_reflectionTex;
+#endif
 
 in vec3 v_viewNormal;
 #ifdef VE_USE_NROMAL_MAPPING
@@ -102,13 +108,21 @@ void main(){
 #else
 	RT1.xyz = u_diffuse;
 #endif
+#ifdef VE_USE_ROUGHNESS_TEXTURE
+    RT1.w = u_roughness * texture(u_roughnessTex, texcoord).x;
+#else
 	RT1.w = u_roughness;
+#endif
 
 #ifdef VE_USE_SPECULAR_TEXTURE
 	RT2.xyz = u_specular * texture(u_specularTex, texcoord).xyz;
 #else
 	RT2.xyz = u_specular;
 #endif
+#ifdef VE_USE_REFLECTION_TEXTURE
+    RT2.w = u_fresnel * texture(u_reflectionTex, texcoord).x;
+#else
 	RT2.w = u_fresnel;
+#endif
 
 }

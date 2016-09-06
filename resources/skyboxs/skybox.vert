@@ -5,6 +5,6 @@ uniform mat4 u_ModelViewProjectMat;
 out vec3 v_texcoord;
 void main()
 {
-	v_texcoord =  vec3(position.x, -position.yz); //see http://www.3dcpptutorials.sk/index.php?id=24
+	v_texcoord =  vec3(position.x, position.yz); //see http://www.3dcpptutorials.sk/index.php?id=24
 	gl_Position = u_ModelViewProjectMat * vec4(position, 1.0);
 }

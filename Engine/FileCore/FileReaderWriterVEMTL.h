@@ -562,6 +562,9 @@ private:
 		else if (strcmp(LIGHTMAP_TEXTURE_KEY.c_str(), str) == 0) {
 			return vePass::LIGHTMAP_TEXTURE;
 		}
+        else if (strcmp(ROUGHNESS_TEXTURE_KEY.c_str(), str) == 0) {
+            return vePass::ROUGHNESS_TEXTURE;
+        }
 		else if (strcmp(REFLECTION_TEXTURE_KEY.c_str(), str) == 0) {
 			return vePass::REFLECTION_TEXTURE;
 		}

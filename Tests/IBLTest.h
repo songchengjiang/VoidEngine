@@ -20,49 +20,63 @@ class IBLTest : public BaseTest
 {
 public:
 	IBLTest() {
-		auto IBLMats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "materials/IBL.vemtl", "IBL"));
 		veNode *root = _sceneManager->createNode("root");
+        
+        float fresnel = 0.0f;
+        for (float x = -15.0; x <= 15.0; x += 5) {
+            float roughness = 0.0f;
+            for (float y = -15.0; y <= 15.0; y += 5) {
+                auto IBLMats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "materials/IBL.vemtl", "IBL"));
+                veNode *entity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "sphere-0"));
+                veTransformer *transer = new veTransformer;
+                entity->addComponent(transer);
+                transer->setPosition(veVec3(x, y, 0.0f));
+                transer->setScale(veVec3(2.0f));
+                root->addChild(entity);
+                
+                IBLMats->getMaterial(0)->getTechnique(0)->getPass(0)->getUniform("u_roughness")->setValue(roughness);
+                IBLMats->getMaterial(0)->getTechnique(0)->getPass(0)->getUniform("u_fresnel")->setValue(fresnel);
+                setRenderableObjectMat(entity, IBLMats->getMaterial(0));
+                roughness += 1.0f / 6.0f;
+            }
+            fresnel += 1.0f / 6.0f;
+        }
+        
+
 		{
-			veNode *entity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "sphere-0"));
-			//node->addComponent(new KeyboardInputer);
-			veTransformer *transer = new veTransformer;
-			entity->addComponent(transer);
-			transer->setPosition(veVec3(0.0f, 0.0f, 0.0f));
-			transer->setScale(veVec3(2.0f));
-			root->addChild(entity);
-
-            setRenderableObjectMat(entity, IBLMats->getMaterial(0));
+            veNode *lightNode = _sceneManager->createNode("IBNode");
+            veIBLight *ibLight = static_cast<veIBLight *>(_sceneManager->createLight(veLight::IB, "ibLight"));
+            lightNode->addComponent(ibLight);
+			veTransformer *lightTranser = new veTransformer;
+			lightNode->addComponent(lightTranser);
+			//point->addComponent(new LightUpdater(15.0f, 0.0f));
+			ibLight->setIntensity(1.0f);
+            
+            veTexture *diffLighting = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/output_iem.ktx", "DiffLighting"));
+            diffLighting->setWrapMode(veTexture::REPEAT);
+            diffLighting->setFilterMode(veTexture::LINEAR);
+            veTexture *specLighting = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/output_pmrem.ktx", "SpecLighting"));
+            specLighting->setWrapMode(veTexture::REPEAT);
+            specLighting->setFilterMode(veTexture::LINEAR_MIP_MAP_LINEAR);
+            ibLight->setDiffuseLightingTexture(diffLighting);
+            ibLight->setSpecularLightingTexture(specLighting);
+			root->addChild(lightNode);
 		}
-
-//		{
-//            veNode *lightNode = _sceneManager->createNode("pointNode");
-//			veLight *point = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "point0"));
-//            lightNode->addComponent(point);
-//			veTransformer *lightTranser = new veTransformer;
-//			lightNode->addComponent(lightTranser);
-//			//point->addComponent(new LightUpdater(15.0f, 0.0f));
-//			point->setIntensity(1.0f);
-//			lightTranser->setPosition(veVec3(0.0f, 0.0f, 3.0f));
-//
-//			veNode *lightentity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "point0-sphere"));
-//			lightentity->setMatrix(veMat4::scale(veVec3(0.2f)));
-//			lightNode->addChild(lightentity);
-//			point->shadowEnable(false);
-//			point->setUseSoftShadow(true);
-//			point->setShadowSoftness(0.05f);
-//			point->setShadowBias(0.001f);
-//			root->addChild(lightNode);
-//		}
         
         {
             auto skyBox = _sceneManager->createSkyBox("skybox");
             _sceneManager->setSkyBox(skyBox);
-            veMaterialArray *materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "skyboxs/skybox-snow.vemtl", "skybox-mats"));
+            veMaterialArray *materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "skyboxs/skybox-bolonga.vemtl", "skybox-mats"));
             skyBox->setMaterial(materials->getMaterial(0));
         }
+        
+        
+        int width = _mainViewer->width();
+        int height = _mainViewer->height();
+        _camera->setProjectionMatrixAsPerspective(60.0f, (float)width / (float)height, 1.0f, 1000.0f);
 
 		_sceneManager->getRootNode()->addChild(root);
-		_sceneManager->setAmbientColor(veVec3(1.0f));
+		_sceneManager->setAmbientColor(veVec3(0.0f));
 	};
 	~IBLTest() {};
 

@@ -144,6 +144,26 @@ public:
             transer->setRotation(veQuat(-veMath::HALF_PI, veVec3::UNIT_X));
         }
         
+        {
+            veNode *lightNode = _sceneManager->createNode("IBNode");
+            veIBLight *ibLight = static_cast<veIBLight *>(_sceneManager->createLight(veLight::IB, "ibLight"));
+            lightNode->addComponent(ibLight);
+            veTransformer *lightTranser = new veTransformer;
+            lightNode->addComponent(lightTranser);
+            //point->addComponent(new LightUpdater(15.0f, 0.0f));
+            ibLight->setIntensity(1.0f);
+            
+            veTexture *diffLighting = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/output_iem.ktx", "DiffLighting"));
+            diffLighting->setWrapMode(veTexture::REPEAT);
+            diffLighting->setFilterMode(veTexture::LINEAR);
+            veTexture *specLighting = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/output_pmrem.ktx", "SpecLighting"));
+            specLighting->setWrapMode(veTexture::REPEAT);
+            specLighting->setFilterMode(veTexture::LINEAR_MIP_MAP_LINEAR);
+            ibLight->setDiffuseLightingTexture(diffLighting);
+            ibLight->setSpecularLightingTexture(specLighting);
+            root->addChild(lightNode);
+        }
+        
         
         std::function<void()> LightingUIFunc = nullptr;
         {

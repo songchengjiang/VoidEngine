@@ -23,6 +23,7 @@ protected:
 	veMaterial* createDirectionalLightMaterial(veLight *light);
 	veMaterial* createPointLightMaterial(veLight *light);
 	veMaterial* createSpotLightMaterial(veLight *light);
+    veMaterial* createIBLightMaterial(veLight *light);
 
 	void renderLights(veCamera *camera, unsigned int contextID);
 	void cullPointLight(veLight *light, veCamera *camera, unsigned int contextID);
@@ -30,6 +31,7 @@ protected:
 	void renderDirectionalLight(veLight *light, veCamera *camera, unsigned int contextID);
 	void renderPointLight(veLight *light, veCamera *camera, unsigned int contextID);
 	void renderSpotLight(veLight *light, veCamera *camera, unsigned int contextID);
+    void renderIBLight(veLight *light, veCamera *camera, unsigned int contextID);
 
 protected:
 
@@ -54,6 +56,7 @@ protected:
 	VE_Ptr<veScreenLightRenderer> _directionalLightRenderer;
 	VE_Ptr<veSphereLightRenderer> _pointLightRenderer;
 	VE_Ptr<veConeLightRenderer>   _spotLightRenderer;
+    VE_Ptr<veScreenLightRenderer> _iBLightRenderer;
 
 	VE_Ptr<veUniform>             _ambientColor;
 

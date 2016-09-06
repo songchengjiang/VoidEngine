@@ -71,7 +71,7 @@ static const char* FULL_SCREEN_F_SHADER = " \
 	}";
 
 
-static const char* DIRECTIONAL_LIGHT_V_SHADER = " \
+static const char* SCREEN_BASED_LIGHT_V_SHADER = " \
 	layout(location = 0) in vec3 position; \n \
 	layout(location = 1) in vec3 normal; \n \
 	layout(location = 2) in vec2 texcoord; \n \
@@ -158,6 +158,65 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 																							               \n \
 		fragColor = vec4(clamp((RT1.xyz * diffFactor + RT2.xyz * specFactor) * lightIntensity, 0.0, 1.0), 1.0);     \n \
 	}";
+
+static const char* IB_LIGHT_F_SHADER = " \
+    uniform highp sampler2D u_depthTex; \n \
+    uniform highp sampler2D u_RT0; \n \
+    uniform sampler2D u_RT1; \n \
+    uniform sampler2D u_RT2; \n \
+    uniform sampler2DShadow u_shadowTex; \n \
+    uniform sampler2D u_diffuseLighting; \n \
+    uniform sampler2D u_specularLighting; \n \
+                                        \n \
+    uniform mat4 u_InvViewMat;  \n \
+    uniform mat4 u_InvViewProjectMat;  \n \
+    uniform mat4 u_lightMatrix;    \n \
+    uniform vec3 u_cameraPosInWorld;    \n \
+                                        \n \
+    uniform vec3  u_lightDirection;   \n \
+    uniform vec3  u_lightColor;    \n \
+    uniform float u_lightIntensity;   \n \
+    uniform float u_specularMipMapCount; \n \
+                                        \n \
+    uniform float u_lightShadowEnabled;   \n \
+    uniform float u_lightShadowBias;   \n \
+    uniform float u_lightShadowStrength;   \n \
+    uniform float u_lightShadowSoft;      \n \
+    uniform float u_lightShadowSoftness;     \n \
+                                                \n \
+    in highp vec2 v_texcoord; \n \
+    layout(location = 0) out vec4 fragColor; \n \
+                                                \n \
+    vec2 caculateCoordsWithLatLong(vec3 D) {    \n \
+        return vec2((atan(D.x, D.z) / PI + 1.0) * 0.5,    \n \
+                (acos(D.y) / PI));    \n \
+    }    \n \
+                                                \n \
+    float luminance(vec3 col) {          \n \
+        return 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;          \n \
+    }         \n \
+                                                        \n \
+    void main() {  \n \
+        vec4 RT0 = texture(u_RT0, v_texcoord);    \n \
+        vec4 RT1 = texture(u_RT1, v_texcoord);    \n \
+        vec4 RT2 = texture(u_RT2, v_texcoord);     \n \
+        if (RT0.w <= 0.0){ fragColor = vec4(0.0); return; }             \n \
+                                                                                \n \
+        vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xyz)), 0.0)).xyz;   \n \
+        highp float depth = texture(u_depthTex, v_texcoord).r;    \n \
+        vec4 worldPosition = u_InvViewProjectMat * vec4(v_texcoord * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
+        worldPosition.xyz /= worldPosition.w;     \n \
+        vec3 eyeDir = normalize(u_cameraPosInWorld - worldPosition.xyz);    \n \
+                                                                                \n \
+        vec2 diffCoords = caculateCoordsWithLatLong(worldNormal);          \n \
+        vec3 r = normalize(reflect(-eyeDir, worldNormal));          \n \
+        vec2 specCoords = caculateCoordsWithLatLong(r);          \n \
+        vec3 diffLightIntensity = texture(u_diffuseLighting, diffCoords).rgb * RT1.w;                           \n \
+        vec3 specLightIntensity = textureLod(u_specularLighting, specCoords, (1.0 - RT2.w) * u_specularMipMapCount).rgb;   \n \
+        float lum = luminance(specLightIntensity);            \n \
+        lum = lum / (lum + 1.0);                              \n \
+        fragColor = vec4(clamp((RT1.xyz * diffLightIntensity + RT2.xyz * pow(lum, RT1.w) * specLightIntensity) * u_lightIntensity, 0.0, 1.0), 1.0);     \n \
+    }";
 
 static const char* POINT_LIGHT_V_SHADER = " \
 	layout(location = 0) in vec3 position; \n \
@@ -493,6 +552,7 @@ void veDeferredRenderPipeline::initLightingParams()
 	_directionalLightRenderer = new veScreenLightRenderer;
 	_pointLightRenderer       = new veSphereLightRenderer;
 	_spotLightRenderer        = new veConeLightRenderer;
+    _iBLightRenderer  = new veScreenLightRenderer;
 }
 
 veMaterial* veDeferredRenderPipeline::createDirectionalLightMaterial(veLight *light)
@@ -513,11 +573,41 @@ veMaterial* veDeferredRenderPipeline::createDirectionalLightMaterial(veLight *li
 	pass->blendFunc().src = GL_ONE;
 	pass->blendFunc().dst = GL_ONE;
 	pass->blendEquation() = GL_FUNC_ADD;
-	pass->setShader(new veShader(veShader::VERTEX_SHADER, DIRECTIONAL_LIGHT_V_SHADER));
+	pass->setShader(new veShader(veShader::VERTEX_SHADER, SCREEN_BASED_LIGHT_V_SHADER));
 	pass->setShader(new veShader(veShader::FRAGMENT_SHADER, (std::string(COMMON_FUNCTIONS) + std::string(DIRECTIONAL_LIGHT_F_SHADER)).c_str()));
 	pass->addUniform(new veUniform("u_lightDirection", veVec3::ZERO));
+    pass->addUniform(new veUniform("u_shadowTex", 4));
 
 	return material;
+}
+
+veMaterial* veDeferredRenderPipeline::createIBLightMaterial(veLight *light)
+{
+    auto material = new veMaterial;
+    auto technique = new veTechnique;
+    auto pass = new vePass;
+    material->addTechnique(technique);
+    technique->addPass(pass);
+    
+    initLightCommomParams(light, pass);
+    pass->setRenderPass(vePass::FORWARD_PASS);
+    pass->depthTest() = false;
+    pass->depthWrite() = false;
+    pass->stencilTest() = false;
+    pass->cullFace() = true;
+    pass->cullFaceMode() = GL_BACK;
+    pass->blendFunc().src = GL_ONE;
+    pass->blendFunc().dst = GL_ONE;
+    pass->blendEquation() = GL_FUNC_ADD;
+    pass->setShader(new veShader(veShader::VERTEX_SHADER, SCREEN_BASED_LIGHT_V_SHADER));
+    pass->setShader(new veShader(veShader::FRAGMENT_SHADER, (std::string(COMMON_FUNCTIONS) + std::string(IB_LIGHT_F_SHADER)).c_str()));
+    pass->addUniform(new veUniform("u_lightDirection", veVec3::ZERO));
+    pass->addUniform(new veUniform("u_specularMipMapCount", 1.0f));
+    pass->addUniform(new veUniform("u_diffuseLighting", 4));
+    pass->addUniform(new veUniform("u_specularLighting", 5));
+    
+    
+    return material;
 }
 
 veMaterial* veDeferredRenderPipeline::createPointLightMaterial(veLight *light)
@@ -562,6 +652,7 @@ veMaterial* veDeferredRenderPipeline::createPointLightMaterial(veLight *light)
 	pass1->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
 	pass1->addUniform(new veUniform("u_lightPosition", veVec3(0.0f)));
 	pass1->addUniform(new veUniform("u_lightARI", 0.0f));
+    pass1->addUniform(new veUniform("u_shadowTex", 4));
 	pass1->setApplyFunctionCallback([]() {
 		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	});
@@ -614,6 +705,7 @@ veMaterial* veDeferredRenderPipeline::createSpotLightMaterial(veLight *light)
 	pass1->addUniform(new veUniform("u_lightARI", 0.0f));
 	pass1->addUniform(new veUniform("u_lightInnerAngleCos", 0.0f));
 	pass1->addUniform(new veUniform("u_lightOuterAngleCos", 0.0f));
+    pass1->addUniform(new veUniform("u_shadowTex", 4));
 	pass1->setApplyFunctionCallback([]() {
 		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	});
@@ -641,7 +733,6 @@ void veDeferredRenderPipeline::initLightCommomParams(veLight *light, vePass *pas
 	pass->addUniform(new veUniform("u_RT0", 1));
 	pass->addUniform(new veUniform("u_RT1", 2));
 	pass->addUniform(new veUniform("u_RT2", 3));
-	pass->addUniform(new veUniform("u_shadowTex", 4));
 }
 
 void veDeferredRenderPipeline::updateLightCommomParams(veLight *light, vePass *pass, veCamera *camera)
@@ -662,7 +753,6 @@ void veDeferredRenderPipeline::updateLightCommomParams(veLight *light, vePass *p
 	pass->setTexture(vePass::DIFFUSE_TEXTURE, params.RT0.get());
 	pass->setTexture(vePass::SPECULAR_TEXTURE, params.RT1.get());
 	pass->setTexture(vePass::EMISSIVE_TEXTURE, params.RT2.get());
-	pass->setTexture(vePass::OPACITYT_TEXTURE, light->getShadowTexture());
 }
 
 void veDeferredRenderPipeline::renderLights(veCamera *camera, unsigned int contextID)
@@ -706,6 +796,18 @@ void veDeferredRenderPipeline::renderLights(veCamera *camera, unsigned int conte
 				}
 			}
 		}
+        
+        {
+            auto iter = lightListMap.find(veLight::IB);
+            if (iter != lightListMap.end()) {
+                auto &iBLightList = iter->second;
+                for (auto &light : iBLightList) {
+                    if (light->isEnabled()) {
+                        renderIBLight(light.get(), camera, contextID);
+                    }
+                }
+            }
+        }
 	}
 }
 
@@ -746,7 +848,32 @@ void veDeferredRenderPipeline::renderDirectionalLight(veLight *light, veCamera *
 	veVec3 direction = lightInWorld * -veVec3::UNIT_Z;
 	direction.normalize();
 	pass->getUniform("u_lightDirection")->setValue(direction);
+    pass->setTexture(vePass::OPACITYT_TEXTURE, light->getShadowTexture());
 	_directionalLightRenderer->render(lightInWorld, pass, camera, contextID);
+}
+
+void veDeferredRenderPipeline::renderIBLight(veLight *light, veCamera *camera, unsigned int contextID)
+{
+    veIBLight *iBLight = static_cast<veIBLight *>(light);
+    if (iBLight->getDiffuseLightingTexture() && iBLight->getSpecularLightingTexture()) {
+        auto &material = _lightRenderParamsList[light];
+        if (!material.valid()) {
+            _lightRenderParamsList[light] = createIBLightMaterial(light);
+        }
+
+        vePass *pass = material->getTechnique(0)->getPass(0);
+        updateLightCommomParams(light, pass, camera);
+        
+        veMat4 lightInWorld = iBLight->getAttachedNodeList()[0]->getNodeToWorldMatrix();
+        lightInWorld[0][3] = lightInWorld[1][3] = lightInWorld[2][3] = 0.0f;
+        veVec3 direction = lightInWorld * -veVec3::UNIT_Z;
+        direction.normalize();
+        pass->getUniform("u_lightDirection")->setValue(direction);
+        pass->getUniform("u_specularMipMapCount")->setValue((veReal)(iBLight->getSpecularLightingTexture()->getMipMapLevelCount() - 1));
+        pass->setTexture(vePass::LIGHTMAP_TEXTURE, iBLight->getDiffuseLightingTexture());
+        pass->setTexture(vePass::REFLECTION_TEXTURE, iBLight->getSpecularLightingTexture());
+        _iBLightRenderer->render(lightInWorld, pass, camera, contextID);
+    }
 }
 
 void veDeferredRenderPipeline::renderPointLight(veLight *light, veCamera *camera, unsigned int contextID)
@@ -760,6 +887,7 @@ void veDeferredRenderPipeline::renderPointLight(veLight *light, veCamera *camera
 	veMat4 lightInWorld = pointLight->getAttachedNodeList()[0]->getNodeToWorldMatrix();
 	pass->getUniform("u_lightPosition")->setValue(veVec3(lightInWorld[0][3], lightInWorld[1][3], lightInWorld[2][3]));
 	pass->getUniform("u_lightARI")->setValue(pointLight->getAttenuationRangeInverse());
+    pass->setTexture(vePass::OPACITYT_TEXTURE, light->getShadowTexture());
 	_pointLightRenderer->render(lightInWorld * veMat4::scale(veVec3(pointLight->getAttenuationRange())), pass, camera, contextID);
 }
 
@@ -782,6 +910,7 @@ void veDeferredRenderPipeline::renderSpotLight(veLight *light, veCamera *camera,
 	pass->getUniform("u_lightARI")->setValue(spotLight->getAttenuationRangeInverse());
 	pass->getUniform("u_lightInnerAngleCos")->setValue(spotLight->getInnerAngleCos());
 	pass->getUniform("u_lightOuterAngleCos")->setValue(spotLight->getOuterAngleCos());
+    pass->setTexture(vePass::OPACITYT_TEXTURE, light->getShadowTexture());
 	float rangeScale = spotLight->getAttenuationRange() * spotLight->getOuterAngle() / 45.0f;
 	_spotLightRenderer->render(lightInWorld * veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())), pass, camera, contextID);
 }

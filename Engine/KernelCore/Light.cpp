@@ -245,3 +245,12 @@ void veSpotLight::setEnabled(bool isEnabled)
 veSpotLight::~veSpotLight()
 {
 }
+
+veIBLight::veIBLight()
+: veLight(IB)
+{
+}
+
+veIBLight::~veIBLight()
+{
+}

@@ -29,7 +29,7 @@
                             ],
                             "textureUnits": [
                               {
-                                "name":  "skybox.snow.texture",
+                                "name":  "skybox.texture",
                                 "type": "TEX_CUBE",
                                 "source": [ "snow_posx.ktx", "snow_negx.ktx", "snow_posy.ktx", "snow_negy.ktx", "snow_posz.ktx", "snow_negz.ktx" ],
                                 "wrap": "CLAMP",

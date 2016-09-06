@@ -57,6 +57,9 @@ veLight* veSceneManager::createLight(veLight::LightType type, const std::string 
 	else if (type == veLight::SPOT) {
 		light = new veSpotLight();
 	}
+    else if (type == veLight::IB) {
+        light = new veIBLight();
+    }
 	light->setName(name);
 	_lightListMap[type].push_back(light);
 	return light;
