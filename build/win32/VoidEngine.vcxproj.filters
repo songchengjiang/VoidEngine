@@ -382,6 +382,9 @@
     <ClCompile Include="..\..\Engine\KernelCore\FrameBufferObjectManager.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\ViewerListener.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -783,6 +786,9 @@
       <Filter>KernelCore\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\FrameBufferObjectManager.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\ViewerListener.h">
       <Filter>KernelCore</Filter>
     </ClInclude>
   </ItemGroup>

@@ -19,8 +19,8 @@ public:
 
 	TraversalMode& traversalMode() { return _traversalMode; }
 
-	virtual void visit(veNode &node);
-	virtual void visit(veCamera &camera);
+	virtual bool visit(veNode &node);
+	virtual bool visit(veCamera &camera);
 
 protected:
 

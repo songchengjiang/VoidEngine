@@ -174,9 +174,9 @@ void veCamera::refresh()
 	_needRefreshFrustumPlane = true;
 }
 
-void veCamera::visit(veNodeVisitor &visitor)
+bool veCamera::visit(veNodeVisitor &visitor)
 {
-	visitor.visit(*this);
+	return visitor.visit(*this);
 }
 
 bool veCamera::isOutOfFrustum(const veBoundingBox &bbox)

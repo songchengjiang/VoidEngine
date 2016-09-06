@@ -115,6 +115,7 @@
     <ClCompile Include="..\..\Engine\KernelCore\TransformFeedback.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Viewer-desktop.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Viewer.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\ViewerListener.cpp" />
     <ClCompile Include="..\..\Engine\UtilCore\Gizmo.cpp" />
     <ClCompile Include="..\..\Engine\UtilCore\GizmoComponent.cpp" />
     <ClCompile Include="..\..\Engine\UtilCore\GizmoRenderer.cpp" />
@@ -252,6 +253,7 @@
     <ClInclude Include="..\..\Engine\KernelCore\VE_Ptr.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Viewer-desktop.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Viewer.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\ViewerListener.h" />
     <ClInclude Include="..\..\Engine\Prerequisites.h" />
     <ClInclude Include="..\..\Engine\UtilCore\Gizmo.h" />
     <ClInclude Include="..\..\Engine\UtilCore\GizmoComponent.h" />

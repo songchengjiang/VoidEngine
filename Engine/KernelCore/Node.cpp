@@ -71,6 +71,34 @@ veNode* veNode::getChild(size_t cIndex)
 	return _children[cIndex].get();
 }
 
+veNode* veNode::findChildBy(const std::string &name)
+{
+	class findNodeVistor : public veNodeVisitor {
+	public:
+		findNodeVistor(const std::string &nm) 
+			: _name(nm)
+			, node(nullptr){
+		
+		}
+		virtual bool visit(veNode &node) override {
+			if (node.getName() == _name) {
+				this->node = &node;
+				return true;
+			}
+			return false;
+		}
+
+		veNode *node;
+
+	private:
+		std::string _name;
+	};
+
+	findNodeVistor nv(name);
+	this->accept(nv);
+	return nv.node;
+}
+
 int veNode::addComponent(veComponent *com)
 {
     if (!com) return -1;
@@ -251,7 +279,8 @@ void veNode::update(veSceneManager *sm, const veMat4 &transform)
 
 void veNode::accept(veNodeVisitor &visitor)
 {
-	visit(visitor);
+	if (visit(visitor))
+		return;
 	if (visitor.traversalMode() == veNodeVisitor::TRAVERSE_CHILDREN) {
 		for (auto &iter : _children) {
 			iter->accept(visitor);
@@ -264,9 +293,9 @@ void veNode::accept(veNodeVisitor &visitor)
 	}
 }
 
-void veNode::visit(veNodeVisitor &visitor)
+bool veNode::visit(veNodeVisitor &visitor)
 {
-	visitor.visit(*this);
+	return visitor.visit(*this);
 }
 
 void veNode::updateBoundingBox()

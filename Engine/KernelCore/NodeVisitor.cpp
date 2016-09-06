@@ -14,12 +14,12 @@ veNodeVisitor::~veNodeVisitor()
 
 }
 
-void veNodeVisitor::visit(veNode &node)
+bool veNodeVisitor::visit(veNode &node)
 {
-
+	return false;
 }
 
-void veNodeVisitor::visit(veCamera &camera)
+bool veNodeVisitor::visit(veCamera &camera)
 {
-	visit(static_cast<veNode&>(camera));
+	return visit(static_cast<veNode&>(camera));
 }

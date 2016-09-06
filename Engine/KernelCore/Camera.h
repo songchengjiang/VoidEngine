@@ -96,7 +96,7 @@ public:
 	virtual void setMatrix(const veMat4 &mat) override;
 	virtual void refresh() override;
 
-	virtual void visit(veNodeVisitor &visitor) override;
+	virtual bool visit(veNodeVisitor &visitor) override;
 	virtual bool isOutOfFrustum(const veBoundingBox &bbox);
 
 	void setShadowCamera(bool isShadow) { _isShadowCamera = isShadow; }

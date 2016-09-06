@@ -111,8 +111,9 @@ public:
 		: _renderableNodes(renderableNodes)
 	{}
 
-	virtual void visit(veNode &node) {
+	virtual bool visit(veNode &node) override {
 		_renderableNodes.push_back(&node);
+		return false;
 	}
 
 private:

@@ -39,6 +39,7 @@ public:
 	virtual veNode* removeChild(size_t cIndex);
 	virtual veNode* getChild(size_t cIndex);
 	size_t getChildCount() const { return _children.size(); }
+	veNode* findChildBy(const std::string &name);
 
 	veNode* getParent() { return _parent; }
 
@@ -85,7 +86,7 @@ public:
 	virtual void update(veSceneManager *sm, const veMat4 &transform);
 
 	virtual void accept(veNodeVisitor &visitor);
-	virtual void visit(veNodeVisitor &visitor);
+	virtual bool visit(veNodeVisitor &visitor);
 
 protected:
 
