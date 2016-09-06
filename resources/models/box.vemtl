@@ -70,6 +70,72 @@
                             ]
                         }
                     ]
+                },
+                {
+                    "name": "tech-1",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": true,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "defination": "#define ATTR_POSITION 0\n#define ATTR_NORMAL 1\n#define ATTR_TANGENT 2\n#define ATTR_BITANGENT 3\n#define ATTR_TEXTURE_COORD0 4\n#define VE_USE_NROMAL_MAPPING 1\n#define VE_USE_PARALLAX_MAPPING 1\n",
+                                    "source": "system/StandardShader.vert",
+                                    "u_ModelViewProjectMat": "MVP_MATRIX",
+                                    "u_ModelViewMat": "MV_MATRIX",
+                                    "u_ModelMat": "M_MATRIX",
+                                    "u_NormalMat": "NORMAL_MATRIX",
+                                    "u_NormalWorldMat": "NORMAL_WORLD_MATRIX",
+                                    "u_cameraWorldPos": "CAMERA_WORLD_POS"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "defination": "#define VE_USE_DIFFUSE_TEXTURE 1\n#define VE_USE_NORMAL_TEXTURE 1\n#define VE_USE_DISPLACEMENT_TEXTURE 1\n#define VE_USE_TEXTURES 1\n#define VE_USE_NROMAL_MAPPING 1\n#define VE_USE_PARALLAX_MAPPING 1\n",
+                                    "source": "system/StandardShader.frag",
+                                    "u_lightMask":1.000000,
+                                    "u_ambient": [0.588235,0.588235,0.588235
+                                    ],
+                                    "u_diffuse": [0.588235,0.588235,0.588235
+                                    ],
+                                    "u_specular": [0.090000,0.090000,0.090000
+                                    ],
+                                    "u_roughness":0.4,
+                                    "u_fresnel":0.6,
+                                    "u_opacity":1.000000,
+                                    "u_reflectivity":0.000000,
+                                    "u_displacement":0.100,
+                                    "u_diffuseTex":0,
+                                    "u_normalTex":1,
+                                    "u_displacementTex":2
+                                }
+                            ],
+                            "textureUnits": [
+                                {
+                                    "name": "textures/bricks.jpg",
+                                    "source": "textures/bricks.jpg",
+                                    "texType": "DIFFUSE_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "NEAREST_MIP_MAP_LINEAR"
+                                },
+                                {
+                                    "name": "textures/bricks_normal.jpg",
+                                    "source": "textures/bricks_normal.jpg",
+                                    "texType": "NORMAL_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "NEAREST_MIP_MAP_LINEAR"
+                                },
+                                {
+                                    "name": "textures/bricks_disp.jpg",
+                                    "source": "textures/bricks_disp.jpg",
+                                    "texType": "DISPLACEMENT_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "NEAREST_MIP_MAP_LINEAR"
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         }
