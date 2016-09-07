@@ -52,10 +52,10 @@ public:
 			//point->addComponent(new LightUpdater(15.0f, 0.0f));
 			ibLight->setIntensity(1.0f);
             
-            veTexture *diffLighting = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/output_iem.ktx", "DiffLighting"));
+            veTexture *diffLighting = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/bolonga_irradiance.ktx", "DiffLighting"));
             diffLighting->setWrapMode(veTexture::REPEAT);
             diffLighting->setFilterMode(veTexture::LINEAR);
-            veTexture *specLighting = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/output_pmrem.ktx", "SpecLighting"));
+            veTexture *specLighting = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/bolonga_radiance.ktx", "SpecLighting"));
             specLighting->setWrapMode(veTexture::REPEAT);
             specLighting->setFilterMode(veTexture::LINEAR_MIP_MAP_LINEAR);
             ibLight->setDiffuseLightingTexture(diffLighting);
@@ -69,11 +69,6 @@ public:
             veMaterialArray *materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "skyboxs/skybox-bolonga.vemtl", "skybox-mats"));
             skyBox->setMaterial(materials->getMaterial(0));
         }
-        
-        
-        int width = _mainViewer->width();
-        int height = _mainViewer->height();
-        _camera->setProjectionMatrixAsPerspective(60.0f, (float)width / (float)height, 1.0f, 1000.0f);
 
 		_sceneManager->getRootNode()->addChild(root);
 		_sceneManager->setAmbientColor(veVec3(0.0f));

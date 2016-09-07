@@ -281,7 +281,7 @@ public:
 		int width = _mainViewer->width();
 		int height = _mainViewer->height();
         _camera = _sceneManager->createCamera("MainCamera", {0, 0, width, height });
-		_camera->setProjectionMatrixAsPerspective(30.0f, (float)width / (float)height, 1.0f, 1000.0f);
+		_camera->setProjectionMatrixAsPerspective(60.0f, (float)width / (float)height, 0.1f, 1000.0f);
 		_camera->setViewMatrixAslookAt(veVec3(0.0f, 0.0f, 30.0f), veVec3::ZERO, veVec3::UNIT_Y);
 		_sceneManager->getRootNode()->addChild(_camera);
         _mainViewer->setCamera(_camera);

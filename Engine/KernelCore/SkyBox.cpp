@@ -34,7 +34,7 @@ public:
             if (camera->getMask() & pass->drawMask()) {
                 rc.pass = pass;
                 pass->visit(rc);
-                camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_OVERLAY, rc);
+                camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_BACKGROUND, rc);
                 //draw(rc);
             }
         }

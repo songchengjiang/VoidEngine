@@ -6,7 +6,7 @@
             "name": "mat-0",
             "techniques": [
                 {
-                    "name": "tech-0",
+                    "name": "bricks",
                     "passes": [
                         {
                             "depthTest": true,
@@ -72,7 +72,7 @@
                     ]
                 },
                 {
-                    "name": "tech-1",
+                    "name": "metals",
                     "passes": [
                         {
                             "depthTest": true,
@@ -97,9 +97,9 @@
                                     "u_lightMask":1.000000,
                                     "u_ambient": [0.588235,0.588235,0.588235
                                     ],
-                                    "u_diffuse": [0.588235,0.588235,0.588235
+                                    "u_diffuse": [1.0,1.0,1.0
                                     ],
-                                    "u_specular": [0.588235,0.588235,0.588235
+                                    "u_specular": [1.0,1.0,1.0
                                     ],
                                     "u_roughness":1.0,
                                     "u_fresnel":1.0,

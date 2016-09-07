@@ -131,6 +131,10 @@ public:
             transer->setPosition(veVec3(0.0f, 5.0f, 0.0f));
             //transer->setRotation(veQuat(veMath::QUARTER_PI, veVec3::UNIT_X) * veQuat(veMath::QUARTER_PI, veVec3::UNIT_Y));
             transer->setScale(veVec3(2.0f));
+            
+            auto mat = entity->findChildBy("Box001")->getRenderableObject(0)->getMaterial();
+            mat->activateTechnique(mat->getTechnique("metals"));
+            
             root->addChild(entity);
         }
         
@@ -142,6 +146,9 @@ public:
             root->addChild(entity);
             transer->setScale(veVec3(30.0f));
             transer->setRotation(veQuat(-veMath::HALF_PI, veVec3::UNIT_X));
+            
+            auto mat = entity->findChildBy("Plane001")->getRenderableObject(0)->getMaterial();
+            mat->activateTechnique(mat->getTechnique("ground"));
         }
         
         {
@@ -153,87 +160,95 @@ public:
             //point->addComponent(new LightUpdater(15.0f, 0.0f));
             ibLight->setIntensity(1.0f);
             
-            veTexture *diffLighting = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/output_iem.ktx", "DiffLighting"));
+            veTexture *diffLighting = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/arches_irradiance.ktx", "DiffLighting"));
             diffLighting->setWrapMode(veTexture::REPEAT);
             diffLighting->setFilterMode(veTexture::LINEAR);
-            veTexture *specLighting = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/output_pmrem.ktx", "SpecLighting"));
+            veTexture *specLighting = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/arches_radiance.ktx", "SpecLighting"));
             specLighting->setWrapMode(veTexture::REPEAT);
             specLighting->setFilterMode(veTexture::LINEAR_MIP_MAP_LINEAR);
             ibLight->setDiffuseLightingTexture(diffLighting);
             ibLight->setSpecularLightingTexture(specLighting);
             root->addChild(lightNode);
         }
+    
+        {
+            auto skyBox = _sceneManager->createSkyBox("skybox");
+            _sceneManager->setSkyBox(skyBox);
+            veMaterialArray *materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "skyboxs/skybox-arches.vemtl", "skybox-mats"));
+            skyBox->setMaterial(materials->getMaterial(0));
+        }
         
         
         std::function<void()> LightingUIFunc = nullptr;
         {
             veNode *lightNode = _sceneManager->createNode("pointNode");
-            veLight *point = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "point0"));
-            lightNode->addComponent(point);
+            veLight *directional = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight", "directional0"));
+            lightNode->addComponent(directional);
             veTransformer *lightTranser = new veTransformer;
-            lightNode->addComponent(lightTranser);
+            //lightNode->addComponent(lightTranser);
             //point->addComponent(new LightUpdater(20.0f, 10.0f));
-            point->setIntensity(1.0f);
-            lightTranser->setPosition(veVec3(20.0f, 10.0f, 0.0f));
+            directional->setIntensity(1.0f);
+            lightNode->setMatrix(veMat4::lookAt(veVec3(20.0f, 18.0f, 35.0f), veVec3::ZERO, veVec3::UNIT_Y));
             
             veNode *lightentity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "spot0-sphere"));
             lightentity->setMatrix(veMat4::scale(veVec3(0.2f)));
             lightNode->addChild(lightentity);
-            point->setEnabled(true);
-            point->shadowEnable(true);
-            point->setUseSoftShadow(true);
-            point->setShadowSoftness(0.05f);
-            point->setShadowBias(0.025f);
+            directional->setEnabled(true);
+            directional->shadowEnable(true);
+            directional->setUseSoftShadow(true);
+            directional->setShadowSoftness(0.002f);
+            directional->setShadowBias(0.001f);
+            directional->setShadowArea(veVec2(30.0f));
             root->addChild(lightNode);
             
-            LightingUIFunc = [point, lightTranser]{
-                bool enabled = point->isEnabled();
+            LightingUIFunc = [directional, lightTranser]{
+                bool enabled = directional->isEnabled();
                 ImGui::Checkbox("Enabled", &enabled);
-                point->setEnabled(enabled);
+                directional->setEnabled(enabled);
                 
                 veVec3 possition = lightTranser->getPosition();
                 ImGui::DragFloat3("Position", &possition.x());
                 lightTranser->setPosition(possition);
                 
-                veVec3 color = point->getColor();
+                veVec3 color = directional->getColor();
                 ImGui::ColorEdit3("Color", &color.x());
-                point->setColor(color);
+                directional->setColor(color);
                 
-                float intensity = point->getIntensity();
+                float intensity = directional->getIntensity();
                 ImGui::DragFloat("Intensity", &intensity, 0.1f);
-                point->setIntensity(intensity);
+                directional->setIntensity(intensity);
                 
-                float attenuationRange = point->getAttenuationRange();
+                float attenuationRange = directional->getAttenuationRange();
                 ImGui::InputFloat("AttenuationRange", &attenuationRange);
-                point->setAttenuationRange(attenuationRange);
+                directional->setAttenuationRange(attenuationRange);
                 
-                bool shadowEnable = point->isShadowEnabled();
+                bool shadowEnable = directional->isShadowEnabled();
                 ImGui::Checkbox("ShadowEnable", &shadowEnable);
-                point->shadowEnable(shadowEnable);
+                directional->shadowEnable(shadowEnable);
                 
-                float shadowStrength = point->getShadowStrength();
+                float shadowStrength = directional->getShadowStrength();
                 ImGui::SliderFloat("ShadowStrength", &shadowStrength, 0.0f, 1.0f);
-                point->setShadowStrength(shadowStrength);
+                directional->setShadowStrength(shadowStrength);
                 
-                bool isUseSoftShadow = point->isUseSoftShadow();
+                bool isUseSoftShadow = directional->isUseSoftShadow();
                 ImGui::Checkbox("UseSoftShadow", &isUseSoftShadow);
-                point->setUseSoftShadow(isUseSoftShadow);
+                directional->setUseSoftShadow(isUseSoftShadow);
                 
-                float softness = point->getShadowSoftness();
-                ImGui::DragFloat("ShadowSoftness", &softness, 0.01f, 0.0f, 1.0f);
-                point->setShadowSoftness(softness);
+                float softness = directional->getShadowSoftness();
+                ImGui::DragFloat("ShadowSoftness", &softness, 0.001f, 0.0f, 1.0f);
+                directional->setShadowSoftness(softness);
                 
-                float shadowBias = point->getShadowBias();
+                float shadowBias = directional->getShadowBias();
                 ImGui::DragFloat("ShadowBias", &shadowBias, 0.0001f, 0.0f, 1.0f, "%.5f");
-                point->setShadowBias(shadowBias);
+                directional->setShadowBias(shadowBias);
                 
-                veVec2 shadowRes = point->getShadowResolution();
+                veVec2 shadowRes = directional->getShadowResolution();
                 ImGui::InputFloat2("ShadowResolution", &shadowRes.x());
-                point->setShadowResolution(shadowRes);
+                directional->setShadowResolution(shadowRes);
                 
-                veVec2 shadowArea = point->getShadowArea();
+                veVec2 shadowArea = directional->getShadowArea();
                 ImGui::InputFloat2("ShadowArea", &shadowArea.x());
-                point->setShadowArea(shadowArea);
+                directional->setShadowArea(shadowArea);
             };
         }
         
@@ -389,6 +404,7 @@ public:
 //            }
         });
         
+        
         _sceneManager->addComponent(imguiComp);
 
 		auto debuger = new veOctreeDebuger(_sceneManager);
@@ -396,7 +412,7 @@ public:
 		debuger->debugDrawOctree(false);
 		//_sceneManager->getRootNode()->addRenderableObject(debuger);
 		_sceneManager->getRootNode()->addChild(root);
-        _sceneManager->setAmbientColor(veVec3(0.2f));
+        _sceneManager->setAmbientColor(veVec3(0.0f));
         
         auto entityPicker = new EntityPicker;
         _sceneManager->addComponent(entityPicker);

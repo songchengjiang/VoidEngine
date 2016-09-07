@@ -207,12 +207,14 @@ static const char* IB_LIGHT_F_SHADER = " \
         vec4 worldPosition = u_InvViewProjectMat * vec4(v_texcoord * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
         worldPosition.xyz /= worldPosition.w;     \n \
         vec3 eyeDir = normalize(u_cameraPosInWorld - worldPosition.xyz);    \n \
+        float NdotV = max(0.0, dot(worldNormal, eyeDir));                  \n \
+        float F = RT2.w + (1.0 - RT2.w) * pow(1.0 - NdotV, 5.0);     \n \
                                                                                 \n \
         vec2 diffCoords = caculateCoordsWithLatLong(worldNormal);          \n \
         vec3 r = normalize(reflect(-eyeDir, worldNormal));          \n \
         vec2 specCoords = caculateCoordsWithLatLong(r);          \n \
         vec3 diffLightIntensity = texture(u_diffuseLighting, diffCoords).rgb * RT1.w;                           \n \
-        vec3 specLightIntensity = textureLod(u_specularLighting, specCoords, (1.0 - RT2.w) * u_specularMipMapCount).rgb;   \n \
+        vec3 specLightIntensity = textureLod(u_specularLighting, specCoords, (1.0 - F) * u_specularMipMapCount).rgb;   \n \
         float lum = luminance(specLightIntensity);            \n \
         lum = lum / (lum + 1.0);                              \n \
         fragColor = vec4(clamp((RT1.xyz * diffLightIntensity + RT2.xyz * pow(lum, RT1.w) * specLightIntensity) * u_lightIntensity, 0.0, 1.0), 1.0);     \n \
@@ -435,6 +437,9 @@ veDeferredRenderPipeline::~veDeferredRenderPipeline()
 
 void veDeferredRenderPipeline::renderScene(veCamera *camera, unsigned int contextID)
 {
+    if (_sceneManager->getSkyBox())
+        _sceneManager->getSkyBox()->render(camera, contextID);
+    
     auto &vp = camera->getViewport();
 	auto &params = getCameraParams(camera);
 	unsigned int deferredClearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
@@ -450,8 +455,6 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, unsigned int contex
 	params.FBO->unBind();
 
 	renderLights(camera, contextID);
-	if (_sceneManager->getSkyBox())
-		_sceneManager->getSkyBox()->render(camera, contextID);
 	_ambientColor->setValue(_sceneManager->getAmbientColor());
 	params.fullScreenTexture->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	params.fullScreenFBO->setFrameBufferSize(size);
