@@ -178,6 +178,45 @@ public:
             skyBox->setMaterial(materials->getMaterial(0));
         }
         
+        {
+            auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/oldTV.vemtl", "oldTV-mats"));
+            auto postProcesser = _sceneManager->createPostProcesser("oldTV");
+            postProcesser->setMaterialArray(mats);
+            postProcesser->setEnabled(false);
+            _mainViewer->getCamera()->addPostProcesser(postProcesser);
+        }
+        
+        {
+            auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/ASCII.vemtl", "ASCII-mats"));
+            auto postProcesser = _sceneManager->createPostProcesser("ASCII");
+            postProcesser->setMaterialArray(mats);
+            postProcesser->setEnabled(false);
+            _mainViewer->getCamera()->addPostProcesser(postProcesser);
+        }
+        
+        {
+        	auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/tiling.vemtl", "tiling-mats"));
+        	auto postProcesser = _sceneManager->createPostProcesser("tiling");
+        	postProcesser->setMaterialArray(mats);
+            postProcesser->setEnabled(false);
+            _mainViewer->getCamera()->addPostProcesser(postProcesser);
+        }
+        
+//        {
+//        	auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/bloom.vemtl", "bloom-mats"));
+//        	auto postProcesser = _sceneManager->createPostProcesser("bloom");
+//        	postProcesser->setMaterialArray(mats);
+//            postProcesser->setEnabled(false);
+//          _mainViewer->getCamera()->addPostProcesser(postProcesser);
+//        }
+        
+        {
+        	auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/grey.vemtl", "grey-mats"));
+        	auto postProcesser = _sceneManager->createPostProcesser("grey");
+        	postProcesser->setMaterialArray(mats);
+            postProcesser->setEnabled(false);
+          _mainViewer->getCamera()->addPostProcesser(postProcesser);
+        }
         
         std::function<void()> LightingUIFunc = nullptr;
         {
@@ -396,6 +435,16 @@ public:
                     GIZMO_COMPONENT->setGizmoType(veGizmoComponent::GizmoType::GT_ROTATION);
                 }else{
                     GIZMO_COMPONENT->setGizmoType(veGizmoComponent::GizmoType::GT_SCALE);
+                }
+                
+                if (ImGui::CollapsingHeader("PostProcessers"))
+                {
+                    for (auto processer : _mainViewer->getCamera()->getPostProcesserList())
+                    {
+                        bool enabled = processer->isEnabled();
+                        ImGui::Checkbox(processer->getName().c_str(), &enabled);
+                        processer->setEnabled(enabled);
+                    }
                 }
                 
                 if (ImGui::CollapsingHeader("Lighting"))

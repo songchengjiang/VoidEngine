@@ -5,6 +5,7 @@
 
 vePostProcesser::vePostProcesser(veSceneManager *sm)
 	: USE_VE_PTR_INIT
+    , _isEnabled(true)
 	, _sceneManager(sm)
 {
 	_renderer = new vePostProcesserRenderer;
@@ -18,6 +19,8 @@ vePostProcesser::~vePostProcesser()
 
 void vePostProcesser::process(veRenderPipeline *pipeline, veFrameBufferObject *fb, veCamera *camera, unsigned int contextID)
 {
+    if (!_isEnabled)
+        return;
 	auto &vp = camera->getViewport();
 	veVec2 size = veVec2(vp.width - vp.x, vp.height - vp.y);
 	for (unsigned int i = 0; i < _materials->getMaterialNum(); ++i) {
