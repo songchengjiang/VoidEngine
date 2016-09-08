@@ -188,7 +188,7 @@ public:
             //lightNode->addComponent(lightTranser);
             //point->addComponent(new LightUpdater(20.0f, 10.0f));
             directional->setIntensity(1.0f);
-            lightNode->setMatrix(veMat4::lookAt(veVec3(20.0f, 18.0f, 35.0f), veVec3::ZERO, veVec3::UNIT_Y));
+            lightNode->setMatrix(veMat4::lookAt(veVec3(10.0f, 9.0f, 17.5f), veVec3::ZERO, veVec3::UNIT_Y));
             
             veNode *lightentity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "spot0-sphere"));
             lightentity->setMatrix(veMat4::scale(veVec3(0.2f)));
@@ -197,7 +197,7 @@ public:
             directional->shadowEnable(true);
             directional->setUseSoftShadow(true);
             directional->setShadowSoftness(0.002f);
-            directional->setShadowBias(0.001f);
+            directional->setShadowBias(0.0003f);
             directional->setShadowArea(veVec2(30.0f));
             root->addChild(lightNode);
             
@@ -276,6 +276,22 @@ public:
             if (ImGui::CollapsingHeader("Materials")) {
                 veMesh *mesh = dynamic_cast<veMesh *>(INTER_NODE->getRenderableObject(0));
                 auto material = mesh->getMaterial();
+                int e = 0;
+                for (size_t tec = 0; tec < material->getTechniqueNum(); ++tec) {
+                    if (material->activeTechnique() == material->getTechnique(tec)) {
+                        break;
+                    }
+                    ++e;
+                }
+                for (int tec = 0; tec < material->getTechniqueNum(); ++tec) {
+                    ImGui::RadioButton(material->getTechnique(tec)->getName().c_str(), &e, tec);
+                    if (tec != material->getTechniqueNum() - 1)
+                        ImGui::SameLine();
+                }
+                
+                if (material->activeTechnique() != material->getTechnique(e)) {
+                    material->activateTechnique(material->getTechnique(e));
+                }
                 auto matpass = material->activeTechnique()->getPass(0);
                 if (ImGui::TreeNode(material->getName().c_str())){
                     for (size_t u = 0; u < matpass->getUniformNum(); ++u){

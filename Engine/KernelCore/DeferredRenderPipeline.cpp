@@ -14,6 +14,10 @@ static const char* COMMON_FUNCTIONS = " \
 		float g = sqrt(1.0 - f / 4.0);    \n \
 		return vec3(fenc * g, 1.0 - f / 2.0);    \n \
 	}    \n \
+                                                                         \n\
+    vec3 linearColor(vec3 col) {    \n \
+        return pow(col, vec3(0.45454545));    \n \
+    }       \n \
                                                                                                                       \n \
 	const float PI = 3.1415926535;                                                                                    \n\
 	float OrenNayar(vec3 norm, vec3 ldir, vec3 vdir, float NdotL, float NdotV, float roughness) {                     \n\
@@ -156,7 +160,7 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 		float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);     \n \
 		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * shadowing(worldPosition.xyz);    \n \
 																							               \n \
-		fragColor = vec4(clamp((RT1.xyz * diffFactor + RT2.xyz * specFactor) * lightIntensity, 0.0, 1.0), 1.0);     \n \
+		fragColor = vec4(clamp((linearColor(RT1.xyz) * diffFactor + linearColor(RT2.xyz) * specFactor) * lightIntensity, 0.0, 1.0), 1.0);     \n \
 	}";
 
 static const char* IB_LIGHT_F_SHADER = " \
@@ -213,11 +217,12 @@ static const char* IB_LIGHT_F_SHADER = " \
         vec2 diffCoords = caculateCoordsWithLatLong(worldNormal);          \n \
         vec3 r = normalize(reflect(-eyeDir, worldNormal));          \n \
         vec2 specCoords = caculateCoordsWithLatLong(r);          \n \
-        vec3 diffLightIntensity = texture(u_diffuseLighting, diffCoords).rgb * RT1.w;                           \n \
+        vec3 diffLighing = texture(u_diffuseLighting, diffCoords).rgb;          \n \
+        vec3 diffLightIntensity = diffLighing * RT1.w;                           \n \
         vec3 specLightIntensity = textureLod(u_specularLighting, specCoords, (1.0 - F) * u_specularMipMapCount).rgb;   \n \
         float lum = luminance(specLightIntensity);            \n \
         lum = lum / (lum + 1.0);                              \n \
-        fragColor = vec4(clamp((RT1.xyz * diffLightIntensity + RT2.xyz * pow(lum, RT1.w) * specLightIntensity) * u_lightIntensity, 0.0, 1.0), 1.0);     \n \
+        fragColor = vec4(clamp((linearColor(RT1.xyz) * diffLightIntensity + linearColor(RT1.xyz * RT2.xyz) * pow(lum, RT1.w) * specLightIntensity) * u_lightIntensity, 0.0, 1.0), 1.0);     \n \
     }";
 
 static const char* POINT_LIGHT_V_SHADER = " \
@@ -319,7 +324,7 @@ static const char* POINT_LIGHT_F_SHADER = " \
 		float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);     \n \
 																						\n \
 		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * attenuation * shadowing(worldPosition.xyz);    \n \
-		fragColor = vec4(clamp((RT1.xyz * diffFactor + RT2.xyz * specFactor) * lightIntensity, 0.0, 1.0), 1.0);     \n \
+		fragColor = vec4(clamp((linearColor(RT1.xyz) * diffFactor + linearColor(RT2.xyz) * specFactor) * lightIntensity, 0.0, 1.0), 1.0);     \n \
 	}";
 
 static const char* SPOT_LIGHT_V_SHADER = " \
@@ -420,7 +425,7 @@ static const char* SPOT_LIGHT_F_SHADER = " \
 		float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);          \n \
 																						    \n \
 		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * attenuation * shadowing(worldPosition.xyz);    \n \
-		fragColor = vec4(clamp((RT1.xyz * diffFactor + RT2.xyz * specFactor) * lightIntensity, 0.0, 1.0), 1.0);     \n \
+		fragColor = vec4(clamp((linearColor(RT1.xyz) * diffFactor + linearColor(RT2.xyz) * specFactor) * lightIntensity, 0.0, 1.0), 1.0);     \n \
 	}";
 
 veDeferredRenderPipeline::veDeferredRenderPipeline(veSceneManager *sm)
