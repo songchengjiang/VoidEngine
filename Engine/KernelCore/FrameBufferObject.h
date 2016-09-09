@@ -26,6 +26,8 @@ public:
 
 	void bind(unsigned int contextID, unsigned int clearMask, GLenum target = GL_FRAMEBUFFER);
 	void unBind();
+    
+    void blitFramebuffer(GLbitfield mask, GLenum filter, unsigned int contextID);
 
 private:
 

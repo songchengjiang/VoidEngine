@@ -1,40 +1,13 @@
 {
     "version": "1.0",
-    "name": "bloom.vemtl",
+    "name": "DOF.vemtl",
     "materials": [
         {
-            "name": "mat-0",
+            "name": "DOF-maT",
             "techniques": [
                 {
-                    "name": "tech-0",
+                    "name": "DOF-tech",
                     "passes": [
-                        {
-                            "renderPass": "FORWARD",
-                            "depthTest": false,
-                            "depthWrite": false,
-                            "cullFace": true,
-                            "shaders": [
-                                {
-                                    "type": "VERTEX_SHADER",
-                                    "source": "postprocesser.vert",
-                                    "u_ModelMat": "M_MATRIX"
-                                },
-                                {
-                                    "type": "FRAGMENT_SHADER",
-                                    "source": "extractlight.frag",
-                                    "u_Threshold": 0.95,
-                                    "u_Texture": 0
-                                }
-                              ],
-                              "textureUnits": [
-                                {
-                                    "name": "bloom-sceneTexture",
-                                    "texType": "COLOR_BUFFER_TEXTURE",
-                                    "wrap": "CLAMP",
-                                    "filter": "LINEAR"
-                                }
-                            ]
-                        },
                         {
                             "renderPass": "FORWARD",
                             "depthTest": false,
@@ -56,7 +29,7 @@
                             ],
                             "textureUnits": [
                                 {
-                                    "name": "bloom-extractlightTex",
+                                    "name": "DOF-sceneTexture",
                                     "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
@@ -84,7 +57,7 @@
                             ],
                             "textureUnits": [
                                 {
-                                    "name": "bloom-downscale",
+                                    "name": "DOF-downscale",
                                     "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
@@ -112,7 +85,7 @@
                             ],
                             "textureUnits": [
                                 {
-                                    "name": "bloom-GaussBlurYTex",
+                                    "name": "DOF-GaussBlurYTex",
                                     "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
@@ -132,22 +105,30 @@
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "bloom.frag",
-                                    "u_exposure": 2.0,
-                                    "u_bloomBlur": 0,
-                                    "u_sceneTex": 1
+                                    "source": "DOF.frag",
+                                    "u_focus": 0.6,
+                                    "u_range": 1.0,
+                                    "u_blurTexture": 0,
+                                    "u_sceneTexture": 1,
+                                    "u_depthTexture": 2
                                 }
                             ],
                             "textureUnits": [
                                 {
-                                    "name": "bloom-GaussBlurXTex",
+                                    "name": "DOF-GaussBlurXTex",
                                     "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 },
                                 {
-                                    "name": "bloom-sceneTexture",
+                                    "name": "DOF-sceneTexture",
                                     "texType": "DIFFUSE_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "LINEAR"
+                                },
+                                {
+                                    "name": "DOF-depthTexture",
+                                    "texType": "DEPTH_STENCIL_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }

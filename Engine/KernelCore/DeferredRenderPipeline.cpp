@@ -52,28 +52,6 @@ static const char* COMMON_FUNCTIONS = " \
 	}                                                                                                                     \n\
 	";
 
-static const char* FULL_SCREEN_V_SHADER = " \
-	layout(location = 0) in vec3 position; \n \
-	layout(location = 1) in vec3 normal; \n \
-	layout(location = 2) in vec2 texcoord; \n \
-	out vec2 v_texcoord; \n \
-	void main() \n \
-	{                   \n \
-		v_texcoord = texcoord; \n \
-		gl_Position = vec4(position, 1.0); \n \
-	}";
-
-static const char* FULL_SCREEN_F_SHADER = " \
-	uniform vec3 u_ambient; \n \
-	uniform sampler2D u_sceneTex; \n \
-	uniform sampler2D u_RT1; \n \
-	in vec2 v_texcoord; \n \
-	layout(location = 0) out vec4 fragColor; \n \
-	void main() {  \n \
-		fragColor = vec4(texture(u_sceneTex, v_texcoord).xyz + texture(u_RT1, v_texcoord).xyz * u_ambient, 1.0); \
-        \n \
-	}";
-
 
 static const char* SCREEN_BASED_LIGHT_V_SHADER = " \
 	layout(location = 0) in vec3 position; \n \
@@ -85,6 +63,16 @@ static const char* SCREEN_BASED_LIGHT_V_SHADER = " \
 		v_texcoord = texcoord; \n \
 		gl_Position = vec4(position, 1.0); \n \
 	}";
+
+static const char* AMBIENT_LIGHT_F_SHADER = " \
+    uniform sampler2D u_RT1; \n \
+    uniform vec3 u_ambient;   \n \
+    in highp vec2 v_texcoord; \n \
+    layout(location = 0) out vec4 fragColor; \n \
+    void main() {  \n \
+        vec4 RT1 = texture(u_RT1, v_texcoord);    \n \
+        fragColor = vec4(clamp(RT1.xyz * u_ambient, 0.0, 1.0), 1.0);     \n \
+    }";
 
 static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 	uniform highp sampler2D u_depthTex; \n \
@@ -432,7 +420,6 @@ veDeferredRenderPipeline::veDeferredRenderPipeline(veSceneManager *sm)
 	: veRenderPipeline(sm)
 {
 	initLightingParams();
-	_ambientColor = new veUniform("u_ambient", veVec3::ZERO);
 }
 
 veDeferredRenderPipeline::~veDeferredRenderPipeline()
@@ -442,58 +429,50 @@ veDeferredRenderPipeline::~veDeferredRenderPipeline()
 
 void veDeferredRenderPipeline::renderScene(veCamera *camera, unsigned int contextID)
 {
+    unsigned int defaultClearMask = camera->getClearMask();
+    unsigned int deferredClearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+    camera->setClearMask(deferredClearMask);
     if (_sceneManager->getSkyBox())
         _sceneManager->getSkyBox()->render(camera, contextID);
     
     auto &vp = camera->getViewport();
 	auto &params = getCameraParams(camera);
-	unsigned int deferredClearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
 	veVec2 size = veVec2(vp.width - vp.x, vp.height - vp.y);
 	params.DS->storage(size.x(), size.y(), 1, GL_DEPTH24_STENCIL8, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr, 1);
 	params.RT0->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	params.RT1->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	params.RT2->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
 	params.FBO->setFrameBufferSize(size);
-	params.FBO->bind(contextID, deferredClearMask);
+	params.FBO->bind(contextID, camera->getClearMask());
     prepareForDraws(camera);
 	draw(camera, camera->getRenderQueue()->deferredRenderGroup);
 	params.FBO->unBind();
 
 	renderLights(camera, contextID);
-	_ambientColor->setValue(_sceneManager->getAmbientColor());
-	params.fullScreenTexture->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
-	params.fullScreenFBO->setFrameBufferSize(size);
-	params.fullScreenFBO->bind(contextID, deferredClearMask, GL_DRAW_FRAMEBUFFER);
-	params.FBO->bind(contextID, deferredClearMask, GL_READ_FRAMEBUFFER);
-	glBlitFramebuffer(0, 0, size.x(), size.y(),
-		0, 0, size.x(), size.y(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-    params.FBO->unBind();
-    params.fullScreenFBO->unBind();
-	params.fullScreenFBO->bind(contextID, deferredClearMask);
-	unsigned int defaultClearMask = camera->getClearMask();
-	camera->setClearMask(GL_COLOR_BUFFER_BIT);
-    prepareForDraws(camera);
-	draw(camera, camera->getRenderQueue()->forwardRenderGroup);
-	camera->setClearMask(defaultClearMask);
-	params.fullScreenFBO->unBind();
-
-
-	params.fullScreenSurface->update(_sceneManager->getRootNode(), _sceneManager);
-	params.fullScreenSurface->render(_sceneManager->getRootNode(), camera, contextID);
-	if (camera->getFrameBufferObject())
-		camera->getFrameBufferObject()->bind(contextID, camera->getClearMask());
-	for (auto &comp : _sceneManager->getComponentList()) {
-		(comp.get())->beforeDraw(_sceneManager, camera);
-	}
+    bool needblitFrame = true;
 	if (!camera->getPostProcesserList().empty()) {
-		if (!_postProcesserFBO.valid())
-			_postProcesserFBO = _sceneManager->createFrameBufferObject("_VE_DEFERRED_RENDER_PIPELINE_POST_PROCESSER_FBO_");
-		_postProcesserFBO->setFrameBufferSize(size);
+        bool isFirstProcesser = true;
 		for (auto &iter : camera->getPostProcesserList()) {
 			auto processer = iter.get();
-			processer->process(this, _postProcesserFBO.get(), camera, contextID);
+            if (processer->isEnabled()) {
+                processer->process(this, camera, isFirstProcesser, contextID);
+                needblitFrame = false;
+                isFirstProcesser = false;
+            }
 		}
 	}
+    
+    if (camera->getFrameBufferObject())
+        camera->getFrameBufferObject()->bind(contextID, camera->getClearMask(), GL_DRAW_FRAMEBUFFER);
+    
+    for (auto &comp : _sceneManager->getComponentList()) {
+        (comp.get())->beforeDraw(_sceneManager, camera);
+    }
+    
+    if (needblitFrame) {
+        params.FBO->blitFramebuffer(GL_DEPTH_BUFFER_BIT, GL_NEAREST, contextID);
+        camera->setClearMask(GL_COLOR_BUFFER_BIT);
+    }
 	prepareForDraws(camera);
 	draw(camera, camera->getRenderQueue()->forwardRenderGroup);
 	for (auto &comp : _sceneManager->getComponentList()) {
@@ -501,6 +480,19 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, unsigned int contex
 	}
 	if (camera->getFrameBufferObject())
 		camera->getFrameBufferObject()->unBind();
+    
+    camera->setClearMask(defaultClearMask);
+}
+
+void veDeferredRenderPipeline::renderToPostProcesser(vePostProcesser *processer, veCamera *camera, unsigned int contextID, bool isFirstProcesser, bool firstHandle)
+{
+    auto &params = getCameraParams(camera);
+    if (isFirstProcesser && firstHandle) {
+        params.FBO->blitFramebuffer(GL_DEPTH_BUFFER_BIT, GL_NEAREST, contextID);
+        camera->setClearMask(GL_COLOR_BUFFER_BIT);
+    }
+    prepareForDraws(camera);
+    draw(camera, camera->getRenderQueue()->forwardRenderGroup);
 }
 
 veDeferredRenderPipeline::CameraRenderParams& veDeferredRenderPipeline::getCameraParams(veCamera *camera)
@@ -523,44 +515,44 @@ veDeferredRenderPipeline::CameraRenderParams& veDeferredRenderPipeline::getCamer
 		params.FBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, params.RT0.get());
 		params.FBO->attach(GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, params.RT1.get());
 		params.FBO->attach(GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, params.RT2.get());
-
-		params.fullScreenFBO = _sceneManager->createFrameBufferObject(camera->getName() + std::string("_VE_DEFERRED_RENDER_PIPELINE_FULL_SCREEN_FBO_"));
-		params.fullScreenTexture = _sceneManager->createTexture(camera->getName() + std::string("_VE_DEFERRED_RENDER_PIPELINE_FULL_SCREEN_TEXTURE_"));
-		params.fullScreenSurface = _sceneManager->createSurface(camera->getName() + std::string("_VE_DEFERRED_RENDER_PIPELINE_FULL_SCREEN_SURFACE_"));
-		params.fullScreenFBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, params.fullScreenTexture.get());
-
-		params.fullScreenTexture->setFilterMode(veTexture::NEAREST);
-
-		auto fullScreenMat = new veMaterial;
-		auto fullScreenTech = new veTechnique;
-		auto pass = new vePass;
-		fullScreenMat->addTechnique(fullScreenTech);
-		fullScreenTech->addPass(pass);
-		params.fullScreenSurface->setMaterial(fullScreenMat);
-
-        pass->setRenderPass(vePass::FORWARD_PASS);
-		pass->depthTest() = false;
-		pass->depthWrite() = false;
-		pass->cullFace() = true;
-		pass->cullFaceMode() = GL_BACK;
-		pass->blendFunc() = veBlendFunc::DISABLE;
-		pass->setShader(new veShader(veShader::VERTEX_SHADER, FULL_SCREEN_V_SHADER));
-		pass->setShader(new veShader(veShader::FRAGMENT_SHADER, FULL_SCREEN_F_SHADER));
-		pass->addUniform(new veUniform("u_sceneTex", 0));
-		pass->addUniform(new veUniform("u_RT1", 1));
-		pass->setTexture(vePass::AMBIENT_TEXTURE, params.fullScreenTexture.get());
-		pass->setTexture(vePass::SPECULAR_TEXTURE, params.RT1.get());
-		pass->addUniform(_ambientColor.get());
 	}
 	return params;
 }
 
 void veDeferredRenderPipeline::initLightingParams()
 {
+    _ambientLightRenderer     = new veScreenLightRenderer;
 	_directionalLightRenderer = new veScreenLightRenderer;
 	_pointLightRenderer       = new veSphereLightRenderer;
 	_spotLightRenderer        = new veConeLightRenderer;
-    _iBLightRenderer  = new veScreenLightRenderer;
+    _iBLightRenderer          = new veScreenLightRenderer;
+    
+    _ambientLightMaterial = createAmbientLightMaterial();
+}
+
+veMaterial* veDeferredRenderPipeline::createAmbientLightMaterial()
+{
+    auto material = new veMaterial;
+    auto technique = new veTechnique;
+    auto pass = new vePass;
+    material->addTechnique(technique);
+    technique->addPass(pass);
+    
+    pass->setRenderPass(vePass::FORWARD_PASS);
+    pass->depthTest() = false;
+    pass->depthWrite() = false;
+    pass->stencilTest() = false;
+    pass->cullFace() = true;
+    pass->cullFaceMode() = GL_BACK;
+    pass->blendFunc().src = GL_ONE;
+    pass->blendFunc().dst = GL_ONE;
+    pass->blendEquation() = GL_FUNC_ADD;
+    pass->setShader(new veShader(veShader::VERTEX_SHADER, SCREEN_BASED_LIGHT_V_SHADER));
+    pass->setShader(new veShader(veShader::FRAGMENT_SHADER, std::string(AMBIENT_LIGHT_F_SHADER).c_str()));
+    pass->addUniform(new veUniform("u_ambient", veVec3::ZERO));
+    pass->addUniform(new veUniform("u_RT1", 0));
+    
+    return material;
 }
 
 veMaterial* veDeferredRenderPipeline::createDirectionalLightMaterial(veLight *light)
@@ -757,7 +749,7 @@ void veDeferredRenderPipeline::updateLightCommomParams(veLight *light, vePass *p
 	pass->getUniform("u_lightShadowSoftness")->setValue(light->getShadowSoftness());
 
 	auto &params = _cameraRenderParamsList[camera];
-	pass->setTexture(vePass::AMBIENT_TEXTURE, params.DS.get());
+	pass->setTexture(vePass::DEPTH_STENCIL_BUFFER_TEXTURE, params.DS.get());
 	pass->setTexture(vePass::DIFFUSE_TEXTURE, params.RT0.get());
 	pass->setTexture(vePass::SPECULAR_TEXTURE, params.RT1.get());
 	pass->setTexture(vePass::EMISSIVE_TEXTURE, params.RT2.get());
@@ -765,6 +757,9 @@ void veDeferredRenderPipeline::updateLightCommomParams(veLight *light, vePass *p
 
 void veDeferredRenderPipeline::renderLights(veCamera *camera, unsigned int contextID)
 {
+    
+    renderAmbientLight(_sceneManager->getAmbientColor(), camera, contextID);
+    
 	auto &lightListMap = _sceneManager->getLightListMap();
 	if (!lightListMap.empty()) {
 		{
@@ -841,6 +836,15 @@ void veDeferredRenderPipeline::cullSpotLight(veLight *light, veCamera *camera, u
     veMat4 lightInWorld = spotLight->getAttachedNodeList()[0]->getNodeToWorldMatrix();
 	float rangeScale = spotLight->getAttenuationRange() * spotLight->getOuterAngle() / 45.0f;
 	_spotLightRenderer->render(lightInWorld * veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())), pass, camera, contextID);
+}
+
+void veDeferredRenderPipeline::renderAmbientLight(const veVec3 &ambient, veCamera *camera, unsigned int contextID)
+{
+    vePass *pass = _ambientLightMaterial->getTechnique(0)->getPass(0);
+    pass->getUniform("u_ambient")->setValue(ambient);
+    auto &params = _cameraRenderParamsList[camera];
+    pass->setTexture(vePass::COLOR_BUFFER_TEXTURE, params.RT1.get());
+    _ambientLightRenderer->render(veMat4::IDENTITY, pass, camera, contextID);
 }
 
 void veDeferredRenderPipeline::renderDirectionalLight(veLight *light, veCamera *camera, unsigned int contextID)

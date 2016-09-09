@@ -141,6 +141,14 @@ void veFrameBufferObject::unBind()
     }
 }
 
+void veFrameBufferObject::blitFramebuffer(GLbitfield mask, GLenum filter, unsigned int contextID)
+{
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, _fboBuffer->getData(contextID));
+    glBlitFramebuffer(0, 0, _size.x(), _size.y(),
+                      0, 0, _size.x(), _size.y(), mask, filter);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, _fboBuffer->getData(contextID));
+}
+
 void veFrameBufferObject::refreshBuffers(unsigned int contextID, unsigned int clearMask)
 {
     auto fbo = _fboBuffer->getData(contextID);

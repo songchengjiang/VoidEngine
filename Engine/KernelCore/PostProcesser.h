@@ -22,7 +22,7 @@ public:
 	void setMaterialArray(veMaterialArray *material) { _materials = material;}
 	veMaterialArray* getMaterialArray() { return _materials.get(); }
 
-	void process(veRenderPipeline *pipeline, veFrameBufferObject *fb, veCamera *camera, unsigned int contextID);
+	void process(veRenderPipeline *pipeline, veCamera *camera, bool firstProcesser, unsigned int contextID);
 
 private:
 
@@ -32,6 +32,7 @@ private:
     bool                            _isEnabled;
 	VE_Ptr<veMaterialArray>         _materials;
 	VE_Ptr<vePostProcesserRenderer> _renderer;
+    VE_Ptr<veFrameBufferObject>     _fbo;
 	veSceneManager                 *_sceneManager;
 };
 

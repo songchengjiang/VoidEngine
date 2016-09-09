@@ -30,7 +30,7 @@
                             "textureUnits": [
                                 {
                                     "name": "tilingtexture",
-                                    "texType": "AMBIENT_TEXTURE",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "NERAEST"
                                 }

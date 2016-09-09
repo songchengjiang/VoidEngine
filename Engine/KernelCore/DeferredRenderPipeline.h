@@ -15,11 +15,13 @@ public:
 protected:
 
 	virtual void renderScene(veCamera *camera, unsigned int contextID) override;
+    virtual void renderToPostProcesser(vePostProcesser *processer, veCamera *camera, unsigned int contextID, bool isFirstProcesser, bool firstHandle) override;
 
 	void initLightingParams();
 	void initLightCommomParams(veLight *light, vePass *pass);
 	void updateLightCommomParams(veLight *light, vePass *pass, veCamera *camera);
 
+    veMaterial* createAmbientLightMaterial();
 	veMaterial* createDirectionalLightMaterial(veLight *light);
 	veMaterial* createPointLightMaterial(veLight *light);
 	veMaterial* createSpotLightMaterial(veLight *light);
@@ -28,6 +30,7 @@ protected:
 	void renderLights(veCamera *camera, unsigned int contextID);
 	void cullPointLight(veLight *light, veCamera *camera, unsigned int contextID);
 	void cullSpotLight(veLight *light, veCamera *camera, unsigned int contextID);
+    void renderAmbientLight(const veVec3 &ambient, veCamera *camera, unsigned int contextID);
 	void renderDirectionalLight(veLight *light, veCamera *camera, unsigned int contextID);
 	void renderPointLight(veLight *light, veCamera *camera, unsigned int contextID);
 	void renderSpotLight(veLight *light, veCamera *camera, unsigned int contextID);
@@ -41,10 +44,6 @@ protected:
 		VE_Ptr<veTexture>             RT0;//normal/lightMask
 		VE_Ptr<veTexture>             RT1;//diffuse/roughness
 		VE_Ptr<veTexture>             RT2;//specular/fresnelFactor
-
-		VE_Ptr<veFrameBufferObject>   fullScreenFBO;
-		VE_Ptr<veSurface>             fullScreenSurface;
-		VE_Ptr<veTexture>             fullScreenTexture;
 	};
 
 protected:
@@ -53,12 +52,13 @@ protected:
 
 protected:
 
+    VE_Ptr<veScreenLightRenderer> _ambientLightRenderer;
 	VE_Ptr<veScreenLightRenderer> _directionalLightRenderer;
 	VE_Ptr<veSphereLightRenderer> _pointLightRenderer;
 	VE_Ptr<veConeLightRenderer>   _spotLightRenderer;
     VE_Ptr<veScreenLightRenderer> _iBLightRenderer;
 
-	VE_Ptr<veUniform>             _ambientColor;
+    VE_Ptr<veMaterial>            _ambientLightMaterial;
 
 	std::unordered_map< veLight*, VE_Ptr<veMaterial> > _lightRenderParamsList;
 	std::unordered_map< veCamera*, CameraRenderParams > _cameraRenderParamsList;

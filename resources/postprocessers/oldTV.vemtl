@@ -40,7 +40,7 @@
                                 {
                                     "name": "scenetexture",
                                     "wrap": "CLAMP",
-                                    "texType": "AMBIENT_TEXTURE",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
                                     "filter": "NERAEST"
                                 },
                                 {

@@ -568,6 +568,12 @@ private:
 		else if (strcmp(REFLECTION_TEXTURE_KEY.c_str(), str) == 0) {
 			return vePass::REFLECTION_TEXTURE;
 		}
+        else if (strcmp(COLOR_BUFFER_TEXTURE_KEY.c_str(), str) == 0) {
+            return vePass::COLOR_BUFFER_TEXTURE;
+        }
+        else if (strcmp(DEPTH_STENCIL_BUFFER_TEXTURE_KEY.c_str(), str) == 0) {
+            return vePass::DEPTH_STENCIL_BUFFER_TEXTURE;
+        }
 
 		return vePass::DIFFUSE_TEXTURE;
 	}

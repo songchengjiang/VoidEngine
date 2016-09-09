@@ -10,6 +10,7 @@
 class veSceneManager;
 class veCamera;
 class veViewer;
+class vePostProcesser;
 class VE_EXPORT veRenderPipeline
 {
 public:
@@ -19,8 +20,7 @@ public:
 	USE_VE_PTR;
 
 	void rendering(veViewer *viewer);
-    void prepareForDraws(veCamera *camera);
-    void draw(veCamera *camera, veRenderQueue::RenderGroup &rg, const std::function<bool(veRenderCommand &command)> &callback = nullptr);
+    virtual void renderToPostProcesser(vePostProcesser *processer, veCamera *camera, unsigned int contextID, bool isFirstProcesser, bool firstHandle) {};
 
 	bool isNodeVisible(veNode *node);
 
@@ -40,13 +40,16 @@ protected:
 
 	vePass* getOrCreateDirectionalShadowPass(const std::string &vDef, const std::string &fDef);
 	vePass* getOrCreateOmnidirectionalShadowPass(const std::string &vDef, const std::string &fDef);
+    
+    void prepareForDraws(veCamera *camera);
+    void draw(veCamera *camera, veRenderQueue::RenderGroup &rg, const std::function<bool(veRenderCommand &command)> &callback = nullptr);
 
 protected:
 
 	std::mutex _visitMutex;
 	veSceneManager *_sceneManager;
 	std::unordered_map<veCamera*, veNodeList > _visibleNodeList;
-	VE_Ptr<veFrameBufferObject> _postProcesserFBO;
+	//VE_Ptr<veFrameBufferObject> _postProcesserFBO;
 	VE_Ptr<veFrameBufferObject> _shadowingFBO;
 
 	std::unordered_map< std::string, VE_Ptr<vePass> > _shadowPassList;

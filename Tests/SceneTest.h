@@ -178,6 +178,15 @@ public:
             skyBox->setMaterial(materials->getMaterial(0));
         }
         
+        
+        {
+            auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/DOF.vemtl", "DOF-mats"));
+            auto postProcesser = _sceneManager->createPostProcesser("DOF");
+            postProcesser->setMaterialArray(mats);
+            postProcesser->setEnabled(true);
+            _mainViewer->getCamera()->addPostProcesser(postProcesser);
+        }
+        
         {
             auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/oldTV.vemtl", "oldTV-mats"));
             auto postProcesser = _sceneManager->createPostProcesser("oldTV");
@@ -202,13 +211,14 @@ public:
             _mainViewer->getCamera()->addPostProcesser(postProcesser);
         }
         
-//        {
-//        	auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/bloom.vemtl", "bloom-mats"));
-//        	auto postProcesser = _sceneManager->createPostProcesser("bloom");
-//        	postProcesser->setMaterialArray(mats);
-//            postProcesser->setEnabled(false);
-//          _mainViewer->getCamera()->addPostProcesser(postProcesser);
-//        }
+        
+        {
+        	auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/bloom.vemtl", "bloom-mats"));
+        	auto postProcesser = _sceneManager->createPostProcesser("bloom");
+        	postProcesser->setMaterialArray(mats);
+            postProcesser->setEnabled(false);
+          _mainViewer->getCamera()->addPostProcesser(postProcesser);
+        }
         
         {
         	auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/grey.vemtl", "grey-mats"));

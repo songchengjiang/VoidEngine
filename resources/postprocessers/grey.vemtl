@@ -28,7 +28,7 @@
                             "textureUnits": [
                                 {
                                     "name": "greytexture",
-                                    "texType": "AMBIENT_TEXTURE",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }

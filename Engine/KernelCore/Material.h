@@ -41,6 +41,10 @@ public:
 		LIGHTMAP_TEXTURE,
         ROUGHNESS_TEXTURE,
 		REFLECTION_TEXTURE,
+        
+        //USED FOR FBO
+        COLOR_BUFFER_TEXTURE,
+        DEPTH_STENCIL_BUFFER_TEXTURE,
 	};
 	vePass();
 	~vePass();
