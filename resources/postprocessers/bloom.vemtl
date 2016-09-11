@@ -22,41 +22,13 @@
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "extractlight.frag",
-                                    "u_Threshold": 0.95,
+                                    "u_Threshold": 0.9,
                                     "u_Texture": 0
                                 }
                               ],
                               "textureUnits": [
                                 {
                                     "name": "bloom-sceneTexture",
-                                    "texType": "COLOR_BUFFER_TEXTURE",
-                                    "wrap": "CLAMP",
-                                    "filter": "LINEAR"
-                                }
-                            ]
-                        },
-                        {
-                            "renderPass": "FORWARD",
-                            "depthTest": false,
-                            "depthWrite": false,
-                            "cullFace": true,
-                            "shaders": [
-                                {
-                                    "type": "VERTEX_SHADER",
-                                    "source": "postprocesser.vert",
-                                    "u_ModelMat": "M_MATRIX"
-                                },
-                                {
-                                    "type": "FRAGMENT_SHADER",
-                                    "source": "downscale3x3.frag",
-                                    "width":  "SCREEN_WIDTH_QUARTER",
-                                    "height": "SCREEN_HEIGHT_QUARTER",
-                                    "u_Texture": 0
-                                }
-                            ],
-                            "textureUnits": [
-                                {
-                                    "name": "bloom-extractlightTex",
                                     "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
@@ -84,7 +56,7 @@
                             ],
                             "textureUnits": [
                                 {
-                                    "name": "bloom-downscale",
+                                    "name": "bloom-extractlightTex",
                                     "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
@@ -133,7 +105,7 @@
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "bloom.frag",
-                                    "u_exposure": 2.0,
+                                    "u_exposure": 0.08,
                                     "u_bloomBlur": 0,
                                     "u_sceneTex": 1
                                 }

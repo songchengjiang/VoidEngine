@@ -1,0 +1,45 @@
+{
+    "version": "1.0",
+    "name": "tonemapping.vemtl",
+    "materials": [
+        {
+            "name": "mat-0",
+            "techniques": [
+                {
+                    "name": "tech-0",
+                    "passes": [
+                        {
+                            "renderPass": "FORWARD",
+                            "depthTest": false,
+                            "depthWrite": false,
+                            "cullFace": true,
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "postprocesser.vert",
+                                    "u_ModelMat": "M_MATRIX"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "tonemapping.frag",
+                                    "u_middleGrey": 0.73,
+                                    "u_key": 1.0,
+                                    "u_white": 0.8,
+                                    "u_colorTexure": 0
+                                }
+                            ],
+                            "textureUnits": [
+                                {
+                                    "name": "scenetexture",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "REPEAT"
+                                }                          
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

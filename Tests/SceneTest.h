@@ -4,6 +4,7 @@
 #include "ExtCore/imgui/ImGuiComponent.h"
 #include "UtilCore/GizmoComponent.h"
 #include <algorithm>
+#include <sstream>
 
 static veNode *INTER_NODE = nullptr;
 static VE_Ptr<veGizmoComponent> GIZMO_COMPONENT = nullptr;
@@ -171,6 +172,7 @@ public:
             root->addChild(lightNode);
         }
     
+
         {
             auto skyBox = _sceneManager->createSkyBox("skybox");
             _sceneManager->setSkyBox(skyBox);
@@ -178,14 +180,6 @@ public:
             skyBox->setMaterial(materials->getMaterial(0));
         }
         
-        
-        {
-            auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/DOF.vemtl", "DOF-mats"));
-            auto postProcesser = _sceneManager->createPostProcesser("DOF");
-            postProcesser->setMaterialArray(mats);
-            postProcesser->setEnabled(true);
-            _mainViewer->getCamera()->addPostProcesser(postProcesser);
-        }
         
         {
             auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/oldTV.vemtl", "oldTV-mats"));
@@ -203,6 +197,7 @@ public:
             _mainViewer->getCamera()->addPostProcesser(postProcesser);
         }
         
+
         {
         	auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/tiling.vemtl", "tiling-mats"));
         	auto postProcesser = _sceneManager->createPostProcesser("tiling");
@@ -213,20 +208,141 @@ public:
         
         
         {
-        	auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/bloom.vemtl", "bloom-mats"));
-        	auto postProcesser = _sceneManager->createPostProcesser("bloom");
-        	postProcesser->setMaterialArray(mats);
-            postProcesser->setEnabled(false);
-          _mainViewer->getCamera()->addPostProcesser(postProcesser);
-        }
-        
-        {
         	auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/grey.vemtl", "grey-mats"));
         	auto postProcesser = _sceneManager->createPostProcesser("grey");
         	postProcesser->setMaterialArray(mats);
             postProcesser->setEnabled(false);
           _mainViewer->getCamera()->addPostProcesser(postProcesser);
         }
+
+		{
+			auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/tonemapping.vemtl", "tonemapping-mats"));
+			auto postProcesser = _sceneManager->createPostProcesser("tonemapping");
+			postProcesser->setMaterialArray(mats);
+			postProcesser->setEnabled(false);
+			_mainViewer->getCamera()->addPostProcesser(postProcesser);
+		}
+
+		{
+			auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/bloom.vemtl", "bloom-mats"));
+			auto postProcesser = _sceneManager->createPostProcesser("bloom");
+			postProcesser->setMaterialArray(mats);
+			postProcesser->setEnabled(false);
+			_mainViewer->getCamera()->addPostProcesser(postProcesser);
+		}
+
+		{
+			auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/DOF.vemtl", "DOF-mats"));
+			auto postProcesser = _sceneManager->createPostProcesser("DOF");
+			postProcesser->setMaterialArray(mats);
+			postProcesser->setEnabled(true);
+			_mainViewer->getCamera()->addPostProcesser(postProcesser);
+		}
+
+		std::function<void(veMaterial *, veViewer *, veReal, veReal)> materialUIFunc = [this](veMaterial *mat, veViewer *viewer, veReal valMin, veReal valMax) {
+			if (ImGui::TreeNode(mat->getName().c_str())) {
+				for (size_t tech = 0; tech < mat->getTechniqueNum(); ++tech) {
+					auto technique = mat->getTechnique(tech);
+					if (ImGui::TreeNode(technique->getName().c_str())) {
+
+						for (size_t p = 0; p < technique->getPassNum(); ++p) {
+							auto matpass = technique->getPass(p);
+							std::stringstream ss;
+							ss << p;
+							if (ImGui::TreeNode(ss.str().c_str())) {
+								for (size_t u = 0; u < matpass->getUniformNum(); ++u) {
+									auto unifrom = matpass->getUniform(u);
+									switch (unifrom->getType()) {
+									case veUniform::Type::INT:
+									{
+										int val;
+										unifrom->getValue(val);
+										ImGui::InputInt(unifrom->getName().c_str(), &val);
+										unifrom->setValue(val);
+
+									}
+									break;
+									case veUniform::Type::BOOL:
+									{
+										bool val;
+										unifrom->getValue(val);
+										ImGui::Checkbox(unifrom->getName().c_str(), &val);
+										unifrom->setValue(val);
+
+									}
+									break;
+									case veUniform::Type::REAL:
+									{
+										float val;
+										unifrom->getValue(val);
+										ImGui::DragFloat(unifrom->getName().c_str(), &val, 0.01f, valMin, valMax);
+										unifrom->setValue(val);
+
+									}
+									break;
+									case veUniform::Type::VEC2:
+									{
+										veVec2 val;
+										unifrom->getValue(val);
+										ImGui::SliderFloat2(unifrom->getName().c_str(), &val.x(), valMin, valMax);
+										unifrom->setValue(val);
+
+									}
+									break;
+									case veUniform::Type::VEC3:
+									{
+										veVec3 val;
+										unifrom->getValue(val);
+										ImGui::SliderFloat3(unifrom->getName().c_str(), &val.x(), valMin, valMax);
+										unifrom->setValue(val);
+
+									}
+									break;
+									case veUniform::Type::VEC4:
+									{
+										veVec4 val;
+										unifrom->getValue(val);
+										ImGui::ColorEdit4(unifrom->getName().c_str(), &val.x());
+										unifrom->setValue(val);
+
+									}
+									break;
+
+									default:
+										break;
+									}
+								}
+
+								for (size_t t = 0; t < matpass->getTextureNum(); ++t) {
+									auto tex = matpass->getTexture(t);
+									ImGui::Text("%s(%d x %d)", tex->getName().c_str(), tex->getWidth(), tex->getHeight());
+									ImGui::Image((void *)(intptr_t)(tex->glTex(viewer->getContextID())), ImVec2(256, 256));
+								}
+								ImGui::TreePop();
+							};
+
+						}
+
+						ImGui::TreePop();
+					}
+				}
+
+				ImGui::TreePop();
+			}
+		};
+
+		std::function<void(veViewer *)> PostPorcesserUIFunc = [=](veViewer *viewer) {
+			for (auto processer : _mainViewer->getCamera()->getPostProcesserList())
+			{
+				if (ImGui::TreeNode(processer->getName().c_str())) {
+					bool enabled = processer->isEnabled();
+					ImGui::Checkbox("Enabled", &enabled);
+					processer->setEnabled(enabled);
+					materialUIFunc(processer->getMaterialArray()->getMaterial(0), viewer, 0.0f, 10.0f);
+					ImGui::TreePop();
+				}
+			}
+		};
         
         std::function<void()> LightingUIFunc = nullptr;
         {
@@ -302,7 +418,7 @@ public:
         }
         
         
-        auto EntityUIFunc = [](veViewer *viewer){
+        auto EntityUIFunc = [=](veViewer *viewer){
             
             
             if (ImGui::CollapsingHeader("Transform")) {
@@ -341,78 +457,8 @@ public:
                 if (material->activeTechnique() != material->getTechnique(e)) {
                     material->activateTechnique(material->getTechnique(e));
                 }
-                auto matpass = material->activeTechnique()->getPass(0);
-                if (ImGui::TreeNode(material->getName().c_str())){
-                    for (size_t u = 0; u < matpass->getUniformNum(); ++u){
-                        auto unifrom = matpass->getUniform(u);
-                        switch (unifrom->getType()) {
-                            case veUniform::Type::INT:
-                            {
-                                int val;
-                                unifrom->getValue(val);
-                                ImGui::InputInt(unifrom->getName().c_str(), &val);
-                                unifrom->setValue(val);
-                                
-                            }
-                                break;
-                            case veUniform::Type::BOOL:
-                            {
-                                bool val;
-                                unifrom->getValue(val);
-                                ImGui::Checkbox(unifrom->getName().c_str(), &val);
-                                unifrom->setValue(val);
-                                
-                            }
-                                break;
-                            case veUniform::Type::REAL:
-                            {
-                                float val;
-                                unifrom->getValue(val);
-                                ImGui::SliderFloat(unifrom->getName().c_str(), &val, 0.0f, 1.0f);
-                                unifrom->setValue(val);
-                                
-                            }
-                                break;
-                            case veUniform::Type::VEC2:
-                            {
-                                veVec2 val;
-                                unifrom->getValue(val);
-                                ImGui::SliderFloat2(unifrom->getName().c_str(), &val.x(), 0.0f, 1.0f);
-                                unifrom->setValue(val);
-                                
-                            }
-                                break;
-                            case veUniform::Type::VEC3:
-                            {
-                                veVec3 val;
-                                unifrom->getValue(val);
-                                ImGui::SliderFloat3(unifrom->getName().c_str(), &val.x(), 0.0f, 1.0f);
-                                unifrom->setValue(val);
-                                
-                            }
-                                break;
-                            case veUniform::Type::VEC4:
-                            {
-                                veVec4 val;
-                                unifrom->getValue(val);
-                                ImGui::ColorEdit4(unifrom->getName().c_str(), &val.x());
-                                unifrom->setValue(val);
-                                
-                            }
-                                break;
-                                
-                            default:
-                                break;
-                        }
-                    }
-                    
-                    for (size_t t = 0; t < matpass->getTextureNum(); ++t){
-                        auto tex = matpass->getTexture(t);
-                        ImGui::Text("%s(%d x %d)", tex->getName().c_str(), tex->getWidth(), tex->getHeight());
-                        ImGui::Image((void *)(intptr_t)(tex->glTex(viewer->getContextID())), ImVec2(256, 256));
-                    }
-                    ImGui::TreePop();
-                }
+
+				materialUIFunc(material, viewer, 0.0f, 1.0f);
             }
         };
         
@@ -449,12 +495,7 @@ public:
                 
                 if (ImGui::CollapsingHeader("PostProcessers"))
                 {
-                    for (auto processer : _mainViewer->getCamera()->getPostProcesserList())
-                    {
-                        bool enabled = processer->isEnabled();
-                        ImGui::Checkbox(processer->getName().c_str(), &enabled);
-                        processer->setEnabled(enabled);
-                    }
+					PostPorcesserUIFunc(viewer);
                 }
                 
                 if (ImGui::CollapsingHeader("Lighting"))
