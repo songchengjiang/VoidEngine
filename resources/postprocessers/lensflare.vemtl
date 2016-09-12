@@ -53,7 +53,7 @@
                                     "u_height": "SCREEN_HEIGHT",
                                     "u_nSamples": 10.0,
                                     "u_flareDispersal": 0.1,
-                                    "u_flareHaloWidth": "SCREEN_WIDTH_HALF",
+                                    "u_flareHaloWidth": 0.25,
                                     "u_flareChromaticDistortion": [1.0, 1.0, 1.0],
                                     "u_colorTexure": 0
                                 }

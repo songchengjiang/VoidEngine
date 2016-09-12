@@ -1,6 +1,4 @@
 uniform sampler2D u_colorTexure;
-uniform float u_width;
-uniform float u_height;
 uniform float u_nSamples;
 uniform float u_flareDispersal;
 uniform float u_flareHaloWidth;
@@ -19,9 +17,8 @@ vec3 textureDistorted(sampler2D tex, vec2 sample_center, vec2 sample_vector, vec
 
 void main() {
     vec2 imageCenter = vec2(0.5);
-    vec2 dimensions = vec2(u_width, u_height);
     vec2 sampleVector = (imageCenter - v_texcoord) * u_flareDispersal;
-    vec2 haloVector = normalize(sampleVector) * (u_flareHaloWidth / u_width);
+    vec2 haloVector = normalize(sampleVector) * u_flareHaloWidth;
     
     vec3 color = textureDistorted(u_colorTexure, v_texcoord + haloVector, haloVector, u_flareChromaticDistortion).rgb * 3.0;
     for(float i = 0.0; i < u_nSamples; i += 1.0){
