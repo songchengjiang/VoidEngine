@@ -238,6 +238,14 @@ public:
 			postProcesser->setEnabled(true);
 			_mainViewer->getCamera()->addPostProcesser(postProcesser);
 		}
+        
+        {
+            auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/lensflare.vemtl", "lensflare-mats"));
+            auto postProcesser = _sceneManager->createPostProcesser("lensflare");
+            postProcesser->setMaterialArray(mats);
+            postProcesser->setEnabled(true);
+            _mainViewer->getCamera()->addPostProcesser(postProcesser);
+        }
 
 		std::function<void(veMaterial *, veViewer *, veReal, veReal)> materialUIFunc = [this](veMaterial *mat, veViewer *viewer, veReal valMin, veReal valMax) {
 			if (ImGui::TreeNode(mat->getName().c_str())) {

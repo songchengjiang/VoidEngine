@@ -1,6 +1,6 @@
 {
     "version": "1.0",
-    "name": "bloom.vemtl",
+    "name": "lensflare.vemtl",
     "materials": [
         {
             "name": "mat-0",
@@ -21,18 +21,17 @@
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "downscale3x3.frag",
-                                    "width":  "SCREEN_WIDTH_QUARTER",
-                                    "height": "SCREEN_HEIGHT_QUARTER",
+                                    "source": "lensflare-threshold.frag",
+                                    "u_threshold": 0.9,
                                     "u_Texture": 0
                                 }
-                            ],
-                            "textureUnits": [
+                              ],
+                              "textureUnits": [
                                 {
-                                    "name": "bloom-sceneTexture",
+                                    "name": "lensflare-scenetexture",
                                     "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
-                                    "filter": "NEAREST"
+                                    "filter": "LINEAR"
                                 }
                             ]
                         },
@@ -49,18 +48,23 @@
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "extractlight.frag",
-                                    "u_Threshold": 0.9,
-                                    "u_Texture": 0
+                                    "source": "lensflare-distortion.frag",
+                                    "u_width": "SCREEN_WIDTH",
+                                    "u_height": "SCREEN_HEIGHT",
+                                    "u_nSamples": 10.0,
+                                    "u_flareDispersal": 0.1,
+                                    "u_flareHaloWidth": "SCREEN_WIDTH_HALF",
+                                    "u_flareChromaticDistortion": [1.0, 1.0, 1.0],
+                                    "u_colorTexure": 0
                                 }
-                              ],
-                              "textureUnits": [
+                            ],
+                            "textureUnits": [
                                 {
-                                    "name": "bloom-downscale",
+                                    "name": "lensflare-threshold",
                                     "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
-                                }
+                                }                          
                             ]
                         },
                         {
@@ -84,7 +88,7 @@
                             ],
                             "textureUnits": [
                                 {
-                                    "name": "bloom-extractlightTex",
+                                    "name": "lensflare-distortionTex",
                                     "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
@@ -112,13 +116,13 @@
                             ],
                             "textureUnits": [
                                 {
-                                    "name": "bloom-GaussBlurYTex",
+                                    "name": "lensflare-GaussBlurYTex",
                                     "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }
                             ]
-                        },                          
+                        },
                         {
                             "renderPass": "FORWARD",
                             "depthTest": false,
@@ -132,25 +136,37 @@
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "bloom.frag",
-                                    "u_exposure": 0.08,
-                                    "u_bloomBlur": 0,
-                                    "u_sceneTex": 1
+                                    "source": "lensflare-blend.frag",
+                                    "u_amount": 3.0,
+                                    "u_colorWidth": "SCREEN_WIDTH",
+                                    "u_colorHeight": "SCREEN_HEIGHT",
+                                    "u_distSize": [1280.0, 720.0],
+                                    "u_colorTexure": 0,
+                                    "u_sceneTexure": 1,
+                                    "u_distTexure": 2
                                 }
                             ],
                             "textureUnits": [
                                 {
-                                    "name": "bloom-GaussBlurXTex",
+                                    "name": "lensflare-GaussBlurXTex",
                                     "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 },
                                 {
-                                    "name": "bloom-sceneTexture",
+                                    "name": "lensflare-scenetexture",
+                                    "texType": "AMBIENT_TEXTURE",
+                                    "wrap": "REPEAT",
+                                    "filter": "NEAREST"
+                                },
+                                {
+                                    "name": "lensdirt_highc",
+                                    "source": "textures/lensdirt_highc.png",
+                                    "type": "TEX_2D",
                                     "texType": "DIFFUSE_TEXTURE",
                                     "wrap": "CLAMP",
-                                    "filter": "NEAREST"
-                                }
+                                    "filter": "LINEAR"
+                                }                      
                             ]
                         }
                     ]
