@@ -15,7 +15,7 @@ public:
 protected:
 
 	virtual void renderScene(veCamera *camera, unsigned int contextID) override;
-    virtual void renderToPostProcesser(vePostProcesser *processer, veCamera *camera, unsigned int contextID, bool isFirstProcesser, bool firstHandle) override;
+    virtual void renderToPostProcesser(vePostProcesser *processer, veCamera *camera, unsigned int contextID) override;
 
 	void initLightingParams();
 	void initLightCommomParams(veLight *light, vePass *pass);
@@ -44,11 +44,17 @@ protected:
 		VE_Ptr<veTexture>             RT0;//normal/lightMask
 		VE_Ptr<veTexture>             RT1;//diffuse/roughness
 		VE_Ptr<veTexture>             RT2;//specular/fresnelFactor
+        
+        VE_Ptr<veFrameBufferObject>   postProcesserFBO;
+        VE_Ptr<veSurface>             postProcesserSurface;
+        VE_Ptr<veTexture>             sceneColorTexture;
+        VE_Ptr<veTexture>             sceneDepthTexture;
 	};
 
 protected:
 
 	CameraRenderParams& getCameraParams(veCamera *camera);
+    void initPostProcesserParams(veCamera *camera);
 
 protected:
 

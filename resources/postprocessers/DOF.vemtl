@@ -64,7 +64,7 @@
                             "textureUnits": [
                                 {
                                     "name": "DOF-downscale",
-                                    "texType": "COLOR_BUFFER_TEXTURE",
+                                    "texType": "OUTPUT_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }
@@ -92,7 +92,7 @@
                             "textureUnits": [
                                 {
                                     "name": "DOF-GaussBlurYTex",
-                                    "texType": "COLOR_BUFFER_TEXTURE",
+                                    "texType": "OUTPUT_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }
@@ -122,13 +122,13 @@
                             "textureUnits": [
                                 {
                                     "name": "DOF-GaussBlurXTex",
-                                    "texType": "COLOR_BUFFER_TEXTURE",
+                                    "texType": "OUTPUT_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 },
                                 {
                                     "name": "DOF-sceneTexture",
-                                    "texType": "DIFFUSE_TEXTURE",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 },

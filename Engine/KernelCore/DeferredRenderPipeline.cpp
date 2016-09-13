@@ -449,17 +449,44 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, unsigned int contex
 	params.FBO->unBind();
 
 	renderLights(camera, contextID);
-    bool needblitFrame = true;
+    bool needPostPorcess = false;
 	if (!camera->getPostProcesserList().empty()) {
-        bool isFirstProcesser = true;
-		for (auto &iter : camera->getPostProcesserList()) {
-			auto processer = iter.get();
+        for (auto &iter : camera->getPostProcesserList()) {
+            auto processer = iter.get();
             if (processer->isEnabled()) {
-                processer->process(this, camera, isFirstProcesser, contextID);
-                needblitFrame = false;
-                isFirstProcesser = false;
+                needPostPorcess = true;
+                break;
             }
-		}
+        }
+        
+        if (needPostPorcess) {
+            initPostProcesserParams(camera);
+            params.sceneColorTexture->storage(size.x(), size.y(), 1, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, nullptr, 1);
+            params.sceneDepthTexture->storage(size.x(), size.y(), 1, GL_DEPTH24_STENCIL8, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr, 1);
+            params.postProcesserFBO->setFrameBufferSize(size);
+            params.postProcesserFBO->bind(contextID, deferredClearMask, GL_DRAW_FRAMEBUFFER);
+            params.FBO->blitFramebuffer(GL_DEPTH_BUFFER_BIT, GL_NEAREST, contextID);
+            camera->setClearMask(GL_COLOR_BUFFER_BIT);
+            prepareForDraws(camera);
+            draw(camera, camera->getRenderQueue()->forwardRenderGroup);
+            params.postProcesserFBO->unBind();
+            
+            for (auto &iter : camera->getPostProcesserList()) {
+                auto processer = iter.get();
+                if (processer->isEnabled()) {
+                    processer->process(this, camera, params.sceneColorTexture.get(), params.sceneDepthTexture.get(), contextID);
+                }
+            }
+            
+            for (auto &iter : camera->getPostProcesserList()) {
+                auto processer = iter.get();
+                if (processer->isEnabled()) {
+                    processer->getProcesserSurface()->update(_sceneManager->getRootNode(), _sceneManager);
+                    processer->getProcesserSurface()->render(_sceneManager->getRootNode(), camera, contextID);
+                }
+            }
+        
+        }
 	}
     
     if (camera->getFrameBufferObject())
@@ -469,7 +496,10 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, unsigned int contex
         (comp.get())->beforeDraw(_sceneManager, camera);
     }
     
-    if (needblitFrame) {
+    if (needPostPorcess) {
+        params.postProcesserFBO->blitFramebuffer(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST, contextID);
+        camera->setClearMask(0);
+    }else{
         params.FBO->blitFramebuffer(GL_DEPTH_BUFFER_BIT, GL_NEAREST, contextID);
         camera->setClearMask(GL_COLOR_BUFFER_BIT);
     }
@@ -484,13 +514,8 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, unsigned int contex
     camera->setClearMask(defaultClearMask);
 }
 
-void veDeferredRenderPipeline::renderToPostProcesser(vePostProcesser *processer, veCamera *camera, unsigned int contextID, bool isFirstProcesser, bool firstHandle)
+void veDeferredRenderPipeline::renderToPostProcesser(vePostProcesser *processer, veCamera *camera, unsigned int contextID)
 {
-    auto &params = getCameraParams(camera);
-    if (isFirstProcesser && firstHandle) {
-        params.FBO->blitFramebuffer(GL_DEPTH_BUFFER_BIT, GL_NEAREST, contextID);
-        camera->setClearMask(GL_COLOR_BUFFER_BIT);
-    }
     prepareForDraws(camera);
     draw(camera, camera->getRenderQueue()->forwardRenderGroup);
 }
@@ -505,7 +530,7 @@ veDeferredRenderPipeline::CameraRenderParams& veDeferredRenderPipeline::getCamer
 		params.RT1 = _sceneManager->createTexture(camera->getName() + std::string("_VE_DEFERRED_RENDER_PIPELINE_RT1_"));
 		params.RT2 = _sceneManager->createTexture(camera->getName() + std::string("_VE_DEFERRED_RENDER_PIPELINE_RT2_"));
 
-		params.DS->setFilterMode(veTexture::NEAREST);
+		params.DS->setFilterMode(veTexture::LINEAR);
 		params.RT0->setFilterMode(veTexture::NEAREST);
 		params.RT1->setFilterMode(veTexture::NEAREST);
 		params.RT2->setFilterMode(veTexture::NEAREST);
@@ -515,8 +540,32 @@ veDeferredRenderPipeline::CameraRenderParams& veDeferredRenderPipeline::getCamer
 		params.FBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, params.RT0.get());
 		params.FBO->attach(GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, params.RT1.get());
 		params.FBO->attach(GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, params.RT2.get());
+        
+        
+        params.FBO->attach(GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, params.DS.get());
+        params.FBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, params.RT0.get());
+        params.FBO->attach(GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, params.RT1.get());
+        params.FBO->attach(GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, params.RT2.get());
 	}
 	return params;
+}
+
+void veDeferredRenderPipeline::initPostProcesserParams(veCamera *camera)
+{
+    auto &params = getCameraParams(camera);
+    if (!params.postProcesserFBO.valid()) {
+        params.postProcesserFBO = _sceneManager->createFrameBufferObject(camera->getName() + std::string("_VE_PRE_POST_PROCESSER_FBO_"));
+        
+        params.sceneColorTexture = _sceneManager->createTexture(camera->getName() + std::string("_VE_SCENE_COLOR_TEXTURE_"));
+        params.postProcesserFBO->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, params.sceneColorTexture.get());
+        params.sceneColorTexture->setWrapMode(veTexture::CLAMP);
+        params.sceneColorTexture->setFilterMode(veTexture::NEAREST);
+        
+        params.sceneDepthTexture = _sceneManager->createTexture(camera->getName() + std::string("_VE_SCENE_DEPTH_TEXTURE_"));
+        params.postProcesserFBO->attach(GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, params.sceneDepthTexture.get());
+        params.sceneDepthTexture->setWrapMode(veTexture::CLAMP);
+        params.sceneDepthTexture->setFilterMode(veTexture::LINEAR);
+    }
 }
 
 void veDeferredRenderPipeline::initLightingParams()

@@ -574,6 +574,9 @@ private:
         else if (strcmp(DEPTH_STENCIL_BUFFER_TEXTURE_KEY.c_str(), str) == 0) {
             return vePass::DEPTH_STENCIL_BUFFER_TEXTURE;
         }
+        else if (strcmp(OUTPUT_TEXTURE_KEY.c_str(), str) == 0) {
+            return vePass::OUTPUT_TEXTURE;
+        }
 
 		return vePass::DIFFUSE_TEXTURE;
 	}

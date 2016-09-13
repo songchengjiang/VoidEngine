@@ -45,6 +45,9 @@ public:
         //USED FOR FBO
         COLOR_BUFFER_TEXTURE,
         DEPTH_STENCIL_BUFFER_TEXTURE,
+        
+        //USED FOR POST PROCESSER
+        OUTPUT_TEXTURE,
 	};
 	vePass();
 	~vePass();

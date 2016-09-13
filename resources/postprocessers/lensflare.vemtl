@@ -61,7 +61,7 @@
                             "textureUnits": [
                                 {
                                     "name": "lensflare-threshold",
-                                    "texType": "COLOR_BUFFER_TEXTURE",
+                                    "texType": "OUTPUT_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }                          
@@ -89,7 +89,7 @@
                             "textureUnits": [
                                 {
                                     "name": "lensflare-distortionTex",
-                                    "texType": "COLOR_BUFFER_TEXTURE",
+                                    "texType": "OUTPUT_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }
@@ -117,7 +117,7 @@
                             "textureUnits": [
                                 {
                                     "name": "lensflare-GaussBlurYTex",
-                                    "texType": "COLOR_BUFFER_TEXTURE",
+                                    "texType": "OUTPUT_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }
@@ -149,13 +149,13 @@
                             "textureUnits": [
                                 {
                                     "name": "lensflare-GaussBlurXTex",
-                                    "texType": "COLOR_BUFFER_TEXTURE",
+                                    "texType": "OUTPUT_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 },
                                 {
                                     "name": "lensflare-scenetexture",
-                                    "texType": "AMBIENT_TEXTURE",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "REPEAT",
                                     "filter": "NEAREST"
                                 },
