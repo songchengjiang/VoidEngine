@@ -449,14 +449,12 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, unsigned int contex
 	params.FBO->unBind();
 
 	renderLights(camera, contextID);
-    bool needblitFrame = true;
 	if (!camera->getPostProcesserList().empty()) {
         bool isFirstProcesser = true;
 		for (auto &iter : camera->getPostProcesserList()) {
 			auto processer = iter.get();
             if (processer->isEnabled()) {
                 processer->process(this, camera, isFirstProcesser, contextID);
-                needblitFrame = false;
                 isFirstProcesser = false;
             }
 		}
@@ -465,34 +463,35 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, unsigned int contex
     if (camera->getFrameBufferObject())
         camera->getFrameBufferObject()->bind(contextID, camera->getClearMask(), GL_DRAW_FRAMEBUFFER);
     
+	camera->setClearMask(defaultClearMask);
     for (auto &comp : _sceneManager->getComponentList()) {
         (comp.get())->beforeDraw(_sceneManager, camera);
     }
     
-    if (needblitFrame) {
-        params.FBO->blitFramebuffer(GL_DEPTH_BUFFER_BIT, GL_NEAREST, contextID);
-        camera->setClearMask(GL_COLOR_BUFFER_BIT);
-    }
+    params.FBO->blitFramebuffer(GL_DEPTH_BUFFER_BIT, GL_NEAREST, contextID);
+    camera->setClearMask(GL_COLOR_BUFFER_BIT);
 	prepareForDraws(camera);
 	draw(camera, camera->getRenderQueue()->forwardRenderGroup);
+	camera->setClearMask(defaultClearMask);
 	for (auto &comp : _sceneManager->getComponentList()) {
 		(comp.get())->afterDraw(_sceneManager, camera);
 	}
 	if (camera->getFrameBufferObject())
 		camera->getFrameBufferObject()->unBind();
-    
-    camera->setClearMask(defaultClearMask);
+   
 }
 
-void veDeferredRenderPipeline::renderToPostProcesser(vePostProcesser *processer, veCamera *camera, unsigned int contextID, bool isFirstProcesser, bool firstHandle)
+void veDeferredRenderPipeline::renderToPostProcesser(vePostProcesser *processer, veCamera *camera, unsigned int bufferMask, unsigned int contextID)
 {
+	unsigned int clearMask = camera->getClearMask();
     auto &params = getCameraParams(camera);
-    if (isFirstProcesser && firstHandle) {
+    if (bufferMask & GL_DEPTH_BUFFER_BIT) {
         params.FBO->blitFramebuffer(GL_DEPTH_BUFFER_BIT, GL_NEAREST, contextID);
         camera->setClearMask(GL_COLOR_BUFFER_BIT);
     }
     prepareForDraws(camera);
     draw(camera, camera->getRenderQueue()->forwardRenderGroup);
+	camera->setClearMask(clearMask);
 }
 
 veDeferredRenderPipeline::CameraRenderParams& veDeferredRenderPipeline::getCameraParams(veCamera *camera)

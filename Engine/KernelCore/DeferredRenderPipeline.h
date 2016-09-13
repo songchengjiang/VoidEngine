@@ -15,7 +15,7 @@ public:
 protected:
 
 	virtual void renderScene(veCamera *camera, unsigned int contextID) override;
-    virtual void renderToPostProcesser(vePostProcesser *processer, veCamera *camera, unsigned int contextID, bool isFirstProcesser, bool firstHandle) override;
+    virtual void renderToPostProcesser(vePostProcesser *processer, veCamera *camera, unsigned int bufferMask, unsigned int contextID) override;
 
 	void initLightingParams();
 	void initLightCommomParams(veLight *light, vePass *pass);
