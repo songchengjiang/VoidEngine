@@ -340,6 +340,8 @@
 		BEB28D5A1C0C761F0013E3B7 /* MaterialManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BEB28D581C0C761F0013E3B7 /* MaterialManager.h */; };
 		BEB952351CFC4B4B00110FF6 /* ParticleSphereRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEB952331CFC4B4B00110FF6 /* ParticleSphereRenderer.cpp */; };
 		BEB952361CFC4B4B00110FF6 /* ParticleSphereRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BEB952341CFC4B4B00110FF6 /* ParticleSphereRenderer.h */; };
+		BEBBB2471D8942F4003B0E93 /* GLDataBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEDE3C081D5C502B008F579F /* GLDataBuffer.cpp */; };
+		BEBBB2481D894315003B0E93 /* FrameBufferObjectManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEDE3C061D5C502B008F579F /* FrameBufferObjectManager.cpp */; };
 		BEC317F81CEEF29300306386 /* Configuration.h in Headers */ = {isa = PBXBuildFile; fileRef = BEC317F71CEEF29300306386 /* Configuration.h */; };
 		BEC317FA1CEEF5E800306386 /* Configuration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEC317F91CEEF5E800306386 /* Configuration.cpp */; };
 		BEC317FB1CEEF5E800306386 /* Configuration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEC317F91CEEF5E800306386 /* Configuration.cpp */; };
@@ -1441,6 +1443,7 @@
 				BE80F0E41CED59AE00E2EECF /* FlockCenteringAffector.cpp in Sources */,
 				BE80F0E51CED59AE00E2EECF /* ColorAffector.cpp in Sources */,
 				BE80F0E61CED59AE00E2EECF /* ScaleAffector.cpp in Sources */,
+				BEBBB2481D894315003B0E93 /* FrameBufferObjectManager.cpp in Sources */,
 				BE80F0E71CED59AE00E2EECF /* ScaleVelocityAffector.cpp in Sources */,
 				BE80F0E81CED59AE00E2EECF /* GravityAffector.cpp in Sources */,
 				BE80F0E91CED59AE00E2EECF /* JetAffector.cpp in Sources */,
@@ -1455,6 +1458,7 @@
 				BE80F0F21CED59AE00E2EECF /* Affector.cpp in Sources */,
 				BE80F0F31CED59AE00E2EECF /* OctreeDebuger.cpp in Sources */,
 				BE80F0F41CED59AE00E2EECF /* Debuger.cpp in Sources */,
+				BEBBB2471D8942F4003B0E93 /* GLDataBuffer.cpp in Sources */,
 				BE80F0F51CED59AE00E2EECF /* Value.cpp in Sources */,
 				BE80F0F61CED59AE00E2EECF /* MathAlgorithm.cpp in Sources */,
 				BE80F0F71CED59AE00E2EECF /* Matrix3.cpp in Sources */,
