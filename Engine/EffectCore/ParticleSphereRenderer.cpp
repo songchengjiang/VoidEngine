@@ -359,10 +359,12 @@ void veParticleSphereRenderer::updateBuffer(veRenderableObject *renderableObj, v
     veMat4 viewProjMat = camera->projectionMatrix() * camera->viewMatrix();
     
     const auto &particles = static_cast<veParticleSystem *>(renderableObj)->getParticles().getActiveDataList();
+    static_cast<veParticleSystem *>(renderableObj)->lock();
     for (auto particle : particles){
         updateInstanceParams(particle, viewProjMat);
         ++_instanceCount;
     }
+    static_cast<veParticleSystem *>(renderableObj)->unLock();
     
     if (!_colors.empty()){
         auto colorbo = _colorboBuffer->getData(contextID);

@@ -5,6 +5,7 @@
 #include "Particle.h"
 #include "Emitter.h"
 #include "Affector.h"
+#include <mutex>
 
 class VE_EXPORT veParticleSystem : public veRenderableObject
 {
@@ -38,6 +39,9 @@ public:
     
     void setParticleQuota(unsigned int quota) { _partilceQuota = quota; }
     unsigned int getParticleQuota() const { return _partilceQuota; }
+
+    void lock();
+    void unLock();
     
 protected:
     
@@ -57,6 +61,7 @@ protected:
     unsigned int _partilceQuota;
     bool         _isPrepare;
     double       _timeElapseSinceStart;
+    std::mutex   _dataMutex;
     
     std::vector< VE_Ptr<veEmitter> >  _emitterList;
     std::vector< VE_Ptr<veAffector> > _affectorList;

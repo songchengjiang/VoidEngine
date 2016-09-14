@@ -99,6 +99,16 @@ void veParticleSystem::unPrepare()
     }
 }
 
+void veParticleSystem::lock()
+{
+    _dataMutex.lock();
+}
+
+void veParticleSystem::unLock()
+{
+    _dataMutex.unlock();
+}
+
 void veParticleSystem::update(veNode *node, veSceneManager *sm)
 {
     double deltaTime = sm->getDeltaTime();
@@ -127,6 +137,7 @@ void veParticleSystem::preProcess(double deltaTime)
 
 void veParticleSystem::process(double deltaTime)
 {
+    lock();
     bool firstActiveParticle = true;
     veParticle *particle = static_cast<veParticle *>(_particlePool.getFirst());
     
@@ -161,6 +172,7 @@ void veParticleSystem::process(double deltaTime)
         particle->timeToLive -= deltaTime;
         particle = static_cast<veParticle *>(_particlePool.getNext());
     }
+    unLock();
     
     if (_renderer.valid())
         static_cast<veParticleRenderer *>(_renderer.get())->update();

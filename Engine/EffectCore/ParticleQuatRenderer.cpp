@@ -120,6 +120,7 @@ void veParticleQuatRenderer::updateBuffer(veRenderableObject *renderableObj, veC
     veMat4 viewProjMat = camera->projectionMatrix() * camera->viewMatrix();
     
     const auto &particles = static_cast<veParticleSystem *>(renderableObj)->getParticles().getActiveDataList();
+    static_cast<veParticleSystem *>(renderableObj)->lock();
     for (auto particle : particles){
         if (_orientationType == OrientationType::OT_DIRECTION){
             veVec3 up = particle->direction;
@@ -135,6 +136,7 @@ void veParticleQuatRenderer::updateBuffer(veRenderableObject *renderableObj, veC
         updateInstanceParams(particle, cameraRot, viewProjMat);
         ++_instanceCount;
     }
+    static_cast<veParticleSystem *>(renderableObj)->unLock();
     
     if (!_colors.empty()){
         auto colorbo = _colorboBuffer->getData(contextID);
