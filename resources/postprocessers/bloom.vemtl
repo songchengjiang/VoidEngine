@@ -57,7 +57,7 @@
                               "textureUnits": [
                                 {
                                     "name": "bloom-downscale",
-                                    "texType": "OUTPUT_TEXTURE",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }
@@ -85,7 +85,7 @@
                             "textureUnits": [
                                 {
                                     "name": "bloom-extractlightTex",
-                                    "texType": "OUTPUT_TEXTURE",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }
@@ -113,7 +113,7 @@
                             "textureUnits": [
                                 {
                                     "name": "bloom-GaussBlurYTex",
-                                    "texType": "OUTPUT_TEXTURE",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }
@@ -141,13 +141,13 @@
                             "textureUnits": [
                                 {
                                     "name": "bloom-GaussBlurXTex",
-                                    "texType": "OUTPUT_TEXTURE",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 },
                                 {
                                     "name": "bloom-sceneTexture",
-                                    "texType": "COLOR_BUFFER_TEXTURE",
+                                    "texType": "DIFFUSE_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "NEAREST"
                                 }

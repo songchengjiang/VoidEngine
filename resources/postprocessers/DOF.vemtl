@@ -33,12 +33,6 @@
                                     "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
-                                },
-                                {
-                                    "name": "DOF-depthTexture",
-                                    "texType": "DEPTH_STENCIL_BUFFER_TEXTURE",
-                                    "wrap": "CLAMP",
-                                    "filter": "LINEAR"
                                 }
                             ]
                         },
@@ -64,7 +58,7 @@
                             "textureUnits": [
                                 {
                                     "name": "DOF-downscale",
-                                    "texType": "OUTPUT_TEXTURE",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }
@@ -92,7 +86,7 @@
                             "textureUnits": [
                                 {
                                     "name": "DOF-GaussBlurYTex",
-                                    "texType": "OUTPUT_TEXTURE",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }
@@ -122,13 +116,13 @@
                             "textureUnits": [
                                 {
                                     "name": "DOF-GaussBlurXTex",
-                                    "texType": "OUTPUT_TEXTURE",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 },
                                 {
                                     "name": "DOF-sceneTexture",
-                                    "texType": "COLOR_BUFFER_TEXTURE",
+                                    "texType": "DIFFUSE_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 },

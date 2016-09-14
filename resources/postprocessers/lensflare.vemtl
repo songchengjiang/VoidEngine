@@ -61,7 +61,7 @@
                             "textureUnits": [
                                 {
                                     "name": "lensflare-threshold",
-                                    "texType": "OUTPUT_TEXTURE",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }                          
@@ -89,7 +89,7 @@
                             "textureUnits": [
                                 {
                                     "name": "lensflare-distortionTex",
-                                    "texType": "OUTPUT_TEXTURE",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }
@@ -117,7 +117,7 @@
                             "textureUnits": [
                                 {
                                     "name": "lensflare-GaussBlurYTex",
-                                    "texType": "OUTPUT_TEXTURE",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 }
@@ -149,13 +149,13 @@
                             "textureUnits": [
                                 {
                                     "name": "lensflare-GaussBlurXTex",
-                                    "texType": "OUTPUT_TEXTURE",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
                                 },
                                 {
                                     "name": "lensflare-scenetexture",
-                                    "texType": "COLOR_BUFFER_TEXTURE",
+                                    "texType": "AMBIENT_TEXTURE",
                                     "wrap": "REPEAT",
                                     "filter": "NEAREST"
                                 },

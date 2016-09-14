@@ -20,7 +20,7 @@ public:
 	USE_VE_PTR;
 
 	void rendering(veViewer *viewer);
-    virtual void renderToPostProcesser(vePostProcesser *processer, veCamera *camera, unsigned int contextID) {};
+    virtual void renderToPostProcesser(vePostProcesser *processer, veCamera *camera, unsigned int bufferMask, unsigned int contextID) {};
 
 	bool isNodeVisible(veNode *node);
 
