@@ -150,6 +150,31 @@ public:
             
             auto mat = entity->findChildBy("Plane001")->getRenderableObject(0)->getMaterial();
             mat->activateTechnique(mat->getTechnique("ground"));
+            
+        }
+        
+        {
+            veNode *entity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.vem", "laoshu-0"));
+            root->addChild(entity);
+            
+            veAnimationContainer* animationContainer = static_cast<veAnimationContainer *>(veFile::instance()->readFile(_sceneManager, "models/laoshu_ani_v03.veanim", "laoshu-anim"));
+            veAnimationPlayer* player = _sceneManager->createAnimationPlayer("player0", animationContainer);
+            player->start(122, 141);
+            player->setLoopAnimation(true);
+            player->setFrameRate(60.0f);
+            player->attachNode(entity);
+            
+            float radius = 12.0f;
+            entity->setUpdateCallback([=](veSceneManager *sm, veNode *node) {
+                static float angle = 0.0f;
+                node->setMatrix(veMat4::rotation(veQuat(angle, veVec3::UNIT_Y)) * veMat4::translation(veVec3(0.0f, 0.0f, -radius)) * veMat4::rotation(veQuat(veMath::HALF_PI, veVec3::NEGATIVE_UNIT_Y)) * veMat4::scale(0.2f));
+                angle += sm->getDeltaTime();
+            });
+            
+            auto ps = static_cast<veParticleSystem *>(veFile::instance()->readFile(_sceneManager, "effects/star.veparticle", "starPS"));
+            veNode *node = _sceneManager->createNode("node");
+            node->addRenderableObject(ps);
+            entity->addChild(node);
         }
         
         {
