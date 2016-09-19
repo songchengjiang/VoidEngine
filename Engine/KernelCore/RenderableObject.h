@@ -36,6 +36,7 @@ public:
 	const veMaterial* getMaterial() const { return _material.get(); }
 	void setBoundingBox(const veBoundingBox &bbox) { _boundingBox = bbox; }
 	const veBoundingBox& getBoundingBox() const { return _boundingBox; }
+    bool isLocalBoundingBox() const { return _isLocalBoundingBox; }
 
 	const std::vector<veNode *>& getParents() const { return _parents; }
 
@@ -47,6 +48,7 @@ protected:
 	VE_Ptr<veMaterial> _material;
 	std::vector<veNode *> _parents;
 	veBoundingBox      _boundingBox;
+    bool               _isLocalBoundingBox;
 	bool              _isVisible;
 	bool              _isDirtyBoundingBox;
 	bool              _isInScene;

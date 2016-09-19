@@ -311,8 +311,12 @@ void veNode::updateBoundingBox()
 
 		if (!_renderableObjects.empty()) {
 			for (auto &iter : _renderableObjects) {
-				if (!iter->getBoundingBox().isNull())
-					_boundingBox.expandBy(iter->getBoundingBox() * _worldMatrix);
+                if (!iter->getBoundingBox().isNull()) {
+                    if (iter->isLocalBoundingBox())
+                        _boundingBox.expandBy(iter->getBoundingBox() * _worldMatrix);
+                    else
+                        _boundingBox.expandBy(iter->getBoundingBox());
+                }
 			}
 		}
 	}

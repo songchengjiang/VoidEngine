@@ -55,6 +55,8 @@ protected:
     void emitPartilces(double deltaTime);
     void excuteEmitPartilces(veEmitter *emitter, unsigned short requested, double deltaTime);
     
+    void updateBoundingBox(veParticle *particle);
+    
 protected:
     
     ParticlePool _particlePool;

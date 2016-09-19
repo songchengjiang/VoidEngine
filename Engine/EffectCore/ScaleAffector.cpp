@@ -4,11 +4,11 @@
 veScaleAffector::veScaleAffector()
 {
     _scaleX = new veValueFixed;
-    static_cast<veValueFixed *>(_scaleX.get())->setValue(1.0f);
+    static_cast<veValueFixed *>(_scaleX.get())->setValue(0.0f);
     _scaleY = new veValueFixed;
-    static_cast<veValueFixed *>(_scaleY.get())->setValue(1.0f);
+    static_cast<veValueFixed *>(_scaleY.get())->setValue(0.0f);
     _scaleZ = new veValueFixed;
-    static_cast<veValueFixed *>(_scaleZ.get())->setValue(1.0f);
+    static_cast<veValueFixed *>(_scaleZ.get())->setValue(0.0f);
 }
 
 veScaleAffector::~veScaleAffector()

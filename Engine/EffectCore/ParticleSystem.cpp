@@ -11,7 +11,8 @@ veParticleSystem::veParticleSystem(veSceneManager *sm)
     , _partilceQuota(DEFAULT_QUOTA)
     , _timeElapseSinceStart(0.f)
 {
-
+    _isLocalBoundingBox = false;
+    _boundingBox = veBoundingBox(veVec3(-0.01f), veVec3(0.01f));
 }
 
 veParticleSystem::~veParticleSystem()
@@ -140,42 +141,61 @@ void veParticleSystem::process(double deltaTime)
     lock();
     bool firstActiveParticle = true;
     veParticle *particle = static_cast<veParticle *>(_particlePool.getFirst());
-    
-    while (particle){
-        
-        if (!particle->isExpired(deltaTime)){
-            particle->process();
+    if (particle) {
+        _boundingBox.dirty();
+        while (particle){
             
-            for (auto affect : _affectorList) {
-                if (affect->isEnabled()){
-                    affect->process(particle, deltaTime, firstActiveParticle);
+            if (!particle->isExpired(deltaTime)){
+                particle->process();
+                
+                for (auto affect : _affectorList) {
+                    if (affect->isEnabled()){
+                        affect->process(particle, deltaTime, firstActiveParticle);
+                    }
                 }
+                
+                firstActiveParticle = false;
+                // Keep latest position
+                //particle->latestPosition = particle->position;
+                
+                particle->position += particle->direction * particle->velocity * deltaTime;
+                particle->emitter->makeLocalParticles(particle);
+                updateBoundingBox(particle);
+            }else{
+                _particlePool.lockLatestData();
             }
             
-            firstActiveParticle = false;
-            // Keep latest position
-            //particle->latestPosition = particle->position;
+            if (particle->hasEventFlags(veParticle::PEF_EXPIRED)){
+                particle->setEventFlags(0);
+                particle->addEventFlags(veParticle::PEF_EXPIRED);
+            }else{
+                particle->setEventFlags(0);
+            }
             
-            particle->position += particle->direction * particle->velocity * deltaTime;
-            particle->emitter->makeLocalParticles(particle);
-        }else{
-            _particlePool.lockLatestData();
+            particle->timeToLive -= deltaTime;
+            particle = static_cast<veParticle *>(_particlePool.getNext());
         }
-        
-        if (particle->hasEventFlags(veParticle::PEF_EXPIRED)){
-            particle->setEventFlags(0);
-            particle->addEventFlags(veParticle::PEF_EXPIRED);
-        }else{
-            particle->setEventFlags(0);
-        }
-        
-        particle->timeToLive -= deltaTime;
-        particle = static_cast<veParticle *>(_particlePool.getNext());
     }
     unLock();
-    
+
     if (_renderer.valid())
         static_cast<veParticleRenderer *>(_renderer.get())->update();
+}
+
+void veParticleSystem::updateBoundingBox(veParticle *particle)
+{
+    veReal halfWidth  = particle->width * 0.5f;
+    veReal halfHeight = particle->height * 0.5f;
+    veReal halfDepth  = particle->depth * 0.5f;
+    _boundingBox.expandBy(particle->position + veVec3(-halfWidth, -halfHeight, halfDepth));
+    _boundingBox.expandBy(particle->position + veVec3(halfWidth, -halfHeight, halfDepth));
+    _boundingBox.expandBy(particle->position + veVec3(-halfWidth, -halfHeight, -halfDepth));
+    _boundingBox.expandBy(particle->position + veVec3(halfWidth, -halfHeight, -halfDepth));
+    
+    _boundingBox.expandBy(particle->position + veVec3(-halfWidth, halfHeight, halfDepth));
+    _boundingBox.expandBy(particle->position + veVec3(halfWidth, halfHeight, halfDepth));
+    _boundingBox.expandBy(particle->position + veVec3(-halfWidth, halfHeight, -halfDepth));
+    _boundingBox.expandBy(particle->position + veVec3(halfWidth, halfHeight, -halfDepth));
 }
 
 void veParticleSystem::postProcess(double deltaTime)

@@ -1,6 +1,6 @@
 {
     "version": "1.0",
-    "name": "jet.veparticle",
+    "name": "jetsmoke.veparticle",
     "materials": "materials/jetEffect.vemtl",
     "renderer": {
         "type": "QUAT"
@@ -24,19 +24,20 @@
             },
             "emissionRate": {
                 "type": "FIXED",
-                "value": 100.0
+                "value": 50.0
             },
             "totalTimeToLive": {
-                "type": "FIXED",
-                "value": 0.6
+                "type": "RANDOM",
+                "minimum": 1.0,
+                "maximum": 1.25
             },
             "width": {
                 "type": "FIXED",
-                "value": 2.5
+                "value": 4.0
             },
             "height": {
                 "type": "FIXED",
-                "value": 2.5
+                "value": 6.0
             }
         }
     ],
@@ -45,11 +46,10 @@
             "type": "COLOR",
             "name": "colorAffector",
             "colors": [
-                [0.0, 1.0, 1.0, 1.0, 0.0],
-                [0.079, 1.0, 0.89, 0.42, 0.15],
-                [0.108, 0.98, 0.53, 0.24, 0.1],
-                [0.7, 0.66, 0.44, 1.0, 0.05],
-                [1.0, 0.51, 0.64, 1.0, 0.0]
+                [0.0, 0.98, 0.83, 0.40, 0.0],
+                [0.171, 1.0, 0.89, 0.42, 0.05],
+                [0.629, 0.53, 0.65, 1.0, 0.03],
+                [1.0, 0.0, 0.0, 0.0, 0.0]
             ]
         },
         {
@@ -59,10 +59,9 @@
                 "type": "CURVED",
                 "interpolationType": "SPLINE",
                 "controlPoints": [
-                    [0.0, 0.0],
-                    [0.02, 0.1],
-                    [0.3,  -0.1],
-                    [0.75, -0.1],
+                    [0.0, -0.5],
+                    [0.4, 0.4],
+                    [0.75, -0.5],
                     [1.0, 0.0]
                 ]
             },
@@ -70,10 +69,9 @@
                 "type": "CURVED",
                 "interpolationType": "SPLINE",
                 "controlPoints": [
-                    [0.0, 0.0],
-                    [0.02, 0.1],
-                    [0.3,  -0.1],
-                    [0.75, -0.1],
+                    [0.0, -0.5],
+                    [0.4, 0.4],
+                    [0.75, -0.5],
                     [1.0, 0.0]
                 ]
             }

@@ -9,6 +9,7 @@ veRenderableObject::veRenderableObject(veSceneManager *sm)
 	, _renderer(nullptr)
 	, _isVisible(true)
 	, _isDirtyBoundingBox(true)
+    , _isLocalBoundingBox(true)
 {
 }
 

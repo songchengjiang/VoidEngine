@@ -16,6 +16,8 @@ static bool GIZMO_SELECTOR = false;
 #define MASTER_CAMERA_FLAG 1
 #define SECOND_CAMERA_FLAG (1 << 1)
 
+#define LIGHTING_FLAG 128
+
 class EntityPicker : public veComponent
 {
 public:
@@ -125,19 +127,26 @@ public:
             
             {
                 auto jetps = static_cast<veParticleSystem *>(veFile::instance()->readFile(_sceneManager, "effects/jet.veparticle", "JetPS"));
+                auto jetsmokeps = static_cast<veParticleSystem *>(veFile::instance()->readFile(_sceneManager, "effects/jetsmoke.veparticle", "JetSmokePS"));
                 veNode *leftJetNode = _sceneManager->createNode("LeftJetNode");
-                leftJetNode->setMatrix(veMat4::transform(veVec3(2.5f, 1.8f, -2.5f), veVec3::UNIT_SCALE, veQuat(-veMath::HALF_PI, veVec3::UNIT_X)));
+                leftJetNode->setMatrix(veMat4::transform(veVec3(2.6f, 1.8f, -2.5f), veVec3::UNIT_SCALE, veQuat(-veMath::HALF_PI, veVec3::UNIT_X)));
                 leftJetNode->addRenderableObject(jetps);
+                leftJetNode->addRenderableObject(jetsmokeps);
+                leftJetNode->setMask(leftJetNode->getMask() & ~LIGHTING_FLAG);
                 entity->addChild(leftJetNode);
             }
             
             {
                 auto jetps = static_cast<veParticleSystem *>(veFile::instance()->readFile(_sceneManager, "effects/jet.veparticle", "JetPS"));
+                auto jetsmokeps = static_cast<veParticleSystem *>(veFile::instance()->readFile(_sceneManager, "effects/jetsmoke.veparticle", "JetSmokePS"));
                 veNode *rightJetNode = _sceneManager->createNode("RightJetNode");
-                rightJetNode->setMatrix(veMat4::transform(veVec3(-2.5f, 1.8f, -2.5f), veVec3::UNIT_SCALE, veQuat(-veMath::HALF_PI, veVec3::UNIT_X)));
+                rightJetNode->setMatrix(veMat4::transform(veVec3(-2.6f, 1.8f, -2.5f), veVec3::UNIT_SCALE, veQuat(-veMath::HALF_PI, veVec3::UNIT_X)));
                 rightJetNode->addRenderableObject(jetps);
+                rightJetNode->addRenderableObject(jetsmokeps);
+                rightJetNode->setMask(rightJetNode->getMask() & ~LIGHTING_FLAG);
                 entity->addChild(rightJetNode);
             }
+            
 		}
         
         {
@@ -395,7 +404,8 @@ public:
         
         std::function<void()> LightingUIFunc = nullptr;
         {
-            veNode *lightNode = _sceneManager->createNode("pointNode");
+            veNode *lightNode = _sceneManager->createNode("directionalLightNode");
+            lightNode->setMask(LIGHTING_FLAG);
             veLight *directional = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight", "directional0"));
             lightNode->addComponent(directional);
             veTransformer *lightTranser = new veTransformer;
