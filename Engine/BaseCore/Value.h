@@ -83,7 +83,7 @@ public:
     
     virtual veReal getValue(veReal x = 0.0f) override;
     
-    void setInterpolationType(InterpolationType type) { _iType = type; }
+    void setInterpolationType(InterpolationType type) { _iType = type; processControlPoints(); }
     InterpolationType getInterpolationType() const { return _iType; }
     
     void addControlPoint(veReal x, veReal y);

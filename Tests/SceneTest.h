@@ -122,6 +122,22 @@ public:
             //transer->setRotation(veQuat(veMath::QUARTER_PI, veVec3::UNIT_Y) * veQuat(veMath::QUARTER_PI, veVec3::UNIT_X) * veQuat(veMath::HALF_PI, veVec3::UNIT_Z));
 			entity->addComponent(transer);
 			root->addChild(entity);
+            
+            {
+                auto jetps = static_cast<veParticleSystem *>(veFile::instance()->readFile(_sceneManager, "effects/jet.veparticle", "JetPS"));
+                veNode *leftJetNode = _sceneManager->createNode("LeftJetNode");
+                leftJetNode->setMatrix(veMat4::transform(veVec3(2.5f, 1.8f, -2.5f), veVec3::UNIT_SCALE, veQuat(-veMath::HALF_PI, veVec3::UNIT_X)));
+                leftJetNode->addRenderableObject(jetps);
+                entity->addChild(leftJetNode);
+            }
+            
+            {
+                auto jetps = static_cast<veParticleSystem *>(veFile::instance()->readFile(_sceneManager, "effects/jet.veparticle", "JetPS"));
+                veNode *rightJetNode = _sceneManager->createNode("RightJetNode");
+                rightJetNode->setMatrix(veMat4::transform(veVec3(-2.5f, 1.8f, -2.5f), veVec3::UNIT_SCALE, veQuat(-veMath::HALF_PI, veVec3::UNIT_X)));
+                rightJetNode->addRenderableObject(jetps);
+                entity->addChild(rightJetNode);
+            }
 		}
         
         {
@@ -171,10 +187,10 @@ public:
                 angle += sm->getDeltaTime();
             });
             
-            auto ps = static_cast<veParticleSystem *>(veFile::instance()->readFile(_sceneManager, "effects/star.veparticle", "starPS"));
-            veNode *node = _sceneManager->createNode("node");
-            node->addRenderableObject(ps);
-            entity->addChild(node);
+//            auto ps = static_cast<veParticleSystem *>(veFile::instance()->readFile(_sceneManager, "effects/star.veparticle", "starPS"));
+//            veNode *node = _sceneManager->createNode("node");
+//            node->addRenderableObject(ps);
+//            entity->addChild(node);
         }
         
         {
@@ -237,7 +253,7 @@ public:
         	auto postProcesser = _sceneManager->createPostProcesser("grey");
         	postProcesser->setMaterialArray(mats);
             postProcesser->setEnabled(false);
-          _mainViewer->getCamera()->addPostProcesser(postProcesser);
+            _mainViewer->getCamera()->addPostProcesser(postProcesser);
         }
 
 		{

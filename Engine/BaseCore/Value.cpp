@@ -112,11 +112,12 @@ veReal veValueCurved::getValue(veReal x)
 void veValueCurved::addControlPoint(veReal x, veReal y)
 {
     _cpList.push_back(veVec2(x, y));
+    processControlPoints();
 }
 
 void veValueCurved::processControlPoints()
 {
-    if (_cpList.empty())
+    if (_cpList.empty() || _iType != InterpolationType::IT_SPLINE)
         return;
     
     std::sort(_cpList.begin(), _cpList.end(), ControlPointSorter());
