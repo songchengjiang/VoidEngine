@@ -19,8 +19,9 @@ public:
 	USE_NAME_PROPERTY;
 
 	void setFrameBufferSize(const veVec2 &size);
-	void attach(GLenum attachment, GLenum target, veTexture *attachTex, GLint layer = -1, bool needMipmap = false);
-	void attach(GLenum attachment, GLenum target, GLint texID, GLint layer = -1, bool needMipmap = false);
+
+	bool attach(GLenum attachment, GLenum target, veTexture *attachTex, GLint layer = -1, bool needMipmap = false);
+	bool attach(GLenum attachment, GLenum target, GLint texID, GLint layer = -1, bool needMipmap = false);
 
 	void setMultisamplesLevel(int samples);
 
@@ -28,6 +29,7 @@ public:
 	void unBind();
     
     void blitFramebuffer(GLbitfield mask, GLenum filter, unsigned int contextID);
+	void refresh();
 
 private:
 

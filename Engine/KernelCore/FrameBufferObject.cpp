@@ -78,34 +78,41 @@ void veFrameBufferObject::setFrameBufferSize(const veVec2 &size)
 {
 	if (size == _size) return;
 	_size = size;
-	_needRefreshBuffers = true;
-	_needRefreshAttachments = true;
+	refresh();
 }
 
-void veFrameBufferObject::attach(GLenum attachment, GLenum target, veTexture *attachTex, GLint layer, bool needMipmap)
+bool veFrameBufferObject::attach(GLenum attachment, GLenum target, veTexture *attachTex, GLint layer, bool needMipmap)
 {
 	auto iter = _attachments.find(attachment);
 	if (iter != _attachments.end()) {
 		if (iter->second.target == target
 			&& iter->second.texture == attachTex
 			&& iter->second.needMipmap == needMipmap)
-			return;
+			return false;
 	}
 	_attachments[attachment] = AttachmentInfo{target, layer, 0, attachTex, needMipmap};
 	_needRefreshAttachments = true;
+	if (attachment == GL_DEPTH_ATTACHMENT || attachment == GL_DEPTH_STENCIL_ATTACHMENT) {
+		_needRefreshBuffers = true;
+	}
+	return true;
 }
 
-void veFrameBufferObject::attach(GLenum attachment, GLenum target, GLint texID, GLint layer, bool needMipmap)
+bool veFrameBufferObject::attach(GLenum attachment, GLenum target, GLint texID, GLint layer, bool needMipmap)
 {
 	auto iter = _attachments.find(attachment);
 	if (iter != _attachments.end()) {
 		if (iter->second.target == target
 			&& iter->second.texID == texID
 			&& iter->second.needMipmap == needMipmap)
-			return;
+			return false;
 	}
 	_attachments[attachment] = AttachmentInfo{target, layer, texID, nullptr, needMipmap};
 	_needRefreshAttachments = true;
+	if (attachment == GL_DEPTH_ATTACHMENT || attachment == GL_DEPTH_STENCIL_ATTACHMENT) {
+		_needRefreshBuffers = true;
+	}
+	return true;
 }
 
 void veFrameBufferObject::setMultisamplesLevel(int samples)
@@ -113,6 +120,11 @@ void veFrameBufferObject::setMultisamplesLevel(int samples)
 	if (_multisamples == samples)
 		return;
 	_multisamples = samples;
+	refresh();
+}
+
+void veFrameBufferObject::refresh()
+{
 	_needRefreshBuffers = true;
 	_needRefreshAttachments = true;
 }
@@ -143,10 +155,12 @@ void veFrameBufferObject::unBind()
 
 void veFrameBufferObject::blitFramebuffer(GLbitfield mask, GLenum filter, unsigned int contextID)
 {
+	GLint currentReadfbo;
+	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &currentReadfbo);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, _fboBuffer->getData(contextID));
     glBlitFramebuffer(0, 0, _size.x(), _size.y(),
                       0, 0, _size.x(), _size.y(), mask, filter);
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, _fboBuffer->getData(contextID));
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, currentReadfbo);
 }
 
 void veFrameBufferObject::refreshBuffers(unsigned int contextID, unsigned int clearMask)

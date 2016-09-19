@@ -293,7 +293,7 @@ public:
             auto mats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "postprocessers/lensflare.vemtl", "lensflare-mats"));
             auto postProcesser = _sceneManager->createPostProcesser("lensflare");
             postProcesser->setMaterialArray(mats);
-            postProcesser->setEnabled(true);
+            postProcesser->setEnabled(false);
             _mainViewer->getCamera()->addPostProcesser(postProcesser);
         }
 

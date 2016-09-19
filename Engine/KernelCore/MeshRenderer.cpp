@@ -96,6 +96,7 @@ void veMeshRenderer::render(veNode *node, veRenderableObject *renderableObj, veC
                         veTransformFeedback *tfback = new veTransformFeedback;
                         tfback->addVarying(TF_VARYING_POSITION_KEY.c_str());
                         tfback->addVarying(TF_VARYING_NORMAL_KEY.c_str());
+                        tfback->setRasterizerDiscard(true);
                         pass->setTransformFeedback(tfback);
                     }
                 }
@@ -175,11 +176,9 @@ void veMeshRenderer::draw(veRenderCommand &command)
 
 	auto transformFeedback = command.pass->getTransformFeedback();
 	if (transformFeedback) {
-		glEnable(GL_RASTERIZER_DISCARD);
 		transformFeedback->bind(command.contextID, _mesh->getTransformFeedbackBuffer(command.contextID), _mesh->getTransformFeedbackBufferSize(), GL_POINTS);
 		glDrawArrays(GL_POINTS, 0, _mesh->getVertexCount());
 		transformFeedback->unBind();
-		glDisable(GL_RASTERIZER_DISCARD);
 	}
 
 	for (unsigned int i = 0; i < _mesh->getPrimitiveNum(); ++i) {
