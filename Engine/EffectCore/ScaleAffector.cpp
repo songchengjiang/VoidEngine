@@ -18,9 +18,9 @@ veScaleAffector::~veScaleAffector()
 
 void veScaleAffector::update(veParticle *particle, double deltaTime)
 {
-    particle->width += _scaleX->getValue(particle->timeFraction);
-    particle->height += _scaleY->getValue(particle->timeFraction);
-    particle->depth += _scaleZ->getValue(particle->timeFraction);
+    particle->width += _scaleX->getValue(particle->timeFraction) * deltaTime;
+    particle->height += _scaleY->getValue(particle->timeFraction) * deltaTime;
+    particle->depth += _scaleZ->getValue(particle->timeFraction) * deltaTime;
     
     particle->width = veMath::maximum(0.0f, particle->width);
     particle->height = veMath::maximum(0.0f, particle->height);

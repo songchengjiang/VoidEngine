@@ -33,7 +33,7 @@
             },
             "width": {
                 "type": "FIXED",
-                "value": 4.0
+                "value": 6.0
             },
             "height": {
                 "type": "FIXED",
@@ -59,9 +59,9 @@
                 "type": "CURVED",
                 "interpolationType": "SPLINE",
                 "controlPoints": [
-                    [0.0, -0.5],
-                    [0.4, 0.4],
-                    [0.75, -0.5],
+                    [0.0, -2.5],
+                    [0.4, 2.4],
+                    [0.75, -2.5],
                     [1.0, 0.0]
                 ]
             },
@@ -69,9 +69,9 @@
                 "type": "CURVED",
                 "interpolationType": "SPLINE",
                 "controlPoints": [
-                    [0.0, -0.5],
-                    [0.4, 0.4],
-                    [0.75, -0.5],
+                    [0.0, -2.5],
+                    [0.4, 2.4],
+                    [0.75, -2.5],
                     [1.0, 0.0]
                 ]
             }

@@ -170,7 +170,7 @@ public:
             entity->addComponent(transer);
             //node->addComponent(GIZMO_COMPONENT.get());
             root->addChild(entity);
-            transer->setScale(veVec3(30.0f));
+            transer->setScale(veVec3(100.0f));
             transer->setRotation(veQuat(-veMath::HALF_PI, veVec3::UNIT_X));
             
             auto mat = entity->findChildBy("Plane001")->getRenderableObject(0)->getMaterial();
@@ -421,8 +421,8 @@ public:
             directional->shadowEnable(true);
             directional->setUseSoftShadow(true);
             directional->setShadowSoftness(0.002f);
-            directional->setShadowBias(0.0003f);
-            directional->setShadowArea(veVec2(30.0f));
+            directional->setShadowBias(0.0004f);
+            directional->setShadowArea(veVec2(60.0f));
             root->addChild(lightNode);
             
             LightingUIFunc = [directional, lightTranser]{
