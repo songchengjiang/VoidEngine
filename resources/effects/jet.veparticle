@@ -32,11 +32,11 @@
             },
             "width": {
                 "type": "FIXED",
-                "value": 2.5
+                "value": 2.0
             },
             "height": {
                 "type": "FIXED",
-                "value": 2.5
+                "value": 2.0
             }
         }
     ],

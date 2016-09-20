@@ -129,7 +129,7 @@ public:
                 auto jetps = static_cast<veParticleSystem *>(veFile::instance()->readFile(_sceneManager, "effects/jet.veparticle", "JetPS"));
                 auto jetsmokeps = static_cast<veParticleSystem *>(veFile::instance()->readFile(_sceneManager, "effects/jetsmoke.veparticle", "JetSmokePS"));
                 veNode *leftJetNode = _sceneManager->createNode("LeftJetNode");
-                leftJetNode->setMatrix(veMat4::transform(veVec3(2.6f, 1.8f, -2.5f), veVec3::UNIT_SCALE, veQuat(-veMath::HALF_PI, veVec3::UNIT_X)));
+                leftJetNode->setMatrix(veMat4::transform(veVec3(2.5f, 1.8f, -2.5f), veVec3::UNIT_SCALE, veQuat(-veMath::HALF_PI, veVec3::UNIT_X)));
                 leftJetNode->addRenderableObject(jetps);
                 leftJetNode->addRenderableObject(jetsmokeps);
                 leftJetNode->setMask(leftJetNode->getMask() & ~LIGHTING_FLAG);
@@ -140,7 +140,7 @@ public:
                 auto jetps = static_cast<veParticleSystem *>(veFile::instance()->readFile(_sceneManager, "effects/jet.veparticle", "JetPS"));
                 auto jetsmokeps = static_cast<veParticleSystem *>(veFile::instance()->readFile(_sceneManager, "effects/jetsmoke.veparticle", "JetSmokePS"));
                 veNode *rightJetNode = _sceneManager->createNode("RightJetNode");
-                rightJetNode->setMatrix(veMat4::transform(veVec3(-2.6f, 1.8f, -2.5f), veVec3::UNIT_SCALE, veQuat(-veMath::HALF_PI, veVec3::UNIT_X)));
+                rightJetNode->setMatrix(veMat4::transform(veVec3(-2.5f, 1.8f, -2.5f), veVec3::UNIT_SCALE, veQuat(-veMath::HALF_PI, veVec3::UNIT_X)));
                 rightJetNode->addRenderableObject(jetps);
                 rightJetNode->addRenderableObject(jetsmokeps);
                 rightJetNode->setMask(rightJetNode->getMask() & ~LIGHTING_FLAG);
@@ -597,7 +597,7 @@ public:
 //        int width = viewer->width();
 //        int height = viewer->height();
 //        auto camera = _sceneManager->createCamera("SecondCamera", {0, 0, width, height });
-//        camera->setProjectionMatrixAsPerspective(30.0f, (float)width / (float)height, 1.0f, 1000.0f);
+//        camera->setProjectionMatrixAsPerspective(60.0f, (float)width / (float)height, 1.0f, 1000.0f);
 //        camera->setViewMatrixAslookAt(veVec3(30.0f, 30.0f, 0.0f), veVec3::ZERO, veVec3::UNIT_Y);
 //        _sceneManager->getRootNode()->addChild(camera);
 //        viewer->setCamera(camera);

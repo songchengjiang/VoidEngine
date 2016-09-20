@@ -69,15 +69,15 @@ veTexture* veTextureManager::createTexture(const std::string &name, veTexture::T
 	_texturePool.push_back(texture);
 	return texture;
 }
-//
-//void veTextureManager::removeTexture(veTexture *tex)
-//{
-//	auto iter = std::find(_texturePool.begin(), _texturePool.end(), tex);
-//	if (iter != _texturePool.end()) {
-//		tex->_manager = nullptr;
-//		_texturePool.erase(iter);
-//	}
-//}
+
+void veTextureManager::removeTexture(veTexture *tex)
+{
+	auto iter = std::find(_texturePool.begin(), _texturePool.end(), tex);
+	if (iter != _texturePool.end()) {
+		tex->_manager = nullptr;
+		_texturePool.erase(iter);
+	}
+}
 
 bool veTextureManager::exchangeTextureMemory(veTexture *texture)
 {

@@ -945,6 +945,10 @@
 		BE3D412B1BAF0B220063041C /* KernelCore */ = {
 			isa = PBXGroup;
 			children = (
+				BE80F14B1CED59F200E2EECF /* ios */,
+				BE1A0AAB1BE24C7F00A1A20D /* SceneManager */,
+				BE1A0AD51BE24DA000A1A20D /* Renderer */,
+				BE6D3AA21CB3C5B200E9E034 /* PostProcesser */,
 				BEDE3C061D5C502B008F579F /* FrameBufferObjectManager.cpp */,
 				BEDE3C071D5C502B008F579F /* FrameBufferObjectManager.h */,
 				BEDE3C081D5C502B008F579F /* GLDataBuffer.cpp */,
@@ -953,10 +957,6 @@
 				BE0D4DB91D24C02E00BA32D6 /* Viewer-desktop.h */,
 				BE0D4DB31D23BF4000BA32D6 /* Viewer.cpp */,
 				BE0D4DB41D23BF4000BA32D6 /* Viewer.h */,
-				BE80F14B1CED59F200E2EECF /* ios */,
-				BE6D3AA21CB3C5B200E9E034 /* PostProcesser */,
-				BE1A0AD51BE24DA000A1A20D /* Renderer */,
-				BE1A0AAB1BE24C7F00A1A20D /* SceneManager */,
 				BE3D41351BAF0B520063041C /* Animation.h */,
 				BE3D41341BAF0B520063041C /* Animation.cpp */,
 				BE412CF51BF630CD00206513 /* Application-desktop.cpp */,
