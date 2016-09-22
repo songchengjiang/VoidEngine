@@ -8,6 +8,7 @@ veViewer::veViewer(int width, int height, const std::string &title)
     , _title(title)
     , _camera(nullptr)
     , _isRunning(false)
+    , _needDestroyRenderContexts(false)
 {
     static unsigned int totalContextID = 0;
     _contextID = totalContextID;

@@ -50,7 +50,7 @@
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "source": "extractlight.frag",
-                                    "u_Threshold": 0.9,
+                                    "u_Threshold": 0.6,
                                     "u_Texture": 0
                                 }
                               ],

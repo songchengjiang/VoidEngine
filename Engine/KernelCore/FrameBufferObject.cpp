@@ -135,8 +135,8 @@ void veFrameBufferObject::bind(unsigned int contextID, unsigned int clearMask, G
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_currentfbo);
 	_target = target;
     if (_needRefreshBuffers){
-        _fboBuffer->destroyAllData();
-        _dsboBuffer->destroyAllData();
+        _fboBuffer->destroyData(contextID);
+        _dsboBuffer->destroyData(contextID);
     }
 	refreshBuffers(contextID, clearMask);
 	refreshAttachments(contextID);

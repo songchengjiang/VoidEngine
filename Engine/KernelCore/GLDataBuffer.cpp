@@ -61,9 +61,9 @@ veGLDataBuffer* veGLDataBufferManager::createGLDataBuffer(const veGLDataBuffer::
     return glDataBuffer;
 }
 
-void veGLDataBufferManager::destroyAllGLDataBuffer()
+void veGLDataBufferManager::destroyAllGLDataBuffer(unsigned int contextID)
 {
     for (auto &glDataBuf : _glDataBuffers){
-        glDataBuf->destroyAllData();
+        glDataBuf->destroyData(contextID);
     }
 }

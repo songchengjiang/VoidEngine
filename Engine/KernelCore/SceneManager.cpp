@@ -27,7 +27,6 @@ veSceneManager::veSceneManager()
     , _resourceRecoveredIntervalTime(10.0f)
 	, _latestResourceRecoveredTime(_resourceRecoveredIntervalTime)
 	, _stopThreading(true)
-    , _needDestroyRenderContexts(false)
 {
 	_managerList[veTextureManager::TYPE()] = new veTextureManager(this);
 	_managerList[veMeshManager::TYPE()] = new veMeshManager(this);
@@ -214,11 +213,6 @@ veBaseManager* veSceneManager::getManager(const std::string &mgType)
 	return iter->second;
 }
 
-void veSceneManager::destroyRenderContexts()
-{
-    _needDestroyRenderContexts = true;
-}
-
 void veSceneManager::handleEvent(veViewer *viewer, const veEvent &event)
 {
     if (!_componentList.empty()) {
@@ -268,13 +262,13 @@ void veSceneManager::render(veViewer *viewer)
 {
     std::unique_lock<std::mutex> renderLock(this->_renderingMutex);
     this->_renderingCondition.wait(renderLock);
-    if (_needDestroyRenderContexts){
-        veGLDataBufferManager::instance()->destroyAllGLDataBuffer();
-        _needDestroyRenderContexts = false;
+    if (viewer->isNeedDestroyRenderContexts()){
+        veGLDataBufferManager::instance()->destroyAllGLDataBuffer(viewer->getContextID());
+        viewer->needDestroyRenderContexts(false);
     }
     this->handleRequests();
     this->renderImp(viewer);
-    this->postRenderHandle();
+    this->postRenderHandle(viewer);
 }
 
 void veSceneManager::startThreading()
@@ -306,17 +300,17 @@ void veSceneManager::enqueueTaskToThread(const std::function<void()> &func)
 	_threadPool.enqueue(func);
 }
 
-void veSceneManager::postRenderHandle()
+void veSceneManager::postRenderHandle(veViewer *viewer)
 {
 	std::unique_lock<std::mutex> updateLock(_updatingMutex);
-	resourceRecovery();
+	resourceRecovery(viewer);
 }
 
-void veSceneManager::resourceRecovery()
+void veSceneManager::resourceRecovery(veViewer *viewer)
 {
 	if (_resourceRecoveredIntervalTime < _latestResourceRecoveredTime) {
 		for (auto &manager : _managerList) {
-			manager.second->resourceRecovery();
+			manager.second->resourceRecovery(viewer->getContextID());
 		}
 		_latestResourceRecoveredTime = 0.0f;
 	}

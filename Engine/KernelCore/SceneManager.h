@@ -93,7 +93,6 @@ public:
     veRenderState* getRenderState(unsigned int contextID) { return &_renderStateList[contextID]; }
 
     void setResourceRecoveredIntervalTime(double time) { _resourceRecoveredIntervalTime = time; }
-    void destroyRenderContexts();
 
     void event(veViewer *viewer);
 	void update(veViewer *viewer);
@@ -117,8 +116,8 @@ protected:
     void stopThreading();
     void dispatchEvents(veViewer *viewer);
     void handleEvent(veViewer *viewer, const veEvent &event);
-	void postRenderHandle();
-	void resourceRecovery();
+	void postRenderHandle(veViewer *viewer);
+	void resourceRecovery(veViewer *viewer);
 	void handleRequests();
 
 protected:
@@ -147,7 +146,7 @@ protected:
 	std::thread _renderingThread;
 	bool        _stopThreading;
 
-    bool   _needDestroyRenderContexts;
+
 	double _deltaTime;
 	double _simulationTime;
     double _resourceRecoveredIntervalTime;

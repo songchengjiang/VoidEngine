@@ -11,7 +11,7 @@ veFrameBufferObjectManager::~veFrameBufferObjectManager()
 
 }
 
-void veFrameBufferObjectManager::resourceRecovery()
+void veFrameBufferObjectManager::resourceRecovery(unsigned int contextID)
 {
 	for (std::vector< VE_Ptr<veFrameBufferObject> >::iterator iter = _fboPool.begin(); iter != _fboPool.end(); ) {
 		if ((*iter)->refCount() <= 1) {

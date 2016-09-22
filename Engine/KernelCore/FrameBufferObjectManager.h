@@ -12,7 +12,7 @@ public:
 
 	~veFrameBufferObjectManager();
 
-	virtual void resourceRecovery() override;
+	virtual void resourceRecovery(unsigned int contextID) override;
 
 	veFrameBufferObject* findFrameBufferObject(const std::string &name);
 	veFrameBufferObject* createFrameBufferObject(const std::string &name);

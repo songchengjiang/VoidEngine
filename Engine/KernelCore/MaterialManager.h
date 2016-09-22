@@ -13,7 +13,7 @@ public:
 	~veMaterialManager();
 
 	virtual void update() override;
-	virtual void resourceRecovery() override;
+	virtual void resourceRecovery(unsigned int contextID) override;
 
 	veMaterialArray* findMaterialArray(const std::string &name);
 	veMaterialArray* createMaterialArray(const std::string &name);

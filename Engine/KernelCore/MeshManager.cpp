@@ -11,7 +11,7 @@ veMeshManager::~veMeshManager()
 
 }
 
-void veMeshManager::resourceRecovery()
+void veMeshManager::resourceRecovery(unsigned int contextID)
 {
 	for (std::vector< VE_Ptr<veMesh> >::iterator iter = _meshPool.begin(); iter != _meshPool.end(); ) {
 		if ((*iter)->refCount() <= 1) {

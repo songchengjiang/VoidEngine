@@ -39,7 +39,7 @@ public:
     static veGLDataBufferManager* instance();
     
     veGLDataBuffer* createGLDataBuffer(const veGLDataBuffer::DataCreateFunc &cFunc, const veGLDataBuffer::DataDestroyFunc &dFunc);
-    void destroyAllGLDataBuffer();
+    void destroyAllGLDataBuffer(unsigned int contextID);
     
     
 protected:

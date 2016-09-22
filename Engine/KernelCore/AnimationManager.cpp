@@ -19,7 +19,7 @@ void veAnimationManager::update()
 	}
 }
 
-void veAnimationManager::resourceRecovery()
+void veAnimationManager::resourceRecovery(unsigned int contextID)
 {
 
 }

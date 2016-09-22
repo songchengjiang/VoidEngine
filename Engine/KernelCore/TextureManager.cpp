@@ -23,9 +23,12 @@ void veTextureManager::update()
 	}
 }
 
-void veTextureManager::resourceRecovery()
+void veTextureManager::resourceRecovery(unsigned int contextID)
 {
 	for (std::vector< VE_Ptr<veTexture> >::iterator iter = _texturePool.begin(); iter != _texturePool.end(); ) {
+        if ((*iter)->_usage <= 0) {
+            releaseTextureMemory((*iter).get(), contextID);
+        }
 		if ((*iter)->refCount() <= 1) {
 			iter = _texturePool.erase(iter);
 		}else {
@@ -79,7 +82,7 @@ void veTextureManager::removeTexture(veTexture *tex)
 	}
 }
 
-bool veTextureManager::exchangeTextureMemory(veTexture *texture)
+bool veTextureManager::exchangeTextureMemory(veTexture *texture, unsigned int contextID)
 {
 	if (assignTextureMemory(texture)) 
 		return true;
@@ -94,7 +97,7 @@ bool veTextureManager::exchangeTextureMemory(veTexture *texture)
 
 	for (auto &iter : pendingReplacetextureList) {
 		for (auto &tex : iter.second) {
-			releaseTextureMemory(tex);
+			releaseTextureMemory(tex, contextID);
 			if (assignTextureMemory(texture))
 				return true;
 		}
@@ -114,7 +117,7 @@ bool veTextureManager::assignTextureMemory(veTexture *texture)
 	return false;
 }
 
-bool veTextureManager::releaseTextureMemory(veTexture *texture)
+bool veTextureManager::releaseTextureMemory(veTexture *texture, unsigned int contextID)
 {
 	std::unique_lock<std::mutex> lock(_texturePoolMutex);
 	auto iter = std::find_if(_allocatedTexturePool.begin(), _allocatedTexturePool.end(),
@@ -125,7 +128,7 @@ bool veTextureManager::releaseTextureMemory(veTexture *texture)
 	if (_currentTextureMemory < iter->second) return false;
 	_currentTextureMemory -= iter->second;
 	texture->_isExchanged = false;
-	texture->releaseTextureData();
+	texture->releaseTextureData(contextID);
 	_allocatedTexturePool.erase(iter);
 	return true;
 }
