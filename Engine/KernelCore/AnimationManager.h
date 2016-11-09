@@ -12,7 +12,7 @@ public:
 	~veAnimationManager();
 
 	virtual void update() override;
-	virtual void resourceRecovery() override;
+	virtual void resourceRecovery(unsigned int contextID) override;
 
 	veAnimationPlayer* findAnimationPlayer(const std::string &name);
 	veAnimationPlayer* createAnimationPlayer(const std::string &name, veAnimationContainer *container);

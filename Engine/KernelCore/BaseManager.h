@@ -11,7 +11,7 @@ public:
 	virtual ~veBaseManager();
 
 	virtual void update() {}
-	virtual void resourceRecovery() = 0;
+	virtual void resourceRecovery(unsigned int contextID) = 0;
 	veSceneManager* getSceneManager() { return _sceneManager; }
 
 protected:

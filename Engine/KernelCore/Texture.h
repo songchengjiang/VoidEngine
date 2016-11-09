@@ -108,7 +108,7 @@ protected:
 	veTexture(GLenum target);
 
 	unsigned int perPixelSize() const;
-	void releaseTextureData();
+	void releaseTextureData(unsigned int contextID);
 	void releaseMemoryData();
 
 protected:

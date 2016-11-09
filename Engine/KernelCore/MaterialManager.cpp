@@ -16,7 +16,7 @@ void veMaterialManager::update()
 {
 }
 
-void veMaterialManager::resourceRecovery()
+void veMaterialManager::resourceRecovery(unsigned int contextID)
 {
 	for (std::vector< VE_Ptr<veMaterialArray> >::iterator iter = _materialPool.begin(); iter != _materialPool.end(); ) {
 		if ((*iter)->refCount() <= 1) {

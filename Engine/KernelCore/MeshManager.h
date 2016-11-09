@@ -12,7 +12,7 @@ public:
 
 	~veMeshManager();
 
-	virtual void resourceRecovery() override;
+	virtual void resourceRecovery(unsigned int contextID) override;
 
 	veMesh* findMesh(const std::string &name);
 	veMesh* createMesh(const std::string &name);

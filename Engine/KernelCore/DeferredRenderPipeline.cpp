@@ -49,8 +49,7 @@ static const char* COMMON_FUNCTIONS = " \
 			float D = alpha2 / Db; 	                                                                                      \n\
 			                                                                                                              \n\
 			return max(0.0, (F * D * G) / (4.0f * NdotL * NdotV));                                                        \n\
-	}                                                                                                                     \n\
-	";
+	}";
 
 
 static const char* SCREEN_BASED_LIGHT_V_SHADER = " \
@@ -468,7 +467,7 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, unsigned int contex
         (comp.get())->beforeDraw(_sceneManager, camera);
     }
     
-    params.FBO->blitFramebuffer(GL_DEPTH_BUFFER_BIT, GL_NEAREST, contextID);
+    params.FBO->blitFramebuffer(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST, contextID);
     camera->setClearMask(GL_COLOR_BUFFER_BIT);
     prepareForDraws(camera);
     draw(camera, camera->getRenderQueue()->forwardRenderGroup);
@@ -485,8 +484,8 @@ void veDeferredRenderPipeline::renderToPostProcesser(vePostProcesser *processer,
 {
     unsigned int clearMask = camera->getClearMask();
     auto &params = getCameraParams(camera);
-    if (bufferMask & GL_DEPTH_BUFFER_BIT) {
-        params.FBO->blitFramebuffer(GL_DEPTH_BUFFER_BIT, GL_NEAREST, contextID);
+    if (bufferMask & (GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT)) {
+        params.FBO->blitFramebuffer(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST, contextID);
         camera->setClearMask(GL_COLOR_BUFFER_BIT);
     }
     prepareForDraws(camera);

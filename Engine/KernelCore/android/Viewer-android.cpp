@@ -110,7 +110,7 @@ void veViewerAndroid::onChanged(int width, int height)
     }
     std::unique_lock<std::mutex> eventLock(_eventMutex);
     resize(width, height);
-    _sceneManager->destroyRenderContexts();
+    needDestroyRenderContexts(true);
 }
 
 void veViewerAndroid::onPause()
@@ -131,7 +131,7 @@ void veViewerAndroid::onResume()
     std::unique_lock<std::mutex> eventLock(_eventMutex);
     _currentEvent.setEventType(veEvent::VE_WIN_FOCUS);
     this->_eventList.push_back(_currentEvent);
-    _sceneManager->destroyRenderContexts();
+    needDestroyRenderContexts(true);
 }
 
 void veViewerAndroid::onDrawFrame()

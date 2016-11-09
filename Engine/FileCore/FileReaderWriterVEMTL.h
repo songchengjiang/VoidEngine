@@ -256,71 +256,68 @@ private:
 
 		do 
 		{
-			if (true) {
-				texture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture(name);
-				if (!texture) {
-					texture = _sceneManager->createTexture(name, type);
-				}
-                if (!texture) return;
-
-				if (texVal.HasMember(SOURCE_KEY.c_str())) {
-					if (type == veTexture::TEXTURE_CUBE) {
-						const Value &sources = texVal[SOURCE_KEY.c_str()];
-						if (sources.Size() != 6) return;
-						//texture = _sceneManager->createTexture(name, texType);
-						veTexture *subTexture = nullptr;
-						for (unsigned int i = 0; i < sources.Size(); ++i) {
-							std::string source = sources[i].GetString();
-							std::string subName = name + std::string("-") + source;
-							if (veFile::instance()->isSupportFile(source)) {
-								if (veFile::instance()->isFileExist(veFile::instance()->getFullFilePath(source))) {
-									subTexture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, source, subName));
-								}
-								else {
-									subTexture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, subName));
-								}							
-							}
-							else {
-								subTexture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture(source);
-								if (!subTexture)
-									subTexture = _sceneManager->createTexture(source);
-							}
-							static_cast<veTextureCube *>(texture)->setTexture((veTextureCube::CubeMapTexType)i, subTexture);
-						}
-						veTexture::SwizzleMode r, g, b, a;
-						subTexture->getSwizzleMode(r, g, b, a);
-						static_cast<veTextureCube *>(texture)->setSwizzleMode(r, g, b, a);
-					}
-					else {
-						std::string source = texVal[SOURCE_KEY.c_str()].GetString();
-						//veTexture *texture = _sceneManager->createTexture(source, texType);					
-						if (veFile::instance()->isSupportFile(source)) {
-							veTexture *tempTex = nullptr;
-							if (veFile::instance()->isFileExist(veFile::instance()->getFullFilePath(source))) {
-								tempTex = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, source, _name + std::string("-temp")));
-							}
-							else {
-								tempTex = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, _name + std::string("-temp")));
-							}
-
-							if (tempTex) {
-								if (tempTex->getMipmapLevels().empty()) {
-									texture->storage(tempTex->getWidth(), tempTex->getHeight(), tempTex->getDepth(), tempTex->getInternalFormat(), tempTex->getPixelFormat(), tempTex->getDataType(), tempTex->getData(), tempTex->getMipMapLevelCount());
-								}
-								else {
-									texture->storage(tempTex->getMipmapLevels(), tempTex->getInternalFormat(), tempTex->getPixelFormat(), tempTex->getDataType());
-								}
-                                veTexture::SwizzleMode r, g, b, a;
-                                tempTex->getSwizzleMode(r, g, b, a);
-                                texture->setSwizzleMode(r, g, b, a);
-							}
-							//static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->removeTexture(tempTex);
-						}
-					}
-				}
-
-			}
-
+            texture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture(name);
+            if (!texture) {
+                texture = _sceneManager->createTexture(name, type);
+            }
+            if (!texture) return;
+            
+            if (texVal.HasMember(SOURCE_KEY.c_str())) {
+                if (type == veTexture::TEXTURE_CUBE) {
+                    const Value &sources = texVal[SOURCE_KEY.c_str()];
+                    if (sources.Size() != 6) return;
+                    //texture = _sceneManager->createTexture(name, texType);
+                    veTexture *subTexture = nullptr;
+                    for (unsigned int i = 0; i < sources.Size(); ++i) {
+                        std::string source = sources[i].GetString();
+                        std::string subName = name + std::string("-") + source;
+                        if (veFile::instance()->isSupportFile(source)) {
+                            if (veFile::instance()->isFileExist(veFile::instance()->getFullFilePath(source))) {
+                                subTexture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, source, subName));
+                            }
+                            else {
+                                subTexture = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, subName));
+                            }
+                        }
+                        else {
+                            subTexture = static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->findTexture(source);
+                            if (!subTexture)
+                                subTexture = _sceneManager->createTexture(source);
+                        }
+                        static_cast<veTextureCube *>(texture)->setTexture((veTextureCube::CubeMapTexType)i, subTexture);
+                    }
+                    veTexture::SwizzleMode r, g, b, a;
+                    subTexture->getSwizzleMode(r, g, b, a);
+                    static_cast<veTextureCube *>(texture)->setSwizzleMode(r, g, b, a);
+                }
+                else {
+                    std::string source = texVal[SOURCE_KEY.c_str()].GetString();
+                    //veTexture *texture = _sceneManager->createTexture(source, texType);
+                    if (veFile::instance()->isSupportFile(source)) {
+                        veTexture *tempTex = nullptr;
+                        if (veFile::instance()->isFileExist(veFile::instance()->getFullFilePath(source))) {
+                            tempTex = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, source, _name + std::string("-temp")));
+                        }
+                        else {
+                            tempTex = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, _fileFolder + source, _name + std::string("-temp")));
+                        }
+                        
+                        if (tempTex) {
+                            if (tempTex->getMipmapLevels().empty()) {
+                                texture->storage(tempTex->getWidth(), tempTex->getHeight(), tempTex->getDepth(), tempTex->getInternalFormat(), tempTex->getPixelFormat(), tempTex->getDataType(), tempTex->getData(), tempTex->getMipMapLevelCount());
+                            }
+                            else {
+                                texture->storage(tempTex->getMipmapLevels(), tempTex->getInternalFormat(), tempTex->getPixelFormat(), tempTex->getDataType());
+                            }
+                            veTexture::SwizzleMode r, g, b, a;
+                            tempTex->getSwizzleMode(r, g, b, a);
+                            texture->setSwizzleMode(r, g, b, a);
+                            static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->removeTexture(tempTex);
+                        }
+                    }
+                }
+            }
+            
 		} while (false);
 
 		if (texVal.HasMember(WRAP_KEY.c_str())) {

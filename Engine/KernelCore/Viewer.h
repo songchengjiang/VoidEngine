@@ -39,6 +39,9 @@ public:
     
     unsigned int getContextID() const { return _contextID; }
     
+    void needDestroyRenderContexts(bool isNeeded) { _needDestroyRenderContexts = isNeeded; }
+    bool isNeedDestroyRenderContexts() const { return _needDestroyRenderContexts; }
+    
 protected:
     
     int                    _width;
@@ -51,6 +54,7 @@ protected:
     
     bool                   _isRunning;
     unsigned int           _contextID;
+    bool                   _needDestroyRenderContexts;
 
     typedef std::vector< VE_Ptr<veViewerListener> > ViewerListenerList;
     ViewerListenerList     _listenerList;

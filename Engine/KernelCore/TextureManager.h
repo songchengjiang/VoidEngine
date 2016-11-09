@@ -14,15 +14,15 @@ public:
 	~veTextureManager();
 
 	virtual void update() override;
-	virtual void resourceRecovery() override;
+	virtual void resourceRecovery(unsigned int contextID) override;
 
 	veTexture* findTexture(const std::string &name);
 	veTexture* createTexture(const std::string &name, veTexture::TextureType texType);
-	//void removeTexture(veTexture *tex);
+	void removeTexture(veTexture *tex);
 	bool requestTextureMemory(veTexture *texture) { return (_currentTextureMemory + texture->getTextureTotalMemory()) < _maxTextureMemory; }
-	bool exchangeTextureMemory(veTexture *texture);
+	bool exchangeTextureMemory(veTexture *texture, unsigned int contextID);
 	bool assignTextureMemory(veTexture *texture);
-	bool releaseTextureMemory(veTexture *texture);
+	bool releaseTextureMemory(veTexture *texture, unsigned int contextID);
 
 	static std::string TYPE() { return "TEXTURE"; }
 

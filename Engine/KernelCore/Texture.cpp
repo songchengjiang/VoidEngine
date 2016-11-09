@@ -114,9 +114,9 @@ unsigned int veTexture::getImageSize(int width, int height) const
 	return ((width + 3) / 4) * ((height + 3) / 4) * perPixelSize();
 }
 
-void veTexture::releaseTextureData()
+void veTexture::releaseTextureData(unsigned int contextID)
 {
-    _textureBuffer->destroyAllData();
+    _textureBuffer->destroyData(contextID);
 }
 
 void veTexture::releaseMemoryData()
@@ -248,7 +248,7 @@ void veTexture::bind(unsigned int contextID)
         _needRefreshSampler = true;
     }
 	if (_needRefreshTex) {
-		_manager->releaseTextureMemory(this);
+		_manager->releaseTextureMemory(this, contextID);
 	}
 	if (!texID) {
         texID = _textureBuffer->createData(contextID);
@@ -399,7 +399,7 @@ void veTexture2D::bind(unsigned int contextID)
 {
 	veTexture::bind(contextID);
 	if (_needRefreshTex) {
-		if (_manager->exchangeTextureMemory(this)) {
+		if (_manager->exchangeTextureMemory(this, contextID)) {
 			if (_width != 0 && _height != 0)
 				glTexStorage2D(_target, _mipMapLevelCount, _internalFormat, _width, _height);
 			if (_isCompressedTex) {
@@ -450,7 +450,7 @@ void veTexture3D::bind(unsigned int contextID)
 {
 	veTexture::bind(contextID);
 	if (_needRefreshTex) {
-		if (_manager->exchangeTextureMemory(this)) {
+		if (_manager->exchangeTextureMemory(this, contextID)) {
 			if (_width != 0 && _height != 0 && _depthOrLayer != 0)
 				glTexStorage3D(_target, _mipMapLevelCount, _internalFormat, _width, _height, _depthOrLayer);
 
@@ -519,7 +519,7 @@ void veTextureCube::bind(unsigned int contextID)
 {
 	veTexture::bind(contextID);
 	if (_needRefreshTex) {
-		if (_manager->exchangeTextureMemory(this)) {
+		if (_manager->exchangeTextureMemory(this, contextID)) {
 			_width = _textures[0].valid() ? _textures[0]->getWidth() : _width;
 			_height = _textures[0].valid() ? _textures[0]->getHeight() : _height;
 			_internalFormat = _textures[0].valid() ? _textures[0]->getInternalFormat() : _internalFormat;
@@ -600,7 +600,7 @@ void veTexture2DArray::bind(unsigned int contextID)
 {
 	veTexture::bind(contextID);
 	if (_needRefreshTex) {
-		if (_manager->exchangeTextureMemory(this)) {
+		if (_manager->exchangeTextureMemory(this, contextID)) {
 			if (_width != 0 && _height != 0 && _depthOrLayer != 0)
 				glTexStorage3D(_target, _mipMapLevelCount, _internalFormat, _width, _height, _depthOrLayer);
 
@@ -654,7 +654,7 @@ void veTextureCubeArray::bind(unsigned int contextID)
 {
 	veTexture::bind(contextID);
 	if (_needRefreshTex) {
-		if (_manager->exchangeTextureMemory(this)) {
+		if (_manager->exchangeTextureMemory(this, contextID)) {
 			_width = !_textures.empty() ? _textures[0].faces[0]->getWidth() : _width;
 			_height = !_textures.empty() ? _textures[0].faces[0]->getHeight() : _height;
 			_depthOrLayer = !_textures.empty() ? _textures.size() : _depthOrLayer;

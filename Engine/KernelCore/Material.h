@@ -128,26 +128,28 @@ private:
 
 private:
 
-    RenderPass _renderPass;
-	bool _depthTest;
-	bool _depthWirte;
-	bool _stencilTest;
-	bool _cullFace;
-	bool _castShadow;
-	GLenum _cullFaceMode;
-	veBlendFunc _blendFunc;
-	GLenum _blendEquation;
+    RenderPass    _renderPass;
+	bool          _depthTest;
+	bool          _depthWirte;
+	bool          _stencilTest;
+	bool          _cullFace;
+	bool          _castShadow;
+	GLenum        _cullFaceMode;
+	veBlendFunc   _blendFunc;
+	GLenum        _blendEquation;
 	veStencilFunc _stencilFunc;
 	veStencilOp   _stencilOp;
-	unsigned int _mask;
+	unsigned int  _mask;
+    
 	//GLenum _polygonMode;
     VE_Ptr<veGLDataBuffer> _programBuffer;
-	bool    _needLinkProgram;
-	std::map<veShader::Type, VE_Ptr<veShader> >           _shaders;
-	std::vector< std::pair<TextureType, VE_Ptr<veTexture> > >            _textures;
-	std::vector< VE_Ptr<veUniform> >            _uniforms;
-	VE_Ptr<veTransformFeedback>                           _transformFeedback;
-	ApplyFunctionCallback                                 _callback;
+	bool                   _needLinkProgram;
+    
+	std::map<veShader::Type, VE_Ptr<veShader> >               _shaders;
+	std::vector< std::pair<TextureType, VE_Ptr<veTexture> > > _textures;
+	std::vector< VE_Ptr<veUniform> >                          _uniforms;
+	VE_Ptr<veTransformFeedback>                               _transformFeedback;
+	ApplyFunctionCallback                                     _callback;
 };
 
 class VE_EXPORT veTechnique
