@@ -192,10 +192,12 @@ private:
 			else if (member->name.GetString() == SOURCE_KEY){
 				std::string source = member->value.GetString();
                 if (veFile::instance()->isFileExist(veFile::instance()->getFullFilePath(source))) {
-					shader->setSource(source);
+                    auto shaderData = veFile::instance()->readFileToBuffer(source);
+					shader->setSource(shaderData->buffer);
 				}
 				else {
-					shader->setSource(_fileFolder + source);
+                    auto shaderData = veFile::instance()->readFileToBuffer(_fileFolder + source);
+					shader->setSource(shaderData->buffer);
 				}
 			}else if (member->name.GetString() == DEFINATION_KEY) {
 				shader->setShaderHeader(member->value.GetString());

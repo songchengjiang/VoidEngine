@@ -27,6 +27,7 @@
 #include "KernelCore/SkyBox.h"
 #include "KernelCore/PostProcesser.h"
 #include "KernelCore/Viewer.h"
+#include "KernelCore/Terrain.h"
 
 #include "FileCore/Printer.h"
 #include "FileCore/File.h"

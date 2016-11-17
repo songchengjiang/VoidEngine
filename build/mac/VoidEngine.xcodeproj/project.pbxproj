@@ -50,6 +50,10 @@
 		BE16BD041CDC897F006E7146 /* SineForceAffector.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BD021CDC897F006E7146 /* SineForceAffector.h */; };
 		BE16BD071CDC92BF006E7146 /* LinearForceAffector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16BD051CDC92BF006E7146 /* LinearForceAffector.cpp */; };
 		BE16BD081CDC92BF006E7146 /* LinearForceAffector.h in Headers */ = {isa = PBXBuildFile; fileRef = BE16BD061CDC92BF006E7146 /* LinearForceAffector.h */; };
+		BE18D2611DDDFB0200EEF38C /* Terrain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE18D25D1DDDFB0200EEF38C /* Terrain.cpp */; };
+		BE18D2621DDDFB0200EEF38C /* Terrain.h in Headers */ = {isa = PBXBuildFile; fileRef = BE18D25E1DDDFB0200EEF38C /* Terrain.h */; };
+		BE18D2631DDDFB0200EEF38C /* TerrainRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE18D25F1DDDFB0200EEF38C /* TerrainRenderer.cpp */; };
+		BE18D2641DDDFB0200EEF38C /* TerrainRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BE18D2601DDDFB0200EEF38C /* TerrainRenderer.h */; };
 		BE1A0AA91BE24C6F00A1A20D /* OctreeDebuger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AA71BE24C6F00A1A20D /* OctreeDebuger.cpp */; };
 		BE1A0AAA1BE24C6F00A1A20D /* OctreeDebuger.h in Headers */ = {isa = PBXBuildFile; fileRef = BE1A0AA81BE24C6F00A1A20D /* OctreeDebuger.h */; };
 		BE1A0AB61BE24D1000A1A20D /* AnimationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE1A0AAC1BE24D1000A1A20D /* AnimationManager.cpp */; };
@@ -415,6 +419,16 @@
 		BE16BD021CDC897F006E7146 /* SineForceAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SineForceAffector.h; path = ../../Engine/EffectCore/SineForceAffector.h; sourceTree = "<group>"; };
 		BE16BD051CDC92BF006E7146 /* LinearForceAffector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LinearForceAffector.cpp; path = ../../Engine/EffectCore/LinearForceAffector.cpp; sourceTree = "<group>"; };
 		BE16BD061CDC92BF006E7146 /* LinearForceAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinearForceAffector.h; path = ../../Engine/EffectCore/LinearForceAffector.h; sourceTree = "<group>"; };
+		BE18D25D1DDDFB0200EEF38C /* Terrain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Terrain.cpp; path = ../../Engine/KernelCore/Terrain.cpp; sourceTree = "<group>"; };
+		BE18D25E1DDDFB0200EEF38C /* Terrain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Terrain.h; path = ../../Engine/KernelCore/Terrain.h; sourceTree = "<group>"; };
+		BE18D25F1DDDFB0200EEF38C /* TerrainRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TerrainRenderer.cpp; path = ../../Engine/KernelCore/TerrainRenderer.cpp; sourceTree = "<group>"; };
+		BE18D2601DDDFB0200EEF38C /* TerrainRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TerrainRenderer.h; path = ../../Engine/KernelCore/TerrainRenderer.h; sourceTree = "<group>"; };
+		BE18D2661DDDFC2000EEF38C /* DepthWriter.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = DepthWriter.frag; path = ../../Engine/Shaders/DepthWriter.frag; sourceTree = "<group>"; };
+		BE18D2671DDDFC2000EEF38C /* DepthWriter.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = DepthWriter.vert; path = ../../Engine/Shaders/DepthWriter.vert; sourceTree = "<group>"; };
+		BE18D2681DDDFC2000EEF38C /* SquareDepthWriter.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = SquareDepthWriter.frag; path = ../../Engine/Shaders/SquareDepthWriter.frag; sourceTree = "<group>"; };
+		BE18D2691DDDFC2000EEF38C /* SquareDepthWriter.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = SquareDepthWriter.vert; path = ../../Engine/Shaders/SquareDepthWriter.vert; sourceTree = "<group>"; };
+		BE18D26A1DDDFC2000EEF38C /* TerrainShader.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = TerrainShader.frag; path = ../../Engine/Shaders/TerrainShader.frag; sourceTree = "<group>"; };
+		BE18D26B1DDDFC2000EEF38C /* TerrainShader.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = TerrainShader.vert; path = ../../Engine/Shaders/TerrainShader.vert; sourceTree = "<group>"; };
 		BE1A0AA71BE24C6F00A1A20D /* OctreeDebuger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OctreeDebuger.cpp; path = ../../Engine/Debuger/OctreeDebuger.cpp; sourceTree = "<group>"; };
 		BE1A0AA81BE24C6F00A1A20D /* OctreeDebuger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OctreeDebuger.h; path = ../../Engine/Debuger/OctreeDebuger.h; sourceTree = "<group>"; };
 		BE1A0AAC1BE24D1000A1A20D /* AnimationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AnimationManager.cpp; path = ../../Engine/KernelCore/AnimationManager.cpp; sourceTree = "<group>"; };
@@ -734,6 +748,19 @@
 			name = libs.mac;
 			sourceTree = "<group>";
 		};
+		BE18D2651DDDFC1000EEF38C /* Shaders */ = {
+			isa = PBXGroup;
+			children = (
+				BE18D2661DDDFC2000EEF38C /* DepthWriter.frag */,
+				BE18D2671DDDFC2000EEF38C /* DepthWriter.vert */,
+				BE18D2681DDDFC2000EEF38C /* SquareDepthWriter.frag */,
+				BE18D2691DDDFC2000EEF38C /* SquareDepthWriter.vert */,
+				BE18D26A1DDDFC2000EEF38C /* TerrainShader.frag */,
+				BE18D26B1DDDFC2000EEF38C /* TerrainShader.vert */,
+			);
+			name = Shaders;
+			sourceTree = "<group>";
+		};
 		BE1A0AAB1BE24C7F00A1A20D /* SceneManager */ = {
 			isa = PBXGroup;
 			children = (
@@ -773,6 +800,8 @@
 			isa = PBXGroup;
 			children = (
 				BE6D3AA41CB3C5DC00E9E034 /* Pipeline */,
+				BE18D25F1DDDFB0200EEF38C /* TerrainRenderer.cpp */,
+				BE18D2601DDDFB0200EEF38C /* TerrainRenderer.h */,
 				BE6D3ABD1CB3C65300E9E034 /* ConeRenderer.cpp */,
 				BE6D3ABE1CB3C65300E9E034 /* ConeRenderer.h */,
 				BE6D3ABF1CB3C65300E9E034 /* LightRenderer.cpp */,
@@ -873,6 +902,7 @@
 		BE3D41281BAF0AFC0063041C /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				BE18D2651DDDFC1000EEF38C /* Shaders */,
 				BEA445DB1D06A80500960C84 /* UtilCore */,
 				BE7E032F1D02C2FF00320061 /* ExtCore */,
 				BE05C5141CD3039E0022D797 /* EffectCore */,
@@ -957,6 +987,8 @@
 				BE0D4DB91D24C02E00BA32D6 /* Viewer-desktop.h */,
 				BE0D4DB31D23BF4000BA32D6 /* Viewer.cpp */,
 				BE0D4DB41D23BF4000BA32D6 /* Viewer.h */,
+				BE18D25D1DDDFB0200EEF38C /* Terrain.cpp */,
+				BE18D25E1DDDFB0200EEF38C /* Terrain.h */,
 				BE3D41351BAF0B520063041C /* Animation.h */,
 				BE3D41341BAF0B520063041C /* Animation.cpp */,
 				BE412CF51BF630CD00206513 /* Application-desktop.cpp */,
@@ -1176,6 +1208,7 @@
 				BE6D3AC81CB3C65300E9E034 /* SphereRenderer.h in Headers */,
 				BE1A0B171BE24E5C00A1A20D /* ThreadPool.h in Headers */,
 				BE1A0ABF1BE24D1000A1A20D /* SceneManager.h in Headers */,
+				BE18D2641DDDFB0200EEF38C /* TerrainRenderer.h in Headers */,
 				BE1A0B051BE24E5B00A1A20D /* Font.h in Headers */,
 				BEA445EF1D06BD0300960C84 /* GizmoTranslation.h in Headers */,
 				BEA445E01D06A86A00960C84 /* Gizmo.h in Headers */,
@@ -1220,6 +1253,7 @@
 				BE791C361CFD9218007071AF /* ParticleBoxRenderer.h in Headers */,
 				BE6D3AB01CB3C5FD00E9E034 /* RenderPipeline.h in Headers */,
 				BE05C51D1CD30E2A0022D797 /* Emitter.h in Headers */,
+				BE18D2621DDDFB0200EEF38C /* Terrain.h in Headers */,
 				BE16BCF21CDC7C9D006E7146 /* JetAffector.h in Headers */,
 				BE7E033C1D02C4CD00320061 /* imgui.h in Headers */,
 				BE412CF41BF630A200206513 /* MathAlgorithm.h in Headers */,
@@ -1350,6 +1384,7 @@
 				BE16BCE01CDC486B006E7146 /* LineEmitter.cpp in Sources */,
 				BE6D3AC51CB3C65300E9E034 /* LightRenderer.cpp in Sources */,
 				BE1B50581BB049E30039A346 /* Parameter.cpp in Sources */,
+				BE18D2611DDDFB0200EEF38C /* Terrain.cpp in Sources */,
 				BE1B50591BB049E30039A346 /* RenderableObject.cpp in Sources */,
 				BEC317FA1CEEF5E800306386 /* Configuration.cpp in Sources */,
 				BE1B505A1BB049E30039A346 /* Renderer.cpp in Sources */,
@@ -1373,6 +1408,7 @@
 				BE1B50631BB049E30039A346 /* FileReaderWriterANIMATION.h in Sources */,
 				BE4E66941C04B7AE0078717E /* FileReaderWriterKTX.h in Sources */,
 				BE6D3AB71CB3C62800E9E034 /* Cone.cpp in Sources */,
+				BE18D2631DDDFB0200EEF38C /* TerrainRenderer.cpp in Sources */,
 				BE0D4DB51D23BF4000BA32D6 /* Viewer.cpp in Sources */,
 				BEA445EA1D06BD0300960C84 /* GizmoScale.cpp in Sources */,
 				BE1A0ABA1BE24D1000A1A20D /* MeshManager.cpp in Sources */,

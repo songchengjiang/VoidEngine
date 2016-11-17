@@ -7,6 +7,7 @@
 #include "Cone.h"
 #include "SkyBox.h"
 #include "Animation.h"
+#include "Terrain.h"
 
 #include "TextureManager.h"
 #include "MeshManager.h"

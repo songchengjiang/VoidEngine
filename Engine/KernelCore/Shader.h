@@ -117,7 +117,7 @@ public:
 	};
 
 	veShader();
-	veShader(Type type, const std::string &filePath);
+	//veShader(Type type, const std::string &filePath);
 	veShader(Type type, const char *str);
 	~veShader();
 
@@ -126,7 +126,7 @@ public:
 	void setType(Type type) { _type = type; }
 	Type getType() const { return _type; }
 
-	void setSource(const std::string &filePath);
+	//void setSource(const std::string &filePath);
 	void setSource(const char *str);
 
 	void setShaderHeader(const std::string &sHeader);

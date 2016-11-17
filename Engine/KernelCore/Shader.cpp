@@ -757,12 +757,12 @@ void veUniform::setName(const std::string &name)
 
 //////////////////////////////////////////////////////////////////////////
 
-veShader::veShader(Type type, const std::string &filePath)
-	: USE_VE_PTR_INIT
-	, _type(type)
-{
-	setSource(filePath);
-}
+//veShader::veShader(Type type, const std::string &filePath)
+//	: USE_VE_PTR_INIT
+//	, _type(type)
+//{
+//	setSource(filePath);
+//}
 
 veShader::veShader(Type type, const char *str)
 	: USE_VE_PTR_INIT
@@ -783,11 +783,11 @@ veShader::~veShader()
 
 }
 
-void veShader::setSource(const std::string &filePath)
-{
-	auto fileData = veFile::instance()->readFileToBuffer(filePath);
-	_source.assign(fileData->buffer, fileData->size);
-}
+//void veShader::setSource(const std::string &filePath)
+//{
+//	auto fileData = veFile::instance()->readFileToBuffer(filePath);
+//	_source.assign(fileData->buffer, fileData->size);
+//}
 
 void veShader::setSource(const char *str)
 {

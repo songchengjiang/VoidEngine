@@ -34,9 +34,9 @@ protected:
 	void renderCameras(veViewer *viewer);
 	virtual void renderScene(veCamera *camera, unsigned int contextID) = 0;
 
-	void renderDirectionalLightShadow(veLight *light, veCamera *camera, unsigned int contextID);
-	void renderPointLightShadow(veLight *light, unsigned int contextID);
-	void renderSpotLightShadow(veLight *light, unsigned int contextID);
+	void renderDirectionalLightShadow(const veMat4 &lightInWorldMat, veLight *light, veCamera *camera, unsigned int contextID, veMat4 *lightShadowMats);
+	void renderPointLightShadow(const veMat4 &lightInWorldMat, veLight *light, unsigned int contextID, veMat4 &lightShadowMat);
+	void renderSpotLightShadow(const veMat4 &lightInWorldMat, veLight *light, unsigned int contextID, veMat4 &lightShadowMat);
     
     void caculateDirectionalLightCascadedParams(const veMat4 &lightInWorldMat, veLight *light, veCamera *camera, float *cascadedLevels);
 

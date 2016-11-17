@@ -191,7 +191,6 @@ veUniform* vePass::removeUniform(size_t idx)
 
 void vePass::reloadProgram()
 {
-    _programBuffer->destroyAllData();
 	_needLinkProgram = true;
 }
 
@@ -200,8 +199,9 @@ void vePass::applyProgram(const veRenderCommand &command)
     auto program = _programBuffer->getData(command.contextID);
 	if (_needLinkProgram || !program) {
 		//glUseProgram(0);
-		if (!program)
-			program = _programBuffer->createData(command.contextID);
+        _programBuffer->destroyData(command.contextID);
+        program = _programBuffer->createData(command.contextID);
+			
 		for (auto &iter : _shaders) {
 			GLuint id = iter.second->compile();
 			glAttachShader(program, id);

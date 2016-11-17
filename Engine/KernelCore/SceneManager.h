@@ -38,6 +38,7 @@ class veRay;
 class veViewer;
 class veEventDispatcher;
 class veFrameBufferObject;
+class veTerrain;
 
 class VE_EXPORT veSceneManager
 {

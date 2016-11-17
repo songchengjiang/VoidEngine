@@ -40,7 +40,7 @@ public:
 
 	const std::vector<veNode *>& getParents() const { return _parents; }
 
-	void dirtyBoundingBox() { _isDirtyBoundingBox = true; }
+	//void dirtyBoundingBox() { _isDirtyBoundingBox = true; }
 
 protected:
 

@@ -17,6 +17,7 @@
 #include "NormalMappingTest.h"
 #include "ParticleSystemTest.h"
 #include "SceneTest.h"
+#include "TerrainTest.h"
 
 //
 class TestCreator
@@ -39,6 +40,7 @@ public:
 		//auto test = new IBLTest;
 		//auto test = new NormalMappingTest;
         //auto test = new ParticleSystemTest;
+        //auto test = new TerrainTest;
         auto test = new SceneTest;
 		test->init();
 	}

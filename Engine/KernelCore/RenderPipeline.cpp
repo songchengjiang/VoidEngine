@@ -4,7 +4,16 @@
 #include "Constants.h"
 #include "Configuration.h"
 #include "Viewer.h"
-#include "Debuger/Debuger.h"
+#include "FileCore/File.h"
+#include "Shaders/DepthWriter.vert"
+#include "Shaders/DepthWriter.frag"
+#include "Shaders/SquareDepthWriter.vert"
+#include "Shaders/SquareDepthWriter.frag"
+
+static const veMat4 LIGHT_BIAS_MAT = veMat4(0.5f, 0.0f, 0.0f, 0.5f
+                                            , 0.0f, 0.5f, 0.0f, 0.5f
+                                            , 0.0f, 0.0f, 0.5f, 0.5f
+                                            , 0.0f, 0.0f, 0.0f, 1.0f);
 
 static veLoopQueue<veRenderCommand>::SortFunc PASS_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
 	return right.priority == left.priority ? left.pass <= right.pass : right.priority <= left.priority;
@@ -87,8 +96,13 @@ void veRenderPipeline::fillRenderQueues(veCamera *camera, unsigned int contextID
 	if (!nodeList.empty()) {
 		for (auto &node : nodeList) {
 			for (unsigned int i = 0; i < node->getRenderableObjectCount(); ++i) {
-				if (node->getRenderableObject(i)->isVisible())
-					node->getRenderableObject(i)->render(node.get(), camera, contextID);
+                if (node->getRenderableObject(i)->isVisible()) {
+                    auto worldBoundingBox = node->getRenderableObject(i)->isLocalBoundingBox()?
+                    node->getRenderableObject(i)->getBoundingBox() * node->getNodeToWorldMatrix():
+                    node->getRenderableObject(i)->getBoundingBox();
+                    if (!camera->isOutOfFrustum(worldBoundingBox))
+                        node->getRenderableObject(i)->render(node.get(), camera, contextID);
+                }
 			}
 		}
 	}
@@ -212,7 +226,7 @@ void veRenderPipeline::renderScene(veCamera *camera, unsigned int contextID)
 	}
 }
 
-void veRenderPipeline::renderDirectionalLightShadow(veLight *light, veCamera *camera, unsigned int contextID)
+void veRenderPipeline::renderDirectionalLightShadow(const veMat4 &lightInWorldMat, veLight *light, veCamera *camera, unsigned int contextID, veMat4 *lightShadowMats)
 {
     auto dLight = static_cast<veDirectionalLight *>(light);
     static auto shadowPass = [this](veRenderCommand &command) -> bool {
@@ -225,6 +239,10 @@ void veRenderPipeline::renderDirectionalLightShadow(veLight *light, veCamera *ca
         }
         return false;
     };
+    
+    for (unsigned short i = 0; i < dLight->getShadowCascadedCount(); ++i) {
+        lightShadowMats[i] = LIGHT_BIAS_MAT * dLight->getShadowCamera(i)->projectionMatrix() * dLight->getShadowCamera(i)->viewMatrix();
+    }
     
     for (unsigned short i = 0; i < dLight->getShadowCascadedCount(); ++i) {
         //dLight->getShadowCamera()->setProjectionMatrix(correctedProjections[i]);
@@ -240,9 +258,8 @@ void veRenderPipeline::renderDirectionalLightShadow(veLight *light, veCamera *ca
     }
 }
 
-void veRenderPipeline::renderPointLightShadow(veLight *light, unsigned int contextID)
+void veRenderPipeline::renderPointLightShadow(const veMat4 &lightInWorldMat, veLight *light, unsigned int contextID, veMat4 &lightShadowMat)
 {
-	if (!light->isShadowEnabled()) return;
 	auto pLight = static_cast<vePointLight *>(light);
     static auto shadowPass = [this](veRenderCommand &command) -> bool {
         if (command.pass->castShadow()) {
@@ -254,6 +271,15 @@ void veRenderPipeline::renderPointLightShadow(veLight *light, unsigned int conte
         }
         return false;
     };
+    
+    veVec3 lightWorldPos = veVec3(lightInWorldMat[0][3], lightInWorldMat[1][3], lightInWorldMat[2][3]);
+    pLight->getShadowCamera(0)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_X, veVec3::NEGATIVE_UNIT_Y));
+    pLight->getShadowCamera(1)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_X, veVec3::NEGATIVE_UNIT_Y));
+    pLight->getShadowCamera(2)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_Y, veVec3::UNIT_Z));
+    pLight->getShadowCamera(3)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_Y, veVec3::NEGATIVE_UNIT_Z));
+    pLight->getShadowCamera(4)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_Z, veVec3::NEGATIVE_UNIT_Y));
+    pLight->getShadowCamera(5)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_Z, veVec3::NEGATIVE_UNIT_Y));
+    lightShadowMat = veMat4::translation(-lightWorldPos);
     
 	for (unsigned short i = 0; i < 6; ++i) {
 		_sceneManager->getRenderState(contextID)->resetState();
@@ -268,9 +294,8 @@ void veRenderPipeline::renderPointLightShadow(veLight *light, unsigned int conte
 	}
 }
 
-void veRenderPipeline::renderSpotLightShadow(veLight *light, unsigned int contextID)
+void veRenderPipeline::renderSpotLightShadow(const veMat4 &lightInWorldMat, veLight *light, unsigned int contextID, veMat4 &lightShadowMat)
 {
-	if (!light->isShadowEnabled()) return;
 	auto sLight = static_cast<veSpotLight *>(light);
     static auto shadowPass = [this](veRenderCommand &command) {
 		if (command.pass->castShadow()) {
@@ -282,6 +307,9 @@ void veRenderPipeline::renderSpotLightShadow(veLight *light, unsigned int contex
 		}
 		return false;
     };
+    
+    sLight->getShadowCamera()->setMatrix(lightInWorldMat);
+    lightShadowMat = LIGHT_BIAS_MAT * sLight->getShadowCamera()->projectionMatrix() * sLight->getShadowCamera()->viewMatrix();
     
 	_sceneManager->getRenderState(contextID)->resetState();
 	_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, sLight->getShadowTexture());
@@ -303,10 +331,10 @@ vePass* veRenderPipeline::getOrCreateDirectionalShadowPass(const std::string &vD
 	}
 
 	auto pass = new vePass;
-	auto vShader = new veShader(veShader::VERTEX_SHADER, std::string("system/DepthWriter.vert"));
+	auto vShader = new veShader(veShader::VERTEX_SHADER, DEPTH_WRITE_VERTEX_SHADER);
 	vShader->setShaderHeader(vDef);
 	pass->setShader(vShader);
-	auto fShader = new veShader(veShader::FRAGMENT_SHADER, std::string("system/DepthWriter.frag"));
+	auto fShader = new veShader(veShader::FRAGMENT_SHADER, DEPTH_WRITE_FRAGMENT_SHADER);
 	fShader->setShaderHeader(fDef);
 	pass->setShader(fShader);
 	pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
@@ -324,10 +352,10 @@ vePass* veRenderPipeline::getOrCreateOmnidirectionalShadowPass(const std::string
 	}
 
 	auto pass = new vePass;
-	auto vShader = new veShader(veShader::VERTEX_SHADER, std::string("system/SquareDepthWriter.vert"));
+	auto vShader = new veShader(veShader::VERTEX_SHADER, SQUARE_DEPTH_WRITE_VERTEX_SHADER);
 	vShader->setShaderHeader(vDef);
 	pass->setShader(vShader);
-	auto fShader = new veShader(veShader::FRAGMENT_SHADER, std::string("system/SquareDepthWriter.frag"));
+	auto fShader = new veShader(veShader::FRAGMENT_SHADER, SQUARE_DEPTH_WRITE_FRAGMENT_SHADER);
 	fShader->setShaderHeader(fDef);
 	pass->setShader(fShader);
 	pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
