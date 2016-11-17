@@ -87,14 +87,15 @@ bool veFrameBufferObject::attach(GLenum attachment, GLenum target, veTexture *at
 	if (iter != _attachments.end()) {
 		if (iter->second.target == target
 			&& iter->second.texture == attachTex
+            && iter->second.layer == layer
 			&& iter->second.needMipmap == needMipmap)
 			return false;
 	}
 	_attachments[attachment] = AttachmentInfo{target, layer, 0, attachTex, needMipmap};
 	_needRefreshAttachments = true;
-	if (attachment == GL_DEPTH_ATTACHMENT || attachment == GL_DEPTH_STENCIL_ATTACHMENT) {
-		_needRefreshBuffers = true;
-	}
+//	if (attachment == GL_DEPTH_ATTACHMENT || attachment == GL_DEPTH_STENCIL_ATTACHMENT) {
+//		_needRefreshBuffers = true;
+//	}
 	return true;
 }
 
@@ -104,14 +105,15 @@ bool veFrameBufferObject::attach(GLenum attachment, GLenum target, GLint texID, 
 	if (iter != _attachments.end()) {
 		if (iter->second.target == target
 			&& iter->second.texID == texID
+            && iter->second.layer == layer
 			&& iter->second.needMipmap == needMipmap)
 			return false;
 	}
 	_attachments[attachment] = AttachmentInfo{target, layer, texID, nullptr, needMipmap};
 	_needRefreshAttachments = true;
-	if (attachment == GL_DEPTH_ATTACHMENT || attachment == GL_DEPTH_STENCIL_ATTACHMENT) {
-		_needRefreshBuffers = true;
-	}
+//	if (attachment == GL_DEPTH_ATTACHMENT || attachment == GL_DEPTH_STENCIL_ATTACHMENT) {
+//		_needRefreshBuffers = true;
+//	}
 	return true;
 }
 

@@ -229,11 +229,12 @@ private:
 						, values[12].GetDouble(), values[13].GetDouble(), values[14].GetDouble(), values[15].GetDouble());
 					uniform->setValue(mat);
 				}else {
-					veRealArray vals;
+					veReal *vals = new veReal[values.Size()];
 					for (unsigned int i = 0; i < values.Size(); ++i) {
-						vals.push_back(values[i].GetDouble());
+						vals[i] = values[i].GetDouble();
 					}
-					uniform->setValue(vals);
+					uniform->setValue(vals, values.Size());
+                    delete[] vals;
 				}
 				pass->addUniform(uniform);
 			}

@@ -188,6 +188,29 @@ void veMat4::makeLookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &u
 		, 0.0f, 0.0f, 0.0f, 1.0f);
 }
 
+void veMat4::makeOrtho(float left, float right, float bottom, float top, float zNear, float zFar)
+{
+    set(2.0f / (right - left), 0.0f                 , 0.0f                 , -(right + left) / (right - left)
+      , 0.0f                 , 2.0f / (top - bottom), 0.0f                 , -(top + bottom) / (top - bottom)
+      , 0.0f                 , 0.0f                 , 2.0f / (zNear - zFar), (zNear + zFar) / (zNear - zFar)
+      , 0.0f                 , 0.0f                 , 0.0f                 , 1.0f);
+}
+
+void veMat4::makePerspective(float fovy, float aspectRatio, float zNear, float zFar)
+{
+    float top = zNear * tan(veMath::veRadian(fovy * 0.5f));
+    float bottom = -top;
+    float right = top * aspectRatio;
+    float left = -right;
+    float a = -(zFar + zNear) / (zFar - zNear);
+    float b = -(2.0 * zNear * zFar) / (zFar - zNear);
+    
+    set((2.0f * zNear) / (right - left), 0.0f                           , (right + left) / (right - left), 0.0f
+       , 0.0f                          , (2.0f * zNear) / (top - bottom), (top + bottom) / (top - bottom), 0.0f
+       , 0.0f                          , 0.0f                           , a                              , b
+       , 0.0f                          , 0.0f                           , -1.0f                          , 0.0f);
+}
+
 void veMat4::decomposition(veVec3* position, veVec3* scale, veQuat* orientation) const
 {
 	if (position){
@@ -397,4 +420,18 @@ veMat4 veMat4::lookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &up)
 	veMat4 m;
 	m.makeLookAt(eye, center, up);
 	return m;
+}
+
+veMat4 veMat4::ortho(float left, float right, float bottom, float top, float zNear, float zFar)
+{
+    veMat4 m;
+    m.makeOrtho(left, right, bottom, top, zNear, zFar);
+    return m;
+}
+
+veMat4 veMat4::perspective(float fovy, float aspectRatio, float zNear, float zFar)
+{
+    veMat4 m;
+    m.makePerspective(fovy, aspectRatio, zNear, zFar);
+    return m;
 }

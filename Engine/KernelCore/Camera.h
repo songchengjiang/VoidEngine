@@ -102,6 +102,7 @@ public:
 	void setShadowCamera(bool isShadow) { _isShadowCamera = isShadow; }
 	bool isShadowCamera() const { return _isShadowCamera; }
 
+    void getFrustumCorners(veVec3 *corners) const;
     
     void addPostProcesser(vePostProcesser *processer);
     const vePostProcesserList& getPostProcesserList() const { return _postProcesserList; }

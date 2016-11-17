@@ -3,11 +3,6 @@
 #include "SceneManager.h"
 #include "Configuration.h"
 
-static const veMat4 LIGHT_BIAS_MAT = veMat4(0.5f, 0.0f, 0.0f, 0.5f
-	, 0.0f, 0.5f, 0.0f, 0.5f
-	, 0.0f, 0.0f, 0.5f, 0.5f
-	, 0.0f, 0.0f, 0.0f, 1.0f);
-
 const veVec2 veLight::DEFAULT_SHADOW_RESOLUTION = veVec2(256);
 const veVec2 veLight::DEFAULT_SHADOW_AREA = veVec2(100.0f);
 const float  veLight::DEFAULT_SHADOW_BIAS = 0.0f;
@@ -33,7 +28,6 @@ veLight::veLight(LightType type)
 	, _shadowSoftness(0.1f)
 	, _isUseSoftShadow(false)
 	, _needUpdateShadowMap(true)
-	, _lightMatrix(veMat4::IDENTITY)
 {
 }
 
@@ -75,7 +69,12 @@ void veLight::setShadowArea(const veVec2 &area)
 
 veDirectionalLight::veDirectionalLight()
 	: veLight(DIRECTIONAL)
+    , _shadowCascadedCount(4)
 {
+    _shadowCascadedLevelScales[0] = 0.05f;
+    _shadowCascadedLevelScales[1] = 0.1f;
+    _shadowCascadedLevelScales[2] = 0.4f;
+    _shadowCascadedLevelScales[3] = 1.0f;
 }
 
 void veDirectionalLight::updateShadow()
@@ -83,41 +82,47 @@ void veDirectionalLight::updateShadow()
 	if (_needUpdateShadowMap) {
 		if (_shadowEnabled) {
 			if (!_shadowTexture.valid()) {
-				_shadowTexture = _sceneManager->createTexture(_name + std::string("-shadowTex"), veTexture::TEXTURE_2D);
+				_shadowTexture = _sceneManager->createTexture(_name + std::string("-shadowTex"), veTexture::TEXTURE_2D_ARRAY);
 				_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 				_shadowTexture->setTexParameter(GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 				_shadowTexture->setFilterMode(veTexture::NEAREST);
 			}
 
-			if (!_shadowCamera.valid()) {
-				_shadowCamera = _sceneManager->createCamera(_name + std::string("-shadowCamera"));
-				_shadowCamera->setShadowCamera(true);
-			}
+            if (!_shadowCameras[0].valid()) {
+                for (unsigned short i = 0; i < 4; ++i) {
+                    _shadowCameras[i] = _sceneManager->createCamera(_name + std::string("-shadowCamera"));
+                    _shadowCameras[i]->setShadowCamera(true);
+                }
+            }
 
-			_shadowTexture->storage(int(_shadowResolution.x()), int(_shadowResolution.y()), 1
+			_shadowTexture->storage(int(_shadowResolution.x()), int(_shadowResolution.y()), _shadowCascadedCount
 				, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr, 1);
 
-			_shadowCamera->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
-			_shadowCamera->setMask(_attachedNodeList[0]->getMask());
-			auto halfShadowArea = _shadowArea * 0.5f;
-			_shadowCamera->setProjectionMatrixAsOrtho(-halfShadowArea.x(), halfShadowArea.x(), -halfShadowArea.y(), halfShadowArea.y(), 0.1f, _attenuationRange);
+            for (unsigned short i = 0; i < 4; ++i) {
+                _shadowCameras[i]->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
+                _shadowCameras[i]->setMask(_attachedNodeList[0]->getMask());
+                _shadowCameras[i]->setVisible(true);
+                auto halfShadowArea = _shadowArea * 0.5f;
+                _shadowCameras[i]->setProjectionMatrixAsOrtho(-halfShadowArea.x(), halfShadowArea.x(), -halfShadowArea.y(), halfShadowArea.y(), 0.1f, _attenuationRange);
+            }
 		}
-		if (_shadowCamera.valid())
-			_shadowCamera->setVisible(_shadowEnabled);
+        if (_shadowCameras[0].valid()) {
+            for (unsigned short i = 0; i < 4; ++i) {
+                _shadowCameras[i]->setVisible(_shadowEnabled);
+            }
+        }
 		_needUpdateShadowMap = false;
 	}
 
-	if (_shadowEnabled) {
-		_shadowCamera->setMatrix(_attachedNodeList[0]->getNodeToWorldMatrix());
-		_lightMatrix = LIGHT_BIAS_MAT * _shadowCamera->projectionMatrix() * _shadowCamera->viewMatrix();
-	}
 }
 
 void veDirectionalLight::setEnabled(bool isEnabled)
 {
     veLight::setEnabled(isEnabled);
-    if (_shadowEnabled && _shadowCamera.valid()){
-        _shadowCamera->setVisible(isEnabled);
+    if (_shadowEnabled && _shadowCameras[0].valid()) {
+        for (unsigned short i = 0; i < 4; ++i) {
+            _shadowCameras[i]->setVisible(isEnabled);
+        }
     }
 }
 
@@ -163,19 +168,6 @@ void vePointLight::updateShadow()
 			}
 		}
 		_needUpdateShadowMap = false;
-	}
-
-	if (_shadowEnabled) {
-		veMat4 lightWorldMat = _attachedNodeList[0]->getNodeToWorldMatrix();
-		veVec3 lightWorldPos = veVec3(lightWorldMat[0][3], lightWorldMat[1][3], lightWorldMat[2][3]);
-		_shadowCameras[0]->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_X, veVec3::NEGATIVE_UNIT_Y));
-		_shadowCameras[1]->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_X, veVec3::NEGATIVE_UNIT_Y));
-		_shadowCameras[2]->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_Y, veVec3::UNIT_Z));
-		_shadowCameras[3]->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_Y, veVec3::NEGATIVE_UNIT_Z));
-		_shadowCameras[4]->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_Z, veVec3::NEGATIVE_UNIT_Y));
-		_shadowCameras[5]->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_Z, veVec3::NEGATIVE_UNIT_Y));
-
-		_lightMatrix = veMat4::translation(-lightWorldPos);
 	}
 }
 
@@ -226,11 +218,6 @@ void veSpotLight::updateShadow()
 		if (_shadowCamera.valid())
 			_shadowCamera->setVisible(_shadowEnabled);
 		_needUpdateShadowMap = false;
-	}
-
-	if (_shadowEnabled) {
-		_shadowCamera->setMatrix(_attachedNodeList[0]->getNodeToWorldMatrix());
-		_lightMatrix = LIGHT_BIAS_MAT * _shadowCamera->projectionMatrix() * _shadowCamera->viewMatrix();
 	}
 }
 

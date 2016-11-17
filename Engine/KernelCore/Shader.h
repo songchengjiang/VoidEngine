@@ -45,7 +45,7 @@ public:
 	veUniform(const std::string &name, const veVec4& val);
 	veUniform(const std::string &name, const veMat3& val);
 	veUniform(const std::string &name, const veMat4& val);
-	veUniform(const std::string &name, const veRealArray &val);
+    veUniform(const std::string &name, const veReal *val, unsigned int n);
 	veUniform(const std::string &name, const veVec2 *val, unsigned int n);
 	veUniform(const std::string &name, const veVec3 *val, unsigned int n);
 	veUniform(const std::string &name, const veVec4 *val, unsigned int n);
@@ -67,7 +67,7 @@ public:
 	void setValue(const veVec4& val);
 	void setValue(const veMat3& val);
 	void setValue(const veMat4& val);
-	void setValue(const veRealArray &val);
+    void setValue(const veReal *val, unsigned int n);
 	void setValue(const veVec2 *val, unsigned int n);
 	void setValue(const veVec3 *val, unsigned int n);
 	void setValue(const veVec4 *val, unsigned int n);
@@ -83,7 +83,7 @@ public:
 	bool getValue(veVec4 &val) const;
 	bool getValue(veMat3 &val) const;
 	bool getValue(veMat4 &val) const;
-	bool getValue(veRealArray &val) const;
+    bool getValue(veReal *val, unsigned int &n) const;
     bool getValue(veVec2 *val, unsigned int &n) const;
     bool getValue(veVec3 *val, unsigned int &n) const;
     bool getValue(veVec4 *val, unsigned int &n) const;

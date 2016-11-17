@@ -30,13 +30,15 @@ protected:
 	void cullRenderQueues(veCamera *camera);
 	void fillRenderQueues(veCamera *camera, unsigned int contextID);
 	void sortRenderQueues(veCamera *camera);
-	void renderShadows(veViewer *viewer);
+	//void renderShadows(veViewer *viewer);
 	void renderCameras(veViewer *viewer);
 	virtual void renderScene(veCamera *camera, unsigned int contextID) = 0;
 
-	void renderDirectionalLightShadow(veLight *light, veViewer *viewer);
-	void renderPointLightShadow(veLight *light, veViewer *viewer);
-	void renderSpotLightShadow(veLight *light, veViewer *viewer);
+	void renderDirectionalLightShadow(veLight *light, veCamera *camera, unsigned int contextID);
+	void renderPointLightShadow(veLight *light, unsigned int contextID);
+	void renderSpotLightShadow(veLight *light, unsigned int contextID);
+    
+    void caculateDirectionalLightCascadedParams(const veMat4 &lightInWorldMat, veLight *light, veCamera *camera, float *cascadedLevels);
 
 	vePass* getOrCreateDirectionalShadowPass(const std::string &vDef, const std::string &fDef);
 	vePass* getOrCreateOmnidirectionalShadowPass(const std::string &vDef, const std::string &fDef);

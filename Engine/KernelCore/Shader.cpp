@@ -96,14 +96,14 @@ veUniform::veUniform(const std::string &name, const veMat4& val)
 	setValue(val);
 }
 
-veUniform::veUniform(const std::string &name, const veRealArray &val)
-	: USE_VE_PTR_INIT
-	, _name(name)
-	, _location(-1)
-	, _preLocation(-1)
-	, _maxReLocation(0)
+veUniform::veUniform(const std::string &name, const veReal *val, unsigned int n)
+    : USE_VE_PTR_INIT
+    , _name(name)
+    , _location(-1)
+    , _preLocation(-1)
+    , _maxReLocation(0)
 {
-	setValue(val);
+    setValue(val, n);
 }
 
 veUniform::veUniform(const std::string &name, const veVec2 *val, unsigned int n)
@@ -496,16 +496,19 @@ void veUniform::setValue(const veMat4& val)
 		_location = -1;
 }
 
-void veUniform::setValue(const veRealArray &val)
+void veUniform::setValue(const veReal *val, unsigned int n)
 {
-	if (_values.size() == val.size() && memcmp(&_values[0], &val[0], _values.size()) == 0)
-		return;
-	_type = Type::REAL_ARRAY;
-	_values = val;
-	if (0 <= _location)
-		_preLocation = _location;
-	if (_maxReLocation < 255)
-		_location = -1;
+    if (_values.size() == n && memcmp(&_values[0], &val[0], _values.size()) == 0)
+        return;
+    _type = Type::REAL_ARRAY;
+    _values.resize(n);
+    for (unsigned int i = 0; i < n; ++i) {
+        _values[i] = val[i];
+    }
+    if (0 <= _location)
+        _preLocation = _location;
+    if (_maxReLocation < 255)
+        _location = -1;
 }
 
 void veUniform::setValue(const veVec2 *val, unsigned int n)
@@ -667,11 +670,15 @@ bool veUniform::getValue(std::string &val) const
 	return true;
 }
 
-bool veUniform::getValue(veRealArray &val) const
+bool veUniform::getValue(veReal *val, unsigned int &n) const
 {
-	if (_type != Type::REAL_ARRAY) return false;
-	val = _values;
-	return true;
+    if (_type != Type::REAL_ARRAY) return false;
+    n = static_cast<unsigned int>(_values.size());
+    val = new veReal[n];
+    for (size_t i = 0; i < n; ++i){
+        val[i] = _values[i];
+    }
+    return true;
 }
 
 bool veUniform::getValue(veVec2 *val, unsigned int &n) const

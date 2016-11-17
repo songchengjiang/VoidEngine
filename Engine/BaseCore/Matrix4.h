@@ -43,6 +43,8 @@ public:
 	void makeScale(const veVec3 &scl);
     void makeTransform(const veVec3& position, const veVec3& scale, const veQuat& orientation);
     void makeLookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &up);
+    void makeOrtho(float left, float right, float bottom, float top, float zNear, float zFar);
+    void makePerspective(float fovy, float aspectRatio, float zNear, float zFar);
     void decomposition(veVec3* position, veVec3* scale, veQuat* orientation) const;
     void transpose();
     void inverse();
@@ -53,7 +55,9 @@ public:
 	static veMat4 scale(const veVec3 &scl);
 	static veMat4 transform(const veVec3& position, const veVec3& scale, const veQuat& orientation);
 	static veMat4 lookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &up);
-
+    static veMat4 ortho(float left, float right, float bottom, float top, float zNear, float zFar);
+    static veMat4 perspective(float fovy, float aspectRatio, float zNear, float zFar);
+    
 	inline veMat4 operator * (const veMat4 &m2) const{
 		veMat4 r;
 		r.m[0][0] = m[0][0] * m2.m[0][0] + m[0][1] * m2.m[1][0] + m[0][2] * m2.m[2][0] + m[0][3] * m2.m[3][0];

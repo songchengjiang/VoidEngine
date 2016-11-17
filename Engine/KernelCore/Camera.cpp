@@ -67,26 +67,13 @@ void veCamera::update(veSceneManager *sm, const veMat4 &transform)
 
 void veCamera::setProjectionMatrixAsOrtho(float left, float right, float bottom, float top, float zNear, float zFar)
 {
-	_projectionMat.set(2.0f / (right - left), 0.0f                 , 0.0f                 , -(right + left) / (right - left)
-		             , 0.0f                 , 2.0f / (top - bottom), 0.0f                 , -(top + bottom) / (top - bottom)
-		             , 0.0f                 , 0.0f                 , 2.0f / (zNear - zFar), (zNear + zFar) / (zNear - zFar)
-		             , 0.0f                 , 0.0f                 , 0.0f                 , 1.0f);
+    _projectionMat.makeOrtho(left, right, bottom, top, zNear, zFar);
 	_needRefreshFrustumPlane = true;
 }
 
 void veCamera::setProjectionMatrixAsPerspective(float fovy, float aspectRatio, float zNear, float zFar)
 {
-	float top = zNear * tan(veMath::veRadian(fovy * 0.5f));
-	float bottom = -top;
-	float right = top * aspectRatio;
-	float left = -right;
-	float a = -(zFar + zNear) / (zFar - zNear);
-	float b = -(2.0 * zNear * zFar) / (zFar - zNear);
-
-	_projectionMat.set((2.0f * zNear) / (right - left), 0.0f                           , (right + left) / (right - left), 0.0f
-		              , 0.0f                          , (2.0f * zNear) / (top - bottom), (top + bottom) / (top - bottom), 0.0f
-		              , 0.0f                          , 0.0f                           , a                              , b
-		              , 0.0f                          , 0.0f                           , -1.0f                          , 0.0f);
+    _projectionMat.makePerspective(fovy, aspectRatio, zNear, zFar);
 	_needRefreshFrustumPlane = true;
 }
 
@@ -132,7 +119,7 @@ veVec3 veCamera::convertScreenCoordsToWorldCoords(const veVec2 &sCoords, veReal 
 {
 	veMat4 projMatInverse = _projectionMat;
 	projMatInverse.inverse();
-	return _matrix * projMatInverse * veVec3(sCoords.x(), sCoords.y(), zDepth);
+	return getNodeToWorldMatrix() * projMatInverse * veVec3(sCoords.x(), sCoords.y(), zDepth);
 }
 
 void veCamera::setFrameBufferObject(veFrameBufferObject *fbo)
@@ -255,6 +242,21 @@ void veCamera::updateFrustumPlane()
 
 		_needRefreshFrustumPlane = false;
 	}
+}
+
+void veCamera::getFrustumCorners(veVec3 *corners) const
+{
+    veMat4 projMatInverse = _projectionMat;
+    projMatInverse.inverse();
+    corners[0] = projMatInverse * veVec3(-1.0, -1.0, -1.0);
+    corners[1] = projMatInverse * veVec3(1.0, -1.0, -1.0);
+    corners[2] = projMatInverse * veVec3(1.0, 1.0, -1.0);
+    corners[3] = projMatInverse * veVec3(-1.0, 1.0, -1.0);
+    
+    corners[4] = projMatInverse * veVec3(-1.0, -1.0, 1.0);
+    corners[5] = projMatInverse * veVec3(1.0, -1.0, 1.0);
+    corners[6] = projMatInverse * veVec3(1.0, 1.0, 1.0);
+    corners[7] = projMatInverse * veVec3(-1.0, 1.0, 1.0);
 }
 
 void veCamera::updateSceneManager()

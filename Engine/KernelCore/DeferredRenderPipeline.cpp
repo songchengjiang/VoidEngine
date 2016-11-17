@@ -4,6 +4,11 @@
 #include "Constants.h"
 #include "Configuration.h"
 
+static const veMat4 LIGHT_BIAS_MAT = veMat4(0.5f, 0.0f, 0.0f, 0.5f
+                                            , 0.0f, 0.5f, 0.0f, 0.5f
+                                            , 0.0f, 0.0f, 0.5f, 0.5f
+                                            , 0.0f, 0.0f, 0.0f, 1.0f);
+
 static const char* COMMON_FUNCTIONS = " \
 	precision highp float;           \n \
 	vec3 decode(vec3 encoded) {     \n \
@@ -78,11 +83,12 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 	uniform highp sampler2D u_RT0; \n \
 	uniform sampler2D u_RT1; \n \
 	uniform sampler2D u_RT2; \n \
-	uniform sampler2DShadow u_shadowTex; \n \
+	uniform sampler2DArrayShadow u_shadowTex; \n \
 												  \n \
 	uniform mat4 u_InvViewMat;  \n \
 	uniform mat4 u_InvViewProjectMat;  \n \
-	uniform mat4 u_lightMatrix;    \n \
+	uniform mat4 u_lightMatrixs[4];    \n \
+    uniform float u_shadowCascadedLevels[4];    \n \
 	uniform vec3 u_cameraPosInWorld;    \n \
 												  \n \
 	uniform vec3  u_lightDirection;   \n \
@@ -106,20 +112,27 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 		vec2(-1.0, 1.0), vec2(0.0, 1.0), vec2(1.0, 1.0)   \n \
 	);                                                      \n \
 												  \n \
-	float shadowing(vec3 vertex) {          \n \
+	float shadowing(vec3 vertex, float depthInEye) {          \n \
 		if (u_lightShadowEnabled < 1.0) return 1.0;          \n \
-		vec4 projectVertex = u_lightMatrix * vec4(vertex, 1.0);          \n \
-		vec3 shadowCoord = vec3(projectVertex.xy, projectVertex.z - u_lightShadowBias) / projectVertex.w;          \n \
+        int layer = 3;         \n \
+        if (depthInEye < u_shadowCascadedLevels[0])         \n \
+            layer = 0;         \n \
+        else if (depthInEye < u_shadowCascadedLevels[1])         \n \
+            layer = 1;         \n \
+        else if (depthInEye < u_shadowCascadedLevels[2])         \n \
+            layer = 2;         \n \
+		vec4 projectVertex = u_lightMatrixs[layer] * vec4(vertex, 1.0);          \n \
+		vec3 shadowCoord = projectVertex.xyz / projectVertex.w;          \n \
 		float factor = 0.0;          \n \
 		if (0.0 < u_lightShadowSoft) {          \n \
 			float sum = 0.0;          \n \
 			for (int i = 0; i < SAMPLE_SIZE; ++i) {          \n \
-				sum += texture(u_shadowTex, vec3(shadowCoord.xy + SAMPLE_OFFSETS[i] * u_lightShadowSoftness, shadowCoord.z));          \n \
+				sum += texture(u_shadowTex, vec4(shadowCoord.xy + SAMPLE_OFFSETS[i] * u_lightShadowSoftness, layer, shadowCoord.z - u_lightShadowBias));          \n \
 			}          \n \
 			factor = sum / float(SAMPLE_SIZE);          \n \
 		}          \n \
 		else {          \n \
-			factor = texture(u_shadowTex, shadowCoord);          \n \
+			factor = texture(u_shadowTex, vec4(shadowCoord.xy, layer, shadowCoord.z - u_lightShadowBias));          \n \
 		}          \n \
 												  \n \
 		if (factor < 1.0)          \n \
@@ -137,7 +150,8 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 		highp float depth = texture(u_depthTex, v_texcoord).r;    \n \
 		vec4 worldPosition = u_InvViewProjectMat * vec4(v_texcoord * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
 		worldPosition.xyz /= worldPosition.w;     \n \
-		vec3 eyeDir = normalize(u_cameraPosInWorld - worldPosition.xyz);    \n \
+        vec3 eyePosition = u_cameraPosInWorld - worldPosition.xyz;    \n \
+		vec3 eyeDir = normalize(eyePosition);    \n \
 		float NdotL = max(0.0, dot(worldNormal, -u_lightDirection));    \n \
 		vec3 H = normalize(eyeDir - u_lightDirection);    \n \
 		float NdotH = max(0.0, dot(worldNormal, H));    \n \
@@ -145,9 +159,17 @@ static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
 		float HdotV = max(0.0, dot(H, eyeDir));    \n \
 		float diffFactor = OrenNayar(worldNormal, -u_lightDirection, eyeDir, NdotL, NdotV, RT1.w);     \n \
 		float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);     \n \
-		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * shadowing(worldPosition.xyz);    \n \
+																							  \n \
+		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * shadowing(worldPosition.xyz, length(eyePosition));    \n \
 																							               \n \
-		fragColor = vec4(clamp((linearColor(RT1.xyz) * diffFactor + linearColor(RT2.xyz) * specFactor) * lightIntensity, 0.0, 1.0), 1.0);     \n \
+vec3 layerColor = vec3(1.0, 1.0, 0.0);       \n \
+if (length(eyePosition) < u_shadowCascadedLevels[0])         \n \
+layerColor = vec3(1.0, 0.0, 0.0);         \n \
+else if (length(eyePosition) < u_shadowCascadedLevels[1])         \n \
+layerColor = vec3(0.0, 1.0, 0.0);         \n \
+else if (length(eyePosition) < u_shadowCascadedLevels[2])         \n \
+layerColor = vec3(0.0, 0.0, 1.0);         \n \
+		fragColor = vec4(clamp((linearColor(RT1.xyz) * diffFactor + linearColor(RT2.xyz) * specFactor) * lightIntensity, 0.0, 1.0) * layerColor, 1.0);     \n \
 	}";
 
 static const char* IB_LIGHT_F_SHADER = " \
@@ -263,8 +285,8 @@ static const char* POINT_LIGHT_F_SHADER = " \
 		if (u_lightShadowEnabled < 1.0) return 1.0;      \n \
 		highp vec4 projectVertex = u_lightMatrix * vec4(vertex, 1.0);      \n \
 		highp float pTolDis2 = dot(projectVertex.xyz, projectVertex.xyz);      \n \
-        pTolDis2 = pTolDis2 - u_lightShadowBias * pTolDis2;         \n \
 		pTolDis2 = pTolDis2 / (pTolDis2 + 1.0);      \n \
+        pTolDis2 = pTolDis2 - u_lightShadowBias;         \n \
 		highp vec4 shadowCoord = vec4(projectVertex.xyz, pTolDis2);      \n \
 		float factor = 0.0;      \n \
 		if (0.0 < u_lightShadowSoft) {      \n \
@@ -365,17 +387,17 @@ static const char* SPOT_LIGHT_F_SHADER = " \
 	float shadowing(vec3 vertex) {          \n \
 		if (u_lightShadowEnabled < 1.0) return 1.0;          \n \
 		vec4 projectVertex = u_lightMatrix * vec4(vertex, 1.0);          \n \
-		vec3 shadowCoord = vec3(projectVertex.xy, projectVertex.z - u_lightShadowBias) / projectVertex.w;          \n \
+		vec3 shadowCoord = projectVertex.xyz / projectVertex.w;          \n \
 		float factor = 0.0;          \n \
 		if (0.0 < u_lightShadowSoft) {          \n \
 			float sum = 0.0;          \n \
 			for (int i = 0; i < SAMPLE_SIZE; ++i) {          \n \
-				sum += texture(u_shadowTex, vec3(shadowCoord.xy + SAMPLE_OFFSETS[i] * u_lightShadowSoftness, shadowCoord.z));          \n \
+				sum += texture(u_shadowTex, vec3(shadowCoord.xy + SAMPLE_OFFSETS[i] * u_lightShadowSoftness, shadowCoord.z - u_lightShadowBias));          \n \
 			}          \n \
 			factor = sum / float(SAMPLE_SIZE);          \n \
 		}          \n \
 		else {          \n \
-			factor = texture(u_shadowTex, shadowCoord);          \n \
+			factor = texture(u_shadowTex, vec3(shadowCoord.xy, shadowCoord.z - u_lightShadowBias));          \n \
 		}          \n \
 												  \n \
 		if (factor < 1.0)          \n \
@@ -574,6 +596,9 @@ veMaterial* veDeferredRenderPipeline::createDirectionalLightMaterial(veLight *li
     pass->setShader(new veShader(veShader::VERTEX_SHADER, SCREEN_BASED_LIGHT_V_SHADER));
     pass->setShader(new veShader(veShader::FRAGMENT_SHADER, (std::string(COMMON_FUNCTIONS) + std::string(DIRECTIONAL_LIGHT_F_SHADER)).c_str()));
     pass->addUniform(new veUniform("u_lightDirection", veVec3::ZERO));
+    pass->addUniform(new veUniform("u_lightMatrixs", &veMat4::IDENTITY, 1));
+    pass->addUniform(new veUniform("u_shadowCascadedLevels", 0.f));
+    pass->addUniform(new veUniform("u_shadowCascadedCount", 0.f));
     pass->addUniform(new veUniform("u_shadowTex", 4));
     
     return material;
@@ -649,6 +674,7 @@ veMaterial* veDeferredRenderPipeline::createPointLightMaterial(veLight *light)
     pass1->setShader(new veShader(veShader::FRAGMENT_SHADER, (std::string(COMMON_FUNCTIONS) + std::string(POINT_LIGHT_F_SHADER)).c_str()));
     pass1->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
     pass1->addUniform(new veUniform("u_lightPosition", veVec3(0.0f)));
+    pass1->addUniform(new veUniform("u_lightMatrix", veMat4::IDENTITY));
     pass1->addUniform(new veUniform("u_lightARI", 0.0f));
     pass1->addUniform(new veUniform("u_shadowTex", 4));
     pass1->setApplyFunctionCallback([]() {
@@ -700,6 +726,7 @@ veMaterial* veDeferredRenderPipeline::createSpotLightMaterial(veLight *light)
     pass1->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
     pass1->addUniform(new veUniform("u_lightDirection", veVec3(0.0f)));
     pass1->addUniform(new veUniform("u_lightPosition", veVec3(0.0f)));
+    pass1->addUniform(new veUniform("u_lightMatrix", veMat4::IDENTITY));
     pass1->addUniform(new veUniform("u_lightARI", 0.0f));
     pass1->addUniform(new veUniform("u_lightInnerAngleCos", 0.0f));
     pass1->addUniform(new veUniform("u_lightOuterAngleCos", 0.0f));
@@ -720,7 +747,6 @@ void veDeferredRenderPipeline::initLightCommomParams(veLight *light, vePass *pas
     pass->addUniform(new veUniform("u_cameraPosInWorld", veVec3::ZERO));
     pass->addUniform(new veUniform("u_lightColor", veVec3::ZERO));
     pass->addUniform(new veUniform("u_lightIntensity", 0.0f));
-    pass->addUniform(new veUniform("u_lightMatrix", veMat4::IDENTITY));
     pass->addUniform(new veUniform("u_lightShadowEnabled", 0.0f));
     pass->addUniform(new veUniform("u_lightShadowBias", 0.0f));
     pass->addUniform(new veUniform("u_lightShadowStrength", 0.0f));
@@ -739,7 +765,6 @@ void veDeferredRenderPipeline::updateLightCommomParams(veLight *light, vePass *p
     pass->getUniform("u_cameraPosInWorld")->setValue(veVec3(cameraWorldMat[0][3], cameraWorldMat[1][3], cameraWorldMat[2][3]));
     pass->getUniform("u_lightColor")->setValue(light->getColor());
     pass->getUniform("u_lightIntensity")->setValue(light->getIntensity());
-    pass->getUniform("u_lightMatrix")->setValue(light->getLightMatrix());
     pass->getUniform("u_lightShadowEnabled")->setValue(light->isShadowEnabled() ? 1.0f : 0.0f);
     pass->getUniform("u_lightShadowBias")->setValue(light->getShadowBias());
     pass->getUniform("u_lightShadowStrength")->setValue(light->getShadowStrength());
@@ -819,8 +844,10 @@ void veDeferredRenderPipeline::cullPointLight(veLight *light, veCamera *camera, 
         _lightRenderParamsList[light] = createPointLightMaterial(light);
     }
     vePass *pass = material->getTechnique(0)->getPass(0);
-    veMat4 lightInWorld = light->getAttachedNodeList()[0]->getNodeToWorldMatrix();
-    _pointLightRenderer->render(lightInWorld * veMat4::scale(veVec3(light->getAttenuationRange())), pass, camera, contextID);
+    for (auto attachedNode : light->getAttachedNodeList()) {
+        veMat4 lightInWorld = attachedNode->getNodeToWorldMatrix();
+        _pointLightRenderer->render(lightInWorld * veMat4::scale(veVec3(light->getAttenuationRange())), pass, camera, contextID);
+    }
 }
 
 void veDeferredRenderPipeline::cullSpotLight(veLight *light, veCamera *camera, unsigned int contextID)
@@ -831,9 +858,12 @@ void veDeferredRenderPipeline::cullSpotLight(veLight *light, veCamera *camera, u
     }
     vePass *pass = material->getTechnique(0)->getPass(0);
     veSpotLight *spotLight = static_cast<veSpotLight *>(light);
-    veMat4 lightInWorld = spotLight->getAttachedNodeList()[0]->getNodeToWorldMatrix();
+    
     float rangeScale = spotLight->getAttenuationRange() * spotLight->getOuterAngle() / 45.0f;
-    _spotLightRenderer->render(lightInWorld * veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())), pass, camera, contextID);
+    for (auto attachedNode : light->getAttachedNodeList()) {
+        veMat4 lightInWorld = attachedNode->getNodeToWorldMatrix();
+        _spotLightRenderer->render(lightInWorld * veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())), pass, camera, contextID);
+    }
 }
 
 void veDeferredRenderPipeline::renderAmbientLight(const veVec3 &ambient, veCamera *camera, unsigned int contextID)
@@ -851,15 +881,33 @@ void veDeferredRenderPipeline::renderDirectionalLight(veLight *light, veCamera *
     if (!material.valid()) {
         _lightRenderParamsList[light] = createDirectionalLightMaterial(light);
     }
+    auto dLight = static_cast<veDirectionalLight *>(light);
+    
     vePass *pass = material->getTechnique(0)->getPass(0);
     updateLightCommomParams(light, pass, camera);
-    veMat4 lightInWorld = light->getAttachedNodeList()[0]->getNodeToWorldMatrix();
-    lightInWorld[0][3] = lightInWorld[1][3] = lightInWorld[2][3] = 0.0f;
-    veVec3 direction = lightInWorld * -veVec3::UNIT_Z;
-    direction.normalize();
-    pass->getUniform("u_lightDirection")->setValue(direction);
+    pass->getUniform("u_shadowCascadedCount")->setValue((veReal)static_cast<veDirectionalLight *>(light)->getShadowCascadedCount());
+    
     pass->setTexture(vePass::OPACITYT_TEXTURE, light->getShadowTexture());
-    _directionalLightRenderer->render(lightInWorld, pass, camera, contextID);
+    for (auto attachedNode : light->getAttachedNodeList()) {
+        veMat4 lightInWorld = attachedNode->getNodeToWorldMatrix();
+        lightInWorld[0][3] = lightInWorld[1][3] = lightInWorld[2][3] = 0.0f;
+        float shadowCascadedLevels[4];
+        caculateDirectionalLightCascadedParams(lightInWorld, light, camera, shadowCascadedLevels);
+        renderDirectionalLightShadow(light, camera, contextID);
+        
+        pass->getUniform("u_shadowCascadedLevels")->setValue(shadowCascadedLevels, dLight->getShadowCascadedCount());
+        
+        veMat4 lightMatrixs[4];
+        for (unsigned short i = 0; i < dLight->getShadowCascadedCount(); ++i) {
+            lightMatrixs[i] = LIGHT_BIAS_MAT * dLight->getShadowCamera(i)->projectionMatrix() * dLight->getShadowCamera(i)->viewMatrix();
+        }
+        pass->getUniform("u_lightMatrixs")->setValue(lightMatrixs, dLight->getShadowCascadedCount());
+        
+        veVec3 direction = lightInWorld * -veVec3::UNIT_Z;
+        direction.normalize();
+        pass->getUniform("u_lightDirection")->setValue(direction);
+        _directionalLightRenderer->render(lightInWorld, pass, camera, contextID);
+    }
 }
 
 void veDeferredRenderPipeline::renderIBLight(veLight *light, veCamera *camera, unsigned int contextID)
@@ -894,11 +942,24 @@ void veDeferredRenderPipeline::renderPointLight(veLight *light, veCamera *camera
     updateLightCommomParams(light, pass, camera);
     
     vePointLight *pointLight = static_cast<vePointLight *>(light);
-    veMat4 lightInWorld = pointLight->getAttachedNodeList()[0]->getNodeToWorldMatrix();
-    pass->getUniform("u_lightPosition")->setValue(veVec3(lightInWorld[0][3], lightInWorld[1][3], lightInWorld[2][3]));
     pass->getUniform("u_lightARI")->setValue(pointLight->getAttenuationRangeInverse());
     pass->setTexture(vePass::OPACITYT_TEXTURE, light->getShadowTexture());
-    _pointLightRenderer->render(lightInWorld * veMat4::scale(veVec3(pointLight->getAttenuationRange())), pass, camera, contextID);
+    for (auto attachedNode : light->getAttachedNodeList()) {
+        veMat4 lightInWorld = attachedNode->getNodeToWorldMatrix();
+        veVec3 lightWorldPos = veVec3(lightInWorld[0][3], lightInWorld[1][3], lightInWorld[2][3]);
+        pointLight->getShadowCamera(0)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_X, veVec3::NEGATIVE_UNIT_Y));
+        pointLight->getShadowCamera(1)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_X, veVec3::NEGATIVE_UNIT_Y));
+        pointLight->getShadowCamera(2)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_Y, veVec3::UNIT_Z));
+        pointLight->getShadowCamera(3)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_Y, veVec3::NEGATIVE_UNIT_Z));
+        pointLight->getShadowCamera(4)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_Z, veVec3::NEGATIVE_UNIT_Y));
+        pointLight->getShadowCamera(5)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_Z, veVec3::NEGATIVE_UNIT_Y));
+        auto lightMatrix = veMat4::translation(-lightWorldPos);
+        pass->getUniform("u_lightMatrix")->setValue(lightMatrix);
+        renderPointLightShadow(light, contextID);
+        
+        pass->getUniform("u_lightPosition")->setValue(lightWorldPos);
+        _pointLightRenderer->render(lightInWorld * veMat4::scale(veVec3(pointLight->getAttenuationRange())), pass, camera, contextID);
+    }
 }
 
 void veDeferredRenderPipeline::renderSpotLight(veLight *light, veCamera *camera, unsigned int contextID)
@@ -909,18 +970,28 @@ void veDeferredRenderPipeline::renderSpotLight(veLight *light, veCamera *camera,
     updateLightCommomParams(light, pass, camera);
     
     veSpotLight *spotLight = static_cast<veSpotLight *>(light);
-    veMat4 lightInWorld = spotLight->getAttachedNodeList()[0]->getNodeToWorldMatrix();
-    pass->getUniform("u_lightPosition")->setValue(veVec3(lightInWorld[0][3], lightInWorld[1][3], lightInWorld[2][3]));
-    veMat4 lightInWorldNoTrans = lightInWorld;
-    lightInWorldNoTrans[0][3] = lightInWorldNoTrans[1][3] = lightInWorldNoTrans[2][3] = 0.0f;
-    veVec3 direction = lightInWorldNoTrans * -veVec3::UNIT_Z;
-    direction.normalize();
-    pass->getUniform("u_lightDirection")->setValue(direction);
     
     pass->getUniform("u_lightARI")->setValue(spotLight->getAttenuationRangeInverse());
     pass->getUniform("u_lightInnerAngleCos")->setValue(spotLight->getInnerAngleCos());
     pass->getUniform("u_lightOuterAngleCos")->setValue(spotLight->getOuterAngleCos());
     pass->setTexture(vePass::OPACITYT_TEXTURE, light->getShadowTexture());
     float rangeScale = spotLight->getAttenuationRange() * spotLight->getOuterAngle() / 45.0f;
-    _spotLightRenderer->render(lightInWorld * veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())), pass, camera, contextID);
+    
+    for (auto attachedNode : light->getAttachedNodeList()) {
+        
+        veMat4 lightInWorld = attachedNode->getNodeToWorldMatrix();
+        spotLight->getShadowCamera()->setMatrix(lightInWorld);
+        auto lightMatrix = LIGHT_BIAS_MAT * spotLight->getShadowCamera()->projectionMatrix() * spotLight->getShadowCamera()->viewMatrix();
+        pass->getUniform("u_lightMatrix")->setValue(lightMatrix);
+        renderSpotLightShadow(light, contextID);
+        
+        pass->getUniform("u_lightPosition")->setValue(veVec3(lightInWorld[0][3], lightInWorld[1][3], lightInWorld[2][3]));
+        veMat4 lightInWorldNoTrans = lightInWorld;
+        lightInWorldNoTrans[0][3] = lightInWorldNoTrans[1][3] = lightInWorldNoTrans[2][3] = 0.0f;
+        veVec3 direction = lightInWorldNoTrans * -veVec3::UNIT_Z;
+        direction.normalize();
+        pass->getUniform("u_lightDirection")->setValue(direction);
+        
+        _spotLightRenderer->render(lightInWorld * veMat4::scale(veVec3(rangeScale, rangeScale, spotLight->getAttenuationRange())), pass, camera, contextID);
+    }
 }

@@ -4,6 +4,7 @@
 #include "Constants.h"
 #include "Configuration.h"
 #include "Viewer.h"
+#include "Debuger/Debuger.h"
 
 static veLoopQueue<veRenderCommand>::SortFunc PASS_SORT = [](const veRenderCommand &left, const veRenderCommand &right)->bool {
 	return right.priority == left.priority ? left.pass <= right.pass : right.priority <= left.priority;
@@ -44,7 +45,7 @@ void veRenderPipeline::rendering(veViewer *viewer)
 //        fillRenderQueues(iter.get());
 //        sortRenderQueues(iter.get());
 //    }
-	renderShadows(viewer);
+//	renderShadows(viewer);
 	renderCameras(viewer);
 }
 
@@ -211,33 +212,35 @@ void veRenderPipeline::renderScene(veCamera *camera, unsigned int contextID)
 	}
 }
 
-void veRenderPipeline::renderDirectionalLightShadow(veLight *light, veViewer *viewer)
+void veRenderPipeline::renderDirectionalLightShadow(veLight *light, veCamera *camera, unsigned int contextID)
 {
-	if (!light->isShadowEnabled()) return;
-	auto dLight = static_cast<veDirectionalLight *>(light);
+    auto dLight = static_cast<veDirectionalLight *>(light);
     static auto shadowPass = [this](veRenderCommand &command) -> bool {
-		if (command.pass->castShadow()) {
-			auto pass = this->getOrCreateDirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
-			pass->cullFace() = command.pass->cullFace();
-			pass->cullFaceMode() = command.pass->cullFaceMode();
-			command.pass = pass;
-			return true;
-		}
-		return false;
+        if (command.pass->castShadow()) {
+            auto pass = this->getOrCreateDirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
+            pass->cullFace() = command.pass->cullFace();
+            pass->cullFaceMode() = command.pass->cullFaceMode();
+            command.pass = pass;
+            return true;
+        }
+        return false;
     };
     
-	_sceneManager->getRenderState(viewer->getContextID())->resetState();
-	_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dLight->getShadowTexture());
-	_shadowingFBO->bind(viewer->getContextID(), GL_DEPTH_BUFFER_BIT);
-	//glClear(GL_DEPTH_BUFFER_BIT);
-    visitRenderQueues(dLight->getShadowCamera(), viewer->getContextID());
-    prepareForDraws(dLight->getShadowCamera());
-	draw(dLight->getShadowCamera(), dLight->getShadowCamera()->getRenderQueue()->deferredRenderGroup, shadowPass);
-    draw(dLight->getShadowCamera(), dLight->getShadowCamera()->getRenderQueue()->forwardRenderGroup, shadowPass);
-	_shadowingFBO->unBind();
+    for (unsigned short i = 0; i < dLight->getShadowCascadedCount(); ++i) {
+        //dLight->getShadowCamera()->setProjectionMatrix(correctedProjections[i]);
+        _sceneManager->getRenderState(contextID)->resetState();
+        _shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_ARRAY, dLight->getShadowTexture(), i);
+        _shadowingFBO->bind(contextID, GL_DEPTH_BUFFER_BIT);
+        //glClear(GL_DEPTH_BUFFER_BIT);
+        visitRenderQueues(dLight->getShadowCamera(i), contextID);
+        prepareForDraws(dLight->getShadowCamera(i));
+        draw(dLight->getShadowCamera(i), dLight->getShadowCamera(i)->getRenderQueue()->deferredRenderGroup, shadowPass);
+        draw(dLight->getShadowCamera(i), dLight->getShadowCamera(i)->getRenderQueue()->forwardRenderGroup, shadowPass);
+        _shadowingFBO->unBind();
+    }
 }
 
-void veRenderPipeline::renderPointLightShadow(veLight *light, veViewer *viewer)
+void veRenderPipeline::renderPointLightShadow(veLight *light, unsigned int contextID)
 {
 	if (!light->isShadowEnabled()) return;
 	auto pLight = static_cast<vePointLight *>(light);
@@ -253,11 +256,11 @@ void veRenderPipeline::renderPointLightShadow(veLight *light, veViewer *viewer)
     };
     
 	for (unsigned short i = 0; i < 6; ++i) {
-		_sceneManager->getRenderState(viewer->getContextID())->resetState();
+		_sceneManager->getRenderState(contextID)->resetState();
 		_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, pLight->getShadowTexture());
-		_shadowingFBO->bind(viewer->getContextID(), GL_DEPTH_BUFFER_BIT);
+		_shadowingFBO->bind(contextID, GL_DEPTH_BUFFER_BIT);
 		//glClear(GL_DEPTH_BUFFER_BIT);
-        visitRenderQueues(pLight->getShadowCamera(i), viewer->getContextID());
+        visitRenderQueues(pLight->getShadowCamera(i), contextID);
         prepareForDraws(pLight->getShadowCamera(i));
 		draw(pLight->getShadowCamera(i), pLight->getShadowCamera(i)->getRenderQueue()->deferredRenderGroup, shadowPass);
         draw(pLight->getShadowCamera(i), pLight->getShadowCamera(i)->getRenderQueue()->forwardRenderGroup, shadowPass);
@@ -265,7 +268,7 @@ void veRenderPipeline::renderPointLightShadow(veLight *light, veViewer *viewer)
 	}
 }
 
-void veRenderPipeline::renderSpotLightShadow(veLight *light, veViewer *viewer)
+void veRenderPipeline::renderSpotLightShadow(veLight *light, unsigned int contextID)
 {
 	if (!light->isShadowEnabled()) return;
 	auto sLight = static_cast<veSpotLight *>(light);
@@ -280,11 +283,11 @@ void veRenderPipeline::renderSpotLightShadow(veLight *light, veViewer *viewer)
 		return false;
     };
     
-	_sceneManager->getRenderState(viewer->getContextID())->resetState();
+	_sceneManager->getRenderState(contextID)->resetState();
 	_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, sLight->getShadowTexture());
-	_shadowingFBO->bind(viewer->getContextID(), GL_DEPTH_BUFFER_BIT);
+	_shadowingFBO->bind(contextID, GL_DEPTH_BUFFER_BIT);
 	//glClear(GL_DEPTH_BUFFER_BIT);
-    visitRenderQueues(sLight->getShadowCamera(), viewer->getContextID());
+    visitRenderQueues(sLight->getShadowCamera(), contextID);
     prepareForDraws(sLight->getShadowCamera());
 	draw(sLight->getShadowCamera(), sLight->getShadowCamera()->getRenderQueue()->deferredRenderGroup, shadowPass);
     draw(sLight->getShadowCamera(), sLight->getShadowCamera()->getRenderQueue()->forwardRenderGroup, shadowPass);
@@ -334,41 +337,81 @@ vePass* veRenderPipeline::getOrCreateOmnidirectionalShadowPass(const std::string
 	return pass;
 }
 
-void veRenderPipeline::renderShadows(veViewer *viewer)
+void veRenderPipeline::caculateDirectionalLightCascadedParams(const veMat4 &lightInWorldMat, veLight *light, veCamera *camera, float *cascadedLevels)
 {
-	auto &lightListMap = _sceneManager->getLightListMap();
-	if (!lightListMap.empty()) {
-		{
-			auto iter = lightListMap.find(veLight::POINT);
-			if (iter != lightListMap.end()) {
-				auto &pointLightList = iter->second;
-				for (auto &light : pointLightList) {
-                    if (light->isEnabled())
-                        renderPointLightShadow(light.get(), viewer);
-				}
-			}
-		}
-
-		{
-			auto iter = lightListMap.find(veLight::SPOT);
-			if (iter != lightListMap.end()) {
-				auto &spotLightList = iter->second;
-				for (auto &light : spotLightList) {
-                    if (light->isEnabled())
-                        renderSpotLightShadow(light.get(), viewer);
-				}
-			}
-		}
-
-		{
-			auto iter = lightListMap.find(veLight::DIRECTIONAL);
-			if (iter != lightListMap.end()) {
-				auto &directionalLightList = iter->second;
-				for (auto &light : directionalLightList) {
-                    if (light->isEnabled())
-                        renderDirectionalLightShadow(light.get(), viewer);
-				}
-			}
-		}
-	}
+    auto dLight = static_cast<veDirectionalLight *>(light);
+    veVec3 camerafrustumCorners[8];
+    camera->getFrustumCorners(camerafrustumCorners);
+    veVec3 preFrustumCorners[4];
+    veVec3 frustumCorners[4];
+    
+    veMat4 lightInWorldInv = lightInWorldMat;
+    lightInWorldInv.inverse();
+    lightInWorldInv = lightInWorldInv * camera->getNodeToWorldMatrix();
+    
+    float t = 0.0;
+    for (unsigned short i = 0; i < dLight->getShadowCascadedCount(); ++i) {
+    
+        preFrustumCorners[0] = camerafrustumCorners[0] * (1.0f - t) + camerafrustumCorners[4] * t;
+        preFrustumCorners[1] = camerafrustumCorners[1] * (1.0f - t) + camerafrustumCorners[5] * t;
+        preFrustumCorners[2] = camerafrustumCorners[2] * (1.0f - t) + camerafrustumCorners[6] * t;
+        preFrustumCorners[3] = camerafrustumCorners[3] * (1.0f - t) + camerafrustumCorners[7] * t;
+        
+        t = dLight->getShadowCascadedLevelScale(i);
+        frustumCorners[0] = camerafrustumCorners[0] * (1.0f - t) + camerafrustumCorners[4] * t;
+        frustumCorners[1] = camerafrustumCorners[1] * (1.0f - t) + camerafrustumCorners[5] * t;
+        frustumCorners[2] = camerafrustumCorners[2] * (1.0f - t) + camerafrustumCorners[6] * t;
+        frustumCorners[3] = camerafrustumCorners[3] * (1.0f - t) + camerafrustumCorners[7] * t;
+        
+        cascadedLevels[i] = -frustumCorners[0].z();
+        
+        veBoundingBox bBox;
+        bBox.expandBy(lightInWorldInv * preFrustumCorners[0]);
+        bBox.expandBy(lightInWorldInv * preFrustumCorners[1]);
+        bBox.expandBy(lightInWorldInv * preFrustumCorners[2]);
+        bBox.expandBy(lightInWorldInv * preFrustumCorners[3]);
+        
+        bBox.expandBy(lightInWorldInv * frustumCorners[0]);
+        bBox.expandBy(lightInWorldInv * frustumCorners[1]);
+        bBox.expandBy(lightInWorldInv * frustumCorners[2]);
+        bBox.expandBy(lightInWorldInv * frustumCorners[3]);
+        
+        veVec3 center = bBox.center();
+        dLight->getShadowCamera(i)->setMatrix(veMat4::translation(lightInWorldMat * center) * lightInWorldMat);
+        veReal left   = bBox.min().x() - center.x();
+        veReal right  = bBox.max().x() - center.x();
+        veReal bottom = bBox.min().y() - center.y();
+        veReal top    = bBox.max().y() - center.y();
+        veReal near   = bBox.min().z() - center.z();
+        veReal far    = bBox.max().z() - center.z();
+        dLight->getShadowCamera(i)->setProjectionMatrixAsOrtho(left, right, bottom, top, near, far);
+    }
 }
+
+//void veRenderPipeline::renderShadows(veViewer *viewer)
+//{
+//	auto &lightListMap = _sceneManager->getLightListMap();
+//	if (!lightListMap.empty()) {
+//		{
+//			auto iter = lightListMap.find(veLight::POINT);
+//			if (iter != lightListMap.end()) {
+//				auto &pointLightList = iter->second;
+//				for (auto &light : pointLightList) {
+//                    if (light->isEnabled())
+//                        renderPointLightShadow(light.get(), viewer);
+//				}
+//			}
+//		}
+//
+//		{
+//			auto iter = lightListMap.find(veLight::SPOT);
+//			if (iter != lightListMap.end()) {
+//				auto &spotLightList = iter->second;
+//				for (auto &light : spotLightList) {
+//                    if (light->isEnabled())
+//                        renderSpotLightShadow(light.get(), viewer);
+//				}
+//			}
+//		}
+//	}
+//}

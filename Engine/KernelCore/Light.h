@@ -66,7 +66,6 @@ public:
 	float getShadowSoftness() const { return _shadowSoftness; }
 
 	veTexture* getShadowTexture() { return _shadowTexture.get(); }
-	const veMat4& getLightMatrix() const { return _lightMatrix; }
 
 protected:
 	veLight(LightType type);
@@ -93,7 +92,6 @@ protected:
 	bool  _isUseSoftShadow;
 
 	VE_Ptr<veTexture>  _shadowTexture;
-	veMat4             _lightMatrix;
 	bool               _needUpdateShadowMap;
     
     veSceneManager    *_sceneManager;
@@ -107,7 +105,11 @@ public:
 	~veDirectionalLight();
 
     virtual void setEnabled(bool isEnabled) override;
-	veCamera* getShadowCamera() const { return _shadowCamera.get(); }
+	veCamera* getShadowCamera(unsigned short idx) const { return _shadowCameras[idx].get(); }
+    void setShadowCascadedCount(unsigned short count) { _shadowCascadedCount = count < 4? count: 4; _needUpdateShadowMap = true; }
+    unsigned short getShadowCascadedCount() const { return _shadowCascadedCount; }
+    void setShadowCascadedLevelScale(unsigned short level, float scl) { _shadowCascadedLevelScales[level] = scl; }
+    float getShadowCascadedLevelScale(unsigned short level) const { return _shadowCascadedLevelScales[level]; }
 
 protected:
 
@@ -116,7 +118,9 @@ protected:
 
 protected:
 
-	VE_Ptr<veCamera> _shadowCamera;
+	VE_Ptr<veCamera> _shadowCameras[4];
+    float            _shadowCascadedLevelScales[4];
+    unsigned short   _shadowCascadedCount;
 };
 
 class VE_EXPORT vePointLight : public veLight
