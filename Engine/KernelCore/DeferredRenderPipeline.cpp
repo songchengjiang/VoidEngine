@@ -3,434 +3,7 @@
 #include "Camera.h"
 #include "Constants.h"
 #include "Configuration.h"
-
-static const char* COMMON_FUNCTIONS = " \
-	precision highp float;           \n \
-	vec3 decode(vec3 encoded) {     \n \
-        float nz = floor(encoded.z * 255.0) / 16.0;     \n \
-        vec2 dec = encoded.xy + vec2(floor(nz) / 16.0, fract(nz)) / 255.0;     \n \
-		vec2 fenc = dec * 4.0 - 2.0;    \n \
-		float f = dot(fenc, fenc);    \n \
-		float g = sqrt(1.0 - f / 4.0);    \n \
-		return vec3(fenc * g, 1.0 - f / 2.0);    \n \
-	}    \n \
-                                                                         \n\
-    vec3 linearColor(vec3 col) {    \n \
-        return pow(col, vec3(0.45454545));    \n \
-    }       \n \
-                                                                                                                      \n \
-	const float PI = 3.1415926535;                                                                                    \n\
-	float OrenNayar(vec3 norm, vec3 ldir, vec3 vdir, float NdotL, float NdotV, float roughness) {                     \n\
-			                                                                                                          \n\
-		float roughness2 = roughness * roughness;                                                                     \n\
-		float A = 1.0 - 0.5 * (roughness2 / (roughness2 + 0.33));                                                     \n\
-		float B = 0.45 * (roughness2 / (roughness2 + 0.09));                                                           \n\
-		float C = max(0.0, dot(normalize(vdir - norm * NdotV), normalize(ldir - norm * NdotL)));                      \n\
-		float NdotLAgl = acos(NdotL);                                                                                 \n\
-		float NdotVAgl = acos(NdotV);                                                                                 \n\
-		float alpha = max(NdotLAgl, NdotVAgl);                                                                        \n\
-		float beta = min(NdotLAgl, NdotVAgl);                                                                         \n\
-			                                                                                                          \n\
-		return NdotL * max(0.0, (A + B * sin(alpha) * tan(beta) * C));                                                \n\
-	}                                                                                                                 \n\
-			                                                                                                          \n\
-	float CookTorrance(float NdotL, float NdotV, float HdotV, float NdotH, float roughness, float fresnel) {        \n\
-			float alpha = pow(1.0 - (1.0 - roughness) * 0.7, 6.0);                                                        \n\
-			float alpha2 = alpha * alpha;                                                                                 \n\
-			                                                                                                              \n\
-			float k = (0.8 + 0.5 * alpha) * (0.8 + 0.5 * alpha) / 2.0;                                                    \n\
-			float Gl = NdotL / (NdotL * (1.0 - k) + k);                                                                   \n\
-			float Gv = NdotV / (NdotV * (1.0 - k) + k);                                                                   \n\
-			float G = Gl * Gv;                                                                                            \n\
-			                                                                                                              \n\
-			float F = fresnel + (1.0 - fresnel) * pow(1.0 - HdotV, 5.0);                                                  \n\
-			                                                                                                              \n\
-			float Db = PI * pow(NdotH * NdotH * (alpha2 - 1.0) + 1.0, 2.0);                                               \n\
-			float D = alpha2 / Db; 	                                                                                      \n\
-			                                                                                                              \n\
-			return max(0.0, (F * D * G) / (4.0f * NdotL * NdotV));                                                        \n\
-	}";
-
-
-static const char* SCREEN_BASED_LIGHT_V_SHADER = " \
-	layout(location = 0) in vec3 position; \n \
-	layout(location = 1) in vec3 normal; \n \
-	layout(location = 2) in vec2 texcoord; \n \
-	out vec2 v_texcoord; \n \
-	void main() \n \
-	{                   \n \
-		v_texcoord = texcoord; \n \
-		gl_Position = vec4(position, 1.0); \n \
-	}";
-
-static const char* AMBIENT_LIGHT_F_SHADER = " \
-    uniform sampler2D u_RT1; \n \
-    uniform vec3 u_ambient;   \n \
-    in highp vec2 v_texcoord; \n \
-    layout(location = 0) out vec4 fragColor; \n \
-    void main() {  \n \
-        vec4 RT1 = texture(u_RT1, v_texcoord);    \n \
-        fragColor = vec4(clamp(RT1.xyz * u_ambient, 0.0, 1.0), 1.0);     \n \
-    }";
-
-static const char* DIRECTIONAL_LIGHT_F_SHADER = " \
-	uniform highp sampler2D u_depthTex; \n \
-	uniform highp sampler2D u_RT0; \n \
-	uniform sampler2D u_RT1; \n \
-	uniform sampler2D u_RT2; \n \
-	uniform sampler2DArrayShadow u_shadowTex; \n \
-												  \n \
-	uniform mat4 u_InvViewMat;  \n \
-	uniform mat4 u_InvViewProjectMat;  \n \
-	uniform mat4 u_lightMatrixs[4];    \n \
-    uniform float u_shadowCascadedLevels[4];    \n \
-	uniform vec3 u_cameraPosInWorld;    \n \
-												  \n \
-	uniform vec3  u_lightDirection;   \n \
-	uniform vec3  u_lightColor;    \n \
-	uniform float u_lightIntensity;   \n \
-												  \n \
-	uniform float u_lightShadowEnabled;   \n \
-	uniform float u_lightShadowBias;   \n \
-	uniform float u_lightShadowStrength;   \n \
-	uniform float u_lightShadowSoft;      \n \
-	uniform float u_lightShadowSoftness;     \n \
-												  \n \
-	in highp vec2 v_texcoord; \n \
-	layout(location = 0) out vec4 fragColor; \n \
-												  \n \
-	#define SAMPLE_SIZE 9  \n \
-	const vec2 SAMPLE_OFFSETS[SAMPLE_SIZE] = vec2[]    \n \
-	(                                                       \n \
-		vec2(-1.0, -1.0), vec2(0.0, -1.0), vec2(1.0, -1.0),    \n \
-		vec2(-1.0, 0.0), vec2(0.0, 0.0), vec2(1.0, 1.0),    \n \
-		vec2(-1.0, 1.0), vec2(0.0, 1.0), vec2(1.0, 1.0)   \n \
-	);                                                      \n \
-												  \n \
-	float shadowing(vec3 vertex, float depthInEye) {          \n \
-		if (u_lightShadowEnabled < 1.0) return 1.0;          \n \
-        int layer = 3;         \n \
-        if (depthInEye < u_shadowCascadedLevels[0])         \n \
-            layer = 0;         \n \
-        else if (depthInEye < u_shadowCascadedLevels[1])         \n \
-            layer = 1;         \n \
-        else if (depthInEye < u_shadowCascadedLevels[2])         \n \
-            layer = 2;         \n \
-		vec4 projectVertex = u_lightMatrixs[layer] * vec4(vertex, 1.0);          \n \
-		vec3 shadowCoord = projectVertex.xyz / projectVertex.w;          \n \
-		float factor = 0.0;          \n \
-		if (0.0 < u_lightShadowSoft) {          \n \
-			float sum = 0.0;          \n \
-			for (int i = 0; i < SAMPLE_SIZE; ++i) {          \n \
-				sum += texture(u_shadowTex, vec4(shadowCoord.xy + SAMPLE_OFFSETS[i] * u_lightShadowSoftness, layer, shadowCoord.z - u_lightShadowBias));          \n \
-			}          \n \
-			factor = sum / float(SAMPLE_SIZE);          \n \
-		}          \n \
-		else {          \n \
-			factor = texture(u_shadowTex, vec4(shadowCoord.xy, layer, shadowCoord.z - u_lightShadowBias));          \n \
-		}          \n \
-												  \n \
-		if (factor < 1.0)          \n \
-			factor = mix(1.0, factor, u_lightShadowStrength);          \n \
-		return factor;          \n \
-	}          \n \
-												  \n \
-	void main() {  \n \
-		vec4 RT0 = texture(u_RT0, v_texcoord);    \n \
-		vec4 RT1 = texture(u_RT1, v_texcoord);    \n \
-		vec4 RT2 = texture(u_RT2, v_texcoord);     \n \
-		if (RT0.w <= 0.0){ fragColor = vec4(0.0); return; }             \n \
-																							  \n \
-		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xyz)), 0.0)).xyz;   \n \
-		highp float depth = texture(u_depthTex, v_texcoord).r;    \n \
-		vec4 worldPosition = u_InvViewProjectMat * vec4(v_texcoord * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
-		worldPosition.xyz /= worldPosition.w;     \n \
-        vec3 eyePosition = u_cameraPosInWorld - worldPosition.xyz;    \n \
-		vec3 eyeDir = normalize(eyePosition);    \n \
-		float NdotL = max(0.0, dot(worldNormal, -u_lightDirection));    \n \
-		vec3 H = normalize(eyeDir - u_lightDirection);    \n \
-		float NdotH = max(0.0, dot(worldNormal, H));    \n \
-		float NdotV = max(0.0, dot(worldNormal, eyeDir));    \n \
-		float HdotV = max(0.0, dot(H, eyeDir));    \n \
-		float diffFactor = OrenNayar(worldNormal, -u_lightDirection, eyeDir, NdotL, NdotV, RT1.w);     \n \
-		float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);     \n \
-																							  \n \
-		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * shadowing(worldPosition.xyz, length(eyePosition));    \n \
-																							               \n \
-vec3 layerColor = vec3(1.0, 1.0, 0.0);       \n \
-if (length(eyePosition) < u_shadowCascadedLevels[0])         \n \
-layerColor = vec3(1.0, 0.0, 0.0);         \n \
-else if (length(eyePosition) < u_shadowCascadedLevels[1])         \n \
-layerColor = vec3(0.0, 1.0, 0.0);         \n \
-else if (length(eyePosition) < u_shadowCascadedLevels[2])         \n \
-layerColor = vec3(0.0, 0.0, 1.0);         \n \
-		fragColor = vec4(clamp((linearColor(RT1.xyz) * diffFactor + linearColor(RT2.xyz) * specFactor) * lightIntensity, 0.0, 1.0) * layerColor, 1.0);     \n \
-	}";
-
-static const char* IB_LIGHT_F_SHADER = " \
-    uniform highp sampler2D u_depthTex; \n \
-    uniform highp sampler2D u_RT0; \n \
-    uniform sampler2D u_RT1; \n \
-    uniform sampler2D u_RT2; \n \
-    uniform sampler2DShadow u_shadowTex; \n \
-    uniform sampler2D u_diffuseLighting; \n \
-    uniform sampler2D u_specularLighting; \n \
-                                        \n \
-    uniform mat4 u_InvViewMat;  \n \
-    uniform mat4 u_InvViewProjectMat;  \n \
-    uniform mat4 u_lightMatrix;    \n \
-    uniform vec3 u_cameraPosInWorld;    \n \
-                                        \n \
-    uniform vec3  u_lightDirection;   \n \
-    uniform vec3  u_lightColor;    \n \
-    uniform float u_lightIntensity;   \n \
-    uniform float u_specularMipMapCount; \n \
-                                        \n \
-    uniform float u_lightShadowEnabled;   \n \
-    uniform float u_lightShadowBias;   \n \
-    uniform float u_lightShadowStrength;   \n \
-    uniform float u_lightShadowSoft;      \n \
-    uniform float u_lightShadowSoftness;     \n \
-                                                \n \
-    in highp vec2 v_texcoord; \n \
-    layout(location = 0) out vec4 fragColor; \n \
-                                                \n \
-    vec2 caculateCoordsWithLatLong(vec3 D) {    \n \
-        return vec2((atan(D.x, D.z) / PI + 1.0) * 0.5,    \n \
-                (acos(D.y) / PI));    \n \
-    }    \n \
-                                                \n \
-    float luminance(vec3 col) {          \n \
-        return 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;          \n \
-    }         \n \
-                                                        \n \
-    void main() {  \n \
-        vec4 RT0 = texture(u_RT0, v_texcoord);    \n \
-        vec4 RT1 = texture(u_RT1, v_texcoord);    \n \
-        vec4 RT2 = texture(u_RT2, v_texcoord);     \n \
-        if (RT0.w <= 0.0){ fragColor = vec4(0.0); return; }             \n \
-                                                                                \n \
-        vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xyz)), 0.0)).xyz;   \n \
-        highp float depth = texture(u_depthTex, v_texcoord).r;    \n \
-        vec4 worldPosition = u_InvViewProjectMat * vec4(v_texcoord * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
-        worldPosition.xyz /= worldPosition.w;     \n \
-        vec3 eyeDir = normalize(u_cameraPosInWorld - worldPosition.xyz);    \n \
-        float NdotV = max(0.0, dot(worldNormal, eyeDir));                  \n \
-        float F = RT2.w + (1.0 - RT2.w) * pow(1.0 - NdotV, 5.0);     \n \
-                                                                                \n \
-        vec2 diffCoords = caculateCoordsWithLatLong(worldNormal);          \n \
-        vec3 r = normalize(reflect(-eyeDir, worldNormal));          \n \
-        vec2 specCoords = caculateCoordsWithLatLong(r);          \n \
-        vec3 diffLighing = texture(u_diffuseLighting, diffCoords).rgb;          \n \
-        vec3 diffLightIntensity = diffLighing * RT1.w;                           \n \
-        vec3 specLightIntensity = textureLod(u_specularLighting, specCoords, (1.0 - F) * u_specularMipMapCount).rgb;   \n \
-        float lum = luminance(specLightIntensity);            \n \
-        lum = lum / (lum + 1.0);                              \n \
-        fragColor = vec4(clamp((linearColor(RT1.xyz) * diffLightIntensity + linearColor(RT1.xyz * RT2.xyz) * pow(lum, RT1.w) * specLightIntensity) * u_lightIntensity, 0.0, 1.0), 1.0);     \n \
-    }";
-
-static const char* POINT_LIGHT_V_SHADER = " \
-	layout(location = 0) in vec3 position; \n \
-	layout(location = 1) in vec3 normal; \n \
-	layout(location = 2) in vec2 texcoord; \n \
-	uniform mat4 u_ModelViewProjectMat;  \n \
-	void main() \n \
-	{                   \n \
-		gl_Position = u_ModelViewProjectMat * vec4(position, 1.0); \n \
-	}";
-
-static const char* POINT_LIGHT_F_SHADER = " \
-	uniform highp sampler2D u_depthTex; \n \
-	uniform highp sampler2D u_RT0; \n \
-	uniform sampler2D u_RT1; \n \
-	uniform sampler2D u_RT2; \n \
-	uniform samplerCubeShadow u_shadowTex;  \n \
-                                                 \n \
-	uniform highp float u_screenWidth;                \n \
-	uniform highp float u_screenHeight;                \n \
-	uniform mat4 u_InvViewMat;  \n \
-	uniform mat4 u_InvViewProjectMat;                \n \
-	uniform mat4 u_lightMatrix;                \n \
-	uniform vec3 u_cameraPosInWorld;                \n \
-												   \n \
-	uniform vec3  u_lightPosition;                \n \
-	uniform vec3  u_lightColor;                \n \
-	uniform float u_lightIntensity;                \n \
-	uniform float u_lightARI;                \n \
-										    \n \
-	uniform float u_lightShadowEnabled;      \n \
-	uniform float u_lightShadowBias;      \n \
-	uniform float u_lightShadowStrength;      \n \
-	uniform float u_lightShadowSoft;      \n \
-	uniform float u_lightShadowSoftness;      \n \
-										    \n \
-	layout(location = 0) out vec4 fragColor; \n \
-										    \n \
-	#define SAMPLE_SIZE 20      \n \
-	const vec3 SAMPLE_OFFSETS[SAMPLE_SIZE] = vec3[]      \n \
-	(                                                    \n \
-		vec3(1.0, 1.0, 1.0), vec3(1.0, -1.0, 1.0), vec3(-1.0, -1.0, 1.0), vec3(-1.0, 1.0, 1.0),      \n \
-		vec3(1.0, 1.0, -1.0), vec3(1.0, -1.0, -1.0), vec3(-1.0, -1.0, -1.0), vec3(-1.0, 1.0, -1.0),      \n \
-		vec3(1.0, 1.0, 0.0), vec3(1.0, -1.0, 0.0), vec3(-1.0, -1.0, 0.0), vec3(-1.0, 1.0, 0.0),      \n \
-		vec3(1.0, 0.0, 1.0), vec3(-1.0, 0.0, 1.0), vec3(1.0, 0.0, -1.0), vec3(-1.0, 0.0, -1.0),      \n \
-		vec3(0.0, 1.0, 1.0), vec3(0.0, -1.0, 1.0), vec3(0.0, -1.0, -1.0), vec3(0.0, 1.0, -1.0)      \n \
-	);      \n \
-										    \n \
-	float shadowing(highp vec3 vertex) {      \n \
-		if (u_lightShadowEnabled < 1.0) return 1.0;      \n \
-		highp vec4 projectVertex = u_lightMatrix * vec4(vertex, 1.0);      \n \
-		highp float pTolDis2 = dot(projectVertex.xyz, projectVertex.xyz);      \n \
-		pTolDis2 = pTolDis2 / (pTolDis2 + 1.0);      \n \
-        pTolDis2 = pTolDis2 - u_lightShadowBias;         \n \
-		highp vec4 shadowCoord = vec4(projectVertex.xyz, pTolDis2);      \n \
-		float factor = 0.0;      \n \
-		if (0.0 < u_lightShadowSoft) {      \n \
-			float sum = 0.0;      \n \
-			for (int i = 0; i < SAMPLE_SIZE; ++i) {      \n \
-				sum += texture(u_shadowTex, vec4(shadowCoord.xyz + SAMPLE_OFFSETS[i] * u_lightShadowSoftness, shadowCoord.w));      \n \
-			}      \n \
-			factor = sum / float(SAMPLE_SIZE);      \n \
-		}      \n \
-		else {      \n \
-			factor = texture(u_shadowTex, shadowCoord);      \n \
-		}      \n \
-										    \n \
-		if (factor < 1.0)      \n \
-			factor = mix(1.0, factor, u_lightShadowStrength);      \n \
-		return factor;      \n \
-	}      \n \
-										    \n \
-	void main() {  \n \
-		highp vec2 texCoords = gl_FragCoord.xy / vec2(u_screenWidth, u_screenHeight);   \n \
-		vec4 RT0 = texture(u_RT0, texCoords);    \n \
-		vec4 RT1 = texture(u_RT1, texCoords);    \n \
-		vec4 RT2 = texture(u_RT2, texCoords);     \n \
-		if (RT0.w <= 0.0){ fragColor = vec4(0.0); return; }             \n \
-																						\n \
-		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xyz)), 0.0)).xyz;   \n \
-		highp float depth = texture(u_depthTex, texCoords).r;    \n \
-		highp vec4 worldPosition = u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
-		worldPosition.xyz /= worldPosition.w;     \n \
-																						\n \
-		vec3 eyeDir = normalize(u_cameraPosInWorld - worldPosition.xyz);     \n \
-		vec3 lightDir = u_lightPosition - worldPosition.xyz;     \n \
-		float attDis = 1.0 + length(lightDir) * u_lightARI;     \n \
-        attDis = 1.0 / (attDis * attDis);\n \
-		float attenuation = clamp(attDis, 0.0, 1.0);     \n \
-		lightDir = normalize(lightDir);     \n \
-																						\n \
-		float NdotL = max(0.0, dot(worldNormal, lightDir));     \n \
-		vec3 H = normalize(eyeDir + lightDir);     \n \
-		float NdotH = max(0.0, dot(worldNormal, H));     \n \
-		float NdotV = max(0.0, dot(worldNormal, eyeDir));    \n \
-		float HdotV = max(0.0, dot(H, eyeDir));    \n \
-		float diffFactor = OrenNayar(worldNormal, lightDir, eyeDir, NdotL, NdotV, RT1.w);     \n \
-		float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);     \n \
-																						\n \
-		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * attenuation * shadowing(worldPosition.xyz);    \n \
-		fragColor = vec4(clamp((linearColor(RT1.xyz) * diffFactor + linearColor(RT2.xyz) * specFactor) * lightIntensity, 0.0, 1.0), 1.0);     \n \
-	}";
-
-static const char* SPOT_LIGHT_V_SHADER = " \
-	layout(location = 0) in vec3 position; \n \
-	layout(location = 1) in vec3 normal; \n \
-	layout(location = 2) in vec2 texcoord; \n \
-	uniform mat4 u_ModelViewProjectMat;  \n \
-	void main() \n \
-	{                   \n \
-		gl_Position = u_ModelViewProjectMat * vec4(position, 1.0); \n \
-	}";
-
-static const char* SPOT_LIGHT_F_SHADER = " \
-	uniform highp sampler2D u_depthTex; \n \
-	uniform highp sampler2D u_RT0; \n \
-	uniform sampler2D u_RT1; \n \
-	uniform sampler2D u_RT2; \n \
-	uniform sampler2DShadow u_shadowTex; \n \
-										    \n \
-	uniform float u_screenWidth;  \n \
-	uniform float u_screenHeight;  \n \
-	uniform mat4 u_InvViewMat;  \n \
-	uniform mat4 u_InvViewProjectMat;  \n \
-	uniform mat4 u_lightMatrix;  \n \
-	uniform vec3 u_cameraPosInWorld;  \n \
-										    \n \
-	uniform vec3  u_lightPosition;  \n \
-	uniform vec3  u_lightDirection;  \n \
-	uniform vec3  u_lightColor;  \n \
-	uniform float u_lightIntensity;  \n \
-	uniform float u_lightARI;  \n \
-	uniform float u_lightInnerAngleCos;  \n \
-	uniform float u_lightOuterAngleCos;  \n \
-										    \n \
-	uniform float u_lightShadowEnabled;  \n \
-	uniform float u_lightShadowBias;  \n \
-	uniform float u_lightShadowStrength;  \n \
-	uniform float u_lightShadowSoft;  \n \
-	uniform float u_lightShadowSoftness;  \n \
-										    \n \
-	layout(location = 0) out vec4 fragColor; \n \
-												  \n \
-	#define SAMPLE_SIZE 9  \n \
-	const vec2 SAMPLE_OFFSETS[SAMPLE_SIZE] = vec2[]    \n \
-	(                                                       \n \
-		vec2(-1.0, -1.0), vec2(0.0, -1.0), vec2(1.0, -1.0),    \n \
-		vec2(-1.0, 0.0), vec2(0.0, 0.0), vec2(1.0, 1.0),    \n \
-		vec2(-1.0, 1.0), vec2(0.0, 1.0), vec2(1.0, 1.0)   \n \
-	);                                                      \n \
-												  \n \
-	float shadowing(vec3 vertex) {          \n \
-		if (u_lightShadowEnabled < 1.0) return 1.0;          \n \
-		vec4 projectVertex = u_lightMatrix * vec4(vertex, 1.0);          \n \
-		vec3 shadowCoord = projectVertex.xyz / projectVertex.w;          \n \
-		float factor = 0.0;          \n \
-		if (0.0 < u_lightShadowSoft) {          \n \
-			float sum = 0.0;          \n \
-			for (int i = 0; i < SAMPLE_SIZE; ++i) {          \n \
-				sum += texture(u_shadowTex, vec3(shadowCoord.xy + SAMPLE_OFFSETS[i] * u_lightShadowSoftness, shadowCoord.z - u_lightShadowBias));          \n \
-			}          \n \
-			factor = sum / float(SAMPLE_SIZE);          \n \
-		}          \n \
-		else {          \n \
-			factor = texture(u_shadowTex, vec3(shadowCoord.xy, shadowCoord.z - u_lightShadowBias));          \n \
-		}          \n \
-												  \n \
-		if (factor < 1.0)          \n \
-			factor = mix(1.0, factor, u_lightShadowStrength);          \n \
-		return factor;          \n \
-	}          \n \
-												  \n \
-	void main() {  \n \
-		highp vec2 texCoords = gl_FragCoord.xy / vec2(u_screenWidth, u_screenHeight);   \n \
-		vec4 RT0 = texture(u_RT0, texCoords);    \n \
-		vec4 RT1 = texture(u_RT1, texCoords);    \n \
-		vec4 RT2 = texture(u_RT2, texCoords);     \n \
-		if (RT0.w <= 0.0){ fragColor = vec4(0.0); return; }             \n \
-																						    \n \
-		vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xyz)), 0.0)).xyz;   \n \
-		highp float depth = texture(u_depthTex, texCoords).r;    \n \
-		vec4 worldPosition = u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);    \n \
-		worldPosition.xyz /= worldPosition.w;     \n \
-																						    \n \
-		vec3 eyeDir = normalize(u_cameraPosInWorld - worldPosition.xyz);    \n \
-		vec3 lightDir = u_lightPosition - worldPosition.xyz;   \n \
-		vec3 attDis = lightDir * u_lightARI;   \n \
-		float attenuation = clamp(1.0 - dot(attDis, attDis), 0.0, 1.0);   \n \
-		lightDir = normalize(lightDir);   \n \
-		float currentAngleCos = dot(lightDir, -u_lightDirection);   \n \
-		attenuation *= smoothstep(u_lightOuterAngleCos, u_lightInnerAngleCos, currentAngleCos);   \n \
-																						    \n \
-		float NdotL = max(0.0, dot(worldNormal, lightDir));   \n \
-		vec3 H = normalize(eyeDir + lightDir);   \n \
-		float NdotH = max(0.0, dot(worldNormal, H));   \n \
-		float NdotV = max(0.0, dot(worldNormal, eyeDir));    \n \
-		float HdotV = max(0.0, dot(H, eyeDir));    \n \
-		float diffFactor = OrenNayar(worldNormal, lightDir, eyeDir, NdotL, NdotV, RT1.w);     \n \
-		float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);          \n \
-																						    \n \
-		vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * attenuation * shadowing(worldPosition.xyz);    \n \
-		fragColor = vec4(clamp((linearColor(RT1.xyz) * diffFactor + linearColor(RT2.xyz) * specFactor) * lightIntensity, 0.0, 1.0), 1.0);     \n \
-	}";
+#include "Shaders/Light.glsl"
 
 veDeferredRenderPipeline::veDeferredRenderPipeline(veSceneManager *sm)
 : veRenderPipeline(sm)
@@ -562,8 +135,8 @@ veMaterial* veDeferredRenderPipeline::createAmbientLightMaterial()
     pass->blendFunc().src = GL_ONE;
     pass->blendFunc().dst = GL_ONE;
     pass->blendEquation() = GL_FUNC_ADD;
-    pass->setShader(new veShader(veShader::VERTEX_SHADER, SCREEN_BASED_LIGHT_V_SHADER));
-    pass->setShader(new veShader(veShader::FRAGMENT_SHADER, std::string(AMBIENT_LIGHT_F_SHADER).c_str()));
+    pass->setShader(new veShader(veShader::VERTEX_SHADER, SCREEN_BASED_LIGHT_VERTEX_SHADER));
+    pass->setShader(new veShader(veShader::FRAGMENT_SHADER, AMBIENT_LIGHT_FRAGMENT_SHADER));
     pass->addUniform(new veUniform("u_ambient", veVec3::ZERO));
     pass->addUniform(new veUniform("u_RT1", 0));
     
@@ -588,8 +161,8 @@ veMaterial* veDeferredRenderPipeline::createDirectionalLightMaterial(veLight *li
     pass->blendFunc().src = GL_ONE;
     pass->blendFunc().dst = GL_ONE;
     pass->blendEquation() = GL_FUNC_ADD;
-    pass->setShader(new veShader(veShader::VERTEX_SHADER, SCREEN_BASED_LIGHT_V_SHADER));
-    pass->setShader(new veShader(veShader::FRAGMENT_SHADER, (std::string(COMMON_FUNCTIONS) + std::string(DIRECTIONAL_LIGHT_F_SHADER)).c_str()));
+    pass->setShader(new veShader(veShader::VERTEX_SHADER, SCREEN_BASED_LIGHT_VERTEX_SHADER));
+    pass->setShader(new veShader(veShader::FRAGMENT_SHADER, DIRECTIONAL_LIGHT_FRAGMENT_SHADER));
     pass->addUniform(new veUniform("u_lightDirection", veVec3::ZERO));
     pass->addUniform(new veUniform("u_lightMatrixs", &veMat4::IDENTITY, 1));
     pass->addUniform(new veUniform("u_shadowCascadedLevels", 0.f));
@@ -617,8 +190,8 @@ veMaterial* veDeferredRenderPipeline::createIBLightMaterial(veLight *light)
     pass->blendFunc().src = GL_ONE;
     pass->blendFunc().dst = GL_ONE;
     pass->blendEquation() = GL_FUNC_ADD;
-    pass->setShader(new veShader(veShader::VERTEX_SHADER, SCREEN_BASED_LIGHT_V_SHADER));
-    pass->setShader(new veShader(veShader::FRAGMENT_SHADER, (std::string(COMMON_FUNCTIONS) + std::string(IB_LIGHT_F_SHADER)).c_str()));
+    pass->setShader(new veShader(veShader::VERTEX_SHADER, SCREEN_BASED_LIGHT_VERTEX_SHADER));
+    pass->setShader(new veShader(veShader::FRAGMENT_SHADER, IB_LIGHT_FRAGMENT_SHADER));
     pass->addUniform(new veUniform("u_lightDirection", veVec3::ZERO));
     pass->addUniform(new veUniform("u_specularMipMapCount", 1.0f));
     pass->addUniform(new veUniform("u_diffuseLighting", 4));
@@ -646,7 +219,7 @@ veMaterial* veDeferredRenderPipeline::createPointLightMaterial(veLight *light)
     pass0->stencilFunc() = { GL_ALWAYS, 0, 0, GL_ALWAYS, 0, 0 };
     pass0->stencilOp() = { GL_KEEP, GL_DECR_WRAP, GL_KEEP, GL_KEEP, GL_INCR_WRAP, GL_KEEP };
     pass0->blendFunc() = veBlendFunc::DISABLE;
-    pass0->setShader(new veShader(veShader::VERTEX_SHADER, POINT_LIGHT_V_SHADER));
+    pass0->setShader(new veShader(veShader::VERTEX_SHADER, WORLD_BASED_LIGHT_VERTEX_SHADER));
     pass0->setShader(new veShader(veShader::FRAGMENT_SHADER, "layout(location=0) out vec4 fragColor;void main(){}"));
     pass0->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
     pass0->setApplyFunctionCallback([]() {
@@ -665,8 +238,8 @@ veMaterial* veDeferredRenderPipeline::createPointLightMaterial(veLight *light)
     pass1->blendFunc().dst = GL_ONE;
     pass1->blendEquation() = GL_FUNC_ADD;
     pass1->stencilFunc() = { GL_NOTEQUAL, 0, 0xFF, GL_NOTEQUAL, 0, 0xFF };
-    pass1->setShader(new veShader(veShader::VERTEX_SHADER, POINT_LIGHT_V_SHADER));
-    pass1->setShader(new veShader(veShader::FRAGMENT_SHADER, (std::string(COMMON_FUNCTIONS) + std::string(POINT_LIGHT_F_SHADER)).c_str()));
+    pass1->setShader(new veShader(veShader::VERTEX_SHADER, WORLD_BASED_LIGHT_VERTEX_SHADER));
+    pass1->setShader(new veShader(veShader::FRAGMENT_SHADER, POINT_LIGHT_FRAGMENT_SHADER));
     pass1->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
     pass1->addUniform(new veUniform("u_lightPosition", veVec3(0.0f)));
     pass1->addUniform(new veUniform("u_lightMatrix", veMat4::IDENTITY));
@@ -697,7 +270,7 @@ veMaterial* veDeferredRenderPipeline::createSpotLightMaterial(veLight *light)
     pass0->stencilFunc() = { GL_ALWAYS, 0, 0, GL_ALWAYS, 0, 0 };
     pass0->stencilOp() = { GL_KEEP, GL_DECR_WRAP, GL_KEEP, GL_KEEP, GL_INCR_WRAP, GL_KEEP };
     pass0->blendFunc() = veBlendFunc::DISABLE;
-    pass0->setShader(new veShader(veShader::VERTEX_SHADER, SPOT_LIGHT_V_SHADER));
+    pass0->setShader(new veShader(veShader::VERTEX_SHADER, WORLD_BASED_LIGHT_VERTEX_SHADER));
     pass0->setShader(new veShader(veShader::FRAGMENT_SHADER, "layout(location=0) out vec4 fragColor;void main(){}"));
     pass0->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
     pass0->setApplyFunctionCallback([]() {
@@ -716,8 +289,8 @@ veMaterial* veDeferredRenderPipeline::createSpotLightMaterial(veLight *light)
     pass1->blendFunc().dst = GL_ONE;
     pass1->blendEquation() = GL_FUNC_ADD;
     pass1->stencilFunc() = { GL_NOTEQUAL, 0, 0xFF, GL_NOTEQUAL, 0, 0xFF };
-    pass1->setShader(new veShader(veShader::VERTEX_SHADER, SPOT_LIGHT_V_SHADER));
-    pass1->setShader(new veShader(veShader::FRAGMENT_SHADER, (std::string(COMMON_FUNCTIONS) + std::string(SPOT_LIGHT_F_SHADER)).c_str()));
+    pass1->setShader(new veShader(veShader::VERTEX_SHADER, WORLD_BASED_LIGHT_VERTEX_SHADER));
+    pass1->setShader(new veShader(veShader::FRAGMENT_SHADER, SPOT_LIGHT_FRAGMENT_SHADER));
     pass1->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
     pass1->addUniform(new veUniform("u_lightDirection", veVec3(0.0f)));
     pass1->addUniform(new veUniform("u_lightPosition", veVec3(0.0f)));

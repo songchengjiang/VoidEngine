@@ -5,10 +5,8 @@
 #include "Configuration.h"
 #include "Viewer.h"
 #include "FileCore/File.h"
-#include "Shaders/DepthWriter.vert"
-#include "Shaders/DepthWriter.frag"
-#include "Shaders/SquareDepthWriter.vert"
-#include "Shaders/SquareDepthWriter.frag"
+#include "Shaders/DepthWriter.glsl"
+#include "Shaders/SquareDepthWriter.glsl"
 
 static const veMat4 LIGHT_BIAS_MAT = veMat4(0.5f, 0.0f, 0.0f, 0.5f
                                             , 0.0f, 0.5f, 0.0f, 0.5f
@@ -370,49 +368,35 @@ void veRenderPipeline::caculateDirectionalLightCascadedParams(const veMat4 &ligh
     auto dLight = static_cast<veDirectionalLight *>(light);
     veVec3 camerafrustumCorners[8];
     camera->getFrustumCorners(camerafrustumCorners);
-    veVec3 preFrustumCorners[4];
-    veVec3 frustumCorners[4];
-    
-    veMat4 lightInWorldInv = lightInWorldMat;
-    lightInWorldInv.inverse();
-    lightInWorldInv = lightInWorldInv * camera->getNodeToWorldMatrix();
+    veVec3 frustumCorners[8];
     
     float t = 0.0;
     for (unsigned short i = 0; i < dLight->getShadowCascadedCount(); ++i) {
     
-        preFrustumCorners[0] = camerafrustumCorners[0] * (1.0f - t) + camerafrustumCorners[4] * t;
-        preFrustumCorners[1] = camerafrustumCorners[1] * (1.0f - t) + camerafrustumCorners[5] * t;
-        preFrustumCorners[2] = camerafrustumCorners[2] * (1.0f - t) + camerafrustumCorners[6] * t;
-        preFrustumCorners[3] = camerafrustumCorners[3] * (1.0f - t) + camerafrustumCorners[7] * t;
-        
-        t = dLight->getShadowCascadedLevelScale(i);
         frustumCorners[0] = camerafrustumCorners[0] * (1.0f - t) + camerafrustumCorners[4] * t;
         frustumCorners[1] = camerafrustumCorners[1] * (1.0f - t) + camerafrustumCorners[5] * t;
         frustumCorners[2] = camerafrustumCorners[2] * (1.0f - t) + camerafrustumCorners[6] * t;
         frustumCorners[3] = camerafrustumCorners[3] * (1.0f - t) + camerafrustumCorners[7] * t;
         
-        cascadedLevels[i] = -frustumCorners[0].z();
+        t = dLight->getShadowCascadedLevelScale(i);
+        frustumCorners[4] = camerafrustumCorners[0] * (1.0f - t) + camerafrustumCorners[4] * t;
+        frustumCorners[5] = camerafrustumCorners[1] * (1.0f - t) + camerafrustumCorners[5] * t;
+        frustumCorners[6] = camerafrustumCorners[2] * (1.0f - t) + camerafrustumCorners[6] * t;
+        frustumCorners[7] = camerafrustumCorners[3] * (1.0f - t) + camerafrustumCorners[7] * t;
         
-        veBoundingBox bBox;
-        bBox.expandBy(lightInWorldInv * preFrustumCorners[0]);
-        bBox.expandBy(lightInWorldInv * preFrustumCorners[1]);
-        bBox.expandBy(lightInWorldInv * preFrustumCorners[2]);
-        bBox.expandBy(lightInWorldInv * preFrustumCorners[3]);
+        veVec3 center = (frustumCorners[0] + frustumCorners[1] + frustumCorners[2] + frustumCorners[3] + frustumCorners[4] + frustumCorners[5] + frustumCorners[6] + frustumCorners[7]) / 8;
+        veReal radius = veMath::maximum((center - frustumCorners[0]).squaredLength(), (center - frustumCorners[1]).squaredLength());
+        radius = veMath::maximum(radius, (center - frustumCorners[2]).squaredLength());
+        radius = veMath::maximum(radius, (center - frustumCorners[3]).squaredLength());
+        radius = veMath::maximum(radius, (center - frustumCorners[4]).squaredLength());
+        radius = veMath::maximum(radius, (center - frustumCorners[5]).squaredLength());
+        radius = veMath::maximum(radius, (center - frustumCorners[6]).squaredLength());
+        radius = veMath::maximum(radius, (center - frustumCorners[7]).squaredLength());
+        radius = veMath::veSqrt(radius);
         
-        bBox.expandBy(lightInWorldInv * frustumCorners[0]);
-        bBox.expandBy(lightInWorldInv * frustumCorners[1]);
-        bBox.expandBy(lightInWorldInv * frustumCorners[2]);
-        bBox.expandBy(lightInWorldInv * frustumCorners[3]);
-        
-        veVec3 center = bBox.center();
-        dLight->getShadowCamera(i)->setMatrix(veMat4::translation(lightInWorldMat * center) * lightInWorldMat);
-        veReal left   = bBox.min().x() - center.x();
-        veReal right  = bBox.max().x() - center.x();
-        veReal bottom = bBox.min().y() - center.y();
-        veReal top    = bBox.max().y() - center.y();
-        veReal near   = bBox.min().z() - center.z();
-        veReal far    = bBox.max().z() - center.z();
-        dLight->getShadowCamera(i)->setProjectionMatrixAsOrtho(left, right, bottom, top, near, far);
+        dLight->getShadowCamera(i)->setMatrix(veMat4::translation(camera->getNodeToWorldMatrix() * center) * lightInWorldMat);
+        dLight->getShadowCamera(i)->setProjectionMatrixAsOrtho(-radius, radius, -radius, radius, -radius, radius);
+        cascadedLevels[i] = -frustumCorners[4].z();
     }
 }
 

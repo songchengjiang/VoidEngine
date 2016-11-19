@@ -181,6 +181,10 @@
 		BE5BF1731BB28A1200FAE523 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE5BF1721BB28A1100FAE523 /* libjpeg.a */; };
 		BE5BF1761BB2A05B00FAE523 /* Debuger.h in Headers */ = {isa = PBXBuildFile; fileRef = BE5BF1751BB2A05B00FAE523 /* Debuger.h */; };
 		BE5BF1781BB2A09D00FAE523 /* Debuger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE5BF1771BB2A09D00FAE523 /* Debuger.cpp */; };
+		BE65C6FB1DE076F500AC3FF3 /* Common.glsl in Sources */ = {isa = PBXBuildFile; fileRef = BE65C6FA1DE076F500AC3FF3 /* Common.glsl */; };
+		BE65C6FC1DE076F500AC3FF3 /* Common.glsl in Sources */ = {isa = PBXBuildFile; fileRef = BE65C6FA1DE076F500AC3FF3 /* Common.glsl */; };
+		BE65C6FE1DE0815D00AC3FF3 /* Light.glsl in Sources */ = {isa = PBXBuildFile; fileRef = BE65C6FD1DE0815D00AC3FF3 /* Light.glsl */; };
+		BE65C6FF1DE0815D00AC3FF3 /* Light.glsl in Sources */ = {isa = PBXBuildFile; fileRef = BE65C6FD1DE0815D00AC3FF3 /* Light.glsl */; };
 		BE6D3AAB1CB3C5FD00E9E034 /* DeferredLightPipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6D3AA51CB3C5FD00E9E034 /* DeferredLightPipeline.cpp */; };
 		BE6D3AAC1CB3C5FD00E9E034 /* DeferredLightPipeline.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6D3AA61CB3C5FD00E9E034 /* DeferredLightPipeline.h */; };
 		BE6D3AAD1CB3C5FD00E9E034 /* DeferredRenderPipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE6D3AA71CB3C5FD00E9E034 /* DeferredRenderPipeline.cpp */; };
@@ -423,12 +427,9 @@
 		BE18D25E1DDDFB0200EEF38C /* Terrain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Terrain.h; path = ../../Engine/KernelCore/Terrain.h; sourceTree = "<group>"; };
 		BE18D25F1DDDFB0200EEF38C /* TerrainRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TerrainRenderer.cpp; path = ../../Engine/KernelCore/TerrainRenderer.cpp; sourceTree = "<group>"; };
 		BE18D2601DDDFB0200EEF38C /* TerrainRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TerrainRenderer.h; path = ../../Engine/KernelCore/TerrainRenderer.h; sourceTree = "<group>"; };
-		BE18D2661DDDFC2000EEF38C /* DepthWriter.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = DepthWriter.frag; path = ../../Engine/Shaders/DepthWriter.frag; sourceTree = "<group>"; };
-		BE18D2671DDDFC2000EEF38C /* DepthWriter.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = DepthWriter.vert; path = ../../Engine/Shaders/DepthWriter.vert; sourceTree = "<group>"; };
-		BE18D2681DDDFC2000EEF38C /* SquareDepthWriter.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = SquareDepthWriter.frag; path = ../../Engine/Shaders/SquareDepthWriter.frag; sourceTree = "<group>"; };
-		BE18D2691DDDFC2000EEF38C /* SquareDepthWriter.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = SquareDepthWriter.vert; path = ../../Engine/Shaders/SquareDepthWriter.vert; sourceTree = "<group>"; };
-		BE18D26A1DDDFC2000EEF38C /* TerrainShader.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = TerrainShader.frag; path = ../../Engine/Shaders/TerrainShader.frag; sourceTree = "<group>"; };
-		BE18D26B1DDDFC2000EEF38C /* TerrainShader.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = TerrainShader.vert; path = ../../Engine/Shaders/TerrainShader.vert; sourceTree = "<group>"; };
+		BE18D2671DDDFC2000EEF38C /* DepthWriter.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DepthWriter.glsl; path = ../../Engine/Shaders/DepthWriter.glsl; sourceTree = "<group>"; };
+		BE18D2691DDDFC2000EEF38C /* SquareDepthWriter.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SquareDepthWriter.glsl; path = ../../Engine/Shaders/SquareDepthWriter.glsl; sourceTree = "<group>"; };
+		BE18D26B1DDDFC2000EEF38C /* Terrain.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Terrain.glsl; path = ../../Engine/Shaders/Terrain.glsl; sourceTree = "<group>"; };
 		BE1A0AA71BE24C6F00A1A20D /* OctreeDebuger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OctreeDebuger.cpp; path = ../../Engine/Debuger/OctreeDebuger.cpp; sourceTree = "<group>"; };
 		BE1A0AA81BE24C6F00A1A20D /* OctreeDebuger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OctreeDebuger.h; path = ../../Engine/Debuger/OctreeDebuger.h; sourceTree = "<group>"; };
 		BE1A0AAC1BE24D1000A1A20D /* AnimationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AnimationManager.cpp; path = ../../Engine/KernelCore/AnimationManager.cpp; sourceTree = "<group>"; };
@@ -582,6 +583,8 @@
 		BE5BF1721BB28A1100FAE523 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../../Dependents/libjpeg/lib/libjpeg.a; sourceTree = "<group>"; };
 		BE5BF1751BB2A05B00FAE523 /* Debuger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Debuger.h; path = ../../Engine/Debuger/Debuger.h; sourceTree = "<group>"; };
 		BE5BF1771BB2A09D00FAE523 /* Debuger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Debuger.cpp; path = ../../Engine/Debuger/Debuger.cpp; sourceTree = "<group>"; };
+		BE65C6FA1DE076F500AC3FF3 /* Common.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Common.glsl; path = ../../Engine/Shaders/Common.glsl; sourceTree = "<group>"; };
+		BE65C6FD1DE0815D00AC3FF3 /* Light.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Light.glsl; path = ../../Engine/Shaders/Light.glsl; sourceTree = "<group>"; };
 		BE6D3AA51CB3C5FD00E9E034 /* DeferredLightPipeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeferredLightPipeline.cpp; path = ../../Engine/KernelCore/DeferredLightPipeline.cpp; sourceTree = "<group>"; };
 		BE6D3AA61CB3C5FD00E9E034 /* DeferredLightPipeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeferredLightPipeline.h; path = ../../Engine/KernelCore/DeferredLightPipeline.h; sourceTree = "<group>"; };
 		BE6D3AA71CB3C5FD00E9E034 /* DeferredRenderPipeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeferredRenderPipeline.cpp; path = ../../Engine/KernelCore/DeferredRenderPipeline.cpp; sourceTree = "<group>"; };
@@ -751,12 +754,11 @@
 		BE18D2651DDDFC1000EEF38C /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
-				BE18D2661DDDFC2000EEF38C /* DepthWriter.frag */,
-				BE18D2671DDDFC2000EEF38C /* DepthWriter.vert */,
-				BE18D2681DDDFC2000EEF38C /* SquareDepthWriter.frag */,
-				BE18D2691DDDFC2000EEF38C /* SquareDepthWriter.vert */,
-				BE18D26A1DDDFC2000EEF38C /* TerrainShader.frag */,
-				BE18D26B1DDDFC2000EEF38C /* TerrainShader.vert */,
+				BE18D2671DDDFC2000EEF38C /* DepthWriter.glsl */,
+				BE18D2691DDDFC2000EEF38C /* SquareDepthWriter.glsl */,
+				BE18D26B1DDDFC2000EEF38C /* Terrain.glsl */,
+				BE65C6FA1DE076F500AC3FF3 /* Common.glsl */,
+				BE65C6FD1DE0815D00AC3FF3 /* Light.glsl */,
 			);
 			name = Shaders;
 			sourceTree = "<group>";
@@ -1367,6 +1369,7 @@
 				BE1A0AB61BE24D1000A1A20D /* AnimationManager.cpp in Sources */,
 				BEAB2E8E1CED661C00B3F9F8 /* File-apple.mm in Sources */,
 				BE16BCE81CDC6D59006E7146 /* ScaleAffector.cpp in Sources */,
+				BE65C6FB1DE076F500AC3FF3 /* Common.glsl in Sources */,
 				BEA445F21D06C1FF00960C84 /* GizmoRenderer.cpp in Sources */,
 				BE1B50511BB049E30039A346 /* Material.cpp in Sources */,
 				BEB952351CFC4B4B00110FF6 /* ParticleSphereRenderer.cpp in Sources */,
@@ -1429,6 +1432,7 @@
 				BE16BCF41CDC7CAB006E7146 /* JetAffector.cpp in Sources */,
 				BEDE3C0C1D5C502B008F579F /* GLDataBuffer.cpp in Sources */,
 				BE1B50681BB049E30039A346 /* FileReaderWriterPNG.h in Sources */,
+				BE65C6FE1DE0815D00AC3FF3 /* Light.glsl in Sources */,
 				BE949D501D097BD9008BC95F /* GizmoComponent.cpp in Sources */,
 				BE1B50691BB049E30039A346 /* FileReaderWriterVEM.h in Sources */,
 				BE1A0AE01BE24E4000A1A20D /* BoxRenderer.cpp in Sources */,
@@ -1533,12 +1537,14 @@
 				BEA445EE1D06BD0300960C84 /* GizmoTranslation.cpp in Sources */,
 				BE80F11C1CED59AE00E2EECF /* Node.cpp in Sources */,
 				BE7E03431D02C78A00320061 /* ImGuiComponent.cpp in Sources */,
+				BE65C6FF1DE0815D00AC3FF3 /* Light.glsl in Sources */,
 				BE80F11D1CED59AE00E2EECF /* NodeVisitor.cpp in Sources */,
 				BE80F11E1CED59AE00E2EECF /* Parameter.cpp in Sources */,
 				BE80F11F1CED59AE00E2EECF /* Plane.cpp in Sources */,
 				BE80F1201CED59AE00E2EECF /* Ray.cpp in Sources */,
 				BE80F1211CED59AE00E2EECF /* RenderableObject.cpp in Sources */,
 				BE80F1221CED59AE00E2EECF /* RenderState.cpp in Sources */,
+				BE65C6FC1DE076F500AC3FF3 /* Common.glsl in Sources */,
 				BE80F1231CED59AE00E2EECF /* Shader.cpp in Sources */,
 				BE80F1241CED59AE00E2EECF /* SkyBox.cpp in Sources */,
 				BE80F1251CED59AE00E2EECF /* Sphere.cpp in Sources */,

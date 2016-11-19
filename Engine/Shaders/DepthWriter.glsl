@@ -1,4 +1,4 @@
-#define STRINGIFY(A)  #A
+#include "Common.glsl"
 
 const char *DEPTH_WRITE_VERTEX_SHADER = STRINGIFY(
 layout (location = ATTR_POSITION) in vec3 position;
@@ -37,5 +37,12 @@ void main()
 	  
 	gl_Position = u_ModelViewProjectMat * finalPos;
 	//v_depthInView = gl_Position.w;
+}
+);
+
+const char *DEPTH_WRITE_FRAGMENT_SHADER = STRINGIFY(
+//in float v_depthInView;
+void main(){
+    //gl_FragDepth = v_depthInView / (v_depthInView + 1.0);
 }
 );
