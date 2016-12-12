@@ -385,6 +385,12 @@
     <ClCompile Include="..\..\Engine\KernelCore\ViewerListener.cpp">
       <Filter>KernelCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\Terrain.cpp">
+      <Filter>KernelCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\KernelCore\TerrainRenderer.cpp">
+      <Filter>KernelCore\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine\BaseCore\Array.h">
@@ -790,6 +796,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\ViewerListener.h">
       <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\Terrain.h">
+      <Filter>KernelCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\KernelCore\TerrainRenderer.h">
+      <Filter>KernelCore\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

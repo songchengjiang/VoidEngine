@@ -107,6 +107,8 @@
     <ClCompile Include="..\..\Engine\KernelCore\SphereRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Surface.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\SurfaceRenderer.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\Terrain.cpp" />
+    <ClCompile Include="..\..\Engine\KernelCore\TerrainRenderer.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Text.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\Texture.cpp" />
     <ClCompile Include="..\..\Engine\KernelCore\TextureManager.cpp" />
@@ -244,6 +246,8 @@
     <ClInclude Include="..\..\Engine\KernelCore\SphereRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Surface.h" />
     <ClInclude Include="..\..\Engine\KernelCore\SurfaceRenderer.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\Terrain.h" />
+    <ClInclude Include="..\..\Engine\KernelCore\TerrainRenderer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Text.h" />
     <ClInclude Include="..\..\Engine\KernelCore\Texture.h" />
     <ClInclude Include="..\..\Engine\KernelCore\TextureManager.h" />

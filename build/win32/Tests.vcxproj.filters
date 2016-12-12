@@ -46,6 +46,9 @@
     <Filter Include="SceneTest">
       <UniqueIdentifier>{c7c724c8-ea95-4fa1-a2ac-69e0682a54f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TerrainTest">
+      <UniqueIdentifier>{66e91024-5477-4ae6-8937-11265cc9d3a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Tests\CameraTest.h">
@@ -94,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Tests\SceneTest.h">
       <Filter>SceneTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tests\TerrainTest.h">
+      <Filter>TerrainTest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

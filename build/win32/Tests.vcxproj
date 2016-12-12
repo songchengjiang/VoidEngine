@@ -104,6 +104,7 @@
     <ClInclude Include="..\..\Tests\SceneTest.h" />
     <ClInclude Include="..\..\Tests\ShadowTest.h" />
     <ClInclude Include="..\..\Tests\SkyBoxTest.h" />
+    <ClInclude Include="..\..\Tests\TerrainTest.h" />
     <ClInclude Include="..\..\Tests\TestCreator.h" />
     <ClInclude Include="..\..\Tests\TextTest.h" />
   </ItemGroup>
