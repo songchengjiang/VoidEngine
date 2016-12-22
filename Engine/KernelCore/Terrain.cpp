@@ -47,32 +47,99 @@ void veTerrainGrid::initMaterial()
     pass->addUniform(new veUniform("u_fresnel", 0.0f));
 }
 
-void veTerrainGrid::build(veReal x, veReal y, unsigned short size, veReal *heightMap, unsigned short width, unsigned int height)
+void veTerrainGrid::build(veReal x, veReal y, unsigned short size, veTexture2D *heightTexture)
 {
     _vertices->clear();
     _indices->clear();
     _boundingBox.dirty();
+    veArray<veVec3> vertices;
+    veArray<veVec3> normals;
+    veArray<veVec3> tangents;
+    veArray<veVec3> bitangents;
+    veArray<veVec2> uvs;
     for (unsigned int yStep = 0; yStep < size; ++yStep) {
         for (unsigned int xStep = 0; xStep < size; ++xStep) {
-            fillVertex(veVec3(x + xStep, 0.0f, y + yStep)
-                     , veVec3::UNIT_Y, veVec3::UNIT_X, veVec3::UNIT_Z
-                     , veVec2((veReal)xStep / (veReal)(size - 1), (veReal)yStep / (veReal)(size - 1)));
+            veReal xPos = x + xStep;
+            veReal yPos = 0.0f;
+            veReal zPos = y + yStep;
+            if (heightTexture != nullptr) {
+                heightTexture->getData((int)xPos, (int)zPos, 0);
+            }
+            vertices.push_back(veVec3(xPos, yPos, zPos));
+            uvs.push_back(veVec2((veReal)xStep / (veReal)(size - 1), (veReal)yStep / (veReal)(size - 1)));
             _boundingBox.expandBy(veVec3(x + xStep, 0.0f, y + yStep));
         }
     }
+    normals.resize(vertices.size());
+    tangents.resize(vertices.size());
+    bitangents.resize(vertices.size());
     
+    
+    auto normalCalcFunc = [](size_t idx0, size_t idx1, size_t idx2, size_t idx3, const veArray<veVec3> &vertices, veArray<veVec3> &normals){
+        veVec3 point0 = vertices[idx0];
+        veVec3 point1 = vertices[idx1];
+        veVec3 point2 = vertices[idx2];
+        veVec3 point3 = vertices[idx3];
+        
+        veVec3 dir0 = point2 - point0;
+        veVec3 dir1 = point1 - point0;
+        dir0.normalize();
+        dir1.normalize();
+        veVec3 norm = dir1.crossProduct(dir0);
+        normals[idx0] += norm;
+        normals[idx1] += norm;
+        normals[idx2] += norm;
+        
+        dir0 = point3 - point2;
+        dir1 = point1 - point2;
+        dir0.normalize();
+        dir1.normalize();
+        norm = dir1.crossProduct(dir0);
+        normals[idx1] += norm;
+        normals[idx2] += norm;
+        normals[idx3] += norm;
+    };
     for (unsigned int yStep = 0; yStep < (size - 1); ++yStep) {
         if (yStep % 2 == 0) {
-            for (int xStep = 0; xStep < size; ++xStep) {
-                _indices->push_back( yStep      * size + xStep);
-                _indices->push_back((yStep + 1) * size + xStep);
+            for (int xStep = 0; xStep < (size - 1); ++xStep) {
+                size_t idx0 = yStep * size + xStep;
+                size_t idx1 = (yStep + 1) * size + xStep;
+                size_t idx2 = yStep * size + xStep + 1;
+                size_t idx3 = (yStep + 1) * size + xStep + 1;
+                _indices->push_back(idx0);
+                _indices->push_back(idx1);
+                _indices->push_back(idx2);
+                _indices->push_back(idx3);
+                normalCalcFunc(idx0, idx1, idx2, idx3, vertices, normals);
             }
         }else{
-            for (int xStep = size - 1; 0 <= xStep; --xStep) {
-                _indices->push_back((yStep + 1) * size + xStep);
-                _indices->push_back( yStep      * size + xStep);
+            for (int xStep = size - 1; 0 < xStep; --xStep) {
+                size_t idx0 = (yStep + 1) * size + xStep;
+                size_t idx1 = yStep * size + xStep;
+                size_t idx2 = (yStep + 1) * size + xStep - 1;
+                size_t idx3 = yStep * size + xStep - 1;
+                _indices->push_back(idx0);
+                _indices->push_back(idx1);
+                _indices->push_back(idx2);
+                _indices->push_back(idx3);
+                
+                normalCalcFunc(idx0, idx1, idx2, idx3, vertices, normals);
             }
         }
+    }
+
+    for (unsigned int i = 0; i < normals.size(); ++i) {
+        normals[i].normalize();
+        veVec3 bitangent = normals[i].crossProduct(veVec3::UNIT_X);
+        veVec3 tangent   = bitangent.crossProduct(normals[i]);
+        tangents[i]      = tangent;
+        bitangents[i]    = bitangent;
+    }
+    
+    for (unsigned int i = 0; i < vertices.size(); ++i) {
+        fillVertex(vertices[i]
+                   , normals[i], tangents[i], bitangents[i]
+                   , uvs[i]);
     }
 }
 
@@ -115,9 +182,6 @@ veTerrain::veTerrain()
     : _gridSize(64)
     , _gridNumInWidth(16)
     , _gridNumInHeight(16)
-    , _heightMap(nullptr)
-    , _heightMapWidth(0)
-    , _heightMapHeight(0)
     , _needBuild(false)
 {
 
@@ -137,12 +201,16 @@ void veTerrain::beforeUpdate(veSceneManager *sm)
             }
         }
         _terrainGridList.clear();
+        if (_heightTexture.valid()) {
+            _gridNumInWidth  = _heightTexture->getWidth() / _gridSize;
+            _gridNumInHeight = _heightTexture->getHeight() / _gridSize;
+        }
         for (unsigned short h = 0; h < _gridNumInHeight; ++h) {
             for (unsigned short w = 0; w < _gridNumInWidth; ++w) {
                 auto grid = new veTerrainGrid(sm);
-                veReal x = (w - 0.5f * _gridNumInWidth) * (_gridSize - 1);
-                veReal y = (h - 0.5f * _gridNumInHeight) * (_gridSize - 1);
-                grid->build(x, y, _gridSize, _heightMap, _heightMapWidth, _heightMapHeight);
+                veReal x = w * (_gridSize - 1);
+                veReal y = h * (_gridSize - 1);
+                grid->build(x, y, _gridSize, _heightTexture.get());
                 _terrainGridList.push_back(grid);
                 for (auto attachedNode : _attachedNodeList) {
                     attachedNode->addRenderableObject(grid);
@@ -151,11 +219,4 @@ void veTerrain::beforeUpdate(veSceneManager *sm)
         }
         _needBuild = false;
     }
-}
-
-void veTerrain::setHeightMap(veReal *heightMap, unsigned short width, unsigned int height)
-{
-    _heightMap = heightMap;
-    _heightMapWidth = width;
-    _heightMapHeight = height;
 }

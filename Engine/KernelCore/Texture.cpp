@@ -380,6 +380,16 @@ void veTexture::storage(const MipmapLevels &mipmaps, GLint internalFormat, GLenu
 	_needRefreshSampler = true;
 }
 
+const unsigned char* veTexture::getData(int width, int height, int depthOrLayer) const
+{
+    if (_data) {
+        unsigned int pixelSize = perPixelSize();
+        unsigned char *colByte = &_data[depthOrLayer * _height * _width * pixelSize + height * _width * pixelSize + width * pixelSize];
+        return colByte;
+    }
+    return nullptr;
+}
+
 GLuint veTexture::glTex(unsigned int contextID) const
 {
 	return _textureBuffer->getData(contextID);

@@ -22,8 +22,9 @@ public:
 	virtual void afterUpdate(veSceneManager *sm) {}
     virtual void beforeRender(veSceneManager *sm, veViewer *viewer) {}
     virtual void afterRender(veSceneManager *sm, veViewer *viewer) {}
-	virtual void beforeDraw(veSceneManager *sm, veCamera *camera) {}
-	virtual void afterDraw(veSceneManager *sm, veCamera *camera) {}
+    virtual void start(veSceneManager *sm) {}
+    virtual void created() {}
+    virtual void destroyed() {}
 	virtual bool onAttachToNode(veNode *node);
 	virtual bool onDetachToNode(veNode *node);
     const std::vector<veNode *>& getAttachedNodeList() const { return _attachedNodeList; }

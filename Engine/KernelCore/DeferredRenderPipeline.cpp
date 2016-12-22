@@ -53,18 +53,12 @@ void veDeferredRenderPipeline::renderScene(veCamera *camera, unsigned int contex
         camera->getFrameBufferObject()->bind(contextID, camera->getClearMask(), GL_DRAW_FRAMEBUFFER);
     
     camera->setClearMask(defaultClearMask);
-    for (auto &comp : _sceneManager->getComponentList()) {
-        (comp.get())->beforeDraw(_sceneManager, camera);
-    }
     
     params.FBO->blitFramebuffer(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST, contextID);
     camera->setClearMask(GL_COLOR_BUFFER_BIT);
     prepareForDraws(camera);
     draw(camera, camera->getRenderQueue()->forwardRenderGroup);
     camera->setClearMask(defaultClearMask);
-    for (auto &comp : _sceneManager->getComponentList()) {
-        (comp.get())->afterDraw(_sceneManager, camera);
-    }
     if (camera->getFrameBufferObject())
         camera->getFrameBufferObject()->unBind();
     

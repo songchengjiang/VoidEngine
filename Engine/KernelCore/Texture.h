@@ -3,6 +3,7 @@
 #include "Prerequisites.h"
 #include "VE_Ptr.h"
 #include "GLDataBuffer.h"
+#include "BaseCore/Vector4.h"
 #include <functional>
 #include <unordered_map>
 
@@ -90,6 +91,7 @@ public:
 	GLenum getPixelFormat() const { return _pixelFormat; }
 	GLenum getDataType() const { return _dataType; }
 	const unsigned char* getData() const { return _data; }
+    const unsigned char* getData(int width, int height, int depthOrLayer) const;
 	unsigned int getDataSize() const { return _dataSize; }
 	virtual unsigned int getTextureTotalMemory();
 	const MipmapLevels& getMipmapLevels() const { return _mipmapLevels; }

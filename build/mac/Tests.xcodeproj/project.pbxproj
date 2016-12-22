@@ -73,6 +73,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		966DDAF21DE43D5F00E7F2A4 /* TerrainTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TerrainTest.h; path = ../../Tests/TerrainTest.h; sourceTree = "<group>"; };
 		BE0E4E6C1BB0451B0001AA36 /* BaseTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BaseTest.h; path = ../../Tests/BaseTest.h; sourceTree = "<group>"; };
 		BE0E4E6D1BB0451B0001AA36 /* CameraTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CameraTest.h; path = ../../Tests/CameraTest.h; sourceTree = "<group>"; };
 		BE0E4E6E1BB0451B0001AA36 /* ImageTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ImageTest.h; path = ../../Tests/ImageTest.h; sourceTree = "<group>"; };
@@ -160,6 +161,7 @@
 				BE6D3AA11CB3C53600E9E034 /* ShadowTest.h */,
 				BE412D081BF6312000206513 /* SkyBoxTest.h */,
 				BE412D091BF6312000206513 /* TestCreator.h */,
+				966DDAF21DE43D5F00E7F2A4 /* TerrainTest.h */,
 				BE412D0A1BF6312000206513 /* TextTest.h */,
 				BE1B50941BB04F580039A346 /* VoidEngine.xcodeproj */,
 				BE1B50881BB04DD70039A346 /* Products */,

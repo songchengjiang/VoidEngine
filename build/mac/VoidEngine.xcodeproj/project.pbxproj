@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		966DDAF51DE464FF00E7F2A4 /* ViewerListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 966DDAF31DE464FF00E7F2A4 /* ViewerListener.cpp */; };
+		966DDAF61DE464FF00E7F2A4 /* ViewerListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 966DDAF41DE464FF00E7F2A4 /* ViewerListener.h */; };
 		BE05C5161CD304BD0022D797 /* Particle.h in Headers */ = {isa = PBXBuildFile; fileRef = BE05C5151CD304BD0022D797 /* Particle.h */; };
 		BE05C5191CD30C860022D797 /* ParticleSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = BE05C5181CD30C860022D797 /* ParticleSystem.h */; };
 		BE05C51B1CD30C9C0022D797 /* ParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE05C51A1CD30C9C0022D797 /* ParticleSystem.cpp */; };
@@ -363,6 +365,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		966DDAF31DE464FF00E7F2A4 /* ViewerListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ViewerListener.cpp; path = ../../Engine/KernelCore/ViewerListener.cpp; sourceTree = "<group>"; };
+		966DDAF41DE464FF00E7F2A4 /* ViewerListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewerListener.h; path = ../../Engine/KernelCore/ViewerListener.h; sourceTree = "<group>"; };
 		BE05C5151CD304BD0022D797 /* Particle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Particle.h; path = ../../Engine/EffectCore/Particle.h; sourceTree = "<group>"; };
 		BE05C5181CD30C860022D797 /* ParticleSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleSystem.h; path = ../../Engine/EffectCore/ParticleSystem.h; sourceTree = "<group>"; };
 		BE05C51A1CD30C9C0022D797 /* ParticleSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleSystem.cpp; path = ../../Engine/EffectCore/ParticleSystem.cpp; sourceTree = "<group>"; };
@@ -981,6 +985,8 @@
 				BE1A0AAB1BE24C7F00A1A20D /* SceneManager */,
 				BE1A0AD51BE24DA000A1A20D /* Renderer */,
 				BE6D3AA21CB3C5B200E9E034 /* PostProcesser */,
+				966DDAF41DE464FF00E7F2A4 /* ViewerListener.h */,
+				966DDAF31DE464FF00E7F2A4 /* ViewerListener.cpp */,
 				BEDE3C061D5C502B008F579F /* FrameBufferObjectManager.cpp */,
 				BEDE3C071D5C502B008F579F /* FrameBufferObjectManager.h */,
 				BEDE3C081D5C502B008F579F /* GLDataBuffer.cpp */,
@@ -1238,6 +1244,7 @@
 				BE1A0B011BE24E5B00A1A20D /* BoudingBox.h in Headers */,
 				BE16BCEE1CDC757D006E7146 /* GravityAffector.h in Headers */,
 				BE16BCEA1CDC70EC006E7146 /* ScaleVelocityAffector.h in Headers */,
+				966DDAF61DE464FF00E7F2A4 /* ViewerListener.h in Headers */,
 				BEA445EC1D06BD0300960C84 /* GizmoScale.h in Headers */,
 				BE16BCE61CDC6D4B006E7146 /* ScaleAffector.h in Headers */,
 				BE1A0AD21BE24D6400A1A20D /* OctreeRenderQueue.h in Headers */,
@@ -1396,6 +1403,7 @@
 				BE1B505B1BB049E30039A346 /* RenderQueue.cpp in Sources */,
 				BE1B505C1BB049E30039A346 /* Shader.cpp in Sources */,
 				BE6D3AAB1CB3C5FD00E9E034 /* DeferredLightPipeline.cpp in Sources */,
+				966DDAF51DE464FF00E7F2A4 /* ViewerListener.cpp in Sources */,
 				BE5AF1311CD87E8F0023B025 /* PointEmitter.cpp in Sources */,
 				BE1B505D1BB049E30039A346 /* Texture.cpp in Sources */,
 				BEA445DE1D06A86A00960C84 /* Gizmo.cpp in Sources */,

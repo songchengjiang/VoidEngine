@@ -246,6 +246,8 @@ bool veNode::routeEvent(veSceneManager *sm, veViewer *viewer, const veEvent &eve
 
 void veNode::update(veSceneManager *sm, const veMat4 &transform)
 {
+    if (!_isVisible) return;
+    
 	_isInScene = true;
 	if (_parent && _parent->_overrideMask) {
 		_mask = _parent->getMask();

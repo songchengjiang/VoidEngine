@@ -22,6 +22,7 @@ bool veComponent::onAttachToNode(veNode *node)
     if (nIter != _attachedNodeList.end()) return false;
 	_attachedNodeList.push_back(node);
 	node->getSceneManager()->addComponent(this);
+    this->created();
     return true;
 }
 
@@ -29,6 +30,7 @@ bool veComponent::onDetachToNode(veNode *node)
 {
 	auto nIter = std::find(_attachedNodeList.begin(), _attachedNodeList.end(), node);
     if (nIter == _attachedNodeList.end()) return false;
+    this->destroyed();
 	_attachedNodeList.erase(nIter);
 	if (_attachedNodeList.empty()) {
 		node->getSceneManager()->removeComponent(this);

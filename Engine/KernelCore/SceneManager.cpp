@@ -248,6 +248,13 @@ void veSceneManager::update(veViewer *viewer)
 		for (auto &manager : _managerList) {
 			manager.second->update();
 		}
+        if (_simulationTime <= 0.0) {
+            if (!_componentList.empty()) {
+                for (auto &com : _componentList) {
+                    com->start(this);
+                }
+            }
+        }
 		updateImp();
 	}
 

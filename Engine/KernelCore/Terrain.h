@@ -4,6 +4,7 @@
 #include "RenderableObject.h"
 #include "VE_Ptr.h"
 #include "Component.h"
+#include "Texture.h"
 #include <unordered_map>
 
 class VE_EXPORT veTerrainGrid : public veRenderableObject
@@ -12,7 +13,7 @@ public:
     veTerrainGrid(veSceneManager *sm);
     virtual ~veTerrainGrid();
     
-    void build(veReal x, veReal y, unsigned short size, veReal *heightMap, unsigned short width, unsigned int height);
+    void build(veReal x, veReal y, unsigned short size, veTexture2D *heightTexture);
     
    	veRealArray* getVertexArray() { return _vertices.get(); }
     unsigned int getVertexStride();
@@ -45,7 +46,7 @@ public:
     void setGridSize(unsigned short size) { _gridSize = size; }
     void setGridNumInWidth(unsigned short num) { _gridNumInWidth = num; }
     void setGridNumInHeight(unsigned short num) { _gridNumInHeight = num; }
-    void setHeightMap(veReal *heightMap, unsigned short width, unsigned int height);
+    void setHeightTexture(veTexture2D *texture) { _heightTexture = texture; }
     
     void build() { _needBuild = true; }
     
@@ -56,9 +57,7 @@ private:
     unsigned short    _gridNumInHeight;
     bool              _needBuild;
     
-    veReal           *_heightMap;
-    unsigned short    _heightMapWidth;
-    unsigned short    _heightMapHeight;
+    VE_Ptr<veTexture2D> _heightTexture;
     
     veTerrainGridList _terrainGridList;
 };
