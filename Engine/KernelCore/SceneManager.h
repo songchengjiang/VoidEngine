@@ -101,18 +101,14 @@ public:
 
 	void enqueueTaskToThread(const std::function<void()> &func);
     void enqueueRequestToRenderThread(const std::function<void()> &func);
-
-	void addComponent(veComponent *component);
-	void removeComponent(veComponent *component);
-	const veComponentList& getComponentList() const { return _componentList; }
     
     void attachViewer(veViewer *viewer);
     void detachViewer(veViewer *viewer);
 
 protected:
 
-	virtual void updateImp() = 0;
-	virtual void renderImp(veViewer *viewer) = 0;
+	virtual void updateImp();
+    virtual void renderImp(veViewer *viewer);
     void startThreading();
     void stopThreading();
     void dispatchEvents(veViewer *viewer);
@@ -123,7 +119,6 @@ protected:
 
 protected:
 
-    veComponentList             _componentList;
 	VE_Ptr<veNode>              _root;
 	VE_Ptr<veSkyBox>            _skyBox;
 	veCameraList                _cameraList;

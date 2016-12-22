@@ -12,16 +12,14 @@ public:
 	~keyboardInput(){}
 
 	virtual bool handle(veSceneManager *sm, veViewer *viewer, const veEvent &event) override{
-		if (_attachedNodeList.empty()) return false;
-
 		if (event.getEventType() == veEvent::VE_DOWN) {
 			switch (event.getKeySymbol())
 			{
 			case veEvent::VE_KEY_LEFT:
 			{
 				--CURRENT_CAMERA;
-				if (CURRENT_CAMERA < 0) CURRENT_CAMERA = int(_attachedNodeList[0]->getChildCount()) - 1;
-				auto cam = static_cast<veCamera *>(_attachedNodeList[0]->getChild(CURRENT_CAMERA));
+				if (CURRENT_CAMERA < 0) CURRENT_CAMERA = int(_attachedNode->getChildCount()) - 1;
+				auto cam = static_cast<veCamera *>(_attachedNode->getChild(CURRENT_CAMERA));
 				viewer->setCamera(cam);
 			}
 				break;
@@ -29,8 +27,8 @@ public:
 			case veEvent::VE_KEY_RIGHT:
 			{
 				++CURRENT_CAMERA;
-				if ((int)_attachedNodeList[0]->getChildCount() <= CURRENT_CAMERA) CURRENT_CAMERA = 0;
-				auto cam = static_cast<veCamera *>(_attachedNodeList[0]->getChild(CURRENT_CAMERA));
+				if ((int)_attachedNode->getChildCount() <= CURRENT_CAMERA) CURRENT_CAMERA = 0;
+				auto cam = static_cast<veCamera *>(_attachedNode->getChild(CURRENT_CAMERA));
 				viewer->setCamera(cam);
 			}
 				break;
@@ -40,10 +38,6 @@ public:
 			}
 		}
 		return false;
-	}
-
-	virtual void beforeUpdate(veSceneManager *sm) override {
-
 	}
 };
 

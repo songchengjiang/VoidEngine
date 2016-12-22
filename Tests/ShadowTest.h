@@ -69,11 +69,14 @@ public:
 			player->attachNode(entity);
 
 			float radius = 7.0f;
-			entity->setUpdateCallback([=](veSceneManager *sm, veNode *node) {
-				static float angle = 0.0f;
-				node->setMatrix(veMat4::rotation(veQuat(angle, veVec3::UNIT_Y)) * veMat4::translation(veVec3(0.0f, -10.0f, -radius)) * veMat4::rotation(veQuat(veMath::HALF_PI, veVec3::NEGATIVE_UNIT_Y)) * veMat4::scale(0.3f));
-				angle += sm->getDeltaTime();
-			});
+            
+            auto updator = new UpdatorComponent;
+            entity->addComponent(updator);
+            updator->UpdateCallback = [=](veSceneManager *sm, veNode *node) {
+                static float angle = 0.0f;
+                node->setMatrix(veMat4::rotation(veQuat(angle, veVec3::UNIT_Y)) * veMat4::translation(veVec3(0.0f, -10.0f, -radius)) * veMat4::rotation(veQuat(veMath::HALF_PI, veVec3::NEGATIVE_UNIT_Y)) * veMat4::scale(0.3f));
+                angle += sm->getDeltaTime();
+            };
 		}
 
 		{

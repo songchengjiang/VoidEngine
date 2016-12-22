@@ -200,74 +200,7 @@ void veOctreeSceneManager::intersectByRay(veOctree *octant, veRay *ray)
 
 void veOctreeSceneManager::updateImp()
 {
-    if (!_componentList.empty()) {
-        for (auto &com : _componentList) {
-            com->beforeUpdate(this);
-        }
-    }
-    
-	_root->update(this, veMat4::IDENTITY);
-	//std::unique_lock<std::mutex> lock(_parallelUpdateOctantMutex);
-	//_parallelUpdateOctantCondition.wait(lock, [this] { return _parallelUpdateOctantNum == 0; });
+    veSceneManager::updateImp();
 	_octree->updateBoundingBox();
     
-    if (!_componentList.empty()) {
-        for (auto &com : _componentList) {
-            com->afterUpdate(this);
-        }
-    }
-}
-
-void veOctreeSceneManager::renderImp(veViewer *viewer)
-{
-	if (!viewer->makeContextCurrent()) return;
-	//culling();
-
-	//_shadowGenerator->shadowing();
-
-	//for (auto &iter : _cameraList) {
-	//	if (iter->isVisible() && iter->isInScene() && iter != _mainCamera) {
-	//		if (iter->getFrameBufferObject()) {
-	//			veOctreeCamera *rttCam = static_cast<veOctreeCamera *>(iter.get());
-	//			rttCam->setSkybox(_skyBox.get());
-	//			rttCam->render();
-	//		}
-	//	}
-	//}
-
-	//if (_mainCamera.valid() && _mainCamera->isInScene() && _mainCamera->isVisible()) {
-	//	veOctreeCamera *mainCam = static_cast<veOctreeCamera *>(_mainCamera.get());
-	//	mainCam->setSkybox(_skyBox.get());
-	//	if (!_postProcesserList.empty()) {
-	//		if (!_postProcesserFBO.valid()) {
-	//			_postProcesserFBO = veFrameBufferObjectManager::instance()->createFrameBufferObject(POST_PROCESSER_FRAMEBUFFER_OBJECT);
-	//		}
-	//		auto fbo = mainCam->getFrameBufferObject();
-	//		mainCam->setFrameBufferObject(_postProcesserFBO.get());
-	//		for (size_t i = 0; i < _postProcesserList.size(); ++i) {
-	//			_postProcesserList[i]->process(_postProcesserFBO.get(), mainCam);
-	//		}
-	//		mainCam->setFrameBufferObject(fbo);
-	//	}
-	//	mainCam->render();
-	//	mainCam->discardRenderScene(false);
-	//}
-    if (!_componentList.empty()) {
-        for (auto &com : _componentList) {
-            if (com->isEnabled()){
-                com->beforeRender(this, viewer);
-            }
-        }
-    }
-	_renderPipeline->rendering(viewer);
-    
-    if (!_componentList.empty()) {
-        for (auto &com : _componentList) {
-            if (com->isEnabled()){
-                com->afterRender(this, viewer);
-            }
-        }
-    }
-    
-	viewer->swapBuffers();
 }

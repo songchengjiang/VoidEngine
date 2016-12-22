@@ -17,17 +17,16 @@ public:
 	USE_VE_PTR;
     USE_NAME_PROPERTY;
 
-	virtual bool handle(veSceneManager *sm, veViewer *viewer, const veEvent &event) { return false; }
-    virtual void beforeUpdate(veSceneManager *sm) {}
-	virtual void afterUpdate(veSceneManager *sm) {}
-    virtual void beforeRender(veSceneManager *sm, veViewer *viewer) {}
-    virtual void afterRender(veSceneManager *sm, veViewer *viewer) {}
-    virtual void start(veSceneManager *sm) {}
     virtual void created() {}
     virtual void destroyed() {}
+	virtual bool handle(veSceneManager *sm, veViewer *viewer, const veEvent &event) { return false; }
+    virtual void update(veSceneManager *sm) {}
+    virtual void start(veSceneManager *sm) {}
+    virtual void beforeRender(veSceneManager *sm, veViewer *viewer) {}
+    virtual void afterRender(veSceneManager *sm, veViewer *viewer) {}
 	virtual bool onAttachToNode(veNode *node);
 	virtual bool onDetachToNode(veNode *node);
-    const std::vector<veNode *>& getAttachedNodeList() const { return _attachedNodeList; }
+    veNode* getAttachedNode() const { return _attachedNode; }
 
 	void setEventFilter(const veEvent::EventType filter) { _filter = filter; };
 	veEvent::EventType getEventFilter() const { return _filter; };
@@ -41,9 +40,9 @@ public:
 protected:
 
 	veEvent::EventType _filter;
-    bool _isEnabled;
-	std::vector<veNode *> _attachedNodeList;
-    int                   _updateOrder;
+    bool               _isEnabled;
+	veNode *           _attachedNode;
+    int                _updateOrder;
 };
 
 typedef std::vector< VE_Ptr<veComponent> > veComponentList;

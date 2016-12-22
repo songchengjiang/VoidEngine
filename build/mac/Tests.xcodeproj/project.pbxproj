@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		96CF1FA01E0BFB2B006C2D19 /* UpdatorComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96CF1F9E1E0BFB2B006C2D19 /* UpdatorComponent.cpp */; };
+		96CF1FA11E0BFB2B006C2D19 /* UpdatorComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96CF1F9E1E0BFB2B006C2D19 /* UpdatorComponent.cpp */; };
 		BEAB2E751CED60F800B3F9F8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BEAB2E691CED60DD00B3F9F8 /* main.m */; };
 		BEAB2E761CED610000B3F9F8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BEAB2E731CED60ED00B3F9F8 /* Main.storyboard */; };
 		BEAB2E771CED610400B3F9F8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BEAB2E711CED60ED00B3F9F8 /* LaunchScreen.storyboard */; };
@@ -74,6 +76,8 @@
 
 /* Begin PBXFileReference section */
 		966DDAF21DE43D5F00E7F2A4 /* TerrainTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TerrainTest.h; path = ../../Tests/TerrainTest.h; sourceTree = "<group>"; };
+		96CF1F9E1E0BFB2B006C2D19 /* UpdatorComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UpdatorComponent.cpp; path = ../../Tests/UpdatorComponent.cpp; sourceTree = "<group>"; };
+		96CF1F9F1E0BFB2B006C2D19 /* UpdatorComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UpdatorComponent.h; path = ../../Tests/UpdatorComponent.h; sourceTree = "<group>"; };
 		BE0E4E6C1BB0451B0001AA36 /* BaseTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BaseTest.h; path = ../../Tests/BaseTest.h; sourceTree = "<group>"; };
 		BE0E4E6D1BB0451B0001AA36 /* CameraTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CameraTest.h; path = ../../Tests/CameraTest.h; sourceTree = "<group>"; };
 		BE0E4E6E1BB0451B0001AA36 /* ImageTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ImageTest.h; path = ../../Tests/ImageTest.h; sourceTree = "<group>"; };
@@ -141,8 +145,10 @@
 		BE0E4E5F1BB0447A0001AA36 = {
 			isa = PBXGroup;
 			children = (
-				BEAB2E661CED60B800B3F9F8 /* ios */,
 				BEAB2E651CED601500B3F9F8 /* resources */,
+				BEAB2E661CED60B800B3F9F8 /* ios */,
+				96CF1F9E1E0BFB2B006C2D19 /* UpdatorComponent.cpp */,
+				96CF1F9F1E0BFB2B006C2D19 /* UpdatorComponent.h */,
 				BE30ABB81CD9E445009477C5 /* ParticleSystemTest.h */,
 				BE1AB4831CFFD877002906BB /* SceneTest.h */,
 				BE0E4E701BB0451B0001AA36 /* main.cpp */,
@@ -368,6 +374,7 @@
 				BEAB2E7B1CED611800B3F9F8 /* ViewController.m in Sources */,
 				BEAB2E751CED60F800B3F9F8 /* main.m in Sources */,
 				BEAB2E7A1CED611300B3F9F8 /* OpenGLAppDelegate.mm in Sources */,
+				96CF1FA01E0BFB2B006C2D19 /* UpdatorComponent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -376,6 +383,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BEAB2EA71CED800100B3F9F8 /* main.cpp in Sources */,
+				96CF1FA11E0BFB2B006C2D19 /* UpdatorComponent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

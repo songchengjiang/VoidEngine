@@ -1,6 +1,7 @@
 #ifndef _PARTICLE_SYSTEM_TEST_
 #define _PARTICLE_SYSTEM_TEST_
 #include "BaseTest.h"
+#include "UpdatorComponent.h"
 
 class ParticleSystemTest : public BaseTest
 {
@@ -69,7 +70,9 @@ public:
             transer->setPosition(veVec3(-5.0f, 0.0f, 0.0f));
             root->addChild(node);
             
-            node->setUpdateCallback([transer](veSceneManager *sm, veNode *node){
+            auto updator = new UpdatorComponent;
+            node->addComponent(updator);
+            updator->UpdateCallback = [transer](veSceneManager *sm, veNode *node){
                 static bool reverse = false;
                 static float maxDis = 5.0f;
                 static float currentDis = -5.0f;
@@ -88,7 +91,7 @@ public:
                     }
                 }
                 transer->setPosition(veVec3(currentDis, 0.0f, 0.0f));
-            });
+            };
         }
         
         _sceneManager->getRootNode()->addChild(root);

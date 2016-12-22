@@ -14,14 +14,12 @@ veTransformer::~veTransformer()
 
 }
 
-void veTransformer::beforeUpdate(veSceneManager *sm)
+void veTransformer::update(veSceneManager *sm)
 {
-	if (_needUpdate && !_attachedNodeList.empty()){
-		for (auto &node : _attachedNodeList) {
-			veMat4 m;
-			m.makeTransform(_position, _scale, _rotation);
-			node->setMatrix(m);
-		}
+	if (_needUpdate){
+        veMat4 m;
+        m.makeTransform(_position, _scale, _rotation);
+        _attachedNode->setMatrix(m);
 		_needUpdate = false;
 	}
 }

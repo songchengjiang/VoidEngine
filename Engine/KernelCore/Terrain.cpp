@@ -192,13 +192,11 @@ veTerrain::~veTerrain()
 
 }
 
-void veTerrain::beforeUpdate(veSceneManager *sm)
+void veTerrain::update(veSceneManager *sm)
 {
-    if (_needBuild && !_attachedNodeList.empty()) {
+    if (_needBuild) {
         for (auto grid : _terrainGridList) {
-            for (auto attachedNode : _attachedNodeList) {
-                attachedNode->removeRenderableObject(grid.get());
-            }
+            _attachedNode->removeRenderableObject(grid.get());
         }
         _terrainGridList.clear();
         if (_heightTexture.valid()) {
@@ -212,9 +210,7 @@ void veTerrain::beforeUpdate(veSceneManager *sm)
                 veReal y = h * (_gridSize - 1);
                 grid->build(x, y, _gridSize, _heightTexture.get());
                 _terrainGridList.push_back(grid);
-                for (auto attachedNode : _attachedNodeList) {
-                    attachedNode->addRenderableObject(grid);
-                }
+                _attachedNode->addRenderableObject(grid);
             }
         }
         _needBuild = false;

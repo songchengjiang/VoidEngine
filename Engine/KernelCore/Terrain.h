@@ -41,7 +41,7 @@ public:
     veTerrain();
     virtual ~veTerrain();
     
-    virtual void beforeUpdate(veSceneManager *sm) override;
+    virtual void update(veSceneManager *sm) override;
     
     void setGridSize(unsigned short size) { _gridSize = size; }
     void setGridNumInWidth(unsigned short num) { _gridNumInWidth = num; }

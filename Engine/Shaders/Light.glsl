@@ -136,7 +136,6 @@ uniform mat4 u_InvViewProjectMat;
 uniform mat4 u_lightMatrix;   
 uniform vec3 u_cameraPosInWorld;   
 
-uniform vec3  u_lightDirection;  
 uniform vec3  u_lightColor;   
 uniform float u_lightIntensity;  
 uniform float u_specularMipMapCount;

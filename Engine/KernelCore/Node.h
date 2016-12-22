@@ -18,8 +18,6 @@ public:
 
 	typedef std::vector< VE_Ptr<veNode> >             Children;
 	typedef std::vector< VE_Ptr<veRenderableObject> > RenderableObjects;
-	typedef std::function<bool(veSceneManager*, veViewer*, const veEvent&, veNode*)> NodeEventCallback;
-	typedef std::function<void(veSceneManager*, veNode*)>                 NodeUpdateCallback;
 
 	USE_VE_PTR;
 	USE_NAME_PROPERTY;
@@ -45,8 +43,8 @@ public:
 
 	int addComponent(veComponent *com);
 	bool removeComponent(veComponent *com);
-	veComponent* removeComponent(unsigned int comIndex);
-	veComponent* getComponent(unsigned int comIndex);
+	veComponent* removeComponent(size_t comIndex);
+	veComponent* getComponent(size_t comIndex);
 	size_t getComponentCount() const { return _components.size(); }
 
 	virtual int addRenderableObject(veRenderableObject *obj);
@@ -76,9 +74,6 @@ public:
 	void setUserData(void *ud) { _userData = ud; }
 	void* getUserData() { return _userData; }
 	const void* getUserData() const { return _userData; }
-
-	void setEventCallback(const NodeEventCallback &callback) { _eventCallback = callback; }
-	void setUpdateCallback(const NodeUpdateCallback &callback) { _updateCallback = callback; }
 
 	virtual void refresh();
 
@@ -112,9 +107,6 @@ protected:
 	bool              _autoUpdateBoundingBox;
 	bool              _isInScene;
 	bool              _isDynamic;
-
-	NodeEventCallback  _eventCallback;
-	NodeUpdateCallback _updateCallback;
 
 	void             *_userData;
 	veSceneManager   *_sceneManager;

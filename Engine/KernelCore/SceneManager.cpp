@@ -18,7 +18,21 @@
 
 #include "Viewer.h"
 
+#include "NodeVisitor.h"
+
 #include <algorithm>
+
+class NodeHandlerVisitor : public veNodeVisitor
+{
+public:
+    
+    std::function<void(veNode *node)> HandlerFunc;
+    
+    virtual bool visit(veNode &node) {
+        HandlerFunc(&node);
+        return false;
+    }
+};
 
 veSceneManager::veSceneManager()
 	: USE_VE_PTR_INIT
@@ -167,25 +181,6 @@ veParticleSystem* veSceneManager::createParticleSystem(const std::string &name)
     return particleSystem;
 }
 
-void veSceneManager::addComponent(veComponent *component)
-{
-    if (!component) return;
-	auto iter = std::find(_componentList.begin(), _componentList.end(), component);
-	if (iter != _componentList.end())
-		return;
-	_componentList.push_back(component);
-	std::sort(_componentList.begin(), _componentList.end(), [this](const VE_Ptr<veComponent> &left, const VE_Ptr<veComponent> &right) -> bool{
-		return left->getUpdateOrder() < right->getUpdateOrder();
-	});
-}
-
-void veSceneManager::removeComponent(veComponent *component)
-{
-    if (!component) return;
-	auto iter = std::find(_componentList.begin(), _componentList.end(), component);
-	_componentList.erase(iter);
-}
-
 void veSceneManager::attachViewer(veViewer *viewer)
 {
     auto iter = std::find(_attachedViewers.begin(), _attachedViewers.end(), viewer);
@@ -216,17 +211,6 @@ veBaseManager* veSceneManager::getManager(const std::string &mgType)
 
 void veSceneManager::handleEvent(veViewer *viewer, const veEvent &event)
 {
-    if (!_componentList.empty()) {
-        for (auto &com : _componentList) {
-            if (com->isEnabled()){
-                if (event.getEventType() & com->getEventFilter()) {
-                    if (com->handle(this, viewer, event))
-                        return;
-                }
-            }
-        }
-    }
-    
     if (_root.valid())
         _root->routeEvent(this, viewer, event);
 }
@@ -248,13 +232,6 @@ void veSceneManager::update(veViewer *viewer)
 		for (auto &manager : _managerList) {
 			manager.second->update();
 		}
-        if (_simulationTime <= 0.0) {
-            if (!_componentList.empty()) {
-                for (auto &com : _componentList) {
-                    com->start(this);
-                }
-            }
-        }
 		updateImp();
 	}
 
@@ -266,6 +243,11 @@ void veSceneManager::update(veViewer *viewer)
 	//render();
 }
 
+void veSceneManager::updateImp()
+{
+    _root->update(this, veMat4::IDENTITY);
+}
+
 void veSceneManager::render(veViewer *viewer)
 {
     std::unique_lock<std::mutex> renderLock(this->_renderingMutex);
@@ -275,8 +257,31 @@ void veSceneManager::render(veViewer *viewer)
         viewer->needDestroyRenderContexts(false);
     }
     this->handleRequests();
-    this->renderImp(viewer);
+    renderImp(viewer);
     this->postRenderHandle(viewer);
+}
+
+void veSceneManager::renderImp(veViewer *viewer)
+{
+    if (!viewer->makeContextCurrent()) return;
+    
+    NodeHandlerVisitor visitor;
+    
+    visitor.HandlerFunc = [this, viewer](veNode *node) {
+        for (size_t i = 0; i < node->getComponentCount(); ++i) {
+            node->getComponent(i)->beforeRender(this, viewer);
+        }
+    };
+    _root->accept(visitor);
+    _renderPipeline->rendering(viewer);
+    visitor.HandlerFunc = [this, viewer](veNode *node) {
+        for (size_t i = 0; i < node->getComponentCount(); ++i) {
+            node->getComponent(i)->afterRender(this, viewer);
+        }
+    };
+    _root->accept(visitor);
+    
+    viewer->swapBuffers();
 }
 
 void veSceneManager::startThreading()

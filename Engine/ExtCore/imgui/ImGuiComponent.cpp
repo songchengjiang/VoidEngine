@@ -244,15 +244,6 @@ bool veImGuiComponent::handle(veSceneManager *sm, veViewer *viewer, const veEven
     return _isAnyWindowFocus;
 }
 
-void veImGuiComponent::beforeUpdate(veSceneManager *sm)
-{
-}
-
-void veImGuiComponent::afterUpdate(veSceneManager *sm)
-{
-
-}
-
 void veImGuiComponent::beforeRender(veSceneManager *sm, veViewer *viewer)
 {
 }

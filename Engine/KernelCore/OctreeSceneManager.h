@@ -29,7 +29,6 @@ public:
 protected:
 
 	virtual void updateImp() override;
-	virtual void renderImp(veViewer *viewer) override;
 
 	void addOctreeNode(veOctreeNode *node, veOctree *octant, unsigned int depth = 0);
 	void intersectByRay(veOctree *octant, veRay *ray);

@@ -5,6 +5,7 @@
 #include "UtilCore/GizmoComponent.h"
 #include <algorithm>
 #include <sstream>
+#include "UpdatorComponent.h"
 
 static veNode *INTER_NODE = nullptr;
 static VE_Ptr<veGizmoComponent> GIZMO_COMPONENT = nullptr;
@@ -65,13 +66,8 @@ public:
 //                        INTER_NODE->addComponent(GIZMO_COMPONENT.get());
                     
                     if (GIZMO_SELECTOR){
-                        auto nodeList = GIZMO_COMPONENT->getAttachedNodeList();
-                        auto niter = std::find(nodeList.begin(), nodeList.end(), INTER_NODE);
-                        if (niter != nodeList.end()){
-                            INTER_NODE->removeComponent(GIZMO_COMPONENT.get());
-                        }else{
-                            INTER_NODE->addComponent(GIZMO_COMPONENT.get());
-                        }
+                        GIZMO_COMPONENT->getAttachedNode()->removeComponent(GIZMO_COMPONENT.get());
+                        INTER_NODE->addComponent(GIZMO_COMPONENT.get());
                         return true;
                     }
                 }else{
@@ -190,11 +186,14 @@ public:
             player->attachNode(entity);
             
             float radius = 12.0f;
-            entity->setUpdateCallback([=](veSceneManager *sm, veNode *node) {
+            
+            auto updator = new UpdatorComponent;
+            entity->addComponent(updator);
+            updator->UpdateCallback = [=](veSceneManager *sm, veNode *node) {
                 static float angle = 0.0f;
                 node->setMatrix(veMat4::rotation(veQuat(angle, veVec3::UNIT_Y)) * veMat4::translation(veVec3(0.0f, 0.0f, -radius)) * veMat4::rotation(veQuat(veMath::HALF_PI, veVec3::NEGATIVE_UNIT_Y)) * veMat4::scale(0.2f));
                 angle += sm->getDeltaTime();
-            });
+            };
             
 //            auto ps = static_cast<veParticleSystem *>(veFile::instance()->readFile(_sceneManager, "effects/star.veparticle", "starPS"));
 //            veNode *node = _sceneManager->createNode("node");
@@ -580,7 +579,7 @@ public:
         });
         
         
-        _sceneManager->addComponent(imguiComp);
+        _sceneManager->getRootNode()->addComponent(imguiComp);
 
 		auto debuger = new veOctreeDebuger(_sceneManager);
 		debuger->debugDrawBoundingBoxWireframe(true);
@@ -590,7 +589,7 @@ public:
         _sceneManager->setAmbientColor(veVec3(0.0f));
         
         auto entityPicker = new EntityPicker;
-        _sceneManager->addComponent(entityPicker);
+        _sceneManager->getRootNode()->addComponent(entityPicker);
         
 //        auto viewer = veApplication::instance()->createViewer(800, 600, "Debug", _mainViewer);
 //        viewer->setSceneManager(_sceneManager);

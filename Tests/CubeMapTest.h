@@ -1,6 +1,7 @@
 #ifndef _CUBE_MAP_TEST_
 #define _CUBE_MAP_TEST_
 #include "BaseTest.h"
+#include "UpdatorComponent.h"
 
 #define CUBE_MAP_CAMERA 0x0000000f
 
@@ -52,26 +53,28 @@ public:
 			veTransformer *transer = new veTransformer;
 			cm->addComponent(transer);
 
-			cm->setUpdateCallback([=](veSceneManager *sm, veNode *node) {
-				static bool reverse = false;
-				static float maxDis = 5.0f;
-				static float currentDis = -5.0f;
-				if (reverse) {
-					currentDis -= 5.0f * sm->getDeltaTime();
-					if (currentDis < -maxDis) {
-						currentDis = -maxDis;
-						reverse = false;
-					}
-				}
-				else {
-					currentDis += 5.0f * sm->getDeltaTime();
-					if (maxDis < currentDis) {
-						currentDis = maxDis;
-						reverse = true;
-					}
-				}
-				transer->setPosition(veVec3(0.0f, currentDis, 0.0f));
-			});
+            auto updator = new UpdatorComponent;
+            cm->addComponent(updator);
+            updator->UpdateCallback = [=](veSceneManager *sm, veNode *node) {
+                static bool reverse = false;
+                static float maxDis = 5.0f;
+                static float currentDis = -5.0f;
+                if (reverse) {
+                    currentDis -= 5.0f * sm->getDeltaTime();
+                    if (currentDis < -maxDis) {
+                        currentDis = -maxDis;
+                        reverse = false;
+                    }
+                }
+                else {
+                    currentDis += 5.0f * sm->getDeltaTime();
+                    if (maxDis < currentDis) {
+                        currentDis = maxDis;
+                        reverse = true;
+                    }
+                }
+                transer->setPosition(veVec3(0.0f, currentDis, 0.0f));
+            };
 		}
 
 		{

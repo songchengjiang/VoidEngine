@@ -35,7 +35,7 @@ public:
 
 	~veLight();
 
-    virtual void beforeUpdate(veSceneManager *sm) override;
+    virtual void update(veSceneManager *sm) override;
 	//virtual void render(veCamera *camera) override;
 
     virtual void setEnabled(bool isEnabled) { _isEnabled = isEnabled; }
@@ -70,7 +70,7 @@ public:
 protected:
 	veLight(LightType type);
 
-	virtual void updateShadow() = 0;
+    virtual void updateShadow(veSceneManager *sm){};
 
 protected:
 
@@ -93,8 +93,6 @@ protected:
 
 	VE_Ptr<veTexture>  _shadowTexture;
 	bool               _needUpdateShadowMap;
-    
-    veSceneManager    *_sceneManager;
 };
 
 class VE_EXPORT veDirectionalLight : public veLight
@@ -114,7 +112,7 @@ public:
 protected:
 
 	veDirectionalLight();
-	virtual void updateShadow() override;
+	virtual void updateShadow(veSceneManager *sm) override;
 
 protected:
 
@@ -136,7 +134,7 @@ public:
 protected:
 
 	vePointLight();
-	virtual void updateShadow() override;
+	virtual void updateShadow(veSceneManager *sm) override;
 
 protected:
 
@@ -163,7 +161,7 @@ public:
 protected:
 
 	veSpotLight();
-	virtual void updateShadow() override;
+	virtual void updateShadow(veSceneManager *sm) override;
 
 protected:
 
@@ -191,8 +189,6 @@ public:
 protected:
     
     veIBLight();
-    
-    virtual void updateShadow() override {};
     
 protected:
     

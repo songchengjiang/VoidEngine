@@ -1,7 +1,6 @@
 #ifndef _BASE_TEST_
 #define _BASE_TEST_
 #include "VoidEngine.h"
-#
 
 #if defined(_MSC_VER)
 #pragma warning( disable : 4996 )
@@ -23,9 +22,7 @@ public:
 		return false;
 	}
 
-	virtual void beforeUpdate(veSceneManager *sm) override{
-		if (_attachedNodeList.empty()) return;
-
+	virtual void update(veSceneManager *sm) override{
         updateColor(sm->getDeltaTime());
         updateMatrix(sm->getDeltaTime());
 	}
@@ -47,7 +44,7 @@ private:
 	void updateMatrix(double deltaTime) {
 		veReal x = _radius * veMath::veCos(_angle);
 		veReal y = _radius * veMath::veSin(_angle);
-		_light->getAttachedNodeList()[0]->setMatrix(veMat4::lookAt(veVec3(x, _height, y), veVec3::ZERO, veVec3::UNIT_Y));
+		_light->getAttachedNode()->setMatrix(veMat4::lookAt(veVec3(x, _height, y), veVec3::ZERO, veVec3::UNIT_Y));
 		_angle += veMath::QUARTER_PI * deltaTime;
 		_angle = fmod(_angle, veMath::TWO_PI);
 	}
@@ -78,14 +75,13 @@ public:
 	}
 	~CameraManipulator(){}
 
-	virtual void beforeUpdate(veSceneManager *sm) override {
+	virtual void update(veSceneManager *sm) override {
         _sceneManager = sm;
 		_simulationTime += sm->getDeltaTime();
 	}
 
 	virtual bool handle(veSceneManager *sm, veViewer *viewer, const veEvent &event) override{
-		if (_attachedNodeList.empty()) return false;
-		_camera = static_cast<veCamera *>(_attachedNodeList[0]);
+		_camera = static_cast<veCamera *>(_attachedNode);
         if (viewer->getCamera() != _camera) return false;
         
 		if (event.getEventType() & veEvent::VE_MOUSE_EVENT) {

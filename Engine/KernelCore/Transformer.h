@@ -10,7 +10,7 @@ public:
 	veTransformer();
 	~veTransformer();
 
-    virtual void beforeUpdate(veSceneManager *sm) override;
+    virtual void update(veSceneManager *sm) override;
 
 	void setPosition(const veVec3 &pos);
 	const veVec3& getPosition() const;

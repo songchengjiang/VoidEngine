@@ -119,7 +119,7 @@ bool veNode::removeComponent(veComponent *com)
 	return true;
 }
 
-veComponent* veNode::removeComponent(unsigned int comIndex)
+veComponent* veNode::removeComponent(size_t comIndex)
 {
 	veAssert(comIndex < _components.size());
 	veComponent* com = _components[comIndex].get();
@@ -128,7 +128,7 @@ veComponent* veNode::removeComponent(unsigned int comIndex)
 	return com;
 }
 
-veComponent* veNode::getComponent(unsigned int comIndex)
+veComponent* veNode::getComponent(size_t comIndex)
 {
 	veAssert(comIndex < _components.size());
 	return _components[comIndex].get();
@@ -224,11 +224,15 @@ bool veNode::routeEvent(veSceneManager *sm, veViewer *viewer, const veEvent &eve
 {
 	if (!_isVisible) return false;
 
-	if (_eventCallback != nullptr) {
-		if (_eventCallback(sm, viewer, event, this))
-			return true;
-	}
-
+    for (auto &com : _components) {
+        if (com->isEnabled()){
+            if (event.getEventType() & com->getEventFilter()) {
+                if (com->handle(sm, viewer, event))
+                    return true;
+            }
+        }
+    }
+    
 	if (!_children.empty()){
 		for (auto &child : _children){
 			if (child->routeEvent(sm, viewer, event)) return true;
@@ -248,18 +252,31 @@ void veNode::update(veSceneManager *sm, const veMat4 &transform)
 {
     if (!_isVisible) return;
     
-	_isInScene = true;
+    if (!_isInScene) {
+        if (!_components.empty()) {
+            for (auto &com : _components) {
+                if (com->isEnabled())
+                    com->start(sm);
+            }
+        }
+        _isInScene = true;
+    }
+    
+    if (!_components.empty()) {
+        for (auto &com : _components) {
+            if (com->isEnabled())
+                com->update(sm);
+        }
+    }
+    
 	if (_parent && _parent->_overrideMask) {
 		_mask = _parent->getMask();
 		_overrideMask = true;
 	}
 
-	if (_updateCallback != nullptr) {
-		_updateCallback(sm, this);
-	}
-
 	if (_refresh)
 		refreshUpdate(sm, transform);
+    
 	if (!_children.empty()) {
 		for (auto &child : _children) {
 			if (_refresh) child->refresh();

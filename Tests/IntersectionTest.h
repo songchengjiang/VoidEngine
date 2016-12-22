@@ -57,7 +57,7 @@ public:
 		return false;
 	}
 
-	virtual void beforeUpdate(veSceneManager *sm) override{
+	virtual void update(veSceneManager *sm) override{
 		for (auto &line : _lines) {
 			debuger->debugDrawLine(line.first, line.second, veVec4(0.0f, 1.0f, 0.0f, 1.0f));
 		}
