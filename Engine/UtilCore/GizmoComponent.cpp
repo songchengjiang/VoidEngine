@@ -34,7 +34,7 @@ bool veGizmoComponent::handle(veSceneManager *sm, veViewer *viewer, const veEven
             }
             
             veVec3 ntowPos, camtowPos;
-            _gizmoNode->getMatrix().decomposition(&ntowPos, nullptr, nullptr);
+            _attachedNode->getMatrix().decomposition(&ntowPos, nullptr, nullptr);
             viewer->getCamera()->getNodeToWorldMatrix().decomposition(&camtowPos, nullptr, nullptr);
             veReal dis = (camtowPos - ntowPos).length();
             //_gizmoNode->setMatrix(veMat4::transform(ntowPos, veVec3(dis / GIZMO_SCALE_SQUARED_DISTANCE), nodeRot));
@@ -84,7 +84,7 @@ bool veGizmoComponent::handle(veSceneManager *sm, veViewer *viewer, const veEven
 void veGizmoComponent::update(veSceneManager *sm)
 {
     if (_refresh){
-        _gizmoNode->removeRenderableObject(_gizmo.get());
+        _attachedNode->removeRenderableObject(_gizmo.get());
         if (_type == GizmoType::GT_TRANSLATION){
             _gizmo = new veGizmoTranslation(sm);
         } else if (_type == GizmoType::GT_ROTATION){
@@ -92,7 +92,7 @@ void veGizmoComponent::update(veSceneManager *sm)
         }else {
             _gizmo = new veGizmoScale(sm);
         }
-        _gizmoNode->addRenderableObject(_gizmo.get());
+        _attachedNode->addRenderableObject(_gizmo.get());
         caculateGizmoMatrix();
         _refresh = false;
     }
@@ -101,82 +101,75 @@ void veGizmoComponent::update(veSceneManager *sm)
 void veGizmoComponent::beforeRender(veSceneManager *sm, veViewer *viewer)
 {
     veVec3 ntowPos, camtowPos;
-    _gizmoNode->getMatrix().decomposition(&ntowPos, nullptr, nullptr);
+    _attachedNode->getMatrix().decomposition(&ntowPos, nullptr, nullptr);
     viewer->getCamera()->getNodeToWorldMatrix().decomposition(&camtowPos, nullptr, nullptr);
     veReal dis = (camtowPos - ntowPos).length();
     //_gizmoNode->setMatrix(veMat4::transform(ntowPos, veVec3(dis / GIZMO_SCALE_SQUARED_DISTANCE), nodeRot));
     _gizmo->setScale(dis / GIZMO_SCALE_SQUARED_DISTANCE);
 }
 
-bool veGizmoComponent::onAttachToNode(veNode *node)
-{
-    bool state = veComponent::onAttachToNode(node);
-    if (state){
-        if (!_gizmoNode.valid() || _gizmoNode->getSceneManager() != node->getSceneManager())
-            _gizmoNode = node->getSceneManager()->createNode("_VE_GIZMO_NODE_");
-        node->getSceneManager()->getRootNode()->addChild(_gizmoNode.get());
-        _refresh = true;
-    }
-    return state;
-}
-
-bool veGizmoComponent::onDetachToNode(veNode *node)
-{
-    bool state = veComponent::onDetachToNode(node);
-    if (state) {
-        node->getSceneManager()->getRootNode()->removeChild(_gizmoNode.get());
-        _refresh = true;
-    }
-
-    return state;
-}
-
 void veGizmoComponent::caculateGizmoMatrix()
 {
-//    if (_attachedNodeList.empty()) return;
-//
-//    veVec3 position, scale; veQuat rotate;
-//    veMat4 nTow;
-//    for (auto &attachedNode : _attachedNodeList){
-//        nTow = attachedNode->getNodeToWorldMatrix();
-//        veVec3 nodePos;
-//        nTow.decomposition(&nodePos, &scale, &rotate);
-//        position += nodePos;
-//    }
-//    position /= _attachedNodeList.size();
-//    updateGizmo(veMat4::transform(position, veVec3::UNIT_SCALE, rotate));
+    if (_handleNodeList.empty()) return;
+
+    veVec3 position, scale; veQuat rotate;
+    veMat4 nTow;
+    for (auto &handleNode : _handleNodeList){
+        nTow = handleNode->getNodeToWorldMatrix();
+        veVec3 nodePos;
+        nTow.decomposition(&nodePos, &scale, &rotate);
+        position += nodePos;
+    }
+    position /= _handleNodeList.size();
+    updateGizmo(veMat4::transform(position, veVec3::UNIT_SCALE, rotate));
 }
 
 void veGizmoComponent::applyGizmoMatrix(const veVec3 &trans, const veVec3 &scl, const veQuat &rot)
 {
-//    if (_attachedNodeList.empty()) return;
-//    
-//    static veVec3 totalGizmoScale = veVec3::UNIT_SCALE;
-//    veVec3 npos, nscl; veQuat nrot;
-//    veMat4 gizmoMatInv = _gizmoNode->getMatrix();
-//    gizmoMatInv.inverse();
-//    for (auto &node : _attachedNodeList) {
-//        veMat4 nodeIngizmoMat = gizmoMatInv * node->getNodeToWorldMatrix();
-//        nodeIngizmoMat.decomposition(&npos, &nscl, &nrot);
-//        nodeIngizmoMat = _gizmoNode->getMatrix() * veMat4::transform(trans, scl + veVec3::UNIT_SCALE, rot) * nodeIngizmoMat;
-//        veMat4 toParentMat = node->getParent()? node->getParent()->getWorldToNodeMatrix() : veMat4::IDENTITY;
-//        node->setMatrix(toParentMat * nodeIngizmoMat);
-//    }
-//    
-//    totalGizmoScale = scl;
-//    updateGizmo(_gizmoNode->getMatrix() * veMat4::transform(trans, veVec3::UNIT_SCALE, rot));
+    if (_handleNodeList.empty()) return;
+    
+    static veVec3 totalGizmoScale = veVec3::UNIT_SCALE;
+    veVec3 npos, nscl; veQuat nrot;
+    veMat4 gizmoMatInv = _attachedNode->getMatrix();
+    gizmoMatInv.inverse();
+    for (auto &handleNode : _handleNodeList) {
+        veMat4 nodeIngizmoMat = gizmoMatInv * handleNode->getNodeToWorldMatrix();
+        nodeIngizmoMat.decomposition(&npos, &nscl, &nrot);
+        nodeIngizmoMat = _attachedNode->getMatrix() * veMat4::transform(trans, scl + veVec3::UNIT_SCALE, rot) * nodeIngizmoMat;
+        veMat4 toParentMat = handleNode->getParent()? handleNode->getParent()->getWorldToNodeMatrix() : veMat4::IDENTITY;
+        handleNode->setMatrix(toParentMat * nodeIngizmoMat);
+    }
+    
+    totalGizmoScale = scl;
+    updateGizmo(_attachedNode->getMatrix() * veMat4::transform(trans, veVec3::UNIT_SCALE, rot));
 }
 
 void veGizmoComponent::updateGizmo(const veMat4 &mat)
 {
     veVec3 npos; veQuat nrot;
     mat.decomposition(&npos, nullptr, &nrot);
-    _gizmoNode->setMatrix(veMat4::transform(npos, veVec3::UNIT_SCALE, nrot));
+    _attachedNode->setMatrix(veMat4::transform(npos, veVec3::UNIT_SCALE, nrot));
 }
 
 void veGizmoComponent::setGizmoType(GizmoType type)
 {
     if (_type == type) return;
     _type = type;
+    _refresh = true;
+}
+
+void veGizmoComponent::addHandleNode(veNode *node)
+{
+    auto iter = std::find(_handleNodeList.begin(), _handleNodeList.end(), node);
+    if (iter != _handleNodeList.end()) return;
+    _handleNodeList.push_back(node);
+    _refresh = true;
+}
+
+void veGizmoComponent::removeHandleNode(veNode *node)
+{
+    auto iter = std::find(_handleNodeList.begin(), _handleNodeList.end(), node);
+    if (iter == _handleNodeList.end()) return;
+    _handleNodeList.erase(iter);
     _refresh = true;
 }

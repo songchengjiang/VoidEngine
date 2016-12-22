@@ -88,11 +88,11 @@ private:
 				_light->setShadowResolution(veVec2(val[0].GetDouble(), val[1].GetDouble()));
 		}
 
-		if (_doucument->HasMember(SHADOW_AREA_KEY.c_str())) {
-			const Value &val = (*_doucument)[SHADOW_AREA_KEY.c_str()];
-			if (val.Size() == 2)
-				_light->setShadowArea(veVec2(val[0].GetDouble(), val[1].GetDouble()));
-		}
+//		if (_doucument->HasMember(SHADOW_AREA_KEY.c_str())) {
+//			const Value &val = (*_doucument)[SHADOW_AREA_KEY.c_str()];
+//			if (val.Size() == 2)
+//				_light->setShadowArea(veVec2(val[0].GetDouble(), val[1].GetDouble()));
+//		}
 
 		if (_doucument->HasMember(SHADOW_SOFT_KEY.c_str())) {
 			const Value &val = (*_doucument)[SHADOW_SOFT_KEY.c_str()];

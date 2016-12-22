@@ -18,21 +18,7 @@
 
 #include "Viewer.h"
 
-#include "NodeVisitor.h"
-
 #include <algorithm>
-
-class NodeHandlerVisitor : public veNodeVisitor
-{
-public:
-    
-    std::function<void(veNode *node)> HandlerFunc;
-    
-    virtual bool visit(veNode &node) {
-        HandlerFunc(&node);
-        return false;
-    }
-};
 
 veSceneManager::veSceneManager()
 	: USE_VE_PTR_INIT
@@ -265,21 +251,9 @@ void veSceneManager::renderImp(veViewer *viewer)
 {
     if (!viewer->makeContextCurrent()) return;
     
-    NodeHandlerVisitor visitor;
-    
-    visitor.HandlerFunc = [this, viewer](veNode *node) {
-        for (size_t i = 0; i < node->getComponentCount(); ++i) {
-            node->getComponent(i)->beforeRender(this, viewer);
-        }
-    };
-    _root->accept(visitor);
+    _root->beforeRender(this, viewer);
     _renderPipeline->rendering(viewer);
-    visitor.HandlerFunc = [this, viewer](veNode *node) {
-        for (size_t i = 0; i < node->getComponentCount(); ++i) {
-            node->getComponent(i)->afterRender(this, viewer);
-        }
-    };
-    _root->accept(visitor);
+    _root->afterRender(this, viewer);
     
     viewer->swapBuffers();
 }

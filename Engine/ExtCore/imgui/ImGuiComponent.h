@@ -15,7 +15,6 @@ public:
     virtual ~veImGuiComponent();
     
     virtual bool handle(veSceneManager *sm, veViewer *viewer, const veEvent &event) override;
-    virtual void beforeRender(veSceneManager *sm, veViewer *viewer) override;
     virtual void afterRender(veSceneManager *sm, veViewer *viewer) override;
     
     void setGuiRenderFunc(const ImGuiRenderFunc &func) { _renderFunc = func; }

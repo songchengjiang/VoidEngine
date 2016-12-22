@@ -66,8 +66,7 @@ public:
 //                        INTER_NODE->addComponent(GIZMO_COMPONENT.get());
                     
                     if (GIZMO_SELECTOR){
-                        GIZMO_COMPONENT->getAttachedNode()->removeComponent(GIZMO_COMPONENT.get());
-                        INTER_NODE->addComponent(GIZMO_COMPONENT.get());
+                        GIZMO_COMPONENT->addHandleNode(INTER_NODE);
                         return true;
                     }
                 }else{
@@ -97,8 +96,11 @@ public:
 		veNode *root = _sceneManager->createNode("root");
         
         GIZMO_COMPONENT = new veGizmoComponent;
-        GIZMO_COMPONENT->setUpdateOrder(GIZMO_COMPONENT_ORDER);
         GIZMO_COMPONENT->setGizmoType(veGizmoComponent::GizmoType::GT_TRANSLATION);
+        veNode *gizmoNode = _sceneManager->createNode("gizmoNode");
+        gizmoNode->addComponent(GIZMO_COMPONENT.get());
+        gizmoNode->setVisible(false);
+        _sceneManager->getRootNode()->addChild(gizmoNode);
         
         std::string fontFile = "fonts/arial.ttf";
         {
@@ -115,7 +117,6 @@ public:
         
 		{
 			veNode *entity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/Aircraft/Aircraft.vem", "Aircraft-entity"));
-            //node->addComponent(GIZMO_COMPONENT.get());
 			veTransformer *transer = new veTransformer;
             //transer->setRotation(veQuat(veMath::QUARTER_PI, veVec3::UNIT_Y) * veQuat(veMath::QUARTER_PI, veVec3::UNIT_X) * veQuat(veMath::HALF_PI, veVec3::UNIT_Z));
 			entity->addComponent(transer);
@@ -419,9 +420,8 @@ public:
             directional->setEnabled(true);
             directional->shadowEnable(true);
             directional->setUseSoftShadow(true);
-            directional->setShadowSoftness(0.002f);
-            directional->setShadowBias(0.0004f);
-            directional->setShadowArea(veVec2(60.0f));
+            directional->setShadowSoftness(0.001f);
+            directional->setShadowBias(0.006f);
             root->addChild(lightNode);
             
             LightingUIFunc = [directional, lightTranser]{
@@ -469,9 +469,6 @@ public:
                 ImGui::InputFloat2("ShadowResolution", &shadowRes.x());
                 directional->setShadowResolution(shadowRes);
                 
-                veVec2 shadowArea = directional->getShadowArea();
-                ImGui::InputFloat2("ShadowArea", &shadowArea.x());
-                directional->setShadowArea(shadowArea);
             };
         }
         
@@ -521,7 +518,6 @@ public:
         };
         
         auto imguiComp = new veImGuiComponent;
-        imguiComp->setUpdateOrder(UI_COMPONENT_ORDER);
         imguiComp->setGuiRenderFunc([=](veViewer *viewer){
 
             ImGui::SetNextWindowSize(ImVec2(_mainViewer->width() * 0.2f,_mainViewer->height() * 0.05f), ImGuiSetCond_FirstUseEver);
@@ -538,6 +534,7 @@ public:
                 ImGui::Begin("Paramters", &show_window);
 
                 ImGui::Checkbox("Gizmo Selector", &GIZMO_SELECTOR);
+                GIZMO_COMPONENT->getAttachedNode()->setVisible(GIZMO_SELECTOR);
                 
                 static int e = 0;
                 ImGui::RadioButton("Tranlation", &e, 0);ImGui::SameLine();

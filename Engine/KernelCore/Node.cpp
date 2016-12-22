@@ -296,6 +296,40 @@ void veNode::update(veSceneManager *sm, const veMat4 &transform)
 	_overrideMask = false;
 }
 
+void veNode::beforeRender(veSceneManager *sm, veViewer *viewer)
+{
+    if (!_isVisible) return;
+    if (!_components.empty()) {
+        for (auto &com : _components) {
+            if (com->isEnabled())
+                com->beforeRender(sm, viewer);
+        }
+    }
+    
+    if (!_children.empty()) {
+        for (auto &child : _children) {
+            child->beforeRender(sm, viewer);
+        }
+    }
+}
+
+void veNode::afterRender(veSceneManager *sm, veViewer *viewer)
+{
+    if (!_isVisible) return;
+    if (!_components.empty()) {
+        for (auto &com : _components) {
+            if (com->isEnabled())
+                com->afterRender(sm, viewer);
+        }
+    }
+    
+    if (!_children.empty()) {
+        for (auto &child : _children) {
+            child->afterRender(sm, viewer);
+        }
+    }
+}
+
 void veNode::accept(veNodeVisitor &visitor)
 {
 	if (visit(visitor))

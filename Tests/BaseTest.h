@@ -279,7 +279,6 @@ public:
         _camera = _sceneManager->createCamera("MainCamera", {0, 0, width, height });
 		_camera->setProjectionMatrixAsPerspective(60.0f, (float)width / (float)height, 0.1f, 1000.0f);
 		_camera->setViewMatrixAslookAt(veVec3(0.0f, 0.0f, 30.0f), veVec3::ZERO, veVec3::UNIT_Y);
-		_sceneManager->getRootNode()->addChild(_camera);
         _mainViewer->setCamera(_camera);
 		_defaultCameraDistance = 30.0f;
 		_defaultCameraZoomScale = 1.0f;
@@ -293,6 +292,7 @@ public:
 
 	virtual void init() {
 		_camera->addComponent(new CameraManipulator(_defaultCameraDistance, _defaultCameraZoomScale));
+        _sceneManager->getRootNode()->addChild(_camera);
 	}
 
 protected:

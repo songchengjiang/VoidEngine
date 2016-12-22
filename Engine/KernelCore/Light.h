@@ -58,8 +58,6 @@ public:
 	float getShadowBias() const { return _shadowBias; }
 	void setShadowStrength(float strength) { _shadowStrength = strength; }
 	float getShadowStrength() const { return _shadowStrength; }
-	void setShadowArea(const veVec2 &area);
-	const veVec2& getShadowArea() const { return _shadowArea; }
 	void setUseSoftShadow(bool use) { _isUseSoftShadow = use; }
 	bool isUseSoftShadow() const { return _isUseSoftShadow; }
 	void setShadowSoftness(float softness) { _shadowSoftness = softness; }
@@ -85,7 +83,6 @@ protected:
 
 	bool   _shadowEnabled;
 	veVec2 _shadowResolution;
-	veVec2 _shadowArea;
 	float _shadowBias;
 	float _shadowStrength;
 	float _shadowSoftness;

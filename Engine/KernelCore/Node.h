@@ -79,6 +79,8 @@ public:
 
 	virtual bool routeEvent(veSceneManager *sm, veViewer *viewer, const veEvent &event);
 	virtual void update(veSceneManager *sm, const veMat4 &transform);
+    virtual void beforeRender(veSceneManager *sm, veViewer *viewer);
+    virtual void afterRender(veSceneManager *sm, veViewer *viewer);
 
 	virtual void accept(veNodeVisitor &visitor);
 	virtual bool visit(veNodeVisitor &visitor);

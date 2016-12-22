@@ -4,7 +4,6 @@
 #include "Configuration.h"
 
 const veVec2 veLight::DEFAULT_SHADOW_RESOLUTION = veVec2(256);
-const veVec2 veLight::DEFAULT_SHADOW_AREA = veVec2(100.0f);
 const float  veLight::DEFAULT_SHADOW_BIAS = 0.0f;
 const float  veLight::DEFAULT_SHADOW_STRENGTH = 1.0f;
 
@@ -19,7 +18,6 @@ veLight::veLight(LightType type)
 	, _intensity(1.0f)
 	, _attenuationRange(1000.0f)
 	, _attenuationRangeInverse(1.0f / _attenuationRange)
-	, _shadowArea(DEFAULT_SHADOW_AREA)
 	, _lightInCamMatrix(veMat4::IDENTITY)
 	, _shadowEnabled(false)
 	, _shadowResolution(DEFAULT_SHADOW_RESOLUTION)
@@ -58,22 +56,14 @@ void veLight::setShadowResolution(const veVec2 &resolution)
 	_needUpdateShadowMap = true;
 }
 
-void veLight::setShadowArea(const veVec2 &area)
-{
-	if (_shadowArea == area)
-		return;
-	_shadowArea = area;
-	_needUpdateShadowMap = true;
-}
-
 veDirectionalLight::veDirectionalLight()
 	: veLight(DIRECTIONAL)
     , _shadowCascadedCount(4)
 {
-    _shadowCascadedLevelScales[0] = 0.05f;
+    _shadowCascadedLevelScales[0] = 0.03f;
     _shadowCascadedLevelScales[1] = 0.1f;
-    _shadowCascadedLevelScales[2] = 0.4f;
-    _shadowCascadedLevelScales[3] = 1.0f;
+    _shadowCascadedLevelScales[2] = 0.3f;
+    _shadowCascadedLevelScales[3] = 0.5f;
 }
 
 void veDirectionalLight::updateShadow(veSceneManager *sm)
@@ -101,8 +91,6 @@ void veDirectionalLight::updateShadow(veSceneManager *sm)
                 _shadowCameras[i]->setViewport({ 0, 0, int(_shadowResolution.x()), int(_shadowResolution.y()) });
                 _shadowCameras[i]->setMask(_attachedNode->getMask());
                 _shadowCameras[i]->setVisible(true);
-                auto halfShadowArea = _shadowArea * 0.5f;
-                _shadowCameras[i]->setProjectionMatrixAsOrtho(-halfShadowArea.x(), halfShadowArea.x(), -halfShadowArea.y(), halfShadowArea.y(), 0.1f, _attenuationRange);
             }
 		}
         if (_shadowCameras[0].valid()) {

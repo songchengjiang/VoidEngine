@@ -7,7 +7,6 @@ veComponent::veComponent()
 	: USE_VE_PTR_INIT
 	, _filter(veEvent::VE_ALL_EVENT)
     , _isEnabled(true)
-    , _updateOrder(0)
     , _attachedNode(nullptr)
 {
 }
@@ -22,7 +21,7 @@ bool veComponent::onAttachToNode(veNode *node)
     if (_attachedNode != nullptr)
         return false;
     _attachedNode = node;
-    this->created();
+    this->awake();
     return true;
 }
 
@@ -30,7 +29,7 @@ bool veComponent::onDetachToNode(veNode *node)
 {
     if (_attachedNode == nullptr)
         return false;
-    this->destroyed();
+    this->asleep();
     _attachedNode = nullptr;
     return true;
 }

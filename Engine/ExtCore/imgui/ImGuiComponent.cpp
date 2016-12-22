@@ -244,10 +244,6 @@ bool veImGuiComponent::handle(veSceneManager *sm, veViewer *viewer, const veEven
     return _isAnyWindowFocus;
 }
 
-void veImGuiComponent::beforeRender(veSceneManager *sm, veViewer *viewer)
-{
-}
-
 void veImGuiComponent::afterRender(veSceneManager *sm, veViewer *viewer)
 {
     if (!_renderPass.valid())
