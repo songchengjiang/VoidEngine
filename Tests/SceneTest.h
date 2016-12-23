@@ -67,11 +67,11 @@ public:
                     
                     if (GIZMO_SELECTOR){
                         GIZMO_COMPONENT->addHandleNode(INTER_NODE);
-                        return true;
+                        return false;
                     }
                 }else{
                     INTER_NODE = nullptr;
-                    
+                    GIZMO_COMPONENT->removeAllHandleNodes();
                 }
             }
         }

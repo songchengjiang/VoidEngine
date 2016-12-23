@@ -66,25 +66,28 @@ void veGizmoRenderer::render(veNode *node, veRenderableObject *renderableObj, ve
             glEnableVertexAttribArray(1);
         }
         
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(_vertices[0]), _vertices.buffer(), GL_STATIC_DRAW);
-    
-        if (!_indices[LINES_INDICES].empty()){
-            auto ibo = _iboBuffers[LINES_INDICES]->getData(contextID);
-            if (!ibo) {
-                ibo = _iboBuffers[LINES_INDICES]->createData(contextID);
+        {
+            std::unique_lock<std::mutex> lock(_dataMutex);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(_vertices[0]), _vertices.buffer(), GL_STATIC_DRAW);
+            
+            if (!_indices[LINES_INDICES].empty()){
+                auto ibo = _iboBuffers[LINES_INDICES]->getData(contextID);
+                if (!ibo) {
+                    ibo = _iboBuffers[LINES_INDICES]->createData(contextID);
+                }
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices[LINES_INDICES].size() * sizeof(_indices[LINES_INDICES][0]), _indices[LINES_INDICES].buffer(), GL_STATIC_DRAW);
             }
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices[LINES_INDICES].size() * sizeof(_indices[LINES_INDICES][0]), _indices[LINES_INDICES].buffer(), GL_STATIC_DRAW);
-        }
-        
-        if (!_indices[TRIANGLES_INDICES].empty()){
-            auto ibo = _iboBuffers[TRIANGLES_INDICES]->getData(contextID);
-            if (!ibo) {
-                ibo = _iboBuffers[TRIANGLES_INDICES]->createData(contextID);
+            
+            if (!_indices[TRIANGLES_INDICES].empty()){
+                auto ibo = _iboBuffers[TRIANGLES_INDICES]->getData(contextID);
+                if (!ibo) {
+                    ibo = _iboBuffers[TRIANGLES_INDICES]->createData(contextID);
+                }
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices[TRIANGLES_INDICES].size() * sizeof(_indices[TRIANGLES_INDICES][0]), _indices[TRIANGLES_INDICES].buffer(), GL_STATIC_DRAW);
             }
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices[TRIANGLES_INDICES].size() * sizeof(_indices[TRIANGLES_INDICES][0]), _indices[TRIANGLES_INDICES].buffer(), GL_STATIC_DRAW);
         }
         
         _refresh = false;
@@ -135,6 +138,7 @@ void veGizmoRenderer::draw(veRenderCommand &command)
 
 void veGizmoRenderer::drawLines(const veVec3 &start, const veVec3 &end, const veVec4 &color)
 {
+    std::unique_lock<std::mutex> lock(_dataMutex);
     size_t vIdx = _vertices.size() / getVertexStride();
     _vertices.push_back(start.x()); _vertices.push_back(start.y()); _vertices.push_back(start.z());
     _vertices.push_back(color.x()); _vertices.push_back(color.y()); _vertices.push_back(color.z()); _vertices.push_back(color.w());
@@ -148,6 +152,7 @@ void veGizmoRenderer::drawLines(const veVec3 &start, const veVec3 &end, const ve
 
 void veGizmoRenderer::drawTri(const veVec3 &v0, const veVec3 &v1, const veVec3 &v2, const veVec4 &color)
 {
+    std::unique_lock<std::mutex> lock(_dataMutex);
     size_t vIdx = _vertices.size() / getVertexStride();
     _vertices.push_back(v0.x()); _vertices.push_back(v0.y()); _vertices.push_back(v0.z());
     _vertices.push_back(color.x()); _vertices.push_back(color.y()); _vertices.push_back(color.z()); _vertices.push_back(color.w());
@@ -165,6 +170,7 @@ void veGizmoRenderer::drawTri(const veVec3 &v0, const veVec3 &v1, const veVec3 &
 
 void veGizmoRenderer::drawQuat(const veVec3 &bl, const veVec3 &br, const veVec3 &tr, const veVec3 &tl, const veVec4 &color)
 {
+    std::unique_lock<std::mutex> lock(_dataMutex);
     size_t vIdx = _vertices.size() / getVertexStride();
     _vertices.push_back(bl.x()); _vertices.push_back(bl.y()); _vertices.push_back(bl.z());
     _vertices.push_back(color.x()); _vertices.push_back(color.y()); _vertices.push_back(color.z()); _vertices.push_back(color.w());
@@ -189,6 +195,7 @@ void veGizmoRenderer::drawQuat(const veVec3 &bl, const veVec3 &br, const veVec3 
 
 void veGizmoRenderer::drawCircle(const veVec3 &axes, veReal radius, const veVec4 &color)
 {
+    std::unique_lock<std::mutex> lock(_dataMutex);
     size_t vIdx = _vertices.size() / getVertexStride();
 #define CIRCLE_SEGMENTS 64
     
@@ -220,6 +227,7 @@ void veGizmoRenderer::drawCircle(const veVec3 &axes, veReal radius, const veVec4
 
 void veGizmoRenderer::drawCone(const veVec3 &pos, const veVec3 &axes, veReal radius, veReal height, const veVec4 &color)
 {
+    std::unique_lock<std::mutex> lock(_dataMutex);
     size_t vIdx = _vertices.size() / getVertexStride();
 #define CONE_SEGMENTS 20
     
@@ -256,6 +264,7 @@ void veGizmoRenderer::drawCone(const veVec3 &pos, const veVec3 &axes, veReal rad
 
 void veGizmoRenderer::drawBox(const veVec3 &pos, veReal halfSize, const veVec4 &color)
 {
+    std::unique_lock<std::mutex> lock(_dataMutex);
     size_t vIdx = _vertices.size() / getVertexStride();
     
     _vertices.push_back(pos.x() - halfSize); _vertices.push_back(pos.y() - halfSize); _vertices.push_back(pos.z() + halfSize);
@@ -333,6 +342,7 @@ unsigned int veGizmoRenderer::getVertexStride() const
 
 void veGizmoRenderer::refresh()
 {
+    std::unique_lock<std::mutex> lock(_dataMutex);
     _vertices.clear();
     _indices[LINES_INDICES].clear();
     _indices[TRIANGLES_INDICES].clear();

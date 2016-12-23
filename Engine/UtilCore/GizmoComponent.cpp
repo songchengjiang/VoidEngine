@@ -36,13 +36,8 @@ bool veGizmoComponent::handle(veSceneManager *sm, veViewer *viewer, const veEven
             veVec3 ntowPos, camtowPos;
             _attachedNode->getMatrix().decomposition(&ntowPos, nullptr, nullptr);
             viewer->getCamera()->getNodeToWorldMatrix().decomposition(&camtowPos, nullptr, nullptr);
-            veReal dis = (camtowPos - ntowPos).length();
             //_gizmoNode->setMatrix(veMat4::transform(ntowPos, veVec3(dis / GIZMO_SCALE_SQUARED_DISTANCE), nodeRot));
-            veReal scl = _gizmo->getScale();
-            
-            _gizmo->setScale(dis / GIZMO_SCALE_SQUARED_DISTANCE);
             _gizmoAxesType = _gizmo->touchDown(viewer, screenCoords);
-            _gizmo->setScale(scl);
             
             if (_gizmoAxesType != veGizmo::AxesType::AT_NONE)
                 return true;
@@ -51,14 +46,14 @@ bool veGizmoComponent::handle(veSceneManager *sm, veViewer *viewer, const veEven
         case veEvent::VE_DRAG:
         case veEvent::VE_TOUCH_MOVE:
         {
-            veVec2 screenCoords;
-            if (event.getEventType() == veEvent::VE_DRAG){
-                screenCoords = veVec2(event.getMouseX(), event.getMouseY());
-            }else{
-                auto touch = event.getTouches()[0];
-                screenCoords = veVec2(touch.x, touch.y);
-            }
             if (_gizmoAxesType != veGizmo::AxesType::AT_NONE){
+                veVec2 screenCoords;
+                if (event.getEventType() == veEvent::VE_DRAG){
+                    screenCoords = veVec2(event.getMouseX(), event.getMouseY());
+                }else{
+                    auto touch = event.getTouches()[0];
+                    screenCoords = veVec2(touch.x, touch.y);
+                }
                 veVec3 pos,scl; veQuat rot;
                 _gizmo->touchMove(viewer, _gizmoAxesType, screenCoords, pos, scl, rot);
                 applyGizmoMatrix(pos, scl, rot);
@@ -85,33 +80,36 @@ void veGizmoComponent::update(veSceneManager *sm)
 {
     if (_refresh){
         _attachedNode->removeRenderableObject(_gizmo.get());
-        if (_type == GizmoType::GT_TRANSLATION){
-            _gizmo = new veGizmoTranslation(sm);
-        } else if (_type == GizmoType::GT_ROTATION){
-            _gizmo = new veGizmoRotation(sm);
-        }else {
-            _gizmo = new veGizmoScale(sm);
+        if (!_handleNodeList.empty()) {
+            if (_type == GizmoType::GT_TRANSLATION){
+                _gizmo = new veGizmoTranslation(sm);
+            } else if (_type == GizmoType::GT_ROTATION){
+                _gizmo = new veGizmoRotation(sm);
+            }else {
+                _gizmo = new veGizmoScale(sm);
+            }
+            _attachedNode->addRenderableObject(_gizmo.get());
+            caculateGizmoMatrix();
         }
-        _attachedNode->addRenderableObject(_gizmo.get());
-        caculateGizmoMatrix();
         _refresh = false;
     }
 }
 
 void veGizmoComponent::beforeRender(veSceneManager *sm, veViewer *viewer)
 {
+    if (!_gizmo.valid())
+        return;
     veVec3 ntowPos, camtowPos;
     _attachedNode->getMatrix().decomposition(&ntowPos, nullptr, nullptr);
     viewer->getCamera()->getNodeToWorldMatrix().decomposition(&camtowPos, nullptr, nullptr);
     veReal dis = (camtowPos - ntowPos).length();
     //_gizmoNode->setMatrix(veMat4::transform(ntowPos, veVec3(dis / GIZMO_SCALE_SQUARED_DISTANCE), nodeRot));
-    _gizmo->setScale(dis / GIZMO_SCALE_SQUARED_DISTANCE);
+    
+    _gizmo->setScale(veMath::maximum(dis / GIZMO_SCALE_SQUARED_DISTANCE, 1.0f));
 }
 
 void veGizmoComponent::caculateGizmoMatrix()
 {
-    if (_handleNodeList.empty()) return;
-
     veVec3 position, scale; veQuat rotate;
     veMat4 nTow;
     for (auto &handleNode : _handleNodeList){
@@ -171,5 +169,11 @@ void veGizmoComponent::removeHandleNode(veNode *node)
     auto iter = std::find(_handleNodeList.begin(), _handleNodeList.end(), node);
     if (iter == _handleNodeList.end()) return;
     _handleNodeList.erase(iter);
+    _refresh = true;
+}
+
+void veGizmoComponent::removeAllHandleNodes()
+{
+    _handleNodeList.clear();
     _refresh = true;
 }

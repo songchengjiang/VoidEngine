@@ -27,6 +27,7 @@ public:
     
     void addHandleNode(veNode *node);
     void removeHandleNode(veNode *node);
+    void removeAllHandleNodes();
     
 protected:
     

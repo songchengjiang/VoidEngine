@@ -5,6 +5,7 @@
 
 #define GIZMO_CIRCLE_RADIUS 0.5f
 #define GIZMO_CIRCLE_SIZE (GIZMO_CIRCLE_RADIUS * 2.0f)
+#define GIZMO_TOUCH_ERROR_RANGE 0.1f
 
 veGizmoRotation::veGizmoRotation(veSceneManager *sm)
     : veGizmo(sm)
@@ -30,7 +31,7 @@ veGizmoRotation::AxesType veGizmoRotation::touchDown(veViewer *viewer, const veV
         veVec3 intersectPoint;
         if (_ray->isIntersectWith(veVec3(0.0f, -GIZMO_CIRCLE_SIZE, GIZMO_CIRCLE_SIZE) * _scale, veVec3(0.0f, -GIZMO_CIRCLE_SIZE, -GIZMO_CIRCLE_SIZE) * _scale, veVec3(0.0f, GIZMO_CIRCLE_SIZE, -GIZMO_CIRCLE_SIZE) * _scale, &intersectPoint, nullptr) ||
             _ray->isIntersectWith(veVec3(0.0f, -GIZMO_CIRCLE_SIZE, GIZMO_CIRCLE_SIZE) * _scale, veVec3(0.0f, GIZMO_CIRCLE_SIZE, -GIZMO_CIRCLE_SIZE) * _scale, veVec3(0.0f, GIZMO_CIRCLE_SIZE, GIZMO_CIRCLE_SIZE) * _scale, &intersectPoint, nullptr)){
-            if (veMath::veAbs(intersectPoint.length() - GIZMO_CIRCLE_RADIUS * _scale) < 0.05 * _scale){
+            if (veMath::veAbs(intersectPoint.length() - GIZMO_CIRCLE_RADIUS * _scale) < GIZMO_TOUCH_ERROR_RANGE * _scale){
                 drawAxes(veVec4(1.0f, 1.0f, 0.0f, 1.0f), veVec4(0.0f, 1.0f, 0.0f, 1.0f), veVec4(0.0f, 0.0f, 1.0f, 1.0f));
                 _planeNormal = veVec3::UNIT_X;
                 at = AxesType::AT_YZ;
@@ -40,7 +41,7 @@ veGizmoRotation::AxesType veGizmoRotation::touchDown(veViewer *viewer, const veV
         
         if (_ray->isIntersectWith(veVec3(-GIZMO_CIRCLE_SIZE, 0.0f, -GIZMO_CIRCLE_SIZE) * _scale, veVec3(-GIZMO_CIRCLE_SIZE, 0.0f, GIZMO_CIRCLE_SIZE) * _scale, veVec3(GIZMO_CIRCLE_SIZE, 0.0f, GIZMO_CIRCLE_SIZE) * _scale, &intersectPoint, nullptr) ||
             _ray->isIntersectWith(veVec3(-GIZMO_CIRCLE_SIZE, 0.0f, -GIZMO_CIRCLE_SIZE) * _scale, veVec3(GIZMO_CIRCLE_SIZE, 0.0f, GIZMO_CIRCLE_SIZE) * _scale, veVec3(GIZMO_CIRCLE_SIZE, 0.0f, -GIZMO_CIRCLE_SIZE) * _scale, &intersectPoint, nullptr)){
-            if (veMath::veAbs(intersectPoint.length() - GIZMO_CIRCLE_RADIUS * _scale) < 0.05 * _scale){
+            if (veMath::veAbs(intersectPoint.length() - GIZMO_CIRCLE_RADIUS * _scale) < GIZMO_TOUCH_ERROR_RANGE * _scale){
                 drawAxes(veVec4(1.0f, 0.0f, 0.0f, 1.0f), veVec4(1.0f, 1.0f, 0.0f, 1.0f), veVec4(0.0f, 0.0f, 1.0f, 1.0f));
                 _planeNormal = veVec3::UNIT_Y;
                 at = AxesType::AT_XZ;
@@ -50,7 +51,7 @@ veGizmoRotation::AxesType veGizmoRotation::touchDown(veViewer *viewer, const veV
         
         if (_ray->isIntersectWith(veVec3(-GIZMO_CIRCLE_SIZE, -GIZMO_CIRCLE_SIZE, 0.0f) * _scale, veVec3(GIZMO_CIRCLE_SIZE, -GIZMO_CIRCLE_SIZE, 0.0f) * _scale, veVec3(GIZMO_CIRCLE_SIZE, GIZMO_CIRCLE_SIZE, 0.0f) * _scale, &intersectPoint, nullptr) ||
             _ray->isIntersectWith(veVec3(-GIZMO_CIRCLE_SIZE, -GIZMO_CIRCLE_SIZE, 0.0f) * _scale, veVec3(GIZMO_CIRCLE_SIZE, GIZMO_CIRCLE_SIZE, 0.0f) * _scale, veVec3(-GIZMO_CIRCLE_SIZE, GIZMO_CIRCLE_SIZE, 0.0f) * _scale, &intersectPoint, nullptr)){
-            if (veMath::veAbs(intersectPoint.length() - GIZMO_CIRCLE_RADIUS * _scale) < 0.05 * _scale){
+            if (veMath::veAbs(intersectPoint.length() - GIZMO_CIRCLE_RADIUS * _scale) < GIZMO_TOUCH_ERROR_RANGE * _scale){
                 drawAxes(veVec4(1.0f, 0.0f, 0.0f, 1.0f), veVec4(0.0f, 1.0f, 0.0f, 1.0f), veVec4(1.0f, 1.0f, 0.0f, 1.0f));
                 _planeNormal = veVec3::UNIT_Z;
                 at = AxesType::AT_XY;

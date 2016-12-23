@@ -91,7 +91,7 @@ public:
 			else if (event.getEventType() == veEvent::VE_DRAG) {
 				if (event.getEventType() == veEvent::VE_DRAG) {
 					_g1 = veVec2(event.getMouseX(), event.getMouseY());
-					if (event.getMouseSymbol() == veEvent::VE_MOUSE_BUTTON_LEFT) {
+					if (event.getMouseSymbol() == veEvent::VE_MOUSE_BUTTON_RIGHT) {
 						rotateCamera(_g0, _g1);
 					}
 					else if (event.getMouseSymbol() == veEvent::VE_MOUSE_BUTTON_MIDDLE) {

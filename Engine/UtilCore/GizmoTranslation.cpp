@@ -3,7 +3,8 @@
 #include "GizmoRenderer.h"
 #include "KernelCore/Viewer.h"
 
-#define GIZMO_PLANE_SIZE 0.25f
+#define GIZMO_PLANE_SIZE  0.25f
+#define GIZMO_TOUCH_ERROR_RANGE 0.1f
 
 veGizmoTranslation::veGizmoTranslation(veSceneManager *sm)
     : veGizmo(sm)
@@ -39,17 +40,17 @@ veGizmoTranslation::AxesType veGizmoTranslation::touchDown(veViewer *viewer, con
         drawAxes(veVec4(1.0f, 1.0f, 0.0f, 1.0f), veVec4(1.0f, 1.0f, 0.0f, 1.0f), veVec4(0.0f, 0.0f, 1.0f, 1.0f), veVec4(1.0f, 0.0f, 0.0f, 0.2f), veVec4(0.0f, 1.0f, 0.0f, 0.2f), veVec4(1.0f, 1.0f, 0.0f, 0.5f));
         _planeNormal = veVec3::UNIT_Z;
         at = AxesType::AT_XY;
-    }else if (_ray->isIntersectWith(veVec3::ZERO, veVec3::UNIT_X * _scale, nullptr, 0.005f * _scale)){
+    }else if (_ray->isIntersectWith(veVec3::ZERO, veVec3::UNIT_X * _scale, nullptr, GIZMO_TOUCH_ERROR_RANGE * _scale)){
         drawAxes(veVec4(1.0f, 1.0f, 0.0f, 1.0f), veVec4(0.0f, 1.0f, 0.0f, 1.0f), veVec4(0.0f, 0.0f, 1.0f, 1.0f), veVec4(1.0f, 0.0f, 0.0f, 0.2f), veVec4(0.0f, 1.0f, 0.0f, 0.2f), veVec4(0.0f, 0.0f, 1.0f, 0.2f));
         veVec3 right = _ray->getDirection().crossProduct(veVec3::UNIT_X);
         _planeNormal = right.crossProduct(veVec3::UNIT_X);
         at = AxesType::AT_X;
-    }else if (_ray->isIntersectWith(veVec3::ZERO, veVec3::UNIT_Y * _scale, nullptr, 0.005f * _scale)){
+    }else if (_ray->isIntersectWith(veVec3::ZERO, veVec3::UNIT_Y * _scale, nullptr, GIZMO_TOUCH_ERROR_RANGE * _scale)){
         drawAxes(veVec4(1.0f, 0.0f, 0.0f, 1.0f), veVec4(1.0f, 1.0f, 0.0f, 1.0f), veVec4(0.0f, 0.0f, 1.0f, 1.0f), veVec4(1.0f, 0.0f, 0.0f, 0.2f), veVec4(0.0f, 1.0f, 0.0f, 0.2f), veVec4(0.0f, 0.0f, 1.0f, 0.2f));
         veVec3 right = _ray->getDirection().crossProduct(veVec3::UNIT_Y);
         _planeNormal = right.crossProduct(veVec3::UNIT_Y);
         at = AxesType::AT_Y;
-    }else if (_ray->isIntersectWith(veVec3::ZERO, veVec3::UNIT_Z * _scale, nullptr, 0.005f * _scale)){
+    }else if (_ray->isIntersectWith(veVec3::ZERO, veVec3::UNIT_Z * _scale, nullptr, GIZMO_TOUCH_ERROR_RANGE * _scale)){
         drawAxes(veVec4(1.0f, 0.0f, 0.0f, 1.0f), veVec4(0.0f, 1.0f, 0.0f, 1.0f), veVec4(1.0f, 1.0f, 0.0f, 1.0f), veVec4(1.0f, 0.0f, 0.0f, 0.2f), veVec4(0.0f, 1.0f, 0.0f, 0.2f), veVec4(0.0f, 0.0f, 1.0f, 0.2f));
         veVec3 right = _ray->getDirection().crossProduct(veVec3::UNIT_Z);
         _planeNormal = right.crossProduct(veVec3::UNIT_Z);

@@ -2,6 +2,7 @@
 #define _VE_GIZMO_RENDERER_
 #include "KernelCore/Renderer.h"
 #include <map>
+#include <mutex>
 
 class VE_EXPORT veGizmoRenderer : public veRenderer
 {
@@ -35,6 +36,7 @@ protected:
     VE_Ptr<veGLDataBuffer> _iboBuffers[INDICES_COUNT];
     veRealArray     _vertices;
     veUint16Array   _indices[INDICES_COUNT];
+    std::mutex      _dataMutex;
     bool            _refresh;
 };
 
