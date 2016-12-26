@@ -39,12 +39,6 @@ class VE_EXPORT veCamera : public veNode
 	friend class veSceneManager;
 public:
 
-	enum class RenderPath
-	{
-		FORWARD_PATH,
-		DEFERRED_PATH
-	};
-
 	enum FrustumPlane
 	{
 		FRUSTUM_PLANE_NEAR   = 0,
@@ -84,9 +78,6 @@ public:
 	void setClearMask(unsigned int mask) { _clearMask = mask; }
 	unsigned int getClearMask() const { return _clearMask; }
 
-	void setRenderPath(RenderPath renderPath);
-	RenderPath getRenderPath() const { return _renderPath; }
-
 	const vePlane& getFrustumPlane(FrustumPlane fp);
 
 	virtual void cull(veNodeList &visibledNodeList) = 0;
@@ -120,21 +111,19 @@ protected:
 
 protected:
 
-	veMat4 _projectionMat;
-	veMat4 _viewMat;
+	veMat4       _projectionMat;
+	veMat4       _viewMat;
 	veViewport   _viewport;
 	veVec4       _clearColor;
 	unsigned int _clearMask;
-	VE_Ptr<veFrameBufferObject> _fbo;
     
+	VE_Ptr<veFrameBufferObject> _fbo;
     vePostProcesserList         _postProcesserList;
 
 	vePlane _frustumPlane[6];
 	bool    _needRefreshFrustumPlane;
-
-	RenderPath _renderPath;
-	bool _isDiscardRenderScene;
-	bool _isShadowCamera;
+	bool    _isDiscardRenderScene;
+	bool    _isShadowCamera;
 
 	veRenderQueue *_renderQueue;
 };

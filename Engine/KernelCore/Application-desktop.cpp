@@ -62,6 +62,7 @@ void veApplicationDesktop::updateViewers()
         if (glfwWindowShouldClose(static_cast<veViewerDesktop *>(*viewer)->_hwnd) != 0){
             (*viewer)->stopSimulation();
             (*viewer)->destroy();
+            VE_SAFE_DELETE(*viewer);
             viewer = _viewerList.erase(viewer);
         }else{
             ++viewer;

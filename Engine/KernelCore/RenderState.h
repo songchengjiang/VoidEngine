@@ -85,10 +85,6 @@ public:
 	void setBlendEquation(GLenum equation) { _blendEquation = equation; }
 	void setStencilFunc(const veStencilFunc &func) { _stencilFunc = func; }
 	void setStencilOp(const veStencilOp &op) { _stencilOp = op; }
-
-private:
-	void init();
-
 private:
 
 	bool          _depthTest;
@@ -102,18 +98,9 @@ private:
 	veStencilFunc _stencilFunc;
 	veStencilOp   _stencilOp;
     
-    bool          _currentDepthTest;
-    bool          _currentDepthWrite;
-    bool          _currentStencilTest;
-    bool          _currentCullFace;
-	bool          _currentScissorTest;
-    GLenum        _currentCullfaceMode;
-    veBlendFunc   _currentBlendFunc;
-    GLenum        _currentBlendEquation;
-    veStencilFunc _currentStencilFunc;
-    veStencilOp   _currentStencilOp;
-    
 	bool _isInited;
+    
+    veRenderState *_defaultRS;
 };
 
 #endif

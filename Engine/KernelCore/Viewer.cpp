@@ -17,7 +17,6 @@ veViewer::veViewer(int width, int height, const std::string &title)
 
 veViewer::~veViewer()
 {
-
 }
 
 void veViewer::startSimulation()

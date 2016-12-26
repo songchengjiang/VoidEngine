@@ -46,15 +46,15 @@ private:
 		//	_camera->setName((*_doucument)[NAME_KEY.c_str()].GetString());
 		//}
 		if (!_camera) return;
-		if ((*_doucument).HasMember(RENDERPASS_KEY.c_str())) {
-			const char *str = (*_doucument)[RENDERPASS_KEY.c_str()].GetString();
-			if (strcmp(FORWARD_KEY.c_str(), str) == 0) {
-				_camera->setRenderPath(veCamera::RenderPath::FORWARD_PATH);
-			}
-			else if (strcmp(DEFERRED_KEY.c_str(), str) == 0) {
-				_camera->setRenderPath(veCamera::RenderPath::DEFERRED_PATH);
-			}
-		}
+//		if ((*_doucument).HasMember(RENDERPASS_KEY.c_str())) {
+//			const char *str = (*_doucument)[RENDERPASS_KEY.c_str()].GetString();
+//			if (strcmp(FORWARD_KEY.c_str(), str) == 0) {
+//				_camera->setRenderPath(veCamera::RenderPath::FORWARD_PATH);
+//			}
+//			else if (strcmp(DEFERRED_KEY.c_str(), str) == 0) {
+//				_camera->setRenderPath(veCamera::RenderPath::DEFERRED_PATH);
+//			}
+//		}
 
 		if ((*_doucument).HasMember(VIEWPORT_KEY.c_str())) {
 			const Value &val = (*_doucument)[VIEWPORT_KEY.c_str()];

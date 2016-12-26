@@ -25,7 +25,6 @@ veCamera::veCamera(veSceneManager *sm)
 	, _clearColor(0.0f)
 	, _clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 	, _fbo(nullptr)
-	, _renderPath(RenderPath::FORWARD_PATH)
 	, _isDiscardRenderScene(false)
 	, _needRefreshFrustumPlane(true)
 	, _renderQueue(nullptr)
@@ -41,7 +40,6 @@ veCamera::veCamera(veSceneManager *sm, const veViewport &vp)
 	, _clearColor(0.0f)
 	, _clearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 	, _fbo(nullptr)
-	, _renderPath(RenderPath::FORWARD_PATH)
 	, _isDiscardRenderScene(false)
 	, _needRefreshFrustumPlane(true)
 	, _renderQueue(nullptr)
@@ -135,11 +133,6 @@ void veCamera::setViewport(const veViewport &vp)
 	_viewport = vp;
 	if (_fbo.valid())
 		_fbo->setFrameBufferSize(veVec2(_viewport.width - _viewport.x, _viewport.height - _viewport.y));
-}
-
-void veCamera::setRenderPath(RenderPath renderPath)
-{
-	_renderPath = renderPath;
 }
 
 const vePlane& veCamera::getFrustumPlane(FrustumPlane fp)
