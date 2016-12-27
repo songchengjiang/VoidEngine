@@ -13,18 +13,20 @@
                             "depthTest": false,
                             "depthWrite": false,
                             "cullFace": true,
+                            "uniforms": {
+                                "u_ModelMat": "M_MATRIX",
+                                "u_colorTex": 0,
+                                "u_NumTiles": 100.0,
+                                "u_Threshold": 0.1
+                            },                            
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "postprocesser.vert",
-                                    "u_ModelMat": "M_MATRIX"
+                                    "source": "postprocesser.vert"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "tiling.frag",
-                                    "u_colorTex": 0,
-                                    "u_NumTiles": 100.0,
-                                    "u_Threshold": 0.1
+                                    "source": "tiling.frag"
                                 }
                             ],
                             "textureUnits": [

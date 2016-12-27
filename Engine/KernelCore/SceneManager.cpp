@@ -29,10 +29,10 @@ veSceneManager::veSceneManager()
 	, _latestResourceRecoveredTime(_resourceRecoveredIntervalTime)
 	, _stopThreading(true)
 {
-	_managerList[veTextureManager::TYPE()] = new veTextureManager(this);
-	_managerList[veMeshManager::TYPE()] = new veMeshManager(this);
-	_managerList[veAnimationManager::TYPE()] = new veAnimationManager(this);
-	_managerList[veMaterialManager::TYPE()] = new veMaterialManager(this);
+	_managerList[veTextureManager::TYPE()]           = new veTextureManager(this);
+	_managerList[veMeshManager::TYPE()]              = new veMeshManager(this);
+	_managerList[veAnimationManager::TYPE()]         = new veAnimationManager(this);
+	_managerList[veMaterialManager::TYPE()]          = new veMaterialManager(this);
     _managerList[veFrameBufferObjectManager::TYPE()] = new veFrameBufferObjectManager(this);
     startThreading();
 }

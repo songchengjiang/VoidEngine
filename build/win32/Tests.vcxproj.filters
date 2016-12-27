@@ -101,8 +101,10 @@
     <ClInclude Include="..\..\Tests\TerrainTest.h">
       <Filter>TerrainTest</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Tests\UpdatorComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Tests\main.cpp" />
+    <ClCompile Include="..\..\Tests\UpdatorComponent.cpp" />
   </ItemGroup>
 </Project>

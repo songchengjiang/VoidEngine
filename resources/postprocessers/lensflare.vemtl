@@ -13,17 +13,19 @@
                             "depthTest": false,
                             "depthWrite": false,
                             "cullFace": true,
+                            "uniforms": {
+                                "u_ModelMat": "M_MATRIX",
+                                "u_threshold": 0.9,
+                                "u_Texture": 0
+                            },                             
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "postprocesser.vert",
-                                    "u_ModelMat": "M_MATRIX"
+                                    "source": "postprocesser.vert"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "lensflare-threshold.frag",
-                                    "u_threshold": 0.9,
-                                    "u_Texture": 0
+                                    "source": "lensflare-threshold.frag"
                                 }
                               ],
                               "textureUnits": [
@@ -40,22 +42,24 @@
                             "depthTest": false,
                             "depthWrite": false,
                             "cullFace": true,
+                            "uniforms": {
+                                "u_ModelMat": "M_MATRIX",
+                                "u_width": "SCREEN_WIDTH",
+                                "u_height": "SCREEN_HEIGHT",
+                                "u_nSamples": 10.0,
+                                "u_flareDispersal": 0.1,
+                                "u_flareHaloWidth": 0.25,
+                                "u_flareChromaticDistortion": [1.0, 1.0, 1.0],
+                                "u_colorTexure": 0
+                            },                             
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "postprocesser.vert",
-                                    "u_ModelMat": "M_MATRIX"
+                                    "source": "postprocesser.vert"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "lensflare-distortion.frag",
-                                    "u_width": "SCREEN_WIDTH",
-                                    "u_height": "SCREEN_HEIGHT",
-                                    "u_nSamples": 10.0,
-                                    "u_flareDispersal": 0.1,
-                                    "u_flareHaloWidth": 0.25,
-                                    "u_flareChromaticDistortion": [1.0, 1.0, 1.0],
-                                    "u_colorTexure": 0
+                                    "source": "lensflare-distortion.frag"
                                 }
                             ],
                             "textureUnits": [
@@ -72,18 +76,20 @@
                             "depthTest": false,
                             "depthWrite": false,
                             "cullFace": true,
+                            "uniforms": {
+                                "u_ModelMat": "M_MATRIX",
+                                "weights": [0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216],
+                                "height":  "SCREEN_HEIGHT_QUARTER",
+                                "u_Texture": 0
+                            },                             
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "postprocesser.vert",
-                                    "u_ModelMat": "M_MATRIX"
+                                    "source": "postprocesser.vert"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "GaussBlurY.frag",
-                                    "weights": [0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216],
-                                    "height":  "SCREEN_HEIGHT_QUARTER",
-                                    "u_Texture": 0
+                                    "source": "GaussBlurY.frag"
                                 }
                             ],
                             "textureUnits": [
@@ -100,18 +106,20 @@
                             "depthTest": false,
                             "depthWrite": false,
                             "cullFace": true,
+                            "uniforms": {
+                                "u_ModelMat": "M_MATRIX",
+                                "weights": [0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216],
+                                "width":  "SCREEN_WIDTH_QUARTER",
+                                "u_Texture": 0
+                            },                             
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "postprocesser.vert",
-                                    "u_ModelMat": "M_MATRIX"
+                                    "source": "postprocesser.vert"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "GaussBlurX.frag",
-                                    "weights": [0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216],
-                                    "width":  "SCREEN_WIDTH_QUARTER",
-                                    "u_Texture": 0
+                                    "source": "GaussBlurX.frag"
                                 }
                             ],
                             "textureUnits": [
@@ -128,22 +136,24 @@
                             "depthTest": false,
                             "depthWrite": false,
                             "cullFace": true,
+                            "uniforms": {
+                                "u_ModelMat": "M_MATRIX",
+                                "u_amount": 3.0,
+                                "u_colorWidth": "SCREEN_WIDTH",
+                                "u_colorHeight": "SCREEN_HEIGHT",
+                                "u_distSize": [1280.0, 720.0],
+                                "u_colorTexure": 0,
+                                "u_sceneTexure": 1,
+                                "u_distTexure": 2
+                            },                            
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "postprocesser.vert",
-                                    "u_ModelMat": "M_MATRIX"
+                                    "source": "postprocesser.vert"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "lensflare-blend.frag",
-                                    "u_amount": 3.0,
-                                    "u_colorWidth": "SCREEN_WIDTH",
-                                    "u_colorHeight": "SCREEN_HEIGHT",
-                                    "u_distSize": [1280.0, 720.0],
-                                    "u_colorTexure": 0,
-                                    "u_sceneTexure": 1,
-                                    "u_distTexure": 2
+                                    "source": "lensflare-blend.frag"
                                 }
                             ],
                             "textureUnits": [

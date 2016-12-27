@@ -259,6 +259,11 @@
     <ClInclude Include="..\..\Engine\KernelCore\Viewer.h" />
     <ClInclude Include="..\..\Engine\KernelCore\ViewerListener.h" />
     <ClInclude Include="..\..\Engine\Prerequisites.h" />
+    <ClInclude Include="..\..\Engine\Shaders\Common.glsl.h" />
+    <ClInclude Include="..\..\Engine\Shaders\DepthWriter.glsl.h" />
+    <ClInclude Include="..\..\Engine\Shaders\Light.glsl.h" />
+    <ClInclude Include="..\..\Engine\Shaders\SquareDepthWriter.glsl.h" />
+    <ClInclude Include="..\..\Engine\Shaders\Terrain.glsl.h" />
     <ClInclude Include="..\..\Engine\UtilCore\Gizmo.h" />
     <ClInclude Include="..\..\Engine\UtilCore\GizmoComponent.h" />
     <ClInclude Include="..\..\Engine\UtilCore\GizmoRenderer.h" />

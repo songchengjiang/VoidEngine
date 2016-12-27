@@ -52,6 +52,9 @@
     <Filter Include="UtilCore">
       <UniqueIdentifier>{00f521a5-7927-46fc-a0ae-7a128325b061}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{65bfe319-7205-4409-b06b-b81b2aecd968}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Engine\BaseCore\Matrix3.cpp">
@@ -802,6 +805,21 @@
     </ClInclude>
     <ClInclude Include="..\..\Engine\KernelCore\TerrainRenderer.h">
       <Filter>KernelCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\Shaders\Common.glsl.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\Shaders\DepthWriter.glsl.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\Shaders\Light.glsl.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\Shaders\SquareDepthWriter.glsl.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\Shaders\Terrain.glsl.h">
+      <Filter>Shaders</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

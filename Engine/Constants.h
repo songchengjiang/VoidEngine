@@ -53,6 +53,7 @@ static const std::string FUNC_SUBTRACT_KEY = "FUNC_SUBTRACT";
 static const std::string FUNC_REVERSE_SUBTRACT_KEY = "FUNC_REVERSE_SUBTRACT";
 static const std::string MIN_KEY = "MIN";
 static const std::string MAX_KEY = "MAX";
+static const std::string UNIFORMS_KEY = "uniforms";
 static const std::string SHADERS_KEY = "shaders";
 static const std::string VERTEXSHADER_KEY = "VERTEX_SHADER";
 static const std::string FRAGMENTSHADER_KEY = "FRAGMENT_SHADER";

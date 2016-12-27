@@ -13,16 +13,18 @@
                             "depthTest": false,
                             "depthWrite": false,
                             "cullFace": true,
+                            "uniforms": {
+                                "u_ModelMat": "M_MATRIX",
+                                "u_colorTex":0
+                            },                             
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "postprocesser.vert",
-                                    "u_ModelMat": "M_MATRIX"
+                                    "source": "postprocesser.vert"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "grey.frag",
-                                    "u_colorTex":0
+                                    "source": "grey.frag"
                                 }
                             ],
                             "textureUnits": [

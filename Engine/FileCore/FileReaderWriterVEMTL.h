@@ -88,6 +88,13 @@ private:
 			}
 		}
 
+		if (passVal.HasMember(UNIFORMS_KEY.c_str())) {
+			const Value &uniforms = passVal[UNIFORMS_KEY.c_str()];
+			for (auto member = uniforms.MemberBegin(); member != uniforms.MemberEnd(); ++member) {
+				readUniform(member->name.GetString(), member->value, pass);
+			}
+		}
+
 		if (passVal.HasMember(TEXTUREUNITS_KEY.c_str())){
 			const Value &texs = passVal[TEXTUREUNITS_KEY.c_str()];
 			for (unsigned int i = 0; i < texs.Size(); ++i){
@@ -168,6 +175,52 @@ private:
 			}
 		}
 	}
+	void readUniform(const std::string &name, const Value &values, vePass *pass) {
+		veUniform *uniform = new veUniform(name);
+		if (values.IsInt()) {
+			uniform->setValue(values.GetInt());
+		}
+		else if (values.IsDouble()) {
+			uniform->setValue((veReal)values.GetDouble());
+		}
+		else if (values.IsString()) {
+			uniform->setValue(std::string(values.GetString()));
+		}
+		else if (values.Size() == 2) {
+			veVec2 vec2(values[0].GetDouble(), values[1].GetDouble());
+			uniform->setValue(vec2);
+		}
+		else if (values.Size() == 3) {
+			veVec3 vec3(values[0].GetDouble(), values[1].GetDouble(), values[2].GetDouble());
+			uniform->setValue(vec3);
+		}
+		else if (values.Size() == 4) {
+			veVec4 vec4(values[0].GetDouble(), values[1].GetDouble(), values[2].GetDouble(), values[3].GetDouble());
+			uniform->setValue(vec4);
+		}
+		else if (values.Size() == 9) {
+			veMat3 mat(values[0].GetDouble(), values[1].GetDouble(), values[2].GetDouble()
+				, values[3].GetDouble(), values[4].GetDouble(), values[5].GetDouble()
+				, values[6].GetDouble(), values[7].GetDouble(), values[8].GetDouble());
+			uniform->setValue(mat);
+		}
+		else if (values.Size() == 16) {
+			veMat4 mat(values[0].GetDouble(), values[1].GetDouble(), values[2].GetDouble(), values[3].GetDouble()
+				, values[4].GetDouble(), values[5].GetDouble(), values[6].GetDouble(), values[7].GetDouble()
+				, values[8].GetDouble(), values[9].GetDouble(), values[10].GetDouble(), values[11].GetDouble()
+				, values[12].GetDouble(), values[13].GetDouble(), values[14].GetDouble(), values[15].GetDouble());
+			uniform->setValue(mat);
+		}
+		else {
+			veReal *vals = new veReal[values.Size()];
+			for (unsigned int i = 0; i < values.Size(); ++i) {
+				vals[i] = values[i].GetDouble();
+			}
+			uniform->setValue(vals, values.Size());
+			delete[] vals;
+		}
+		pass->addUniform(uniform);
+	}
 
 	void readShader(const Value &shaderVal, vePass *pass){
 		veShader *shader = nullptr;
@@ -201,44 +254,6 @@ private:
 				}
 			}else if (member->name.GetString() == DEFINATION_KEY) {
 				shader->setShaderHeader(member->value.GetString());
-			}else {
-				veUniform *uniform = new veUniform(member->name.GetString());
-				const Value &values = member->value;
-				if (values.IsInt()){
-					uniform->setValue(values.GetInt());
-				}else if (values.IsDouble()){
-					uniform->setValue((veReal)values.GetDouble());
-				}else if (values.IsString()){
-					uniform->setValue(std::string(values.GetString()));
-				}else if (values.Size() == 2){
-					veVec2 vec2(values[0].GetDouble(), values[1].GetDouble());
-					uniform->setValue(vec2);
-				}else if (values.Size() == 3){
-					veVec3 vec3(values[0].GetDouble(), values[1].GetDouble(), values[2].GetDouble());
-					uniform->setValue(vec3);
-				}else if (values.Size() == 4){
-					veVec4 vec4(values[0].GetDouble(), values[1].GetDouble(), values[2].GetDouble(), values[3].GetDouble());
-					uniform->setValue(vec4);
-				}else if (values.Size() == 9){
-					veMat3 mat(values[0].GetDouble(), values[1].GetDouble(), values[2].GetDouble()
-						, values[3].GetDouble(), values[4].GetDouble(), values[5].GetDouble()
-						, values[6].GetDouble(), values[7].GetDouble(), values[8].GetDouble());
-					uniform->setValue(mat);
-				}else if (values.Size() == 16){
-					veMat4 mat(values[0].GetDouble(), values[1].GetDouble(), values[2].GetDouble(), values[3].GetDouble()
-						, values[4].GetDouble(), values[5].GetDouble(), values[6].GetDouble(), values[7].GetDouble()
-						, values[8].GetDouble(), values[9].GetDouble(), values[10].GetDouble(), values[11].GetDouble()
-						, values[12].GetDouble(), values[13].GetDouble(), values[14].GetDouble(), values[15].GetDouble());
-					uniform->setValue(mat);
-				}else {
-					veReal *vals = new veReal[values.Size()];
-					for (unsigned int i = 0; i < values.Size(); ++i) {
-						vals[i] = values[i].GetDouble();
-					}
-					uniform->setValue(vals, values.Size());
-                    delete[] vals;
-				}
-				pass->addUniform(uniform);
 			}
 		}
 		pass->setShader(shader);

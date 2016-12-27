@@ -111,7 +111,6 @@ protected:
     virtual void renderImp(veViewer *viewer);
     void startThreading();
     void stopThreading();
-    void dispatchEvents(veViewer *viewer);
     void handleEvent(veViewer *viewer, const veEvent &event);
 	void postRenderHandle(veViewer *viewer);
 	void resourceRecovery(veViewer *viewer);

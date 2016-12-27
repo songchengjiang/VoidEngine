@@ -14,6 +14,9 @@
                             "depthWrite": false,
                             "cullFace": true,
                             "blendFunc": ["SRC_ALPHA", "ONE"],
+                            "uniforms": {
+                                "u_diffuseTex": 0                                
+                            },                            
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
@@ -23,8 +26,7 @@
                                 {
                                     "type": "FRAGMENT_SHADER",
                                     "defination": "#define VE_USE_DIFFUSE_TEXTURE 1\n#define VE_USE_TEXTURES 1\n",
-                                    "source": "shaders/ParticleSystem.frag",
-                                    "u_diffuseTex": 0
+                                    "source": "shaders/ParticleSystem.frag"
                                 }
                             ],
                             "textureUnits": [

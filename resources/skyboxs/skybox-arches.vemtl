@@ -14,17 +14,19 @@
                             "depthWrite": true,
                             "cullFace": false,
                             "cullFaceMode":  "FRONT",
+                            "uniforms": {
+                                "u_ModelViewProjectMat": "MVP_MATRIX",
+                                "u_cubeMap": 0                           
+                            },                             
                             "shaders": [
                               {
                                 "type": "VERTEX_SHADER",
                                 "defination": "#define ATTR_POSITION 0\n#define ATTR_NORMAL 1\n#define ATTR_TEXTURE_COORD0 2\n",
-                                "source": "skybox.vert",
-                                "u_ModelViewProjectMat": "MVP_MATRIX"
+                                "source": "skybox.vert"
                               },
                               {
                                 "type": "FRAGMENT_SHADER",
-                                "source": "skybox.frag",
-                                "u_cubeMap": 0
+                                "source": "skybox.frag"
                               }
                             ],
                             "textureUnits": [

@@ -13,24 +13,26 @@
                             "depthTest": false,
                             "depthWrite": false,
                             "cullFace": true,
+                            "uniforms": {
+                                "u_ModelMat": "M_MATRIX",
+                                "u_time": "SIM_TIME",
+                                "u_sinTime": "SIM_SIN_TIME",
+                                "u_iNumTiles": [0.01, 0.02],
+                                "u_iNumTiles2": [0.005, 0.01],
+                                "u_numTiles": [100.0, 50.0],
+                                "u_lum": [0.30, 0.59, 0.11, 0.0],
+                                "u_charBias": 0.734375,
+                                "u_colorTex": 0,
+                                "u_asc2Tex": 1
+                            },                              
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "source": "postprocesser.vert",
-                                    "u_ModelMat": "M_MATRIX"
+                                    "source": "postprocesser.vert"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "source": "ASCII.frag",
-                                    "u_time": "SIM_TIME",
-                                    "u_sinTime": "SIM_SIN_TIME",
-                                    "u_iNumTiles": [0.01, 0.02],
-                                    "u_iNumTiles2": [0.005, 0.01],
-                                    "u_numTiles": [100.0, 50.0],
-                                    "u_lum": [0.30, 0.59, 0.11, 0.0],
-                                    "u_charBias": 0.734375,
-                                    "u_colorTex": 0,
-                                    "u_asc2Tex": 1
+                                    "source": "ASCII.frag"
                                 }
                             ],
                             "textureUnits": [

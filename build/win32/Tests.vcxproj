@@ -107,9 +107,11 @@
     <ClInclude Include="..\..\Tests\TerrainTest.h" />
     <ClInclude Include="..\..\Tests\TestCreator.h" />
     <ClInclude Include="..\..\Tests\TextTest.h" />
+    <ClInclude Include="..\..\Tests\UpdatorComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Tests\main.cpp" />
+    <ClCompile Include="..\..\Tests\UpdatorComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="VoidEngine.vcxproj">

@@ -99,7 +99,7 @@ void veTerrainGrid::build(veReal x, veReal y, unsigned short size, veTexture2D *
         normals[idx2] += norm;
         normals[idx3] += norm;
     };
-    for (unsigned int yStep = 0; yStep < (size - 1); ++yStep) {
+    for (unsigned short yStep = 0; yStep < (size - 1); ++yStep) {
         if (yStep % 2 == 0) {
             for (int xStep = 0; xStep < (size - 1); ++xStep) {
                 size_t idx0 = yStep * size + xStep;
