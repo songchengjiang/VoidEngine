@@ -1,4 +1,4 @@
-#include "Common.glsl"
+#include "Common.glsl.h"
 
 const char *TERRAIN_VERTEX_SHADER = STRINGIFY(
 layout (location = ATTR_POSITION) in vec3 position;

@@ -1,6 +1,6 @@
 #define STRINGIFY(A)  #A
 
-#define SHADER_COMMON_FUNCTION STRINGIFY(                                                                                  \
+#define SHADER_COMMON_FUNCTION STRINGIFY(                                                                           \
 precision highp float;                                                                                            \n\
 vec3 decode(vec3 encoded) {                                                                                       \n\
     float nz = floor(encoded.z * 255.0) / 16.0;                                                                   \n\

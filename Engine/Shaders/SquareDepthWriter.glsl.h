@@ -1,6 +1,6 @@
-#include "Common.glsl"
+#include "Common.glsl.h"
 
-const char *DEPTH_WRITE_VERTEX_SHADER = STRINGIFY(
+const char *SQUARE_DEPTH_WRITE_VERTEX_SHADER = STRINGIFY(
 layout (location = ATTR_POSITION) in vec3 position;
 \n#ifdef ATTR_BONE_INDICES\n
 layout (location = ATTR_BONE_INDICES) in vec4 boneIndices;
@@ -9,7 +9,9 @@ layout (location = ATTR_BONE_INDICES) in vec4 boneIndices;
 layout (location = ATTR_BONE_WEIGHTS) in vec4 boneWeights; 
 \n#endif\n
                  
-uniform mat4 u_ModelViewProjectMat;              
+uniform mat4 u_ModelViewMat;
+uniform mat4 u_ModelViewProjectMat;
+
 \n#ifdef VE_USE_BONES\n
 uniform mat4 u_BoneMates[60];
 void updateBonePosition(out vec4 pos)
@@ -24,7 +26,7 @@ void updateBonePosition(out vec4 pos)
 }
 \n#endif\n
 
-//out float v_depthInView;
+out vec3 v_posInLightView;
 
 void main()                                                 
 {   
@@ -35,14 +37,15 @@ void main()
 	finalPos = vec4(position, 1.0);
 \n#endif\n
 	  
+	v_posInLightView = (u_ModelViewMat * finalPos).xyz;
 	gl_Position = u_ModelViewProjectMat * finalPos;
-	//v_depthInView = gl_Position.w;
 }
 );
 
-const char *DEPTH_WRITE_FRAGMENT_SHADER = STRINGIFY(
-//in float v_depthInView;
+const char *SQUARE_DEPTH_WRITE_FRAGMENT_SHADER = STRINGIFY(
+in highp vec3 v_posInLightView;
 void main(){
-    //gl_FragDepth = v_depthInView / (v_depthInView + 1.0);
+    highp float pTolDis2 = dot(v_posInLightView, v_posInLightView);
+    gl_FragDepth = pTolDis2 / (pTolDis2 + 1.0);
 }
 );

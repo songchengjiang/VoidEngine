@@ -5,8 +5,8 @@
 #include "Configuration.h"
 #include "Viewer.h"
 #include "FileCore/File.h"
-#include "Shaders/DepthWriter.glsl"
-#include "Shaders/SquareDepthWriter.glsl"
+#include "Shaders/DepthWriter.glsl.h"
+#include "Shaders/SquareDepthWriter.glsl.h"
 
 static const veMat4 LIGHT_BIAS_MAT = veMat4(0.5f, 0.0f, 0.0f, 0.5f
                                             , 0.0f, 0.5f, 0.0f, 0.5f

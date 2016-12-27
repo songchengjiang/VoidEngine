@@ -3,7 +3,7 @@
 #include "Camera.h"
 #include "Constants.h"
 #include "Configuration.h"
-#include "Shaders/Light.glsl"
+#include "Shaders/Light.glsl.h"
 
 veDeferredRenderPipeline::veDeferredRenderPipeline(veSceneManager *sm)
 : veRenderPipeline(sm)

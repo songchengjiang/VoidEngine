@@ -3,7 +3,7 @@
 #include "TerrainRenderer.h"
 #include "FileCore/File.h"
 #include "Constants.h"
-#include "Shaders/Terrain.glsl"
+#include "Shaders/Terrain.glsl.h"
 
 veTerrainGrid::veTerrainGrid(veSceneManager *sm)
     : veRenderableObject(sm)

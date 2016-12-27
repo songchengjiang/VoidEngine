@@ -1,4 +1,4 @@
-#include "Common.glsl"
+#include "Common.glsl.h"
 
 static const char* SCREEN_BASED_LIGHT_VERTEX_SHADER = STRINGIFY(
 layout(location = 0) in vec3 position;

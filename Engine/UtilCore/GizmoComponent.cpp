@@ -1,6 +1,7 @@
 #include "GizmoComponent.h"
 #include "KernelCore/SceneManager.h"
 #include "KernelCore/Viewer.h"
+#include <algorithm>
 
 #define GIZMO_SCALE_SQUARED_DISTANCE 10.0f
 
