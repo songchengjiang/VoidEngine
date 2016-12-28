@@ -142,6 +142,19 @@ void veRenderState::resetState()
         glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_KEEP);
         _defaultRS->_stencilOp = veStencilOp::KEEP;
     }
+
+	if (!_isInited) {
+		_depthTest     = _defaultRS->_depthTest;
+		_depthWrite    = _defaultRS->_depthWrite;
+		_scissorTest   = _defaultRS->_scissorTest;
+		_cullFace      = _defaultRS->_cullFace;
+		_cullfaceMode  = _defaultRS->_cullfaceMode;
+		_blendFunc     = _defaultRS->_blendFunc;
+		_blendEquation = _defaultRS->_blendEquation;
+		_stencilTest   = _defaultRS->_stencilTest;
+		_stencilFunc   = _defaultRS->_stencilFunc;
+		_stencilOp     = _defaultRS->_stencilOp;
+		_isInited = true;
+	}
     
-    _isInited = true;
 }
