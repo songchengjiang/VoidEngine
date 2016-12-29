@@ -22,9 +22,9 @@ public:
 	IBLTest() {
 		veNode *root = _sceneManager->createNode("root");
         
-        float fresnel = 0.0f;
+        float roughness = 0.0f;
         for (float x = -15.0; x <= 15.0; x += 5) {
-            float roughness = 0.0f;
+            float fresnel = 0.0f;
             for (float y = -15.0; y <= 15.0; y += 5) {
                 auto IBLMats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "materials/IBL.vemtl", "IBL"));
                 veNode *entity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "sphere-0"));
@@ -37,9 +37,9 @@ public:
                 IBLMats->getMaterial(0)->getTechnique(0)->getPass(0)->getUniform("u_roughness")->setValue(roughness);
                 IBLMats->getMaterial(0)->getTechnique(0)->getPass(0)->getUniform("u_fresnel")->setValue(fresnel);
                 setRenderableObjectMat(entity, IBLMats->getMaterial(0));
-                roughness += 1.0f / 6.0f;
+                fresnel += 1.0f / 6.0f;
             }
-            fresnel += 1.0f / 6.0f;
+            roughness += 1.0f / 6.0f;
         }
         
 

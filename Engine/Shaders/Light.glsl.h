@@ -169,17 +169,16 @@ void main() {
     worldPosition.xyz /= worldPosition.w;
     vec3 eyeDir = normalize(u_cameraPosInWorld - worldPosition.xyz);
     float NdotV = max(0.0, dot(worldNormal, eyeDir));
-    float F = RT2.w + (1.0 - RT2.w) * pow(1.0 - NdotV, 5.0);
 
     vec2 diffCoords = caculateCoordsWithLatLong(worldNormal);
     vec3 r = normalize(reflect(-eyeDir, worldNormal));
     vec2 specCoords = caculateCoordsWithLatLong(r);
     vec3 diffLighing = texture(u_diffuseLighting, diffCoords).rgb;
-    vec3 diffLightIntensity = diffLighing * RT1.w;
-    vec3 specLightIntensity = textureLod(u_specularLighting, specCoords, (1.0 - F) * u_specularMipMapCount).rgb;
+    vec3 diffLightIntensity = diffLighing * (1.0 - RT2.w);
+    vec3 specLightIntensity = textureLod(u_specularLighting, specCoords, RT1.w * u_specularMipMapCount).rgb;
     float lum = luminance(specLightIntensity);
     lum = lum / (lum + 1.0);
-    fragColor = vec4(clamp((linearColor(RT1.xyz) * diffLightIntensity + linearColor(RT1.xyz * RT2.xyz) * pow(lum, RT1.w) * specLightIntensity) * u_lightIntensity, 0.0, 1.0), 1.0);
+    fragColor = vec4(clamp((linearColor(RT1.xyz) * diffLightIntensity + linearColor(RT1.xyz * RT2.xyz) * pow(lum, (1.0 - RT2.w)) * specLightIntensity) * u_lightIntensity, 0.0, 1.0), 1.0);
 });
 
 static const char* POINT_LIGHT_FRAGMENT_SHADER =
