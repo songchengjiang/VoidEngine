@@ -26,7 +26,6 @@
 		BEAB2E851CED63ED00B3F9F8 /* postprocessers in Resources */ = {isa = PBXBuildFile; fileRef = BEAB2E551CED600300B3F9F8 /* postprocessers */; };
 		BEAB2E861CED63ED00B3F9F8 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = BEAB2E561CED600300B3F9F8 /* shaders */; };
 		BEAB2E871CED63ED00B3F9F8 /* skyboxs in Resources */ = {isa = PBXBuildFile; fileRef = BEAB2E571CED600300B3F9F8 /* skyboxs */; };
-		BEAB2E881CED63ED00B3F9F8 /* system in Resources */ = {isa = PBXBuildFile; fileRef = BEAB2E581CED600300B3F9F8 /* system */; };
 		BEAB2E891CED63ED00B3F9F8 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = BEAB2E591CED600300B3F9F8 /* textures */; };
 		BEAB2EA71CED800100B3F9F8 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE0E4E701BB0451B0001AA36 /* main.cpp */; };
 		BEAB2EAA1CED803E00B3F9F8 /* libVoidEngine.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BE1B50991BB04F590039A346 /* libVoidEngine.dylib */; };
@@ -39,7 +38,6 @@
 		BEAB2EB11CED805500B3F9F8 /* postprocessers in Resources */ = {isa = PBXBuildFile; fileRef = BEAB2E551CED600300B3F9F8 /* postprocessers */; };
 		BEAB2EB21CED805500B3F9F8 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = BEAB2E561CED600300B3F9F8 /* shaders */; };
 		BEAB2EB31CED805500B3F9F8 /* skyboxs in Resources */ = {isa = PBXBuildFile; fileRef = BEAB2E571CED600300B3F9F8 /* skyboxs */; };
-		BEAB2EB41CED805500B3F9F8 /* system in Resources */ = {isa = PBXBuildFile; fileRef = BEAB2E581CED600300B3F9F8 /* system */; };
 		BEAB2EB51CED805500B3F9F8 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = BEAB2E591CED600300B3F9F8 /* textures */; };
 /* End PBXBuildFile section */
 
@@ -107,7 +105,6 @@
 		BEAB2E551CED600300B3F9F8 /* postprocessers */ = {isa = PBXFileReference; lastKnownFileType = folder; name = postprocessers; path = ../../resources/postprocessers; sourceTree = "<group>"; };
 		BEAB2E561CED600300B3F9F8 /* shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; name = shaders; path = ../../resources/shaders; sourceTree = "<group>"; };
 		BEAB2E571CED600300B3F9F8 /* skyboxs */ = {isa = PBXFileReference; lastKnownFileType = folder; name = skyboxs; path = ../../resources/skyboxs; sourceTree = "<group>"; };
-		BEAB2E581CED600300B3F9F8 /* system */ = {isa = PBXFileReference; lastKnownFileType = folder; name = system; path = ../../resources/system; sourceTree = "<group>"; };
 		BEAB2E591CED600300B3F9F8 /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; name = textures; path = ../../resources/textures; sourceTree = "<group>"; };
 		BEAB2E671CED60DD00B3F9F8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../../Tests/ios/Assets.xcassets; sourceTree = "<group>"; };
 		BEAB2E681CED60DD00B3F9F8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../../Tests/ios/Info.plist; sourceTree = "<group>"; };
@@ -204,7 +201,6 @@
 				BEAB2E551CED600300B3F9F8 /* postprocessers */,
 				BEAB2E561CED600300B3F9F8 /* shaders */,
 				BEAB2E571CED600300B3F9F8 /* skyboxs */,
-				BEAB2E581CED600300B3F9F8 /* system */,
 				BEAB2E591CED600300B3F9F8 /* textures */,
 			);
 			name = resources;
@@ -337,7 +333,6 @@
 				BEAB2E851CED63ED00B3F9F8 /* postprocessers in Resources */,
 				BEAB2E861CED63ED00B3F9F8 /* shaders in Resources */,
 				BEAB2E871CED63ED00B3F9F8 /* skyboxs in Resources */,
-				BEAB2E881CED63ED00B3F9F8 /* system in Resources */,
 				BEAB2E891CED63ED00B3F9F8 /* textures in Resources */,
 				BEAB2E791CED610900B3F9F8 /* Info.plist in Resources */,
 				BEAB2E761CED610000B3F9F8 /* Main.storyboard in Resources */,
@@ -359,7 +354,6 @@
 				BEAB2EB11CED805500B3F9F8 /* postprocessers in Resources */,
 				BEAB2EB21CED805500B3F9F8 /* shaders in Resources */,
 				BEAB2EB31CED805500B3F9F8 /* skyboxs in Resources */,
-				BEAB2EB41CED805500B3F9F8 /* system in Resources */,
 				BEAB2EB51CED805500B3F9F8 /* textures in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

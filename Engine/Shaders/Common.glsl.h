@@ -43,7 +43,7 @@ float CookTorrance(float NdotL, float NdotV, float HdotV, float NdotH, float rou
                                                                                                                   \n\
     float Db = PI * pow(NdotH * NdotH * (alpha2 - 1.0) + 1.0, 2.0);                                               \n\
     float D = alpha2 / Db; 	                                                                                      \n\
-                                                                                                                  \n\
-    return max(0.0, (F * D * G) / (4.0f * NdotL * NdotV));                                                        \n\
+    float val = mix(0.1, 1.0, NdotL * NdotV);                                                                     \n\
+    return max(0.0, (F * D * G) / (4.0f * val));                                                                  \n\
 }                                                                                                                 \n\
 )
