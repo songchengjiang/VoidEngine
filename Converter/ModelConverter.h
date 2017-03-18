@@ -36,6 +36,7 @@ private:
 	void writeTechnique(const aiMaterial *mat);
 	void writePass(const aiMaterial *mat);
 	void writeRenderState(const aiMaterial *mat);
+    void writeUniforms(const aiMaterial *mat);
 	void writeShaders(const aiMaterial *mat);
 	void writeShader(const aiMaterial *mat, const std::string &shaderName);
 

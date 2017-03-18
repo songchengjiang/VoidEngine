@@ -24,7 +24,7 @@
                                 "u_diffuse": [0.588235,0.588235,0.588235],
                                 "u_specular": [0.090000,0.090000,0.090000],
                                 "u_roughness":0.4,
-                                "u_fresnel":0.6,
+                                "u_metallic":0.6,
                                 "u_opacity":1.000000,
                                 "u_reflectivity":0.000000,
                                 "u_displacement":0.100,
@@ -92,7 +92,7 @@
                                 "u_specular": [1.0,1.0,1.0
                                 ],
                                 "u_roughness":1.0,
-                                "u_fresnel":1.0,
+                                "u_metallic":1.0,
                                 "u_opacity":1.0,
                                 "u_reflectivity":0.0,
                                 "u_diffuseTex":0,
@@ -137,7 +137,7 @@
                                 {
                                     "name": "textures/substanceTexs/metal_metallic.png",
                                     "source": "textures/substanceTexs/metal_metallic.png",
-                                    "texType": "REFLECTION_TEXTURE",
+                                    "texType": "METALLIC_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "NEAREST_MIP_MAP_LINEAR"
                                 }
@@ -167,7 +167,7 @@
                                 "u_specular": [1.0,1.0,1.0
                                 ],
                                 "u_roughness":1.0,
-                                "u_fresnel":0.0,
+                                "u_metallic":0.0,
                                 "u_opacity":1.0,
                                 "u_reflectivity":0.0,
                                 "u_diffuseTex":0,
@@ -235,7 +235,7 @@
                                 "u_specular": [1.0,1.0,1.0
                                 ],
                                 "u_roughness":1.0,
-                                "u_fresnel":0.0,
+                                "u_metallic":0.0,
                                 "u_opacity":1.0,
                                 "u_reflectivity":0.0,
                                 "u_diffuseTex":0,
@@ -273,7 +273,7 @@
                                 {
                                     "name": "textures/substanceTexs/fabric_roughness.png",
                                     "source": "textures/substanceTexs/fabric_roughness.png",
-                                    "texType": "ROUGHNESS_TEXTURE",
+                                    "texType": "METALLIC_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "NEAREST_MIP_MAP_LINEAR"
                                 }

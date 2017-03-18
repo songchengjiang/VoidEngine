@@ -5,6 +5,7 @@
 #include <vector>
 #include <unordered_map>
 #include <sstream>
+#include <string>
 #include "Constants.h"
 
 std::vector<std::string> MESH_NAME_LIST;
@@ -398,6 +399,7 @@ void ModelConverter::writePass(const aiMaterial *mat)
 	int val = 0;
 	_matWriter.StartObject();
 	writeRenderState(mat);
+    writeUniforms(mat);
 	writeShaders(mat);
 	writeTextures(mat);
 	_matWriter.EndObject();
@@ -410,6 +412,99 @@ void ModelConverter::writeRenderState(const aiMaterial *mat)
 	_matWriter.String(CULLFACE_KEY.c_str(), CULLFACE_KEY.size()); _matWriter.Bool(true);
 }
 
+void ModelConverter::writeUniforms(const aiMaterial *mat)
+{
+    _matWriter.String(UNIFORMS_KEY.c_str(), UNIFORMS_KEY.size());
+    _matWriter.StartObject();
+    
+    _matWriter.String(MVP_MATRIX_KEY.c_str(), MVP_MATRIX_KEY.size());
+    _matWriter.String(MVP_MATRIX.c_str(), MVP_MATRIX.size());
+    _matWriter.String(MV_MATRIX_KEY.c_str(), MV_MATRIX_KEY.size());
+    _matWriter.String(MV_MATRIX.c_str(), MV_MATRIX.size());
+    _matWriter.String(M_MATRIX_KEY.c_str(), M_MATRIX_KEY.size());
+    _matWriter.String(M_MATRIX.c_str(), M_MATRIX.size());
+    _matWriter.String(NORMAL_MATRIX_KEY.c_str(), NORMAL_MATRIX_KEY.size());
+    _matWriter.String(NORMAL_MATRIX.c_str(), NORMAL_MATRIX.size());
+    _matWriter.String(NORMAL_WORLD_MATRIX_KEY.c_str(), NORMAL_WORLD_MATRIX_KEY.size());
+    _matWriter.String(NORMAL_WROLD_MATRIX.c_str(), NORMAL_WROLD_MATRIX.size());
+    _matWriter.String(CAMERA_WORLD_POS_KEY.c_str(), CAMERA_WORLD_POS_KEY.size());
+    _matWriter.String(CAMERA_WORLD_POS.c_str(), CAMERA_WORLD_POS.size());
+    
+    if (MATERIAL_MESH_MAP[mat]->HasBones()) {
+        _matWriter.String(BONE_MATRIXES_KEY.c_str(), BONE_MATRIXES_KEY.size());
+        _matWriter.String(BONE_MATRIXES.c_str(), BONE_MATRIXES.size());
+    }
+    
+    _matWriter.String(LIGHTMASK_KEY.c_str(), LIGHTMASK_KEY.size());
+    _matWriter.Float(1.0f);
+    
+    aiColor4D col;
+    
+    aiGetMaterialColor(mat, AI_MATKEY_COLOR_DIFFUSE, &col);
+    if (!col.IsBlack()){
+        _matWriter.String(DIFFUSE_KEY.c_str(), DIFFUSE_KEY.size());
+        aiVector3D vec3Col(col.r, col.g, col.b);
+        writeVec3(_matWriter, &vec3Col);
+    }
+    
+    aiGetMaterialColor(mat, AI_MATKEY_COLOR_EMISSIVE, &col);
+    if (!col.IsBlack()){
+        _matWriter.String(EMISSIVE_KEY.c_str(), EMISSIVE_KEY.size());
+        aiVector3D vec3Col(col.r, col.g, col.b);
+        writeVec3(_matWriter, &vec3Col);
+    }
+    
+    float valFloat = 0.0f;
+    aiGetMaterialFloat(mat, AI_MATKEY_SHININESS, &valFloat);
+    _matWriter.String(ROUGHNESS_KEY.c_str(), ROUGHNESS_KEY.size());
+    _matWriter.Float(valFloat <= 128.0f? 1.0f - valFloat / 128.0f: 0.0f);
+    _matWriter.String(METALLIC_KEY.c_str(), METALLIC_KEY.size());
+    _matWriter.Float(valFloat <= 128.0f ? valFloat / 128.0f : 1.0f);
+    
+    aiGetMaterialFloat(mat, AI_MATKEY_OPACITY, &valFloat);
+    _matWriter.String(OPACITY_KEY.c_str(), OPACITY_KEY.size());
+    _matWriter.Float(valFloat);
+    
+    if (hasTexture(mat, aiTextureType_DISPLACEMENT)) {
+        _matWriter.String(DISPLACEMENT_KEY.c_str(), DISPLACEMENT_KEY.size());
+        _matWriter.Float(0.1f);
+    }
+    
+    unsigned int texUnit = 0;
+    
+    if (hasTexture(mat, aiTextureType_DIFFUSE)){
+        _matWriter.String(DIFFUSETEX_KEY.c_str(), DIFFUSETEX_KEY.size());
+        _matWriter.Uint(texUnit++);
+    }
+    
+    if (hasTexture(mat, aiTextureType_EMISSIVE)){
+        _matWriter.String(EMISSIVETEX_KEY.c_str(), EMISSIVETEX_KEY.size());
+        _matWriter.Uint(texUnit++);
+    }
+    
+    if (hasTexture(mat, aiTextureType_NORMALS)){
+        _matWriter.String(NORMALTEX_KEY.c_str(), NORMALTEX_KEY.size());
+        _matWriter.Uint(texUnit++);
+    }
+    
+    if (hasTexture(mat, aiTextureType_OPACITY)){
+        _matWriter.String(OPACITYTEX_KEY.c_str(), OPACITYTEX_KEY.size());
+        _matWriter.Uint(texUnit++);
+    }
+    
+    if (hasTexture(mat, aiTextureType_DISPLACEMENT)){
+        _matWriter.String(DISPLACEMENTTEX_KEY.c_str(), DISPLACEMENTTEX_KEY.size());
+        _matWriter.Uint(texUnit++);
+    }
+    
+    if (hasTexture(mat, aiTextureType_LIGHTMAP)){
+        _matWriter.String(LIGHTMAPTEX_KEY.c_str(), LIGHTMAPTEX_KEY.size());
+        _matWriter.Uint(texUnit++);
+    }
+    
+    _matWriter.EndObject();
+}
+
 void ModelConverter::writeShaders(const aiMaterial *mat)
 {
 	int valInt = 0;
@@ -419,9 +514,6 @@ void ModelConverter::writeShaders(const aiMaterial *mat)
 
 void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shaderName)
 {
-	int valInt = 0;
-	float valFloat = 0.0f;
-
 	_matWriter.String(SHADERS_KEY.c_str(), SHADERS_KEY.size());
 	_matWriter.StartArray();
 
@@ -433,22 +525,6 @@ void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shade
 	_matWriter.String(getShaderDefinations(mat, VERTEXSHADER_KEY).c_str());
 	_matWriter.String(SOURCE_KEY.c_str(), SOURCE_KEY.size());
 	_matWriter.String((shaderName + std::string(".vert")).c_str());
-	_matWriter.String(MVP_MATRIX_KEY.c_str(), MVP_MATRIX_KEY.size());
-	_matWriter.String(MVP_MATRIX.c_str(), MVP_MATRIX.size());
-	_matWriter.String(MV_MATRIX_KEY.c_str(), MV_MATRIX_KEY.size());
-	_matWriter.String(MV_MATRIX.c_str(), MV_MATRIX.size());
-	_matWriter.String(M_MATRIX_KEY.c_str(), M_MATRIX_KEY.size());
-	_matWriter.String(M_MATRIX.c_str(), M_MATRIX.size());
-	_matWriter.String(NORMAL_MATRIX_KEY.c_str(), NORMAL_MATRIX_KEY.size());
-	_matWriter.String(NORMAL_MATRIX.c_str(), NORMAL_MATRIX.size());
-	_matWriter.String(NORMAL_WORLD_MATRIX_KEY.c_str(), NORMAL_WORLD_MATRIX_KEY.size());
-	_matWriter.String(NORMAL_WROLD_MATRIX.c_str(), NORMAL_WROLD_MATRIX.size());
-	_matWriter.String(CAMERA_WORLD_POS_KEY.c_str(), CAMERA_WORLD_POS_KEY.size());
-	_matWriter.String(CAMERA_WORLD_POS.c_str(), CAMERA_WORLD_POS.size());
-	if (MATERIAL_MESH_MAP[mat]->HasBones()) {
-		_matWriter.String(BONE_MATRIXES_KEY.c_str(), BONE_MATRIXES_KEY.size());
-		_matWriter.String(BONE_MATRIXES.c_str(), BONE_MATRIXES.size());
-	}
 	_matWriter.EndObject();
 
 	//fragment shader
@@ -459,130 +535,6 @@ void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shade
 	_matWriter.String(getShaderDefinations(mat, FRAGMENTSHADER_KEY).c_str());
 	_matWriter.String(SOURCE_KEY.c_str(), SOURCE_KEY.size());
 	_matWriter.String((shaderName + std::string(".frag")).c_str());
-
-	_matWriter.String(LIGHTMASK_KEY.c_str(), LIGHTMASK_KEY.size());
-	_matWriter.Float(1.0f);
-
-	aiColor4D col;
-	aiGetMaterialColor(mat, AI_MATKEY_COLOR_AMBIENT, &col);
-	if (!col.IsBlack()){
-		_matWriter.String(AMBIENT_KEY.c_str(), AMBIENT_KEY.size());
-		aiVector3D vec3Col(col.r, col.g, col.b);
-		writeVec3(_matWriter, &vec3Col);
-	}
-
-	aiGetMaterialColor(mat, AI_MATKEY_COLOR_DIFFUSE, &col);
-	if (!col.IsBlack()){
-		_matWriter.String(DIFFUSE_KEY.c_str(), DIFFUSE_KEY.size());
-		aiVector3D vec3Col(col.r, col.g, col.b);
-		writeVec3(_matWriter, &vec3Col);
-	}
-
-	aiGetMaterialColor(mat, AI_MATKEY_COLOR_SPECULAR, &col);
-	if (!col.IsBlack()){
-		_matWriter.String(SPECULAR_KEY.c_str(), SPECULAR_KEY.size());
-		aiVector3D vec3Col(col.r, col.g, col.b);
-		writeVec3(_matWriter, &vec3Col);
-	}
-
-	aiGetMaterialColor(mat, AI_MATKEY_COLOR_EMISSIVE, &col);
-	if (!col.IsBlack()){
-		_matWriter.String(EMISSIVE_KEY.c_str(), EMISSIVE_KEY.size());
-		aiVector3D vec3Col(col.r, col.g, col.b);
-		writeVec3(_matWriter, &vec3Col);
-	}
-
-	aiGetMaterialColor(mat, AI_MATKEY_COLOR_TRANSPARENT, &col);
-	if (!col.IsBlack()){
-		_matWriter.String(TRANSPARENT_KEY.c_str(), TRANSPARENT_KEY.size());
-		aiVector3D vec3Col(col.r, col.g, col.b);
-		writeVec3(_matWriter, &vec3Col);
-	}
-
-	aiGetMaterialColor(mat, AI_MATKEY_COLOR_REFLECTIVE, &col);
-	if (!col.IsBlack()){
-		_matWriter.String(REFLECTIVE_KEY.c_str(), REFLECTIVE_KEY.size());
-		aiVector3D vec3Col(col.r, col.g, col.b);
-		writeVec3(_matWriter, &vec3Col);
-	}
-
-
-	aiGetMaterialFloat(mat, AI_MATKEY_SHININESS, &valFloat);
-	_matWriter.String(ROUGHNESS_KEY.c_str(), ROUGHNESS_KEY.size());
-	_matWriter.Float(valFloat <= 128.0f? 1.0f - valFloat / 128.0f: 0.0f);
-	_matWriter.String(FRESNEL_KEY.c_str(), FRESNEL_KEY.size());
-	_matWriter.Float(valFloat <= 128.0f ? valFloat / 128.0f : 1.0f);
-
-	aiGetMaterialFloat(mat, AI_MATKEY_OPACITY, &valFloat);
-	_matWriter.String(OPACITY_KEY.c_str(), OPACITY_KEY.size());
-	_matWriter.Float(valFloat);
-
-	aiGetMaterialFloat(mat, AI_MATKEY_REFLECTIVITY, &valFloat);
-	_matWriter.String(REFLECTIVITY_KEY.c_str(), REFLECTIVITY_KEY.size());
-	_matWriter.Float(valFloat);
-
-
-	if (hasTexture(mat, aiTextureType_DISPLACEMENT)) {
-		_matWriter.String(DISPLACEMENT_KEY.c_str(), DISPLACEMENT_KEY.size());
-		_matWriter.Float(0.1f);
-	}
-
-	unsigned int texUnit = 0;
-	if (hasTexture(mat, aiTextureType_AMBIENT)){
-		_matWriter.String(AMBIENTTEX_KEY.c_str(), AMBIENTTEX_KEY.size());
-		_matWriter.Uint(texUnit++);
-	}
-
-	if (hasTexture(mat, aiTextureType_DIFFUSE)){
-		_matWriter.String(DIFFUSETEX_KEY.c_str(), DIFFUSETEX_KEY.size());
-		_matWriter.Uint(texUnit++);
-	}
-
-	if (hasTexture(mat, aiTextureType_SPECULAR)){
-		_matWriter.String(SPECULAR_KEY.c_str(), SPECULAR_KEY.size());
-		_matWriter.Uint(texUnit++);
-	}
-
-	if (hasTexture(mat, aiTextureType_EMISSIVE)){
-		_matWriter.String(EMISSIVETEX_KEY.c_str(), EMISSIVETEX_KEY.size());
-		_matWriter.Uint(texUnit++);
-	}
-
-	if (hasTexture(mat, aiTextureType_HEIGHT)){
-		_matWriter.String(HEIGHTTEX_KEY.c_str(), HEIGHTTEX_KEY.size());
-		_matWriter.Uint(texUnit++);
-	}
-
-	if (hasTexture(mat, aiTextureType_NORMALS)){
-		_matWriter.String(NORMALTEX_KEY.c_str(), NORMALTEX_KEY.size());
-		_matWriter.Uint(texUnit++);
-	}
-
-	if (hasTexture(mat, aiTextureType_SHININESS)){
-		_matWriter.String(SHININESSTEX_KEY.c_str(), SHININESSTEX_KEY.size());
-		_matWriter.Uint(texUnit++);
-	}
-
-	if (hasTexture(mat, aiTextureType_OPACITY)){
-		_matWriter.String(OPACITYTEX_KEY.c_str(), OPACITYTEX_KEY.size());
-		_matWriter.Uint(texUnit++);
-	}
-
-	if (hasTexture(mat, aiTextureType_DISPLACEMENT)){
-		_matWriter.String(DISPLACEMENTTEX_KEY.c_str(), DISPLACEMENTTEX_KEY.size());
-		_matWriter.Uint(texUnit++);
-	}
-
-	if (hasTexture(mat, aiTextureType_LIGHTMAP)){
-		_matWriter.String(LIGHTMAPTEX_KEY.c_str(), LIGHTMAPTEX_KEY.size());
-		_matWriter.Uint(texUnit++);
-	}
-
-	if (hasTexture(mat, aiTextureType_REFLECTION)){
-		_matWriter.String(REFLECTIONTEX_KEY.c_str(), REFLECTIONTEX_KEY.size());
-		_matWriter.Uint(texUnit++);
-	}
-
 	_matWriter.EndObject();
 
 	_matWriter.EndArray();
@@ -593,17 +545,12 @@ void ModelConverter::writeTextures(const aiMaterial *mat)
 	aiString texPath;
 	_matWriter.String(TEXTUREUNITS_KEY.c_str(), TEXTUREUNITS_KEY.size());
 	_matWriter.StartArray();
-	writeTexture(mat, aiTextureType_AMBIENT);
 	writeTexture(mat, aiTextureType_DIFFUSE);
-	writeTexture(mat, aiTextureType_SPECULAR);
 	writeTexture(mat, aiTextureType_EMISSIVE);
-	writeTexture(mat, aiTextureType_HEIGHT);
 	writeTexture(mat, aiTextureType_NORMALS);
-	writeTexture(mat, aiTextureType_SHININESS);
 	writeTexture(mat, aiTextureType_OPACITY);
 	writeTexture(mat, aiTextureType_DISPLACEMENT);
 	writeTexture(mat, aiTextureType_LIGHTMAP);
-	writeTexture(mat, aiTextureType_REFLECTION);
 	_matWriter.EndArray();
 }
 
@@ -614,11 +561,13 @@ void ModelConverter::writeTexture(const aiMaterial *mat, aiTextureType texType)
 	unsigned int ct = mat->GetTextureCount(texType);
 	mat->GetTexture(texType, 0, &texturePath, 0, 0, 0, 0, &mapMode);
 	if (0 < texturePath.length){
+        std::string texturePathSTD = texturePath.C_Str();
+        std::string textureFileName = texturePathSTD.substr(texturePathSTD.find_last_of("\\/") + 1);
 		_matWriter.StartObject();
 		_matWriter.String(NAME_KEY.c_str(), NAME_KEY.size());
-		_matWriter.String(texturePath.C_Str(), texturePath.length);
+		_matWriter.String(textureFileName.c_str(), textureFileName.size());
 		_matWriter.String(SOURCE_KEY.c_str(), SOURCE_KEY.size()); 
-		_matWriter.String(texturePath.C_Str(), texturePath.length);
+		_matWriter.String(textureFileName.c_str(), textureFileName.size());
 		_matWriter.String(TEXTYPE_KEY.c_str(), TEXTYPE_KEY.size());
 		_matWriter.String(getTextureTypeName(texType).c_str());
 
@@ -767,26 +716,15 @@ std::string ModelConverter::getTextureTypeName(aiTextureType texType)
 {
 	switch (texType)
 	{
-	case aiTextureType_AMBIENT:
-		return AMBIENT_TEXTURE_KEY;
 
 	case aiTextureType_DIFFUSE:
 		return DIFFUSE_TEXTURE_KEY;
-
-	case aiTextureType_SPECULAR:
-		return SPECULAR_TEXTURE_KEY;
 
 	case aiTextureType_EMISSIVE:
 		return EMISSIVE_TEXTURE_KEY;
 
 	case aiTextureType_NORMALS:
 		return NORMAL_TEXTURE_KEY;
-
-	case aiTextureType_HEIGHT:
-		return HEIGHT_TEXTURE_KEY;
-
-	case aiTextureType_SHININESS:
-		return SHININESS_TEXTURE_KEY;
 
 	case aiTextureType_OPACITY:
 		return OPACITYT_TEXTURE_KEY;
@@ -796,9 +734,7 @@ std::string ModelConverter::getTextureTypeName(aiTextureType texType)
 
 	case aiTextureType_LIGHTMAP:
 		return LIGHTMAP_TEXTURE_KEY;
-
-	case aiTextureType_REFLECTION:
-		return REFLECTION_TEXTURE_KEY;
+            
 	}
 
 	return DIFFUSE_TEXTURE_KEY;

@@ -30,7 +30,48 @@ float OrenNayar(vec3 norm, vec3 ldir, vec3 vdir, float NdotL, float NdotV, float
     return NdotL * max(0.0, (A + B * sin(alpha) * tan(beta) * C));                                                \n\
 }                                                                                                                 \n\
                                                                                                                   \n\
-float CookTorrance(float NdotL, float NdotV, float HdotV, float NdotH, float roughness, float fresnel) {          \n\
+                                                                       \n\
+vec3 FresnelSchlick(float cosTheta, vec3 F0)                          \n\
+{                                                                       \n\
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);                                                                       \n\
+}                                                                       \n\
+                                                                       \n\
+float DistributionGGX(float NdotH, float roughness)                                                                       \n\
+{                                                                       \n\
+    float a      = roughness*roughness;                                                                       \n\
+    float a2     = a*a;                                                                       \n\
+    float NdotH2 = NdotH*NdotH;                                                                       \n\
+                                                                           \n\
+    float nom   = a2;                                                                       \n\
+    float denom = (NdotH2 * (a2 - 1.0) + 1.0);                                                                       \n\
+    denom = PI * denom * denom;                                                                       \n\
+                                                                           \n\
+    return nom / denom;                                                                       \n\
+}                                                                       \n\
+                                                                       \n\
+float GeometrySchlickGGX(float NdotV, float roughness)                                                                       \n\
+{                                                                       \n\
+    float r = (roughness + 1.0);                                                                       \n\
+    float k = (r*r) / 8.0;                                                                       \n\
+                                                                         \n\
+    float denom = NdotV * (1.0 - k) + k;                                                                       \n\
+                                                                           \n\
+    return NdotV / denom;                                                                       \n\
+}                                                                       \n\
+float GeometrySmith(float NdotV, float NdotL, float roughness)                                                                       \n\
+{                                                                       \n\
+    float ggx2  = GeometrySchlickGGX(NdotV, roughness);                                                                       \n\
+    float ggx1  = GeometrySchlickGGX(NdotL, roughness);                                                                       \n\
+                                                                           \n\
+    return ggx1 * ggx2;                                                                       \n\
+}                                                                       \n\
+                                                                       \n\
+                                                                       \n\
+vec2 caculateCoordsWithLatLong(vec3 D) {                                                                       \n\
+    return vec2((atan(D.x, D.z) / PI + 1.0) * 0.5, (acos(D.y) / PI));                                                                       \n\
+}                                                                       \n\
+                                                                       \n\
+float CookTorrance(float NdotL, float NdotV, float HdotV, float NdotH, float roughness, float fresnel) {         \n\
     float alpha = pow(1.0 - (1.0 - roughness) * 0.7, 6.0);                                                        \n\
     float alpha2 = alpha * alpha;                                                                                 \n\
                                                                                                                   \n\
@@ -43,7 +84,6 @@ float CookTorrance(float NdotL, float NdotV, float HdotV, float NdotH, float rou
                                                                                                                   \n\
     float Db = PI * pow(NdotH * NdotH * (alpha2 - 1.0) + 1.0, 2.0);                                               \n\
     float D = alpha2 / Db; 	                                                                                      \n\
-    float val = mix(0.1, 1.0, NdotL * NdotV);                                                                     \n\
-    return max(0.0, (F * D * G) / (4.0f * val));                                                                  \n\
+    return (F * D * G) / (4.0f * NdotL * NdotV + 0.001);                                                          \n\
 }                                                                                                                 \n\
 )

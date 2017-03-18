@@ -96,9 +96,6 @@ public:
 	const veBone* getBone(unsigned int idx) const;
 	size_t getBoneNum() const { return _bones.size(); };
 
-	void setBoundingBox(const veBoundingBox &bbox) { _boundingBox = bbox; }
-	const veBoundingBox& getBoundingBox() const { return _boundingBox; }
-
 	typedef std::function<bool(const veReal* /*p1*/, const veReal* /*p2*/, const veReal* /*p3*/
 		                     , const veReal* /*n1*/, const veReal* /*n2*/, const veReal* /*n3*/)> PrimitiveCallback;
 	void traversePrimitives(const PrimitiveCallback &callback);

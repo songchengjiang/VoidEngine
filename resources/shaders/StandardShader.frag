@@ -7,7 +7,7 @@ uniform float u_shininess;
 uniform float u_opacity;
 uniform float u_lightMask;
 uniform float u_roughness;
-uniform float u_fresnel; 
+uniform float u_metallic;
 #ifdef VE_USE_DIFFUSE_TEXTURE
 uniform sampler2D u_diffuseTex;
 #endif
@@ -120,9 +120,9 @@ void main(){
 	RT2.xyz = u_specular;
 #endif
 #ifdef VE_USE_REFLECTION_TEXTURE
-    RT2.w = u_fresnel * texture(u_reflectionTex, texcoord).x;
+    RT2.w = u_metallic * texture(u_reflectionTex, texcoord).x;
 #else
-	RT2.w = u_fresnel;
+	RT2.w = u_metallic;
 #endif
 
 }

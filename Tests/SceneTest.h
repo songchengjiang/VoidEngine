@@ -201,26 +201,6 @@ public:
 //            node->addRenderableObject(ps);
 //            entity->addChild(node);
         }
-        
-        {
-            veNode *lightNode = _sceneManager->createNode("IBNode");
-            veIBLight *ibLight = static_cast<veIBLight *>(_sceneManager->createLight(veLight::IB, "ibLight"));
-            lightNode->addComponent(ibLight);
-            veTransformer *lightTranser = new veTransformer;
-            lightNode->addComponent(lightTranser);
-            //point->addComponent(new LightUpdater(15.0f, 0.0f));
-            ibLight->setIntensity(1.0f);
-            
-            veTexture *diffLighting = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/arches_irradiance.ktx", "DiffLighting"));
-            diffLighting->setWrapMode(veTexture::REPEAT);
-            diffLighting->setFilterMode(veTexture::LINEAR);
-            veTexture *specLighting = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/arches_radiance.ktx", "SpecLighting"));
-            specLighting->setWrapMode(veTexture::REPEAT);
-            specLighting->setFilterMode(veTexture::LINEAR_MIP_MAP_LINEAR);
-            ibLight->setDiffuseLightingTexture(diffLighting);
-            ibLight->setSpecularLightingTexture(specLighting);
-            root->addChild(lightNode);
-        }
     
 
         {
@@ -406,7 +386,7 @@ public:
         {
             veNode *lightNode = _sceneManager->createNode("directionalLightNode");
             lightNode->setMask(LIGHTING_FLAG);
-            veLight *directional = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight", "directional0"));
+            veLight *directional = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "directional0"));
             lightNode->addComponent(directional);
             veTransformer *lightTranser = new veTransformer;
             //lightNode->addComponent(lightTranser);
@@ -574,6 +554,17 @@ public:
 //                ImGui::ShowTestWindow(&show_test_window);
 //            }
         });
+        
+        {
+            veTexture *irradiance = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/arches_irradiance.ktx", "irradiance"));
+            irradiance->setWrapMode(veTexture::REPEAT);
+            irradiance->setFilterMode(veTexture::LINEAR);
+            veTexture *radiance = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/arches_radiance.ktx", "radiance"));
+            radiance->setWrapMode(veTexture::REPEAT);
+            radiance->setFilterMode(veTexture::LINEAR_MIP_MAP_LINEAR);
+            _camera->setIrradianceTexture(irradiance);
+            _camera->setRadianceTexture(radiance);
+        }
         
         
         _sceneManager->getRootNode()->addComponent(imguiComp);

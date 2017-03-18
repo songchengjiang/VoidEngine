@@ -161,36 +161,6 @@ veMaterial* veDeferredRenderPipeline::createDirectionalLightMaterial(veLight *li
     pass->addUniform(new veUniform("u_lightMatrixs", &veMat4::IDENTITY, 1));
     pass->addUniform(new veUniform("u_shadowCascadedLevels", 0.f));
     pass->addUniform(new veUniform("u_shadowCascadedCount", 0.f));
-    pass->addUniform(new veUniform("u_shadowTex", 4));
-    
-    return material;
-}
-
-veMaterial* veDeferredRenderPipeline::createIBLightMaterial(veLight *light)
-{
-    auto material = new veMaterial;
-    auto technique = new veTechnique;
-    auto pass = new vePass;
-    material->addTechnique(technique);
-    technique->addPass(pass);
-    
-    initLightCommomParams(light, pass);
-    pass->setRenderPass(vePass::FORWARD_PASS);
-    pass->depthTest() = false;
-    pass->depthWrite() = false;
-    pass->stencilTest() = false;
-    pass->cullFace() = true;
-    pass->cullFaceMode() = GL_BACK;
-    pass->blendFunc().src = GL_ONE;
-    pass->blendFunc().dst = GL_ONE;
-    pass->blendEquation() = GL_FUNC_ADD;
-    pass->setShader(new veShader(veShader::VERTEX_SHADER, SCREEN_BASED_LIGHT_VERTEX_SHADER));
-    pass->setShader(new veShader(veShader::FRAGMENT_SHADER, IB_LIGHT_FRAGMENT_SHADER));
-    pass->addUniform(new veUniform("u_lightDirection", veVec3::ZERO));
-    pass->addUniform(new veUniform("u_specularMipMapCount", 1.0f));
-    pass->addUniform(new veUniform("u_diffuseLighting", 4));
-    pass->addUniform(new veUniform("u_specularLighting", 5));
-    
     
     return material;
 }
@@ -238,7 +208,6 @@ veMaterial* veDeferredRenderPipeline::createPointLightMaterial(veLight *light)
     pass1->addUniform(new veUniform("u_lightPosition", veVec3(0.0f)));
     pass1->addUniform(new veUniform("u_lightMatrix", veMat4::IDENTITY));
     pass1->addUniform(new veUniform("u_lightARI", 0.0f));
-    pass1->addUniform(new veUniform("u_shadowTex", 4));
     pass1->setApplyFunctionCallback([]() {
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     });
@@ -292,7 +261,6 @@ veMaterial* veDeferredRenderPipeline::createSpotLightMaterial(veLight *light)
     pass1->addUniform(new veUniform("u_lightARI", 0.0f));
     pass1->addUniform(new veUniform("u_lightInnerAngleCos", 0.0f));
     pass1->addUniform(new veUniform("u_lightOuterAngleCos", 0.0f));
-    pass1->addUniform(new veUniform("u_shadowTex", 4));
     pass1->setApplyFunctionCallback([]() {
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     });
@@ -314,11 +282,15 @@ void veDeferredRenderPipeline::initLightCommomParams(veLight *light, vePass *pas
     pass->addUniform(new veUniform("u_lightShadowStrength", 0.0f));
     pass->addUniform(new veUniform("u_lightShadowSoft", 0.0f));
     pass->addUniform(new veUniform("u_lightShadowSoftness", 0.0f));
+    pass->addUniform(new veUniform("u_radianceMipMapCount", 1.0f));
     
     pass->addUniform(new veUniform("u_depthTex", 0));
     pass->addUniform(new veUniform("u_RT0", 1));
     pass->addUniform(new veUniform("u_RT1", 2));
     pass->addUniform(new veUniform("u_RT2", 3));
+    pass->addUniform(new veUniform("u_shadowTex", 4));
+    pass->addUniform(new veUniform("u_irradiance", 5));
+    pass->addUniform(new veUniform("u_radiance", 6));
 }
 
 void veDeferredRenderPipeline::updateLightCommomParams(veLight *light, vePass *pass, veCamera *camera)
@@ -332,12 +304,16 @@ void veDeferredRenderPipeline::updateLightCommomParams(veLight *light, vePass *p
     pass->getUniform("u_lightShadowStrength")->setValue(light->getShadowStrength());
     pass->getUniform("u_lightShadowSoft")->setValue(light->isUseSoftShadow() ? 1.0f : 0.0f);
     pass->getUniform("u_lightShadowSoftness")->setValue(light->getShadowSoftness());
+    pass->getUniform("u_radianceMipMapCount")->setValue((veReal)camera->getRadianceTexture()->getMipMapLevelCount());
     
     auto &params = _cameraRenderParamsList[camera];
     pass->setTexture(vePass::DEPTH_STENCIL_BUFFER_TEXTURE, params.DS.get());
     pass->setTexture(vePass::DIFFUSE_TEXTURE, params.RT0.get());
-    pass->setTexture(vePass::SPECULAR_TEXTURE, params.RT1.get());
-    pass->setTexture(vePass::EMISSIVE_TEXTURE, params.RT2.get());
+    pass->setTexture(vePass::ROUGHNESS_TEXTURE, params.RT1.get());
+    pass->setTexture(vePass::METALLIC_TEXTURE, params.RT2.get());
+    pass->setTexture(vePass::SHADOW_TEXTURE, light->getShadowTexture());
+    pass->setTexture(vePass::IRRADIANCE_TEXTURE, camera->getIrradianceTexture());
+    pass->setTexture(vePass::RADIANCE_TEXTURE, camera->getRadianceTexture());
 }
 
 void veDeferredRenderPipeline::renderLights(veCamera *camera, unsigned int contextID)
@@ -384,18 +360,7 @@ void veDeferredRenderPipeline::renderLights(veCamera *camera, unsigned int conte
                 }
             }
         }
-        
-        {
-            auto iter = lightListMap.find(veLight::IB);
-            if (iter != lightListMap.end()) {
-                auto &iBLightList = iter->second;
-                for (auto &light : iBLightList) {
-                    if (light->isEnabled()) {
-                        renderIBLight(light.get(), camera, contextID);
-                    }
-                }
-            }
-        }
+
     }
 }
 
@@ -408,7 +373,7 @@ void veDeferredRenderPipeline::cullPointLight(veLight *light, veCamera *camera, 
     vePass *pass = material->getTechnique(0)->getPass(0);
     
     veMat4 lightInWorld = light->getAttachedNode()->getNodeToWorldMatrix();
-    _pointLightRenderer->render(lightInWorld * veMat4::scale(veVec3(light->getAttenuationRange())), pass, camera, contextID);
+    _pointLightRenderer->render(lightInWorld * veMat4::scale(veVec3(light->getAttenuationRange() * 1.1f)), pass, camera, contextID);
 }
 
 void veDeferredRenderPipeline::cullSpotLight(veLight *light, veCamera *camera, unsigned int contextID)
@@ -445,8 +410,7 @@ void veDeferredRenderPipeline::renderDirectionalLight(veLight *light, veCamera *
     vePass *pass = material->getTechnique(0)->getPass(0);
     updateLightCommomParams(light, pass, camera);
     pass->getUniform("u_shadowCascadedCount")->setValue((veReal)static_cast<veDirectionalLight *>(light)->getShadowCascadedCount());
-    
-    pass->setTexture(vePass::OPACITYT_TEXTURE, light->getShadowTexture());
+
     
     veMat4 lightInWorld = light->getAttachedNode()->getNodeToWorldMatrix();
     lightInWorld[0][3] = lightInWorld[1][3] = lightInWorld[2][3] = 0.0f;
@@ -466,26 +430,6 @@ void veDeferredRenderPipeline::renderDirectionalLight(veLight *light, veCamera *
     _directionalLightRenderer->render(lightInWorld, pass, camera, contextID);
 }
 
-void veDeferredRenderPipeline::renderIBLight(veLight *light, veCamera *camera, unsigned int contextID)
-{
-    veIBLight *iBLight = static_cast<veIBLight *>(light);
-    if (iBLight->getDiffuseLightingTexture() && iBLight->getSpecularLightingTexture()) {
-        auto &material = _lightRenderParamsList[light];
-        if (!material.valid()) {
-            _lightRenderParamsList[light] = createIBLightMaterial(light);
-        }
-        
-        vePass *pass = material->getTechnique(0)->getPass(0);
-        updateLightCommomParams(light, pass, camera);
-        
-        
-        pass->getUniform("u_specularMipMapCount")->setValue((veReal)(iBLight->getSpecularLightingTexture()->getMipMapLevelCount() - 1));
-        pass->setTexture(vePass::LIGHTMAP_TEXTURE, iBLight->getDiffuseLightingTexture());
-        pass->setTexture(vePass::REFLECTION_TEXTURE, iBLight->getSpecularLightingTexture());
-        _iBLightRenderer->render(veMat4::IDENTITY, pass, camera, contextID);
-    }
-}
-
 void veDeferredRenderPipeline::renderPointLight(veLight *light, veCamera *camera, unsigned int contextID)
 {
     auto &material = _lightRenderParamsList[light];
@@ -495,7 +439,6 @@ void veDeferredRenderPipeline::renderPointLight(veLight *light, veCamera *camera
     
     vePointLight *pointLight = static_cast<vePointLight *>(light);
     pass->getUniform("u_lightARI")->setValue(pointLight->getAttenuationRangeInverse());
-    pass->setTexture(vePass::OPACITYT_TEXTURE, light->getShadowTexture());
 
     veMat4 lightInWorld = light->getAttachedNode()->getNodeToWorldMatrix();
     if (light->isShadowEnabled()) {
@@ -504,7 +447,7 @@ void veDeferredRenderPipeline::renderPointLight(veLight *light, veCamera *camera
         pass->getUniform("u_lightMatrix")->setValue(lightShadowMat);
     }
     pass->getUniform("u_lightPosition")->setValue(veVec3(lightInWorld[0][3], lightInWorld[1][3], lightInWorld[2][3]));
-    _pointLightRenderer->render(lightInWorld * veMat4::scale(veVec3(pointLight->getAttenuationRange())), pass, camera, contextID);
+    _pointLightRenderer->render(lightInWorld * veMat4::scale(veVec3(pointLight->getAttenuationRange() * 1.1f)), pass, camera, contextID);
 }
 
 void veDeferredRenderPipeline::renderSpotLight(veLight *light, veCamera *camera, unsigned int contextID)
@@ -519,7 +462,6 @@ void veDeferredRenderPipeline::renderSpotLight(veLight *light, veCamera *camera,
     pass->getUniform("u_lightARI")->setValue(spotLight->getAttenuationRangeInverse());
     pass->getUniform("u_lightInnerAngleCos")->setValue(spotLight->getInnerAngleCos());
     pass->getUniform("u_lightOuterAngleCos")->setValue(spotLight->getOuterAngleCos());
-    pass->setTexture(vePass::OPACITYT_TEXTURE, light->getShadowTexture());
     float rangeScale = spotLight->getAttenuationRange() * spotLight->getOuterAngle() / 45.0f;
     
     veMat4 lightInWorld = light->getAttachedNode()->getNodeToWorldMatrix();

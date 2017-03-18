@@ -39,6 +39,9 @@ uniform highp sampler2D u_RT0;
 uniform sampler2D u_RT1;
 uniform sampler2D u_RT2;
 uniform sampler2DArrayShadow u_shadowTex;
+uniform sampler2D u_irradiance;
+uniform sampler2D u_radiance;
+uniform float u_radianceMipMapCount;
 
 uniform mat4 u_InvViewMat; 
 uniform mat4 u_InvViewProjectMat; 
@@ -100,6 +103,11 @@ void main() {
     vec4 RT1 = texture(u_RT1, v_texcoord);
     vec4 RT2 = texture(u_RT2, v_texcoord);
     if (RT0.w <= 0.0){ fragColor = vec4(0.0); return; }
+    
+    vec3 albedo = RT1.xyz;
+    vec3 specular = RT2.xyz;
+    float roughness = RT1.w;
+    float metallic = RT2.w;
 
     vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xyz)), 0.0)).xyz;
     highp float depth = texture(u_depthTex, v_texcoord).r;
@@ -112,74 +120,36 @@ void main() {
     float NdotH = max(0.0, dot(worldNormal, H));
     float NdotV = max(0.0, dot(worldNormal, eyeDir));
     float HdotV = max(0.0, dot(H, eyeDir));
-    float diffFactor = OrenNayar(worldNormal, -u_lightDirection, eyeDir, NdotL, NdotV, RT1.w);
-    float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);
+    float diffFactor = OrenNayar(worldNormal, -u_lightDirection, eyeDir, NdotL, NdotV, roughness);
+    //float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, roughness, metallic);
+    
+    // cook-torrance brdf
+    vec3 F0 = vec3(0.04);
+    F0 = mix(F0, albedo, metallic);
+    float NDF = DistributionGGX(NdotH, roughness);
+    float G   = GeometrySmith(NdotV, NdotL, roughness);
+    vec3 F    = FresnelSchlick(HdotV, F0);
+    vec3 kS = F;
+    vec3 kD = vec3(1.0) - kS;
+    kD *= 1.0 - metallic;
+    vec3 nominator    = NDF * G * F;
+    float denominator = 4 * NdotV * NdotL + 0.001;
+    vec3 brdf = nominator / denominator;
+    vec3 Lo = (kD * albedo * diffFactor + brdf * NdotL);
 
-    vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * shadowing(worldPosition.xyz, length(eyePosition));
-
-    fragColor = vec4(clamp((linearColor(RT1.xyz) * diffFactor + linearColor(RT2.xyz) * specFactor) * lightIntensity, 0.0, 1.0), 1.0);
-});
-
-static const char* IB_LIGHT_FRAGMENT_SHADER =
-SHADER_COMMON_FUNCTION
-STRINGIFY(
-uniform highp sampler2D u_depthTex;
-uniform highp sampler2D u_RT0;
-uniform sampler2D u_RT1;
-uniform sampler2D u_RT2;
-uniform sampler2DShadow u_shadowTex;
-uniform sampler2D u_diffuseLighting;
-uniform sampler2D u_specularLighting;
-
-uniform mat4 u_InvViewMat; 
-uniform mat4 u_InvViewProjectMat; 
-uniform mat4 u_lightMatrix;   
-uniform vec3 u_cameraPosInWorld;   
-
-uniform vec3  u_lightColor;   
-uniform float u_lightIntensity;  
-uniform float u_specularMipMapCount;
-
-uniform float u_lightShadowEnabled;  
-uniform float u_lightShadowBias;  
-uniform float u_lightShadowStrength;  
-uniform float u_lightShadowSoft;     
-uniform float u_lightShadowSoftness;    
-
-in highp vec2 v_texcoord;
-layout(location = 0) out vec4 fragColor;
-
-vec2 caculateCoordsWithLatLong(vec3 D) {   
-    return vec2((atan(D.x, D.z) / PI + 1.0) * 0.5, (acos(D.y) / PI));
-}   
-
-float luminance(vec3 col) {         
-    return 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
-}        
-
-void main() { 
-    vec4 RT0 = texture(u_RT0, v_texcoord);
-    vec4 RT1 = texture(u_RT1, v_texcoord);
-    vec4 RT2 = texture(u_RT2, v_texcoord);
-    if (RT0.w <= 0.0){ fragColor = vec4(0.0); return; }
-
-    vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xyz)), 0.0)).xyz;
-    highp float depth = texture(u_depthTex, v_texcoord).r;
-    vec4 worldPosition = u_InvViewProjectMat * vec4(v_texcoord * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);
-    worldPosition.xyz /= worldPosition.w;
-    vec3 eyeDir = normalize(u_cameraPosInWorld - worldPosition.xyz);
-    float NdotV = max(0.0, dot(worldNormal, eyeDir));
-
-    vec2 diffCoords = caculateCoordsWithLatLong(worldNormal);
+    //IBL
+    vec2 irradianceCoords = caculateCoordsWithLatLong(worldNormal);
     vec3 r = normalize(reflect(-eyeDir, worldNormal));
-    vec2 specCoords = caculateCoordsWithLatLong(r);
-    vec3 diffLighing = texture(u_diffuseLighting, diffCoords).rgb;
-    vec3 diffLightIntensity = diffLighing * (1.0 - RT2.w);
-    vec3 specLightIntensity = textureLod(u_specularLighting, specCoords, RT1.w * u_specularMipMapCount).rgb;
-    float lum = luminance(specLightIntensity);
-    lum = lum / (lum + 1.0);
-    fragColor = vec4(clamp((linearColor(RT1.xyz) * diffLightIntensity + linearColor(RT1.xyz * RT2.xyz) * pow(lum, (1.0 - RT2.w)) * specLightIntensity) * u_lightIntensity, 0.0, 1.0), 1.0);
+    vec2 radianceCoords = caculateCoordsWithLatLong(r);
+    vec3 irradiance = texture(u_irradiance, irradianceCoords).rgb;
+    vec3 radiance = textureLod(u_radiance, radianceCoords, roughness * u_radianceMipMapCount).rgb;
+    vec3 ambient = kD * irradiance * albedo + kS * radiance;
+    
+    float shadow = shadowing(worldPosition.xyz, length(eyePosition));
+    vec3 lightIntensity = u_lightColor * u_lightIntensity;
+    fragColor = vec4(clamp(linearColor((ambient + Lo * shadow) * lightIntensity), 0.0, 1.0), 1.0);
 });
+
 
 static const char* POINT_LIGHT_FRAGMENT_SHADER =
 SHADER_COMMON_FUNCTION
@@ -188,7 +158,10 @@ uniform highp sampler2D u_depthTex;
 uniform highp sampler2D u_RT0;
 uniform sampler2D u_RT1;
 uniform sampler2D u_RT2;
-uniform samplerCubeShadow u_shadowTex; 
+uniform samplerCubeShadow u_shadowTex;
+uniform sampler2D u_irradiance;
+uniform sampler2D u_radiance;
+uniform float u_radianceMipMapCount;
 
 uniform highp float u_screenWidth;               
 uniform highp float u_screenHeight;               
@@ -251,6 +224,11 @@ void main() {
     vec4 RT2 = texture(u_RT2, texCoords);
     if (RT0.w <= 0.0){ fragColor = vec4(0.0); return; }
 
+    vec3 albedo = RT1.xyz;
+    vec3 specular = RT2.xyz;
+    float roughness = RT1.w;
+    float metallic = RT2.w;
+    
     vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xyz)), 0.0)).xyz;
     highp float depth = texture(u_depthTex, texCoords).r;
     highp vec4 worldPosition = u_InvViewProjectMat * vec4(texCoords * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);
@@ -258,9 +236,8 @@ void main() {
 
     vec3 eyeDir = normalize(u_cameraPosInWorld - worldPosition.xyz);
     vec3 lightDir = u_lightPosition - worldPosition.xyz;
-    float attDis = 1.0 + length(lightDir) * u_lightARI;
-    attDis = 1.0 / (attDis * attDis);
-    float attenuation = clamp(attDis, 0.0, 1.0);
+    vec3 attDis = lightDir * u_lightARI;
+    float attenuation = clamp(1.0 - dot(attDis, attDis), 0.0, 1.0);
     lightDir = normalize(lightDir);
 
     float NdotL = max(0.0, dot(worldNormal, lightDir));
@@ -268,11 +245,36 @@ void main() {
     float NdotH = max(0.0, dot(worldNormal, H));
     float NdotV = max(0.0, dot(worldNormal, eyeDir));
     float HdotV = max(0.0, dot(H, eyeDir));
-    float diffFactor = OrenNayar(worldNormal, lightDir, eyeDir, NdotL, NdotV, RT1.w);
-    float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);
-
-    vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * attenuation * shadowing(worldPosition.xyz);
-    fragColor = vec4(clamp((linearColor(RT1.xyz) * diffFactor + linearColor(RT2.xyz) * specFactor) * lightIntensity, 0.0, 1.0), 1.0);
+    float diffFactor = OrenNayar(worldNormal, lightDir, eyeDir, NdotL, NdotV, roughness);
+    //float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);
+    
+    // cook-torrance brdf
+    vec3 F0 = vec3(0.04);
+    F0 = mix(F0, albedo, metallic);
+    float NDF = DistributionGGX(NdotH, roughness);
+    float G   = GeometrySmith(NdotV, NdotL, roughness);
+    vec3 F    = FresnelSchlick(HdotV, F0);
+    vec3 kS = F;
+    vec3 kD = vec3(1.0) - kS;
+    kD *= 1.0 - metallic;
+    vec3 nominator    = NDF * G * F;
+    float denominator = 4 * NdotV * NdotL + 0.001;
+    vec3 brdf = nominator / denominator;
+    vec3 Lo = kD * albedo * diffFactor + brdf * NdotL;
+    
+    //IBL
+    vec2 irradianceCoords = caculateCoordsWithLatLong(worldNormal);
+    vec3 r = normalize(reflect(-eyeDir, worldNormal));
+    vec2 radianceCoords = caculateCoordsWithLatLong(r);
+    vec3 irradiance = texture(u_irradiance, irradianceCoords).rgb;
+    vec3 radiance = textureLod(u_radiance, radianceCoords, roughness * u_radianceMipMapCount).rgb;
+    vec3 ambient = kD * irradiance * albedo + kS * radiance;
+    
+    float shadow = shadowing(worldPosition.xyz);
+    vec3 lightIntensity = u_lightColor * u_lightIntensity * attenuation;
+    fragColor = vec4(clamp(linearColor(ambient + Lo * shadow) * lightIntensity, 0.0, 1.0), 1.0);
+    
+    //fragColor = vec4(clamp((linearColor(RT1.xyz) * diffFactor + linearColor(RT2.xyz) * specFactor) * lightIntensity, 0.0, 1.0), 1.0);
 });
 
 static const char* SPOT_LIGHT_FRAGMENT_SHADER =
@@ -283,6 +285,9 @@ uniform highp sampler2D u_RT0;
 uniform sampler2D u_RT1;
 uniform sampler2D u_RT2;
 uniform sampler2DShadow u_shadowTex;
+uniform sampler2D u_irradiance;
+uniform sampler2D u_radiance;
+uniform float u_radianceMipMapCount;
 
 uniform float u_screenWidth; 
 uniform float u_screenHeight; 
@@ -342,6 +347,11 @@ void main() {
     vec4 RT1 = texture(u_RT1, texCoords);
     vec4 RT2 = texture(u_RT2, texCoords);
     if (RT0.w <= 0.0){ fragColor = vec4(0.0); return; }
+    
+    vec3 albedo = RT1.xyz;
+    vec3 specular = RT2.xyz;
+    float roughness = RT1.w;
+    float metallic = RT2.w;
 
     vec3 worldNormal = (u_InvViewMat * vec4(normalize(decode(RT0.xyz)), 0.0)).xyz;
     highp float depth = texture(u_depthTex, texCoords).r;
@@ -361,9 +371,32 @@ void main() {
     float NdotH = max(0.0, dot(worldNormal, H));
     float NdotV = max(0.0, dot(worldNormal, eyeDir));
     float HdotV = max(0.0, dot(H, eyeDir));
-    float diffFactor = OrenNayar(worldNormal, lightDir, eyeDir, NdotL, NdotV, RT1.w);
-    float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);
+    float diffFactor = OrenNayar(worldNormal, lightDir, eyeDir, NdotL, NdotV, roughness);
+    //float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, RT1.w, RT2.w);
 
-    vec3 lightIntensity = vec3(u_lightColor.r, u_lightColor.g, u_lightColor.b) * u_lightIntensity * attenuation * shadowing(worldPosition.xyz);
-    fragColor = vec4(clamp((linearColor(RT1.xyz) * diffFactor + linearColor(RT2.xyz) * specFactor) * lightIntensity, 0.0, 1.0), 1.0);
+    // cook-torrance brdf
+    vec3 F0 = vec3(0.04);
+    F0 = mix(F0, albedo, metallic);
+    float NDF = DistributionGGX(NdotH, roughness);
+    float G   = GeometrySmith(NdotV, NdotL, roughness);
+    vec3 F    = FresnelSchlick(HdotV, F0);
+    vec3 kS = F;
+    vec3 kD = vec3(1.0) - kS;
+    kD *= 1.0 - metallic;
+    vec3 nominator    = NDF * G * F;
+    float denominator = 4 * NdotV * NdotL + 0.001;
+    vec3 brdf = nominator / denominator;
+    vec3 Lo = kD * albedo * diffFactor + brdf * NdotL;
+    
+    //IBL
+    vec2 irradianceCoords = caculateCoordsWithLatLong(worldNormal);
+    vec3 r = normalize(reflect(-eyeDir, worldNormal));
+    vec2 radianceCoords = caculateCoordsWithLatLong(r);
+    vec3 irradiance = texture(u_irradiance, irradianceCoords).rgb;
+    vec3 radiance = textureLod(u_radiance, radianceCoords, roughness * u_radianceMipMapCount).rgb;
+    vec3 ambient = kD * irradiance * albedo + kS * radiance;
+    
+    float shadow = shadowing(worldPosition.xyz);
+    vec3 lightIntensity = u_lightColor * u_lightIntensity * attenuation;
+    fragColor = vec4(clamp(linearColor(ambient + Lo * shadow) * lightIntensity, 0.0, 1.0), 1.0);
 });

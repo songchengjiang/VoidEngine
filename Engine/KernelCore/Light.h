@@ -29,7 +29,6 @@ public:
 		DIRECTIONAL,
 		POINT,
 		SPOT,
-        IB,
 		AREA,
 	};
 
@@ -168,29 +167,6 @@ protected:
 	float  _outerAngleCos;
 
 	VE_Ptr<veCamera> _shadowCamera;
-};
-
-class VE_EXPORT veIBLight : public veLight
-{
-    friend class veSceneManager;
-public:
-    
-    ~veIBLight();
-    
-    void setDiffuseLightingTexture(veTexture *diffTex) { _diffuseLightingTex = diffTex; }
-    veTexture* getDiffuseLightingTexture() const { return _diffuseLightingTex.get(); }
-    void setSpecularLightingTexture(veTexture *specTex) { _specularLightingTex = specTex; }
-    veTexture* getSpecularLightingTexture() const { return _specularLightingTex.get(); }
-    
-    
-protected:
-    
-    veIBLight();
-    
-protected:
-    
-    VE_Ptr<veTexture> _diffuseLightingTex;
-    VE_Ptr<veTexture> _specularLightingTex;
 };
 
 typedef std::vector< VE_Ptr<veLight> > veLightList;

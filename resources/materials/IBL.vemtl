@@ -22,7 +22,7 @@
                                   "u_diffuse": [1.000000,1.000000,1.000000],
                                   "u_specular": [1.000000,1.000000,1.00000],
                                   "u_roughness":0.200000,
-                                  "u_fresnel":0.800000,
+                                  "u_metallic":0.800000,
                                   "u_opacity":0.2,
                                   "u_reflectivity":0.000000
                               },

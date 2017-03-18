@@ -25,7 +25,6 @@ protected:
     veMaterial* createDirectionalLightMaterial(veLight *light);
     veMaterial* createPointLightMaterial(veLight *light);
     veMaterial* createSpotLightMaterial(veLight *light);
-    veMaterial* createIBLightMaterial(veLight *light);
     
     void renderLights(veCamera *camera, unsigned int contextID);
     void cullPointLight(veLight *light, veCamera *camera, unsigned int contextID);
@@ -34,7 +33,6 @@ protected:
     void renderDirectionalLight(veLight *light, veCamera *camera, unsigned int contextID);
     void renderPointLight(veLight *light, veCamera *camera, unsigned int contextID);
     void renderSpotLight(veLight *light, veCamera *camera, unsigned int contextID);
-    void renderIBLight(veLight *light, veCamera *camera, unsigned int contextID);
     
 protected:
     
@@ -43,7 +41,7 @@ protected:
         VE_Ptr<veTexture>             DS;
         VE_Ptr<veTexture>             RT0;//normal/lightMask
         VE_Ptr<veTexture>             RT1;//diffuse/roughness
-        VE_Ptr<veTexture>             RT2;//specular/fresnelFactor
+        VE_Ptr<veTexture>             RT2;//specular/metallic
     };
     
 protected:

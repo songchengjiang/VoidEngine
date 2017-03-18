@@ -22,52 +22,65 @@ public:
 	IBLTest() {
 		veNode *root = _sceneManager->createNode("root");
         
-        float roughness = 0.0f;
-        for (float x = -15.0; x <= 15.0; x += 5) {
-            float fresnel = 0.0f;
-            for (float y = -15.0; y <= 15.0; y += 5) {
+        int nrRows    = 7;
+        int nrColumns = 7;
+        float spacing = 2.5;
+        
+        for (int row = 0; row < nrRows; ++row) {
+            for (int col = 0; col < nrColumns; ++col) {
                 auto IBLMats = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "materials/IBL.vemtl", "IBL"));
                 veNode *entity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "sphere-0"));
                 veTransformer *transer = new veTransformer;
                 entity->addComponent(transer);
-                transer->setPosition(veVec3(x, y, 0.0f));
-                transer->setScale(veVec3(2.0f));
+                transer->setPosition(veVec3((float)(col - (nrColumns / 2)) * spacing,
+                                            (float)(row - (nrRows / 2)) * spacing,
+                                            0.0f));
+                transer->setScale(veVec3(1.0f));
                 root->addChild(entity);
                 
+                // we clamp the roughness to 0.025 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look a bit off
+                // on direct lighting.
+                float roughness = (float)col / (float)nrColumns;
+                roughness = roughness <= 0.0? 0.025: roughness;
                 IBLMats->getMaterial(0)->getTechnique(0)->getPass(0)->getUniform("u_roughness")->setValue(roughness);
-                IBLMats->getMaterial(0)->getTechnique(0)->getPass(0)->getUniform("u_fresnel")->setValue(fresnel);
+                IBLMats->getMaterial(0)->getTechnique(0)->getPass(0)->getUniform("u_metallic")->setValue((float)row / (float)nrRows);
                 setRenderableObjectMat(entity, IBLMats->getMaterial(0));
-                fresnel += 1.0f / 6.0f;
             }
-            roughness += 1.0f / 6.0f;
         }
         
-
-		{
-            veNode *lightNode = _sceneManager->createNode("IBNode");
-            veIBLight *ibLight = static_cast<veIBLight *>(_sceneManager->createLight(veLight::IB, "ibLight"));
-            lightNode->addComponent(ibLight);
-			veTransformer *lightTranser = new veTransformer;
-			lightNode->addComponent(lightTranser);
-			//point->addComponent(new LightUpdater(15.0f, 0.0f));
-			ibLight->setIntensity(1.0f);
+        {
+            veNode *lightNode = _sceneManager->createNode("directionalNode");
+            veLight *directional = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight", "directional0"));
+            lightNode->addComponent(directional);
+            veTransformer *lightTranser = new veTransformer;
+            lightNode->addComponent(lightTranser);
+            lightTranser->setPosition(veVec3(0.0f, 0.0f, 10.0f));
+            directional->setIntensity(0.5f);
             
-            veTexture *diffLighting = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/bolonga_irradiance.ktx", "DiffLighting"));
-            diffLighting->setWrapMode(veTexture::REPEAT);
-            diffLighting->setFilterMode(veTexture::LINEAR);
-            veTexture *specLighting = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/bolonga_radiance.ktx", "SpecLighting"));
-            specLighting->setWrapMode(veTexture::REPEAT);
-            specLighting->setFilterMode(veTexture::LINEAR_MIP_MAP_LINEAR);
-            ibLight->setDiffuseLightingTexture(diffLighting);
-            ibLight->setSpecularLightingTexture(specLighting);
-			root->addChild(lightNode);
-		}
+            veNode *lightentity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/sphere.vem", "directional0-sphere"));
+            lightentity->setMatrix(veMat4::scale(veVec3(0.2f)));
+            lightNode->addChild(lightentity);
+            directional->setUseSoftShadow(true);
+            directional->setShadowSoftness(0.005f);
+            root->addChild(lightNode);
+        }
         
         {
             auto skyBox = _sceneManager->createSkyBox("skybox");
             _sceneManager->setSkyBox(skyBox);
             veMaterialArray *materials = static_cast<veMaterialArray *>(veFile::instance()->readFile(_sceneManager, "skyboxs/skybox-bolonga.vemtl", "skybox-mats"));
             skyBox->setMaterial(materials->getMaterial(0));
+        }
+        
+        {
+            veTexture *irradiance = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/bolonga_irradiance.ktx", "irradiance"));
+            irradiance->setWrapMode(veTexture::REPEAT);
+            irradiance->setFilterMode(veTexture::LINEAR);
+            veTexture *radiance = static_cast<veTexture *>(veFile::instance()->readFile(_sceneManager, "textures/bolonga_radiance.ktx", "radiance"));
+            radiance->setWrapMode(veTexture::REPEAT);
+            radiance->setFilterMode(veTexture::LINEAR_MIP_MAP_LINEAR);
+            _camera->setIrradianceTexture(irradiance);
+            _camera->setRadianceTexture(radiance);
         }
 
 		_sceneManager->getRootNode()->addChild(root);

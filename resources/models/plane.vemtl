@@ -25,7 +25,7 @@
                                 "u_specular": [0.200000,0.200000,0.200000
                                 ],
                                 "u_roughness":0.600000,
-                                "u_fresnel":0.400000,
+                                "u_metallic":0.400000,
                                 "u_opacity":1.0,
                                 "u_reflectivity":0.000000
                             },                            
@@ -67,7 +67,7 @@
                                 "u_specular": [1.000000,1.000000,1.000000
                                 ],
                                 "u_roughness":1.0,
-                                "u_fresnel":0.0,
+                                "u_metallic":0.0,
                                 "u_opacity":1.0,
                                 "u_reflectivity":0.0,
                                 "u_diffuseTex":0,

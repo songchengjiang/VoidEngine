@@ -50,8 +50,20 @@ public:
 	};
 
 	~veCamera();
-
+    
+    const vePlane& getFrustumPlane(FrustumPlane fp);
+    
+    virtual void cull(veNodeList &visibledNodeList) = 0;
+    
+    virtual void setMatrix(const veMat4 &mat) override;
+    virtual void refresh() override;
+    virtual bool visit(veNodeVisitor &visitor) override;
+    virtual bool isOutOfFrustum(const veBoundingBox &bbox);
+    
 	virtual void update(veSceneManager *sm, const veMat4 &transform) override;
+    
+    void resize(int width, int height);
+    veRenderQueue* getRenderQueue() { return _renderQueue; }
 
 	void setProjectionMatrixAsOrtho(float left, float right, float bottom, float top, float zNear, float zFar);
 	void setProjectionMatrixAsPerspective(float fovy, float aspectRatio, float zNear, float zFar);
@@ -63,8 +75,6 @@ public:
 	void setViewMatrix(const veMat4 &mat);
 	//veMat4& viewMatrix() { return _viewMat; }
 	const veMat4& viewMatrix() const { return _viewMat; }
-
-	veVec3 convertScreenCoordsToWorldCoords(const veVec2 &sCoords, veReal zDepth = -1.0f);
 
 	void setFrameBufferObject(veFrameBufferObject *fbo);
 	veFrameBufferObject* getFrameBufferObject() { return _fbo.get(); }
@@ -78,28 +88,20 @@ public:
 	void setClearMask(unsigned int mask) { _clearMask = mask; }
 	unsigned int getClearMask() const { return _clearMask; }
 
-	const vePlane& getFrustumPlane(FrustumPlane fp);
-
-	virtual void cull(veNodeList &visibledNodeList) = 0;
-
-	veRenderQueue* getRenderQueue() { return _renderQueue; }
-
-	virtual void setMatrix(const veMat4 &mat) override;
-	virtual void refresh() override;
-
-	virtual bool visit(veNodeVisitor &visitor) override;
-	virtual bool isOutOfFrustum(const veBoundingBox &bbox);
-
 	void setShadowCamera(bool isShadow) { _isShadowCamera = isShadow; }
 	bool isShadowCamera() const { return _isShadowCamera; }
 
     void getFrustumCorners(veVec3 *corners) const;
+    veVec3 convertScreenCoordsToWorldCoords(const veVec2 &sCoords, veReal zDepth = -1.0f);
     
     void addPostProcesser(vePostProcesser *processer);
     const vePostProcesserList& getPostProcesserList() const { return _postProcesserList; }
     virtual void removePostProcesser(const std::string &name);
-    
-    void resize(int width, int height);
+
+    void setIrradianceTexture(veTexture *irradiance) { _irradianceTexture = irradiance; }
+    veTexture* getIrradianceTexture() const { return _irradianceTexture.get(); }
+    void setRadianceTexture(veTexture *radiance) { _radianceTexture = radiance; }
+    veTexture* getRadianceTexture() const { return _radianceTexture.get(); }
 
 protected:
 
@@ -116,6 +118,10 @@ protected:
 	veViewport   _viewport;
 	veVec4       _clearColor;
 	unsigned int _clearMask;
+    
+    VE_Ptr<veTexture> _clearTexture;
+    VE_Ptr<veTexture> _irradianceTexture;
+    VE_Ptr<veTexture> _radianceTexture;
     
 	VE_Ptr<veFrameBufferObject> _fbo;
     vePostProcesserList         _postProcesserList;

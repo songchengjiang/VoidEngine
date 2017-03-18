@@ -27,27 +27,27 @@ public:
         FORWARD_PASS,
     };
 
+    //NOTICE: The order of TextureType is not equal to the Texture Unit
 	enum TextureType
 	{
-		AMBIENT_TEXTURE,
 		DIFFUSE_TEXTURE,
-		SPECULAR_TEXTURE,
 		EMISSIVE_TEXTURE,
 		NORMAL_TEXTURE,
-		HEIGHT_TEXTURE,
-		SHININESS_TEXTURE,
 		OPACITYT_TEXTURE,
 		DISPLACEMENT_TEXTURE,
 		LIGHTMAP_TEXTURE,
         ROUGHNESS_TEXTURE,
-		REFLECTION_TEXTURE,
-        
+        METALLIC_TEXTURE,
+        SHADOW_TEXTURE,
+        IRRADIANCE_TEXTURE,
+        RADIANCE_TEXTURE,
         //USED FOR FBO
         COLOR_BUFFER_TEXTURE,
         DEPTH_STENCIL_BUFFER_TEXTURE,
         
-        //USED FOR POST PROCESSER
-        OUTPUT_TEXTURE,
+        USER_TEXTURE0,
+        USER_TEXTURE1,
+        USER_TEXTURE2,
 	};
 	vePass();
 	~vePass();

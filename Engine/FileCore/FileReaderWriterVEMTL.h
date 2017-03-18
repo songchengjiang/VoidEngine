@@ -547,26 +547,14 @@ private:
 	}
 
 	vePass::TextureType getPassTextureType(const char *str) {
-		if (strcmp(AMBIENT_TEXTURE_KEY.c_str(), str) == 0) {
-			return vePass::AMBIENT_TEXTURE;
-		}
-		else if (strcmp(DIFFUSE_TEXTURE_KEY.c_str(), str) == 0) {
+		if (strcmp(DIFFUSE_TEXTURE_KEY.c_str(), str) == 0) {
 			return vePass::DIFFUSE_TEXTURE;
-		}
-		else if (strcmp(SPECULAR_TEXTURE_KEY.c_str(), str) == 0) {
-			return vePass::SPECULAR_TEXTURE;
 		}
 		else if (strcmp(EMISSIVE_TEXTURE_KEY.c_str(), str) == 0) {
 			return vePass::EMISSIVE_TEXTURE;
 		}
 		else if (strcmp(NORMAL_TEXTURE_KEY.c_str(), str) == 0) {
 			return vePass::NORMAL_TEXTURE;
-		}
-		else if (strcmp(HEIGHT_TEXTURE_KEY.c_str(), str) == 0) {
-			return vePass::HEIGHT_TEXTURE;
-		}
-		else if (strcmp(SHININESS_TEXTURE_KEY.c_str(), str) == 0) {
-			return vePass::SHININESS_TEXTURE;
 		}
 		else if (strcmp(OPACITYT_TEXTURE_KEY.c_str(), str) == 0) {
 			return vePass::OPACITYT_TEXTURE;
@@ -580,17 +568,14 @@ private:
         else if (strcmp(ROUGHNESS_TEXTURE_KEY.c_str(), str) == 0) {
             return vePass::ROUGHNESS_TEXTURE;
         }
-		else if (strcmp(REFLECTION_TEXTURE_KEY.c_str(), str) == 0) {
-			return vePass::REFLECTION_TEXTURE;
-		}
+        else if (strcmp(METALLIC_TEXTURE_KEY.c_str(), str) == 0) {
+            return vePass::METALLIC_TEXTURE;
+        }
         else if (strcmp(COLOR_BUFFER_TEXTURE_KEY.c_str(), str) == 0) {
             return vePass::COLOR_BUFFER_TEXTURE;
         }
         else if (strcmp(DEPTH_STENCIL_BUFFER_TEXTURE_KEY.c_str(), str) == 0) {
             return vePass::DEPTH_STENCIL_BUFFER_TEXTURE;
-        }
-        else if (strcmp(OUTPUT_TEXTURE_KEY.c_str(), str) == 0) {
-            return vePass::OUTPUT_TEXTURE;
         }
 
 		return vePass::DIFFUSE_TEXTURE;
