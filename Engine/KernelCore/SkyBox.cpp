@@ -12,8 +12,6 @@ public:
 	{}
 
 	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID) override {
-		if (!isNeedRendering())
-			return;
 		updateBuffer(contextID);
 
 		veMat4 cameraWorldMat = camera->getNodeToWorldMatrix();
@@ -51,7 +49,6 @@ veSkyBox::veSkyBox(veReal size)
 	, _sceneManager(nullptr)
 {
 	_renderer = new veSkyBoxRenderer(this);
-	_renderer->setRenderStageMask(veRenderer::RENDERING);
 	setSize(size);
 }
 

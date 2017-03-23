@@ -145,8 +145,6 @@ void veMeshRenderer::render(veNode *node, veRenderableObject *renderableObj, veC
 
 void veMeshRenderer::draw(veRenderCommand &command)
 {
-	if (!isNeedRendering())
-		return;
 
 	//vePass *renderPass = nullptr;
 	//if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::DIRECTIONAL_SHADOW) {

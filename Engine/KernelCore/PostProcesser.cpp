@@ -9,7 +9,6 @@ vePostProcesser::vePostProcesser(veSceneManager *sm)
 , _sceneManager(sm)
 {
     _renderer = new vePostProcesserRenderer;
-    _renderer->setRenderStageMask(_renderer->getRenderStageMask() & ~veRenderer::LIGHTINGING);
 }
 
 vePostProcesser::~vePostProcesser()

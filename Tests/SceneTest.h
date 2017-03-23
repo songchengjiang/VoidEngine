@@ -386,7 +386,7 @@ public:
         {
             veNode *lightNode = _sceneManager->createNode("directionalLightNode");
             lightNode->setMask(LIGHTING_FLAG);
-            veLight *directional = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/point0.velight", "directional0"));
+            veLight *directional = static_cast<veLight *>(veFile::instance()->readFile(_sceneManager, "lights/directional0.velight", "directional0"));
             lightNode->addComponent(directional);
             veTransformer *lightTranser = new veTransformer;
             //lightNode->addComponent(lightTranser);

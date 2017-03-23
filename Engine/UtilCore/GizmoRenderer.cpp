@@ -119,8 +119,6 @@ void veGizmoRenderer::render(veNode *node, veRenderableObject *renderableObj, ve
 
 void veGizmoRenderer::draw(veRenderCommand &command)
 {
-    if (!isNeedRendering())
-        return;
     if (!command.pass->apply(command))
         return;
     glBindVertexArray(_vaoBuffer->getData(command.contextID));

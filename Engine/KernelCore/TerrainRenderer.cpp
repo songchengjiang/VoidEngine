@@ -110,8 +110,6 @@ void veTerrainRenderer::render(veNode *node, veRenderableObject *renderableObj, 
 
 void veTerrainRenderer::draw(veRenderCommand &command)
 {
-	if (!isNeedRendering())
-		return;
 	if (!command.pass->apply(command))
 		return;
 

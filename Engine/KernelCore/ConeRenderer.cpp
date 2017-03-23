@@ -141,8 +141,6 @@ void veConeRenderer::render(veNode *node, veRenderableObject *renderableObj, veC
 
 void veConeRenderer::draw(veRenderCommand &command)
 {
-	if (!isNeedRendering())
-		return;
 	if (!command.pass->apply(command))
 		return;
 	glBindVertexArray(_vaoBuffer->getData(command.contextID));

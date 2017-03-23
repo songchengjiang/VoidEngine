@@ -175,8 +175,6 @@ void veBoxRenderer::render(veNode *node, veRenderableObject *renderableObj, veCa
 
 void veBoxRenderer::draw(veRenderCommand &command)
 {
-	if (!isNeedRendering())
-		return;
 	if (!command.pass->apply(command))
 		return;
 	glBindVertexArray(_vaoBuffer->getData(command.contextID));

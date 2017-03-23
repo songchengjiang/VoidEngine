@@ -83,8 +83,6 @@ public:
 	}
 
 	virtual void draw(veRenderCommand &command) override {
-		if (!isNeedRendering())
-			return;
 		command.pass->apply(command);
 		glBindVertexArray(_vaoBuffer->getData(command.contextID));
         if (0 < drawCount){
@@ -129,7 +127,6 @@ veDebuger::veDebuger(veSceneManager *sm)
 	, _needRefresh(true)
 {
 	_renderer = new veDebugRenderer(this);
-	_renderer->setRenderStageMask(veRenderer::RENDERING);
 }
 
 veDebuger::~veDebuger()

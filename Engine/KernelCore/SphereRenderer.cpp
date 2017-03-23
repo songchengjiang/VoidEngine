@@ -151,8 +151,6 @@ void veSphereRenderer::render(veNode *node, veRenderableObject *renderableObj, v
 
 void veSphereRenderer::draw(veRenderCommand &command)
 {
-	if (!isNeedRendering())
-		return;
 	if (!command.pass->apply(command))
 		return;
 	glBindVertexArray(_vaoBuffer->getData(command.contextID));
