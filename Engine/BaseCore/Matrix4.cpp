@@ -337,7 +337,10 @@ void veMat4::inverse()
 	veReal t20 = +(v4 * m10 - v2 * m11 + v0 * m13);
 	veReal t30 = -(v3 * m10 - v1 * m11 + v0 * m12);
 
-	veReal invDet = 1 / (t00 * m00 + t10 * m01 + t20 * m02 + t30 * m03);
+	veReal Det = t00 * m00 + t10 * m01 + t20 * m02 + t30 * m03;
+	if (veMath::veAbs(Det) < veMath::TOLERANCE)
+		return;
+	veReal invDet = 1 / Det;
 
 	veReal d00 = t00 * invDet;
 	veReal d10 = t10 * invDet;

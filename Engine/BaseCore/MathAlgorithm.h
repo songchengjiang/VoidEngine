@@ -12,6 +12,7 @@ public:
 	static const veReal HALF_PI;
 	static const veReal QUARTER_PI;
 	static const veReal FLOAT_MAX;
+	static const veReal TOLERANCE;
 
 	veMath();
 	~veMath();
