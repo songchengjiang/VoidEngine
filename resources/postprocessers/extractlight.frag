@@ -10,5 +10,7 @@ float grey(vec3 val){
 void main()
 {
 	vec4 color = texture(u_Texture, v_texcoord);
-	fragColor = color * clamp(grey(color.rgb) - u_Threshold, 0.0, 1.0) * (1.0 / (1.0 - u_Threshold));
+	if (u_Threshold < grey(color.rgb))
+		fragColor = color;
+	//fragColor = color * clamp(grey(color.rgb) - u_Threshold, 0.0, 1.0);
 }
