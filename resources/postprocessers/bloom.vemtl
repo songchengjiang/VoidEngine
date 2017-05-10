@@ -15,39 +15,9 @@
                             "cullFace": true,
                             "uniforms": {
                                 "u_ModelMat": "M_MATRIX",
-                                "width":  "SCREEN_WIDTH_QUARTER",
-                                "height": "SCREEN_HEIGHT_QUARTER",
-                                "u_Texture": 0
-                            },                             
-                            "shaders": [
-                                {
-                                    "type": "VERTEX_SHADER",
-                                    "source": "postprocesser.vert"
-                                },
-                                {
-                                    "type": "FRAGMENT_SHADER",
-                                    "source": "downscale3x3.frag"
-                                }
-                            ],
-                            "textureUnits": [
-                                {
-                                    "name": "bloom-sceneTexture",
-                                    "texType": "COLOR_BUFFER_TEXTURE",
-                                    "wrap": "CLAMP",
-                                    "filter": "NEAREST"
-                                }
-                            ]
-                        },
-                        {
-                            "renderPass": "FORWARD",
-                            "depthTest": false,
-                            "depthWrite": false,
-                            "cullFace": true,
-                            "uniforms": {
-                                "u_ModelMat": "M_MATRIX",
                                 "u_Threshold": 0.6,
                                 "u_Texture": 0
-                            },                             
+                            },
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
@@ -60,7 +30,7 @@
                               ],
                               "textureUnits": [
                                 {
-                                    "name": "bloom-downscale",
+                                    "name": "bloom-sceneTexture",
                                     "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
@@ -74,10 +44,41 @@
                             "cullFace": true,
                             "uniforms": {
                                 "u_ModelMat": "M_MATRIX",
+                                "width":  "SCREEN_WIDTH_QUARTER",
+                                "height": "SCREEN_HEIGHT_QUARTER",
+                                "u_Texture": 0
+                            },
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "postprocesser.vert"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "downscale3x3.frag"
+                                }
+                            ],
+                            "textureUnits": [
+                                {
+                                    "name": "bloom-extractlight",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "NEAREST"
+                                }
+                            ]
+                        },
+                        {
+                            "renderPass": "FORWARD",
+                            "depthTest": false,
+                            "depthWrite": false,
+                            "cullFace": true,
+                            "uniforms": {
+                                "u_ModelMat": "M_MATRIX",
                                 "weights": [0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216],
                                 "height":  "SCREEN_HEIGHT_QUARTER",
+                                "blurSize": 1.0,
                                 "u_Texture": 0
-                            },                            
+                            },                               
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
@@ -90,7 +91,7 @@
                             ],
                             "textureUnits": [
                                 {
-                                    "name": "bloom-extractlightTex",
+                                    "name": "bloom-downscale",
                                     "texType": "COLOR_BUFFER_TEXTURE",
                                     "wrap": "CLAMP",
                                     "filter": "LINEAR"
@@ -106,8 +107,9 @@
                                 "u_ModelMat": "M_MATRIX",
                                 "weights": [0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216],
                                 "width":  "SCREEN_WIDTH_QUARTER",
+                                "blurSize": 1.0,
                                 "u_Texture": 0
-                            },                             
+                            },                              
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
@@ -126,7 +128,69 @@
                                     "filter": "LINEAR"
                                 }
                             ]
-                        },                          
+                        },
+                        {
+                            "renderPass": "FORWARD",
+                            "depthTest": false,
+                            "depthWrite": false,
+                            "cullFace": true,
+                            "uniforms": {
+                                "u_ModelMat": "M_MATRIX",
+                                "weights": [0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216],
+                                "height":  "SCREEN_HEIGHT_QUARTER",
+                                "blurSize": 2.0,
+                                "u_Texture": 0
+                            },                               
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "postprocesser.vert"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "GaussBlurY.frag"
+                                }
+                            ],
+                            "textureUnits": [
+                                {
+                                    "name": "bloom-downscale",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "LINEAR"
+                                }
+                            ]
+                        },                        
+                        {
+                            "renderPass": "FORWARD",
+                            "depthTest": false,
+                            "depthWrite": false,
+                            "cullFace": true,
+                            "uniforms": {
+                                "u_ModelMat": "M_MATRIX",
+                                "weights": [0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216],
+                                "width":  "SCREEN_WIDTH_QUARTER",
+                                "blurSize": 2.0,
+                                "u_Texture": 0
+                            },                              
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "postprocesser.vert"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "GaussBlurX.frag"
+                                }
+                            ],
+                            "textureUnits": [
+                                {
+                                    "name": "bloom-GaussBlurYTex",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "LINEAR"
+                                }
+                            ]
+                        },
                         {
                             "renderPass": "FORWARD",
                             "depthTest": false,

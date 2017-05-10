@@ -46,7 +46,8 @@
                             "uniforms": {
                                 "u_ModelMat": "M_MATRIX",
                                 "weights": [0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216],
-                                "height":  "SCREEN_HEIGHT_HALF",
+                                "height":  "SCREEN_HEIGHT_QUARTER",
+                                "blurSize": 1.0,
                                 "u_Texture": 0
                             },                               
                             "shaders": [
@@ -76,7 +77,8 @@
                             "uniforms": {
                                 "u_ModelMat": "M_MATRIX",
                                 "weights": [0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216],
-                                "width":  "SCREEN_WIDTH_HALF",
+                                "width":  "SCREEN_WIDTH_QUARTER",
+                                "blurSize": 1.0,
                                 "u_Texture": 0
                             },                              
                             "shaders": [
@@ -97,7 +99,69 @@
                                     "filter": "LINEAR"
                                 }
                             ]
-                        },                          
+                        },
+                        {
+                            "renderPass": "FORWARD",
+                            "depthTest": false,
+                            "depthWrite": false,
+                            "cullFace": true,
+                            "uniforms": {
+                                "u_ModelMat": "M_MATRIX",
+                                "weights": [0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216],
+                                "height":  "SCREEN_HEIGHT_QUARTER",
+                                "blurSize": 2.0,
+                                "u_Texture": 0
+                            },                               
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "postprocesser.vert"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "GaussBlurY.frag"
+                                }
+                            ],
+                            "textureUnits": [
+                                {
+                                    "name": "DOF-downscale",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "LINEAR"
+                                }
+                            ]
+                        },                        
+                        {
+                            "renderPass": "FORWARD",
+                            "depthTest": false,
+                            "depthWrite": false,
+                            "cullFace": true,
+                            "uniforms": {
+                                "u_ModelMat": "M_MATRIX",
+                                "weights": [0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216],
+                                "width":  "SCREEN_WIDTH_QUARTER",
+                                "blurSize": 2.0,
+                                "u_Texture": 0
+                            },                              
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "postprocesser.vert"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "GaussBlurX.frag"
+                                }
+                            ],
+                            "textureUnits": [
+                                {
+                                    "name": "DOF-GaussBlurYTex",
+                                    "texType": "COLOR_BUFFER_TEXTURE",
+                                    "wrap": "CLAMP",
+                                    "filter": "LINEAR"
+                                }
+                            ]
+                        },
                         {
                             "renderPass": "FORWARD",
                             "depthTest": false,
