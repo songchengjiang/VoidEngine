@@ -509,7 +509,7 @@ void ModelConverter::writeShaders(const aiMaterial *mat)
 {
 	int valInt = 0;
 	aiGetMaterialInteger(mat, AI_MATKEY_SHADING_MODEL, &valInt);
-	writeShader(mat, std::string("system/") + getShaderName(valInt));
+	writeShader(mat, std::string("shaders/") + getShaderName(valInt));
 }
 
 void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shaderName)
