@@ -3,7 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/android.iml" filepath="$PROJECT_DIR$/android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vetests/vetests.iml" filepath="$PROJECT_DIR$/vetests/vetests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/voidengine/voidengine.iml" filepath="$PROJECT_DIR$/voidengine/voidengine.iml" />
     </modules>
   </component>
 </project>

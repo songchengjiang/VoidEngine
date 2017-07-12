@@ -9,6 +9,7 @@ vePostProcesser::vePostProcesser(veSceneManager *sm)
 , _sceneManager(sm)
 {
     _renderer = new vePostProcesserRenderer;
+    _fbo = _sceneManager->createFrameBufferObject(_name + std::string("_VE_DEFERRED_RENDER_PIPELINE_POST_PROCESSER_FBO_"));
 }
 
 vePostProcesser::~vePostProcesser()
@@ -16,13 +17,16 @@ vePostProcesser::~vePostProcesser()
     
 }
 
+void vePostProcesser::setEnabled(bool isEnabled)
+{
+    _isEnabled = isEnabled;
+    _fbo->refresh();
+}
+
 void vePostProcesser::process(veRenderPipeline *pipeline, veCamera *camera, bool firstProcesser, unsigned int contextID)
 {
     auto &vp = camera->getViewport();
     veVec2 size = veVec2(vp.width - vp.x, vp.height - vp.y);
-    if (!_fbo.valid()) {
-        _fbo = _sceneManager->createFrameBufferObject(_name + std::string("_VE_DEFERRED_RENDER_PIPELINE_POST_PROCESSER_FBO_"));
-    }
     _fbo->setFrameBufferSize(size);
     for (unsigned int i = 0; i < _materials->getMaterialNum(); ++i) {
         auto material = _materials->getMaterial(i);

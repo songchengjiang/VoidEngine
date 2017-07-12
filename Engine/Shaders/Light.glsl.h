@@ -21,7 +21,9 @@ void main()
     gl_Position = u_ModelViewProjectMat * vec4(position, 1.0);
 });
 
-static const char* AMBIENT_LIGHT_FRAGMENT_SHADER = STRINGIFY(
+static const char* AMBIENT_LIGHT_FRAGMENT_SHADER =
+SHADER_COMMON_FUNCTION
+STRINGIFY(
 uniform sampler2D u_RT1;
 uniform vec3 u_ambient;  
 in highp vec2 v_texcoord;
@@ -38,7 +40,7 @@ uniform highp sampler2D u_depthTex;
 uniform highp sampler2D u_RT0;
 uniform sampler2D u_RT1;
 uniform sampler2D u_RT2;
-uniform sampler2DArrayShadow u_shadowTex;
+uniform highp sampler2DArrayShadow u_shadowTex;
 uniform sampler2D u_irradiance;
 uniform sampler2D u_radiance;
 uniform float u_radianceMipMapCount;
@@ -70,7 +72,7 @@ const vec2 SAMPLE_OFFSETS[SAMPLE_SIZE] = vec2[]
     vec2(-1.0, 1.0), vec2(0.0, 1.0), vec2(1.0, 1.0)
 );                                                     
 
-float shadowing(vec3 vertex, float depthInEye) {         
+float shadowing(vec3 vertex, float depthInEye) {
     if (u_lightShadowEnabled < 1.0) return 1.0;
     int layer = 3;
     if (depthInEye < u_shadowCascadedLevels[0])
@@ -85,12 +87,12 @@ float shadowing(vec3 vertex, float depthInEye) {
     if (0.0 < u_lightShadowSoft) {
         float sum = 0.0;
         for (int i = 0; i < SAMPLE_SIZE; ++i) {
-            sum += texture(u_shadowTex, vec4(shadowCoord.xy + SAMPLE_OFFSETS[i] * u_lightShadowSoftness, layer, shadowCoord.z - u_lightShadowBias));
+            sum += texture(u_shadowTex, vec4(shadowCoord.xy + SAMPLE_OFFSETS[i] * u_lightShadowSoftness, float(layer), shadowCoord.z - u_lightShadowBias));
         }
         factor = sum / float(SAMPLE_SIZE);
     }
     else {
-        factor = texture(u_shadowTex, vec4(shadowCoord.xy, layer, shadowCoord.z - u_lightShadowBias));
+        factor = texture(u_shadowTex, vec4(shadowCoord.xy, float(layer), shadowCoord.z - u_lightShadowBias));
     }
 
     if (factor < 1.0)
@@ -98,12 +100,12 @@ float shadowing(vec3 vertex, float depthInEye) {
     return factor;
 }
 
-void main() { 
+void main() {
     vec4 RT0 = texture(u_RT0, v_texcoord);
     vec4 RT1 = texture(u_RT1, v_texcoord);
     vec4 RT2 = texture(u_RT2, v_texcoord);
     if (RT0.w <= 0.0){ fragColor = vec4(0.0); return; }
-    
+
     vec3 albedo = RT1.xyz;
     vec3 specular = RT2.xyz;
     float roughness = RT1.w;
@@ -122,7 +124,7 @@ void main() {
     float HdotV = max(0.0, dot(H, eyeDir));
     float diffFactor = OrenNayar(worldNormal, -u_lightDirection, eyeDir, NdotL, NdotV, roughness);
     //float specFactor = CookTorrance(NdotL, NdotV, HdotV, NdotH, roughness, metallic);
-    
+
     // cook-torrance brdf
     vec3 F0 = vec3(0.04);
     F0 = mix(F0, albedo, metallic);
@@ -133,7 +135,7 @@ void main() {
     vec3 kD = vec3(1.0) - kS;
     kD *= 1.0 - metallic;
     vec3 nominator    = NDF * G * F;
-    float denominator = 4 * NdotV * NdotL + 0.001;
+    float denominator = 4.0 * NdotV * NdotL + 0.001;
     vec3 brdf = nominator / denominator;
     vec3 Lo = (kD * albedo * diffFactor + brdf * NdotL);
 
@@ -144,7 +146,7 @@ void main() {
     vec3 irradiance = texture(u_irradiance, irradianceCoords).rgb;
     vec3 radiance = textureLod(u_radiance, radianceCoords, roughness * u_radianceMipMapCount).rgb;
     vec3 ambient = kD * irradiance * albedo + kS * radiance;
-    
+
     float shadow = shadowing(worldPosition.xyz, length(eyePosition));
     vec3 lightIntensity = u_lightColor * u_lightIntensity;
     fragColor = vec4(clamp(linearColor((ambient + Lo * shadow) * lightIntensity), 0.0, 1.0), 1.0);
@@ -258,7 +260,7 @@ void main() {
     vec3 kD = vec3(1.0) - kS;
     kD *= 1.0 - metallic;
     vec3 nominator    = NDF * G * F;
-    float denominator = 4 * NdotV * NdotL + 0.001;
+    float denominator = 4.0 * NdotV * NdotL + 0.001;
     vec3 brdf = nominator / denominator;
     vec3 Lo = kD * albedo * diffFactor + brdf * NdotL;
     
@@ -384,7 +386,7 @@ void main() {
     vec3 kD = vec3(1.0) - kS;
     kD *= 1.0 - metallic;
     vec3 nominator    = NDF * G * F;
-    float denominator = 4 * NdotV * NdotL + 0.001;
+    float denominator = 4.0 * NdotV * NdotL + 0.001;
     vec3 brdf = nominator / denominator;
     vec3 Lo = kD * albedo * diffFactor + brdf * NdotL;
     

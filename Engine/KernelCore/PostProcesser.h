@@ -16,7 +16,7 @@ public:
     USE_VE_PTR;
     USE_NAME_PROPERTY;
     
-    void setEnabled(bool isEnabled) { _isEnabled = isEnabled; }
+    void setEnabled(bool isEnabled);
     bool isEnabled() const { return _isEnabled; }
     
     void setMaterialArray(veMaterialArray *material) { _materials = material;}
