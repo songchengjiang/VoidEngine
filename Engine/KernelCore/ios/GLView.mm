@@ -23,10 +23,10 @@
 }
 
 - (void)setupContext {
-    EAGLRenderingAPI api = kEAGLRenderingAPIOpenGLES3;
+    EAGLRenderingAPI api = kEAGLRenderingAPIOpenGLES2;
     _context = [[EAGLContext alloc] initWithAPI:api];
     if (!_context) {
-        NSLog(@"Failed to initialize OpenGLES 3.0 context");
+        NSLog(@"Failed to initialize OpenGLES 2.0 context");
         exit(1);
     }
     
@@ -54,6 +54,12 @@
 }
 
 - (void)rendering:(CADisplayLink*)displayLink {
+    CGRect frame = [self frame];
+    CGFloat width = frame.size.width - frame.origin.x;
+    CGFloat height = frame.size.height - frame.origin.y;
+    glViewport(frame.origin.x, frame.origin.y, width * self.contentScaleFactor, height * self.contentScaleFactor);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     self.viewer->getSceneManager()->render(self.viewer);
 }
 
