@@ -14,6 +14,7 @@ public:
 	static veApplication* instance();
 
     virtual veViewer* createViewer(int width, int height, const std::string &title, veViewer *sharedContextViewer = nullptr) = 0;
+	void destroyAllViewer();
     veViewer* getViewer(size_t idx);
     size_t getViewerCount() const { return _viewerList.size(); }
 	virtual bool run() = 0;

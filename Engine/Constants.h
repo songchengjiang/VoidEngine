@@ -299,6 +299,7 @@ static const std::string SHININESS_KEY = "u_shininess";
 static const std::string OPACITY_KEY = "u_opacity";
 static const std::string ROUGHNESS_KEY = "u_roughness";
 static const std::string METALLIC_KEY = "u_metallic";
+static const std::string ALPHA_KEY = "u_alpha";
 static const std::string REFLECTIVITY_KEY = "u_reflectivity";
 static const std::string DISPLACEMENT_KEY = "u_displacement";
 static const std::string CAMERA_WORLD_POS_KEY = "u_cameraWorldPos";
@@ -327,7 +328,7 @@ static const std::string INV_P_MATRIX  = "INV_P_MATRIX";
 static const std::string INV_VP_MATRIX  = "INV_VP_MATRIX";
 static const std::string MVP_MATRIX    = "MVP_MATRIX";
 static const std::string NORMAL_MATRIX = "NORMAL_MATRIX";
-static const std::string NORMAL_WROLD_MATRIX = "NORMAL_WORLD_MATRIX";
+static const std::string NORMAL_WORLD_MATRIX = "NORMAL_WORLD_MATRIX";
 static const std::string BONE_MATRIXES = "BONE_MATRIXES";
 static const std::string SCREEN_WIDTH  = "SCREEN_WIDTH";
 static const std::string SCREEN_HEIGHT = "SCREEN_HEIGHT";
@@ -349,48 +350,46 @@ static const std::string ANIMATION_EXT = ".veanim";
 
 //////////////////////////////////////////////////////////////////////////
 
-static const std::string SHADER_DEFINE_BONES             = "#define VE_USE_BONES 1\n";
-static const std::string SHADER_DEFINE_LIGHTS            = "#define VE_USE_LIGHTS 1\n";
-static const std::string SHADER_DEFINE_TEXTURES          = "#define VE_USE_TEXTURES 1\n";
-static const std::string SHADER_DEFINE_NROMAL_MAPPING    = "#define VE_USE_NROMAL_MAPPING 1\n";
-static const std::string SHADER_DEFINE_PARALLAX_MAPPING  = "#define VE_USE_PARALLAX_MAPPING 1\n";
+static const std::string SHADER_DEFINE_BONES             = "VE_USE_BONES";
+static const std::string SHADER_DEFINE_LIGHTS            = "VE_USE_LIGHTS";
+static const std::string SHADER_DEFINE_TEXTURES          = "VE_USE_TEXTURES";
 
-static const std::string SHADER_DEFINE_AMBIENT_TEXTURE      = "#define VE_USE_AMBIENT_TEXTURE 1\n";
-static const std::string SHADER_DEFINE_DIFFUSE_TEXTURE      = "#define VE_USE_DIFFUSE_TEXTURE 1\n";
-static const std::string SHADER_DEFINE_SPECULAR_TEXTURE     = "#define VE_USE_SPECULAR_TEXTURE 1\n";
-static const std::string SHADER_DEFINE_EMISSIVE_TEXTURE     = "#define VE_USE_EMISSIVE_TEXTURE 1\n";
-static const std::string SHADER_DEFINE_NORMAL_TEXTURE       = "#define VE_USE_NORMAL_TEXTURE 1\n";
-static const std::string SHADER_DEFINE_HEIGHT_TEXTURE       = "#define VE_USE_HEIGHT_TEXTURE 1\n";
-static const std::string SHADER_DEFINE_SHININESS_TEXTURE    = "#define VE_USE_SHININESS_TEXTURE 1\n";
-static const std::string SHADER_DEFINE_OPACITYT_TEXTURE     = "#define VE_USE_OPACITYT_TEXTURE 1\n";
-static const std::string SHADER_DEFINE_DISPLACEMENT_TEXTURE = "#define VE_USE_DISPLACEMENT_TEXTURE 1\n";
-static const std::string SHADER_DEFINE_LIGHTMAP_TEXTURE     = "#define VE_USE_LIGHTMAP_TEXTURE 1\n";
-static const std::string SHADER_DEFINE_ROUGHNESS_TEXTURE    = "#define VE_USE_ROUGHNESS_TEXTURE 1\n";
-static const std::string SHADER_DEFINE_REFLECTION_TEXTURE   = "#define VE_USE_REFLECTION_TEXTURE 1\n";
+static const std::string SHADER_DEFINE_AMBIENT_TEXTURE      = "VE_USE_AMBIENT_TEXTURE";
+static const std::string SHADER_DEFINE_DIFFUSE_TEXTURE      = "VE_USE_DIFFUSE_TEXTURE";
+static const std::string SHADER_DEFINE_SPECULAR_TEXTURE     = "VE_USE_SPECULAR_TEXTURE";
+static const std::string SHADER_DEFINE_EMISSIVE_TEXTURE     = "VE_USE_EMISSIVE_TEXTURE";
+static const std::string SHADER_DEFINE_NORMAL_TEXTURE       = "VE_USE_NORMAL_TEXTURE";
+static const std::string SHADER_DEFINE_HEIGHT_TEXTURE       = "VE_USE_HEIGHT_TEXTURE";
+static const std::string SHADER_DEFINE_SHININESS_TEXTURE    = "VE_USE_SHININESS_TEXTURE";
+static const std::string SHADER_DEFINE_OPACITYT_TEXTURE     = "VE_USE_OPACITYT_TEXTURE";
+static const std::string SHADER_DEFINE_DISPLACEMENT_TEXTURE = "VE_USE_DISPLACEMENT_TEXTURE";
+static const std::string SHADER_DEFINE_LIGHTMAP_TEXTURE     = "VE_USE_LIGHTMAP_TEXTURE";
+static const std::string SHADER_DEFINE_ROUGHNESS_TEXTURE    = "VE_USE_ROUGHNESS_TEXTURE";
+static const std::string SHADER_DEFINE_REFLECTION_TEXTURE   = "VE_USE_REFLECTION_TEXTURE";
 
-static const std::string SHADER_DEFINE_ATTR_POSITION       = "#define ATTR_POSITION";
-static const std::string SHADER_DEFINE_ATTR_NORMAL         = "#define ATTR_NORMAL";
-static const std::string SHADER_DEFINE_ATTR_TANGENT        = "#define ATTR_TANGENT";
-static const std::string SHADER_DEFINE_ATTR_BITANGENT      = "#define ATTR_BITANGENT";
-static const std::string SHADER_DEFINE_ATTR_TEXTURE_COORD  = "#define ATTR_TEXTURE_COORD";
-static const std::string SHADER_DEFINE_ATTR_TEXTURE_COORD0 = "#define ATTR_TEXTURE_COORD0";
-static const std::string SHADER_DEFINE_ATTR_TEXTURE_COORD1 = "#define ATTR_TEXTURE_COORD1";
-static const std::string SHADER_DEFINE_ATTR_TEXTURE_COORD2 = "#define ATTR_TEXTURE_COORD2";
-static const std::string SHADER_DEFINE_ATTR_TEXTURE_COORD3 = "#define ATTR_TEXTURE_COORD3";
-static const std::string SHADER_DEFINE_ATTR_COLOR          = "#define ATTR_COLOR";
-static const std::string SHADER_DEFINE_ATTR_COLOR0         = "#define ATTR_COLOR0";
-static const std::string SHADER_DEFINE_ATTR_COLOR1         = "#define ATTR_COLOR1";
-static const std::string SHADER_DEFINE_ATTR_COLOR2         = "#define ATTR_COLOR2";
-static const std::string SHADER_DEFINE_ATTR_COLOR3         = "#define ATTR_COLOR3";
-static const std::string SHADER_DEFINE_ATTR_BONE_INDICES   = "#define ATTR_BONE_INDICES";
-static const std::string SHADER_DEFINE_ATTR_BONE_WEIGHTS   = "#define ATTR_BONE_WEIGHTS";
-static const std::string SHADER_DEFINE_ATTR_USER0          = "#define ATTR_USER0";
-static const std::string SHADER_DEFINE_ATTR_USER1          = "#define ATTR_USER1";
+//static const std::string SHADER_DEFINE_ATTR_POSITION       = "ATTR_POSITION";
+//static const std::string SHADER_DEFINE_ATTR_NORMAL         = "ATTR_NORMAL";
+//static const std::string SHADER_DEFINE_ATTR_TANGENT        = "ATTR_TANGENT";
+//static const std::string SHADER_DEFINE_ATTR_BITANGENT      = "ATTR_BITANGENT";
+//static const std::string SHADER_DEFINE_ATTR_TEXTURE_COORD  = "ATTR_TEXTURE_COORD";
+//static const std::string SHADER_DEFINE_ATTR_TEXTURE_COORD0 = "ATTR_TEXTURE_COORD0";
+//static const std::string SHADER_DEFINE_ATTR_TEXTURE_COORD1 = "ATTR_TEXTURE_COORD1";
+//static const std::string SHADER_DEFINE_ATTR_TEXTURE_COORD2 = "ATTR_TEXTURE_COORD2";
+//static const std::string SHADER_DEFINE_ATTR_TEXTURE_COORD3 = "ATTR_TEXTURE_COORD3";
+//static const std::string SHADER_DEFINE_ATTR_COLOR          = "ATTR_COLOR";
+//static const std::string SHADER_DEFINE_ATTR_COLOR0         = "ATTR_COLOR0";
+//static const std::string SHADER_DEFINE_ATTR_COLOR1         = "ATTR_COLOR1";
+//static const std::string SHADER_DEFINE_ATTR_COLOR2         = "ATTR_COLOR2";
+//static const std::string SHADER_DEFINE_ATTR_COLOR3         = "ATTR_COLOR3";
+//static const std::string SHADER_DEFINE_ATTR_BONE_INDICES   = "ATTR_BONE_INDICES";
+//static const std::string SHADER_DEFINE_ATTR_BONE_WEIGHTS   = "ATTR_BONE_WEIGHTS";
+//static const std::string SHADER_DEFINE_ATTR_USER0          = "ATTR_USER0";
+//static const std::string SHADER_DEFINE_ATTR_USER1          = "ATTR_USER1";
 
 static const std::string SHADER_VERSION                        = "#version";
-static const std::string PRECISION_DEFINE_FLOAT                = "precision lowp float;";
-static const std::string PRECISION_DEFINE_SAMPLER2DSHADOW      = "precision lowp sampler2DShadow;";
-static const std::string PRECISION_DEFINE_SAMPLERCUBESHADOW    = "precision lowp samplerCubeShadow;";
+static const std::string PRECISION_DEFINE_FLOAT                = "precision mediump float;";
+static const std::string PRECISION_DEFINE_SAMPLER2DSHADOW      = "precision mediump sampler2DShadow;";
+static const std::string PRECISION_DEFINE_SAMPLERCUBESHADOW    = "precision mediump samplerCubeShadow;";
 
 static const std::string SHADER_DEFINE_PLATFORM_IOS     = "#define VE_PLATFORM_IOS 1\n";
 static const std::string SHADER_DEFINE_PLATFORM_ANDROID = "#define VE_PLATFORM_ANDROID 2\n";
@@ -400,5 +399,38 @@ static const std::string SHADER_DEFINE_PLATFORM_MAC     = "#define VE_PLATFORM_M
 
 static const std::string SYSTEM_MATERIAL_TECHNIQUE_WIRTE_DEPTH_ONLY = "SYSTEM_MATERIAL_TECHNIQUE_WIRTE_DEPTH_ONLY";
 static const std::string SYSTEM_MATERIAL_TECHNIQUE_WIRTE_SQUARE_DEPTH_ONLY = "SYSTEM_MATERIAL_TECHNIQUE_WIRTE_SQUARE_DEPTH_ONLY";
+
+static const std::string VERTEX_ATTRIBUTE_POSITION_NAME        = "a_position";
+static const std::string VERTEX_ATTRIBUTE_NORMAL_NAME          = "a_normal";
+static const std::string VERTEX_ATTRIBUTE_TANGENT_NAME         = "a_tangent";
+static const std::string VERTEX_ATTRIBUTE_BINORMAL_NAME        = "a_binormal";
+static const std::string VERTEX_ATTRIBUTE_BLENDWEIGHTS_NAME    = "a_blendWeights";
+static const std::string VERTEX_ATTRIBUTE_BLENDINDICES_NAME    = "a_blendIndices";
+static const std::string VERTEX_ATTRIBUTE_TEXCOORD0_NAME       = "a_texCoord0";
+static const std::string VERTEX_ATTRIBUTE_TEXCOORD1_NAME       = "a_texCoord1";
+static const std::string VERTEX_ATTRIBUTE_TEXCOORD2_NAME       = "a_texCoord2";
+static const std::string VERTEX_ATTRIBUTE_TEXCOORD3_NAME       = "a_texCoord3";
+static const std::string VERTEX_ATTRIBUTE_COLOR0_NAME          = "a_color0";
+static const std::string VERTEX_ATTRIBUTE_COLOR1_NAME          = "a_color1";
+static const std::string VERTEX_ATTRIBUTE_COLOR2_NAME          = "a_color2";
+static const std::string VERTEX_ATTRIBUTE_COLOR3_NAME          = "a_color3";
+
+
+static const std::string SHADER_INNER_UNIFROM_IRRADIANCE_NAME             = "ve_u_irradiance";
+static const std::string SHADER_INNER_UNIFROM_RADIANCE_NAME               = "ve_u_radiance";
+static const std::string SHADER_INNER_UNIFROM_LUT_NAME                    = "ve_u_lut";
+static const std::string SHADER_INNER_UNIFROM_DIR_LIGHT_DIRECTION_NAME    = "ve_u_dirLightDirection";
+static const std::string SHADER_INNER_UNIFROM_DIR_LIGHT_COlOR_NAME        = "ve_u_dirLightColor";
+static const std::string SHADER_INNER_UNIFROM_DIR_LIGHT_INTENSITY_NAME    = "ve_u_dirLightIntensity";
+static const std::string SHADER_INNER_UNIFROM_POINT_LIGHT_POSITION_NAME   = "ve_u_pointLightPosition";
+static const std::string SHADER_INNER_UNIFROM_POINT_LIGHT_COlOR_NAME      = "ve_u_pointLightColor";
+static const std::string SHADER_INNER_UNIFROM_POINT_LIGHT_INTENSITY_NAME  = "ve_u_pointLightIntensity";
+static const std::string SHADER_INNER_UNIFROM_POINT_LIGHT_ARI_NAME        = "ve_u_pointLightARI";
+
+
+static const std::string SHADER_DEFINATION_IBL_NAME              = "VE_USE_IBL";
+static const std::string SHADER_DEFINATION_LIGHTING_NAME         = "VE_USE_LIGHTING";
+static const std::string SHADER_DEFINATION_DIR_LIGHTING_NAME     = "VE_USE_DIR_LIGHT";
+static const std::string SHADER_DEFINATION_POINT_LIGHTING_NAME   = "VE_USE_POINT_LIGHT";
 
 #endif

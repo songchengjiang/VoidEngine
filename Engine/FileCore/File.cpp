@@ -10,8 +10,8 @@
 #include "FileReaderWriterPARTICLE.h"
 #include "FileReaderWriterANIMATION.h"
 #include "FileReaderWriterCAMERA.h"
-#include "FileReaderWriterEXR.h"
-#include "FileReaderWriterJPEG.h"
+//#include "FileReaderWriterEXR.h"
+//#include "FileReaderWriterJPEG.h"
 #include "FileReaderWriterLIGHT.h"
 #include "FileReaderWriterPNG.h"
 #include "FileReaderWriterKTX.h"
@@ -25,8 +25,8 @@ veFile::veFile()
     VE_READERWRITER_REG("veparticle", veFileReaderWriterPARTICLE);
     VE_READERWRITER_REG("veanim", veFileReaderWriterANIMATION);
     VE_READERWRITER_REG("vecamera", veFileReaderWriterCAMERA);
-    VE_READERWRITER_REG("exr", veFileReaderWriterEXR);
-    VE_READERWRITER_REG("jpg", veFileReaderWriterJPEG);
+    //VE_READERWRITER_REG("exr", veFileReaderWriterEXR);
+    //VE_READERWRITER_REG("jpg", veFileReaderWriterJPEG);
     VE_READERWRITER_REG("velight", veFileReaderWriterLIGHT);
     VE_READERWRITER_REG("png", veFileReaderWriterPNG);
     VE_READERWRITER_REG("ktx", veFileReaderWriterKTX);

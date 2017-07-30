@@ -2,6 +2,7 @@
 #define _CAMERA_TEST_
 #include "BaseTest.h"
 
+
 int CURRENT_CAMERA = 0;
 
 class keyboardInput : public veComponent 

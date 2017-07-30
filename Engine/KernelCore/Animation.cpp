@@ -4,16 +4,14 @@
 #include "SceneManager.h"
 #include <set>
 
-class FindMeshNodes 
+class AnimNodeVisitor : public veNodeVisitor
 {
 public:
 
-	void find(veNode *node) {
-		nodeList.push_back(node);
-		for (size_t i = 0; i < node->getChildCount(); ++i) {
-			find(node->getChild(i));
-		}
-	}
+    virtual bool visit(veNode &node){
+        nodeList.push_back(&node);
+        return false;
+    }
 
 	std::vector<veNode *> nodeList;
 };
@@ -53,13 +51,13 @@ bool veAnimKeyValues::evaluate(double keyTime, veVec3 &pos, veVec3 &scl, veQuat 
 
 	bool state = false;
 	if (posIter != _positions.end()) {
-		//auto prePosIter = posIter;
-		//--prePosIter;
-		//if (prePosIter != _positions.end()) {
-		//	double t = (keyTime - prePosIter->first) / (posIter->first - prePosIter->first);
-		//	pos = prePosIter->second * (1.0 - t) + posIter->second * t;
-		//}
-		pos = posIter->second;
+		auto prePosIter = posIter;
+		--prePosIter;
+		if (prePosIter != _positions.end()) {
+			double t = (keyTime - prePosIter->first) / (posIter->first - prePosIter->first);
+			pos = prePosIter->second * (1.0 - t) + posIter->second * t;
+		}
+		//pos = posIter->second;
 		state = true;
 	}
 	else {
@@ -70,13 +68,13 @@ bool veAnimKeyValues::evaluate(double keyTime, veVec3 &pos, veVec3 &scl, veQuat 
 	}
 
 	if (rotIter != _rotations.end()) {
-		//auto preRotIter = rotIter;
-		//--preRotIter;
-		//if (preRotIter != _rotations.end()) {
-		//	double t = (keyTime - preRotIter->first) / (rotIter->first - preRotIter->first);
-		//	rot = veQuat::slerp(t, preRotIter->second, rotIter->second);
-		//}
-		rot = rotIter->second;
+		auto preRotIter = rotIter;
+		--preRotIter;
+		if (preRotIter != _rotations.end()) {
+			double t = (keyTime - preRotIter->first) / (rotIter->first - preRotIter->first);
+			rot = veQuat::nlerp(t, preRotIter->second, rotIter->second, true);
+		}
+		//rot = rotIter->second;
 		state = true;
 	}
 	else {
@@ -87,13 +85,13 @@ bool veAnimKeyValues::evaluate(double keyTime, veVec3 &pos, veVec3 &scl, veQuat 
 	}
 
 	if (sclIter != _scales.end()) {
-		//auto preSclIter = sclIter;
-		//--preSclIter;
-		//if (preSclIter != _scales.end()) {
-		//	double t = (keyTime - preSclIter->first) / (sclIter->first - preSclIter->first);
-		//	scl = preSclIter->second * (1.0 - t) + sclIter->second * t;
-		//}
-		scl = sclIter->second;
+		auto preSclIter = sclIter;
+		--preSclIter;
+		if (preSclIter != _scales.end()) {
+			double t = (keyTime - preSclIter->first) / (sclIter->first - preSclIter->first);
+			scl = preSclIter->second * (1.0 - t) + sclIter->second * t;
+		}
+		//scl = sclIter->second;
 		state = true;
 	}
 	else {
@@ -190,8 +188,7 @@ double veAnimationContainer::getFrameRate() const
 }
 
 veAnimationPlayer::veAnimationPlayer(veAnimationContainer *animationContainer)
-	: USE_VE_PTR_INIT
-	, _animationContainer(animationContainer)
+	: _animationContainer(animationContainer)
 	, _smimulationFrame(0.0)
 	, _startFrame(0)
 	, _pauseFrame(0)
@@ -200,7 +197,6 @@ veAnimationPlayer::veAnimationPlayer(veAnimationContainer *animationContainer)
 	, _needUpdate(false)
 	, _requestNoUpdate(false)
 	, _isLoop(false)
-	, _node(nullptr)
 	, _manager(nullptr)
 	, _activeAnimationChannel(nullptr)
 {
@@ -212,14 +208,32 @@ veAnimationPlayer::~veAnimationPlayer()
 
 }
 
+void veAnimationPlayer::awake()
+{
+    if (_animationContainer.valid()) {
+        _animationMap.clear();
+        AnimNodeVisitor finder;
+        _attachedNode->accept(finder);
+        for (size_t i = 0; i < _animationContainer->getAnimationChannelNum(); ++i) {
+            veAnimation *animation = _animationContainer->getAnimationChannel(i);
+            for (auto &iter : finder.nodeList) {
+                auto valuse = animation->getAnimKeyValuesByName(iter->getName());
+                if (valuse) {
+                    _animationMap[animation].push_back(std::make_pair(iter, valuse));
+                }
+            }
+        }
+    }
+}
+
 void veAnimationPlayer::update(veSceneManager *sm)
 {
-	if (!_node || _animationMap.empty()) return;
+	if (_animationMap.empty()) return;
 	if (_needUpdate) {
 		if (!_activeAnimationChannel && _animationContainer->getAnimationChannelNum()) {
 			_activeAnimationChannel = _animationContainer->getAnimationChannel(0);
 		}
-        if (sm->isNodeVisibleInScene(_node)) {
+        if (sm->isNodeVisibleInScene(_attachedNode)) {
             updateAnimations();
             if (_requestNoUpdate) _needUpdate = false;
         }
@@ -261,25 +275,6 @@ void veAnimationPlayer::stop()
 {
 	_requestNoUpdate = true;
 	_smimulationFrame = 0.0;
-}
-
-void veAnimationPlayer::attachNode(veNode *node)
-{
-	_node = node;
-	if (_node && _animationContainer.valid()) {
-		_animationMap.clear();
-		FindMeshNodes finder;
-		finder.find(_node);
-		for (size_t i = 0; i < _animationContainer->getAnimationChannelNum(); ++i) {
-			veAnimation *animation = _animationContainer->getAnimationChannel(i);
-			for (auto &iter : finder.nodeList) {
-				auto valuse = animation->getAnimKeyValuesByName(iter->getName());
-				if (valuse) {
-					_animationMap[animation].push_back(std::make_pair(iter, valuse));
-				}
-			}
-		}
-	}
 }
 
 void veAnimationPlayer::updateAnimations()

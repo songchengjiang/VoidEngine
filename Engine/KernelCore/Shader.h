@@ -8,6 +8,7 @@
 #include "BaseCore/Matrix3.h"
 #include "BaseCore/Matrix4.h"
 #include "BaseCore/Array.h"
+#include "Texture.h"
 #include "RenderCommand.h"
 #include <map>
 
@@ -18,6 +19,7 @@ public:
 
 	enum class Type
 	{
+        NONE,
 		INT,
 		BOOL,
 		REAL,
@@ -32,6 +34,7 @@ public:
 		VEC4_ARRAY,
 		MAT3_ARRAY,
 		MAT4_ARRAY,
+        SAMPLER,
 		AUTO,
 	};
 
@@ -39,6 +42,7 @@ public:
 	veUniform(const std::string &name, int val);
 	veUniform(const std::string &name, bool val);
 	veUniform(const std::string &name, veReal val);
+    veUniform(const std::string &name, veTexture *val);
 	veUniform(const std::string &name, const std::string &val);
 	veUniform(const std::string &name, const veVec2& val);
 	veUniform(const std::string &name, const veVec3& val);
@@ -56,12 +60,13 @@ public:
 
 	USE_VE_PTR;
 
-	void apply(const veRenderCommand &command);
+	void apply(const veRenderCommand &command, unsigned int &texUnit);
 
 	void setValue(int val);
 	void setValue(bool val);
 	void setValue(veReal val);
 	void setValue(const std::string &val);
+    void setValue(veTexture *val);
 	void setValue(const veVec2& val);
 	void setValue(const veVec3& val);
 	void setValue(const veVec4& val);
@@ -77,6 +82,7 @@ public:
 	bool getValue(int &val) const;
 	bool getValue(bool &val) const;
 	bool getValue(veReal &val) const;
+    bool getValue(veTexture *&val) const;
 	bool getValue(std::string &val) const;
 	bool getValue(veVec2 &val) const;
 	bool getValue(veVec3 &val) const;
@@ -93,6 +99,8 @@ public:
 	void setName(const std::string &name);
 	const std::string& getName() const { return _name; }
 	Type getType() const { return _type; }
+    
+    void refresh();
 
 private:
 	
@@ -100,6 +108,7 @@ private:
 	std::string _autoBindingValue;
 	Type        _type;
 	veRealArray _values;
+    VE_Ptr<veTexture> _texture;
 	GLint       _location;
 	GLint       _preLocation;
 	unsigned char _maxReLocation;
@@ -131,6 +140,9 @@ public:
 
 	void setShaderHeader(const std::string &sHeader);
 	const std::string& getShaderHeader() const { return _shaderHeaders; }
+    
+    bool addDefination(const std::string &def);
+    bool removeDefination(const std::string &def);
 
 private:
 
@@ -139,8 +151,10 @@ private:
 
 private:
 
+    GLuint _shader;
 	Type _type;
 	std::string _source;
 	std::string _shaderHeaders;
+    std::vector<std::string> _definations;
 };
 #endif

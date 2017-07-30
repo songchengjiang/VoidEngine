@@ -10,7 +10,7 @@ veGLDataBuffer::veGLDataBuffer(const DataCreateFunc &cFunc, const DataDestroyFun
 
 veGLDataBuffer::~veGLDataBuffer()
 {
-    destroyAllData();
+    //destroyAllData();
 }
 
 GLuint veGLDataBuffer::getData(unsigned int contextID) const

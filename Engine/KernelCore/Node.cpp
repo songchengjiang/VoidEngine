@@ -42,6 +42,7 @@ int veNode::addChild(veNode *child)
 	veAssert(child->_parent == nullptr);
 	child->_parent = this;
 	_children.push_back(child);
+    child->setVisible(_isVisible);
 	return int(_children.size() - 1);
 }
 
@@ -174,11 +175,11 @@ veRenderableObject* veNode::getRenderableObject(size_t objIndex)
 	return _renderableObjects[objIndex].get();
 }
 
-veMat4 veNode::getNodeToWorldMatrix() const
+const veMat4& veNode::getNodeToWorldMatrix() const
 {
 	if (_refresh) {
-		veMat4 worldMatrix = _parent == nullptr ? _matrix : _parent->getNodeToWorldMatrix() * _matrix;
-		return worldMatrix;
+		_worldMatrix = _parent == nullptr ? _matrix : _parent->getNodeToWorldMatrix() * _matrix;
+		return _worldMatrix;
 	}else
 		return _worldMatrix;
 }
@@ -206,6 +207,18 @@ veMat4 veNode::computeWorldToNodeMatrix() const
 	veMat4 worldMat = computeNodeToWorldMatrix();
 	worldMat.inverse();
 	return worldMat;
+}
+
+void veNode::setVisible(bool isVis)
+{
+    if (_isVisible == isVis)
+        return;
+    _isVisible = isVis;
+    if (!_children.empty()){
+        for (auto &child : _children){
+            child->setVisible(_isVisible);
+        }
+    }
 }
 
 void veNode::setMask(unsigned int mask, bool isOverride /*= true*/)
@@ -250,50 +263,49 @@ bool veNode::routeEvent(veSceneManager *sm, veViewer *viewer, const veEvent &eve
 
 void veNode::update(veSceneManager *sm, const veMat4 &transform)
 {
-    if (!_isVisible) return;
-    
-    if (!_isInScene) {
+    if (_isVisible) {
+        if (!_isInScene) {
+            if (!_components.empty()) {
+                for (auto &com : _components) {
+                    if (com->isEnabled())
+                        com->start(sm);
+                }
+            }
+            _isInScene = true;
+        }
+        
         if (!_components.empty()) {
             for (auto &com : _components) {
                 if (com->isEnabled())
-                    com->start(sm);
+                    com->update(sm);
             }
         }
-        _isInScene = true;
-    }
-    
-    if (!_components.empty()) {
-        for (auto &com : _components) {
-            if (com->isEnabled())
-                com->update(sm);
+        
+        if (_parent && _parent->_overrideMask) {
+            _mask = _parent->getMask();
+            _overrideMask = true;
         }
+        
+        veMat4 worldMat = this->getWorldToNodeMatrix();
+        
+        if (!_children.empty()) {
+            for (auto &child : _children) {
+                if (_refresh) child->refresh();
+                child->update(sm, worldMat);
+            }
+        }
+        
+        if (!_renderableObjects.empty()) {
+            for (auto &iter : _renderableObjects) {
+                iter->update(this, sm);
+            }
+        }
+        
+        updateBoundingBox();
+        _refresh = false;
+        _overrideMask = false;
     }
-    
-	if (_parent && _parent->_overrideMask) {
-		_mask = _parent->getMask();
-		_overrideMask = true;
-	}
-
-	if (_refresh)
-		refreshUpdate(sm, transform);
-    
-	if (!_children.empty()) {
-		for (auto &child : _children) {
-			if (_refresh) child->refresh();
-			child->update(sm, _worldMatrix);
-		}
-	}
-
-	if (!_renderableObjects.empty()) {
-		for (auto &iter : _renderableObjects) {
-			iter->update(this, sm);
-		}
-	}
-
-	updateBoundingBox();
 	updateSceneManager();
-	_refresh = false;
-	_overrideMask = false;
 }
 
 void veNode::beforeRender(veSceneManager *sm, veViewer *viewer)
@@ -373,11 +385,6 @@ void veNode::updateBoundingBox()
 			}
 		}
 	}
-}
-
-void veNode::refreshUpdate(veSceneManager *sm, const veMat4 &transform)
-{
-	_worldMatrix = transform * _matrix;
 }
 
 void veNode::updateSceneManager()

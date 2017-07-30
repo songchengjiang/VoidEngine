@@ -45,6 +45,8 @@ protected:
     veViewerAndroid *_sharedViewer;
     std::thread _updateThread;
     std::mutex  _eventMutex;
+    bool        _isFirstFrame;
+    clock_t     _preFrameTime;
 };
 
 #endif

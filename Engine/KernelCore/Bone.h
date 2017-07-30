@@ -29,8 +29,8 @@ public:
 	void setBoundingBox(const veBoundingBox &bbox) { _boundingBox = bbox; }
 	const veBoundingBox& getBoundingBox() const { return _boundingBox; }
 
-	void setBindPosBoundingBox(const veBoundingBox &bbox) { _bindPosBoundingBox = bbox; }
-	const veBoundingBox& getBindPosBoundingBox() const { return _bindPosBoundingBox; }
+//	void setBindPosBoundingBox(const veBoundingBox &bbox) { _bindPosBoundingBox = bbox; }
+//	const veBoundingBox& getBindPosBoundingBox() const { return _bindPosBoundingBox; }
 
 private:
 
@@ -38,7 +38,7 @@ private:
 	//std::unordered_map<unsigned int, float> _weights;
 	veNode            *_boneNode;
 	veBoundingBox      _boundingBox;
-	veBoundingBox      _bindPosBoundingBox;
+	//veBoundingBox      _bindPosBoundingBox;
 };
 
 #endif

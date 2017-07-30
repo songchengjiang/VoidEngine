@@ -1,7 +1,9 @@
 package com.voidengine.lib;
 
 import android.content.Context;
+import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.renderscript.Matrix4f;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -25,7 +27,7 @@ public class VESurfaceView extends GLSurfaceView {
 
         //setEGLConfigChooser(8, 8, 8, 8, 24, 8);
         setEGLConfigChooser(new VESurfaceViewChooser());
-        setEGLContextClientVersion(3);
+        setEGLContextClientVersion(2);
         setFocusableInTouchMode(true);
         mRenderer = new Renderer(this);
         setRenderer(mRenderer);
@@ -44,7 +46,7 @@ public class VESurfaceView extends GLSurfaceView {
                     EGL10.EGL_ALPHA_SIZE, 8,
                     EGL10.EGL_DEPTH_SIZE, 24,
                     EGL10.EGL_STENCIL_SIZE,8,
-                    EGL10.EGL_RENDERABLE_TYPE, 0x0040, //EGL_OPENGL_ES3_BIT_KHR
+                    //EGL10.EGL_RENDERABLE_TYPE, 0x0040, //EGL_OPENGL_ES3_BIT_KHR
                     EGL10.EGL_SURFACE_TYPE, EGL10.EGL_WINDOW_BIT | EGL10.EGL_PBUFFER_BIT,
                     EGL10.EGL_NONE
             };
@@ -143,6 +145,9 @@ public class VESurfaceView extends GLSurfaceView {
                 final float yDown = ys[0];
 
                 VEJNIWrapper.nativeOnSurfaceTouchDown(this, idDown, xDown, yDown);
+                //VEJNIWrapper.nativeOnSetNodeVisible(mLightNode, !mIsVisible);
+                //VEJNIWrapper.nativeOnSetNodeVisible(mModelID, !mIsVisible);
+                mIsVisible = !mIsVisible;
                 break;
 
             case MotionEvent.ACTION_MOVE:
@@ -175,6 +180,10 @@ public class VESurfaceView extends GLSurfaceView {
         return true;
     }
 
+    public void onDestroy() {
+        VEJNIWrapper.nativeOnSurfaceDestroy(this);
+    }
+
     private static class Renderer implements GLSurfaceView.Renderer {
         private VESurfaceView mSurfaceView;
         private int mSurfaceWidth;
@@ -190,6 +199,9 @@ public class VESurfaceView extends GLSurfaceView {
         }
 
         public void onDrawFrame(GL10 gl) {
+            GLES20.glClearColor(0.5f,0.5f,0.5f,1.0f);
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+            GLES20.glViewport(0,0,mSurfaceWidth,mSurfaceHeight);
             VEJNIWrapper.nativeOnSurfaceDrawFrame(mSurfaceView);
         }
 
@@ -200,9 +212,46 @@ public class VESurfaceView extends GLSurfaceView {
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
             if (mSurfaceView.mNeedCreate) {
                 VEJNIWrapper.nativeOnSurfaceCreated(mSurfaceView, mSurfaceWidth, mSurfaceHeight);
+
+                long sm = VEJNIWrapper.nativeOnCreateSceneManager();
+                long sceneNode = VEJNIWrapper.nativeOnGetSceneNode(sm);
+                long mCameraID = VEJNIWrapper.nativeOnCreateCameraNode(sm, sceneNode, "MainCamera", 52.2f, (float) mSurfaceWidth / (float) mSurfaceHeight, 0.1f, 1000.0f);
+                Matrix4f mat = new Matrix4f();
+                mat.loadIdentity();
+                mat.translate(0.0f, 0.0f, -1.0f);
+                mat.rotate(90.0f, 1.0f, 0.0f, 0.0f);
+                mat.scale(0.1f, 0.1f, 0.1f);
+
+                //VEJNIWrapper.nativeOnMoveNode(mCameraID, offsetMat.getArray());
+                mSurfaceView.mModelID = VEJNIWrapper.nativeOnCreateEmptyNode(sm, sceneNode, "Entity");
+                VEJNIWrapper.nativeOnMoveNode(mSurfaceView.mModelID, mat.getArray());
+                VEJNIWrapper.nativeOnCreateModelNode(sm, mSurfaceView.mModelID, "lamp", "models/lamp/lamp.vem");
+
+                mat.loadTranslate(0.0f, 3.5f, 0.0f);
+                mSurfaceView.mLightNode = VEJNIWrapper.nativeOnCreateLightNode(sm, mSurfaceView.mModelID, "pointLight", "lights/point0.velight");
+                VEJNIWrapper.nativeOnMoveNode(mSurfaceView.mLightNode, mat.getArray());
+
+                mat.loadScale(0.07f, 0.07f, 0.07f);
+                VEJNIWrapper.nativeOnMoveNode(VEJNIWrapper.nativeOnCreateModelNode(sm, mSurfaceView.mModelID, "plane", "models/plane.vem"), mat.getArray());
+                VEJNIWrapper.nativeOnMoveNode(VEJNIWrapper.nativeOnCreateModelNode(sm, mSurfaceView.mModelID, "shadowPlane", "models/shadowPlane.vem"), mat.getArray());
+
+                VEJNIWrapper.nativeOnCreateComponent(mSurfaceView.mModelID, "NodeManipulator");
+
+                Matrix4f res = new Matrix4f(VEJNIWrapper.nativeOnGetNodeMatrix(mSurfaceView.mModelID));
+                VEJNIWrapper.nativeOnMoveNode(mSurfaceView.mModelID, res.getArray());
+
+
+
+                //VEJNIWrapper.nativeOnRemoveCamera(camera);
+
+                //VEJNIWrapper.nativeOnRemoveCamera(camera);
             }
             Log.i(TAG, "nativeOnSurfaceCreated");
         }
 
     }
+
+    private long mLightNode = -1;
+    private long mModelID = -1;
+    private boolean mIsVisible = true;
 }

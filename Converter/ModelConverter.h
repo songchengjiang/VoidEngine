@@ -63,11 +63,14 @@ private:
 	static bool hasTexture(const aiMaterial *mat, aiTextureType texType);
 
 	void collectBoneIndiecsAndBoneWeights(const aiMesh *mesh, std::vector< std::pair<aiVector4D, aiVector4D> > &results);
+    
+    
+    void bakeLightMap(const aiScene *scene);
 
 private:
 
 	std::string getTextureTypeName(aiTextureType texType);
-	std::string getShaderDefinations(const aiMaterial *mat, const std::string &type);
+	void writeShaderDefinations(const aiMaterial *mat, const std::string &type);
 
 private:
 

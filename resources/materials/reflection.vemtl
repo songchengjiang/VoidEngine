@@ -1,0 +1,55 @@
+{
+    "version": "1.0",
+    "name": "reflection.vemtl",
+    "materials": [
+        {
+            "name": "reflection",
+            "techniques": [
+                {
+                      "name": "reflection",
+                      "passes": [
+                          {
+                              "depthTest": true,
+                              "depthWrite": true,
+                              "cullFace": true,
+                              "uniforms": {
+                                  "u_ModelViewProjectMat": "MVP_MATRIX",
+                                  "u_ModelViewMat": "MV_MATRIX",
+                                  "u_ModelMat": "M_MATRIX",
+                                  "u_NormalMat": "NORMAL_MATRIX",
+                                  "u_NormalWorldMat": "NORMAL_WORLD_MATRIX",
+                                  "u_cameraPos": "CAMERA_WORLD_POS",
+                                  "u_screenWidth": "SCREEN_WIDTH",
+                                  "u_screenHeight": "SCREEN_HEIGHT",
+                                  "u_roughness":0.200000,
+                                  "u_metallic":0.800000,
+
+                                  "u_radianceTexture": 0
+                              },
+                              "shaders": [
+                                  {
+                                      "type": "VERTEX_SHADER",
+                                      "defination": "#define ATTR_POSITION 0\n#define ATTR_NORMAL 1\n#define ATTR_TANGENT 2\n#define ATTR_BITANGENT 3\n#define ATTR_TEXTURE_COORD0 4\n",
+                                      "source": "reflection.vert"
+                                  },
+                                  {
+                                      "type": "FRAGMENT_SHADER",
+                                      "source": "reflection.frag"
+                                  }
+                              ],
+                               "textureUnits": [
+                                   {
+                                       "name": "bolonga_irradiance",
+                                       "source": "textures/bolonga_irradiance.png",
+                                       "texType": "DIFFUSE_TEXTURE",
+                                       "wrap": "REPEAT",
+                                       "filter": "LINEAR_MIP_MAP_LINEAR"
+                                   }
+                               ]
+                          }
+                      ]
+                  }
+            ]
+        }
+    ]
+}

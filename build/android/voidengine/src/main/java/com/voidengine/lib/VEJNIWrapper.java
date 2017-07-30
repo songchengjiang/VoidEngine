@@ -7,6 +7,10 @@ import android.util.Log;
 
 public class VEJNIWrapper {
 
+    static {
+        System.loadLibrary("voidengine");
+    }
+
     public static native void nativeOnActivityCreate(Activity activity, AssetManager assetMgr);
     public static native void nativeOnActivityDestroy(Activity activity);
 
@@ -20,4 +24,19 @@ public class VEJNIWrapper {
     public static native void nativeOnSurfaceTouchUp(GLSurfaceView surface, int id, float x, float y);
     public static native void nativeOnSurfaceTouchMove(GLSurfaceView surface, final int[] ids, final float[] xs, final float[] ys);
     public static native void nativeOnSurfaceTouchCancel(GLSurfaceView surface, final int[] ids, final float[] xs, final float[] ys);
+
+
+    public static native long nativeOnCreateSceneManager();
+    public static native long nativeOnGetSceneNode(long sceneManagerID);
+    public static native long nativeOnCreateEmptyNode(long sceneManagerID, long parentNodeID, String name);
+    public static native long nativeOnCreateModelNode(long sceneManagerID, long parentNodeID, String name, String filePath);
+    public static native long nativeOnCreateCameraNode(long sceneManagerID, long parentNodeID, String name, float fovy, float aspectRadio, float zNear, float zFar);
+    public static native long nativeOnCreateLightNode(long sceneManagerID, long parentNodeID, String name, String filePath);
+    public static native long nativeOnCreateComponent(long attachedNodeID, String type);
+    public static native void nativeOnMoveNode(long nodeID, final float[] matrix);
+    public static native float[] nativeOnGetNodeMatrix(long nodeID);
+    public static native long nativeOnGetModelMaterial(long nodeID, String materialName);
+    public static native void nativeOnSetMaterialParameter(long materialID, String paramName, final float[] values);
+    public static native void nativeOnSetNodeVisible(long nodeID, boolean isVisible);
+    public static native void nativeOnDestroyNode(long modelID);
 }

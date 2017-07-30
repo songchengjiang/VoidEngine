@@ -430,8 +430,8 @@ void veViewerDesktop::collectWindowSizeEvent(GLFWwindow* window, int width, int 
     event.setEventType(veEvent::VE_WIN_RESIZE);
     event.setWindowWidth(width);
     event.setWindowHeight(height);
-    if (viewer->getCamera())
-        viewer->getCamera()->resize(event.getWindowWidth(), event.getWindowHeight());
+//    if (viewer->getCamera())
+//        viewer->getCamera()->resize(event.getWindowWidth(), event.getWindowHeight());
     viewer->needDestroyRenderContexts(true);
     viewer->_eventList.push_back(event);
 }

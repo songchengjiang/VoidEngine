@@ -1,0 +1,229 @@
+{
+    "version": "1.0",
+    "name": "lamp.vemtl",
+    "materials": [
+        {
+            "name": "mat-0",
+            "techniques": [
+                {
+                    "name": "tech-0",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": true,
+                            "uniforms": {
+                                "u_ModelViewProjectMat": "MVP_MATRIX",
+                                "u_ModelViewMat": "MV_MATRIX",
+                                "u_ModelMat": "M_MATRIX",
+                                "u_NormalMat": "NORMAL_MATRIX",
+                                "u_NormalWorldMat": "NORMAL_WORLD_MATRIX",
+                                "u_cameraWorldPos": "CAMERA_WORLD_POS",
+                                "u_ambient": [1.0,1.0,1.0],
+                                "u_diffuse": [1.0,1.0,1.0],
+                                "u_roughness":1.0,
+                                "u_metallic":1.0,
+                                "u_alpha": 1.0,
+                                "u_diffuseTex": {
+                                    "source": "lamp_DIFFUSE.png",
+                                    "wrap": "REPEAT",
+                                    "filter": "NEAREST_MIP_MAP_LINEAR"
+                                 },
+                                "u_normalTex": {
+                                    "source": "lamp_NORMAL.png",
+                                    "wrap": "REPEAT",
+                                    "filter": "NEAREST_MIP_MAP_LINEAR"
+                                },
+                                "u_roughnessTex": {
+                                    "source": "lamp_ROUGHNESS.png",
+                                    "wrap": "CLAMP",
+                                    "filter": "NEAREST_MIP_MAP_LINEAR"
+                                },
+                                "u_metallicTex": {
+                                    "source": "lamp_METALLIC.png",
+                                    "wrap": "CLAMP",
+                                    "filter": "NEAREST_MIP_MAP_LINEAR"
+                                }
+                            },
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "defination": [ "VE_USE_NORMAL_TEXTURE" ],
+                                    "source": "shaders/StandardShader.vert"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "defination": [
+                                        "VE_USE_DIFFUSE_TEXTURE",
+                                        "VE_USE_NORMAL_TEXTURE",
+                                        "VE_USE_TEXTURES",
+                                        "VE_USE_ROUGHNESS_TEXTURE",
+                                        "VE_USE_METALLIC_TEXTURE"
+                                    ],
+                                    "source": "shaders/StandardShader.frag"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "mat-1",
+            "techniques": [
+                {
+                    "name": "tech-0",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": true,
+                            "uniforms": {
+                                "u_ModelViewProjectMat": "MVP_MATRIX",
+                                "u_ModelViewMat": "MV_MATRIX",
+                                "u_ModelMat": "M_MATRIX",
+                                "u_NormalMat": "NORMAL_MATRIX",
+                                "u_NormalWorldMat": "NORMAL_WORLD_MATRIX",
+                                "u_cameraWorldPos": "CAMERA_WORLD_POS",
+                                "u_diffuse": [1.000000,1.000000,1.000000
+                                ],
+                                "u_emissive": [0.000000,0.000000,0.000000
+                                ],
+                                "u_alpha":1.0,
+                                "u_roughness":0.2,
+                                "u_metallic":0.1
+                            },
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "defination": [],
+                                    "source": "shaders/StandardShader.vert"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "defination": [],
+                                    "source": "shaders/StandardShader.frag"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "mat-2",
+            "techniques": [
+                {
+                    "name": "tech-0",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": true,
+                            "uniforms": {
+                                "u_ModelViewProjectMat": "MVP_MATRIX",
+                                "u_ModelViewMat": "MV_MATRIX",
+                                "u_ModelMat": "M_MATRIX",
+                                "u_NormalMat": "NORMAL_MATRIX",
+                                "u_NormalWorldMat": "NORMAL_WORLD_MATRIX",
+                                "u_cameraWorldPos": "CAMERA_WORLD_POS",
+                                "u_diffuse": [1.0,1.0,1.0],
+                                "u_roughness":1.0,
+                                "u_metallic":1.0,
+                                "u_alpha":1.000000,
+                                "u_diffuseTex": {
+                                    "source": "lamp_DIFFUSE.png",
+                                    "wrap": "REPEAT",
+                                    "filter": "NEAREST_MIP_MAP_LINEAR"
+                                 },
+                                "u_normalTex": {
+                                    "source": "lamp_NORMAL.png",
+                                    "wrap": "REPEAT",
+                                    "filter": "NEAREST_MIP_MAP_LINEAR"
+                                },
+                                "u_roughnessTex": {
+                                    "source": "lamp_ROUGHNESS.png",
+                                    "wrap": "CLAMP",
+                                    "filter": "NEAREST_MIP_MAP_LINEAR"
+                                },
+                                "u_metallicTex": {
+                                    "source": "lamp_METALLIC.png",
+                                    "wrap": "CLAMP",
+                                    "filter": "NEAREST_MIP_MAP_LINEAR"
+                                }
+                            },
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "defination": [
+                                        "VE_USE_NORMAL_TEXTURE"
+                                    ],
+                                    "source": "shaders/StandardShader.vert"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "defination": [
+                                        "VE_USE_DIFFUSE_TEXTURE",
+                                        "VE_USE_NORMAL_TEXTURE",
+                                        "VE_USE_TEXTURES",
+                                        "VE_USE_ROUGHNESS_TEXTURE",
+                                        "VE_USE_METALLIC_TEXTURE"
+                                    ],
+                                    "source": "shaders/StandardShader.frag"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "mat-3",
+            "techniques": [
+                {
+                    "name": "tech-0",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": false,
+                            "cullFace": false,
+                            "blendFunc": ["SRC_ALPHA", "ONE_MINUS_SRC_ALPHA"],
+                            "uniforms": {
+                                "u_ModelViewProjectMat": "MVP_MATRIX",
+                                "u_ModelViewMat": "MV_MATRIX",
+                                "u_ModelMat": "M_MATRIX",
+                                "u_NormalMat": "NORMAL_MATRIX",
+                                "u_NormalWorldMat": "NORMAL_WORLD_MATRIX",
+                                "u_cameraWorldPos": "CAMERA_WORLD_POS",
+                                "u_diffuse": [1.0,1.0,1.0],
+                                "u_alpha":0.5,
+                                "u_roughness":1.0,
+                                "u_metallic":0.0,
+                                "u_diffuseTex": {
+                                    "source": "lamp_SHADOW.png",
+                                    "wrap": "REPEAT",
+                                    "filter": "NEAREST_MIP_MAP_LINEAR"
+                                }
+                            },
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "defination": [],
+                                    "source": "shaders/Color.vert"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "defination": [
+                                        "VE_USE_DIFFUSE_TEXTURE",
+                                        "VE_USE_TEXTURES"
+                                    ],
+                                    "source": "shaders/Color.frag"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

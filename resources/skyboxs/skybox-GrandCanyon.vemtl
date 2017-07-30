@@ -1,0 +1,44 @@
+{
+    "version": "1.0",
+    "name": "skybox.vemtl",
+    "materials": [
+        {
+            "name": "skyboxMat",
+            "techniques": [
+                {
+                    "name": "normal",
+                    "passes": [
+                        {
+                            "renderPass": "FORWARD",
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "cullFace": false,
+                            "cullFaceMode":  "FRONT",
+                            "uniforms": {
+                                "u_ModelViewProjectMat": "MVP_MATRIX",
+                                "u_cubeMap": {
+                                    "type": "TEX_CUBE",
+                                    "source": [ "GrandCanyon_posx.ktx", "GrandCanyon_negx.ktx", "GrandCanyon_posy.ktx", "GrandCanyon_negy.ktx", "GrandCanyon_posz.ktx", "GrandCanyon_negz.ktx" ],
+                                    "wrap": "CLAMP",
+                                    "filter": "LINEAR_MIP_MAP_LINEAR"
+                                }
+                            },                             
+                            "shaders": [
+                              {
+                                "type": "VERTEX_SHADER",
+                                "defination": [],
+                                "source": "skybox.vert"
+                              },
+                              {
+                                "type": "FRAGMENT_SHADER",
+                                "defination": [],
+                                "source": "skybox.frag"
+                              }
+                            ]
+                        }  
+                    ]
+                }
+            ]
+        }
+    ]
+}

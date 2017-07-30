@@ -2,17 +2,15 @@
 uniform sampler2D u_diffuseTex;
 #endif
 
-in vec4 v_color;
-in vec2 v_texcoord;
-
-layout(location=0) out vec4 fragColor;
+varying vec4 v_color;
+varying vec2 v_texcoord;
              
 void main(){
 
 #ifdef VE_USE_DIFFUSE_TEXTURE
-	fragColor = v_color * texture(u_diffuseTex, v_texcoord);
+	gl_FragColor = v_color * texture2D(u_diffuseTex, v_texcoord);
 #else
-	fragColor = v_color;
+	gl_FragColor = v_color;
 #endif
     
 }

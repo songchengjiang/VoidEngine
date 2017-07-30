@@ -165,7 +165,7 @@ private:
 				up = veVec3(val[0].GetDouble(), val[1].GetDouble(), val[2].GetDouble());
 			}
 		}
-		_camera->setViewMatrixAslookAt(eye, center, up);
+		//_camera->setViewMatrixAslookAt(eye, center, up);
 	}
 
 	void readfbo(const Value &fboVal) {
@@ -192,7 +192,7 @@ private:
 			bool   needMipmap = false;
 			int width = _camera->getViewport().width;
 			int height = _camera->getViewport().height;
-			GLuint internalFormat = GL_RGBA32F;
+			GLuint internalFormat = GL_RGBA;
 			if (attachmentVal.HasMember(ATTACHMENT_KEY.c_str())) {
 				attachment = getFrameBufferObjectAttach(attachmentVal[ATTACHMENT_KEY.c_str()].GetString());
 			}
@@ -213,21 +213,21 @@ private:
 				height = attachmentVal[HEIGHT_KEY.c_str()].GetUint();
 			}
 
-			if (attachmentVal.HasMember(FORMAT_KEY.c_str())) {
-				const char* format = attachmentVal[FORMAT_KEY.c_str()].GetString();
-				if (strcmp(format, "RGB32F") == 0) {
-					internalFormat = GL_RGB32F;
-				}
-				else if (strcmp(format, "RGBA32F") == 0) {
-					internalFormat = GL_RGBA32F;
-				}
-				else if (strcmp(format, "RGB8") == 0) {
-					internalFormat = GL_RGB8;
-				}
-				else if (strcmp(format, "RGBA8") == 0) {
-					internalFormat = GL_RGBA8;
-				}
-			}
+//			if (attachmentVal.HasMember(FORMAT_KEY.c_str())) {
+//				const char* format = attachmentVal[FORMAT_KEY.c_str()].GetString();
+//				if (strcmp(format, "RGB32F") == 0) {
+//					internalFormat = GL_RGB32F;
+//				}
+//				else if (strcmp(format, "RGBA32F") == 0) {
+//					internalFormat = GL_RGBA32F;
+//				}
+//				else if (strcmp(format, "RGB8") == 0) {
+//					internalFormat = GL_RGB8;
+//				}
+//				else if (strcmp(format, "RGBA8") == 0) {
+//					internalFormat = GL_RGBA;
+//				}
+//			}
 
 			texture->storage(width, height, 1, internalFormat, GL_RGB, GL_UNSIGNED_BYTE, nullptr, (unsigned int)log2(width) + 1);
 			fbo->attach(attachment, target, texture, -1, needMipmap);

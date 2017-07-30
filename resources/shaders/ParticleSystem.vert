@@ -1,14 +1,13 @@
-layout (location = ATTR_POSITION) in vec3 position;
-layout (location = ATTR_TEXTURE_COORD0) in vec2 texcoord0;
-layout (location = ATTR_COLOR0) in vec4 color;
-layout (location = ATTR_MVP_MAT) in mat4 modelViewProjectMat;
+attribute vec3 a_position;
+attribute vec2 a_texCoord0;
+attribute vec4 a_color0;
 
-out vec4 v_color;
-out vec2 v_texcoord;
+varying vec4 v_color;
+varying vec2 v_texcoord;
 
 void main()                                                 
 {
-    v_color = color;
-	v_texcoord = texcoord0;
-	gl_Position = modelViewProjectMat * vec4(position, 1.0);
+    v_color = a_color0;
+	v_texcoord = a_texCoord0;
+	gl_Position = vec4(a_position, 1.0);
 }

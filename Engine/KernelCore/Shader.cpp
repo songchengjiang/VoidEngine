@@ -6,6 +6,8 @@
 #include "Camera.h"
 #include "SceneManager.h"
 #include "Configuration.h"
+#include "Shaders/Common.glsl.h"
+#include <algorithm>
 
 veUniform::veUniform(const std::string &name)
 	: USE_VE_PTR_INIT
@@ -13,6 +15,7 @@ veUniform::veUniform(const std::string &name)
 	, _location(-1)
 	, _preLocation(-1)
 	, _maxReLocation(0)
+    , _type(Type::NONE)
 {
 }
 
@@ -34,6 +37,16 @@ veUniform::veUniform(const std::string &name, veReal val)
 	, _maxReLocation(0)
 {
 	setValue(val);
+}
+
+veUniform::veUniform(const std::string &name, veTexture *val)
+	: USE_VE_PTR_INIT
+    , _name(name)
+    , _location(-1)
+    , _preLocation(-1)
+    , _maxReLocation(0)
+{
+    setValue(val);
 }
 
 veUniform::veUniform(const std::string &name, const std::string &val)
@@ -161,8 +174,10 @@ veUniform::~veUniform()
 
 }
 
-void veUniform::apply(const veRenderCommand &command)
+void veUniform::apply(const veRenderCommand &command, unsigned int &texUnit)
 {
+    if (_type == Type::NONE)
+        return;
 	if (_location < 0 && _maxReLocation == 255)
 		return;
 	if (_location < 0) {
@@ -181,6 +196,15 @@ void veUniform::apply(const veRenderCommand &command)
 	case Type::REAL_ARRAY:
 		glUniform1fv(_location, GLsizei(_values.size()), _values.buffer());
 		break;
+            
+    case Type::SAMPLER:
+        {
+            glActiveTexture(GL_TEXTURE0 + texUnit);
+            _texture->bind(command.contextID);
+            glUniform1i(_location, texUnit);
+            ++texUnit;
+        }
+        break;
 
 	case Type::VEC2:
 	case Type::VEC2_ARRAY:
@@ -242,9 +266,9 @@ void veUniform::apply(const veRenderCommand &command)
 				glUniform1f(_location, veMath::veSin(command.sceneManager->getSimulationTime()));
 			}
 			else {
-				const veMat4 &worldMat = command.worldMatrix->value();
+				const veMat4 &worldMat = command.worldMatrix->value()[0];
 				const veMat4 &viewMat = command.camera->viewMatrix();
-				const veMat4 &invViewMat = command.camera->getNodeToWorldMatrix();
+				const veMat4 &invViewMat = command.camera->getAttachedNode()->getNodeToWorldMatrix();
 				veMat4 modelViewMat = viewMat * worldMat;
 				if (_autoBindingValue == MVP_MATRIX) {
 					veMat4 mvp = command.camera->projectionMatrix() * modelViewMat;
@@ -304,7 +328,7 @@ void veUniform::apply(const veRenderCommand &command)
 					m[2] = normMat[2][0]; m[5] = normMat[2][1]; m[8] = normMat[2][2];
 					glUniformMatrix3fv(_location, 1, GL_FALSE, m);
 				}
-				else if (_autoBindingValue == NORMAL_WROLD_MATRIX) {
+				else if (_autoBindingValue == NORMAL_WORLD_MATRIX) {
 					veMat3 normMat(worldMat[0][0], worldMat[0][1], worldMat[0][2]
 						, worldMat[1][0], worldMat[1][1], worldMat[1][2]
 						, worldMat[2][0], worldMat[2][1], worldMat[2][2]);
@@ -341,24 +365,19 @@ void veUniform::apply(const veRenderCommand &command)
 					glUniformMatrix4fv(_location, 1, GL_FALSE, m);
 				}
 				else if (_autoBindingValue == BONE_MATRIXES) {
-					static float boneMates[60 * 16];
-					veMesh *mesh = static_cast<veMesh *>(command.user1);
-					veMat4 worldToMesh = worldMat;
-					worldToMesh.inverse();
-					for (unsigned int i = 0; i < mesh->getBoneNum(); ++i) {
+					static float boneMates[48 * 16];
+					for (unsigned int i = 0; i < command.bonesMatrix->valueSize(); ++i) {
 						unsigned int idx = 16 * i;
-						const auto &bone = mesh->getBone(i);
-						veMat4 boneMat = worldToMesh * bone->getBoneNode()->getNodeToWorldMatrix() * bone->getOffsetMat();
+                        const veMat4 &boneMat = command.bonesMatrix->value()[i];
 						boneMates[idx + 0] = boneMat[0][0]; boneMates[idx + 4] = boneMat[0][1]; boneMates[idx + 8] = boneMat[0][2]; boneMates[idx + 12] = boneMat[0][3];
 						boneMates[idx + 1] = boneMat[1][0]; boneMates[idx + 5] = boneMat[1][1]; boneMates[idx + 9] = boneMat[1][2]; boneMates[idx + 13] = boneMat[1][3];
 						boneMates[idx + 2] = boneMat[2][0]; boneMates[idx + 6] = boneMat[2][1]; boneMates[idx + 10] = boneMat[2][2]; boneMates[idx + 14] = boneMat[2][3];
 						boneMates[idx + 3] = boneMat[3][0]; boneMates[idx + 7] = boneMat[3][1]; boneMates[idx + 11] = boneMat[3][2]; boneMates[idx + 15] = boneMat[3][3];
 					}
-					glUniformMatrix4fv(_location, 60, GL_FALSE, boneMates);
+					glUniformMatrix4fv(_location, 48, GL_FALSE, boneMates);
 				}
 				else if (_autoBindingValue == CAMERA_WORLD_POS) {
-					veMat4 cameraInWorld = command.camera->getNodeToWorldMatrix();
-					glUniform3f(_location, cameraInWorld[0][3], cameraInWorld[1][3], cameraInWorld[2][3]);
+					glUniform3f(_location, invViewMat[0][3], invViewMat[1][3], invViewMat[2][3]);
 				}
 			}
 			//uniform->setValue(values);
@@ -432,6 +451,18 @@ void veUniform::setValue(const veVec2& val)
 		_preLocation = _location;
 	if (_maxReLocation < 255)
 		_location = -1;
+}
+
+void veUniform::setValue(veTexture *val)
+{
+    if (_texture == val)
+        return;
+    _type = Type::SAMPLER;
+    _texture = val;
+    if (0 <= _location)
+        _preLocation = _location;
+    if (_maxReLocation < 255)
+        _location = -1;
 }
 
 void veUniform::setValue(const veVec3& val)
@@ -618,6 +649,13 @@ bool veUniform::getValue(veReal &val) const
 	return true;
 }
 
+bool veUniform::getValue(veTexture *&val) const
+{
+    if (_type != Type::SAMPLER) return false;
+    val = _texture.get();
+    return true;
+}
+
 bool veUniform::getValue(veVec2 &val) const
 {
 	if (_type != Type::VEC2) return false;
@@ -755,6 +793,12 @@ void veUniform::setName(const std::string &name)
 	_maxReLocation = 0;
 }
 
+void veUniform::refresh()
+{
+    _location = -1;
+    _maxReLocation = 0;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 //veShader::veShader(Type type, const std::string &filePath)
@@ -768,12 +812,14 @@ veShader::veShader(Type type, const char *str)
 	: USE_VE_PTR_INIT
 	, _type(type)
 	, _source(str)
+    , _shader(0)
 {
 	setSource(str);
 }
 
 veShader::veShader()
 	: USE_VE_PTR_INIT
+    , _shader(0)
 {
 
 }
@@ -799,22 +845,49 @@ void veShader::setShaderHeader(const std::string &sHeader)
 	_shaderHeaders = sHeader;
 }
 
+bool veShader::addDefination(const std::string &def)
+{
+    auto iter = std::find(_definations.begin(), _definations.end(), def);
+    if (iter != _definations.end())
+        return false;
+    _definations.push_back(def);
+    return true;
+}
+
+bool veShader::removeDefination(const std::string &def)
+{
+    auto iter = std::find(_definations.begin(), _definations.end(), def);
+    if (iter != _definations.end()) {
+        _definations.erase(iter);
+        return true;
+    }
+    return false;
+}
+
 GLuint veShader::compile()
 {
 	std::string preDefination;
 	char str[16];
 #if (VE_PLATFORM == VE_PLATFORM_WIN32) || (VE_PLATFORM == VE_PLATFORM_MAC)
-	sprintf(str, " %d%d0\n", VE_GL_VERSION_MAJOR, VE_GL_VERSION_MINOR);
+	//sprintf(str, " %d%d0\n", VE_GL_VERSION_MAJOR, VE_GL_VERSION_MINOR);
 #else
-	sprintf(str, " %d%d0 es\n", VE_GLSL_ES_VERSION_MAJOR, VE_GLSL_ES_VERSION_MINOR);
+	sprintf(str, " %d%d0\n", VE_GLSL_ES_VERSION_MAJOR, VE_GLSL_ES_VERSION_MINOR);
+//    preDefination += SHADER_VERSION + std::string(str);
 #endif
-	preDefination += SHADER_VERSION + std::string(str);
+    
+#if (VE_PLATFORM == VE_PLATFORM_WIN32) || (VE_PLATFORM == VE_PLATFORM_MAC)
+//    preDefination += "#extension GL_ARB_shader_texture_lod : enable\n";
+#else
+//    preDefination += "#extension GL_EXT_shader_texture_lod : require\n";
+//    preDefination += "#define texture2DLod texture2DLodEXT\n";
+#endif
+    
 
 #if VE_PLATFORM == VE_PLATFORM_ANDROID || VE_PLATFORM == VE_PLATFORM_IOS
 	if (_type == veShader::FRAGMENT_SHADER) {
 		preDefination += PRECISION_DEFINE_FLOAT + std::string("\n");
-		preDefination += PRECISION_DEFINE_SAMPLER2DSHADOW + std::string("\n");
-		preDefination += PRECISION_DEFINE_SAMPLERCUBESHADOW + std::string("\n");
+		//preDefination += PRECISION_DEFINE_SAMPLER2DSHADOW + std::string("\n");
+		//preDefination += PRECISION_DEFINE_SAMPLERCUBESHADOW + std::string("\n");
 	}
 #endif
 
@@ -835,10 +908,24 @@ GLuint veShader::compile()
 #elif VE_PLATFORM == VE_PLATFORM_MAC
 	preDefination += std::string("#define VE_PLATFORM VE_PLATFORM_MAC\n");
 #endif
+    
+    for (const std::string &def : _definations) {
+        preDefination += "#define " + def + " 1\n";
+    }
+    preDefination += "uniform sampler2D " + SHADER_INNER_UNIFROM_IRRADIANCE_NAME + ";\n";
+    preDefination += "uniform sampler2D " + SHADER_INNER_UNIFROM_RADIANCE_NAME + ";\n";
+    preDefination += "uniform sampler2D " + SHADER_INNER_UNIFROM_LUT_NAME + ";\n";
+    preDefination += "uniform vec3 " + SHADER_INNER_UNIFROM_DIR_LIGHT_DIRECTION_NAME + ";\n";
+    preDefination += "uniform vec3 " + SHADER_INNER_UNIFROM_DIR_LIGHT_COlOR_NAME + ";\n";
+    preDefination += "uniform float " + SHADER_INNER_UNIFROM_DIR_LIGHT_INTENSITY_NAME + ";\n";
+    preDefination += "uniform vec3 " + SHADER_INNER_UNIFROM_POINT_LIGHT_POSITION_NAME + ";\n";
+    preDefination += "uniform vec3 " + SHADER_INNER_UNIFROM_POINT_LIGHT_COlOR_NAME + ";\n";
+    preDefination += "uniform float " + SHADER_INNER_UNIFROM_POINT_LIGHT_INTENSITY_NAME + ";\n";
+    preDefination += "uniform float " + SHADER_INNER_UNIFROM_POINT_LIGHT_ARI_NAME + ";\n";
 
     auto shader = glCreateShader(_type);
 
-	std::string source = preDefination + _shaderHeaders + _source;
+	std::string source = preDefination + _shaderHeaders + SHADER_COMMON_FUNCTION + _source;
 	char *buffer = new char[source.size() + 1];
 	strcpy(buffer, source.c_str());
 	glShaderSource(shader, 1, &buffer, nullptr);
@@ -864,6 +951,7 @@ GLuint veShader::compile()
 		shader = 0;
 	}
 	delete[] buffer;
+    _shader = shader;
 	return shader;
 }
 

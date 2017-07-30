@@ -102,18 +102,18 @@ public:
         gizmoNode->setVisible(false);
         _sceneManager->getRootNode()->addChild(gizmoNode);
         
-        std::string fontFile = "fonts/arial.ttf";
-        {
-            auto text = _sceneManager->createText("text0", new veFont(fontFile, 64), "Hello Void Engine");
-            text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
-            auto node = _sceneManager->createNode("node0");
-            node->addRenderableObject(text);
-            veTransformer *transer = new veTransformer;
-            node->addComponent(transer);
-            transer->setPosition(veVec3(0.0f, 0.8f, 0.0f));
-            root->addChild(node);
-            node->setMask(MASTER_CAMERA_FLAG);
-        }
+//        std::string fontFile = "fonts/arial.ttf";
+//        {
+//            auto text = _sceneManager->createText("text0", new veFont(fontFile, 64), "Hello Void Engine");
+//            text->setColor(veVec4(1.0f, 0.0f, 0.0f, 1.0f));
+//            auto node = _sceneManager->createNode("node0");
+//            node->addRenderableObject(text);
+//            veTransformer *transer = new veTransformer;
+//            node->addComponent(transer);
+//            transer->setPosition(veVec3(0.0f, 0.8f, 0.0f));
+//            root->addChild(node);
+//            node->setMask(MASTER_CAMERA_FLAG);
+//        }
         
 		{
 			veNode *entity = static_cast<veNode *>(veFile::instance()->readFile(_sceneManager, "models/Aircraft/Aircraft.vem", "Aircraft-entity"));

@@ -6,7 +6,6 @@ veViewer::veViewer(int width, int height, const std::string &title)
     : _width(width)
     , _height(height)
     , _title(title)
-    , _camera(nullptr)
     , _isRunning(false)
     , _needDestroyRenderContexts(false)
 {
@@ -21,12 +20,12 @@ veViewer::~veViewer()
 
 void veViewer::startSimulation()
 {
-    _sceneManager->attachViewer(this);
+    //_sceneManager->attachViewer(this);
 }
 
 void veViewer::stopSimulation()
 {
-    _sceneManager->detachViewer(this);
+    //_sceneManager->detachViewer(this);
 }
 
 void veViewer::addListener(veViewerListener *listener)

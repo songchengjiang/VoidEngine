@@ -25,32 +25,32 @@ model {
                 }
             }
 
-            libfreetype {
-                // Inform Android Studio where header file dir for this lib
-                headers.srcDir "${dependents_root}/freetype/include"
-                // Inform Android Studio where lib is -- each ABI should have a lib file
-                binaries.withType(StaticLibraryBinary) {
-                    staticLibraryFile = file("${dependents_root}/freetype/lib/android/${targetPlatform.getName()}/libfreetype.a")
-                }
-            }
+//            libfreetype {
+//                // Inform Android Studio where header file dir for this lib
+//                headers.srcDir "${dependents_root}/freetype/include"
+//                // Inform Android Studio where lib is -- each ABI should have a lib file
+//                binaries.withType(StaticLibraryBinary) {
+//                    staticLibraryFile = file("${dependents_root}/freetype/lib/android/${targetPlatform.getName()}/libfreetype.a")
+//                }
+//            }
 
-            libjpeg {
-                // Inform Android Studio where header file dir for this lib
-                headers.srcDir "${dependents_root}"
-                // Inform Android Studio where lib is -- each ABI should have a lib file
-                binaries.withType(StaticLibraryBinary) {
-                    staticLibraryFile = file("${dependents_root}/libjpeg/lib/android/${targetPlatform.getName()}/libjpeg.a")
-                }
-            }
+//            libjpeg {
+//                // Inform Android Studio where header file dir for this lib
+//                headers.srcDir "${dependents_root}"
+//                // Inform Android Studio where lib is -- each ABI should have a lib file
+//                binaries.withType(StaticLibraryBinary) {
+//                    staticLibraryFile = file("${dependents_root}/libjpeg/lib/android/${targetPlatform.getName()}/libjpeg.a")
+//                }
+//            }
 
-            libopenexr {
-                // Inform Android Studio where header file dir for this lib
-                headers.srcDir "${dependents_root}"
-                // Inform Android Studio where lib is -- each ABI should have a lib file
-                binaries.withType(StaticLibraryBinary) {
-                    staticLibraryFile = file("${dependents_root}/openexr/lib/android/${targetPlatform.getName()}/libopenexr.a")
-                }
-            }
+//            libopenexr {
+//                // Inform Android Studio where header file dir for this lib
+//                headers.srcDir "${dependents_root}"
+//                // Inform Android Studio where lib is -- each ABI should have a lib file
+//                binaries.withType(StaticLibraryBinary) {
+//                    staticLibraryFile = file("${dependents_root}/openexr/lib/android/${targetPlatform.getName()}/libopenexr.a")
+//                }
+//            }
 
             libz {
                 // Inform Android Studio where header file dir for this lib
@@ -85,9 +85,9 @@ model {
                 }
                 dependencies {
                     library 'libpng' linkage 'static'
-                    library 'libfreetype' linkage 'static'
-                    library 'libjpeg' linkage 'static'
-                    library 'libopenexr' linkage 'static'
+                    //library 'libfreetype' linkage 'static'
+//                    library 'libjpeg' linkage 'static'
+//                    //library 'libopenexr' linkage 'static'
                     library 'libz' linkage 'static'
                 }
             }
@@ -115,7 +115,7 @@ model {
         cppFlags.add("-fno-exceptions")
         cppFlags.add("-DANDROID")
         cppFlags.add("-std=c++11")
-        ldLibs.addAll(["log", "GLESv3", "EGL", "android"])
+        ldLibs.addAll(["log", "GLESv2", "EGL", "android"])
         //ldFlags.add("-c")
         abiFilters.addAll(['armeabi', 'armeabi-v7a'])
         stl = "gnustl_static"

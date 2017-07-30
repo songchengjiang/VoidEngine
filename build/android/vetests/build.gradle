@@ -84,7 +84,7 @@ model {
         cppFlags.add("-fno-exceptions")
         cppFlags.add("-DANDROID")
         cppFlags.add("-std=c++11")
-        ldLibs.addAll(["log", "GLESv3", "EGL", "android"])
+        ldLibs.addAll(["log", "GLESv2", "EGL", "android"])
         abiFilters.addAll(['armeabi', 'armeabi-v7a'])
         stl = "gnustl_static"
     }

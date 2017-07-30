@@ -20,7 +20,6 @@ public:
 	USE_VE_PTR;
 
 	void rendering(veViewer *viewer);
-    virtual void renderToPostProcesser(vePostProcesser *processer, veCamera *camera, unsigned int bufferMask, unsigned int contextID) {};
 
 	bool isNodeVisible(veNode *node);
 
@@ -34,14 +33,14 @@ protected:
 	void renderCameras(veViewer *viewer);
 	virtual void renderScene(veCamera *camera, unsigned int contextID) = 0;
 
-	void renderDirectionalLightShadow(const veMat4 &lightInWorldMat, veLight *light, veCamera *camera, unsigned int contextID, veMat4 *lightShadowMats);
-	void renderPointLightShadow(const veMat4 &lightInWorldMat, veLight *light, unsigned int contextID, veMat4 &lightShadowMat);
-	void renderSpotLightShadow(const veMat4 &lightInWorldMat, veLight *light, unsigned int contextID, veMat4 &lightShadowMat);
-    
-    void caculateDirectionalLightCascadedParams(const veMat4 &lightInWorldMat, veLight *light, veCamera *camera, float *cascadedLevels);
-
-	vePass* getOrCreateDirectionalShadowPass(const std::string &vDef, const std::string &fDef);
-	vePass* getOrCreateOmnidirectionalShadowPass(const std::string &vDef, const std::string &fDef);
+//	void renderDirectionalLightShadow(const veMat4 &lightInWorldMat, veLight *light, veCamera *camera, unsigned int contextID, veMat4 *lightShadowMats);
+//	void renderPointLightShadow(const veMat4 &lightInWorldMat, veLight *light, unsigned int contextID, veMat4 &lightShadowMat);
+//	void renderSpotLightShadow(const veMat4 &lightInWorldMat, veLight *light, unsigned int contextID, veMat4 &lightShadowMat);
+//    
+//    void caculateDirectionalLightCascadedParams(const veMat4 &lightInWorldMat, veLight *light, veCamera *camera, float *cascadedLevels);
+//
+//	vePass* getOrCreateDirectionalShadowPass(const std::string &vDef, const std::string &fDef);
+//	vePass* getOrCreateOmnidirectionalShadowPass(const std::string &vDef, const std::string &fDef);
     
     void prepareForDraws(veCamera *camera);
     void draw(veCamera *camera, veRenderQueue::RenderGroup &rg, const std::function<bool(veRenderCommand &command)> &callback = nullptr);

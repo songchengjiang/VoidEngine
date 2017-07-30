@@ -27,6 +27,9 @@
                                 "u_metallic":0.6,
                                 "u_opacity":1.000000,
                                 "u_reflectivity":0.000000,
+                                "u_lightDirection": [1.0, 2.0, 2.0],
+                                "u_lightColor": [1.0, 1.0, 1.0],
+                                "u_lightIntensity": 1.0,
                                 "u_displacement":0.100,
                                 "u_diffuseTex":0,
                                 "u_normalTex":1,
@@ -35,12 +38,12 @@
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "defination": "#define ATTR_POSITION 0\n#define ATTR_NORMAL 1\n#define ATTR_TANGENT 2\n#define ATTR_BITANGENT 3\n#define ATTR_TEXTURE_COORD0 4\n#define VE_USE_NROMAL_MAPPING 1\n#define VE_USE_PARALLAX_MAPPING 1\n",
+                                    "defination": "#define VE_USE_NORMAL_TEXTURE 1\n#define VE_USE_DISPLACEMENT_TEXTURE 1\n",
                                     "source": "shaders/StandardShader.vert"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "defination": "#define VE_USE_DIFFUSE_TEXTURE 1\n#define VE_USE_NORMAL_TEXTURE 1\n#define VE_USE_DISPLACEMENT_TEXTURE 1\n#define VE_USE_TEXTURES 1\n#define VE_USE_NROMAL_MAPPING 1\n#define VE_USE_PARALLAX_MAPPING 1\n",
+                                    "defination": "#define VE_USE_DIFFUSE_TEXTURE 1\n#define VE_USE_NORMAL_TEXTURE 1\n#define VE_USE_DISPLACEMENT_TEXTURE 1\n#define VE_USE_TEXTURES 1\n",
                                     "source": "shaders/StandardShader.frag"
                                 }
                             ],
@@ -95,20 +98,23 @@
                                 "u_metallic":1.0,
                                 "u_opacity":1.0,
                                 "u_reflectivity":0.0,
+                                "u_lightDirection": [1.0, 2.0, 2.0],
+                                "u_lightColor": [1.0, 1.0, 1.0],
+                                "u_lightIntensity": 1.0,
                                 "u_diffuseTex":0,
                                 "u_normalTex":1,
                                 "u_roughnessTex":2,
-                                "u_reflectionTex":3                            
+                                "u_metallicTex":3                            
                             },                              
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "defination": "#define ATTR_POSITION 0\n#define ATTR_NORMAL 1\n#define ATTR_TANGENT 2\n#define ATTR_BITANGENT 3\n#define ATTR_TEXTURE_COORD0 4\n#define VE_USE_NROMAL_MAPPING 1\n#define VE_USE_ROUGHNESS_TEXTURE 1\n#define VE_USE_REFLECTION_TEXTURE 1\n",
+                                    "defination": "#define VE_USE_NORMAL_TEXTURE 1\n",
                                     "source": "shaders/StandardShader.vert"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "defination": "#define VE_USE_DIFFUSE_TEXTURE 1\n#define VE_USE_NORMAL_TEXTURE 1\n#define VE_USE_TEXTURES 1\n#define VE_USE_NROMAL_MAPPING 1\n#define VE_USE_ROUGHNESS_TEXTURE 1\n#define VE_USE_REFLECTION_TEXTURE 1\n",
+                                    "defination": "#define VE_USE_DIFFUSE_TEXTURE 1\n#define VE_USE_NORMAL_TEXTURE 1\n#define VE_USE_TEXTURES 1\n#define VE_USE_ROUGHNESS_TEXTURE 1\n#define VE_USE_METALLIC_TEXTURE 1\n",
                                     "source": "shaders/StandardShader.frag"
                                 }
                             ],
@@ -170,20 +176,23 @@
                                 "u_metallic":0.0,
                                 "u_opacity":1.0,
                                 "u_reflectivity":0.0,
+                                "u_lightDirection": [1.0, 2.0, 2.0],
+                                "u_lightColor": [1.0, 1.0, 1.0],
+                                "u_lightIntensity": 1.0,
                                 "u_diffuseTex":0,
                                 "u_normalTex":1,
                                 "u_roughnessTex":2,
-                                "u_reflectionTex":3
+                                "u_metallicTex":3
                             },                              
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "defination": "#define ATTR_POSITION 0\n#define ATTR_NORMAL 1\n#define ATTR_TANGENT 2\n#define ATTR_BITANGENT 3\n#define ATTR_TEXTURE_COORD0 4\n#define VE_USE_NROMAL_MAPPING 1\n#define VE_USE_ROUGHNESS_TEXTURE 1\n",
+                                    "defination": "#define VE_USE_NORMAL_TEXTURE 1\n",
                                     "source": "shaders/StandardShader.vert"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "defination": "#define VE_USE_DIFFUSE_TEXTURE 1\n#define VE_USE_NORMAL_TEXTURE 1\n#define VE_USE_TEXTURES 1\n#define VE_USE_NROMAL_MAPPING 1\n#define VE_USE_ROUGHNESS_TEXTURE 1\n",
+                                    "defination": "#define VE_USE_DIFFUSE_TEXTURE 1\n#define VE_USE_NORMAL_TEXTURE 1\n#define VE_USE_TEXTURES 1\n#define VE_USE_ROUGHNESS_TEXTURE 1\n#define VE_USE_METALLIC_TEXTURE 1\n",
                                     "source": "shaders/StandardShader.frag"
                                 }
                             ],
@@ -238,20 +247,23 @@
                                 "u_metallic":0.0,
                                 "u_opacity":1.0,
                                 "u_reflectivity":0.0,
+                                "u_lightDirection": [1.0, 2.0, 2.0],
+                                "u_lightColor": [1.0, 1.0, 1.0],
+                                "u_lightIntensity": 1.0,
                                 "u_diffuseTex":0,
                                 "u_normalTex":1,
                                 "u_roughnessTex":2,
-                                "u_reflectionTex":3
+                                "u_metallicTex":3
                             },                            
                             "shaders": [
                                 {
                                     "type": "VERTEX_SHADER",
-                                    "defination": "#define ATTR_POSITION 0\n#define ATTR_NORMAL 1\n#define ATTR_TANGENT 2\n#define ATTR_BITANGENT 3\n#define ATTR_TEXTURE_COORD0 4\n#define VE_USE_NROMAL_MAPPING 1\n#define VE_USE_ROUGHNESS_TEXTURE 1\n",
+                                    "defination": "#define VE_USE_NORMAL_TEXTURE 1\n",
                                     "source": "shaders/StandardShader.vert"
                                 },
                                 {
                                     "type": "FRAGMENT_SHADER",
-                                    "defination": "#define VE_USE_DIFFUSE_TEXTURE 1\n#define VE_USE_NORMAL_TEXTURE 1\n#define VE_USE_TEXTURES 1\n#define VE_USE_NROMAL_MAPPING 1\n#define VE_USE_ROUGHNESS_TEXTURE 1\n",
+                                    "defination": "#define VE_USE_DIFFUSE_TEXTURE 1\n#define VE_USE_NORMAL_TEXTURE 1\n#define VE_USE_TEXTURES 1\n#define VE_USE_ROUGHNESS_TEXTURE 1\n",
                                     "source": "shaders/StandardShader.frag"
                                 }
                             ],

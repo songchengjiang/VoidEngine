@@ -10,9 +10,6 @@ veMesh::veMesh(veSceneManager *sm)
 	: veRenderableObject(sm)
 	, _needRefresh(false)
 	, _vertexStride(0)
-	, _transformFeedbackVertices(nullptr)
-	, _transformFeedbackBuffer(0)
-	, _transformFeedbackBufferSize(0)
 {
     _renderer = new veMeshRenderer;
 }
@@ -24,7 +21,6 @@ veMesh::~veMesh()
 
 void veMesh::render(veNode *node, veCamera *camera, unsigned int contextID)
 {
-    generateTransformFeedbackBuffer(contextID);
     veRenderableObject::render(node, camera, contextID);
     _needRefresh = false;
 }
@@ -151,13 +147,13 @@ void veMesh::addBone(veBone *bone)
     static_cast<veMeshRenderer *>(_renderer.get())->needRefresh();
 }
 
-const veBone* veMesh::getBone(unsigned int idx) const
+const veBone* veMesh::getBone(size_t idx) const
 {
 	veAssert(idx < _bones.size());
 	return _bones[idx].get();
 }
 
-veBone* veMesh::getBone(unsigned int idx)
+veBone* veMesh::getBone(size_t idx)
 {
 	veAssert(idx < _bones.size());
 	return _bones[idx].get();
@@ -196,14 +192,14 @@ void veMesh::caculateBoundingBox()
 			for (size_t i = 0; i < _vertices->size(); i += stride) {
 				for (unsigned int bw = 0; bw < bwNum; ++bw) {
 					auto boneWeight = _vertices->buffer()[bwOffset + i + bw];
-					if (boneWeight != 0) {
+					if (boneWeight != 0.0f) {
 						auto bone = (unsigned int)_vertices->buffer()[biOffset + i + bw];
 						bboxs[bone].expandBy(veVec3(_vertices->buffer()[vOffset + i], _vertices->buffer()[vOffset + i + 1], _vertices->buffer()[vOffset + i + 2]));
 					}
 				}
 			}
 			for (size_t i = 0; i < _bones.size(); ++i) {
-				_bones[i]->setBindPosBoundingBox(bboxs[i]);
+				_bones[i]->setBoundingBox(bboxs[i]);
 			}
 
 			delete[] bboxs;
@@ -211,105 +207,48 @@ void veMesh::caculateBoundingBox()
 	}
 }
 
-void veMesh::generateTransformFeedbackBuffer(unsigned int contextID)
-{
-	if (!_bones.empty()) {
-		if (!_transformFeedbackBuffer.valid()) {
-			_transformFeedbackBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
-				GLuint vbo;
-				glGenBuffers(1, &vbo);
-				return vbo;
-			}, [](GLuint vbo){
-				glDeleteBuffers(1, &vbo);
-			});
-		}
-
-		auto tfb = _transformFeedbackBuffer->getData(contextID);
-		if (_needRefresh || !tfb) {
-			unsigned int stride = (3 + 3) * sizeof(GLfloat);
-			unsigned int bufSize = stride * getVertexCount();
-			if (!tfb) {
-				tfb = _transformFeedbackBuffer->createData(contextID);
-			}
-			glBindBuffer(GL_ARRAY_BUFFER, tfb);
-			glBufferData(GL_ARRAY_BUFFER, bufSize, nullptr, GL_DYNAMIC_COPY);
-			_transformFeedbackBufferSize = bufSize;
-		}
-		glBindBuffer(GL_ARRAY_BUFFER, tfb);
-		_transformFeedbackVertices = (veReal *)glMapBufferRange(GL_ARRAY_BUFFER, 0, _transformFeedbackBufferSize, GL_MAP_READ_BIT);
-		glUnmapBuffer(GL_ARRAY_BUFFER);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-	}
-}
-
 void veMesh::traversePrimitives(const PrimitiveCallback &callback)
 {
 	for (auto &primitive : _primitives) {
 		if (primitive.primitiveType == Primitive::TRIANGLES) {
-			if (!_bones.empty()) {
-				if (!_transformFeedbackVertices) {
-					veLog("GL_TRANSFORM_FEEDBACK_BUFFER is NULL!");
-					return;
-				}
-				unsigned int stride = (3 + 3);
-				unsigned int vOffset = 0;
-				unsigned int nOffset = 3;
-				for (size_t idx = 0; idx < primitive.indices->size(); idx += 3) {
-					unsigned int id0 = (*primitive.indices)[idx];
-					unsigned int id1 = (*primitive.indices)[idx + 1];
-					unsigned int id2 = (*primitive.indices)[idx + 2];
-					veReal *p1 = &(_transformFeedbackVertices)[id0 * stride + vOffset];
-					veReal *p2 = &(_transformFeedbackVertices)[id1 * stride + vOffset];
-					veReal *p3 = &(_transformFeedbackVertices)[id2 * stride + vOffset];
-					veReal *n1 = &(_transformFeedbackVertices)[id0 * stride + nOffset];
-					veReal *n2 = &(_transformFeedbackVertices)[id1 * stride + nOffset];
-					veReal *n3 = &(_transformFeedbackVertices)[id2 * stride + nOffset];
-					if (callback != nullptr) {
-						if (callback(p1, p2, p3, n1, n2, n3))
-							break;
-					}
-				}
-			}
-			else {
-				unsigned int stride = 0;
-				unsigned int vOffset = 0;
-				unsigned int vCount = 0;
-				unsigned int nOffset = 0;
-				unsigned int nCount = 0;
-				for (auto iter : _attributes) {
-					if (iter.attributeType == VertexAtrribute::VERTEX_ATTRIB_POSITION) {
-						vOffset = stride;
-						vCount = iter.valueNum;
-					}
-					else if (iter.attributeType == VertexAtrribute::VERTEX_ATTRIB_NORMAL) {
-						nOffset = stride;
-						nCount = iter.valueNum;
-					}
-					if (iter.valueType == veMesh::VertexAtrribute::FLOAT) stride += iter.valueNum;
-					else if (iter.valueType == veMesh::VertexAtrribute::UINT) stride += sizeof(GLuint) * iter.valueNum / sizeof(GLfloat);
-					else if (iter.valueType == veMesh::VertexAtrribute::USHORT) stride += sizeof(GLushort) * iter.valueNum / sizeof(GLfloat);
-				}
-
-				if (vCount < 3 || nCount < 3) {
-					veLog("Vertex or Normal Size < 3, not support in traversePrimitive function.");
-					return;
-				}
-				for (size_t idx = 0; idx < primitive.indices->size(); idx += 3) {
-					unsigned int id0 = (*primitive.indices)[idx];
-					unsigned int id1 = (*primitive.indices)[idx + 1];
-					unsigned int id2 = (*primitive.indices)[idx + 2];
-					veReal *p1 = &(*_vertices)[id0 * stride + vOffset];
-					veReal *p2 = &(*_vertices)[id1 * stride + vOffset];
-					veReal *p3 = &(*_vertices)[id2 * stride + vOffset];
-					veReal *n1 = &(*_vertices)[id0 * stride + nOffset];
-					veReal *n2 = &(*_vertices)[id1 * stride + nOffset];
-					veReal *n3 = &(*_vertices)[id2 * stride + nOffset];
-					if (callback != nullptr) {
-						if (callback(p1, p2, p3, n1, n2, n3))
-							break;
-					}
-				}
-			}
+            unsigned int stride = 0;
+            unsigned int vOffset = 0;
+            unsigned int vCount = 0;
+            unsigned int nOffset = 0;
+            unsigned int nCount = 0;
+            for (auto iter : _attributes) {
+                if (iter.attributeType == VertexAtrribute::VERTEX_ATTRIB_POSITION) {
+                    vOffset = stride;
+                    vCount = iter.valueNum;
+                }
+                else if (iter.attributeType == VertexAtrribute::VERTEX_ATTRIB_NORMAL) {
+                    nOffset = stride;
+                    nCount = iter.valueNum;
+                }
+                if (iter.valueType == veMesh::VertexAtrribute::FLOAT) stride += iter.valueNum;
+                else if (iter.valueType == veMesh::VertexAtrribute::UINT) stride += sizeof(GLuint) * iter.valueNum / sizeof(GLfloat);
+                else if (iter.valueType == veMesh::VertexAtrribute::USHORT) stride += sizeof(GLushort) * iter.valueNum / sizeof(GLfloat);
+            }
+            
+            if (vCount < 3 || nCount < 3) {
+                veLog("Vertex or Normal Size < 3, not support in traversePrimitive function.");
+                return;
+            }
+            for (size_t idx = 0; idx < primitive.indices->size(); idx += 3) {
+                unsigned int id0 = (*primitive.indices)[idx];
+                unsigned int id1 = (*primitive.indices)[idx + 1];
+                unsigned int id2 = (*primitive.indices)[idx + 2];
+                veReal *p1 = &(*_vertices)[id0 * stride + vOffset];
+                veReal *p2 = &(*_vertices)[id1 * stride + vOffset];
+                veReal *p3 = &(*_vertices)[id2 * stride + vOffset];
+                veReal *n1 = &(*_vertices)[id0 * stride + nOffset];
+                veReal *n2 = &(*_vertices)[id1 * stride + nOffset];
+                veReal *n3 = &(*_vertices)[id2 * stride + nOffset];
+                if (callback != nullptr) {
+                    if (callback(p1, p2, p3, n1, n2, n3))
+                        break;
+                }
+            }
 		}
 	}
 
@@ -325,8 +264,8 @@ void veMesh::updateBoundingBox()
         veMat4 toNodeMatrix = _parents.empty()? veMat4::IDENTITY: _parents[0]->getWorldToNodeMatrix();
 		for (auto &iter : _bones) {
 			veMat4 boneMat = toNodeMatrix * iter->getBoneNode()->getNodeToWorldMatrix() * iter->getOffsetMat();
-			iter->setBoundingBox(iter->getBindPosBoundingBox() * boneMat);
-			_boundingBox.expandBy(iter->getBoundingBox());
+			//iter->setBoundingBox(iter->getBindPosBoundingBox() * boneMat);
+			_boundingBox.expandBy(iter->getBoundingBox() * boneMat);
 		}
 	}
 }

@@ -12,9 +12,7 @@
             android:value="vetests" />
 
         <activity android:name=".VETestsActivity"
-                  android:screenOrientation="landscape"
-                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-                  android:configChanges="orientation">
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

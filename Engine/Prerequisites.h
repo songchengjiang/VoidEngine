@@ -85,10 +85,10 @@ public: const std::string& getName() const { return _name; }
 #include <vector>
 #include <string>
 
-#define VE_GL_VERSION_MAJOR 4
+#define VE_GL_VERSION_MAJOR 1
 #define VE_GL_VERSION_MINOR 1
 
-#define VE_GLSL_ES_VERSION_MAJOR 3
+#define VE_GLSL_ES_VERSION_MAJOR 1
 #define VE_GLSL_ES_VERSION_MINOR 0
 
 #define VE_PLATFORM_IOS                1
@@ -125,8 +125,8 @@ extern GLEWContext* glewGetContext();
 #if VE_PLATFORM == VE_PLATFORM_MAC
 #define GLFW_INCLUDE_GLCOREARB
 #define GLFW_INCLUDE_GLEXT
-#include <OpenGL/gl3.h>
-#include <OpenGL/gl3ext.h>
+#include <OpenGL/gl.h>
+#include <OpenGL/glext.h>
 #endif
 #include "glfw/include/GLFW/glfw3.h"
 #endif
@@ -138,7 +138,14 @@ extern GLEWContext* glewGetContext();
 
 #if VE_PLATFORM == VE_PLATFORM_ANDROID
 #include <EGL/egl.h>
-#include <GLES3/gl3.h>
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#define GL_WRITE_ONLY GL_WRITE_ONLY_OES
+#define GL_DEPTH_COMPONENT24 GL_DEPTH_COMPONENT24_OES
+#define GL_DEPTH24_STENCIL8 GL_DEPTH24_STENCIL8_OES
+#define GL_RGB8 GL_RGB8_OES
+#define GL_RGBA8 GL_RGBA8_OES
+#define glClearDepth glClearDepthf
 #endif
 
 #endif

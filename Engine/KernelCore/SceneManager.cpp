@@ -1,13 +1,13 @@
 #include "SceneManager.h"
 #include "Event.h"
-#include "Surface.h"
-#include "Image.h"
-#include "Text.h"
-#include "Sphere.h"
-#include "Cone.h"
+//#include "Surface.h"
+//#include "Image.h"
+//#include "Text.h"
+//#include "Sphere.h"
+//#include "Cone.h"
 #include "SkyBox.h"
 #include "Animation.h"
-#include "Terrain.h"
+//#include "Terrain.h"
 
 #include "TextureManager.h"
 #include "MeshManager.h"
@@ -58,60 +58,51 @@ veLight* veSceneManager::createLight(veLight::LightType type, const std::string 
 		light = new veSpotLight();
 	}
 	light->setName(name);
-	_lightListMap[type].push_back(light);
 	return light;
 }
 
-veSurface* veSceneManager::createSurface(const std::string &name)
-{
-	auto surface = new veSurface(this);
-	surface->_sceneManager = this;
-	surface->setName(name);
-	return surface;
-}
+//veSurface* veSceneManager::createSurface(const std::string &name)
+//{
+//	auto surface = new veSurface(this);
+//	surface->_sceneManager = this;
+//	surface->setName(name);
+//	return surface;
+//}
 
-veImage* veSceneManager::createImage(const std::string &name, veTexture *texture)
-{
-	auto image = new veImage(this, texture);
-	image->_sceneManager = this;
-	image->setName(name);
-	return image;
-}
+//veImage* veSceneManager::createImage(const std::string &name, veTexture *texture)
+//{
+//	auto image = new veImage(this, texture);
+//	image->_sceneManager = this;
+//	image->setName(name);
+//	return image;
+//}
 
 veMesh* veSceneManager::createMesh(const std::string &name)
 {
 	return static_cast<veMeshManager *>(_managerList[veMeshManager::TYPE()])->createMesh(name);
 }
 
-veSphere* veSceneManager::createSphere(const std::string &name)
-{
-	auto sphere = new veSphere(this);
-	sphere->setName(name);
-	return sphere;
-}
+//veSphere* veSceneManager::createSphere(const std::string &name)
+//{
+//	auto sphere = new veSphere(this);
+//	sphere->setName(name);
+//	return sphere;
+//}
+//
+//veCone* veSceneManager::createCone(const std::string &name)
+//{
+//	auto cone = new veCone(this);
+//	cone->setName(name);
+//	return cone;
+//}
 
-veCone* veSceneManager::createCone(const std::string &name)
-{
-	auto cone = new veCone(this);
-	cone->setName(name);
-	return cone;
-}
-
-veSkyBox* veSceneManager::createSkyBox(const std::string &name, veReal size)
-{
-	auto skybox = new veSkyBox(size);
-	skybox->setName(name);
-	skybox->_sceneManager = this;
-	return skybox;
-}
-
-veText* veSceneManager::createText(const std::string &name, veFont *font, const std::string &content)
-{
-	auto text = new veText(this, font, content);
-	text->setName(name);
-	text->_sceneManager = this;
-	return text;
-}
+//veText* veSceneManager::createText(const std::string &name, veFont *font, const std::string &content)
+//{
+//	auto text = new veText(this, font, content);
+//	text->setName(name);
+//	text->_sceneManager = this;
+//	return text;
+//}
 
 veAnimationContainer* veSceneManager::createAnimationContainer(const std::string &name)
 {
@@ -149,18 +140,11 @@ veMaterialArray* veSceneManager::createMaterialArray(const std::string &name)
 	return static_cast<veMaterialManager *>(_managerList[veMaterialManager::TYPE()])->createMaterialArray(name);
 }
 
-vePostProcesser* veSceneManager::createPostProcesser(const std::string &name)
-{
-	auto postProcesser = new vePostProcesser(this);
-	postProcesser->setName(name);
-	return postProcesser;
-}
 
 veParticleSystem* veSceneManager::createParticleSystem(const std::string &name)
 {
     auto particleSystem = new veParticleSystem(this);
     particleSystem->setName(name);
-    _particleSystemList.push_back(particleSystem);
     return particleSystem;
 }
 
@@ -218,10 +202,10 @@ void veSceneManager::update(veViewer *viewer)
 		updateImp();
 	}
 
-	{
-		std::unique_lock<std::mutex> renderLock(_renderingMutex);
-		_renderingCondition.notify_all();
-	}
+//	{
+//		std::unique_lock<std::mutex> renderLock(_renderingMutex);
+//		_renderingCondition.notify_all();
+//	}
 	_simulationTime += _deltaTime;
 	//render();
 }
@@ -233,8 +217,8 @@ void veSceneManager::updateImp()
 
 void veSceneManager::render(veViewer *viewer)
 {
-    std::unique_lock<std::mutex> renderLock(this->_renderingMutex);
-    this->_renderingCondition.wait(renderLock);
+//    std::unique_lock<std::mutex> renderLock(this->_renderingMutex);
+//    this->_renderingCondition.wait(renderLock);
     if (viewer->isNeedDestroyRenderContexts()){
         veGLDataBufferManager::instance()->destroyAllGLDataBuffer(viewer->getContextID());
         viewer->needDestroyRenderContexts(false);

@@ -1,23 +1,23 @@
 #ifndef _TEST_CREATOR_
 #define _TEST_CREATOR_
-#include "BaseTest.h"
-#include "LightTest.h"
-#include "CameraTest.h"
-#include "RenToTex.h"
+//#include "BaseTest.h"
+//#include "LightTest.h"
+//#include "CameraTest.h"
+//#include "RenToTex.h"
 #include "MeshTest.h"
-#include "ImageTest.h"
-#include "TextTest.h"
-#include "PerformanceTest.h"
-#include "IntersectionTest.h"
-#include "SkyBoxTest.h"
-#include "PostProcesserTest.h"
-#include "CubeMapTest.h"
-#include "ShadowTest.h"
-#include "IBLTest.h"
-#include "NormalMappingTest.h"
-#include "ParticleSystemTest.h"
-#include "SceneTest.h"
-#include "TerrainTest.h"
+//#include "ImageTest.h"
+//#include "TextTest.h"
+//#include "PerformanceTest.h"
+//#include "IntersectionTest.h"
+//#include "SkyBoxTest.h"
+//#include "PostProcesserTest.h"
+//#include "CubeMapTest.h"
+//#include "ShadowTest.h"
+//#include "IBLTest.h"
+//#include "NormalMappingTest.h"
+//#include "ParticleSystemTest.h"
+//#include "SceneTest.h"
+//#include "TerrainTest.h"
 
 //
 class TestCreator
@@ -28,7 +28,7 @@ public:
 		//auto test = new LightTest;
 		//auto test = new CameraTest;
 		//auto test = new RenToTex;
-		//auto test = new MeshTest;
+		auto test = new MeshTest;
 		//auto test = new ImageTest;
 		//auto test = new TextTest;
 		//auto test = new PerformanceTest;
@@ -41,7 +41,7 @@ public:
 		//auto test = new NormalMappingTest;
         //auto test = new ParticleSystemTest;
         //auto test = new TerrainTest;
-        auto test = new SceneTest;
+        //auto test = new SceneTest;
 		test->init();
 	}
 

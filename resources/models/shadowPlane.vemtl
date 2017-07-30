@@ -1,0 +1,54 @@
+{
+    "version": "1.0",
+    "name": "plane.vemtl",
+    "materials": [
+        {
+            "name": "mat-0",
+            "techniques": [
+                {
+                    "name": "grid",
+                    "passes": [
+                        {
+                            "depthTest": true,
+                            "depthWrite": false,
+                            "cullFace": false,
+                            "blendFunc": ["SRC_ALPHA", "ONE_MINUS_SRC_ALPHA"],
+                            "uniforms": {
+                                 "u_ModelViewProjectMat": "MVP_MATRIX",
+                                 "u_ModelViewMat": "MV_MATRIX",
+                                 "u_ModelMat": "M_MATRIX",
+                                 "u_NormalMat": "NORMAL_MATRIX",
+                                 "u_NormalWorldMat": "NORMAL_WORLD_MATRIX",
+                                 "u_cameraWorldPos": "CAMERA_WORLD_POS",
+                                 "u_lightMask":1.000000,
+                                 "u_ambient": [0.588235,0.588235,0.588235
+                                 ],
+                                 "u_diffuse": [1.0,1.0,1.0
+                                 ],
+                                 "u_specular": [1.0,1.0,1.0
+                                 ],
+                                 "u_alpha":0.000000,
+                                 "u_roughness":0.5,
+                                 "u_metallic":0.4,
+                                 "u_opacity":1.0,
+                                 "u_reflectivity":0.0
+                            },
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "defination": [],
+                                    "source": "shaders/StandardShader.vert"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "defination": [],
+                                    "source": "shaders/StandardShader.frag"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

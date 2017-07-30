@@ -20,7 +20,7 @@
             },
             "velocity": {
                 "type": "FIXED",
-                "value": 15.0
+                "value": 1.0
             },
             "emissionRate": {
                 "type": "FIXED",
@@ -33,11 +33,11 @@
             },
             "width": {
                 "type": "FIXED",
-                "value": 4.0
+                "value": 0.2
             },
             "height": {
                 "type": "FIXED",
-                "value": 4.0
+                "value": 0.2
             }
         }
     ],

@@ -11,6 +11,7 @@ int main(int argc, char **argv)
     veApplication::instance()->createViewer(800, 600, "VoidEngineTest");
 	TestCreator::createTest();
 	return veApplication::instance()->run();
+
 }
 
 #endif

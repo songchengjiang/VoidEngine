@@ -7,6 +7,24 @@
 #include "FileCore/File.h"
 #include "Shaders/DepthWriter.glsl.h"
 #include "Shaders/SquareDepthWriter.glsl.h"
+#include "NodeVisitor.h"
+
+class CameraVisitor : public veNodeVisitor
+{
+public:
+    CameraVisitor(){}
+
+    virtual bool visit(veNode &node) {
+        if (node.isVisible()) {
+            auto camera = node.getComponent<veCamera>();
+            if (camera)
+                CameraList.push_back(camera);
+        }
+        return false;
+    }
+
+    std::list<veCamera *> CameraList;
+};
 
 static const veMat4 LIGHT_BIAS_MAT = veMat4(0.5f, 0.0f, 0.0f, 0.5f
                                             , 0.0f, 0.5f, 0.0f, 0.5f
@@ -77,7 +95,7 @@ void veRenderPipeline::visitRenderQueues(veCamera *camera, unsigned int contextI
 
 void veRenderPipeline::cullRenderQueues(veCamera *camera)
 {
-	if (camera->isVisible()) {
+	if (camera->isEnabled()) {
 		//_sceneManager->enqueueTaskToThread(nullptr, nullptr, [camera, this] {
 			//veNodeList nodeList;
 			std::unique_lock<std::mutex> lock(_visitMutex);
@@ -142,7 +160,7 @@ void veRenderPipeline::sortRenderQueues(veCamera *camera)
             }
         }
     };
-	if (camera->isVisible()) {
+	if (camera->isEnabled()) {
         renderGroupSortFunc(camera->getRenderQueue()->deferredRenderGroup);
         renderGroupSortFunc(camera->getRenderQueue()->forwardRenderGroup);
 	}
@@ -150,34 +168,42 @@ void veRenderPipeline::sortRenderQueues(veCamera *camera)
 
 void veRenderPipeline::renderCameras(veViewer *viewer)
 {
-	auto &cameraList = _sceneManager->getCameraList();
+    CameraVisitor visitor;
+    _sceneManager->getRootNode()->accept(visitor);
+
+	auto &cameraList = visitor.CameraList;
+    veCamera *mainCamera = nullptr;
 	for (auto &iter : cameraList) {
-		veCamera *camera = iter.get();
-		if (camera->isVisible() &&
-            !camera->isShadowCamera() &&
-            camera != viewer->getCamera() &&
-            !camera->getViewport().isNull() &&
-            camera->getFrameBufferObject()) {
-			_sceneManager->getRenderState(viewer->getContextID())->resetState();
-            visitRenderQueues(camera, viewer->getContextID());
-			renderScene(camera, viewer->getContextID());
-		}
+		veCamera *camera = iter;
+        if (camera->isEnabled() && !camera->getViewport().isNull() && !camera->isShadowCamera()) {
+            if (!camera->getFrameBufferObject()) {
+                mainCamera = camera;
+                continue;
+            }else {
+                _sceneManager->getRenderState(viewer->getContextID())->resetState();
+                visitRenderQueues(camera, viewer->getContextID());
+                renderScene(camera, viewer->getContextID());
+            }
+        }
 	}
-	if (viewer->getCamera()) {
+
+	if (mainCamera) {
 		_sceneManager->getRenderState(viewer->getContextID())->resetState();
-        if (viewer->getCamera()->isVisible()){
-            visitRenderQueues(viewer->getCamera(), viewer->getContextID());
-            auto vp = viewer->getCamera()->getViewport();
-            viewer->getCamera()->setViewport({
+        if (mainCamera->isEnabled()){
+            visitRenderQueues(mainCamera, viewer->getContextID());
+            auto vp = mainCamera->getViewport();
+            mainCamera->setViewport({
                   vp.x * (int)veConfiguration::VE_DEVICE_PIXEL_RATIO
                 , vp.y * (int)veConfiguration::VE_DEVICE_PIXEL_RATIO
                 , vp.width * (int)veConfiguration::VE_DEVICE_PIXEL_RATIO
                 , vp.height * (int)veConfiguration::VE_DEVICE_PIXEL_RATIO
             });
-            renderScene(viewer->getCamera(), viewer->getContextID());
-            viewer->getCamera()->setViewport(vp);
+            renderScene(mainCamera, viewer->getContextID());
+            mainCamera->setViewport(vp);
         }
 	}
+
+    _sceneManager->getRenderState(viewer->getContextID())->resetState();
 }
 
 void veRenderPipeline::prepareForDraws(veCamera *camera)
@@ -224,181 +250,181 @@ void veRenderPipeline::renderScene(veCamera *camera, unsigned int contextID)
 	}
 }
 
-void veRenderPipeline::renderDirectionalLightShadow(const veMat4 &lightInWorldMat, veLight *light, veCamera *camera, unsigned int contextID, veMat4 *lightShadowMats)
-{
-    auto dLight = static_cast<veDirectionalLight *>(light);
-    static auto shadowPass = [this](veRenderCommand &command) -> bool {
-        if (command.pass->castShadow()) {
-            auto pass = this->getOrCreateDirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
-            pass->cullFace() = command.pass->cullFace();
-            pass->cullFaceMode() = command.pass->cullFaceMode();
-            command.pass = pass;
-            return true;
-        }
-        return false;
-    };
-    
-    for (unsigned short i = 0; i < dLight->getShadowCascadedCount(); ++i) {
-        lightShadowMats[i] = LIGHT_BIAS_MAT * dLight->getShadowCamera(i)->projectionMatrix() * dLight->getShadowCamera(i)->viewMatrix();
-    }
-    
-    for (unsigned short i = 0; i < dLight->getShadowCascadedCount(); ++i) {
-        //dLight->getShadowCamera()->setProjectionMatrix(correctedProjections[i]);
-        _sceneManager->getRenderState(contextID)->resetState();
-        _shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_ARRAY, dLight->getShadowTexture(), i);
-        _shadowingFBO->bind(contextID, GL_DEPTH_BUFFER_BIT);
-        //glClear(GL_DEPTH_BUFFER_BIT);
-        visitRenderQueues(dLight->getShadowCamera(i), contextID);
-        prepareForDraws(dLight->getShadowCamera(i));
-        draw(dLight->getShadowCamera(i), dLight->getShadowCamera(i)->getRenderQueue()->deferredRenderGroup, shadowPass);
-        draw(dLight->getShadowCamera(i), dLight->getShadowCamera(i)->getRenderQueue()->forwardRenderGroup, shadowPass);
-        _shadowingFBO->unBind();
-    }
-}
-
-void veRenderPipeline::renderPointLightShadow(const veMat4 &lightInWorldMat, veLight *light, unsigned int contextID, veMat4 &lightShadowMat)
-{
-	auto pLight = static_cast<vePointLight *>(light);
-    static auto shadowPass = [this](veRenderCommand &command) -> bool {
-        if (command.pass->castShadow()) {
-            auto pass = this->getOrCreateOmnidirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
-            pass->cullFace() = command.pass->cullFace();
-            pass->cullFaceMode() = command.pass->cullFaceMode();
-            command.pass = pass;
-            return true;
-        }
-        return false;
-    };
-    
-    veVec3 lightWorldPos = veVec3(lightInWorldMat[0][3], lightInWorldMat[1][3], lightInWorldMat[2][3]);
-    pLight->getShadowCamera(0)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_X, veVec3::NEGATIVE_UNIT_Y));
-    pLight->getShadowCamera(1)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_X, veVec3::NEGATIVE_UNIT_Y));
-    pLight->getShadowCamera(2)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_Y, veVec3::UNIT_Z));
-    pLight->getShadowCamera(3)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_Y, veVec3::NEGATIVE_UNIT_Z));
-    pLight->getShadowCamera(4)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_Z, veVec3::NEGATIVE_UNIT_Y));
-    pLight->getShadowCamera(5)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_Z, veVec3::NEGATIVE_UNIT_Y));
-    lightShadowMat = veMat4::translation(-lightWorldPos);
-    
-	for (unsigned short i = 0; i < 6; ++i) {
-		_sceneManager->getRenderState(contextID)->resetState();
-		_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, pLight->getShadowTexture());
-		_shadowingFBO->bind(contextID, GL_DEPTH_BUFFER_BIT);
-		//glClear(GL_DEPTH_BUFFER_BIT);
-        visitRenderQueues(pLight->getShadowCamera(i), contextID);
-        prepareForDraws(pLight->getShadowCamera(i));
-		draw(pLight->getShadowCamera(i), pLight->getShadowCamera(i)->getRenderQueue()->deferredRenderGroup, shadowPass);
-        draw(pLight->getShadowCamera(i), pLight->getShadowCamera(i)->getRenderQueue()->forwardRenderGroup, shadowPass);
-        _shadowingFBO->unBind();
-	}
-}
-
-void veRenderPipeline::renderSpotLightShadow(const veMat4 &lightInWorldMat, veLight *light, unsigned int contextID, veMat4 &lightShadowMat)
-{
-	auto sLight = static_cast<veSpotLight *>(light);
-    static auto shadowPass = [this](veRenderCommand &command) {
-		if (command.pass->castShadow()) {
-			auto pass = this->getOrCreateDirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
-			pass->cullFace() = command.pass->cullFace();
-			pass->cullFaceMode() = command.pass->cullFaceMode();
-			command.pass = pass;
-			return true;
-		}
-		return false;
-    };
-    
-    sLight->getShadowCamera()->setMatrix(lightInWorldMat);
-    lightShadowMat = LIGHT_BIAS_MAT * sLight->getShadowCamera()->projectionMatrix() * sLight->getShadowCamera()->viewMatrix();
-    
-	_sceneManager->getRenderState(contextID)->resetState();
-	_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, sLight->getShadowTexture());
-	_shadowingFBO->bind(contextID, GL_DEPTH_BUFFER_BIT);
-	//glClear(GL_DEPTH_BUFFER_BIT);
-    visitRenderQueues(sLight->getShadowCamera(), contextID);
-    prepareForDraws(sLight->getShadowCamera());
-	draw(sLight->getShadowCamera(), sLight->getShadowCamera()->getRenderQueue()->deferredRenderGroup, shadowPass);
-    draw(sLight->getShadowCamera(), sLight->getShadowCamera()->getRenderQueue()->forwardRenderGroup, shadowPass);
-	_shadowingFBO->unBind();
-}
-
-vePass* veRenderPipeline::getOrCreateDirectionalShadowPass(const std::string &vDef, const std::string &fDef)
-{
-	std::string id = vDef + fDef + std::string("|D");
-	auto iter = _shadowPassList.find(id);
-	if (iter != _shadowPassList.end()) {
-		return iter->second.get();
-	}
-
-	auto pass = new vePass;
-	auto vShader = new veShader(veShader::VERTEX_SHADER, DEPTH_WRITE_VERTEX_SHADER);
-	vShader->setShaderHeader(vDef);
-	pass->setShader(vShader);
-	auto fShader = new veShader(veShader::FRAGMENT_SHADER, DEPTH_WRITE_FRAGMENT_SHADER);
-	fShader->setShaderHeader(fDef);
-	pass->setShader(fShader);
-	pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
-	pass->addUniform(new veUniform("u_BoneMates", BONE_MATRIXES));
-	_shadowPassList[id] = pass;
-	return pass;
-}
-
-vePass* veRenderPipeline::getOrCreateOmnidirectionalShadowPass(const std::string &vDef, const std::string &fDef)
-{
-	std::string id = vDef + fDef + std::string("|OD");
-	auto iter = _shadowPassList.find(id);
-	if (iter != _shadowPassList.end()) {
-		return iter->second.get();
-	}
-
-	auto pass = new vePass;
-	auto vShader = new veShader(veShader::VERTEX_SHADER, SQUARE_DEPTH_WRITE_VERTEX_SHADER);
-	vShader->setShaderHeader(vDef);
-	pass->setShader(vShader);
-	auto fShader = new veShader(veShader::FRAGMENT_SHADER, SQUARE_DEPTH_WRITE_FRAGMENT_SHADER);
-	fShader->setShaderHeader(fDef);
-	pass->setShader(fShader);
-	pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
-	pass->addUniform(new veUniform("u_ModelViewMat", MV_MATRIX));
-	pass->addUniform(new veUniform("u_BoneMates", BONE_MATRIXES));
-	_shadowPassList[id] = pass;
-	return pass;
-}
-
-void veRenderPipeline::caculateDirectionalLightCascadedParams(const veMat4 &lightInWorldMat, veLight *light, veCamera *camera, float *cascadedLevels)
-{
-    auto dLight = static_cast<veDirectionalLight *>(light);
-    veVec3 camerafrustumCorners[8];
-    camera->getFrustumCorners(camerafrustumCorners);
-    veVec3 frustumCorners[8];
-    
-    float t = 0.0;
-    for (unsigned short i = 0; i < dLight->getShadowCascadedCount(); ++i) {
-    
-        frustumCorners[0] = camerafrustumCorners[0] * (1.0f - t) + camerafrustumCorners[4] * t;
-        frustumCorners[1] = camerafrustumCorners[1] * (1.0f - t) + camerafrustumCorners[5] * t;
-        frustumCorners[2] = camerafrustumCorners[2] * (1.0f - t) + camerafrustumCorners[6] * t;
-        frustumCorners[3] = camerafrustumCorners[3] * (1.0f - t) + camerafrustumCorners[7] * t;
-        
-        t = dLight->getShadowCascadedLevelScale(i);
-        frustumCorners[4] = camerafrustumCorners[0] * (1.0f - t) + camerafrustumCorners[4] * t;
-        frustumCorners[5] = camerafrustumCorners[1] * (1.0f - t) + camerafrustumCorners[5] * t;
-        frustumCorners[6] = camerafrustumCorners[2] * (1.0f - t) + camerafrustumCorners[6] * t;
-        frustumCorners[7] = camerafrustumCorners[3] * (1.0f - t) + camerafrustumCorners[7] * t;
-        
-        veVec3 center = (frustumCorners[0] + frustumCorners[1] + frustumCorners[2] + frustumCorners[3] + frustumCorners[4] + frustumCorners[5] + frustumCorners[6] + frustumCorners[7]) / 8;
-        veReal radius = veMath::maximum((center - frustumCorners[0]).squaredLength(), (center - frustumCorners[1]).squaredLength());
-        radius = veMath::maximum(radius, (center - frustumCorners[2]).squaredLength());
-        radius = veMath::maximum(radius, (center - frustumCorners[3]).squaredLength());
-        radius = veMath::maximum(radius, (center - frustumCorners[4]).squaredLength());
-        radius = veMath::maximum(radius, (center - frustumCorners[5]).squaredLength());
-        radius = veMath::maximum(radius, (center - frustumCorners[6]).squaredLength());
-        radius = veMath::maximum(radius, (center - frustumCorners[7]).squaredLength());
-        radius = veMath::veSqrt(radius);
-        
-        dLight->getShadowCamera(i)->setMatrix(veMat4::translation(camera->getNodeToWorldMatrix() * center) * lightInWorldMat);
-        dLight->getShadowCamera(i)->setProjectionMatrixAsOrtho(-radius, radius, -radius, radius, -radius, radius);
-        cascadedLevels[i] = -frustumCorners[4].z();
-    }
-}
+//void veRenderPipeline::renderDirectionalLightShadow(const veMat4 &lightInWorldMat, veLight *light, veCamera *camera, unsigned int contextID, veMat4 *lightShadowMats)
+//{
+//    auto dLight = static_cast<veDirectionalLight *>(light);
+//    static auto shadowPass = [this](veRenderCommand &command) -> bool {
+//        if (command.pass->castShadow()) {
+//            auto pass = this->getOrCreateDirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
+//            pass->cullFace() = command.pass->cullFace();
+//            pass->cullFaceMode() = command.pass->cullFaceMode();
+//            command.pass = pass;
+//            return true;
+//        }
+//        return false;
+//    };
+//    
+//    for (unsigned short i = 0; i < dLight->getShadowCascadedCount(); ++i) {
+//        lightShadowMats[i] = LIGHT_BIAS_MAT * dLight->getShadowCamera(i)->projectionMatrix() * dLight->getShadowCamera(i)->viewMatrix();
+//    }
+//    
+//    for (unsigned short i = 0; i < dLight->getShadowCascadedCount(); ++i) {
+//        //dLight->getShadowCamera()->setProjectionMatrix(correctedProjections[i]);
+//        _sceneManager->getRenderState(contextID)->resetState();
+//        _shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_ARRAY, dLight->getShadowTexture(), i);
+//        _shadowingFBO->bind(contextID, GL_DEPTH_BUFFER_BIT);
+//        //glClear(GL_DEPTH_BUFFER_BIT);
+//        visitRenderQueues(dLight->getShadowCamera(i), contextID);
+//        prepareForDraws(dLight->getShadowCamera(i));
+//        draw(dLight->getShadowCamera(i), dLight->getShadowCamera(i)->getRenderQueue()->deferredRenderGroup, shadowPass);
+//        draw(dLight->getShadowCamera(i), dLight->getShadowCamera(i)->getRenderQueue()->forwardRenderGroup, shadowPass);
+//        _shadowingFBO->unBind();
+//    }
+//}
+//
+//void veRenderPipeline::renderPointLightShadow(const veMat4 &lightInWorldMat, veLight *light, unsigned int contextID, veMat4 &lightShadowMat)
+//{
+//	auto pLight = static_cast<vePointLight *>(light);
+//    static auto shadowPass = [this](veRenderCommand &command) -> bool {
+//        if (command.pass->castShadow()) {
+//            auto pass = this->getOrCreateOmnidirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
+//            pass->cullFace() = command.pass->cullFace();
+//            pass->cullFaceMode() = command.pass->cullFaceMode();
+//            command.pass = pass;
+//            return true;
+//        }
+//        return false;
+//    };
+//    
+//    veVec3 lightWorldPos = veVec3(lightInWorldMat[0][3], lightInWorldMat[1][3], lightInWorldMat[2][3]);
+//    pLight->getShadowCamera(0)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_X, veVec3::NEGATIVE_UNIT_Y));
+//    pLight->getShadowCamera(1)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_X, veVec3::NEGATIVE_UNIT_Y));
+//    pLight->getShadowCamera(2)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_Y, veVec3::UNIT_Z));
+//    pLight->getShadowCamera(3)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_Y, veVec3::NEGATIVE_UNIT_Z));
+//    pLight->getShadowCamera(4)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::UNIT_Z, veVec3::NEGATIVE_UNIT_Y));
+//    pLight->getShadowCamera(5)->setMatrix(veMat4::lookAt(lightWorldPos, lightWorldPos + veVec3::NEGATIVE_UNIT_Z, veVec3::NEGATIVE_UNIT_Y));
+//    lightShadowMat = veMat4::translation(-lightWorldPos);
+//    
+//	for (unsigned short i = 0; i < 6; ++i) {
+//		_sceneManager->getRenderState(contextID)->resetState();
+//		_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, pLight->getShadowTexture());
+//		_shadowingFBO->bind(contextID, GL_DEPTH_BUFFER_BIT);
+//		//glClear(GL_DEPTH_BUFFER_BIT);
+//        visitRenderQueues(pLight->getShadowCamera(i), contextID);
+//        prepareForDraws(pLight->getShadowCamera(i));
+//		draw(pLight->getShadowCamera(i), pLight->getShadowCamera(i)->getRenderQueue()->deferredRenderGroup, shadowPass);
+//        draw(pLight->getShadowCamera(i), pLight->getShadowCamera(i)->getRenderQueue()->forwardRenderGroup, shadowPass);
+//        _shadowingFBO->unBind();
+//	}
+//}
+//
+//void veRenderPipeline::renderSpotLightShadow(const veMat4 &lightInWorldMat, veLight *light, unsigned int contextID, veMat4 &lightShadowMat)
+//{
+//	auto sLight = static_cast<veSpotLight *>(light);
+//    static auto shadowPass = [this](veRenderCommand &command) {
+//		if (command.pass->castShadow()) {
+//			auto pass = this->getOrCreateDirectionalShadowPass(command.pass->getShader(veShader::VERTEX_SHADER)->getShaderHeader(), command.pass->getShader(veShader::FRAGMENT_SHADER)->getShaderHeader());
+//			pass->cullFace() = command.pass->cullFace();
+//			pass->cullFaceMode() = command.pass->cullFaceMode();
+//			command.pass = pass;
+//			return true;
+//		}
+//		return false;
+//    };
+//    
+//    sLight->getShadowCamera()->setMatrix(lightInWorldMat);
+//    lightShadowMat = LIGHT_BIAS_MAT * sLight->getShadowCamera()->projectionMatrix() * sLight->getShadowCamera()->viewMatrix();
+//    
+//	_sceneManager->getRenderState(contextID)->resetState();
+//	_shadowingFBO->attach(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, sLight->getShadowTexture());
+//	_shadowingFBO->bind(contextID, GL_DEPTH_BUFFER_BIT);
+//	//glClear(GL_DEPTH_BUFFER_BIT);
+//    visitRenderQueues(sLight->getShadowCamera(), contextID);
+//    prepareForDraws(sLight->getShadowCamera());
+//	draw(sLight->getShadowCamera(), sLight->getShadowCamera()->getRenderQueue()->deferredRenderGroup, shadowPass);
+//    draw(sLight->getShadowCamera(), sLight->getShadowCamera()->getRenderQueue()->forwardRenderGroup, shadowPass);
+//	_shadowingFBO->unBind();
+//}
+//
+//vePass* veRenderPipeline::getOrCreateDirectionalShadowPass(const std::string &vDef, const std::string &fDef)
+//{
+//	std::string id = vDef + fDef + std::string("|D");
+//	auto iter = _shadowPassList.find(id);
+//	if (iter != _shadowPassList.end()) {
+//		return iter->second.get();
+//	}
+//
+//	auto pass = new vePass;
+//	auto vShader = new veShader(veShader::VERTEX_SHADER, DEPTH_WRITE_VERTEX_SHADER);
+//	vShader->setShaderHeader(vDef);
+//	pass->setShader(vShader);
+//	auto fShader = new veShader(veShader::FRAGMENT_SHADER, DEPTH_WRITE_FRAGMENT_SHADER);
+//	fShader->setShaderHeader(fDef);
+//	pass->setShader(fShader);
+//	pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
+//	pass->addUniform(new veUniform("u_BoneMates", BONE_MATRIXES));
+//	_shadowPassList[id] = pass;
+//	return pass;
+//}
+//
+//vePass* veRenderPipeline::getOrCreateOmnidirectionalShadowPass(const std::string &vDef, const std::string &fDef)
+//{
+//	std::string id = vDef + fDef + std::string("|OD");
+//	auto iter = _shadowPassList.find(id);
+//	if (iter != _shadowPassList.end()) {
+//		return iter->second.get();
+//	}
+//
+//	auto pass = new vePass;
+//	auto vShader = new veShader(veShader::VERTEX_SHADER, SQUARE_DEPTH_WRITE_VERTEX_SHADER);
+//	vShader->setShaderHeader(vDef);
+//	pass->setShader(vShader);
+//	auto fShader = new veShader(veShader::FRAGMENT_SHADER, SQUARE_DEPTH_WRITE_FRAGMENT_SHADER);
+//	fShader->setShaderHeader(fDef);
+//	pass->setShader(fShader);
+//	pass->addUniform(new veUniform("u_ModelViewProjectMat", MVP_MATRIX));
+//	pass->addUniform(new veUniform("u_ModelViewMat", MV_MATRIX));
+//	pass->addUniform(new veUniform("u_BoneMates", BONE_MATRIXES));
+//	_shadowPassList[id] = pass;
+//	return pass;
+//}
+//
+//void veRenderPipeline::caculateDirectionalLightCascadedParams(const veMat4 &lightInWorldMat, veLight *light, veCamera *camera, float *cascadedLevels)
+//{
+//    auto dLight = static_cast<veDirectionalLight *>(light);
+//    veVec3 camerafrustumCorners[8];
+//    camera->getFrustumCorners(camerafrustumCorners);
+//    veVec3 frustumCorners[8];
+//    
+//    float t = 0.0;
+//    for (unsigned short i = 0; i < dLight->getShadowCascadedCount(); ++i) {
+//    
+//        frustumCorners[0] = camerafrustumCorners[0] * (1.0f - t) + camerafrustumCorners[4] * t;
+//        frustumCorners[1] = camerafrustumCorners[1] * (1.0f - t) + camerafrustumCorners[5] * t;
+//        frustumCorners[2] = camerafrustumCorners[2] * (1.0f - t) + camerafrustumCorners[6] * t;
+//        frustumCorners[3] = camerafrustumCorners[3] * (1.0f - t) + camerafrustumCorners[7] * t;
+//        
+//        t = dLight->getShadowCascadedLevelScale(i);
+//        frustumCorners[4] = camerafrustumCorners[0] * (1.0f - t) + camerafrustumCorners[4] * t;
+//        frustumCorners[5] = camerafrustumCorners[1] * (1.0f - t) + camerafrustumCorners[5] * t;
+//        frustumCorners[6] = camerafrustumCorners[2] * (1.0f - t) + camerafrustumCorners[6] * t;
+//        frustumCorners[7] = camerafrustumCorners[3] * (1.0f - t) + camerafrustumCorners[7] * t;
+//        
+//        veVec3 center = (frustumCorners[0] + frustumCorners[1] + frustumCorners[2] + frustumCorners[3] + frustumCorners[4] + frustumCorners[5] + frustumCorners[6] + frustumCorners[7]) / 8;
+//        veReal radius = veMath::maximum((center - frustumCorners[0]).squaredLength(), (center - frustumCorners[1]).squaredLength());
+//        radius = veMath::maximum(radius, (center - frustumCorners[2]).squaredLength());
+//        radius = veMath::maximum(radius, (center - frustumCorners[3]).squaredLength());
+//        radius = veMath::maximum(radius, (center - frustumCorners[4]).squaredLength());
+//        radius = veMath::maximum(radius, (center - frustumCorners[5]).squaredLength());
+//        radius = veMath::maximum(radius, (center - frustumCorners[6]).squaredLength());
+//        radius = veMath::maximum(radius, (center - frustumCorners[7]).squaredLength());
+//        radius = veMath::veSqrt(radius);
+//        
+//        dLight->getShadowCamera(i)->setMatrix(veMat4::translation(camera->getNodeToWorldMatrix() * center) * lightInWorldMat);
+//        dLight->getShadowCamera(i)->setProjectionMatrixAsOrtho(-radius, radius, -radius, radius, -radius, radius);
+//        cascadedLevels[i] = -frustumCorners[4].z();
+//    }
+//}
 
 //void veRenderPipeline::renderShadows(veViewer *viewer)
 //{

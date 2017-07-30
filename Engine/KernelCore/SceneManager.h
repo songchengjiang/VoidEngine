@@ -51,9 +51,9 @@ public:
 
 	virtual veNode* createNode(const std::string &name) = 0;
 	virtual veLight* createLight(veLight::LightType type, const std::string &name);
-	virtual veSurface* createSurface(const std::string &name);
-	virtual veImage* createImage(const std::string &name, veTexture *texture);
-	virtual veText* createText(const std::string &name, veFont *font, const std::string &content = "");
+	//virtual veSurface* createSurface(const std::string &name);
+	//virtual veImage* createImage(const std::string &name, veTexture *texture);
+	//virtual veText* createText(const std::string &name, veFont *font, const std::string &content = "");
 	virtual veAnimation* createAnimation(const std::string &name);
 	virtual veAnimationContainer* createAnimationContainer(const std::string &name);
     
@@ -62,23 +62,18 @@ public:
 	virtual veRay* createRay(const veVec3 &start, const veVec3 &end);
 	virtual veCamera* createCamera(const std::string &name, const veViewport &vp = { 0, 0, 0, 0 }) = 0;
 	virtual veMesh* createMesh(const std::string &name);
-	virtual veSphere* createSphere(const std::string &name);
-	virtual veCone* createCone(const std::string &name);
-	virtual veSkyBox* createSkyBox(const std::string &name, veReal size = 500.0f);
+	//virtual veSphere* createSphere(const std::string &name);
+	//virtual veCone* createCone(const std::string &name);
 	virtual veAnimationPlayer* createAnimationPlayer(const std::string &name, veAnimationContainer *container);
 	virtual veTexture* createTexture(const std::string &name, veTexture::TextureType texType = veTexture::TEXTURE_2D);
 	virtual veMaterialArray* createMaterialArray(const std::string &name);
-	virtual vePostProcesser* createPostProcesser(const std::string &name);
     virtual veParticleSystem* createParticleSystem(const std::string &name);
 
 	virtual void requestRender(veNode *node) = 0;
 	virtual void requestRayCast(veRay *ray) = 0;
 	virtual bool isNodeVisibleInScene(veNode *node) { return true; }
 
-	const veCameraList& getCameraList() const { return _cameraList; }
-	const veLightListMap& getLightListMap() const { return _lightListMap; }
-	void setSkyBox(veSkyBox *skybox) { _skyBox = skybox; }
-	veSkyBox* getSkyBox() const { return _skyBox.get(); }
+	//const veCameraList& getCameraList() const { return _cameraList; }
 	void setAmbientColor(const veVec3 &color) { _ambient = color; }
 	const veVec3& getAmbientColor() const { return _ambient; }
 
@@ -119,10 +114,9 @@ protected:
 protected:
 
 	VE_Ptr<veNode>              _root;
-	VE_Ptr<veSkyBox>            _skyBox;
-	veCameraList                _cameraList;
-	veLightListMap              _lightListMap;
-    veParticleSystemList        _particleSystemList;
+	//veCameraList                _cameraList;
+	//veLightListMap              _lightListMap;
+    //veParticleSystemList        _particleSystemList;
 	veVec3                      _ambient;
 	VE_Ptr<veRenderPipeline>    _renderPipeline;
     std::vector<veViewer *>     _attachedViewers;

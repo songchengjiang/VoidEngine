@@ -9,6 +9,8 @@
 #include "Application-android.h"
 #endif
 
+#include "Viewer.h"
+
 veApplication::veApplication()
 {
 }
@@ -33,4 +35,10 @@ veViewer* veApplication::getViewer(size_t idx)
 {
     veAssert(idx < _viewerList.size());
     return _viewerList[idx];
+}
+
+void veApplication::destroyAllViewer()
+{
+    stop();
+    _viewerList.clear();
 }

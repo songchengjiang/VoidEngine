@@ -5,6 +5,7 @@
 veViewerAndroid::veViewerAndroid(int width, int height, const std::string &title, veViewerAndroid *sharedViewer)
     : veViewer(width, height, title)
     , _sharedViewer(sharedViewer)
+    , _isFirstFrame(true)
 {
     
 }
@@ -27,30 +28,30 @@ void veViewerAndroid::startSimulation()
     if (!_sceneManager.valid()) return;
     veViewer::startSimulation();
 
-    _isRunning = true;
+//    _isRunning = true;
 
-    _updateThread = std::thread([this] {
-        clock_t frameTimeClocks = 1.0 / 60.0 * CLOCKS_PER_SEC;
-        clock_t preFrameTime = clock();
-        double invertClocksSec = 1.0 / (double)CLOCKS_PER_SEC;
-        while(_isRunning){
-            clock_t currentFrameTime = clock();
-            this->update((currentFrameTime - preFrameTime) * invertClocksSec);
-            while ((clock() - currentFrameTime) < frameTimeClocks) {
-                std::this_thread::sleep_for(std::chrono::microseconds(1));
-            }
-            preFrameTime = currentFrameTime;
-        }
-    });
+//    _updateThread = std::thread([this] {
+//        clock_t frameTimeClocks = 1.0 / 60.0 * CLOCKS_PER_SEC;
+//        clock_t preFrameTime = clock();
+//        double invertClocksSec = 1.0 / (double)CLOCKS_PER_SEC;
+//        while(_isRunning){
+//            clock_t currentFrameTime = clock();
+//            this->update((currentFrameTime - preFrameTime) * invertClocksSec);
+//            while ((clock() - currentFrameTime) < frameTimeClocks) {
+//                std::this_thread::sleep_for(std::chrono::microseconds(1));
+//            }
+//            preFrameTime = currentFrameTime;
+//        }
+//    });
 }
 
 void veViewerAndroid::stopSimulation()
 {
-    if (!_sceneManager.valid()) return;
-    if (!_isRunning) return;
-    _isRunning = false;
-    _updateThread.join();
-    veViewer::stopSimulation();
+//    if (!_sceneManager.valid()) return;
+//    if (!_isRunning) return;
+//    _isRunning = false;
+//    _updateThread.join();
+//    veViewer::stopSimulation();
 }
 
 void veViewerAndroid::update(double deltaTime)
@@ -91,6 +92,7 @@ void veViewerAndroid::onCreated(int width, int height)
     _currentEvent.setWindowWidth(width);
     _currentEvent.setWindowHeight(height);
     this->_eventList.push_back(_currentEvent);
+    _isFirstFrame = true;
 }
 
 void veViewerAndroid::onDestroy()
@@ -137,7 +139,15 @@ void veViewerAndroid::onResume()
 void veViewerAndroid::onDrawFrame()
 {
     if (!_sceneManager.valid()) return;
+    static double invertClocksSec = 1.0 / (double)CLOCKS_PER_SEC;
+    if (_isFirstFrame) {
+        _preFrameTime = clock();
+        _isFirstFrame = false;
+    }
+    clock_t currentFrameTime = clock();
+    this->update((currentFrameTime - _preFrameTime) * invertClocksSec);
     _sceneManager->render(this);
+    _preFrameTime = currentFrameTime;
 }
 
 void veViewerAndroid::resize(int width, int height)
@@ -147,8 +157,8 @@ void veViewerAndroid::resize(int width, int height)
     _currentEvent.setEventType(veEvent::VE_WIN_RESIZE);
     _currentEvent.setWindowWidth(width);
     _currentEvent.setWindowHeight(height);
-    if (this->getCamera())
-        this->getCamera()->resize(_currentEvent.getWindowWidth(), _currentEvent.getWindowHeight());
+//    if (this->getCamera())
+//        this->getCamera()->resize(_currentEvent.getWindowWidth(), _currentEvent.getWindowHeight());
     this->_eventList.push_back(_currentEvent);
 }
 

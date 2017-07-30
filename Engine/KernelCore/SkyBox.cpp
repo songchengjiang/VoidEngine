@@ -1,55 +1,124 @@
 #include "SkyBox.h"
-#include "BoxRenderer.h"
 #include "Camera.h"
 #include "SceneManager.h"
-
-class veSkyBoxRenderer : public veBoxRenderer
-{
-public:
-
-	veSkyBoxRenderer(veSkyBox *skybox)
-		: _skyBox(skybox)
-	{}
-
-	virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID) override {
-		updateBuffer(contextID);
-
-		veMat4 cameraWorldMat = camera->getNodeToWorldMatrix();
-		veRenderCommand rc;
-		veMat4 mat = veMat4::IDENTITY;
-		mat[0][3] = cameraWorldMat[0][3];
-		mat[1][3] = cameraWorldMat[1][3];
-		mat[2][3] = cameraWorldMat[2][3];
-		mat[0][0] = mat[1][1] = mat[2][2] = _skyBox->getSize() * 0.5f;
-		rc.worldMatrix = new veMat4Ptr(mat);
-		rc.camera = camera;
-		rc.sceneManager = camera->getSceneManager();
-		rc.renderer = this;
-        rc.contextID = contextID;
-        auto material = _skyBox->getMaterial();
-        for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {
-            auto pass = material->activeTechnique()->getPass(i);
-            if (camera->getMask() & pass->drawMask()) {
-                rc.pass = pass;
-                pass->visit(rc);
-                camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_BACKGROUND, rc);
-                //draw(rc);
-            }
-        }
-	}
-
-private:
-
-	veSkyBox *_skyBox;
-};
+#include "MeshRenderer.h"
+#include "Viewer.h"
 
 veSkyBox::veSkyBox(veReal size)
 	: USE_VE_PTR_INIT
-	, _mask(0xffffffff)
-	, _sceneManager(nullptr)
 {
-	_renderer = new veSkyBoxRenderer(this);
+	_renderer = new veMeshRenderer();
 	setSize(size);
+    
+    _vertices = new veRealArray();
+    //NEGATIVE_X
+    _vertices->push_back(-1.0f); _vertices->push_back(-1.0f); _vertices->push_back(-1.0f); //v
+    _vertices->push_back(-1.0f); _vertices->push_back(0.0f); _vertices->push_back(0.0f);   //n
+    _vertices->push_back(0.0f); _vertices->push_back(0.0f);                              //tc
+    
+    _vertices->push_back(-1.0f); _vertices->push_back(1.0f); _vertices->push_back(-1.0f); //v
+    _vertices->push_back(-1.0f); _vertices->push_back(0.0f); _vertices->push_back(0.0f);   //n
+    _vertices->push_back(0.0f); _vertices->push_back(1.0f);                              //tc
+    
+    _vertices->push_back(-1.0f); _vertices->push_back(-1.0f); _vertices->push_back(1.0f); //v
+    _vertices->push_back(-1.0f); _vertices->push_back(0.0f); _vertices->push_back(0.0f);   //n
+    _vertices->push_back(1.0f); _vertices->push_back(0.0f);                              //tc
+    
+    _vertices->push_back(-1.0f); _vertices->push_back(1.0f); _vertices->push_back(1.0f); //v
+    _vertices->push_back(-1.0f); _vertices->push_back(0.0f); _vertices->push_back(0.0f);   //n
+    _vertices->push_back(1.0f); _vertices->push_back(1.0f);                              //tc
+    
+    //POSITIVE_Z
+    _vertices->push_back(-1.0f); _vertices->push_back(-1.0f); _vertices->push_back(1.0f); //v
+    _vertices->push_back(0.0f); _vertices->push_back(0.0f); _vertices->push_back(1.0f);   //n
+    _vertices->push_back(0.0f); _vertices->push_back(0.0f);                              //tc
+    
+    _vertices->push_back(-1.0f); _vertices->push_back(1.0f); _vertices->push_back(1.0f); //v
+    _vertices->push_back(0.0f); _vertices->push_back(0.0f); _vertices->push_back(1.0f);   //n
+    _vertices->push_back(0.0f); _vertices->push_back(1.0f);                                 //tc
+    
+    _vertices->push_back(1.0f); _vertices->push_back(-1.0f); _vertices->push_back(1.0f); //v
+    _vertices->push_back(0.0f); _vertices->push_back(0.0f); _vertices->push_back(1.0f);   //n
+    _vertices->push_back(1.0f); _vertices->push_back(0.0f);                              //tc
+    
+    _vertices->push_back(1.0f); _vertices->push_back(1.0f); _vertices->push_back(1.0f); //v
+    _vertices->push_back(0.0f); _vertices->push_back(0.0f); _vertices->push_back(1.0f);   //n
+    _vertices->push_back(1.0f); _vertices->push_back(1.0f);                              //tc
+    
+    //POSITIVE_X
+    _vertices->push_back(1.0f); _vertices->push_back(-1.0f); _vertices->push_back(1.0f); //v
+    _vertices->push_back(1.0f); _vertices->push_back(0.0f); _vertices->push_back(1.0f);   //n
+    _vertices->push_back(0.0f); _vertices->push_back(0.0f);                              //tc
+    
+    _vertices->push_back(1.0f); _vertices->push_back(1.0f); _vertices->push_back(1.0f); //v
+    _vertices->push_back(1.0f); _vertices->push_back(0.0f); _vertices->push_back(1.0f);   //n
+    _vertices->push_back(0.0f); _vertices->push_back(1.0f);                                 //tc
+    
+    _vertices->push_back(1.0f); _vertices->push_back(-1.0f); _vertices->push_back(-1.0f); //v
+    _vertices->push_back(1.0f); _vertices->push_back(0.0f); _vertices->push_back(1.0f);   //n
+    _vertices->push_back(1.0f); _vertices->push_back(0.0f);                              //tc
+    
+    _vertices->push_back(1.0f); _vertices->push_back(1.0f); _vertices->push_back(-1.0f); //v
+    _vertices->push_back(1.0f); _vertices->push_back(0.0f); _vertices->push_back(1.0f);   //n
+    _vertices->push_back(1.0f); _vertices->push_back(1.0f);                              //tc
+    
+    //NEGATIVE_Z
+    _vertices->push_back(1.0f); _vertices->push_back(-1.0f); _vertices->push_back(-1.0f); //v
+    _vertices->push_back(0.0f); _vertices->push_back(0.0f); _vertices->push_back(-1.0f);   //n
+    _vertices->push_back(0.0f); _vertices->push_back(0.0f);                              //tc
+    
+    _vertices->push_back(1.0f); _vertices->push_back(1.0f); _vertices->push_back(-1.0f); //v
+    _vertices->push_back(0.0f); _vertices->push_back(0.0f); _vertices->push_back(-1.0f);   //n
+    _vertices->push_back(0.0f); _vertices->push_back(1.0f);                                 //tc
+    
+    _vertices->push_back(-1.0f); _vertices->push_back(-1.0f); _vertices->push_back(-1.0f); //v
+    _vertices->push_back(0.0f); _vertices->push_back(0.0f); _vertices->push_back(-1.0f);   //n
+    _vertices->push_back(1.0f); _vertices->push_back(0.0f);                              //tc
+    
+    _vertices->push_back(-1.0f); _vertices->push_back(1.0f); _vertices->push_back(-1.0f); //v
+    _vertices->push_back(0.0f); _vertices->push_back(0.0f); _vertices->push_back(-1.0f);   //n
+    _vertices->push_back(1.0f); _vertices->push_back(1.0f);                              //tc
+    
+    //POSITIVE_Y
+    _vertices->push_back(-1.0f); _vertices->push_back(1.0f); _vertices->push_back(1.0f); //v
+    _vertices->push_back(0.0f); _vertices->push_back(1.0f); _vertices->push_back(0.0f);   //n
+    _vertices->push_back(0.0f); _vertices->push_back(0.0f);                              //tc
+    
+    _vertices->push_back(-1.0f); _vertices->push_back(1.0f); _vertices->push_back(-1.0f); //v
+    _vertices->push_back(0.0f); _vertices->push_back(1.0f); _vertices->push_back(0.0f);   //n
+    _vertices->push_back(0.0f); _vertices->push_back(1.0f);                                 //tc
+    
+    _vertices->push_back(1.0f); _vertices->push_back(1.0f); _vertices->push_back(1.0f); //v
+    _vertices->push_back(0.0f); _vertices->push_back(1.0f); _vertices->push_back(0.0f);   //n
+    _vertices->push_back(1.0f); _vertices->push_back(0.0f);                              //tc
+    
+    _vertices->push_back(1.0f); _vertices->push_back(1.0f); _vertices->push_back(-1.0f); //v
+    _vertices->push_back(0.0f); _vertices->push_back(1.0f); _vertices->push_back(0.0f);   //n
+    _vertices->push_back(1.0f); _vertices->push_back(1.0f);                              //tc
+    
+    //NEGATIVE_Y
+    _vertices->push_back(-1.0f); _vertices->push_back(-1.0f); _vertices->push_back(-1.0f); //v
+    _vertices->push_back(0.0f); _vertices->push_back(-1.0f); _vertices->push_back(0.0f);   //n
+    _vertices->push_back(0.0f); _vertices->push_back(0.0f);                              //tc
+    
+    _vertices->push_back(-1.0f); _vertices->push_back(-1.0f); _vertices->push_back(1.0f); //v
+    _vertices->push_back(0.0f); _vertices->push_back(-1.0f); _vertices->push_back(0.0f);   //n
+    _vertices->push_back(0.0f); _vertices->push_back(1.0f);                                 //tc
+    
+    _vertices->push_back(1.0f); _vertices->push_back(-1.0f); _vertices->push_back(-1.0f); //v
+    _vertices->push_back(0.0f); _vertices->push_back(-1.0f); _vertices->push_back(0.0f);   //n
+    _vertices->push_back(1.0f); _vertices->push_back(0.0f);                              //tc
+    
+    _vertices->push_back(1.0f); _vertices->push_back(-1.0f); _vertices->push_back(1.0f); //v
+    _vertices->push_back(0.0f); _vertices->push_back(-1.0f); _vertices->push_back(0.0f);   //n
+    _vertices->push_back(1.0f); _vertices->push_back(1.0f);                              //tc
+    
+    _indices = new veUint16Array;
+    for (unsigned int face = 0; face < 6; ++face) {
+        unsigned int idx = 4 * face;
+        _indices->push_back(idx + 0); _indices->push_back(idx + 2); _indices->push_back(idx + 1);
+        _indices->push_back(idx + 1); _indices->push_back(idx + 2); _indices->push_back(idx + 3);
+    }
 }
 
 veSkyBox::~veSkyBox()
@@ -62,12 +131,30 @@ void veSkyBox::setSize(veReal size)
 	_size = size;
 }
 
-void veSkyBox::setMask(unsigned int mask)
+void veSkyBox::beforeRender(veSceneManager *sm, veViewer *viewer)
 {
-	_mask = mask;
-}
-
-void veSkyBox::render(veCamera *camera, unsigned int contextID)
-{
-	_renderer->render(nullptr, nullptr, camera, contextID);
+    veCamera *camera = _attachedNode->getComponent<veCamera>();
+    if (!camera)
+        return;
+    
+    if (!_mesh.valid()) {
+        _mesh = sm->createMesh("_SkyBoxMesh_");
+        _mesh->setVertexArray(_vertices.get());
+        _mesh->addVertexAtrribute({veMesh::VertexAtrribute::VERTEX_ATTRIB_POSITION, 3, veMesh::VertexAtrribute::FLOAT});
+        _mesh->addVertexAtrribute({veMesh::VertexAtrribute::VERTEX_ATTRIB_NORMAL, 3, veMesh::VertexAtrribute::FLOAT});
+        _mesh->addVertexAtrribute({veMesh::VertexAtrribute::VERTEX_ATTRIB_TEX_COORD0, 2, veMesh::VertexAtrribute::FLOAT});
+        
+        _mesh->addPrimitive({veMesh::Primitive::TRIANGLES, _indices});
+        _mesh->setMaterial(_material.get());
+    }
+    
+    veMat4 cameraWorldMat = _attachedNode->getNodeToWorldMatrix();
+    veRenderCommand rc;
+    veMat4 mat = veMat4::IDENTITY;
+    mat[0][3] = cameraWorldMat[0][3];
+    mat[1][3] = cameraWorldMat[1][3];
+    mat[2][3] = cameraWorldMat[2][3];
+    mat[0][0] = mat[1][1] = mat[2][2] = _size * 0.5f;
+    
+    _renderer->render(_mesh.get(), camera, mat, viewer->getContextID(), veRenderQueue::RENDER_QUEUE_BACKGROUND);
 }

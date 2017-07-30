@@ -5,16 +5,16 @@
 #include "ParticleSystem.h"
 
 veParticleRenderer::veParticleRenderer()
-    : _instanceCount(0)
-    , _needUpdate(true)
+//    : _instanceCount(0)
+    : _needUpdate(true)
 {
-    _vaoBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
-        GLuint vao;
-        glGenVertexArrays(1, &vao);
-        return vao;
-    }, [](GLuint vao){
-        glDeleteVertexArrays(1, &vao);
-    });
+//    _vaoBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+//        GLuint vao;
+//        glGenVertexArrays(1, &vao);
+//        return vao;
+//    }, [](GLuint vao){
+//        glDeleteVertexArrays(1, &vao);
+//    });
     
     _vboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
         GLuint vbo;
@@ -32,21 +32,21 @@ veParticleRenderer::veParticleRenderer()
         glDeleteBuffers(1, &ibo);
     });
     
-    _mvpboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
-        GLuint vbo;
-        glGenBuffers(1, &vbo);
-        return vbo;
-    }, [](GLuint vbo){
-        glDeleteBuffers(1, &vbo);
-    });
-    
-    _colorboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
-        GLuint vbo;
-        glGenBuffers(1, &vbo);
-        return vbo;
-    }, [](GLuint vbo){
-        glDeleteBuffers(1, &vbo);
-    });
+//    _mvpboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+//        GLuint vbo;
+//        glGenBuffers(1, &vbo);
+//        return vbo;
+//    }, [](GLuint vbo){
+//        glDeleteBuffers(1, &vbo);
+//    });
+//    
+//    _colorboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
+//        GLuint vbo;
+//        glGenBuffers(1, &vbo);
+//        return vbo;
+//    }, [](GLuint vbo){
+//        glDeleteBuffers(1, &vbo);
+//    });
 }
 
 veParticleRenderer::~veParticleRenderer()
@@ -59,29 +59,28 @@ void veParticleRenderer::draw(veRenderCommand &command)
     if (!command.pass->apply(command))
         return;
     
-    if (!_indices.empty()){
-        glBindVertexArray(_vaoBuffer->getData(command.contextID));
-        glDrawElements(GL_TRIANGLES, GLsizei(_indices.size()), GL_UNSIGNED_SHORT, nullptr);
-    }
+//    if (!_indices.empty()){
+//        glBindVertexArray(_vaoBuffer->getData(command.contextID));
+//        glDrawElements(GL_TRIANGLES, GLsizei(_indices.size()), GL_UNSIGNED_SHORT, nullptr);
+//    }
 }
 
-void veParticleRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID)
+void veParticleRenderer::render(veRenderableObject *renderableObj, veCamera *camera, const veMat4 &worldMatrix, unsigned int contextID, veRenderQueue::RenderQueueType type)
 {
     updateBuffer(renderableObj, camera, contextID);
     
     veRenderCommand rc;
-    rc.mask = node->getMask();
-    rc.worldMatrix = new veMat4Ptr(veMat4::IDENTITY);
+    rc.worldMatrix = new veMat4Ptr(&worldMatrix, 1);
     rc.camera = camera;
-    rc.sceneManager = camera->getSceneManager();
-    rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
+    rc.sceneManager = camera->getAttachedNode()->getSceneManager();
+    rc.depthInCamera = (camera->viewMatrix() * worldMatrix)[2][3];
     rc.renderer = this;
     rc.contextID = contextID;
     
     auto material = renderableObj->getMaterial();
     for (unsigned int i = 0; i < material->activeTechnique()->getPassNum(); ++i) {
         auto pass = material->activeTechnique()->getPass(i);
-        if (camera->getMask() & pass->drawMask()) {
+        if (true) {
             bool isTransparent = pass->blendFunc() != veBlendFunc::DISABLE ? true : false;
             rc.pass = pass;
             pass->visit(rc);

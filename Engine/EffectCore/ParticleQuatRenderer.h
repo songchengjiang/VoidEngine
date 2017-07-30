@@ -24,6 +24,8 @@ protected:
     
     virtual void updateBuffer(veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID) override;
     void updateInstanceParams(veParticle *particle, const veMat4 &cameraRot, const veMat4 &vp);
+    void addParticle(const veVec3 &v0, const veVec3 &v1, const veVec3 &v2, const veVec3 &v3
+                   , const veVec4 &color);
     inline unsigned int getVertexStride() const;
 
 protected:

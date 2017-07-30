@@ -27,5 +27,5 @@ void veRenderableObject::render(veNode *node, veCamera *camera, unsigned int con
 {
 	if (!_isVisible) return;
 	if (_renderer.valid() && _material.valid())
-		_renderer->render(node, this, camera, contextID);
+		_renderer->render(this, camera, node->getNodeToWorldMatrix(), contextID);
 }

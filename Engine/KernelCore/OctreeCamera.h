@@ -8,8 +8,8 @@ class veOctree;
 class VE_EXPORT veOctreeCamera : public veCamera
 {
 public:
-	veOctreeCamera(veSceneManager *sm);
-	veOctreeCamera(veSceneManager *sm, const veViewport &vp);
+	veOctreeCamera();
+	veOctreeCamera(const veViewport &vp);
 	~veOctreeCamera();
 
 	virtual void cull(veNodeList &visibledNodeList) override;

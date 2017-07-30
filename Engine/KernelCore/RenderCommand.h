@@ -19,9 +19,6 @@ struct veRenderCommand
 	veRenderCommand()
 		: priority(NORMAL_PRIORITY)
 		, depthInCamera(0.0f)
-		, user1(nullptr)
-		, user2(nullptr)
-		, user3(nullptr)
         , contextID(0){
 	}
 
@@ -33,20 +30,14 @@ struct veRenderCommand
 	};
 
 	int                 priority;
-	unsigned int        mask;
 	VE_Ptr<veMat4Ptr>   worldMatrix;
+    VE_Ptr<veMat4Ptr>   bonesMatrix;
 	veReal              depthInCamera;
 	vePass             *pass;
-	//veNode             *attachedNode;
-	//veRenderableObject *renderableObj;
 	veCamera           *camera;
 	veSceneManager     *sceneManager;
-	void*               user1;
-	void*               user2;
-	void*               user3;
 	veRenderer         *renderer;
     unsigned int        contextID;
-    //std::function<void(const veRenderCommand &)> drawFunc;
 };
 
 #endif

@@ -15,7 +15,7 @@ public:
 	static const int DEFAULT_WIDTH;
 	static const int DEFAULT_HEIGHT;
 	static const int DEFAULT_DEPTH;
-	static const int DEFAULT_INTERNAL_FORMAT;
+	//static const int DEFAULT_INTERNAL_FORMAT;
 
 	enum TextureType
 	{
@@ -43,14 +43,6 @@ public:
 		LINEAR_MIP_MAP_LINEAR = GL_LINEAR_MIPMAP_LINEAR,
 	};
 
-	enum SwizzleMode
-	{
-		SWIZZLE_R = GL_RED,
-		SWIZZLE_G = GL_GREEN,
-		SWIZZLE_B = GL_BLUE,
-		SWIZZLE_A = GL_ALPHA,
-	};
-
 	struct MipmapLevel
 	{
 		int width;
@@ -74,9 +66,6 @@ public:
 	WrapMode getWrapMode() const { return _wrapMode; }
 	void setFilterMode(FilterMode filterMode){ _filterMode = filterMode; _needRefreshSampler = true; }
 	FilterMode getFilterMode() const { return _filterMode; }
-	void setSwizzleMode(SwizzleMode r, SwizzleMode g, SwizzleMode b, SwizzleMode a);
-	void getSwizzleMode(SwizzleMode &r, SwizzleMode &g, SwizzleMode &b, SwizzleMode &a);
-
 	void setTexParameter(GLenum pname, GLint param);
 
 	virtual void storage(int width, int height, int depthOrLayer, GLint internalFormat, GLenum pixelFormat = GL_RGB, GLenum dataType = GL_UNSIGNED_BYTE
@@ -117,7 +106,6 @@ protected:
 
 	WrapMode        _wrapMode;
 	FilterMode      _filterMode;
-	SwizzleMode     _swizzleMode[4];
 	bool            _needRefreshTex;
 	bool            _needRefreshSampler;
     VE_Ptr<veGLDataBuffer> _textureBuffer;
@@ -158,6 +146,39 @@ protected:
 
 };
 
+class VE_EXPORT veTextureCube : public veTexture
+{
+    friend class veTextureManager;
+public:
+    
+    enum CubeMapTexType
+    {
+        CUBE_MAP_POSITIVE_X = 0,
+        CUBE_MAP_NEGATIVE_X = 1,
+        CUBE_MAP_POSITIVE_Y = 2,
+        CUBE_MAP_NEGATIVE_Y = 3,
+        CUBE_MAP_POSITIVE_Z = 4,
+        CUBE_MAP_NEGATIVE_Z = 5,
+    };
+    
+    ~veTextureCube();
+    
+    virtual void bind(unsigned int contextID) override;
+    
+    void setTexture(CubeMapTexType texType, veTexture *texture);
+    veTexture* getTexture(CubeMapTexType texType);
+    virtual unsigned int getTextureTotalMemory() override;
+    
+protected:
+    veTextureCube();
+    
+protected:
+    
+    VE_Ptr<veTexture> _textures[6];
+};
+
+#if VE_PLATFORM != VE_PLATFORM_ANDROID && VE_PLATFORM != VE_PLATFORM_IOS
+
 class VE_EXPORT veTexture3D : public veTexture
 {
 	friend class veTextureManager;
@@ -170,38 +191,6 @@ public:
 protected:
 	veTexture3D();
 
-};
-
-
-class VE_EXPORT veTextureCube : public veTexture
-{
-	friend class veTextureManager;
-public:
-
-	enum CubeMapTexType
-	{
-		CUBE_MAP_POSITIVE_X = 0,
-		CUBE_MAP_NEGATIVE_X = 1,
-		CUBE_MAP_POSITIVE_Y = 2,
-		CUBE_MAP_NEGATIVE_Y = 3,
-		CUBE_MAP_POSITIVE_Z = 4,
-		CUBE_MAP_NEGATIVE_Z = 5,
-	};
-
-	~veTextureCube();
-
-	virtual void bind(unsigned int contextID) override;
-
-	void setTexture(CubeMapTexType texType, veTexture *texture);
-	veTexture* getTexture(CubeMapTexType texType);
-	virtual unsigned int getTextureTotalMemory() override;
-
-protected:
-	veTextureCube();
-
-protected:
-
-	VE_Ptr<veTexture> _textures[6];
 };
 
 class VE_EXPORT veTexture2DArray : public veTexture
@@ -218,7 +207,6 @@ protected:
 
 };
 
-#if VE_PLATFORM != VE_PLATFORM_ANDROID && VE_PLATFORM != VE_PLATFORM_IOS
 class VE_EXPORT veTextureCubeArray : public veTexture
 {
 	friend class veTextureManager;

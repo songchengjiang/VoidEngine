@@ -95,25 +95,25 @@ private:
 			}
 		}
 
-		if (passVal.HasMember(TEXTUREUNITS_KEY.c_str())){
-			const Value &texs = passVal[TEXTUREUNITS_KEY.c_str()];
-			for (unsigned int i = 0; i < texs.Size(); ++i){
-				readTexture(texs[i], pass);
-			}
-		}
+//		if (passVal.HasMember(TEXTUREUNITS_KEY.c_str())){
+//			const Value &texs = passVal[TEXTUREUNITS_KEY.c_str()];
+//			for (unsigned int i = 0; i < texs.Size(); ++i){
+//				readTexture(texs[i], pass);
+//			}
+//		}
 
 		tecnique->addPass(pass);
 	}
 
 	void readRenderState(const Value &passVal, vePass *pass) {
-        if (passVal.HasMember(RENDERPASS_KEY.c_str())){
-            std::string renderPass = passVal[RENDERPASS_KEY.c_str()].GetString();
-            if (renderPass == DEFERRED_KEY){
-                pass->setRenderPass(vePass::DEFERRED_PASS);
-            }else if(renderPass == FORWARD_KEY){
-                pass->setRenderPass(vePass::FORWARD_PASS);
-            }
-        }
+//        if (passVal.HasMember(RENDERPASS_KEY.c_str())){
+//            std::string renderPass = passVal[RENDERPASS_KEY.c_str()].GetString();
+//            if (renderPass == DEFERRED_KEY){
+//                pass->setRenderPass(vePass::DEFERRED_PASS);
+//            }else if(renderPass == FORWARD_KEY){
+//                pass->setRenderPass(vePass::FORWARD_PASS);
+//            }
+//        }
 		if (passVal.HasMember(DEPTHTEST_KEY.c_str()))
 			pass->depthTest() = passVal[DEPTHTEST_KEY.c_str()].GetBool();
 		if (passVal.HasMember(DEPTHWRITE_KEY.c_str()))
@@ -185,7 +185,10 @@ private:
 		}
 		else if (values.IsString()) {
 			uniform->setValue(std::string(values.GetString()));
-		}
+        }else if (values.IsObject()) {
+            auto texture = readTexture(values, pass);
+            uniform->setValue(texture);
+        }
 		else if (values.Size() == 2) {
 			veVec2 vec2(values[0].GetDouble(), values[1].GetDouble());
 			uniform->setValue(vec2);
@@ -253,21 +256,26 @@ private:
 					shader->setSource(shaderData->buffer);
 				}
 			}else if (member->name.GetString() == DEFINATION_KEY) {
-				shader->setShaderHeader(member->value.GetString());
+                for (unsigned int i = 0; i < member->value.Size(); ++i){
+                    shader->addDefination(member->value[i].GetString());
+                }
 			}
 		}
 		pass->setShader(shader);
 	}
 
-	void readTexture(const Value &texVal, vePass *pass){
+	veTexture* readTexture(const Value &texVal, vePass *pass){
 		veTexture::TextureType type = veTexture::TEXTURE_2D;
 		veTexture *texture = nullptr;
 		std::string name;
-		if (texVal.HasMember(NAME_KEY.c_str())) {
-			name = texVal[NAME_KEY.c_str()].GetString();
+		if (texVal.HasMember(SOURCE_KEY.c_str())) {
+            if (texVal[SOURCE_KEY.c_str()].IsString())
+                name = texVal[SOURCE_KEY.c_str()].GetString();
+            else
+                name = texVal[SOURCE_KEY.c_str()][0].GetString();
 		}
 		if (name.empty())
-			return;
+			return nullptr;
 		if (texVal.HasMember(TYPE_KEY.c_str())) {
 			type = getTextureType(texVal[TYPE_KEY.c_str()].GetString());
 		}
@@ -278,12 +286,12 @@ private:
             if (!texture) {
                 texture = _sceneManager->createTexture(name, type);
             }
-            if (!texture) return;
+            if (!texture) return nullptr;
             
             if (texVal.HasMember(SOURCE_KEY.c_str())) {
                 if (type == veTexture::TEXTURE_CUBE) {
                     const Value &sources = texVal[SOURCE_KEY.c_str()];
-                    if (sources.Size() != 6) return;
+                    if (sources.Size() != 6) return nullptr;
                     //texture = _sceneManager->createTexture(name, texType);
                     veTexture *subTexture = nullptr;
                     for (unsigned int i = 0; i < sources.Size(); ++i) {
@@ -304,9 +312,6 @@ private:
                         }
                         static_cast<veTextureCube *>(texture)->setTexture((veTextureCube::CubeMapTexType)i, subTexture);
                     }
-                    veTexture::SwizzleMode r, g, b, a;
-                    subTexture->getSwizzleMode(r, g, b, a);
-                    static_cast<veTextureCube *>(texture)->setSwizzleMode(r, g, b, a);
                 }
                 else {
                     std::string source = texVal[SOURCE_KEY.c_str()].GetString();
@@ -327,9 +332,9 @@ private:
                             else {
                                 texture->storage(tempTex->getMipmapLevels(), tempTex->getInternalFormat(), tempTex->getPixelFormat(), tempTex->getDataType());
                             }
-                            veTexture::SwizzleMode r, g, b, a;
-                            tempTex->getSwizzleMode(r, g, b, a);
-                            texture->setSwizzleMode(r, g, b, a);
+//                            veTexture::SwizzleMode r, g, b, a;
+//                            tempTex->getSwizzleMode(r, g, b, a);
+//                            texture->setSwizzleMode(r, g, b, a);
                             static_cast<veTextureManager *>(_sceneManager->getManager(veTextureManager::TYPE()))->removeTexture(tempTex);
                         }
                     }
@@ -358,12 +363,13 @@ private:
 			else texture->setFilterMode(veTexture2D::NEAREST_MIP_MAP_LINEAR);
 		}
 
-		vePass::TextureType texType = vePass::DIFFUSE_TEXTURE;
-		if (texVal.HasMember(TEXTYPE_KEY.c_str())) {
-			texType = getPassTextureType(texVal[TEXTYPE_KEY.c_str()].GetString());
-		}
+//		vePass::TextureType texType = vePass::DIFFUSE_TEXTURE;
+//		if (texVal.HasMember(TEXTYPE_KEY.c_str())) {
+//			texType = getPassTextureType(texVal[TEXTYPE_KEY.c_str()].GetString());
+//		}
 
-		pass->setTexture(texType, texture);
+        return texture;
+		//pass->setTexture(texType, texture);
 		//else if (texVal.HasMember(TARGET_KEY.c_str())) {
 		//	std::string target = texVal[TARGET_KEY.c_str()].GetString();
 		//	if (target.find_last_of(":") != std::string::npos) {
@@ -404,6 +410,7 @@ private:
 		//		texture->storage(internalFormat, width, height);
 		//	}
 		//}
+        
 	}
 
 	GLenum getFrameBufferObjectAttach(const char* str) {
@@ -420,10 +427,7 @@ private:
 	}
 
 	GLenum getBlendFuncParam(const char* str) {
-		if (strncmp(ONE_KEY.c_str(), str, ONE_KEY.size()) == 0) {
-			return GL_ONE;
-		}
-		else if (strncmp(ZERO_KEY.c_str(), str, ZERO_KEY.size()) == 0) {
+		if (strncmp(ZERO_KEY.c_str(), str, ZERO_KEY.size()) == 0) {
 			return GL_ZERO;
 		}
 		else if (strncmp(SRC_COLOR_KEY.c_str(), str, SRC_COLOR_KEY.size()) == 0) {
@@ -449,7 +453,9 @@ private:
 		}
 		else if (strncmp(ONE_MINUS_DST_COLOR_KEY.c_str(), str, ONE_MINUS_DST_COLOR_KEY.size()) == 0) {
 			return GL_ONE_MINUS_DST_COLOR;
-		}
+        }else if (strncmp(ONE_KEY.c_str(), str, ONE_KEY.size()) == 0) {
+            return GL_ONE;
+        }
 		return GL_ZERO;
 	}
 
@@ -546,40 +552,43 @@ private:
 		return veTexture::TEXTURE_2D;
 	}
 
-	vePass::TextureType getPassTextureType(const char *str) {
-		if (strcmp(DIFFUSE_TEXTURE_KEY.c_str(), str) == 0) {
-			return vePass::DIFFUSE_TEXTURE;
-		}
-		else if (strcmp(EMISSIVE_TEXTURE_KEY.c_str(), str) == 0) {
-			return vePass::EMISSIVE_TEXTURE;
-		}
-		else if (strcmp(NORMAL_TEXTURE_KEY.c_str(), str) == 0) {
-			return vePass::NORMAL_TEXTURE;
-		}
-		else if (strcmp(OPACITYT_TEXTURE_KEY.c_str(), str) == 0) {
-			return vePass::OPACITYT_TEXTURE;
-		}
-		else if (strcmp(DISPLACEMENT_TEXTURE_KEY.c_str(), str) == 0) {
-			return vePass::DISPLACEMENT_TEXTURE;
-		}
-		else if (strcmp(LIGHTMAP_TEXTURE_KEY.c_str(), str) == 0) {
-			return vePass::LIGHTMAP_TEXTURE;
-		}
-        else if (strcmp(ROUGHNESS_TEXTURE_KEY.c_str(), str) == 0) {
-            return vePass::ROUGHNESS_TEXTURE;
-        }
-        else if (strcmp(METALLIC_TEXTURE_KEY.c_str(), str) == 0) {
-            return vePass::METALLIC_TEXTURE;
-        }
-        else if (strcmp(COLOR_BUFFER_TEXTURE_KEY.c_str(), str) == 0) {
-            return vePass::COLOR_BUFFER_TEXTURE;
-        }
-        else if (strcmp(DEPTH_STENCIL_BUFFER_TEXTURE_KEY.c_str(), str) == 0) {
-            return vePass::DEPTH_STENCIL_BUFFER_TEXTURE;
-        }
-
-		return vePass::DIFFUSE_TEXTURE;
-	}
+//	vePass::TextureType getPassTextureType(const char *str) {
+//		if (strcmp(DIFFUSE_TEXTURE_KEY.c_str(), str) == 0) {
+//			return vePass::DIFFUSE_TEXTURE;
+//		}
+//		else if (strcmp(EMISSIVE_TEXTURE_KEY.c_str(), str) == 0) {
+//			return vePass::EMISSIVE_TEXTURE;
+//		}
+//		else if (strcmp(NORMAL_TEXTURE_KEY.c_str(), str) == 0) {
+//			return vePass::NORMAL_TEXTURE;
+//		}
+//		else if (strcmp(OPACITYT_TEXTURE_KEY.c_str(), str) == 0) {
+//			return vePass::OPACITYT_TEXTURE;
+//		}
+//		else if (strcmp(DISPLACEMENT_TEXTURE_KEY.c_str(), str) == 0) {
+//			return vePass::DISPLACEMENT_TEXTURE;
+//		}
+//		else if (strcmp(LIGHTMAP_TEXTURE_KEY.c_str(), str) == 0) {
+//			return vePass::LIGHTMAP_TEXTURE;
+//		}
+//        else if (strcmp(ROUGHNESS_TEXTURE_KEY.c_str(), str) == 0) {
+//            return vePass::ROUGHNESS_TEXTURE;
+//        }
+//        else if (strcmp(METALLIC_TEXTURE_KEY.c_str(), str) == 0) {
+//            return vePass::METALLIC_TEXTURE;
+//        }
+//        else if (strcmp(COLOR_BUFFER_TEXTURE_KEY.c_str(), str) == 0) {
+//            return vePass::COLOR_BUFFER_TEXTURE;
+//        }
+//        else if (strcmp(DEPTH_STENCIL_BUFFER_TEXTURE_KEY.c_str(), str) == 0) {
+//            return vePass::DEPTH_STENCIL_BUFFER_TEXTURE;
+//        }
+//        else if (strcmp(DEPTH_STENCIL_BUFFER_TEXTURE_KEY.c_str(), str) == 0) {
+//            return vePass::DEPTH_STENCIL_BUFFER_TEXTURE;
+//        }
+//
+//		return vePass::DIFFUSE_TEXTURE;
+//	}
 
 private:
 

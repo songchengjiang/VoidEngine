@@ -94,16 +94,14 @@ private:
 	std::vector<VE_Ptr<veAnimation>> _animations;
 };
 
-class VE_EXPORT veAnimationPlayer
+class VE_EXPORT veAnimationPlayer : public veComponent
 {
 	friend class veAnimationManager;
 public:
 	~veAnimationPlayer();
 
-	USE_VE_PTR;
-	USE_NAME_PROPERTY;
-
-	void update(veSceneManager *sm);
+    virtual void awake() override;
+	virtual void update(veSceneManager *sm) override;
 
 	void start(double sFrame = 0, double eFrame = -1);
 	void pause();
@@ -113,21 +111,18 @@ public:
 	void setLoopAnimation(bool isLoop) { _isLoop = isLoop; }
 	bool isLoopAnimation() { return _isLoop; }
 
-	void attachNode(veNode *node);
-
 	veAnimationContainer* getAnimationContainer() { return _animationContainer.get(); }
 	void setActiveAnimationChannel(veAnimation *animation) { _activeAnimationChannel = animation; }
 
 private:
 
-	veAnimationPlayer(veAnimationContainer *animationContainer);
+    veAnimationPlayer(veAnimationContainer *animationContainer);
 	void updateAnimations();
 
 private:
 
 	VE_Ptr<veAnimationContainer> _animationContainer;
 	AnimationMap _animationMap;
-	veNode * _node;
 	veAnimation* _activeAnimationChannel;
 	double _smimulationFrame;
 	double _startFrame;

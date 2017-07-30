@@ -54,15 +54,16 @@ void veRenderState::applyState()
         if (_blendFunc != veBlendFunc::DISABLE) {
             glEnable(GL_BLEND);
             glBlendFunc(_blendFunc.src, _blendFunc.dst);
-            if (_blendEquation != _defaultRS->_blendEquation) {
-                glBlendEquation(_blendEquation);
-                _defaultRS->_blendEquation = _blendEquation;
-            }
         }
         else {
             glDisable(GL_BLEND);
         }
         _defaultRS->_blendFunc = _blendFunc;
+    }
+    
+    if (_blendEquation != _defaultRS->_blendEquation) {
+        glBlendEquation(_blendEquation);
+        _defaultRS->_blendEquation = _blendEquation;
     }
     
     if (_stencilTest != _defaultRS->_stencilTest) {

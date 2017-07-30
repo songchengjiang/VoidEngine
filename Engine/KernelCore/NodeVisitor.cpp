@@ -18,8 +18,3 @@ bool veNodeVisitor::visit(veNode &node)
 {
 	return false;
 }
-
-bool veNodeVisitor::visit(veCamera &camera)
-{
-	return visit(static_cast<veNode&>(camera));
-}

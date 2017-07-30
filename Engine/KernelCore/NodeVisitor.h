@@ -3,7 +3,6 @@
 #include "Prerequisites.h"
 
 class veNode;
-class veCamera;
 class VE_EXPORT veNodeVisitor
 {
 public:
@@ -20,7 +19,6 @@ public:
 	TraversalMode& traversalMode() { return _traversalMode; }
 
 	virtual bool visit(veNode &node);
-	virtual bool visit(veCamera &camera);
 
 protected:
 

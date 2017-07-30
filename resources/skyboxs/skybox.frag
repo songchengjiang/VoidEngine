@@ -1,6 +1,5 @@
-in vec3 v_texcoord;
-layout(location = 0) out vec4 fragColor;
+varying vec3 v_texcoord;
 uniform samplerCube u_cubeMap;
 void main() {
-	fragColor = texture(u_cubeMap, v_texcoord);
+	gl_FragColor = textureCube(u_cubeMap, v_texcoord);
 }

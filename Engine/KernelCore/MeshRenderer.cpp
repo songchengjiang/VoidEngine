@@ -8,7 +8,6 @@
 #include "MaterialManager.h"
 #include "SceneManager.h"
 #include "Constants.h"
-#include "TransformFeedback.h"
 #include "MatrixPtr.h"
 #include <unordered_map>
 #include <thread>
@@ -20,14 +19,6 @@ veMeshRenderer::veMeshRenderer()
     , _mesh(nullptr)
     , _needRefresh(false)
 {
-    _vaoBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
-        GLuint vao;
-        glGenVertexArrays(1, &vao);
-        return vao;
-    }, [](GLuint vao){
-        glDeleteVertexArrays(1, &vao);
-    });
-    
     _vboBuffer = veGLDataBufferManager::instance()->createGLDataBuffer([]() -> GLuint{
         GLuint vbo;
         glGenBuffers(1, &vbo);
@@ -35,6 +26,21 @@ veMeshRenderer::veMeshRenderer()
     }, [](GLuint vbo){
         glDeleteBuffers(1, &vbo);
     });
+    
+    _attributesNamesMap[veMesh::VertexAtrribute::VERTEX_ATTRIB_POSITION]     = VERTEX_ATTRIBUTE_POSITION_NAME;
+    _attributesNamesMap[veMesh::VertexAtrribute::VERTEX_ATTRIB_NORMAL]       = VERTEX_ATTRIBUTE_NORMAL_NAME;
+    _attributesNamesMap[veMesh::VertexAtrribute::VERTEX_ATTRIB_TANGENT]      = VERTEX_ATTRIBUTE_TANGENT_NAME;
+    _attributesNamesMap[veMesh::VertexAtrribute::VERTEX_ATTRIB_BITANGENT]    = VERTEX_ATTRIBUTE_BINORMAL_NAME;
+    _attributesNamesMap[veMesh::VertexAtrribute::VERTEX_ATTRIB_TEX_COORD0]   = VERTEX_ATTRIBUTE_TEXCOORD0_NAME;
+    _attributesNamesMap[veMesh::VertexAtrribute::VERTEX_ATTRIB_TEX_COORD1]   = VERTEX_ATTRIBUTE_TEXCOORD1_NAME;
+    _attributesNamesMap[veMesh::VertexAtrribute::VERTEX_ATTRIB_TEX_COORD2]   = VERTEX_ATTRIBUTE_TEXCOORD2_NAME;
+    _attributesNamesMap[veMesh::VertexAtrribute::VERTEX_ATTRIB_TEX_COORD3]   = VERTEX_ATTRIBUTE_TEXCOORD3_NAME;
+    _attributesNamesMap[veMesh::VertexAtrribute::VERTEX_ATTRIB_COLOR0]       = VERTEX_ATTRIBUTE_COLOR0_NAME;
+    _attributesNamesMap[veMesh::VertexAtrribute::VERTEX_ATTRIB_COLOR1]       = VERTEX_ATTRIBUTE_COLOR1_NAME;
+    _attributesNamesMap[veMesh::VertexAtrribute::VERTEX_ATTRIB_COLOR2]       = VERTEX_ATTRIBUTE_COLOR2_NAME;
+    _attributesNamesMap[veMesh::VertexAtrribute::VERTEX_ATTRIB_COLOR3]       = VERTEX_ATTRIBUTE_COLOR3_NAME;
+    _attributesNamesMap[veMesh::VertexAtrribute::VERTEX_ATTRIB_BONE_INDICES] = VERTEX_ATTRIBUTE_BLENDINDICES_NAME;
+    _attributesNamesMap[veMesh::VertexAtrribute::VERTEX_ATTRIB_BONE_WEIGHTS] = VERTEX_ATTRIBUTE_BLENDWEIGHTS_NAME;
 }
 
 veMeshRenderer::~veMeshRenderer()
@@ -42,36 +48,38 @@ veMeshRenderer::~veMeshRenderer()
 
 }
 
-void veMeshRenderer::render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID)
+void veMeshRenderer::render(veRenderableObject *renderableObj, veCamera *camera, const veMat4 &worldMatrix, unsigned int contextID, veRenderQueue::RenderQueueType type)
 {
     _mesh = static_cast<veMesh *>(renderableObj);
-    //if (mesh->getBoneNum()) _drawUsage = GL_DYNAMIC_DRAW;
-    auto vao = _vaoBuffer->getData(contextID);
-    if (!vao){
-        vao = _vaoBuffer->createData(contextID);
+    veRenderCommand rc;
+    rc.worldMatrix = new veMat4Ptr(&worldMatrix, 1);
+    rc.camera = camera;
+    rc.sceneManager = camera->getAttachedNode()->getSceneManager();
+    rc.depthInCamera = (camera->viewMatrix() * worldMatrix)[2][3];
+    rc.renderer = this;
+    rc.contextID = contextID;
+    if (0 < _mesh->getBoneNum()) {
+        rc.bonesMatrix = new veMat4Ptr(_mesh->getBoneNum());
+        veMat4 worldToMesh = worldMatrix;
+        worldToMesh.inverse();
+        for (size_t i = 0; i < _mesh->getBoneNum(); ++i) {
+            const auto &bone = _mesh->getBone(i);
+            rc.bonesMatrix->value()[i] = worldToMesh * bone->getBoneNode()->getNodeToWorldMatrix() * bone->getOffsetMat();
+        }
+    }
+    
+    
+    auto vbo = _vboBuffer->getData(contextID);
+    if (!vbo){
+        vbo = _vboBuffer->createData(contextID);
         _needRefresh = true;
     }
     if (_needRefresh) {
-        auto vbo = _vboBuffer->getData(contextID);
-        if (!vbo){
-            vbo = _vboBuffer->createData(contextID);
-        }
-        glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         if (!_mesh->getVertexArray()->empty())
             glBufferData(GL_ARRAY_BUFFER, _mesh->getVertexArray()->size() * sizeof((*_mesh->getVertexArray())[0]), _mesh->getVertexArray()->buffer(), _drawUsage);
         
-        GLsizei stride = _mesh->getVertexStride();
-        GLsizei offset = 0;
-        for (unsigned int i = 0; i < _mesh->getVertexAtrributeNum(); ++i) {
-            auto attri = _mesh->getVertexAtrribute(i);
-            GLboolean normalize = attri.valueType == veMesh::VertexAtrribute::FLOAT ? GL_FALSE : GL_TRUE;
-            glVertexAttribPointer(i, attri.valueNum, attri.valueType, normalize, stride, BUFFER_OFFSET(offset));
-            glEnableVertexAttribArray(i);
-            if (attri.valueType == veMesh::VertexAtrribute::FLOAT) offset += sizeof(GLfloat) * attri.valueNum;
-            else if (attri.valueType == veMesh::VertexAtrribute::UINT) offset += sizeof(GLuint) * attri.valueNum;
-            else if (attri.valueType == veMesh::VertexAtrribute::USHORT) offset += sizeof(GLushort) * attri.valueNum;
-        }
+        _mesh->getVertexStride();
         
         if (_iboBuffers.size() < _mesh->getPrimitiveNum()) {
             _iboBuffers.resize(_mesh->getPrimitiveNum());
@@ -83,23 +91,6 @@ void veMeshRenderer::render(veNode *node, veRenderableObject *renderableObj, veC
                 }, [](GLuint ibo){
                     glDeleteBuffers(1, &ibo);
                 });
-            }
-        }
-        
-        if (0 < _mesh->getBoneNum()) {
-            auto material = _mesh->getMaterial();
-            for (size_t tech = 0; tech < material->getTechniqueNum(); ++tech) {
-                auto technique = material->getTechnique(tech);
-                for (size_t p = 0; p < technique->getPassNum(); ++p) {
-                    auto pass = technique->getPass(p);
-                    if (!pass->getTransformFeedback()) {
-                        veTransformFeedback *tfback = new veTransformFeedback;
-                        tfback->addVarying(TF_VARYING_POSITION_KEY.c_str());
-                        tfback->addVarying(TF_VARYING_NORMAL_KEY.c_str());
-                        tfback->setRasterizerDiscard(true);
-                        pass->setTransformFeedback(tfback);
-                    }
-                }
             }
         }
         
@@ -118,66 +109,46 @@ void veMeshRenderer::render(veNode *node, veRenderableObject *renderableObj, veC
         _needRefresh = false;
     }
     
-    veRenderCommand rc;
-    rc.mask = node->getMask();
-    rc.worldMatrix = new veMat4Ptr(node->getNodeToWorldMatrix());
-    rc.user1 = _mesh;
-    rc.camera = camera;
-    rc.sceneManager = camera->getSceneManager();
-    rc.depthInCamera = (camera->viewMatrix() * rc.worldMatrix->value())[2][3];
-    rc.renderer = this;
-    rc.contextID = contextID;
-    
     auto technique = _mesh->getMaterial()->activeTechnique();
     for (unsigned int i = 0; i < technique->getPassNum(); ++i) {
         auto pass = technique->getPass(i);
-        if (camera->getMask() & pass->drawMask()) {
-            bool isTransparent = pass->blendFunc() != veBlendFunc::DISABLE ? true : false;
+        if (true) {
             rc.pass = pass;
             pass->visit(rc);
-            if (isTransparent)
-                camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
-            else
-                camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_ENTITY, rc);
+            
+            if (type == veRenderQueue::AUTO) {
+                bool isTransparent = pass->blendFunc() != veBlendFunc::DISABLE ? true : false;
+                if (isTransparent)
+                    camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_TRANSPARENT, rc);
+                else
+                    camera->getRenderQueue()->pushCommand(i, veRenderQueue::RENDER_QUEUE_ENTITY, rc);
+            }else {
+                camera->getRenderQueue()->pushCommand(i, type, rc);
+            }
         }
     }
 }
 
 void veMeshRenderer::draw(veRenderCommand &command)
 {
-
-	//vePass *renderPass = nullptr;
-	//if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::DIRECTIONAL_SHADOW) {
-	//	renderPass = command.pass;
-	//	auto matAry = static_cast<veMaterialManager *>(command.sceneManager->getManager(veMaterialManager::TYPE()))->findMaterialArray("_SYSTEM_");
-	//	command.pass = matAry->getMaterial(0 < mesh->getBoneNum() ? veMaterial::SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY
-	//		: veMaterial::SYSTEM_MATERIAL_DIRECTIONAL_SHADOW_MAP_FOR_ENTITY)->activeTechnique()->getPass(0);
-	//}
-	//else if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::OMNIDIRECTIONAL_SHADOW){
-	//	renderPass = command.pass;
-	//	auto matAry = static_cast<veMaterialManager *>(command.sceneManager->getManager(veMaterialManager::TYPE()))->findMaterialArray("_SYSTEM_");
-	//	command.pass = matAry->getMaterial(0 < mesh->getBoneNum() ? veMaterial::SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ANIM_ENTITY
-	//		: veMaterial::SYSTEM_MATERIAL_OMNIDIRECTIONAL_SHADOW_MAP_FOR_ENTITY)->activeTechnique()->getPass(0);
-	//}
-	//else if (veRenderer::CURRENT_RENDER_STAGE == veRenderer::LIGHTINGING) {
-	//	if (command.pass->blendFunc() != veBlendFunc::DISABLE) return;
-	//	renderPass = command.pass;
-	//	auto matAry = static_cast<veMaterialManager *>(command.sceneManager->getManager(veMaterialManager::TYPE()))->findMaterialArray("_SYSTEM_");
-	//	command.pass = matAry->getMaterial(0 < mesh->getBoneNum() ? veMaterial::SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ANIM_ENTITY
-	//		: veMaterial::SYSTEM_MATERIAL_LIGHTING_PASS_FOR_ENTITY)->activeTechnique()->getPass(0);
-	//}
-
 	if (!command.pass->apply(command))
 		return;
     
-	glBindVertexArray(_vaoBuffer->getData(command.contextID));
-
-	auto transformFeedback = command.pass->getTransformFeedback();
-	if (transformFeedback) {
-		transformFeedback->bind(command.contextID, _mesh->getTransformFeedbackBuffer(command.contextID), _mesh->getTransformFeedbackBufferSize(), GL_POINTS);
-		glDrawArrays(GL_POINTS, 0, _mesh->getVertexCount());
-		transformFeedback->unBind();
-	}
+    glBindBuffer(GL_ARRAY_BUFFER, _vboBuffer->getData(command.contextID));
+    GLsizei stride = _mesh->getVertexStride();
+    GLsizei offset = 0;
+    for (unsigned int i = 0; i < _mesh->getVertexAtrributeNum(); ++i) {
+        auto attri = _mesh->getVertexAtrribute(i);
+        GLboolean normalize = attri.valueType == veMesh::VertexAtrribute::FLOAT ? GL_FALSE : GL_TRUE;
+        int loc = glGetAttribLocation(command.pass->getProgram(command.contextID), _attributesNamesMap[attri.attributeType].c_str());
+        if (0 <= loc) {
+            glVertexAttribPointer(loc, attri.valueNum, attri.valueType, normalize, stride, BUFFER_OFFSET(offset));
+            glEnableVertexAttribArray(loc);
+        }
+        if (attri.valueType == veMesh::VertexAtrribute::FLOAT) offset += sizeof(GLfloat) * attri.valueNum;
+        else if (attri.valueType == veMesh::VertexAtrribute::UINT) offset += sizeof(GLuint) * attri.valueNum;
+        else if (attri.valueType == veMesh::VertexAtrribute::USHORT) offset += sizeof(GLushort) * attri.valueNum;
+    }
 
 	for (unsigned int i = 0; i < _mesh->getPrimitiveNum(); ++i) {
 		auto primitive = _mesh->getPrimitive(i);
@@ -189,6 +160,14 @@ void veMeshRenderer::draw(veRenderCommand &command)
 	//}
 	int ec = glGetError();
 	if (ec != GL_NO_ERROR) {
-		veLog("GL ERROR CODE: 0x%x", ec);
+		veLog("veMeshRenderer: GL ERROR CODE: 0x%x\n", ec);
 	}
+
+    for (unsigned int i = 0; i < _mesh->getVertexAtrributeNum(); ++i) {
+        auto attri = _mesh->getVertexAtrribute(i);
+        int loc = glGetAttribLocation(command.pass->getProgram(command.contextID), _attributesNamesMap[attri.attributeType].c_str());
+        if (0 <= loc) {
+            glDisableVertexAttribArray(loc);
+        }
+    }
 }

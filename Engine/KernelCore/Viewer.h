@@ -30,11 +30,8 @@ public:
 
     void addListener(veViewerListener *listener);
     void removeListener(veViewerListener *listener);
-    
-    void setCamera(veCamera *camera) { _camera = camera; }
-    veCamera* getCamera() { return _camera; }
 
-    void setSceneManager(veSceneManager *sm) { _sceneManager = sm; }
+    void setSceneManager(veSceneManager *sm) { _sceneManager = sm; _sceneManager->attachViewer(this); }
     veSceneManager* getSceneManager() { return _sceneManager.get(); }
     
     unsigned int getContextID() const { return _contextID; }
@@ -47,7 +44,6 @@ protected:
     int                    _width;
     int                    _height;
     std::string            _title;
-    veCamera              *_camera;
     VE_Ptr<veSceneManager> _sceneManager;
     veEventList            _eventList;
     veEvent                _currentEvent;

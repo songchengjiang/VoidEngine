@@ -92,8 +92,8 @@ public:
 	size_t getPrimitiveNum() const { return _primitives.size(); };
 
 	void addBone(veBone *bone);
-	veBone* getBone(unsigned int idx);
-	const veBone* getBone(unsigned int idx) const;
+	veBone* getBone(size_t idx);
+	const veBone* getBone(size_t idx) const;
 	size_t getBoneNum() const { return _bones.size(); };
 
 	typedef std::function<bool(const veReal* /*p1*/, const veReal* /*p2*/, const veReal* /*p3*/
@@ -109,9 +109,6 @@ protected:
     void caculateBoundingBox();
     void updateBoundingBox();
     bool intersectWith(veRay *ray, veVec3 &position, veVec3 &normal);
-	void generateTransformFeedbackBuffer(unsigned int contextID);
-	GLuint getTransformFeedbackBuffer(unsigned int contextID) { return _transformFeedbackBuffer->getData(contextID); }
-	GLsizeiptr getTransformFeedbackBufferSize() { return _transformFeedbackBufferSize; }
 
 protected:
 
@@ -119,9 +116,6 @@ protected:
 	std::vector<VertexAtrribute>       _attributes;
 	std::vector<Primitive>             _primitives;
 	std::vector< VE_Ptr<veBone> >      _bones;
-	veReal                            *_transformFeedbackVertices;
-    VE_Ptr<veGLDataBuffer>             _transformFeedbackBuffer;
-	GLsizeiptr                         _transformFeedbackBufferSize;
 	unsigned int                       _vertexStride;
 	bool                               _needRefresh;
 };

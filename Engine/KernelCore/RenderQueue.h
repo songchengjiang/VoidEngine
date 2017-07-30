@@ -15,6 +15,7 @@ public:
 
 	enum RenderQueueType
 	{
+        AUTO                     = -1,
 		RENDER_QUEUE_BACKGROUND  = 0,
 		RENDER_QUEUE_ENTITY      = 50,
 		RENDER_QUEUE_TRANSPARENT = 100,

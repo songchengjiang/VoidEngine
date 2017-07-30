@@ -13,18 +13,22 @@ veOctreeNode::~veOctreeNode()
 
 bool veOctreeNode::removeChild(veNode *child)
 {
-    veOctreeNode *octreeChild = static_cast<veOctreeNode *>(child);
-    if (octreeChild->octant)
-        octreeChild->octant->removeNode(octreeChild);
+    veOctreeNode *octreeChild = dynamic_cast<veOctreeNode *>(child);
+    if (octreeChild) {
+        if (octreeChild->octant)
+            octreeChild->octant->removeNode(octreeChild);
+    }
     return veNode::removeChild(child);
 }
 
 veNode* veOctreeNode::removeChild(size_t cIndex)
 {
     auto child = veNode::removeChild(cIndex);
-    veOctreeNode *octreeChild = static_cast<veOctreeNode *>(child);
-    if (octreeChild->octant)
-        octreeChild->octant->removeNode(octreeChild);
+    veOctreeNode *octreeChild = dynamic_cast<veOctreeNode *>(child);
+    if (octreeChild) {
+        if (octreeChild->octant)
+            octreeChild->octant->removeNode(octreeChild);
+    }
     return child;
 }
 

@@ -10,7 +10,6 @@ PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEEXTPROC glFramebufferTexture2DMultisampleEXT
 #endif
 #else
 #if VE_PLATFORM != VE_PLATFORM_WIN32
-void (*glRenderbufferStorageMultisampleEXT)(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height) = nullptr;
 #endif
 void (*glFramebufferTexture2DMultisampleEXT)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLsizei samples) = nullptr;
 #endif
@@ -157,12 +156,12 @@ void veFrameBufferObject::unBind()
 
 void veFrameBufferObject::blitFramebuffer(GLbitfield mask, GLenum filter, unsigned int contextID)
 {
-	GLint currentReadfbo;
-	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &currentReadfbo);
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, _fboBuffer->getData(contextID));
-    glBlitFramebuffer(0, 0, _size.x(), _size.y(),
-                      0, 0, _size.x(), _size.y(), mask, filter);
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, currentReadfbo);
+//	GLint currentReadfbo;
+//	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &currentReadfbo);
+//    glBindFramebuffer(GL_READ_FRAMEBUFFER, _fboBuffer->getData(contextID));
+//    glBlitFramebuffer(0, 0, _size.x(), _size.y(),
+//                      0, 0, _size.x(), _size.y(), mask, filter);
+//    glBindFramebuffer(GL_READ_FRAMEBUFFER, currentReadfbo);
 }
 
 void veFrameBufferObject::refreshBuffers(unsigned int contextID, unsigned int clearMask)
@@ -177,9 +176,9 @@ void veFrameBufferObject::refreshBuffers(unsigned int contextID, unsigned int cl
 	bool needRenderBuffer = false;
 	if (_needRefreshBuffers) {
 		auto depth = _attachments.find(GL_DEPTH_ATTACHMENT);
-		auto depthAndstencil = _attachments.find(GL_DEPTH_STENCIL_ATTACHMENT);
+		//auto depthAndstencil = _attachments.find(GL_DEPTH_STENCIL_ATTACHMENT);
 		auto stencil = _attachments.find(GL_STENCIL_BUFFER_BIT);
-		if (depth == _attachments.end() && depthAndstencil == _attachments.end() && stencil == _attachments.end()) {
+		if (depth == _attachments.end() && /* depthAndstencil == _attachments.end() && */ stencil == _attachments.end()) {
 			if ((clearMask & GL_DEPTH_BUFFER_BIT) || (clearMask & GL_STENCIL_BUFFER_BIT)) {
 				needRenderBuffer = true;
 			}
@@ -201,16 +200,16 @@ void veFrameBufferObject::refreshBuffers(unsigned int contextID, unsigned int cl
 			if (dsbo) {
 				glBindRenderbuffer(GL_RENDERBUFFER, dsbo);
 				if (hasDepthBuffer && !hasStencilBuffer)
-					if (0 < _multisamples && glRenderbufferStorageMultisampleEXT != nullptr){
-						glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, _multisamples, GL_DEPTH_COMPONENT24, _size.x(), _size.y());
-						veLog("glRenderbufferStorageMultisampleEXT");
-					}
-					else
+//					if (0 < _multisamples && glRenderbufferStorageMultisampleEXT != nullptr){
+//						glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, _multisamples, GL_DEPTH_COMPONENT24, _size.x(), _size.y());
+//						veLog("glRenderbufferStorageMultisampleEXT");
+//					}
+//					else
 						glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, _size.x(), _size.y());
 				else
-					if (0 < _multisamples && glRenderbufferStorageMultisampleEXT != nullptr)
-						glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, _multisamples, GL_DEPTH24_STENCIL8, _size.x(), _size.y());
-					else
+//					if (0 < _multisamples && glRenderbufferStorageMultisampleEXT != nullptr)
+//						glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, _multisamples, GL_DEPTH24_STENCIL8, _size.x(), _size.y());
+//					else
 						glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _size.x(), _size.y());
 
 				if (hasDepthBuffer)
@@ -235,38 +234,38 @@ void veFrameBufferObject::refreshAttachments(unsigned int contextID)
 		std::vector<GLenum> mrt;
 		for (auto &iter : _attachments) {
 			if (iter.second.texture.valid() || 0 < iter.second.texID) {
-				if (iter.first >= GL_COLOR_ATTACHMENT0 && iter.first <= GL_COLOR_ATTACHMENT15)
-					mrt.push_back(iter.first);
+				//if (iter.first >= GL_COLOR_ATTACHMENT0 /* && iter.first <= GL_COLOR_ATTACHMENT15 */)
+				//	mrt.push_back(iter.first);
 				//iter.second->storage(iter.second->getWidth(), iter.second->getHeight(), 1
 				//	, iter.second->getInternalFormat(), iter.second->getPixelFormat(), iter.second->getDataType(), nullptr);
 				if (iter.second.texture.valid())
 					iter.second.texture->bind(contextID);
 				if (iter.second.layer < 0)
-					if (0 < _multisamples && glFramebufferTexture2DMultisampleEXT != nullptr){
-						glFramebufferTexture2DMultisampleEXT(_target, iter.first, iter.second.target, iter.second.texture.valid()? iter.second.texture->glTex(contextID): iter.second.texID, 0, _multisamples);
-					}
-					else {
+				//	if (0 < _multisamples && glFramebufferTexture2DMultisampleEXT != nullptr){
+				//		glFramebufferTexture2DMultisampleEXT(_target, iter.first, iter.second.target, iter.second.texture.valid()? iter.second.texture->glTex(contextID): iter.second.texID, 0, _multisamples);
+				//	}
+				//	elseS {
 						glFramebufferTexture2D(_target, iter.first, iter.second.target, iter.second.texture.valid()? iter.second.texture->glTex(contextID): iter.second.texID, 0);
-					}
-				else
-					glFramebufferTextureLayer(_target, iter.first, iter.second.texture.valid()? iter.second.texture->glTex(contextID): iter.second.texID, 0, iter.second.layer);
+				//	}
+				//else
+				//	glFramebufferTextureLayer(_target, iter.first, iter.second.texture.valid()? iter.second.texture->glTex(contextID): iter.second.texID, 0, iter.second.layer);
 			}
 			else {
 				if (iter.second.layer < 0)
-					if (0 < _multisamples && glFramebufferTexture2DMultisampleEXT != nullptr)
-						glFramebufferTexture2DMultisampleEXT(_target, iter.first, 0, 0, 0, 0);
-					else
+				//	if (0 < _multisamples && glFramebufferTexture2DMultisampleEXT != nullptr)
+				//		glFramebufferTexture2DMultisampleEXT(_target, iter.first, 0, 0, 0, 0);
+				//	else
 						glFramebufferTexture2D(_target, iter.first, 0, 0, 0);
-				else
-					glFramebufferTextureLayer(_target, iter.first, 0, 0, 0);
+				//else
+				//	glFramebufferTextureLayer(_target, iter.first, 0, 0, 0);
 			}
 		}
-		if (!mrt.empty())
-			glDrawBuffers(GLsizei(mrt.size()), &mrt[0]);
-		else {
-			GLenum bufs = { GL_NONE };
-			glDrawBuffers(1, &bufs);
-		}
+//		if (!mrt.empty())
+//			glDrawBuffers(GLsizei(mrt.size()), &mrt[0]);
+//		else {
+//			GLenum bufs = { GL_NONE };
+//			glDrawBuffers(1, &bufs);
+//		}
 
 //		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 //		if (status == GL_FRAMEBUFFER_COMPLETE) {

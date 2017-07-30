@@ -1,12 +1,19 @@
 #include "ModelConverter.h"
 #include <assimp/include/cimport.h>
 #include <assimp/include/postprocess.h>
+#include <glfw/include/GLFW/glfw3.h>
+#include <OpenGL/gl3.h>
+#include <OpenGL/gl3ext.h>
 #include <iostream>
 #include <vector>
 #include <unordered_map>
 #include <sstream>
 #include <string>
 #include "Constants.h"
+
+#define LIGHTMAPPER_IMPLEMENTATION
+#define LM_DEBUG_INTERPOLATION
+#include "lightmapper.h"
 
 std::vector<std::string> MESH_NAME_LIST;
 std::vector<std::string> MATERIAL_NAME_LIST;
@@ -44,6 +51,8 @@ void ModelConverter::convert(const std::string &filePath, const std::string &out
 	writeAnimations(scene);
 
 	outputFiles();
+    
+    //bakeLightMap(scene);
 	//rapidjson::StringBuffer s;
 	//rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
 
@@ -401,7 +410,7 @@ void ModelConverter::writePass(const aiMaterial *mat)
 	writeRenderState(mat);
     writeUniforms(mat);
 	writeShaders(mat);
-	writeTextures(mat);
+	//writeTextures(mat);
 	_matWriter.EndObject();
 }
 
@@ -426,7 +435,7 @@ void ModelConverter::writeUniforms(const aiMaterial *mat)
     _matWriter.String(NORMAL_MATRIX_KEY.c_str(), NORMAL_MATRIX_KEY.size());
     _matWriter.String(NORMAL_MATRIX.c_str(), NORMAL_MATRIX.size());
     _matWriter.String(NORMAL_WORLD_MATRIX_KEY.c_str(), NORMAL_WORLD_MATRIX_KEY.size());
-    _matWriter.String(NORMAL_WROLD_MATRIX.c_str(), NORMAL_WROLD_MATRIX.size());
+    _matWriter.String(NORMAL_WORLD_MATRIX.c_str(), NORMAL_WORLD_MATRIX.size());
     _matWriter.String(CAMERA_WORLD_POS_KEY.c_str(), CAMERA_WORLD_POS_KEY.size());
     _matWriter.String(CAMERA_WORLD_POS.c_str(), CAMERA_WORLD_POS.size());
     
@@ -435,8 +444,8 @@ void ModelConverter::writeUniforms(const aiMaterial *mat)
         _matWriter.String(BONE_MATRIXES.c_str(), BONE_MATRIXES.size());
     }
     
-    _matWriter.String(LIGHTMASK_KEY.c_str(), LIGHTMASK_KEY.size());
-    _matWriter.Float(1.0f);
+//    _matWriter.String(LIGHTMASK_KEY.c_str(), LIGHTMASK_KEY.size());
+//    _matWriter.Float(1.0f);
     
     aiColor4D col;
     
@@ -454,6 +463,9 @@ void ModelConverter::writeUniforms(const aiMaterial *mat)
         writeVec3(_matWriter, &vec3Col);
     }
     
+    _matWriter.String(ALPHA_KEY.c_str(), ALPHA_KEY.size());
+    _matWriter.Float(1.0f);
+    
     float valFloat = 0.0f;
     aiGetMaterialFloat(mat, AI_MATKEY_SHININESS, &valFloat);
     _matWriter.String(ROUGHNESS_KEY.c_str(), ROUGHNESS_KEY.size());
@@ -461,9 +473,9 @@ void ModelConverter::writeUniforms(const aiMaterial *mat)
     _matWriter.String(METALLIC_KEY.c_str(), METALLIC_KEY.size());
     _matWriter.Float(valFloat <= 128.0f ? valFloat / 128.0f : 1.0f);
     
-    aiGetMaterialFloat(mat, AI_MATKEY_OPACITY, &valFloat);
-    _matWriter.String(OPACITY_KEY.c_str(), OPACITY_KEY.size());
-    _matWriter.Float(valFloat);
+//    aiGetMaterialFloat(mat, AI_MATKEY_OPACITY, &valFloat);
+//    _matWriter.String(OPACITY_KEY.c_str(), OPACITY_KEY.size());
+//    _matWriter.Float(valFloat);
     
     if (hasTexture(mat, aiTextureType_DISPLACEMENT)) {
         _matWriter.String(DISPLACEMENT_KEY.c_str(), DISPLACEMENT_KEY.size());
@@ -474,32 +486,38 @@ void ModelConverter::writeUniforms(const aiMaterial *mat)
     
     if (hasTexture(mat, aiTextureType_DIFFUSE)){
         _matWriter.String(DIFFUSETEX_KEY.c_str(), DIFFUSETEX_KEY.size());
-        _matWriter.Uint(texUnit++);
+        writeTexture(mat, aiTextureType_DIFFUSE);
+        //_matWriter.Uint(texUnit++);
     }
     
     if (hasTexture(mat, aiTextureType_EMISSIVE)){
         _matWriter.String(EMISSIVETEX_KEY.c_str(), EMISSIVETEX_KEY.size());
-        _matWriter.Uint(texUnit++);
+        writeTexture(mat, aiTextureType_EMISSIVE);
+        //_matWriter.Uint(texUnit++);
     }
     
     if (hasTexture(mat, aiTextureType_NORMALS)){
         _matWriter.String(NORMALTEX_KEY.c_str(), NORMALTEX_KEY.size());
-        _matWriter.Uint(texUnit++);
+        writeTexture(mat, aiTextureType_NORMALS);
+        //_matWriter.Uint(texUnit++);
     }
     
-    if (hasTexture(mat, aiTextureType_OPACITY)){
-        _matWriter.String(OPACITYTEX_KEY.c_str(), OPACITYTEX_KEY.size());
-        _matWriter.Uint(texUnit++);
-    }
+//    if (hasTexture(mat, aiTextureType_OPACITY)){
+//        _matWriter.String(OPACITYTEX_KEY.c_str(), OPACITYTEX_KEY.size());
+//        writeTexture(mat, aiTextureType_OPACITY);
+//        //_matWriter.Uint(texUnit++);
+//    }
     
-    if (hasTexture(mat, aiTextureType_DISPLACEMENT)){
-        _matWriter.String(DISPLACEMENTTEX_KEY.c_str(), DISPLACEMENTTEX_KEY.size());
-        _matWriter.Uint(texUnit++);
-    }
+//    if (hasTexture(mat, aiTextureType_DISPLACEMENT)){
+//        _matWriter.String(DISPLACEMENTTEX_KEY.c_str(), DISPLACEMENTTEX_KEY.size());
+//        writeTexture(mat, aiTextureType_DISPLACEMENT);
+//        //_matWriter.Uint(texUnit++);
+//    }
     
     if (hasTexture(mat, aiTextureType_LIGHTMAP)){
         _matWriter.String(LIGHTMAPTEX_KEY.c_str(), LIGHTMAPTEX_KEY.size());
-        _matWriter.Uint(texUnit++);
+        writeTexture(mat, aiTextureType_LIGHTMAP);
+        //_matWriter.Uint(texUnit++);
     }
     
     _matWriter.EndObject();
@@ -522,7 +540,9 @@ void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shade
 	_matWriter.String(TYPE_KEY.c_str(), TYPE_KEY.size());
 	_matWriter.String(VERTEXSHADER_KEY.c_str(), VERTEXSHADER_KEY.size());
 	_matWriter.String(DEFINATION_KEY.c_str(), DEFINATION_KEY.size());
-	_matWriter.String(getShaderDefinations(mat, VERTEXSHADER_KEY).c_str());
+    _matWriter.StartArray();
+    writeShaderDefinations(mat, VERTEXSHADER_KEY);
+    _matWriter.EndArray();
 	_matWriter.String(SOURCE_KEY.c_str(), SOURCE_KEY.size());
 	_matWriter.String((shaderName + std::string(".vert")).c_str());
 	_matWriter.EndObject();
@@ -532,7 +552,9 @@ void ModelConverter::writeShader(const aiMaterial *mat, const std::string &shade
 	_matWriter.String(TYPE_KEY.c_str(), TYPE_KEY.size());
 	_matWriter.String(FRAGMENTSHADER_KEY.c_str(), FRAGMENTSHADER_KEY.size());
 	_matWriter.String(DEFINATION_KEY.c_str(), DEFINATION_KEY.size());
-	_matWriter.String(getShaderDefinations(mat, FRAGMENTSHADER_KEY).c_str());
+    _matWriter.StartArray();
+    writeShaderDefinations(mat, FRAGMENTSHADER_KEY);
+    _matWriter.EndArray();
 	_matWriter.String(SOURCE_KEY.c_str(), SOURCE_KEY.size());
 	_matWriter.String((shaderName + std::string(".frag")).c_str());
 	_matWriter.EndObject();
@@ -564,12 +586,12 @@ void ModelConverter::writeTexture(const aiMaterial *mat, aiTextureType texType)
         std::string texturePathSTD = texturePath.C_Str();
         std::string textureFileName = texturePathSTD.substr(texturePathSTD.find_last_of("\\/") + 1);
 		_matWriter.StartObject();
-		_matWriter.String(NAME_KEY.c_str(), NAME_KEY.size());
-		_matWriter.String(textureFileName.c_str(), textureFileName.size());
+		//_matWriter.String(NAME_KEY.c_str(), NAME_KEY.size());
+		//_matWriter.String(textureFileName.c_str(), textureFileName.size());
 		_matWriter.String(SOURCE_KEY.c_str(), SOURCE_KEY.size()); 
 		_matWriter.String(textureFileName.c_str(), textureFileName.size());
-		_matWriter.String(TEXTYPE_KEY.c_str(), TEXTYPE_KEY.size());
-		_matWriter.String(getTextureTypeName(texType).c_str());
+		//_matWriter.String(TEXTYPE_KEY.c_str(), TEXTYPE_KEY.size());
+		//_matWriter.String(getTextureTypeName(texType).c_str());
 
 		_matWriter.String(WRAP_KEY.c_str(), WRAP_KEY.size());
 		if (mapMode == aiTextureMapMode_Wrap) _matWriter.String(REPEAT_KEY.c_str(), REPEAT_KEY.size());
@@ -740,138 +762,129 @@ std::string ModelConverter::getTextureTypeName(aiTextureType texType)
 	return DIFFUSE_TEXTURE_KEY;
 }
 
-std::string ModelConverter::getShaderDefinations(const aiMaterial *mat, const std::string &type)
+void ModelConverter::writeShaderDefinations(const aiMaterial *mat, const std::string &type)
 {
-	std::string definations;
-
 	const aiMesh *mesh = MATERIAL_MESH_MAP[mat];
 	if (type == VERTEXSHADER_KEY) {
 		if (mesh->HasBones()) {
-			definations += SHADER_DEFINE_BONES;
+            _matWriter.String(SHADER_DEFINE_BONES.c_str(), SHADER_DEFINE_BONES.size());
 		}
+        
+        if (hasTexture(mat, aiTextureType_NORMALS)) {
+            _matWriter.String(SHADER_DEFINE_NORMAL_TEXTURE.c_str(), SHADER_DEFINE_NORMAL_TEXTURE.size());
+        }
 
-		unsigned short attributeIndex = 0;
-		char str[8];
-		if (mesh->HasPositions()) {
-			sprintf(str, " %d\n", attributeIndex);
-			definations += SHADER_DEFINE_ATTR_POSITION + str;
-			++attributeIndex;
-		}
+//		unsigned short attributeIndex = 0;
+//		char str[8];
+//		if (mesh->HasPositions()) {
+//			sprintf(str, " %d\n", attributeIndex);
+//			definations += SHADER_DEFINE_ATTR_POSITION + str;
+//			++attributeIndex;
+//		}
+//
+//		if (mesh->HasNormals()) {
+//			sprintf(str, " %d\n", attributeIndex);
+//			definations += SHADER_DEFINE_ATTR_NORMAL + str;
+//			++attributeIndex;
+//		}
+//
+//		if (mesh->HasTangentsAndBitangents()) {
+//			sprintf(str, " %d\n", attributeIndex);
+//			definations += SHADER_DEFINE_ATTR_TANGENT + str;
+//			++attributeIndex;
+//
+//			sprintf(str, " %d\n", attributeIndex);
+//			definations += SHADER_DEFINE_ATTR_BITANGENT + str;
+//			++attributeIndex;
+//		}
 
-		if (mesh->HasNormals()) {
-			sprintf(str, " %d\n", attributeIndex);
-			definations += SHADER_DEFINE_ATTR_NORMAL + str;
-			++attributeIndex;
-		}
+//		unsigned int uvNum = mesh->GetNumUVChannels();
+//		uvNum = uvNum <= 4 ? uvNum : 4;
+//		for (unsigned int i = 0; i < uvNum; ++i) {
+//			sprintf(str, "%d %d\n", i, attributeIndex);
+//			definations += SHADER_DEFINE_ATTR_TEXTURE_COORD + str;
+//			++attributeIndex;
+//		}
 
-		if (mesh->HasTangentsAndBitangents()) {
-			sprintf(str, " %d\n", attributeIndex);
-			definations += SHADER_DEFINE_ATTR_TANGENT + str;
-			++attributeIndex;
-
-			sprintf(str, " %d\n", attributeIndex);
-			definations += SHADER_DEFINE_ATTR_BITANGENT + str;
-			++attributeIndex;
-		}
-
-		unsigned int uvNum = mesh->GetNumUVChannels();
-		uvNum = uvNum <= 4 ? uvNum : 4;
-		for (unsigned int i = 0; i < uvNum; ++i) {
-			sprintf(str, "%d %d\n", i, attributeIndex);
-			definations += SHADER_DEFINE_ATTR_TEXTURE_COORD + str;
-			++attributeIndex;
-		}
-
-		unsigned int colNum = mesh->GetNumColorChannels();
-		colNum = colNum <= 4 ? colNum : 4;
-		for (unsigned int i = 0; i < colNum; ++i) {
-			sprintf(str, "%d %d\n", i, attributeIndex);
-			definations += SHADER_DEFINE_ATTR_COLOR + str;
-			++attributeIndex;
-		}
-
-		if (mesh->HasBones()) {
-			sprintf(str, " %d\n", attributeIndex);
-			definations += SHADER_DEFINE_ATTR_BONE_INDICES + str;
-			++attributeIndex;
-
-			sprintf(str, " %d\n", attributeIndex);
-			definations += SHADER_DEFINE_ATTR_BONE_WEIGHTS + str;
-			++attributeIndex;
-		}
+//		unsigned int colNum = mesh->GetNumColorChannels();
+//		colNum = colNum <= 4 ? colNum : 4;
+//		for (unsigned int i = 0; i < colNum; ++i) {
+//			sprintf(str, "%d %d\n", i, attributeIndex);
+//			definations += SHADER_DEFINE_ATTR_COLOR + str;
+//			++attributeIndex;
+//		}
+//
+//		if (mesh->HasBones()) {
+//			sprintf(str, " %d\n", attributeIndex);
+//			definations += SHADER_DEFINE_ATTR_BONE_INDICES + str;
+//			++attributeIndex;
+//
+//			sprintf(str, " %d\n", attributeIndex);
+//			definations += SHADER_DEFINE_ATTR_BONE_WEIGHTS + str;
+//			++attributeIndex;
+//		}
 	}
 	else if (type == FRAGMENTSHADER_KEY) {
 		bool hasTex = false;
 		if (hasTexture(mat, aiTextureType_AMBIENT)) {
-			definations += SHADER_DEFINE_AMBIENT_TEXTURE;
+            _matWriter.String(SHADER_DEFINE_AMBIENT_TEXTURE.c_str(), SHADER_DEFINE_AMBIENT_TEXTURE.size());
 			hasTex = true;
 		}
 
 		if (hasTexture(mat, aiTextureType_DIFFUSE)) {
-			definations += SHADER_DEFINE_DIFFUSE_TEXTURE;
+            _matWriter.String(SHADER_DEFINE_DIFFUSE_TEXTURE.c_str(), SHADER_DEFINE_DIFFUSE_TEXTURE.size());
 			hasTex = true;
 		}
 
 		if (hasTexture(mat, aiTextureType_SPECULAR)) {
-			definations += SHADER_DEFINE_SPECULAR_TEXTURE;
+            _matWriter.String(SHADER_DEFINE_SPECULAR_TEXTURE.c_str(), SHADER_DEFINE_SPECULAR_TEXTURE.size());
 			hasTex = true;
 		}
 
 		if (hasTexture(mat, aiTextureType_EMISSIVE)) {
-			definations += SHADER_DEFINE_EMISSIVE_TEXTURE;
+            _matWriter.String(SHADER_DEFINE_EMISSIVE_TEXTURE.c_str(), SHADER_DEFINE_EMISSIVE_TEXTURE.size());
 			hasTex = true;
 		}
 
-		if (hasTexture(mat, aiTextureType_NORMALS)) {
-			definations += SHADER_DEFINE_NORMAL_TEXTURE;
+		if (mesh->HasTangentsAndBitangents() && hasTexture(mat, aiTextureType_NORMALS)) {
+            _matWriter.String(SHADER_DEFINE_NORMAL_TEXTURE.c_str(), SHADER_DEFINE_NORMAL_TEXTURE.size());
 			hasTex = true;
 		}
 
 		if (hasTexture(mat, aiTextureType_HEIGHT)) {
-			definations += SHADER_DEFINE_HEIGHT_TEXTURE;
+            _matWriter.String(SHADER_DEFINE_HEIGHT_TEXTURE.c_str(), SHADER_DEFINE_HEIGHT_TEXTURE.size());
 			hasTex = true;
 		}
 
 		if (hasTexture(mat, aiTextureType_SHININESS)) {
-			definations += SHADER_DEFINE_SHININESS_TEXTURE;
+            _matWriter.String(SHADER_DEFINE_SHININESS_TEXTURE.c_str(), SHADER_DEFINE_SHININESS_TEXTURE.size());
 			hasTex = true;
 		}
 
 		if (hasTexture(mat, aiTextureType_OPACITY)) {
-			definations += SHADER_DEFINE_OPACITYT_TEXTURE;
+            _matWriter.String(SHADER_DEFINE_OPACITYT_TEXTURE.c_str(), SHADER_DEFINE_OPACITYT_TEXTURE.size());
 			hasTex = true;
 		}
 
-		if (hasTexture(mat, aiTextureType_DISPLACEMENT)) {
-			definations += SHADER_DEFINE_DISPLACEMENT_TEXTURE;
+		if (mesh->HasTangentsAndBitangents() && hasTexture(mat, aiTextureType_DISPLACEMENT)) {
+            _matWriter.String(SHADER_DEFINE_DISPLACEMENT_TEXTURE.c_str(), SHADER_DEFINE_DISPLACEMENT_TEXTURE.size());
 			hasTex = true;
 		}
 
 		if (hasTexture(mat, aiTextureType_LIGHTMAP)) {
-			definations += SHADER_DEFINE_LIGHTMAP_TEXTURE;
+            _matWriter.String(SHADER_DEFINE_LIGHTMAP_TEXTURE.c_str(), SHADER_DEFINE_LIGHTMAP_TEXTURE.size());
 			hasTex = true;
 		}
 
 		if (hasTexture(mat, aiTextureType_REFLECTION)) {
-			definations += SHADER_DEFINE_REFLECTION_TEXTURE;
+            _matWriter.String(SHADER_DEFINE_REFLECTION_TEXTURE.c_str(), SHADER_DEFINE_REFLECTION_TEXTURE.size());
 			hasTex = true;
 		}
 
 		if (hasTex) {
-			definations += SHADER_DEFINE_TEXTURES;
+            _matWriter.String(SHADER_DEFINE_TEXTURES.c_str(), SHADER_DEFINE_TEXTURES.size());
 		}
 	}
-
-	bool useTangentSpace = false;
-	if (mesh->HasTangentsAndBitangents() && hasTexture(mat, aiTextureType_NORMALS)) {
-		definations += SHADER_DEFINE_NROMAL_MAPPING;
-	}
-
-	if (mesh->HasTangentsAndBitangents() && hasTexture(mat, aiTextureType_DISPLACEMENT)) {
-		definations += SHADER_DEFINE_PARALLAX_MAPPING;
-	}
-
-	return definations;
 }
 
 void ModelConverter::generateMeshNames(const aiScene *scene)
@@ -986,4 +999,319 @@ void ModelConverter::outputFiles()
 		}
 		fclose(file);
 	}
+}
+
+static GLuint loadShader(GLenum type, const char *source)
+{
+    GLuint shader = glCreateShader(type);
+    if (shader == 0)
+    {
+        fprintf(stderr, "Could not create shader!\n");
+        return 0;
+    }
+    glShaderSource(shader, 1, &source, NULL);
+    glCompileShader(shader);
+    GLint compiled;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+    if (!compiled)
+    {
+        fprintf(stderr, "Could not compile shader!\n");
+        GLint infoLen = 0;
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
+        if (infoLen)
+        {
+            char* infoLog = (char*)malloc(infoLen);
+            glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
+            fprintf(stderr, "%s\n", infoLog);
+            free(infoLog);
+        }
+        glDeleteShader(shader);
+        return 0;
+    }
+    return shader;
+}
+
+static GLuint loadProgram(const char *vp, const char *fp, const char **attributes, int attributeCount)
+{
+    GLuint vertexShader = loadShader(GL_VERTEX_SHADER, vp);
+    if (!vertexShader)
+        return 0;
+    GLuint fragmentShader = loadShader(GL_FRAGMENT_SHADER, fp);
+    if (!fragmentShader)
+    {
+        glDeleteShader(vertexShader);
+        return 0;
+    }
+    
+    GLuint program = glCreateProgram();
+    if (program == 0)
+    {
+        fprintf(stderr, "Could not create program!\n");
+        return 0;
+    }
+    glAttachShader(program, vertexShader);
+    glAttachShader(program, fragmentShader);
+    
+    for (int i = 0; i < attributeCount; i++)
+        glBindAttribLocation(program, i, attributes[i]);
+    
+    glLinkProgram(program);
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+    GLint linked;
+    glGetProgramiv(program, GL_LINK_STATUS, &linked);
+    if (!linked)
+    {
+        fprintf(stderr, "Could not link program!\n");
+        GLint infoLen = 0;
+        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLen);
+        if (infoLen)
+        {
+            char* infoLog = (char*)malloc(sizeof(char) * infoLen);
+            glGetProgramInfoLog(program, infoLen, NULL, infoLog);
+            fprintf(stderr, "%s\n", infoLog);
+            free(infoLog);
+        }
+        glDeleteProgram(program);
+        return 0;
+    }
+    return program;
+}
+
+static GLuint generateBakeProgram()
+{
+    // load shader
+    static const char *vp =
+    "#version 150 core\n"
+    "in vec3 a_position;\n"
+    "in vec2 a_texcoord;\n"
+    "uniform mat4 u_view;\n"
+    "uniform mat4 u_projection;\n"
+    "out vec2 v_texcoord;\n"
+    
+    "void main()\n"
+    "{\n"
+    "gl_Position = u_projection * (u_view * vec4(a_position, 1.0));\n"
+    "v_texcoord = a_texcoord;\n"
+    "}\n";
+    
+    const char *fp =
+    "#version 150 core\n"
+    "in vec2 v_texcoord;\n"
+    "uniform sampler2D u_lightmap;\n"
+    "out vec4 o_color;\n"
+    
+    "void main()\n"
+    "{\n"
+    "o_color = vec4(texture(u_lightmap, v_texcoord).rgb, gl_FrontFacing ? 1.0 : 0.0);\n"
+    "}\n";
+    
+    static const char *attribs[] =
+    {
+        "a_position",
+        "a_texcoord"
+    };
+    
+    GLuint program = loadProgram(vp, fp, attribs, 2);
+    if (!program)
+    {
+        fprintf(stderr, "Error loading shader\n");
+        return 0;
+    }
+    
+    return program;
+    
+}
+
+static GLuint generateBakeTexture()
+{
+    GLuint lightmap;
+    // create lightmap texture
+    glGenTextures(1, &lightmap);
+    glBindTexture(GL_TEXTURE_2D, lightmap);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    unsigned char emissive[] = { 0, 0, 0, 255 };
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, emissive);
+    return lightmap;
+}
+
+static GLuint generateMeshVAO(const aiMesh *mesh)
+{
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+    
+    {
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, mesh->mNumVertices * sizeof(aiVector3D), mesh->mVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(aiVector3D), nullptr);
+    }
+    
+    {
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, mesh->mNumVertices * sizeof(aiVector3D), mesh->mTextureCoords[0], GL_STATIC_DRAW);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(aiVector3D), nullptr);
+    }
+    
+    std::vector<unsigned int> indices;
+    for (unsigned int f = 0; f < mesh->mNumFaces; ++f) {
+        const aiFace &face = mesh->mFaces[f];
+        if (face.mNumIndices == 3) {
+            indices.push_back(face.mIndices[0]);
+            indices.push_back(face.mIndices[1]);
+            indices.push_back(face.mIndices[2]);
+        }
+    }
+    
+    GLuint ibo;
+    glGenBuffers(1, &ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+    
+    return vao;
+}
+
+static void bakeOneMesh(const aiMesh *mesh, GLuint vao, GLuint tex, GLuint prog, float *outData, int w, int h, int comp)
+{
+     if (!mesh->mTextureCoords[0])
+         return;
+    lm_context *ctx = lmCreate(
+                               64,               // hemisphere resolution (power of two, max=512)
+                               0.001f, 100.0f,   // zNear, zFar of hemisphere cameras
+                               1.0f, 1.0f, 1.0f, // background color (white for ambient occlusion)
+                               2, 0.01f);        // lightmap interpolation threshold (small differences are interpolated rather than sampled)
+    // check debug_interpolation.tga for an overview of sampled (red) vs interpolated (green) pixels.
+    if (!ctx)
+    {
+        fprintf(stderr, "Error: Could not initialize lightmapper.\n");
+        return;
+    }
+    
+    lmSetTargetLightmap(ctx, outData, w, h, comp);
+    
+    std::vector<unsigned int> indices;
+    for (unsigned int f = 0; f < mesh->mNumFaces; ++f) {
+        const aiFace &face = mesh->mFaces[f];
+        if (face.mNumIndices == 3) {
+            indices.push_back(face.mIndices[0]);
+            indices.push_back(face.mIndices[1]);
+            indices.push_back(face.mIndices[2]);
+        }
+    }
+    
+    lmSetGeometry(ctx, NULL,
+                  LM_FLOAT, (unsigned char*)mesh->mVertices, sizeof(aiVector3D),
+                  LM_FLOAT, (unsigned char*)mesh->mTextureCoords[0], sizeof(aiVector3D),
+                  indices.size(), LM_UNSIGNED_INT, &indices[0]);
+    
+    int vp[4];
+    float view[16], projection[16];
+    double lastUpdateTime = 0.0;
+    while (lmBegin(ctx, vp, view, projection))
+    {
+        // render to lightmapper framebuffer
+        glViewport(vp[0], vp[1], vp[2], vp[3]);
+        
+        glEnable(GL_DEPTH_TEST);
+        
+        glUseProgram(prog);
+        glUniform1i(glGetUniformLocation(prog, "u_lightmap"), 0);
+        glUniformMatrix4fv(glGetUniformLocation(prog, "u_projection"), 1, GL_FALSE, projection);
+        glUniformMatrix4fv(glGetUniformLocation(prog, "u_view"), 1, GL_FALSE, view);
+        glBindTexture(GL_TEXTURE_2D, tex);
+        
+        glBindVertexArray(vao);
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        
+        // display progress every second (printf is expensive)
+        double time = glfwGetTime();
+        if (time - lastUpdateTime > 1.0)
+        {
+            lastUpdateTime = time;
+            printf("\r%6.2f%%", lmProgress(ctx) * 100.0f);
+            fflush(stdout);
+        }
+        
+        lmEnd(ctx);
+    }
+    printf("\rFinished baking %d triangles.\n", indices.size() / 3);
+    lmDestroy(ctx);
+    
+    // postprocess texture
+    float *temp = new float[w * h * comp];
+    lmImageSmooth(outData, temp, w, h, comp);
+    lmImageDilate(temp, outData, w, h, comp);
+    for (int i = 0; i < 16; i++)
+    {
+        lmImageDilate(outData, temp, w, h, comp);
+        lmImageDilate(temp, outData, w, h, comp);
+    }
+    lmImagePower(outData, w, h, comp, 1.0f / 2.2f, 0x7); // gamma correct color channels
+    delete[] temp;
+}
+
+void ModelConverter::bakeLightMap(const aiScene *scene)
+{
+    if (!glfwInit()) return;
+    
+    printf("--------------------Baking Lightmap--------------------\n");
+    glfwWindowHint(GLFW_RED_BITS, 8);
+    glfwWindowHint(GLFW_GREEN_BITS, 8);
+    glfwWindowHint(GLFW_BLUE_BITS, 8);
+    glfwWindowHint(GLFW_ALPHA_BITS, 8);
+    glfwWindowHint(GLFW_DEPTH_BITS, 32);
+    glfwWindowHint(GLFW_STENCIL_BITS, GLFW_DONT_CARE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
+    GLFWwindow *window = glfwCreateWindow(1024, 1024, "Lightmapping", NULL, NULL);
+    glfwMakeContextCurrent(window);
+    
+    GLuint *meshVAOs = new GLuint[scene->mNumMeshes];
+    GLuint *meshBakeTextures = new GLuint[scene->mNumMaterials];
+    GLuint renderProg = generateBakeProgram();
+    float **datas = new float*[scene->mNumMaterials];
+    
+    int w = 1024;
+    int h = 1024;
+    int comp = 4;
+    for (unsigned int i = 0; i < scene->mNumMaterials; ++i) {
+        meshBakeTextures[i] = generateBakeTexture();
+        datas[i] = new float[w * h * comp];
+    }
+    
+    for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
+        meshVAOs[i] = generateMeshVAO(scene->mMeshes[i]);
+    }
+    
+    for (unsigned int i = 0; i < scene->mNumMeshes; ++i){
+        float *data = datas[scene->mMeshes[i]->mMaterialIndex];
+        bakeOneMesh(scene->mMeshes[i], meshVAOs[i], meshBakeTextures[scene->mMeshes[i]->mMaterialIndex], renderProg, data, w, h, comp);
+    }
+    
+    for (unsigned int i = 0; i < scene->mNumMaterials; ++i) {
+        char str[64];
+        sprintf(str, "%sLightMap-%d.tga", _outputFileFolder.c_str(), i);
+        // save result to a file
+        if (lmImageSaveTGAf(str, datas[i], w, h, comp, 1.0f))
+            printf("Saved %s\n", str);
+        delete[] datas[i];
+    }
+    delete[] datas;
+    delete[] meshBakeTextures;
+    delete[] meshVAOs;
+    
+    glfwDestroyWindow(window);
 }

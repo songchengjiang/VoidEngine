@@ -5,15 +5,15 @@
 #include "RenderPipeline.h"
 #include <algorithm>
 
-veOctreeCamera::veOctreeCamera(veSceneManager *sm)
-	: veCamera(sm)
+veOctreeCamera::veOctreeCamera()
+	: veCamera()
 	, _octree(nullptr)
 {
 	_renderQueue = new veOctreeRenderQueue;
 }
 
-veOctreeCamera::veOctreeCamera(veSceneManager *sm, const veViewport &vp)
-	: veCamera(sm, vp)
+veOctreeCamera::veOctreeCamera(const veViewport &vp)
+	: veCamera(vp)
 	, _octree(nullptr)
 {
 	_renderQueue = new veOctreeRenderQueue;
@@ -38,7 +38,7 @@ void veOctreeCamera::traverseOctree(veOctree *octant, veNodeList &visibledNodeLi
 	if (!octant->nodeList.empty()) {
 		std::unique_lock<std::mutex> lock(octant->nodeListMutex);
 		for (auto &iter : octant->nodeList) {
-			if (iter->isVisible() && (iter->getMask() & getMask())) {
+			if (iter->isVisible() && (iter->getMask() & _attachedNode->getMask())) {
 				if (!isOutOfFrustum(iter->getBoundingBox())) {
 					//std::unique_lock<std::mutex> lock(_visitMutex);
 					//_visibleNodeList.push_back(iter);

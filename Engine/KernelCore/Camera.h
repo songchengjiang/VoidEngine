@@ -3,13 +3,13 @@
 #include "Prerequisites.h"
 #include "BaseCore/Matrix4.h"
 #include "BaseCore/Vector4.h"
+#include "Component.h"
 #include "Node.h"
 #include "RenderQueue.h"
 #include "FrameBufferObject.h"
 #include "Plane.h"
 #include "Material.h"
 #include "SkyBox.h"
-#include "PostProcesser.h"
 
 class veVisualiser;
 class veLight;
@@ -34,7 +34,7 @@ struct VE_EXPORT veViewport
 	}
 };
 
-class VE_EXPORT veCamera : public veNode
+class VE_EXPORT veCamera : public veComponent
 {
 	friend class veSceneManager;
 public:
@@ -54,13 +54,9 @@ public:
     const vePlane& getFrustumPlane(FrustumPlane fp);
     
     virtual void cull(veNodeList &visibledNodeList) = 0;
-    
-    virtual void setMatrix(const veMat4 &mat) override;
-    virtual void refresh() override;
-    virtual bool visit(veNodeVisitor &visitor) override;
     virtual bool isOutOfFrustum(const veBoundingBox &bbox);
     
-	virtual void update(veSceneManager *sm, const veMat4 &transform) override;
+    virtual void update(veSceneManager *sm) override;
     
     void resize(int width, int height);
     veRenderQueue* getRenderQueue() { return _renderQueue; }
@@ -71,10 +67,8 @@ public:
 	const veMat4& projectionMatrix() const { return _projectionMat; }
 	void setProjectionMatrix(const veMat4 &mat);
 
-	void setViewMatrixAslookAt(const veVec3 &eye, const veVec3 &center, const veVec3 &up);
-	void setViewMatrix(const veMat4 &mat);
 	//veMat4& viewMatrix() { return _viewMat; }
-	const veMat4& viewMatrix() const { return _viewMat; }
+    const veMat4& viewMatrix() const { return _viewMat; }
 
 	void setFrameBufferObject(veFrameBufferObject *fbo);
 	veFrameBufferObject* getFrameBufferObject() { return _fbo.get(); }
@@ -93,23 +87,21 @@ public:
 
     void getFrustumCorners(veVec3 *corners) const;
     veVec3 convertScreenCoordsToWorldCoords(const veVec2 &sCoords, veReal zDepth = -1.0f);
-    
-    void addPostProcesser(vePostProcesser *processer);
-    const vePostProcesserList& getPostProcesserList() const { return _postProcesserList; }
-    virtual void removePostProcesser(const std::string &name);
 
     void setIrradianceTexture(veTexture *irradiance) { _irradianceTexture = irradiance; }
     veTexture* getIrradianceTexture() const { return _irradianceTexture.get(); }
     void setRadianceTexture(veTexture *radiance) { _radianceTexture = radiance; }
     veTexture* getRadianceTexture() const { return _radianceTexture.get(); }
+    void setLutTexture(veTexture *lut) { _lutTexture = lut; }
+    veTexture* getLutTexture() const { return _lutTexture.get(); }
+
 
 protected:
 
-	veCamera(veSceneManager *sm);
-	veCamera(veSceneManager *sm, const veViewport &vp);
+	veCamera();
+	veCamera(const veViewport &vp);
 	void visitQueue(veLoopQueue< veRenderCommand > &queue);
 	void updateFrustumPlane();
-	virtual void updateSceneManager() override;
 
 protected:
 
@@ -122,9 +114,9 @@ protected:
     VE_Ptr<veTexture> _clearTexture;
     VE_Ptr<veTexture> _irradianceTexture;
     VE_Ptr<veTexture> _radianceTexture;
+    VE_Ptr<veTexture> _lutTexture;
     
 	VE_Ptr<veFrameBufferObject> _fbo;
-    vePostProcesserList         _postProcesserList;
 
 	vePlane _frustumPlane[6];
 	bool    _needRefreshFrustumPlane;

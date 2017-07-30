@@ -47,6 +47,7 @@ private:
 			veLog("veFileReaderWriterKTX: Not support format!");
 			return;
 		}
+        
 		if (tex.target() == gli::TARGET_2D) {
 			_texture = _sceneManager->createTexture(_name, veTexture::TEXTURE_2D);
 		}
@@ -72,9 +73,9 @@ private:
 		}
 
 		if (_texture) {
-			_texture->setSwizzleMode(veTexture::SwizzleMode(Format.Swizzle[0]), veTexture::SwizzleMode(Format.Swizzle[1])
-				, veTexture::SwizzleMode(Format.Swizzle[2]), veTexture::SwizzleMode(Format.Swizzle[3]));
-			_texture->storage(mipmapLevels, internalFormat, pixelFormat, dataType);
+//			_texture->setSwizzleMode(veTexture::SwizzleMode(Format.Swizzle[0]), veTexture::SwizzleMode(Format.Swizzle[1])
+//				, veTexture::SwizzleMode(Format.Swizzle[2]), veTexture::SwizzleMode(Format.Swizzle[3]));
+			_texture->storage(mipmapLevels, pixelFormat, pixelFormat, dataType);
 		}
 
 		if (!mipmapLevels.empty()) {

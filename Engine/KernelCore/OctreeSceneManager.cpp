@@ -7,7 +7,8 @@
 #include "Ray.h"
 #include "FileCore/File.h"
 #include "MaterialManager.h"
-#include "DeferredRenderPipeline.h"
+//#include "DeferredRenderPipeline.h"
+#include "ForwardRenderPipeline.h"
 #include "Viewer.h"
 
 static const std::string POST_PROCESSER_FRAMEBUFFER_OBJECT = "POST_PROCESSER_FRAMEBUFFER_OBJECT";
@@ -40,7 +41,7 @@ void veOctreeSceneManager::init()
 	_root = new veOctreeNode;
 	_root->setSceneManager(this);
 	_octree->originBoundingBox = _octree->boundingBox = _boundingBox;
-	_renderPipeline  = new veDeferredRenderPipeline(this);
+	_renderPipeline  = new veForwardRenderPipeline(this);
 }
 
 veNode* veOctreeSceneManager::createNode(const std::string &name)
@@ -53,10 +54,10 @@ veNode* veOctreeSceneManager::createNode(const std::string &name)
 
 veCamera* veOctreeSceneManager::createCamera(const std::string &name, const veViewport &vp)
 {
-	auto camera = new veOctreeCamera(this, vp);
+	auto camera = new veOctreeCamera(vp);
 	camera->setName(name);
 	camera->setOctree(_octree);
-	_cameraList.push_back(camera);
+	//_cameraList.push_back(camera);
 	return camera;
 }
 
@@ -69,26 +70,32 @@ void veOctreeSceneManager::requestRender(veNode *node)
 	//	++_parallelUpdateOctantNum;
 	//}
 	//_threadPool.enqueue(nullptr, nullptr, [this, ocNode] {
-		if (!ocNode->octant) {
-			if (ocNode->getBoundingBox().isNull() || !ocNode->isIn(this->_octree->boundingBox)) {
-				this->_octree->addNode(ocNode);
-			}
-			else {
-				addOctreeNode(ocNode, this->_octree);
-			}
-		}
-		else {
-			if (!ocNode->isIn(ocNode->octant->boundingBox)) {
-				ocNode->octant->removeNode(ocNode);
-
-				if (!ocNode->isIn(this->_octree->boundingBox)) {
-					this->_octree->addNode(ocNode);
-				}
-				else {
-					addOctreeNode(ocNode, this->_octree);
-				}
-			}
-		}
+    if (node->isVisible()) {
+        if (!ocNode->octant) {
+            if (ocNode->getBoundingBox().isNull() || !ocNode->isIn(this->_octree->boundingBox)) {
+                this->_octree->addNode(ocNode);
+            }
+            else {
+                addOctreeNode(ocNode, this->_octree);
+            }
+        }
+        else {
+            if (!ocNode->isIn(ocNode->octant->boundingBox)) {
+                ocNode->octant->removeNode(ocNode);
+                
+                if (!ocNode->isIn(this->_octree->boundingBox)) {
+                    this->_octree->addNode(ocNode);
+                }
+                else {
+                    addOctreeNode(ocNode, this->_octree);
+                }
+            }
+        }
+    }else {
+        if (ocNode->octant) {
+            ocNode->octant->removeNode(ocNode);
+        }
+    }
 		//{
 		//	std::unique_lock<std::mutex> lock(_parallelUpdateOctantMutex);
 		//	--_parallelUpdateOctantNum;

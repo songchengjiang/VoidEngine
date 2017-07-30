@@ -6,7 +6,6 @@
 #include "VE_Ptr.h"
 #include "RenderCommand.h"
 #include "RenderState.h"
-#include "TransformFeedback.h"
 #include "GLDataBuffer.h"
 #include <unordered_map>
 
@@ -22,33 +21,33 @@ public:
 	static vePass* CURRENT_PASS;
 	typedef std::function<void()> ApplyFunctionCallback;
     
-    enum RenderPass{
-        DEFERRED_PASS,
-        FORWARD_PASS,
-    };
+//    enum RenderPass{
+//        DEFERRED_PASS,
+//        FORWARD_PASS,
+//    };
 
-    //NOTICE: The order of TextureType is not equal to the Texture Unit
-	enum TextureType
-	{
-		DIFFUSE_TEXTURE,
-		EMISSIVE_TEXTURE,
-		NORMAL_TEXTURE,
-		OPACITYT_TEXTURE,
-		DISPLACEMENT_TEXTURE,
-		LIGHTMAP_TEXTURE,
-        ROUGHNESS_TEXTURE,
-        METALLIC_TEXTURE,
-        SHADOW_TEXTURE,
-        IRRADIANCE_TEXTURE,
-        RADIANCE_TEXTURE,
-        //USED FOR FBO
-        COLOR_BUFFER_TEXTURE,
-        DEPTH_STENCIL_BUFFER_TEXTURE,
-        
-        USER_TEXTURE0,
-        USER_TEXTURE1,
-        USER_TEXTURE2,
-	};
+//    //NOTICE: The order of TextureType is not equal to the Texture Unit
+//	enum TextureType
+//	{
+//		DIFFUSE_TEXTURE,
+//		EMISSIVE_TEXTURE,
+//		NORMAL_TEXTURE,
+//		OPACITYT_TEXTURE,
+//		DISPLACEMENT_TEXTURE,
+//		LIGHTMAP_TEXTURE,
+//        ROUGHNESS_TEXTURE,
+//        METALLIC_TEXTURE,
+//        SHADOW_TEXTURE,
+//        IRRADIANCE_TEXTURE,
+//        RADIANCE_TEXTURE,
+//        LUT_TEXTURE,
+//        //USED FOR FBO
+//        COLOR_BUFFER_TEXTURE,
+//        DEPTH_STENCIL_BUFFER_TEXTURE,
+//        
+//        USER_TEXTURE0,
+//        USER_TEXTURE1,
+//	};
 	vePass();
 	~vePass();
 
@@ -57,8 +56,8 @@ public:
 	void visit(const veRenderCommand &command);
 	bool apply(const veRenderCommand &command);
 
-    void setRenderPass(RenderPass rp) { _renderPass = rp; }
-    RenderPass getRenderPass() const { return _renderPass; }
+//    void setRenderPass(RenderPass rp) { _renderPass = rp; }
+//    RenderPass getRenderPass() const { return _renderPass; }
     
 	const bool& depthTest() const { return _depthTest; };
 	bool& depthTest() { return _depthTest; }
@@ -98,13 +97,14 @@ public:
 
 	//void addTexture(veTexture *texture);
 	//void setTexture(size_t idx, veTexture *texture);
-	void setTexture(TextureType type, veTexture *texture);
+	//void setTexture(TextureType type, veTexture *texture);
 	//veTexture* getTexture(size_t idx);
-	veTexture* getTexture(TextureType type);
-	const veTexture* getTexture(TextureType type) const;
-	const veTexture* getTexture(size_t idx) const;
+	//veTexture* getTexture(TextureType type);
+	//const veTexture* getTexture(TextureType type) const;
+	//const veTexture* getTexture(size_t idx) const;
+    //int getTextureUnit(TextureType type) const;
 	//veTexture* removeTexture(size_t idx);
-	size_t getTextureNum() const { return _textures.size(); }
+	//size_t getTextureNum() const { return _textures.size(); }
 
 	void addUniform(veUniform *uniform);
 	veUniform* getUniform(const std::string &name) const;
@@ -113,22 +113,22 @@ public:
     veUniform* removeUniform(size_t idx);
 	size_t getUniformNum() const { return _uniforms.size(); }
 
-	void setTransformFeedback(veTransformFeedback *transFeedback) { _transformFeedback = transFeedback; _needLinkProgram = true; }
-	veTransformFeedback* getTransformFeedback() { return _transformFeedback.get(); }
-
 	void setApplyFunctionCallback(const ApplyFunctionCallback &callback) { _callback = callback; }
 
 	void reloadProgram();
+    
+    GLuint getProgram(unsigned int contextID);
 
 private:
 
 	void applyProgram(const veRenderCommand &command);
 	void applyUniforms(const veRenderCommand &command);
-	int findTextureID(TextureType type) const;
+    //void applyTextures(const veRenderCommand &command);
+	//int findTextureID(TextureType type) const;
 
 private:
 
-    RenderPass    _renderPass;
+    //RenderPass    _renderPass;
 	bool          _depthTest;
 	bool          _depthWirte;
 	bool          _stencilTest;
@@ -146,9 +146,8 @@ private:
 	bool                   _needLinkProgram;
     
 	std::map<veShader::Type, VE_Ptr<veShader> >               _shaders;
-	std::vector< std::pair<TextureType, VE_Ptr<veTexture> > > _textures;
+	//std::vector< std::pair<TextureType, VE_Ptr<veTexture> > > _textures;
 	std::vector< VE_Ptr<veUniform> >                          _uniforms;
-	VE_Ptr<veTransformFeedback>                               _transformFeedback;
 	ApplyFunctionCallback                                     _callback;
 };
 

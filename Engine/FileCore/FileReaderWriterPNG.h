@@ -47,7 +47,7 @@ public:
 private:
 
 	void readImage(png_structp png_ptr, png_infop info_ptr){
-		GLint internalFormat = GL_RGB8;
+		GLint internalFormat = GL_RGB;
 		GLenum pixelFormat = GL_RGB;
 		GLenum dataType = GL_UNSIGNED_BYTE;
 		png_set_sig_bytes(png_ptr, 8);
@@ -69,7 +69,7 @@ private:
 					buffer[index++] = row_pointers[y][x++];//a
 				}
 			}
-			internalFormat = GL_RGBA8;
+			internalFormat = GL_RGBA;
 			pixelFormat = GL_RGBA;
 		}
 		else if (color_type == PNG_COLOR_TYPE_RGB){
@@ -89,8 +89,8 @@ private:
 					buffer[index++] = row_pointers[y][x++];//gray
 				}
 			}
-			internalFormat = GL_R8;
-			pixelFormat = GL_RED;
+			internalFormat = GL_LUMINANCE;
+			pixelFormat = GL_LUMINANCE;
 		}
 		else if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA){
 			buffer = new unsigned char[width * height * 2];
@@ -100,8 +100,8 @@ private:
 					buffer[index++] = row_pointers[y][x++];//alpha
 				}
 			}
-			internalFormat = GL_RG8;
-			pixelFormat = GL_RG;
+			internalFormat = GL_LUMINANCE_ALPHA;
+			pixelFormat = GL_LUMINANCE_ALPHA;
 		}
 
 		if (buffer){

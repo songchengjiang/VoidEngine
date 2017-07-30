@@ -10,7 +10,7 @@ public:
     veParticleRenderer();
     virtual ~veParticleRenderer();
     
-    virtual void render(veNode *node, veRenderableObject *renderableObj, veCamera *camera, unsigned int contextID) override;
+    virtual void render(veRenderableObject *renderableObj, veCamera *camera, const veMat4 &worldMatrix, unsigned int contextID, veRenderQueue::RenderQueueType type) override;
     virtual void draw(veRenderCommand &command) override;
     
     virtual void update();
@@ -21,17 +21,17 @@ protected:
     
 protected:
     
-    VE_Ptr<veGLDataBuffer> _vaoBuffer;
+//    VE_Ptr<veGLDataBuffer> _vaoBuffer;
     VE_Ptr<veGLDataBuffer> _vboBuffer;
     VE_Ptr<veGLDataBuffer> _iboBuffer;
-    VE_Ptr<veGLDataBuffer> _mvpboBuffer;
-    VE_Ptr<veGLDataBuffer> _colorboBuffer;
+//    VE_Ptr<veGLDataBuffer> _mvpboBuffer;
+//    VE_Ptr<veGLDataBuffer> _colorboBuffer;
     veRealArray     _vertices;
     veUint16Array   _indices;
     bool            _needUpdate;
-    veArray<veMat4>   _mvpMats;
-    veArray<veVec4>   _colors;
-    unsigned int      _instanceCount;
+//    veArray<veMat4>   _mvpMats;
+//    veArray<veVec4>   _colors;
+//    unsigned int      _instanceCount;
 };
 
 #endif

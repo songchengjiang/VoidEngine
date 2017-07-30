@@ -24,7 +24,7 @@ public:
 
 	virtual ~veNode();
 
-	void setVisible(bool isVis) { _isVisible = isVis; }
+    void setVisible(bool isVis);
 	bool isVisible() const { return _isVisible; };
 	void setDynamicNode(bool isStatic) { _isDynamic = isStatic; }
 	bool isDynamicNode() { return _isDynamic; }
@@ -45,6 +45,8 @@ public:
 	bool removeComponent(veComponent *com);
 	veComponent* removeComponent(size_t comIndex);
 	veComponent* getComponent(size_t comIndex);
+    template<class T>
+    T* getComponent();
 	size_t getComponentCount() const { return _components.size(); }
 
 	virtual int addRenderableObject(veRenderableObject *obj);
@@ -65,7 +67,7 @@ public:
 
 	bool isInScene() const { return _isInScene; }
 
-	virtual veMat4 getNodeToWorldMatrix() const;
+	virtual const veMat4& getNodeToWorldMatrix() const;
 	virtual veMat4 getWorldToNodeMatrix() const;
 
 	veMat4 computeNodeToWorldMatrix() const;
@@ -75,7 +77,8 @@ public:
 	void* getUserData() { return _userData; }
 	const void* getUserData() const { return _userData; }
 
-	virtual void refresh();
+	void refresh();
+    bool needRefresh() const { return _refresh; }
 
 	virtual bool routeEvent(veSceneManager *sm, veViewer *viewer, const veEvent &event);
 	virtual void update(veSceneManager *sm, const veMat4 &transform);
@@ -89,7 +92,6 @@ protected:
 
 	veNode();
 	void updateBoundingBox();
-	virtual void refreshUpdate(veSceneManager *sm, const veMat4 &transform);
 	virtual void updateSceneManager();
 
 protected:
@@ -101,7 +103,7 @@ protected:
 
 	veBoundingBox     _boundingBox;
 	veMat4            _matrix;
-	veMat4            _worldMatrix;
+	mutable veMat4    _worldMatrix;
 	bool              _isVisible;
 	bool              _refresh;
 	unsigned int      _mask;
@@ -113,6 +115,18 @@ protected:
 	void             *_userData;
 	veSceneManager   *_sceneManager;
 };
+
+template<class T>
+T* veNode::getComponent()
+{
+    for (auto &iter : _components) {
+        veComponent *comp = iter.get();
+        if (dynamic_cast<T*>(comp)) {
+            return static_cast<T*>(comp);
+        }
+    }
+    return nullptr;
+}
 
 typedef std::vector< VE_Ptr<veNode> > veNodeList;
 
